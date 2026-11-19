@@ -39,6 +39,7 @@ def factory_coordination_status(context,work):
 
 @register.inclusion_tag('factory/background_status.html', takes_context=True)
 def factory_background_status(context, work):
+    from django.utils import timezone
     from apps.workflows.factory import TERMINAL
     from apps.workflows.factory_execution import can_control
     from apps.workflows.factory_progress import ACTIVE
@@ -52,6 +53,7 @@ def factory_background_status(context, work):
     request=context.get('request')
     return {'work': work, 'job': job, 'active': bool(job and job.status in ACTIVE),
             'watching':watching,'preserve_form':bool(request and request.method=='POST'),
+            'current_claim': bool(job and job.status == 'running' and job.available_at > timezone.now()),
             'can_control': can_control(context['user'], work), 'csrf_token': context.get('csrf_token'),
             'can_continue': not work.cancel_requested and work.status not in TERMINAL | {'waiting_effect'}}
 

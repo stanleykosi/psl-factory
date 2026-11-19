@@ -73,8 +73,20 @@ class ArchiveFileTests(TestCase):
         observation=f.work.activities.filter(kind='ACT04').latest('pk').attempts.filter(phase='observed').latest('pk')
         self.assertEqual(observation.result['file_archive']['plan_id'],plan.pk)
         self.assertEqual(len(observation.result['file_archive']['unconfirmed_file_ids']),3)
-        for job in ArchiveCopyJob.objects.filter(file__plan=plan):
-            self.assertTrue(archive_transfer.run_once(job.pk))
+        self.client.force_login(f.actor)
+        url = reverse('factory_detail', args=[f.work.pk])
+        self.assertContains(self.client.get(url), '3 files queued for copying.')
+
+        def check_progress(adapter, file, data):
+            page = self.client.get(url)
+            self.assertContains(page, 'Copying 1 file to the synthetic acceptance store.')
+            self.assertContains(page, 'data-work-watch')
+            return copy_to_store(adapter, file, data)
+
+        copy_to_store = SyntheticObjectArchive.copy
+        with patch.object(SyntheticObjectArchive, 'copy', new=check_progress):
+            for job in ArchiveCopyJob.objects.filter(file__plan=plan):
+                self.assertTrue(archive_transfer.run_once(job.pk))
         result = archive_transfer.projection(f.actor, f.work)
         self.assertTrue(result['verified'], result['finding'])
         self.assertEqual(result['confirmed'], 3)
@@ -91,6 +103,8 @@ class ArchiveFileTests(TestCase):
         self.client.force_login(f.actor)
         page = self.client.get(reverse('factory_detail', args=[f.work.pk]))
         self.assertContains(page, 'Open Support handover')
+        self.assertNotContains(page, 'queued for copying')
+        self.assertNotContains(page, 'Copying 1 file')
         self.assertContains(page, 'synthetic acceptance store')
         self.assertNotContains(page, 'from the private file store')
         with self.assertRaises(DatabaseError), transaction.atomic():

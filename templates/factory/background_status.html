@@ -1,7 +1,7 @@
 {% if job or can_control and can_continue %}
 <section class="card"{% if watching %} data-work-watch data-preserve-form="{{ preserve_form|yesno:'true,false' }}"{% endif %}>
   <h2>Background work</h2>
-  {% if job.status == 'running' %}<p>A worker is checking the next step.</p>
+  {% if job.status == 'running' %}<p role="status">{% if not current_claim %}The background step is waiting to be checked again.{% elif work.definition == 'delivery-hypercare/v1' and watching %}The factory is checking release stability against the recorded observations.{% else %}A worker is checking the next step.{% endif %}</p>
   {% elif job.status == 'queued' %}<p>The next step is queued.</p>
   {% elif job.status == 'waiting' %}<p>Waiting for a decision, evidence or a receipt. The factory checks for changes.</p>
   {% elif job.status == 'held' %}<p>Background work needs attention. Check the work item’s current status and recovery options.</p>

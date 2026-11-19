@@ -1,6 +1,7 @@
 {
   "design_consolidation_20261116": {
-    "batch_acceptance":{"status":"submitted_grouped_postgresql_candidate_201","plan":"docs/design/batch-acceptance.md","runner":"scripts/design_acceptance_batch.py","checks":"c63026cf-d5e9-4cb7-8e4e-53cb5bc65c52","test_modules":36,"groups":["commercial","project_delivery","finance_reporting","shared"],"inventory_audit_passed":true,"browser_counts_changed":false,"hod_decisions_deferred":true},
+    "batch_acceptance":{"status":"running_grouped_postgresql_candidate_201","plan":"docs/design/batch-acceptance.md","runner":"scripts/design_acceptance_batch.py","checks":"c63026cf-d5e9-4cb7-8e4e-53cb5bc65c52","frozen_test_modules":36,"discovered_tests":487,"groups":["commercial","project_delivery","finance_reporting","shared"],"inventory_audit_passed":true,"browser_counts_changed":false,"hod_decisions_deferred":true},
+    "delivery_progress_next_batch":{"states":["SCR-46-evaluating","SCR-47-working"],"implemented":["Current background stability status","Archive queued files and live copy lease progress","Receipt and expired lease distinction","Existing edit-preserving refresh"],"local_checks":"Django check and compile passed","postgresql_and_browser":"pending after candidate201 freeze"},
     "active_commercial_checkpoint":"commercial_client_response_browser_196",
     "commercial_client_response_browser_196":{
       "supersedes_status_and_next_in":"commercial_client_response_20261119",

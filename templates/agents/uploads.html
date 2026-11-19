@@ -26,7 +26,7 @@
 <h2>Agent drafts</h2>
 {% if watch_jobs %}<div data-work-watch data-preserve-form="{% if error %}true{% else %}false{% endif %}">
   <p>Agents are reviewing your files. This page updates while you wait.</p>
-</div><script defer src="{% static 'work-progress.js' %}?v=1"></script>{% endif %}
+</div><script defer src="{% static 'work-progress.js' %}?v=2"></script>{% endif %}
 {% for job in jobs %}
 <article class="card" id="agent-job-{{ job.pk }}">
   <h3>{{ job.role_label }} · {{ job.upload.name }}</h3>

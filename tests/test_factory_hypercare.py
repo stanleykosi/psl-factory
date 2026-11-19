@@ -29,6 +29,26 @@ def setup(configure=True):
 
 
 class FactoryHypercareTests(TestCase):
+    def test_release_stability_progress_follows_an_actual_claim_and_stops_at_observed_result(self):
+        from apps.workflows import factory_progress
+        f = setup()
+        f.accepted()
+        f.criteria()
+        f.observations()
+        f.work.refresh_from_db()
+        enrolled = factory_progress.set_progress(f.actor, f.work.pk, f.work.revision, True)
+        self.assertEqual(factory_progress.claim().pk, enrolled.pk)
+        self.client.force_login(f.actor)
+        url = reverse('factory_detail', args=[f.work.pk])
+        self.assertContains(self.client.get(url), 'The factory is checking release stability against the recorded observations.')
+        enrolled.available_at = timezone.now() - timedelta(seconds=1)
+        enrolled.save(update_fields=['available_at'])
+        self.assertContains(self.client.get(url), 'The background step is waiting to be checked again.')
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        self.assertEqual(f.work.status, 'verified', f.work.finding)
+        self.assertNotContains(self.client.get(url), 'The factory is checking release stability against the recorded observations.')
+
     def test_typed_observation_uses_current_rule_unknown_metrics_and_source_permissions(self):
         f=setup();f.accepted();f.criteria();f.observations(errors=2)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db()

@@ -307,10 +307,17 @@ def projection(actor, work):
     source_kinds = dict(public_evidence(work.case.evidence.filter(pk__in=[file.evidence_id for file in files])).values_list('pk', 'kind'))
     visible = set(source_kinds)
     groups = {}
+    now = timezone.now()
+    copying = 0
+    queued = 0
     for file in files:
         file.plan = plan
         file.display_name = file.name if can_operate and file.evidence_id in visible else 'Project source file'
-        file.display_status = {'pending':'Queued','leased':'Copying','unknown':'Confirmation missing',
+        lease_current = file.job.status == 'leased' and file.job.lease_until and file.job.lease_until > now
+        copying += bool(lease_current)
+        queued += file.job.status == 'pending'
+        file.display_status = {'pending':'Queued','leased':'Copying' if lease_current else 'Original copy needs checking',
+            'unknown':'Confirmation missing',
             'missing':'File not found','confirmed':'Archived','held':'Needs review'}[file.job.status]
         file.can_lookup = can_operate and file.evidence_id in visible and file.job.status in ['unknown', 'missing', 'held']
         file.can_retry = False
@@ -359,4 +366,5 @@ def projection(actor, work):
                           not work.cancel_requested and file.job.status == 'missing')
     return {'plan': plan, 'files': files, 'confirmed': confirmed, 'total': len(files),
             'can_operate': can_operate, 'verified': verified, 'finding': finding, 'store_label': store_label,
-            'groups': list(groups.values())}
+            'groups': list(groups.values()), 'copying': copying, 'queued': queued,
+            'watching': bool(copying or (queued and current_scope and not work.cancel_requested))}

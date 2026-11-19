@@ -20,12 +20,33 @@
   const refresh = document.createElement('button');
   refresh.type = 'button';
   refresh.textContent = 'Refresh this work';
+  const confirmation = document.createElement('div');
+  confirmation.hidden = true;
+  const question = document.createElement('p');
+  question.textContent = 'Refreshing discards your unsaved edits.';
+  const keep = document.createElement('button');
+  keep.type = 'button';
+  keep.textContent = 'Keep editing';
+  const discard = document.createElement('button');
+  discard.type = 'button';
+  discard.textContent = 'Discard edits and refresh';
+  confirmation.append(question, keep, discard);
   refresh.addEventListener('click', () => {
-    if (!edited || window.confirm('Refresh this work and discard your unsaved form edits?')) {
+    if (!edited) {
       window.location.reload();
+      return;
     }
+    refresh.hidden = true;
+    confirmation.hidden = false;
+    keep.focus();
   });
-  notice.append(message, refresh);
+  keep.addEventListener('click', () => {
+    confirmation.hidden = true;
+    refresh.hidden = false;
+    refresh.focus();
+  });
+  discard.addEventListener('click', () => window.location.reload());
+  notice.append(message, refresh, confirmation);
   progress.append(notice);
 
   const update = () => {

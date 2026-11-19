@@ -1,7 +1,9 @@
 {% load studio_ui %}
-<section class="card">
+<section class="card"{% if file_archive.watching %} data-work-watch data-preserve-form="{% if request.method == 'POST' %}true{% else %}false{% endif %}"{% endif %}>
   <h2>Archived files</h2>
   {% if file_archive.plan %}
+    {% if file_archive.copying %}<p role="status">Copying {{ file_archive.copying }} file{{ file_archive.copying|pluralize }} to the {{ file_archive.store_label }}.</p>
+    {% elif file_archive.watching %}<p role="status">{{ file_archive.queued }} file{{ file_archive.queued|pluralize }} queued for copying.</p>{% endif %}
     <p>{{ file_archive.confirmed }} of {{ file_archive.total }} files have matching store receipts.</p>
     {% if file_archive.verified %}<p>The selected files were read back from the {{ file_archive.store_label }} and matched their recorded hashes.</p>{% endif %}
     {% if file_archive.finding %}<p role="status">{{ file_archive.finding }}</p>{% endif %}

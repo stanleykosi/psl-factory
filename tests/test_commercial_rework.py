@@ -54,6 +54,23 @@ class CommercialReworkTests(ReworkFixture, TestCase):
     def setUp(self):
         self.setup_rework()
 
+    def test_rework_browser_fixture_is_additive_and_does_not_create_responses_or_model_jobs(self):
+        from django.contrib.auth import get_user_model
+        from apps.agents.models import AgentJob, CaseUpload
+        from apps.pmo.models import ClientResponse
+        from tests.railway_commercial_client_seed import prepare_rework
+        get_user_model().objects.create_user(username='psl-agent-trial')
+        guard = {'PSL_COMMERCIAL_CLIENT_FIXTURE': '1', 'RAILWAY_ENVIRONMENT_NAME': 'design-acceptance'}
+        with patch.dict(os.environ, guard):
+            fixture = prepare_rework()
+            replay = prepare_rework()
+        self.assertEqual(replay['case'], fixture['case'])
+        self.assertEqual(replay['current_proposal'], fixture['current_proposal'])
+        self.assertTrue(replay['preserved_existing'])
+        self.assertEqual(CaseUpload.objects.filter(case_id=fixture['case']).count(), 2)
+        self.assertFalse(ClientResponse.objects.filter(revision__dossier__case_id=fixture['case']).exists())
+        self.assertFalse(AgentJob.objects.filter(upload__case_id=fixture['case']).exists())
+
     def test_client_change_screen_saves_and_prepares_exact_reviewed_scope(self):
         self.client.force_login(self.actor)
         url = reverse('commercial_client_response', args=[self.case.pk])
