@@ -232,3 +232,17 @@ F-43 Finance cash forecast review, part 1 (Sign-off list 3): the 8 visual waiver
 
 ## D-125 · F-45 signed; Option B chosen for the re-check sentence (19 Nov 2026, design engineer: "Sign, choose Option B")
 F-45 ledger source, part 1 (Sign-off list 3): the 7 visual waivers and the exceptions, except the Conflicts 13 side-note exception. For that one the design engineer chose Option B: the backend sends the re-check sentence as `workspace.next`, and the frame draws it in the side column as the board does. That changes the mock fixture plus the backend handoff, and the exception is removed once the builder makes the change. The ledger-only "approved only after the re-read confirms it" behaviour is accepted (F-33's income line stays a follow-up). Product acceptance is given on the contract mock. Merge into dlv-00 approved after the Option B change and the dlv-00 merge.
+
+## D-126 · F-37 waivers, exceptions, rework decision and product acceptance signed (19 Nov 2026, design engineer: "once f37 is ready, i have signed off")
+F-37 RFP response, requirements and answers, part 1. Signed as presented once ready:
+- the 8 visual waivers (70.5–74.7) and 48 exceptions;
+- the coordinator's call to rework the layout before review;
+- product acceptance on the contract mock.
+
+QA-3-1 (Record team input can't complete on the mock; the shared response mock has no T-3401 handler) is in scope as accepted, because AC5 needs only the link and drawer. It's recorded as a follow-up. Merge into dlv-00 approved once merge prep passes.
+
+## D-127 · F-40 allowed one extra gate attempt (19 Nov 2026, design engineer: "Yes, one more try")
+F-40 used its 3 gate attempts in round 3. Attempts 1–2 failed on load-flaky tests; attempt 3 passed every test but flagged delivery/config.json because of a stale base_sha (a coordinator error, now corrected). max_gate_attempts is raised to 4 for this one attempt, then set back to 3.
+
+## D-128 · F-40 waivers, exceptions and product acceptance signed (19 Nov 2026, design engineer: "Sign F-40")
+F-40 delivery closure and handover, part 1 (Sign-off list 3): the 8 visual waivers (73.8–88.2) and 26 exceptions, including the separate "Support replied" date-time picker and the Proof card's remove control. Product acceptance is given on the contract mock. Merge into dlv-00 approved after the backend-handoff section is added.

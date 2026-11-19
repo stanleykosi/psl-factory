@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-security
-COMMIT: 1457df1c1d4ad44327640da4efcce7d5d85dc9cd
+COMMIT: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
 AUTHORITY: delivery security review
 
 ## Summary
@@ -30,3 +30,6 @@ Round 2 (1457df1c) changed presentation and fixtures: chip tones, Handover row s
 
 ## Carried forward to round 3
 Round 3 changed only fidelity-exceptions.json; the code is the same commit (1457df1c). Carried forward by the coordinator.
+
+## Re-pinned to 60ff597c (coordinator)
+The head moved by merging dlv-00 (F-35, F-39, F-43, F-45, #75). tsc and eslint clean; e2e 152 passed; gate attempt 4 PASS. QA runs on this head.

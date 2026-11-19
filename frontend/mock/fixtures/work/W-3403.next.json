@@ -1,0 +1,467 @@
+{
+  "id": "W-3403",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "current_person"
+    },
+    {
+      "name": "Pricing",
+      "status": "not_started"
+    },
+    {
+      "name": "Submission",
+      "status": "not_started"
+    },
+    {
+      "name": "Outcome",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "A PM works through the requirements and records each team’s input. Review starts once every requirement has an answer.",
+  "sample": true,
+  "case_id": "C-2101",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "deadline",
+      "label": "DEADLINE 28 NOV · 16 DAYS",
+      "at": "2026-11-28T16:00:00Z",
+      "days_left": 16
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 2,
+        "of": 4,
+        "current": true
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission"
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome"
+      }
+    ]
+  },
+  "state": "effect_uncertain",
+  "revision": 8,
+  "tasks": [
+    {
+      "id": "T-3401",
+      "kind": "record_response",
+      "title": "Record team input",
+      "required_role": "PM",
+      "you_can_act": true,
+      "revision": 4,
+      "response": {
+        "variant": "team_input",
+        "responders": [
+          {
+            "id": "P-KA",
+            "name": "Kemi Adeyemi",
+            "role": "Security lead",
+            "organisation": "PSL"
+          }
+        ],
+        "actions": [
+          {
+            "value": "estimate",
+            "label": "Estimate"
+          },
+          {
+            "value": "input",
+            "label": "Input"
+          }
+        ],
+        "teams": [
+          {
+            "key": "engineering",
+            "name": "Engineering",
+            "given": true,
+            "estimate_needed": true
+          },
+          {
+            "key": "qa",
+            "name": "QA",
+            "given": true
+          },
+          {
+            "key": "security",
+            "name": "Security",
+            "given": false,
+            "estimate_needed": true
+          },
+          {
+            "key": "product",
+            "name": "Product",
+            "given": false
+          }
+        ],
+        "blocking": "Security and Product haven't given input yet. Review can't start until they do.",
+        "evidence_kind": "team_input_proof",
+        "claim_required": true,
+        "intro": "Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name."
+      }
+    }
+  ],
+  "workspace": {
+    "line_key": "rfp_response",
+    "screen": "SCR-26",
+    "view": "review",
+    "revision": 8,
+    "steps": [
+      {
+        "key": "accept_selected",
+        "label": "Accept selected",
+        "emphasis": "secondary",
+        "applies_to": "items",
+        "consequence": "Bulk accept still records each answer under your name."
+      },
+      {
+        "key": "accept",
+        "label": "Accept answer",
+        "emphasis": "primary",
+        "applies_to": "item",
+        "consequence": "Accepting records your name. Tola’s original suggestion stays in the history, so reviewers can see what was changed."
+      },
+      {
+        "key": "edit_accept",
+        "label": "Edit answer",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "submit_label": "Save and accept",
+        "consequence": "Your words replace Tola’s once you save; Tola’s version stays in the history.",
+        "fields": [
+          {
+            "name": "answer",
+            "label": "Your answer",
+            "type": "long_text",
+            "required": true,
+            "value": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded."
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "choice",
+            "required": true,
+            "value": "addressed",
+            "options": [
+              {
+                "value": "addressed",
+                "label": "Addressed"
+              },
+              {
+                "value": "clarify",
+                "label": "Clarify"
+              },
+              {
+                "value": "out_of_scope",
+                "label": "Out of scope"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "write_own",
+        "label": "Write my own",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "submit_label": "Save my answer",
+        "consequence": "Tola’s suggestion is kept in the history, marked “not used”.",
+        "fields": [
+          {
+            "name": "suggestion",
+            "label": "Tola’s suggestion (not used)",
+            "type": "display",
+            "required": false,
+            "value": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded."
+          },
+          {
+            "name": "answer",
+            "label": "Your answer",
+            "type": "long_text",
+            "required": true,
+            "placeholder": "Write PSL’s answer to R-07"
+          },
+          {
+            "name": "reason",
+            "label": "Why not Tola’s answer?",
+            "type": "long_text",
+            "required": false,
+            "placeholder": "e.g. the client asked for two approvers",
+            "help": "Kept internal. It is not shown to the client."
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "choice",
+            "required": true,
+            "value": "addressed",
+            "options": [
+              {
+                "value": "addressed",
+                "label": "Addressed"
+              },
+              {
+                "value": "clarify",
+                "label": "Clarify"
+              },
+              {
+                "value": "out_of_scope",
+                "label": "Out of scope"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "key": "requirements",
+        "kind": "table",
+        "columns": [
+          {
+            "key": "ref",
+            "label": "#",
+            "kind": "reference"
+          },
+          {
+            "key": "requirement",
+            "label": "Requirement",
+            "kind": "text"
+          },
+          {
+            "key": "answer",
+            "label": "Suggested answer",
+            "kind": "text"
+          },
+          {
+            "key": "status",
+            "label": "Status",
+            "kind": "tag"
+          }
+        ],
+        "total": 41,
+        "next_cursor": "o:4",
+        "filters": [
+          {
+            "value": "suggested",
+            "label": "Status: Suggested by Tola"
+          }
+        ],
+        "items": [
+          {
+            "id": "R-07",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-07"
+              },
+              {
+                "column": "requirement",
+                "text": "Loan officers approve applications above a set amount",
+                "link": {
+                  "label": "RFP p.6"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "SUGGESTED BY TOLA",
+                  "tone": "agent"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-08",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-08"
+              },
+              {
+                "column": "requirement",
+                "text": "Borrowers see repayment schedule in the app",
+                "link": {
+                  "label": "RFP p.6"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "The app shows each instalment, its due date and what has been paid."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "SUGGESTED BY TOLA",
+                  "tone": "agent"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-09",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-09"
+              },
+              {
+                "column": "requirement",
+                "text": "Daily export to their core banking system",
+                "link": {
+                  "label": "RFP p.7"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "A nightly file export in their required format, with a delivery receipt."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "SUGGESTED BY TOLA",
+                  "tone": "agent"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-10",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-10"
+              },
+              {
+                "column": "requirement",
+                "text": "Accessibility for low-vision users",
+                "link": {
+                  "label": "RFP p.9"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Screens meet WCAG 2.2 AA; tested with screen readers on Android."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "SUGGESTED BY TOLA",
+                  "tone": "agent"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "suggestions",
+        "kind": "suggestions",
+        "title": "Review Tola’s suggestion",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "R-07",
+            "label": "R-07 · RFP p.6 · Loan officers approve applications above a set amount",
+            "text": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+            "agent": "tola",
+            "tag": {
+              "label": "Addressed",
+              "tone": "neutral"
+            },
+            "steps": [
+              "accept",
+              "edit_accept",
+              "write_own"
+            ],
+            "detail": "From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+            "cites": [
+              {
+                "label": "Harmattan Bank RFP 2025 · R-12",
+                "work_id": "W-1999"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

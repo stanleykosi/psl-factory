@@ -39,6 +39,8 @@ export type ItemControls = {
   item?: (section: Section, item: Item) => ReactNode;
   /** The checkbox for an `items` step. */
   select?: (section: Section, item: Item) => ReactNode;
+  /** F-37: the header box that ticks or unticks the rows on screen (never rows that are not drawn). */
+  selectAll?: (section: Section) => ReactNode;
   /** The open form for one of the item's steps, drawn under its row. */
   after?: (section: Section, item: Item) => ReactNode;
   /** The `items` step button under the section. */
@@ -263,8 +265,9 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
         <thead>
           <tr>
             {selectable && (
-              <th className="psl-check-cell">
+              <th className={controls?.selectAll?.(section) ? 'psl-check-cell ws-selectall' : 'psl-check-cell'}>
                 <span className="cmp-sr">Select</span>
+                {controls?.selectAll?.(section)}
               </th>
             )}
             {columns.map((c) => (

@@ -12,6 +12,8 @@ import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
 import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
+import { RfpFrame } from '@/features/rfp/RfpFrame';
+import { statusTone } from '@/features/rfp/labels';
 import { SEVERITY_WORDS, tagTone } from '@/features/workspace/labels';
 import { screenHeading } from '@/features/workspace/Workspace';
 
@@ -143,6 +145,9 @@ function ProjectBar({ caseId }: { caseId: string }) {
   );
 }
 
+/** F-37: the line key of the RFP requirements workspace; read only to draw the RFP frame and its status tag. */
+const RFP_RESPONSE_LINE = 'rfp_response';
+
 function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boolean; historyHref: string }) {
   const ws = item.workspace;
   const state = STATE_TAGS[item.state];
@@ -155,7 +160,10 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
   );
   // F-30: a severity the workspace's facts carry is drawn beside the status, as the issue boards do
   const severity = ws?.sections.flatMap((section) => (section.kind === 'facts' && !section.restricted ? section.items : [])).find((i) => i.severity !== undefined)?.severity;
-  const tag = status ? (
+  // F-37: an RFP's requirements page reads the RFP's own status (the frame's tag), as the RFP pages do
+  const tag = item.rfp && ws?.line_key === RFP_RESPONSE_LINE ? (
+    <span className={`psl-tag ${statusTone(item.rfp.status.kind)} work-state`}>{item.rfp.status.label}</span>
+  ) : status ? (
     <Tag tone={tagTone(status.tone)} className="work-state">
       {status.label}
     </Tag>
@@ -271,7 +279,20 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
-      {line ? (
+      {line && !phone && shown.rfp && shown.workspace?.line_key === RFP_RESPONSE_LINE ? (
+        <RfpFrame
+          id={id}
+          item={shown}
+          rfp={shown.rfp}
+          fallback={shown.title}
+          current="requirements"
+          end={
+            <Link className="psl-link rfp-history" href={`${base}/history`}>
+              History
+            </Link>
+          }
+        />
+      ) : line ? (
         <LineHeader item={shown} phone={phone} historyHref={`${base}/history`} />
       ) : (
         <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
