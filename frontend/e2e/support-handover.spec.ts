@@ -41,7 +41,7 @@ async function fillReply(page: Page, action = 'Gaps found') {
   await expect(panel.getByRole('radio', { name: 'Received' })).toBeVisible();
   await panel.getByLabel('When they replied').fill('2026-04-10T11:00');
   await panel.getByRole('radio', { name: action }).check({ force: true });
-  if (action === 'Gaps found') await panel.getByLabel('Gaps').fill(GAPS.join('\n'));
+  if (action === 'Gaps found') await panel.getByLabel('Gaps', { exact: true }).fill(GAPS.join('\n'));
   await panel.locator('input[type="file"]').setInputFiles(REPLY);
   await expect(panel.getByText(/Uploaded/)).toBeVisible();
   await panel.getByRole('checkbox', { name: 'I confirm this response is genuine.' }).check();
@@ -222,7 +222,7 @@ test.describe('Record Support’s reply', () => {
     await page.goto('/work/W-3703');
     await loaded(page);
     await expect(replyPanel(page).getByText('Femi Ojo · Support lead')).toBeVisible();
-    await expect(replyPanel(page).getByLabel('Gaps')).toHaveCount(0);
+    await expect(replyPanel(page).getByLabel('Gaps', { exact: true })).toHaveCount(0);
     await fillReply(page);
     await replyPanel(page).getByRole('button', { name: 'Record reply' }).dblclick();
     await expect(page.getByText('Gaps · 2').first()).toBeVisible();
@@ -267,7 +267,7 @@ test.describe('Record Support’s reply', () => {
     await fillReply(page);
     await replyPanel(page).getByRole('button', { name: 'Record reply' }).click();
     await expect(page.getByText(/This changed while you were recording/)).toBeVisible();
-    await expect(replyPanel(page).getByLabel('Gaps')).toHaveValue(GAPS.join('\n'));
+    await expect(replyPanel(page).getByLabel('Gaps', { exact: true })).toHaveValue(GAPS.join('\n'));
     await expect(page.locator('body')).not.toContainText(/Recorded under your name/);
   });
 

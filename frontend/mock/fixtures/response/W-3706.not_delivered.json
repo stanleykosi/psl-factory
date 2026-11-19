@@ -207,6 +207,9 @@
         }
       }
     ],
+    "next": [
+      "Publishing sends it to Support. Then you record whether they received it or found gaps."
+    ],
     "version": {
       "label": "Support handover v1",
       "document_id": "D-3701"
