@@ -9,6 +9,7 @@ import type { WorkItem } from '@/api/types';
 
 import type { Rfp, RfpTab } from './contract';
 import { frameHeading, statusTone } from './labels';
+import './rfp.css';
 
 const work = (id: string) => `/work/${encodeURIComponent(id)}`;
 

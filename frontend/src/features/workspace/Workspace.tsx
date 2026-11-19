@@ -96,7 +96,10 @@ function WorkspaceHeader({ workspace, itemTitle, beside }: { workspace: Workspac
 
 /** Suggestions sit in the side column; so does the checklist while the agent is working, as the boards draw the assembling panel (D-81). */
 const inSide = (item: WorkItem) => (section: Section) =>
-  section.kind === 'suggestions' || (section.kind === 'checklist' && item.agent.status === 'working');
+  section.kind === 'suggestions' ||
+  (section.kind === 'checklist' && item.agent.status === 'working') ||
+  // F-37: the RFP board draws Progress and Before review in the right column with the review panel
+  (item.workspace?.line_key === RFP_LINE && (section.kind === 'figures' || section.kind === 'checklist'));
 
 /** `items` is set for an `items` step: its ids are the ones ticked when the form is submitted (all sections, or that one), so the set sent is the set on screen. */
 type Open = { token: string; step: Step; itemIds?: string[]; items?: { section?: string } };
@@ -560,7 +563,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const strip = issueLine(workspace) ? workspace.sections.filter((section) => section.kind === 'facts') : [];
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
-  const sideNote = issueLine(workspace) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
+  const sideNote = (issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   const agentSide = schedule && item.agent.status === 'working';
   const notice = flow.notice;
   return (
@@ -793,7 +796,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   const writable = page !== undefined && typeof workspace.revision === 'number';
   return (
     <div className="ws" data-line={workspace.line_key}>
-      <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item) || issueLine(workspace)} />
+      <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item) || issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)} />
       {writable ? (
         <WorkspaceSteps id={id} item={item} workspace={workspace} page={page} />
       ) : (
@@ -808,7 +811,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               ))}
             <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} />
           </div>
-          {(workspace.sections.some(inSide(item)) || agentSide) && (
+          {(workspace.sections.some(inSide(item)) || agentSide || (workspace.line_key === RFP_LINE && !phone && (workspace.agent_note?.lines.length ?? 0) > 0)) && (
             <aside className="ws-side" aria-label="Review and decide">
               {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} />}
               {workspace.sections
@@ -816,6 +819,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
                 .map((section) => (
                   <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
                 ))}
+              {workspace.line_key === RFP_LINE && !phone && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
             </aside>
           )}
         </div>
