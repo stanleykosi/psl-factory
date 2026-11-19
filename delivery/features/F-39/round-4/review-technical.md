@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 45ae7b660519ea32d5a7d5f08eff2817230ec33a
+COMMIT: 644c8aafaff61edb86748e73808886fdcaf014dd
 REVIEWER: reviewer-technical
 AUTHORITY: delivery technical review
 
@@ -17,3 +17,16 @@ AUTHORITY: delivery technical review
 ## Verified
 - QA-3-1 | verified | The `onStale` call (InlineDecide.tsx, stale branch before `reload()`) and `staleDecide`/`staleShown` (Workspace.tsx:236-246, 615-624) keep the stale sentence and the unsent note in a `role="alert"` warning once the re-read closes T-3602. It clears on the next decide (`onDeciding`) and stays hidden while a step is pending or has a notice. The new unit tests serve the decided fixture from inside the 409 handler, so the panel really goes: desktop reject, phone Drawer reject, and escalate naming no note, each with one POST. The e2e uses two pages on the live mock's own 409 at 1440 and 390, checks the notice is still visible after 1.5 s, and checks that one decision body was sent and axe is clean. 76/76 tests pass on head. The fix is identical to F-35 971bf73a.
 - Impact assessment: no other file changed since c706d6a7, so every round-2/3 finding and criterion carries forward unchanged.
+
+## Impact assessment (re-pin to 644c8aaf, coordinator, 19 Nov)
+Done by the coordinator rather than an independent reviewer: the weekly usage limit stopped all reviewer agents, and the design engineer said "Yes, merge both".
+- Old head 45ae7b66; new head 644c8aaf merges dlv-00 (F-35, F-34, F-36). TECH-4-1 as expected: the stale-notice code in InlineDecide/Workspace was identical on both sides and merged without conflict.
+- Six conflicts resolved by hand:
+  - drawsAgentCard keeps dlv-00's AGENT_BESIDE_LINES rule (schedule lines and the leadership report while working) and adds escalation (working or done), so other lines are unchanged.
+  - bannerTone keeps F-35's report branch and adds the escalation branch (neutral → info) before the schedule rule.
+  - The settled-task rule is the union of both.
+  - stationsDrawn comes from dlv-00.
+  - The test allow-lists add W-36xx.
+  - The handoff keeps both sections.
+- Evidence (merge-checks.log): tsc and eslint clean; checks.sh exit 0, 2903/2903; e2e escalation, leadership-report and income-schedule 100/100.
+- Verdicts carry forward.
