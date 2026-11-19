@@ -545,10 +545,11 @@ describe('approve and reject (AC 9, 12)', () => {
     expect(decideRequest(decision.body)).toBe(true);
     expect(decision.csrf).toBe('mock-csrf-finance_lead');
     expect(factValue('Reference recorded')).toBe('YES · 14 NOV');
+    expect(await screen.findByText('LED-0052 v1 is approved')).toBeTruthy();
     expect(buttons()).toEqual([]);
   });
 
-  it('a 200 whose re-read still serves the review never says Verified; the panel’s notice is F-33’s decision notice only', async () => {
+  it('a 200 whose re-read still serves the review never says Verified or approved: the decision reads “result not confirmed”', async () => {
     onDecide = (body, path) => answer(taskOf(path), body.verdict as string, 'verified');
     await open(item('W-4203'));
     await ready();
@@ -557,10 +558,10 @@ describe('approve and reject (AC 9, 12)', () => {
     await waitFor(() => expect(reads('W-4203')).toBeGreaterThan(1));
     await settle();
     expect(status().textContent).toBe('AWAITING FINANCE DECISION');
-    expect(said()).not.toMatch(/verified/i);
-    // merged F-33 behaviour (spec difference, build.md): a confirmed 200 with a re-read says the decision is recorded
-    expect(said()).toContain('LED-0052 v1 is approved');
+    expect(said()).not.toMatch(/verified|approved/i);
+    expect(await screen.findByText('LED-0052 v1: result not confirmed')).toBeTruthy();
     expect(factValue('Reference recorded')).toBeUndefined();
+    expect(posts('/decision')).toHaveLength(1);
   });
 
   it('Reject needs a note: empty and blank send nothing and focus the note with the announced message; over 2000 characters is refused', async () => {
