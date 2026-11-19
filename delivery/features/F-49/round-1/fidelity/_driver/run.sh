@@ -14,7 +14,7 @@ for W in 1440 390; do
   curl -s -X POST http://127.0.0.1:4964/__mock/reset > /dev/null
   node $D/fid-driver.mjs --playwright $PW \
     --board "$B/$name.dc.html" --page http://localhost:4965/my-work --width $W --cookies psl_mock_persona=pmo_lead,psl_mock_worklist=board \
-    --actions $D/act.mjs --exceptions "$EXC" --wait-ms 800 --out "$OUT/$name-$W" > "$OUT/$name-$W.log" 2>&1
+    --actions $D/act.mjs --exceptions "$EXC" --visual-height union --wait-ms 800 --out "$OUT/$name-$W" > "$OUT/$name-$W.log" 2>&1
   python3 - "$OUT/$name-$W/report.json" "$name-$W" "$W" >> "$OUT/scores.txt" <<'PY'
 import json,sys
 r=json.load(open(sys.argv[1])); s=r['scores']

@@ -202,6 +202,8 @@ describe('the main button and the chooser', () => {
     expect(chevron.getAttribute('aria-expanded')).toBe('true');
     const close = within(dialog()).getByRole('button', { name: 'Close' });
     const back = within(dialog()).getByRole('button', { name: 'Back' });
+    // the drawer moves focus to its first field once the chooser has loaded; wait for that before moving focus ourselves
+    await waitFor(() => expect(document.activeElement?.tagName).toBe('INPUT'));
     back.focus();
     // Next is disabled, so Back is the last focusable: Tab wraps to Close.
     fireEvent.keyDown(back, { key: 'Tab' });

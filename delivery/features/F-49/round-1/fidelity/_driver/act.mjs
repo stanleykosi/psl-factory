@@ -21,6 +21,12 @@ export default async function (page) {
   await dlg.getByRole('radiogroup', { name: 'Submission deadline' }).getByRole('radio', { name: 'Stated', exact: true }).click();
   await dlg.getByLabel('Deadline (optional)').fill('2026-11-28T17:00');
   await dlg.getByLabel('Note (optional)').fill('Received from their procurement lead by email.');
+  if (phone) {
+    // round 2: show the whole sheet (UI-1-1): a viewport as tall as the sheet's content, so nothing is scrolled out of view
+    const extra = await dlg.evaluate((el) => { const s = el.querySelector('.cmp-scroll'); return s ? s.scrollHeight - s.clientHeight : 0; });
+    await page.setViewportSize({ width: 390, height: 844 + Math.max(0, extra) + 40 });
+    await dlg.evaluate((el) => { const s = el.querySelector('.cmp-scroll'); if (s) s.scrollTop = 0; });
+  }
   await page.mouse.move(0, 899);
   await page.evaluate(() => document.activeElement && document.activeElement.blur());
 }
