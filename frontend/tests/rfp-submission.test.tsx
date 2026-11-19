@@ -269,7 +269,7 @@ describe('controls only from you_can_act and the steps sent (AC 8)', () => {
     expect(buttons()).toEqual(['Approve and submit', 'Return', 'Reject']);
     expect(ws().getByText('Approving lets the factory submit this exact pack. If anything in it changes, it comes back to you.', { exact: false })).toBeTruthy();
     expect(ws().getByText('Goes to procurement@tamarindloans.example')).toBeTruthy();
-    expect(ws().getByText('Submission pack v1')).toBeTruthy();
+    expect(document.querySelector('.ws-idecide')!.textContent).toContain('Submission pack v1');
     expect(posts('/api/v1/tasks/T-3502/claim')).toHaveLength(1);
     expect(screen.queryByRole('navigation', { name: 'RFP' })).toBeNull();
     expect(document.querySelector('.work-crumbrow')!.textContent).toContain('DECISION');
@@ -533,7 +533,7 @@ describe('the pack changed (AC 13) and another reviewer decided first (checklist
     onDecide = () => decided('approve', 'T-3506');
     await click('Review the latest');
     await ready();
-    expect(ws().getByText('Submission pack v2')).toBeTruthy();
+    expect(document.querySelector('.ws-idecide')!.textContent).toContain('Submission pack v2');
     await click('Approve and submit');
     await waitFor(() => expect(posts('/decision')).toHaveLength(2));
     expect(posts('/decision')[1].body).toEqual({ verdict: 'approve', expected_revision: 2 });
