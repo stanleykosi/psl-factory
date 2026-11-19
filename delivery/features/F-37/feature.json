@@ -143,11 +143,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -767,7 +769,7 @@
         "delivery/features/F-37/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -784,11 +786,25 @@
           ],
           "head": "36db1217cc448105529fc82e2e2ec5087be13606",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "refs": [
+            "The RFP pages render normally at both widths, 0 page errors. The F-30/F-31 stacked tables were not checked."
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "justify-items scoped to the RFP line"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "The RFP pages render normally at both widths, 0 page errors. The F-30/F-31 stacked tables were not checked."
       ]
     },
     {
@@ -914,6 +930,75 @@
       "verified_by": "reviewer-ui",
       "verification_refs": [
         "36db1217"
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Record team input on W-3401 (drawer at both widths): proof upload (200) and claim (200) work, but `POST /api/v1/tasks/T-3401/response` returns 501 `not_mocked`. The UI shows \"We couldn't confirm your input was recorded\u2026 reloaded\" and claims no success, but the PM journey \"record the Engineering Lead's part with proof\" cannot complete on this stack. The checklist stays at Record. Mock gap in the shared F-18/F-31 response mock (`frontend/mock/response.mjs`), not part-1 code. The spec only requires the link and drawer (AC5). Add a T-3401 response handler or prove it against the real backend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The 500 for E-WORK-STEP cannot be triggered by `psl_mock_scenario` (not declared, `mock/workspace.mjs:143`). AC11 says \"psl_mock_scenario 500\". Add a scripted 500 (a `.steps.json` entry or a cookie) so the e2e and QA can drive it without a route override.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-3",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"N selected\" count carries over after Accept answer (the same as UX-1-5). Select-all after one accept gives \"4 SELECTED\" while the accepted R-07 stays in the list. Seen again at both widths; confirms UX-1-5.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
       ]
     }
   ],
