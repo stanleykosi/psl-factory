@@ -516,7 +516,7 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
 /** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default
  *  (information on the leadership report while the agent drafts, F-35).
  *  `strip` draws facts (F-30) or figures (F-43) as a strip of cells; `caption` draws a one-sentence untitled text section as a caption (F-43). */
-export function SectionView({ section, level, controls, banner = 'warning', strip = false, caption = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; caption?: boolean; banner?: 'warning' | 'success' | 'problem' | 'info' }) {
+export function SectionView({ section, level, controls, banner = 'warning', strip = false, caption = false, lead = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; caption?: boolean; lead?: boolean; banner?: 'warning' | 'success' | 'problem' | 'info' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
@@ -527,6 +527,21 @@ export function SectionView({ section, level, controls, banner = 'warning', stri
     return (
       <Callout kind={banner} announce={false} className="ws-note">
         {section.note}
+      </Callout>
+    );
+  }
+  // F-38: the submission page's lead sentence (one returned text item) is the board's band with its icon, in the status tone; the item's own tag stays beside it
+  if (lead && !restricted && section.kind === 'text' && !section.title && section.items.length === 1 && hasValue(section.items[0].text)) {
+    const [item] = section.items;
+    return (
+      <Callout kind={banner} announce={false} className="ws-note">
+        {item.text}
+        {item.tag && (
+          <>
+            {' '}
+            <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>
+          </>
+        )}
       </Callout>
     );
   }

@@ -243,6 +243,10 @@
         }
       }
     ],
-    "revision": 1
+    "revision": 1,
+    "version": {
+      "label": "v1",
+      "number": 1
+    }
   }
 }

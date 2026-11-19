@@ -162,12 +162,22 @@
             "at": "2026-11-26T14:43:00Z"
           }
         ]
+      },
+      {
+        "key": "hint",
+        "kind": "text",
+        "items": [],
+        "note": "If the portal hadn't sent a receipt, this would show \"Effect uncertain\" and someone would check the portal before anything is sent again."
       }
     ],
     "next": [
       "When the client announces the result, record it here: won, lost or still pending."
     ],
-    "revision": 4
+    "revision": 4,
+    "status": {
+      "label": "Done",
+      "tone": "verified"
+    }
   },
   "rfp_outcome": {
     "submission": {

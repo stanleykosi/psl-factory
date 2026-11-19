@@ -183,7 +183,8 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
   );
   return (
     <header className="work-header work-header--end work-header--line">
-      {phone && <span className="work-barref work-barref--line psl-mono">{item.reference}</span>}
+      {/* F-38: the submission boards put the state in the phone bar (the verified status, or the version label), not the reference */}
+      {phone && <span className="work-barref work-barref--line psl-mono">{ws?.line_key === RFP_SUBMISSION_LINE ? (status?.tone === 'verified' ? status.label : ws.version?.label) ?? item.reference : item.reference}</span>}
       {!phone && (
         <div className="work-crumbrow">
           {crumbs.length > 0 ? (
@@ -220,7 +221,9 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
           {phone && (
             <>
               <SampleLabel show={item.sample} />
-              {tag}
+              {/* F-38: the RFP's own status (its deadline) is drawn under the title on a phone, where the frame is not */}
+              {ws?.line_key === RFP_SUBMISSION_LINE && item.rfp?.status.label && <span className="psl-mono">{item.rfp.status.label}</span>}
+              {ws?.line_key === RFP_SUBMISSION_LINE && status?.tone === 'verified' ? null : tag}
               {history}
             </>
           )}

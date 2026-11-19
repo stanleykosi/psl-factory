@@ -747,7 +747,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
           {!(item.workspace && forecastLine(item.workspace.line_key)) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
           {aside}
           {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
-          <RfpOutcomeLink id={id} item={item} />
+          {item.workspace?.line_key !== 'rfp_submission' && <RfpOutcomeLink id={id} item={item} />}
           {view?.task_note && shownTasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>

@@ -732,8 +732,8 @@ describe('receipts only as returned (AC 15)', () => {
     for (const [name, to] of [['W-3503', 'procurement@tamarindloans.example'], ['W-3504', "Client's procurement portal"]] as const) {
       await open(item(name));
       expect(rowIn('Sent to', to).textContent).toMatch(/Received.*26 Nov 15:43/);
-      expect(document.querySelector('.ws-section--text .psl-tag')!.textContent).toBe('Receipt confirmed');
-      expect(document.querySelector('.ws-section--text .psl-tag')!.className).toContain('done');
+      expect(document.querySelector('.ws-note .psl-tag')!.textContent).toBe('Receipt confirmed');
+      expect(document.querySelector('.ws-note .psl-tag')!.className).toContain('done');
       cleanup();
     }
   });
@@ -851,6 +851,39 @@ describe('nothing on load or on a timer (AC 19)', () => {
     expect(writes().filter((r) => !r.path.endsWith('/claim'))).toEqual([]);
     expect(posts('/decision')).toHaveLength(0);
     expect(posts('/steps')).toHaveLength(0);
+  });
+});
+
+describe('the drawable board elements are drawn (UI-1-1 to UI-1-10)', () => {
+  it('W-3503: the sentence is a green band with its icon, the info note is a blue band, and Record the outcome is the primary button inside the Next card', async () => {
+    await open(item('W-3503'));
+    const bands = [...document.querySelectorAll('.ws .psl-callout')];
+    expect(bands[0].className).toContain('psl-callout--success');
+    expect(bands[0].querySelector('svg')).toBeTruthy();
+    expect(bands[0].textContent).toContain('ref TL-SUB-0091');
+    expect(bands[1].className).toContain('psl-callout--info');
+    expect(bands[1].textContent).toContain("If delivery hadn't been confirmed");
+    const next = screen.getByRole('heading', { name: 'Next' }).closest('section')!;
+    const link = within(next).getByRole('link', { name: 'Record the outcome' });
+    expect(link.className).not.toContain('psl-btn--secondary');
+    expect(link.getAttribute('href')).toBe('/work/W-3503/outcome');
+    expect(screen.getAllByRole('link', { name: 'Record the outcome' })).toHaveLength(1);
+  });
+
+  it('W-3501 draws Tola’s card with "Drafted 22 Nov 10:15"', async () => {
+    await open(item('W-3501'));
+    expect(document.querySelector('.psl-agent__foot')!.textContent).toContain('Drafted 22 Nov 10:15');
+  });
+
+  it('phone: the bar carries DONE on the submitted page and v1 on the draft, the deadline sits under the title, and Record the outcome is a pinned bar', async () => {
+    phone();
+    await open(item('W-3503'));
+    expect(document.querySelector('.work-barref')!.textContent).toBe('Done');
+    expect(screen.getByRole('region', { name: 'Record the outcome' }).className).toContain('ws-decide');
+    cleanup();
+    await open(item('W-3501'));
+    expect(document.querySelector('.work-barref')!.textContent).toBe('v1');
+    expect(body()).toContain('DEADLINE 28 NOV · 6 DAYS');
   });
 });
 
