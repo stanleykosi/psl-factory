@@ -148,6 +148,7 @@ for (const [label, viewport] of [
       await page.getByRole('option', { name: 'Found', exact: true }).click();
       await scope.locator('input[type="file"]').setInputFiles(PNG);
       await expect(scope.getByText('qb-screenshot-je7741.png · 310 KB')).toBeVisible();
+      await expect(scope.getByText(/Uploading…/)).toHaveCount(0);
       await expectNoAxeViolations(page);
       if (phone) expect(await smallTargets(page)).toEqual([]);
       expect(writes.map((w) => w.path)).toEqual(['/api/v1/cases/C-LED-0052/evidence']);
@@ -174,6 +175,7 @@ for (const [label, viewport] of [
       await page.getByRole('option', { name: 'Unknown', exact: true }).click();
       await scope.locator('input[type="file"]').setInputFiles(PNG);
       await expect(scope.getByText('qb-screenshot-je7741.png · 310 KB')).toBeVisible();
+      await expect(scope.getByText(/Uploading…/)).toHaveCount(0);
       await scope.getByRole('button', { name: 'Record observation' }).click();
       await expect(page.locator('.work-state')).toHaveText('CHECK HELD');
       await expect(page.locator('.ws').getByRole('button')).toHaveCount(0);
@@ -189,6 +191,7 @@ for (const [label, viewport] of [
       await page.getByRole('option', { name: 'Found', exact: true }).click();
       await scope.locator('input[type="file"]').setInputFiles(PNG);
       await expect(scope.getByText('qb-screenshot-je7741.png · 310 KB')).toBeVisible();
+      await expect(scope.getByText(/Uploading…/)).toHaveCount(0);
       await scope.getByRole('button', { name: 'Record observation' }).click();
       await expect(page.getByText('We couldn’t confirm this step. Check the page before trying again.')).toBeVisible();
       await expect(page.locator('.work-state')).toHaveText('AWAITING FINANCE DECISION');
