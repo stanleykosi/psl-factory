@@ -1,0 +1,274 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T16:08:39.751Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-40-mobile-submitted-portal.dc.html",
+  "boardName": "SCR-40-mobile-submitted-portal.dc.html",
+  "pageUrl": "http://localhost:4985/work/W-3504",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-38/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "3 board item(s) are missing from the page and are not approved exceptions (coverage 50% with exceptions, needs 100%).",
+    "Visual match 82.2 is below 90."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 50,
+    "visual": 82.2
+  },
+  "visual": {
+    "score": 82.2,
+    "allCellsScore": 83.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 913,
+    "cell": 12,
+    "contentCells": 2235,
+    "mismatchedCells": 397
+  },
+  "coverage": {
+    "total": 6,
+    "found": 3,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Submitted",
+        "pageName": "Submitted · portal receipt confirmed",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Submitted\" on the board, \"Submitted · portal receipt confirmed\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record the outcome",
+        "pageName": "Record the outcome",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #2459D6 on the board, #FFFFFF on the page",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 175,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← RFP",
+        "key": "link: ← RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "page",
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Portal receipt TL-SUB-0091 confirmed.",
+        "key": "text: Portal receipt TL-SUB-0091 confirmed.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 245,
+          "h": 21
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to RFP",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 41,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TL-RFP-2026-014",
+        "container": "main",
+        "pageBox": {
+          "x": 124,
+          "y": 0,
+          "w": 108,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 713,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "When the client announces the result, record it here: won, lost or still pending.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 750,
+          "w": 326,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 3
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

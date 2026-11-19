@@ -1,0 +1,9 @@
+board	width	coverage	coverage with exceptions	visual	pass	waiver
+SCR-40-desktop-draft-1440	1440	coverage 78.1	with exceptions run 93.8 (full list proposed after the run, not re-run)	visual 89	pass no	waiver proposed
+SCR-40-desktop-review-1440	1440	coverage 80	with exceptions run 80 (full list proposed after the run, not re-run)	visual 80.2	pass no	waiver proposed
+SCR-40-desktop-submitted-1440	1440	coverage 77.8	with exceptions run 92.6 (full list proposed after the run, not re-run)	visual 74.2	pass no	waiver proposed
+SCR-40-desktop-submitted-portal-1440	1440	coverage 77.8	with exceptions run 92.6 (full list proposed after the run, not re-run)	visual 78	pass no	waiver proposed
+SCR-40-mobile-draft-390	390	coverage 57.1	with exceptions run 57.1 (full list proposed after the run, not re-run)	visual 78.1	pass no	waiver proposed
+SCR-40-mobile-review-390	390	coverage 77.8	with exceptions run 77.8 (full list proposed after the run, not re-run)	visual 79.3	pass no	waiver proposed
+SCR-40-mobile-submitted-390	390	coverage 50	with exceptions run 50 (full list proposed after the run, not re-run)	visual 83.1	pass no	waiver proposed
+SCR-40-mobile-submitted-portal-390	390	coverage 50	with exceptions run 50 (full list proposed after the run, not re-run)	visual 82.2	pass no	waiver proposed
