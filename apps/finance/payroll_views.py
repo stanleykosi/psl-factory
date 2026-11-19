@@ -46,7 +46,8 @@ def workbench(request,case_id,focus=None):
    elif k=='capture':
     r=domain.capture(a,c,d['request_record'].pk,d['provider'],d['operation_key'],d['body'],v,spreadsheet=d.get('spreadsheet'))
     if not r.metadata['accepted']:
-     messages.error(request,'Payroll export rejected: '+', '.join(r.metadata['codes'])+'; no source values retained')
+     from .payroll_working import rejection_notice
+     messages.error(request,rejection_notice(r.metadata['codes']))
      return redirect(request.path)
    elif k=='combine':domain.combine(a,c,d['request_record'].pk,[i.pk for i in d['inputs']],d['operation_key'],v)
    elif k=='match':domain.match(a,c,d['parent'].pk,d['hr_snapshot'].pk,d['operation_key'],v)

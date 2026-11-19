@@ -15,7 +15,7 @@
 {% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="receive"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="publication_id" value="{{ row.payroll.publication }}"><button>Acknowledge receipt as myself</button></form>{% endif %}
 {% endif %}
 {% else %}
-<p><a href="{% url 'payroll' case.pk %}">Open native payroll source, review and HR-correction tools</a></p>
+<p><a href="{% url 'payroll' case.pk %}">Payroll sources, reviews and staff corrections</a></p>
 {% include 'finance/payroll_working_rows.html' %}
 <section class="card"><h2>Selected payroll sources</h2><p>{{ row.payroll.request }}</p><ul>{% for id in row.payroll.inputs.input_ids %}<li><a href="{% url 'payroll_inspect' case.pk 'input' id %}">Inspect restricted payroll input {{ id }}</a></li>{% endfor %}</ul>
 {% if row.payroll.runs %}<h3>Prepared results</h3><ul>{% for kind, run in row.payroll.runs.items %}<li>{{ kind|readable }} · {{ run.status|readable }} · <a href="{% url 'payroll_inspect' case.pk 'run' run.id %}">Inspect exact working result {{ run.id }}</a></li>{% endfor %}</ul>{% endif %}</section>

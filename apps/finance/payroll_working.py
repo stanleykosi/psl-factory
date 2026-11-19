@@ -9,6 +9,25 @@ MESSAGES={'unknown_amount':'Pay amount needs review','overlap_unresolved':'The t
     'unknown_bu':'Business unit needs confirmation','midperiod_transfer_requires_treatment':'A mid-month move needs an agreed treatment',
     'merge_policy_missing':'The source-combination rule needs configuration','match_policy_missing':'The staff-matching rule needs configuration'}
 
+REJECTION_MESSAGES={
+    'spreadsheet_columns':'Use only the columns agreed for this payroll source.',
+    'spreadsheet_format':'Check the spreadsheet format and remove formulas before uploading.',
+    'out_of_contract_fields':'The export contains fields outside its agreed source layout.',
+    'json_schema':'The export contents could not be read. Check the file format.',
+    'envelope_schema':'The export is missing required source details.',
+    'source_or_period_scope':'Use the agreed payroll source, period and currency.',
+    'source_freshness':'Ask the source owner for a current export with its actual preparation time.',
+    'duplicate_source_row_or_component':'Ask the source owner to resolve duplicate staff or pay items.',
+    'identity_schema':'Check staff, row and pay-item references with the source owner.',
+    'amount_schema_or_precision':'Ask the source owner to check pay amounts and their decimal places.',
+    'control_total_schema':'Ask the source owner to check the control total.',
+}
+
+
+def rejection_notice(codes):
+    messages=list(dict.fromkeys(REJECTION_MESSAGES.get(code,'Check the export and its agreed source layout.') for code in codes))
+    return 'The upload could not be accepted. '+' '.join(messages)+' No source values retained.'
+
 
 def rows(value,kind,*,page=None,status='all'):
     source=value.get('rows',[])

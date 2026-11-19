@@ -15,7 +15,7 @@ class PayrollCaptureForm(CommandForm):
   widget=forms.DateTimeInput(format='%Y-%m-%dT%H:%M:%S',attrs={'type':'datetime-local','step':'1'}))
  completeness = forms.ChoiceField(required=False,label='Does the file contain the full export?',
   choices=[('','Choose for CSV or Excel'),('complete','Complete export'),('partial','Part of the export'),('unknown','Not confirmed')])
- control_total = forms.CharField(required=False,max_length=600,label='Source control total',
+ control_total = forms.CharField(required=False,max_length=100,label='Source control total',
   help_text='Leave blank when the source does not provide a total. Unknown amounts stay unknown.')
  # Existing integrations may still submit the exact structured envelope. It is
  # secondary to the human fields and cannot be combined with conflicting input.

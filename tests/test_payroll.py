@@ -159,7 +159,7 @@ class PayrollTests(TestCase):
   v['oracles'][0]['expected']='500.00000000';policy(f,REPORT,v)
   c,m,a,p=pipeline(f);self.assertEqual(a.result['eligible_total'],'24691357802469136080.24691356');self.assertEqual(a.result['coefficient_effect'],'12345678901234568040.12345678')
  def test_UI_capture_rejection_never_reflects_bad_source_values(self):
-  f=self.f;self.client.force_login(f['owner']);v=json.loads(body(f,1));v['rows'][0]['medical']='PRIVATE-UI-SENTINEL';res=self.client.post(reverse('payroll',args=[f['case'].pk]),{'action':'capture','revision':rev(f['case']),'request_record':f['request'].pk,'provider':'PAY-B','operation_key':'bad-ui','body':json.dumps(v)},follow=True);self.assertNotContains(res,'PRIVATE-UI-SENTINEL');self.assertContains(res,'out_of_contract_fields')
+  f=self.f;self.client.force_login(f['owner']);v=json.loads(body(f,1));v['rows'][0]['medical']='PRIVATE-UI-SENTINEL';res=self.client.post(reverse('payroll',args=[f['case'].pk]),{'action':'capture','revision':rev(f['case']),'request_record':f['request'].pk,'provider':'PAY-B','operation_key':'bad-ui','body':json.dumps(v)},follow=True);self.assertNotContains(res,'PRIVATE-UI-SENTINEL');self.assertContains(res,'outside its agreed source layout');self.assertNotIn('out_of_contract_fields',' '.join(str(m) for m in res.context['messages']))
  def test_focused_payroll_upload_and_matching_keep_exact_source_boundaries(self):
   f=self.f
   case=f['case']

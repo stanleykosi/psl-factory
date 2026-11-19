@@ -79,7 +79,7 @@ class PayrollSourceTests(TestCase):
               'source_version':'plain-v2','extracted_at':(timezone.now()-timedelta(seconds=1)).isoformat(),
               'completeness':'complete','control_total':'150'}
         for changes in [{'extraction':json.dumps({key:base[key] for key in ['source_version','extracted_at','completeness','control_total']})},
-                        {'source_version':''},{'extracted_at':'not-a-time'}]:
+                        {'source_version':''},{'extracted_at':'not-a-time'},{'control_total':'9'*101}]:
             data={**base,**changes,'revision':rev(f['case']),'file':SimpleUploadedFile('source.csv',CSV)}
             self.assertContains(self.client.post(url,data,follow=True),'The upload could not be accepted')
         data={**base,'revision':rev(f['case']),'file':SimpleUploadedFile('source.json',b'{}')}
@@ -116,7 +116,7 @@ class PayrollSourceTests(TestCase):
             self.assertEqual(row.payload['rows'][0]['employee_id'], 'E002')
             self.assertEqual(row.metadata['status'], 'complete')
             self.assertContains(post(format_, content, name, control_total='151'), 'The upload could not be accepted')
-        self.assertContains(post('xlsx', worksheet(formula=True), 'formula'), 'spreadsheet_format')
+        self.assertContains(post('xlsx', worksheet(formula=True), 'formula'), 'remove formulas')
         extra = b'Ref,Staff ID,Pay code,Total,private\nB1,E002,BASIC,150,PRIVATE-SENTINEL\n'
         self.assertNotContains(post('csv', extra, 'extra'), 'PRIVATE-SENTINEL')
         self.assertEqual(PayrollInput.objects.get(operation_key='extra').payload, {})

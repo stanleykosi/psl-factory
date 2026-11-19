@@ -164,7 +164,7 @@ def detail(request,work,focus=None):
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart','successor'] else None,initial={**panel['inputs'],'request_id':panel['request'].pk}) if not recipient and panel['can_correct'] and focus in (None,'recovery') else None
     if request.method=='POST':
         try:
-            p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'));notice='Native payroll action recorded'
+            p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'));notice='Payroll update recorded'
             require_action(work,focus,action)
             if recipient and action!='receive':raise PermissionDenied('Aggregate recipients can only acknowledge their own report')
             if action=='advance':
