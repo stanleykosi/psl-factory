@@ -1,0 +1,137 @@
+{
+  "id": "W-3908",
+  "title": "Fixed asset schedule · October",
+  "line": "Fixed asset schedule",
+  "reference": "PPE-0006",
+  "state": "setup_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Register review",
+      "status": "stopped"
+    },
+    {
+      "name": "Date review (if unclear)",
+      "status": "not_started"
+    },
+    {
+      "name": "Calculate",
+      "status": "not_started"
+    },
+    {
+      "name": "Schedule review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the asset register",
+        "status": "done",
+        "source": "PPE_REGISTER_OCT.XLSX · 64 ASSETS"
+      },
+      {
+        "text": "Compared with September's schedule",
+        "status": "done",
+        "source": "PPE-0005"
+      },
+      {
+        "text": "Found 3 assets with unclear in-service dates",
+        "status": "done",
+        "source": "VALUES NOT READ"
+      },
+      {
+        "text": "Hand to register review",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T09:05:00Z"
+  },
+  "next_step": "An admin sets the register rules in Setup. The register review starts then.",
+  "sample": true,
+  "workspace": {
+    "line_key": "fixed_assets",
+    "screen": "SCR-55",
+    "view": "setup_needed",
+    "status": {
+      "label": "SETUP NEEDED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "held",
+        "kind": "facts",
+        "title": "Why it's held",
+        "items": [
+          {
+            "id": "H-1",
+            "label": "Register rules",
+            "value": "NOT SET",
+            "tag": {
+              "label": "NOT SET",
+              "tone": "stopped"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "An admin sets Register rules in Setup · Finance rules. The register review starts then."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "PPE-0006",
+          "label": "ASSETS · PPE-0006"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

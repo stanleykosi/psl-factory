@@ -1,0 +1,454 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T03:10:45.803Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-43/design/canvas/finance/project/SCR-56-mobile-uncertain.dc.html",
+  "boardName": "SCR-56-mobile-uncertain.dc.html",
+  "pageUrl": "http://localhost:4895/work/W-4003",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-43/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 74.5 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 57.1,
+    "coverageWithExceptions": 100,
+    "visual": 74.5
+  },
+  "visual": {
+    "score": 74.5,
+    "allCellsScore": 74.5,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1010,
+    "cell": 12,
+    "contentCells": 2341,
+    "mismatchedCells": 597
+  },
+  "coverage": {
+    "total": 7,
+    "found": 4,
+    "coverage": 57.1,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FC-0014",
+        "pageName": "FC-0014",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Delivery uncertain",
+        "pageName": "Cash forecast · base case, Nov–Apr",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Delivery uncertain\" on the board, \"Cash forecast · base case, Nov–Apr\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STATION 7 OF 8 · PUBLISH",
+        "pageName": "STATION 7 OF 8 · PUBLISH",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 118,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 181,
+          "w": 173,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: the phone bar's way back is the frame's (F-17/F-22/F-33 as built); the board's wording is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Check with the CEO's office before sending again.",
+        "key": "text: Check with the CEO's office before sending again.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 155,
+          "w": 306,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 9: the phone shows the desktop wording from the same fixture, \"Check with the CEO's office, then record it.\" (D-111, D-113).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record what happened",
+        "key": "link: Record what happened",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 4: the existing ReconcilePanel is drawn instead of one button: its heading (desktop) and accessible name (phone) read \"Record what happened\", with the three choices and \"Record and continue\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"FC-0014\"",
+        "kind": "Text",
+        "name": "FC-0014",
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (66% across), middle on the page (53% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "EFFECT UNCERTAIN",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 133,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "We don't know if the CEO received the forecast. The delivery is held; it can't be sent again until someone checks.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 223,
+          "w": 306,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DELIVERY",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 312,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 453,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Check with the CEO's office, then record it.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 490,
+          "w": 326,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Record what happened",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 537,
+          "w": 358,
+          "h": 377
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Confirm what happened before anything is resent.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 56,
+          "y": 547,
+          "w": 306,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "radio",
+        "name": "It arrived. I have proof it was received (upload it next).",
+        "container": "complementary",
+        "pageBox": {
+          "x": 26,
+          "y": 617,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "It arrived.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 56,
+          "y": 618,
+          "w": 65,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "It didn’t arrive.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 26,
+          "y": 689,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "I can’t tell yet. Keep it held and check again tomorrow.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 26,
+          "y": 740,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I can’t tell yet.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 56,
+          "y": 741,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Record and continue",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Your choice is recorded with your name.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 800,
+          "w": 358,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-43/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

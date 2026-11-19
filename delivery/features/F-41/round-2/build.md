@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4
+COMMIT: a6c95d30225f2a01c632cda4dd65c23d4144f726
 BUILDER: builder
 LANE: full
 
@@ -52,3 +52,19 @@ LANE: full
 - UI-2-4: the table still starts about 10px lower than on the board.
 - UI-2-5: the INV-reference link exceptions are still mapped to Conflicts 16; this is for the design engineer.
 - UX-2-2: the phone cards still show "Still owed" only, as the board draws them; whether to add invoiced and received is a design decision.
+
+## Merge with dlv-00 (F-47, #65)
+- **New head:** a6c95d30225f2a01c632cda4dd65c23d4144f726 ("Merge dlv-00-delivery-setup (F-47, #65) into F-41"), merged onto 85d04ad7.
+- **Conflicts:** one, in `delivery/BACKEND-HANDOFF.md`. Both new sections are kept: "Added during F-47: Start work proof upload" first, then "Added during F-41: payments list and reminder".
+- **Merged without conflicts:**
+  - `frontend/mock/server.mjs`: F-47's upload branch and cookie pass-through sit alongside F-41's E-INVOICES import, `M1_OPERATIONS` entry, fixture-filter exclusion and dispatch line.
+  - `frontend/mock/fixtures/me.finance_lead.json`: F-47's change taken as is.
+  - `frontend/tests/mock-contract.test.ts`: no conflict; the F-41 lists (E-INVOICES persona statuses and `contractBody`, the `attachment` and `submit_label` checks, the W-3813 sample exemption) still run alongside the base's.
+- **`bash delivery/checks.sh`**, run under the shared lock at a 1-minute load below 14: **exit 0**. Django check clean; lint, typecheck and build OK; 112 test files and 2606 tests passed.
+- **`E2E_PORT=4952 MOCK_PORT=4953 npx playwright test e2e/payments.spec.ts e2e/start-work-proof.spec.ts e2e/workspace.spec.ts e2e/response.spec.ts`:** **98 passed** in 5.4 min.
+  - payments: 31
+  - start-work-proof: 14
+  - workspace: 37
+  - response: 16
+- **Clean-up:** `frontend/test-results` was deleted, and no server is left on ports 4950 to 4953.
+- **Fidelity:** not re-run. The merge brings no F-41 layout change, so the round-2 scores and the D-119 signed waivers stand.

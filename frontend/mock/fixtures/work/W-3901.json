@@ -1,0 +1,154 @@
+{
+  "id": "W-3901",
+  "title": "Fixed asset schedule · October",
+  "line": "Fixed asset schedule",
+  "reference": "PPE-0006",
+  "state": "processing",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "current_agent"
+    },
+    {
+      "name": "Register review",
+      "status": "not_started"
+    },
+    {
+      "name": "Date review (if unclear)",
+      "status": "not_started"
+    },
+    {
+      "name": "Calculate",
+      "status": "not_started"
+    },
+    {
+      "name": "Schedule review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read the asset register",
+        "status": "done",
+        "source": "PPE_REGISTER_OCT.XLSX · 64 ASSETS"
+      },
+      {
+        "text": "Compared with September's schedule",
+        "status": "done",
+        "source": "PPE-0005"
+      },
+      {
+        "text": "Found 3 assets with unclear in-service dates",
+        "status": "working",
+        "source": "VALUES NOT READ"
+      },
+      {
+        "text": "Hand to register review",
+        "status": "not_started"
+      }
+    ],
+    "started_at": "2026-11-13T09:05:00Z"
+  },
+  "next_step": "Chidi is checking the asset register. A PPE reviewer reviews the register changes when Chidi hands it over.",
+  "sample": true,
+  "workspace": {
+    "line_key": "fixed_assets",
+    "screen": "SCR-55",
+    "view": "investigating",
+    "status": {
+      "label": "CHIDI INVESTIGATING",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "register",
+        "kind": "facts",
+        "title": "Register",
+        "note": "Chidi never reads asset values; he checks structure, dates and provenance.",
+        "items": [
+          {
+            "id": "R-1",
+            "label": "Assets",
+            "value": "64"
+          },
+          {
+            "id": "R-2",
+            "label": "Added since September",
+            "value": "4"
+          },
+          {
+            "id": "R-3",
+            "label": "Disposed",
+            "value": "1"
+          },
+          {
+            "id": "R-4",
+            "label": "Unclear dates",
+            "value": "3"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_chidi",
+        "label": "Ask Chidi",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "PPE-0006",
+          "label": "ASSETS · PPE-0006"
+        }
+      ]
+    },
+    "revision": 3
+  }
+}

@@ -1,0 +1,1297 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T17:36:06.394Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-36/design/canvas/project/SCR-24-desktop.dc.html",
+  "boardName": "SCR-24-desktop.dc.html",
+  "pageUrl": "http://localhost:4965/my-work?queue=unassigned&assign=W-3302",
+  "viewport": {
+    "width": 1440,
+    "height": 940
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-36/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 94.1 meets 90.",
+    "11 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 73.8,
+    "coverageWithExceptions": 100,
+    "visual": 94.1
+  },
+  "visual": {
+    "score": 94.1,
+    "allCellsScore": 97,
+    "width": 1440,
+    "height": 940,
+    "boardHeight": 940,
+    "pageHeight": 940,
+    "cell": 12,
+    "contentCells": 4781,
+    "mismatchedCells": 284
+  },
+  "coverage": {
+    "total": 42,
+    "found": 31,
+    "coverage": 73.8,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 82,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 350,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "pageName": "Kemi Adebayo · PMO Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1199,
+          "y": 20,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 153,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 312
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 488
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 209,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 187,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 147,
+          "w": 532,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 152,
+          "w": 532,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 3",
+        "pageName": "Needs me 3",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 149,
+          "w": 124,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 154,
+          "w": 124,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 2",
+        "pageName": "Waiting on others 2",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 214,
+          "y": 149,
+          "w": 172,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 214,
+          "y": 154,
+          "w": 172,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 28",
+        "pageName": "Done 28",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 386,
+          "y": 149,
+          "w": 99,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 386,
+          "y": 154,
+          "w": 99,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Unassigned 1",
+        "pageName": "Unassigned 1",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 485,
+          "y": 149,
+          "w": 135,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 485,
+          "y": 154,
+          "w": 135,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "Your work",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 217,
+          "w": 1260,
+          "h": 93
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 294,
+          "w": 1260,
+          "h": 129
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WORK",
+        "pageName": "WORK",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 217,
+          "w": 807,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 294,
+          "w": 542,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "pageName": "STATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 897,
+          "y": 217,
+          "w": 302,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 294,
+          "w": 276,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "AGE",
+        "pageName": "AGE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1199,
+          "y": 217,
+          "w": 151,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 294,
+          "w": 112,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10m",
+        "pageName": "10m",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 1199,
+          "y": 252,
+          "w": 151,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 333,
+          "w": 112,
+          "h": 90
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Assign accountable PM",
+        "pageName": "Assign accountable PM",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 938,
+          "y": 0,
+          "w": 502,
+          "h": 940
+        },
+        "pageBox": {
+          "x": 940,
+          "y": 0,
+          "w": 500,
+          "h": 940
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TAMARIND LOANS · TL-RFP-2026-014",
+        "pageName": "TAMARIND LOANS · TL-RFP-2026-014",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 21,
+          "w": 211,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 18,
+          "w": 262,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Assign accountable PM",
+        "pageName": "Assign accountable PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 960,
+          "y": 36,
+          "w": 224,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 35,
+          "w": 262,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only people allowed to prepare RFPs for this workspace are listed. Who may assign is set by PSL in Setup.",
+        "pageName": "Only people allowed to prepare RFPs for this workspace are listed. Who may assign is set by PSL in Setup.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1000,
+          "y": 106,
+          "w": 408,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 107,
+          "w": 406,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Accountable PM",
+        "pageName": "Accountable PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 172,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 175,
+          "w": 458,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 people can prepare RFPs here",
+        "pageName": "3 people can prepare RFPs here",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 250,
+          "w": 460,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 252,
+          "w": 458,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You are assigning as",
+        "pageName": "You are assigning as",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 281,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 286,
+          "w": 458,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "One of the roles PSL allows to assign RFPs",
+        "pageName": "One of the roles PSL allows to assign RFPs",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 359,
+          "w": 460,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 363,
+          "w": 458,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof (optional)",
+        "pageName": "Proof (optional)",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 390,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 397,
+          "w": 458,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cancel",
+        "pageName": "Cancel",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "coloured bar under it on the board (#1F2427), none on the page"
+        ],
+        "boardBox": {
+          "x": 960,
+          "y": 874,
+          "w": 153,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 878,
+          "w": 161,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assign PM",
+        "pageName": "Assign PM",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1123,
+          "y": 874,
+          "w": 297,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 1133,
+          "y": 878,
+          "w": 287,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 6: the shared frame shows the destinations the signed-in persona (pmo_lead, mock only, destinations as pm) has; the board shows a PMO Lead with Overview.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "key": "link: Setup",
+        "container": "navigation",
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 6: the shared frame shows the destinations the signed-in persona (pmo_lead, mock only, destinations as pm) has; the board shows a PMO Lead with Setup.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "×",
+        "key": "text: ×",
+        "container": "dialog",
+        "boardBox": {
+          "x": 1407,
+          "y": 18,
+          "w": 13,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 7 and 11: the shared Drawer's close is an icon button named Close, not a text ×.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO ▾",
+        "key": "text: Tunde Bello · PMO ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 196,
+          "w": 460,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 10: nobody is chosen for the person; the list starts at \"Choose a PM\" and the PM is picked from assign.candidates only.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO Lead ▾",
+        "key": "text: PMO Lead ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 305,
+          "w": 460,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 3: the shared Select draws its own chevron; the role words come from the response (assign.roles).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "assignment-email.eml",
+        "key": "text: assignment-email.eml",
+        "container": "dialog",
+        "boardBox": {
+          "x": 1002,
+          "y": 426,
+          "w": 145,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 10: the file name is drawn filled in on the board; the page starts with no file and shows the person's own after choosing one.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 18 KB",
+        "key": "text: Uploaded · 18 KB",
+        "container": "dialog",
+        "boardBox": {
+          "x": 1002,
+          "y": 446,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: the file size is drawn filled in on the board; the page shows the chosen file's own size (\"Size unknown\" when not known).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Note",
+        "key": "text: Note",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 488,
+          "w": 460,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 10: the shared TextArea writes \"(optional)\" after the label and shows a character count.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde led the Lagoon Health bid; similar loan-origination scope.",
+        "key": "text: Tunde led the Lagoon Health bid; similar loan-origination scope.",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 512,
+          "w": 460,
+          "h": 112
+        },
+        "exception": {
+          "reason": "Conflicts 10: the note is drawn filled in on the board; the page starts with an empty note.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: Tunde is alerted by WhatsApp and email and sees it in Needs me. They start the RFP response, and Tola investigates it straight away.",
+        "key": "text: What happens next: Tunde is alerted by WhatsApp and email and sees it in Needs me. They start the RFP response, and Tola investigates it straight away.",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 638,
+          "w": 460,
+          "h": 47
+        },
+        "exception": {
+          "reason": "Conflicts 5: the sentences are the backend's (assign.next, mock overlay G-24-3), shown as returned; the backend cannot know the chosen name before the choice, and no analysis job exists (G-24-4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next:",
+        "key": "text: What happens next:",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 651,
+          "w": 121,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5: the sentence after the label is the backend's own (assign.next), so the label and sentence are one block.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Text \"Kemi Adebayo · PMO Lead\"",
+        "kind": "Text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "boardBox": {
+          "x": 1199,
+          "y": 20,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 153,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Text \"TAMARIND LOANS · TL-RFP-2026-014\""
+        ]
+      },
+      {
+        "label": "Text \"Only people allowed to prepare RFPs for this workspace are listed. Who may assign is set by PSL in Setup.\"",
+        "kind": "Text",
+        "name": "Only people allowed to prepare RFPs for this workspace are listed. Who may assign is set by PSL in Setup.",
+        "boardBox": {
+          "x": 1000,
+          "y": 106,
+          "w": 408,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 107,
+          "w": 406,
+          "h": 42
+        },
+        "reasons": [
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Accountable PM\"",
+        "kind": "Text",
+        "name": "Accountable PM",
+        "boardBox": {
+          "x": 960,
+          "y": 172,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 175,
+          "w": 458,
+          "h": 21
+        },
+        "reasons": [
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 217,
+          "w": 1260,
+          "h": 93
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 294,
+          "w": 1260,
+          "h": 129
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Text \"3 people can prepare RFPs here\"",
+        "kind": "Text",
+        "name": "3 people can prepare RFPs here",
+        "boardBox": {
+          "x": 960,
+          "y": 250,
+          "w": 460,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 252,
+          "w": 458,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Table \"\"; on the page it comes after Text \"Accountable PM\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"You are assigning as\"",
+        "kind": "Text",
+        "name": "You are assigning as",
+        "boardBox": {
+          "x": 960,
+          "y": 281,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 286,
+          "w": 458,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"3 people can prepare RFPs here\"; on the page it comes after Main area \"\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"10m\"",
+        "kind": "Text",
+        "name": "10m",
+        "boardBox": {
+          "x": 1199,
+          "y": 252,
+          "w": 151,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 333,
+          "w": 112,
+          "h": 90
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"You are assigning as\"; on the page it comes after Text \"One of the roles PSL allows to assign RFPs\""
+        ]
+      },
+      {
+        "label": "Text \"One of the roles PSL allows to assign RFPs\"",
+        "kind": "Text",
+        "name": "One of the roles PSL allows to assign RFPs",
+        "boardBox": {
+          "x": 960,
+          "y": 359,
+          "w": 460,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 363,
+          "w": 458,
+          "h": 18
+        },
+        "reasons": [
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof (optional)\"",
+        "kind": "Text",
+        "name": "Proof (optional)",
+        "boardBox": {
+          "x": 960,
+          "y": 390,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 397,
+          "w": 458,
+          "h": 21
+        },
+        "reasons": [
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 979,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "34 records you can see · updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 1078,
+          "y": 110,
+          "w": 274,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 224,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 88,
+          "y": 224,
+          "w": 464,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 562,
+          "y": 224,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 1302,
+          "y": 237,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Unassigned",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 292,
+          "w": 1264,
+          "h": 197
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 1384,
+          "y": 10,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Accountable PM",
+        "container": "form",
+        "pageBox": {
+          "x": 962,
+          "y": 202,
+          "w": 458,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 996,
+          "y": 489,
+          "w": 61,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 962,
+          "y": 515,
+          "w": 458,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 1367,
+          "y": 609,
+          "w": 53,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: The PM you choose is alerted by WhatsApp and email and sees it in Needs me. They start the RFP response. Tola starts reading the RFP once the PM opens it.",
+        "container": "form",
+        "pageBox": {
+          "x": 962,
+          "y": 641,
+          "w": 458,
+          "h": 72
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-36/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

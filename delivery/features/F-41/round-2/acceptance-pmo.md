@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 85d04ad79aa865483c48cae49f041fb17da9755f
+COMMIT: a6c95d30225f2a01c632cda4dd65c23d4144f726
 REVIEWER: pmo-acceptance
 AUTHORITY: delivery PMO acceptance
 
@@ -27,3 +27,11 @@ AUTHORITY: delivery PMO acceptance
 - Accepted risks: the recorded deviations (no browser timeout, "Received" instead of "Delivered", no `inputs` key on a send) are named in review-qa.md Notes, with BACKEND-HANDOFF priority 1 as the guard. None relies on an unnamed authority.
 - Parent package: the claims stop at this slice. Release is `not_authorized` and merge is `not_merged`.
 - Fidelity: 100% coverage after exceptions on all 4 boards. Scores and exceptions are as listed, pending the design engineer.
+
+## Update for head a6c95d30 (diff 85d04ad7..a6c95d30)
+
+- The head moved by merging dlv-00 (F-47 Start work proof upload, #65 test settings). No payments, reminder, phone drawer or attachment file is in the frontend diff.
+- F-47 additions in mock/server.mjs (a third E-EVIDENCE-UPLOAD owner, gated to start-work lines) and me.finance_lead.json (more startable lines) sit beside F-41 code without changing it. mock-contract.test.ts is not in this diff.
+- No money rule changed. Vitest on payments, start-work, mock-contract and workspace tests: 12 files, 621 tests passed. checks.sh 2606 and e2e 98 passed.
+
+Verdict unchanged.

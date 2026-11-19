@@ -1,0 +1,289 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "FINANCE / FORECASTS / FC-0014",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22/F-33 frame as built), not one text line; the words come from the crumbs.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the phone bar's way back is the frame's (F-17/F-22/F-33 as built); the board's wording is not drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "SAMPLE DATA",
+   "category": "frame",
+   "conflicts": null,
+   "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all fixtures). Not a spec Conflicts item.",
+   "approved_by": "builder proposal, pending design engineer",
+   "authority": "design decision 14 Nov 2026 (c), restated in D-92"
+  },
+  {
+   "role": "text",
+   "name": "Bisi Ade · Finance",
+   "category": "sample data",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead on all four boards and no new persona is added.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Investigating the cash forecast",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the agent card is the existing AgentCard drawn from item.agent, which has no title field; the agent's name, steps, sources, WORKING and the footer are drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Chidi · Finance agent · step 3 of 4",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the existing AgentCard draws the name, \"Cannot approve, send or pay.\" and \"step n of m\" (counted from the steps sent: step 4 of 4) on separate lines; item.agent carries no agent role.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦22.6M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦18.4M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦21.0M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦20.0M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦12.1M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦24.3M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦7.8M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "₦19.8M",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1 (needs the design engineer's answer): no endpoint supplies a shortened amount and this figure is under approval, so the cell shows the full amount as returned (for example ₦22,600,000.00), never rounded in the browser (D-113). The full amount is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Unknown",
+   "category": "component",
+   "conflicts": 1,
+   "reason": "Conflicts 1, 14 (UI-1-4): the review board writes \"Unknown\" as plain body text in the table cell; the page draws the shared Unknown chip (the library's INV-UNKNOWN component, in words, never 0). The word is on the page at both widths; the tool also does not read a span inside a td, so the style difference is listed here for the design engineer to sign, not as a tool gap.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "management",
+   "category": "component",
+   "conflicts": 6,
+   "reason": "Conflicts 6: the basis is tasks[0].decision.basis drawn whole as returned, with no bold audience word; the word management is on the page inside the sentence.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Note (needed to return, reject or withdraw)",
+   "category": "component",
+   "conflicts": 6,
+   "reason": "Conflicts 6: the note label lists only the verdicts offered that need a note, \"Note (needed to return or reject)\"; Withdraw is not offered in part 1.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Return",
+   "category": "component",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone Decide bar uses the step's own label, \"Return with a note\", as desktop (D-111, F-33/F-42 as built).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "We don't know if the CEO received the forecast.",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the banner is one untitled text section whose whole sentence is the backend's, drawn without a bold lead; these words are on the page at the start of that sentence.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Check with the CEO's office, then record it. You can also cancel this delivery or retry it once checked.",
+   "category": "component",
+   "conflicts": 3,
+   "reason": "Conflicts 3: Cancel delivery and retry are not built (open backend question), so the fixture's Next is only \"Check with the CEO's office, then record it.\", which is on the page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Check with the CEO's office before sending again.",
+   "category": "frame item",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone shows the desktop wording from the same fixture, \"Check with the CEO's office, then record it.\" (D-111, D-113).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Record what happened",
+   "category": "component",
+   "conflicts": 4,
+   "reason": "Conflicts 4: the existing ReconcilePanel is drawn instead of one button: its heading (desktop) and accessible name (phone) read \"Record what happened\", with the three choices and \"Record and continue\".",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Cancel delivery",
+   "category": "component",
+   "conflicts": 3,
+   "reason": "Conflicts 3: not drawn in part 1; what cancelling an uncertain delivery does is an open backend question (gaps :137). No send, resend, retry or cancel control appears (INV-RESEND).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Record actuals",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: Record actuals opens a form no board draws (G-56-5) and belongs to part 3; the fixture's Next sentence is shown as returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "CALC",
+   "category": "frame item",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone shows the desktop figure labels and values from the same fixture (CALCULATED, REVIEWED, DRAFTED, 2 of 2), D-111, D-113.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "REVIEW",
+   "category": "frame item",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone shows the desktop figure labels and values from the same fixture (CALCULATED, REVIEWED, DRAFTED, 2 of 2), D-111, D-113.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DRAFT",
+   "category": "frame item",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone shows the desktop figure labels and values from the same fixture (CALCULATED, REVIEWED, DRAFTED, 2 of 2), D-111, D-113.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "2/2",
+   "category": "frame item",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone shows the desktop figure labels and values from the same fixture (CALCULATED, REVIEWED, DRAFTED, 2 of 2), D-111, D-113.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-56-desktop-investigating",
+   "width": 1440,
+   "visual": 84.4,
+   "reason": "D-83: measured 84.4 in round 2 on a production build (one run). Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell, crumbs as a list, the History link, page width; Conflicts 11); stations drawn by the shared StationTrack with a status line under each name; the AgentCard head with no title and \"step 4 of 4\" from the steps sent (Conflicts 15). The Sources tags are now drawn in their tone (UI-1-2).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-56-desktop-review",
+   "width": 1440,
+   "visual": 75.6,
+   "reason": "D-83: measured 75.6 in round 2 on a production build (one run). Remaining gaps: the shared frame (Conflicts 11); the station status lines; six table rows instead of three (Conflicts 2) with full amounts and the shared Unknown chip (Conflicts 1); the basis drawn whole without bold and the note label (Conflicts 6); the backend's consequence lines under the buttons.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-56-desktop-uncertain",
+   "width": 1440,
+   "visual": 70.9,
+   "reason": "D-83: measured 70.9 in round 2 on a production build (one run). Remaining gaps: the shared frame (Conflicts 11); the station status lines; the existing ReconcilePanel with three choices in the side column instead of the one Record button, and no Cancel delivery (Conflicts 3, 4); the banner without a bold lead (Conflicts 12); the shorter Next sentence (Conflicts 3). The Confirmation tag is now drawn in its tone (UI-1-2).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-56-desktop-verified",
+   "width": 1440,
+   "visual": 55.6,
+   "reason": "D-83: measured 55.6 in round 2 on a production build (one run). Remaining gaps: round 2 draws the board's dark six-cell strip and the caption (UI-1-1), but the strip now sits about 40px lower than the board's because the shared StationTrack draws a status line under each station name (frame, Conflicts 11), so a dark block lands on light board pixels and the score fell from 75.8 (when the figures were a white list). Other gaps: the shared frame (Conflicts 11); no Record actuals (Conflicts 5). Below the 70 floor: the gap is the frame's offset of a now-matching strip; asks a one-board floor exception (as D-112 for SCR-30-mobile-verified).",
+   "approved_by": "builder proposal, pending design engineer",
+   "floor_exception": true
+  },
+  {
+   "board": "SCR-56-mobile-investigating",
+   "width": 390,
+   "visual": 83.1,
+   "reason": "D-83: measured 83.1 in round 2 on a production build (one run). Remaining gaps: the shared phone frame and bar (Conflicts 11); the same sections and words as desktop in one column (Conflicts 10); the AgentCard (Conflicts 15).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-56-mobile-review",
+   "width": 390,
+   "visual": 78.4,
+   "reason": "D-83: measured 78.4 in round 2 on a production build (one run). Remaining gaps: the shared phone frame (Conflicts 11); the full-amount table scrolling in its own region, six rows (Conflicts 1, 2); the desktop basis, note and step labels in one column (Conflicts 9, 10).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-56-mobile-uncertain",
+   "width": 390,
+   "visual": 74.5,
+   "reason": "D-83: measured 74.5 in round 2 on a production build (one run). Remaining gaps: the shared phone frame and the full item title on two lines (Conflicts 9, 11); the page now runs in the board's order (stations, banner, Delivery, Next, then the choices above the pinned button; UI-1-3), with the desktop Delivery facts and Next the board drops (Conflicts 10) and the existing ReconcilePanel's three choices instead of the one Record button (Conflicts 4).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-56-mobile-verified",
+   "width": 390,
+   "visual": 51.9,
+   "reason": "D-83: measured 51.9 in round 2 on a production build (one run). Remaining gaps: round 2 draws the board's dark 3x2 strip and the caption (UI-1-1), but the full item title on two lines, the status tag and History (Conflicts 9, 11) push the strip about 70px below the board's, so the dark block lands on light board pixels and the score fell from 72.6; the desktop labels and \"2 of 2\" (Conflicts 9), the caption and Next the board drops (Conflicts 10). Below the 70 floor: the gap is the frame's offset of a now-matching strip; asks a one-board floor exception (as D-112 for SCR-30-mobile-verified).",
+   "approved_by": "builder proposal, pending design engineer",
+   "floor_exception": true
+  }
+ ]
+}

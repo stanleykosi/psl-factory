@@ -6,10 +6,10 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { Button, Callout, formatDayMonth, formatDayTime, Tag, Unknown as UnknownValue } from '@/components';
+import { Button, Callout, formatDayMonth, formatDayTime, formatSize, Icon, Tag, Unknown as UnknownValue } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
 
-import { columnDayMonth } from './proposals';
+import { columnDayMonth, itemAttachment } from './proposals';
 
 import {
   agentName,
@@ -104,6 +104,22 @@ const citedInLabel = (item: Item) => {
 };
 
 const Detail = ({ text }: { text?: string }) => (text ? <span className="ws-detail">{text}</span> : null);
+
+/** PROPOSAL (G-SCR32-3, F-41): the file that goes with a message, as text only. */
+function Attachment({ item }: { item: Item }) {
+  const file = itemAttachment(item);
+  if (!file) return null;
+  return (
+    <span className="ws-attachment">
+      <Icon name="clip" />
+      <span>
+        <strong>{file.label}</strong>
+        <span className="cmp-sr"> · </span>
+        <span className="ws-attachment__meta">Uploaded · {formatSize(file.sizeBytes)}</span>
+      </span>
+    </span>
+  );
+}
 
 function Restricted({ label }: { label?: string }) {
   return <p className="ws-restricted">{label ?? WS_TEXT.restricted}</p>;
@@ -389,6 +405,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                   <Lead item={item} />
                 </span>
                 <Detail text={item.detail} />
+                <Attachment item={item} />
               </span>,
               <>
                 {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
@@ -448,7 +465,8 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   );
 }
 
-/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
+/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default
+ *  (information on the leadership report while the agent drafts, F-35). */
 export function SectionView({ section, level, controls, banner = 'warning', strip = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; banner?: 'warning' | 'success' | 'problem' | 'info' }) {
   const headId = useId();
   const noteId = useId();

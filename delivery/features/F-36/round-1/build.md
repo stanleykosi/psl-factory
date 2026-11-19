@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 023ad69ede328ce092a5c2d2cd91ec3b462ac6bd
+COMMIT: 264b349260dbbd734eaadcb5228781f83cccccb0
 BUILDER: builder
 LANE: full
 
@@ -49,6 +49,8 @@ None (round 1).
 - `E2E_PORT=4966 MOCK_PORT=4967 npx playwright test e2e/rfp-assign.spec.ts e2e/my-work.spec.ts e2e/issue-detail.spec.ts e2e/response.spec.ts`: 78 passed. An earlier run had 2 failures in my own spec (axe target-size on the validation summary links, fixed in CSS; W-3399 not a 404 in the mock, e2e now uses W-1099); the fixed run is all green. `frontend/test-results` deleted.
 - Fidelity: production build with API_ORIGIN pointing at the mock on 4964, app on 4965, shared tool unmodified, cookies `psl_mock_persona=pmo_lead,psl_mock_worklist=board`, output in `delivery/features/F-36/round-1/fidelity/`. (A first attempt hit an app built with the default API origin and showed "couldn't load your account"; it was discarded and the app rebuilt before the real run. The run was repeated once after keepTop/orange button and five more exceptions.)
 - My servers on 4964 to 4967 stopped.
+
+- Gate follow-up (head after 023ad69e): attempt 1 failed in my own test "opens over the list with the client and reference" (2444 ms under load). Cause: a wait, not a bug. The test found the dialog and then read the list rows at once, but the list loads beside the panel. Fix (fb0e079a): `waitFor` the rows before asserting; the assertions are unchanged and no timeout was raised. The file then passed 5 of 5 alone, and once with 4 busy-loop processes running. Two later full runs failed only under extreme machine load (an untouched `setup-templates` focus test, passed 3 of 3 alone; then beforeAll hook timeouts across mock tests). Merged origin/dlv-00-delivery-setup (PR #65: 5 s async timeout, 60 s hookTimeout, maxWorkers 4). `checks.sh` under the lock after the merge: EXIT 0, 109 files, 2535 tests passed.
 
 ## Scores
 - SCR-24-desktop at 1440: coverage 73.8 raw, 100 with exceptions; visual 91.8; PASS.

@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-51-desktop-investigating-1440	1440	75	100	87.1	False
+SCR-51-desktop-decide-1440	1440	71	100	77.3	False
+SCR-51-desktop-not-escalated-1440	1440	84.6	100	84.4	False
+SCR-51-desktop-draft-1440	1440	75	100	80.1	False
+SCR-51-mobile-investigating-390	390	50	100	85	False
+SCR-51-mobile-decide-390	390	66.7	100	82.3	False
+SCR-51-mobile-not-escalated-390	390	40	100	75.5	False
+SCR-51-mobile-draft-390	390	55.6	100	85.3	False

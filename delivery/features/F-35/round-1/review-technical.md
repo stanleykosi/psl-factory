@@ -1,0 +1,18 @@
+VERDICT: PASS
+REVIEWER: reviewer-technical
+COMMIT: d12c2769dbd23763f89f3e176de2f5f1d8d94417
+AUTHORITY: delivery technical review
+
+## Summary
+- The leadership report line reuses F-33's InlineDecide, `useDecision` and the agent card beside the sections through two small line sets. The income line behaves exactly as before: `STATION_LINES = {income_schedules}`, its `bannerTone` branch is unchanged, and `LineAgent` `day` defaults to false.
+- Controls come only from `tasks[].you_can_act` and the steps the item sends. W-3207 (reviewer not set) has no task, no step, no `required_role` and no reviewer name. Nothing reads `/me`. No file in decide, response, api, shell, mock server, InlineDecide, proposals or Steps changed, and no existing fixture changed.
+- "Sent", "delivered" and "received" come only from the re-read status and receipts. An uncertain decide (W-3209, or a 500, network failure or timeout) re-reads first and shows "result not confirmed" or `UncertainNotice`. It never shows "is approved", and it sends nothing again after 60 s. There is no resend control and no POST to `/actions`.
+- Tuesday is backend status and text only. Left-out projects appear as the backend's count sentence, and the test checks that no project title from `list.json` appears on the page.
+- The two widened fixture-id checks admit only W-32xx files, all new in this branch (none existed at base): the verdict overlay is in W-3202, W-3205.next, W-3206, W-3208, W-3209 and W-3210, and links are only in W-3201. Re-ran `tests/leadership-report.test.tsx` and `tests/leadership-report-mock.test.ts`: 43/43 pass.
+
+## Findings
+- TECH-1-1 | non-blocking | medium | backend | The `sends` flag (FLAG judgement). The spec's table puts `sends: true` on `approve_send`. The builder left it off (build.md:23), and the deviation is listed in BACKEND-HANDOFF.md. On a decision step `sends` changes only the wording: the write goes through InlineDecide, not `useWorkspaceStep`'s lock-on-failure path. So the mock's rendered behaviour is honest. It is not honest about the shape the real backend will most likely send for "Approve and send". Shared `Consequence` (frontend/src/features/workspace/Steps.tsx:18-21) adds `STEP_TEXT.sends` "This sends to the client." whenever `sends` is true and the step's own `consequence` does not contain "send". A real `sends: true` with no consequence would therefore print a false sentence on an internal report (leadership-report.test.tsx:155 would catch it only on the fixture as it stands). Recommendation: keep this fixture as built for round 1, and settle it as a contract rule rather than with a frontend audience guess. Whenever a step has `sends: true`, the backend also sends a `consequence` that names who receives it (for example "Approving sends this exact version to the leadership audience."). The existing regex already suppresses the client sentence in that case. When that is confirmed, the fixture should carry `sends: true` with that consequence. Follow-up outside this lane (Steps.tsx is read-only here): the shared fallback should not say "client" on a line it does not know. It could use audience-neutral wording, or omit the sentence when no consequence is given. Add a test that a `sends: true` copy of W-3202 never renders "client".
+
+## Notes
+- income-schedule-mock.test.ts:107 allows the whole `W-32` prefix rather than the six named files. Today that equals the new fixtures only, and W-3201..W-3219 is reserved to F-35, so this is acceptable. Naming the files would be stricter.
+- `bannerTone`'s leadership report branch maps `person` to the warning default. No report fixture with a `person` status has a note-only banner, so nothing shows it today.

@@ -68,6 +68,11 @@ export function useEvidenceUpload({ caseId, caseRevision, kind, reloadCaseRevisi
       try {
         const content = await readBase64(file);
         const result = await uploadEvidence(caseId, { kind, filename: file.name, content_base64: content, case_revision: current });
+        // A 200 without an evidence_id did not confirm the upload: it is not sent, and Try again uploads it again.
+        if (typeof result?.evidence_id !== 'string' || result.evidence_id === '') {
+          update(key, { status: 'failed', problem: 'Couldn’t upload. Try again.', retryable: true });
+          return;
+        }
         revision.current = result.case_revision;
         update(key, { status: 'uploaded', evidenceId: result.evidence_id, problem: undefined, retryable: false });
       } catch (error) {

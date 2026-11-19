@@ -1,93 +1,93 @@
-GATE: FAIL
-COMMIT: 023ad69ede328ce092a5c2d2cd91ec3b462ac6bd
-ATTEMPT: 1
+GATE: PASS
+COMMIT: 264b349260dbbd734eaadcb5228781f83cccccb0
+ATTEMPT: 2
 
 ## Summary
-- checks.sh failed with exit 1
+- checks.sh passed
 - Protected paths: none changed
-- Commit 023ad69ede32, round 1, attempt 1
+- Commit 264b349260db, round 1, attempt 2
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-                [36m>[39m
-                  [0mChoose a file[0m
-                [36m</button>[39m
-              [36m</div>[39m
-            [36m</div>[39m
-            [36m<div[39m
-              [33mclass[39m=[32m"psl-field"[39m
-            [36m>[39m
-              [36m<label[39m
-                [33mclass[39m=[32m"psl-label"[39m
-                [33mfor[39m=[32m"assign-note"[39m
-                [33mid[39m=[32m"assign-note-label"[39m
-              [36m>[39m
-                [0mNote[0m
-                [0m [0m
-                [36m<span[39m
-                  [33mclass[39m=[32m"psl-opt"[39m
-                [36m>[39m
-                  [0m(optional)[0m
-                [36m</span>[39m
-              [36m</label>[39m
-              [36m<textarea[39m
-                [33maria-describedby[39m=[32m"assign-note-count"[39m
-                [33mclass[39m=[32m"psl-input psl-input--area"[39m
-                [33mid[39m=[32m"assign-note"[39m
-                [33mstyle[39m=[32m"height: auto;"[39m
-              [36m/>[39m
-              [36m<span[39m
-                [33mclass[39m=[32m"psl-count"[39m
-                [33mid[39m=[32m"assign-note-count"[39m
-              [36m>[39m
-                [0m0[0m
-                [0m / [0m
-                [0m2000[0m
-              [36m</span>[39m
-            [36m</div>[39m
-            [36m<p[39m
-              [33mclass[39m=[32m"rfp-assign__next"[39m
-            [36m>[39m
-              [36m<strong>[39m
-                [0mWhat happens next:[0m
-              [36m</strong>[39m
-              [0m [0m
-              [0mThe PM you choose is alerted by WhatsApp and email and sees it in Needs me. They start the RFP response. Tola starts reading the RFP once the PM opens it.[0m
-            [36m</p>[39m
-          [36m</form>[39m
-        [36m</div>[39m
-      [36m</div>[39m
-      [36m<div[39m
-        [33mclass[39m=[32m"psl-drawer__foot"[39m
-      [36m>[39m
-        [36m<button[39m
-          [33mclass[39m=[32m"psl-btn psl-btn--secondary"[39m
-          [33mtype[39m=[32m"button"[39m
-        [36m>[39m
-          [0mCancel[0m
-        [36m</button>[39m
-        [36m<button[39m
-          [33mclass[39m=[32m"psl-btn psl-btn--start"[39m
-          [33mform[39m=[32m"assign-pm-form"[39m
-          [33mtype[39m=[32m"submit"[39m
-        [36m>[39m
-          [0mAssign PM[0m
-        [36m</button>[39m
-      [36m</div>[39m
-    [36m</aside>[39m
-  [36m</div>[39m
-[36m</body>[39m
- ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
- ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
- ❯ node_modules/@testing-library/dom/dist/query-helpers.js:109:15
- ❯ tests/rfp-assign.test.tsx:121:19
-    119|     const dialog = await open('W-3302');
-    120|     expect(within(dialog).getByText('Tamarind Loans · TL-RFP-2026-014'…
-    121|     expect(screen.getAllByText(/loan origination RFP/).length).toBeGre…
-       |                   ^
-    122|     expect(screen.getByRole('tab', { name: /Unassigned/ })).toBeTruthy…
-    123|     // opening the panel changes the URL only: the list was read once
+  Generating static pages using 7 workers (16/22) 
+✓ Generating static pages using 7 workers (22/22) in 715ms
+  Finalizing page optimization ...
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /assistant
+├ ƒ /assistant/[conversationId]
+├ ○ /clients
+├ ƒ /clients/[clientId]
+├ ○ /exceptions
+├ ƒ /finance/month-end
+├ ƒ /frame-fixtures/phone-back
+├ ○ /my-work
+├ ○ /notifications
+├ ○ /overview
+├ ○ /projects
+├ ƒ /projects/[caseId]
+├ ƒ /projects/[caseId]/[tab]
+├ ƒ /projects/[caseId]/documents/[documentId]
+├ ○ /settings/alerts
+├ ○ /setup
+├ ○ /setup/costing-rule
+├ ○ /setup/delegation
+├ ○ /setup/payroll-visibility
+├ ○ /setup/roles
+├ ○ /setup/rules
+├ ○ /setup/rules/delivery
+├ ○ /setup/rules/finance
+├ ○ /setup/staff
+├ ○ /setup/templates
+├ ƒ /work/[id]
+├ ƒ /work/[id]/decide
+├ ƒ /work/[id]/history
+├ ƒ /work/[id]/outcome
+└ ƒ /work/[id]/respond
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'jsdom@31.0.1',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
 ```

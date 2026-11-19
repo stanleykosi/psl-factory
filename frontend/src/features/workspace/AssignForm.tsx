@@ -7,7 +7,10 @@
 // F-31: with `preset` (the response names a default among the candidates) the form is the engagement's "Confirm PM": drawn
 // open inside the side panel (`bare`), that person chosen with the response's help line, labelled with `assign.role`,
 // and no Cancel. The person still presses Confirm.
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+// F-36 (RFP, "Assign accountable PM"): `words` replaces the owner words, `hint` is the line under the field, `lead`, `middle` and
+// `tail` are extra parts of the same form (the intro, the acting role and proof, "What happens next"), and `formId` with `actions: false` leaves the
+// buttons to the Drawer's footer. Nothing is chosen ahead, nothing is filtered.
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 
 import { Button, Callout, Select, TextArea, ValidationSummary, type FieldProblem } from '@/components';
 import { NOTE_MAX } from '@/features/decide/format';
@@ -18,6 +21,7 @@ import { ASSIGN_TEXT } from './useWorkspaceAssign';
 import type { SubmitResult } from './useWorkspaceStep';
 
 export type Assign = NonNullable<WorkItem['assign']>;
+export type AssignWords = Partial<Record<'owner' | 'choose' | 'submit' | 'chooseOwner' | 'gone', string>>;
 
 type Props = {
   assign: Assign;
@@ -31,16 +35,31 @@ type Props = {
   onSubmit: (request: { person_id: string; note?: string }) => Promise<SubmitResult>;
   /** Absent for a preset form, which has nothing to cancel. */
   onClose?: () => void;
+  /** F-36: the field and button words of another kind of owner ("Accountable PM"). */
+  words?: AssignWords;
+  /** F-36: the line under the field when nothing is preset. */
+  hint?: string;
+  /** F-36: parts drawn before the field, between the field and the note, and after the note. */
+  lead?: ReactNode;
+  middle?: ReactNode;
+  tail?: ReactNode;
+  /** F-36: the form's id and whether it draws its own buttons (false: the Drawer footer's submit button names the form). */
+  formId?: string;
+  actions?: boolean;
+  ariaLabel?: string;
 };
 
 const OWNER_ID = 'assign-owner';
 const NOTE_ID = 'assign-note';
 
-export function AssignForm({ assign, pending, submitLabel, preset, labelledBy, onSubmit, onClose }: Props) {
+export function AssignForm({ assign, pending, submitLabel, preset, labelledBy, onSubmit, onClose, words, hint, lead, middle, tail, formId, actions = true, ariaLabel }: Props) {
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [owner, setOwner] = useState<string | undefined>(preset?.personId);
+  const [picked, setOwner] = useState<string | undefined>(preset?.personId);
+  // F-36: a re-read that no longer lists the person chosen clears the choice and says so
+  const owner = picked !== undefined && assign.candidates.some((c) => c.person_id === picked) ? picked : undefined;
+  const gone = picked !== undefined && owner === undefined;
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<{ owner?: string; note?: string }>({});
   const [message, setMessage] = useState<string>();
@@ -70,6 +89,7 @@ export function AssignForm({ assign, pending, submitLabel, preset, labelledBy, o
   });
   const noteRequired = assign.note_required === true;
   const role = assign.role ?? ASSIGN_TEXT.owner;
+  const text = { ...ASSIGN_TEXT, ...words };
 
   const focusFirst = (found: { owner?: string; note?: string }) => {
     requestAnimationFrame(() => document.getElementById(found.owner ? OWNER_ID : NOTE_ID)?.focus());
@@ -79,7 +99,7 @@ export function AssignForm({ assign, pending, submitLabel, preset, labelledBy, o
     if (pending) return;
     const trimmed = note.trim();
     const found: { owner?: string; note?: string } = {};
-    if (owner === undefined) found.owner = ASSIGN_TEXT.chooseOwner;
+    if (owner === undefined) found.owner = text.chooseOwner;
     if (note.length > NOTE_MAX) found.note = ASSIGN_TEXT.noteLong;
     else if (noteRequired && trimmed === '') found.note = ASSIGN_TEXT.needNote;
     setErrors(found);
@@ -106,27 +126,32 @@ export function AssignForm({ assign, pending, submitLabel, preset, labelledBy, o
     <>
       <ValidationSummary problems={problems} attempt={attempt} />
       {message && <Callout kind="problem">{message}</Callout>}
+      {lead}
       <Select
         id={OWNER_ID}
-        label={preset ? role : ASSIGN_TEXT.owner}
-        hint={preset?.hint}
+        label={preset ? role : text.owner}
+        hint={preset?.hint ?? hint}
         options={options}
         value={owner}
         onChange={setOwner}
-        placeholder={ASSIGN_TEXT.choose}
-        error={errors.owner}
+        placeholder={text.choose}
+        error={errors.owner ?? (gone ? (text.gone ?? 'That person can no longer be chosen.') : undefined)}
       />
+      {middle}
       <TextArea id={NOTE_ID} label={ASSIGN_TEXT.note} optional={!noteRequired} value={note} limit={NOTE_MAX} onChange={(event) => setNote(event.target.value)} error={errors.note} />
-      <div className="ws-form__actions">
-        <Button type="submit" kind="primary" busy={pending} busyLabel={`${preset ? ASSIGN_TEXT.confirm(role) : ASSIGN_TEXT.submit}…`} aria-disabled={pending || undefined}>
-          {submitLabel ?? (preset ? ASSIGN_TEXT.confirm(role) : ASSIGN_TEXT.submit)}
-        </Button>
-        {onClose && (
-          <Button kind="secondary" onClick={onClose}>
-            {ASSIGN_TEXT.cancel}
+      {tail}
+      {actions && (
+        <div className="ws-form__actions">
+          <Button type="submit" kind="primary" busy={pending} busyLabel={`${preset ? ASSIGN_TEXT.confirm(role) : text.submit}…`} aria-disabled={pending || undefined}>
+            {submitLabel ?? (preset ? ASSIGN_TEXT.confirm(role) : text.submit)}
           </Button>
-        )}
-      </div>
+          {onClose && (
+            <Button kind="secondary" onClick={onClose}>
+              {ASSIGN_TEXT.cancel}
+            </Button>
+          )}
+        </div>
+      )}
     </>
   );
   const onFormSubmit = (event: FormEvent) => {
@@ -134,9 +159,9 @@ export function AssignForm({ assign, pending, submitLabel, preset, labelledBy, o
     void submit();
   };
 
-  if (labelledBy) {
+  if (labelledBy || formId) {
     return (
-      <form ref={formRef} className="ws-form ws-form--bare" aria-labelledby={labelledBy} noValidate onSubmit={onFormSubmit}>
+      <form ref={formRef} id={formId} className="ws-form ws-form--bare" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : ariaLabel} noValidate onSubmit={onFormSubmit}>
         {fields}
       </form>
     );

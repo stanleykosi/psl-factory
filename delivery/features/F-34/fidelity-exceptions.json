@@ -6,7 +6,7 @@
    "category": "frame item",
    "conflicts": 14,
    "reason": "Conflicts 14: the signed-in name and role are the frame's top bar, as built (F-22), not the board's wording.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -14,7 +14,7 @@
    "category": "frame item",
    "conflicts": 14,
    "reason": "Conflicts 14 and 15: the crumbs are the frame's list of items as returned (Projects / Lagoon Health / Delivery / HYP-0062), not one text line; Lagoon Health is the sample project.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "link",
@@ -22,7 +22,7 @@
    "category": "frame item",
    "conflicts": 14,
    "reason": "Conflicts 14: the first crumb is drawn by the frame's crumb list.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tablist",
@@ -30,7 +30,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the project tab bar on a line item is the frame's navigation with no tab marked current (F-32 Conflicts 8).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -38,7 +38,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the project bar is the frame's navigation of links, drawn as links with no current tab.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tablist",
@@ -46,7 +46,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -54,7 +54,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -62,7 +62,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -70,7 +70,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -78,7 +78,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -86,7 +86,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -94,7 +94,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -102,7 +102,7 @@
    "category": "frame item",
    "conflicts": 8,
    "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -110,7 +110,7 @@
    "category": "frame layout",
    "conflicts": 6,
    "reason": "Conflicts 6: the record form opens on press and draws Version as a labelled input, not the board's read-only text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -118,7 +118,7 @@
    "category": "frame layout",
    "conflicts": 6,
    "reason": "Conflicts 6: the pre-filled value sits in the Version input, not as text (the value is the returned `value`).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -126,7 +126,7 @@
    "category": "frame layout",
    "conflicts": 6,
    "reason": "Conflicts 6: Released on is a labelled datetime input, not read-only text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -134,7 +134,7 @@
    "category": "sample data",
    "conflicts": 15,
    "reason": "Conflicts 15: dates are 2026 to agree with F-32's rows, and the date is typed by the driver into a datetime input.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -142,7 +142,7 @@
    "category": "frame layout",
    "conflicts": 6,
    "reason": "Conflicts 6: Environment is a labelled input, not read-only text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -150,7 +150,7 @@
    "category": "sample data",
    "conflicts": 15,
    "reason": "Conflicts 15: the pre-filled environment reads Production · Lagoon Health (P-0101), in an input.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -158,7 +158,7 @@
    "category": "no field",
    "conflicts": 13,
    "reason": "Conflicts 13: the proof line reads as ProofField draws it (file name, size and Add another file).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -166,7 +166,7 @@
    "category": "no field",
    "conflicts": 13,
    "reason": "Conflicts 13: the bold lead-in is not a field; the whole returned consequence sentence is drawn as plain text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "link",
@@ -174,7 +174,7 @@
    "category": "frame item",
    "conflicts": 7,
    "reason": "Conflicts 7: the phone bar keeps the built F-22 frame (Back to Queue).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -182,7 +182,7 @@
    "category": "frame item",
    "conflicts": 7,
    "reason": "Conflicts 7: the phone bar word is a frame item; the status is drawn by the returned label and tone.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -190,7 +190,7 @@
    "category": "phone wording",
    "conflicts": 7,
    "reason": "Conflicts 7: the page shows the desktop wording stacked in one column (the returned banner sentence).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -198,7 +198,7 @@
    "category": "frame item",
    "conflicts": 7,
    "reason": "Conflicts 7: the phone bar word is a frame item; the status is drawn by the returned label and tone.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -206,7 +206,7 @@
    "category": "phone wording",
    "conflicts": 7,
    "reason": "Conflicts 7: the page shows the desktop wording (the returned hold sentence) stacked in one column.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tag",
@@ -214,7 +214,7 @@
    "category": "tone",
    "conflicts": 16,
    "reason": "UI-1-2 (Conflicts 16): the board draws this tag amber (waiting on someone); the backend has no `waiting` workspace tone (D-46), so it returns `person`, which draws orange. The tone comes only from the returned value; no frontend mapping is added. Gap recorded in BACKEND-HANDOFF.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tag",
@@ -222,7 +222,7 @@
    "category": "tone",
    "conflicts": 16,
    "reason": "UI-1-2 (Conflicts 16): the board draws this tag amber (waiting on someone); the backend has no `waiting` workspace tone (D-46), so it returns `person`, which draws orange. The tone comes only from the returned value; no frontend mapping is added. Gap recorded in BACKEND-HANDOFF.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tag",
@@ -230,7 +230,7 @@
    "category": "tone",
    "conflicts": 16,
    "reason": "UI-1-2 (Conflicts 16): the board draws this tag amber (waiting on someone); the backend has no `waiting` workspace tone (D-46), so it returns `person`, which draws orange. The tone comes only from the returned value; no frontend mapping is added. Gap recorded in BACKEND-HANDOFF.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tag",
@@ -238,7 +238,7 @@
    "category": "tone",
    "conflicts": 4,
    "reason": "UI-1-2: with tone `person` the Setup needed tag draws orange-red (not amber as Conflicts 4 assumed); only the banner is amber. Same missing `waiting` tone (D-46).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tag",
@@ -246,7 +246,7 @@
    "category": "frame layout",
    "conflicts": 10,
    "reason": "UI-1-1 (Conflicts 10, 12): the shared checklist puts a returned tag after the row text, not at the row end where the board draws MET.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   }
  ],
  "visual_waivers": [
@@ -255,49 +255,49 @@
    "width": 1440,
    "visual": 80.4,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-46-desktop-record",
    "width": 1440,
    "visual": 82.7,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-46-desktop-setup-needed",
    "width": 1440,
    "visual": 77.1,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-46-mobile",
    "width": 390,
    "visual": 84.5,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-46-mobile-qualified",
    "width": 390,
    "visual": 81.5,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-46-mobile-record",
    "width": 390,
    "visual": 77.5,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-46-mobile-setup-needed",
    "width": 390,
    "visual": 80,
    "reason": "D-83 (Conflicts 16): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, joined station strip, the project tab bar as links) and the frame's fixed Next/Decide panel; the board's data is drawn as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   }
  ]
 }
