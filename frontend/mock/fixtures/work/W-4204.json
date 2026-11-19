@@ -158,13 +158,10 @@
             "value": "YES · 14 NOV"
           }
         ]
-      },
-      {
-        "key": "recheck",
-        "kind": "text",
-        "items": [],
-        "note": "A reference only. If the source changes later, a re-check reopens it."
       }
+    ],
+    "next": [
+      "A reference only. If the source changes later, a re-check reopens it."
     ],
     "context": {
       "crumbs": [

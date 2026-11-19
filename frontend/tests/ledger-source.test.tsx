@@ -213,7 +213,12 @@ describe('four states from data (AC 1, 8)', () => {
     expect(factValue('Authenticity certified')).toBe('NO');
     expect(factValue('Completeness certified')).toBe('NO');
     expect(factValue('Reference recorded')).toBe('YES · 14 NOV');
-    expect(ws().getByText('A reference only. If the source changes later, a re-check reopens it.')).toBeTruthy();
+    // the sentence is workspace.next: in the side Next area, not in a main section
+    const sentence = ws().getByText('A reference only. If the source changes later, a re-check reopens it.');
+    const next = sentence.closest('.ws-side');
+    expect(next).toBeTruthy();
+    expect(within(next as HTMLElement).getByRole('heading', { name: 'Next' })).toBeTruthy();
+    expect(sentence.closest('.ws-main, .ws-sections')).toBeNull();
     expect(buttons()).toEqual([]);
     expect(document.querySelector('.ws-idecide')).toBeNull();
     // the decided task has nothing left to open on this line
