@@ -3251,3 +3251,18 @@
 {"at":"2026-11-19T08:47:18Z","feature":"F-35","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"86d2dcef36ac27a07f8096303f8f6ae424ee40eb"}}
 {"at":"2026-11-19T08:47:19Z","feature":"F-35","round":3,"kind":"transition","head":"eefaf6c5e7f3","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T08:47:19Z","feature":"F-35","round":3,"kind":"transition","head":"eefaf6c5e7f3","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T09:01:33Z","feature":"F-39","round":4,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"644c8aafaff6","findings":{"TECH-4-1":"low","TECH-4-2":"low"},"written_at":"2026-11-19T09:01:11Z"}
+{"at":"2026-11-19T09:01:33Z","feature":"F-39","round":4,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"644c8aafaff6","findings":{"QA-4-1":"low","QA-4-2":"low"},"written_at":"2026-11-19T09:01:11Z"}
+{"at":"2026-11-19T09:01:33Z","feature":"F-39","round":4,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"644c8aafaff6","findings":{"PMO-4-1":"low","PMO-4-2":"low","PMO-4-3":"low"},"written_at":"2026-11-19T09:01:11Z"}
+{"at":"2026-11-19T09:01:33Z","feature":"F-39","round":4,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"644c8aafaff6","written_at":"2026-11-19T09:01:11Z"}
+{"at":"2026-11-19T09:01:33Z","feature":"F-39","round":4,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"644c8aafaff6","written_at":"2026-11-19T09:01:11Z"}
+{"at":"2026-11-19T09:01:33Z","feature":"F-39","round":4,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"644c8aafaff6","findings":{"UI-3-1":"low"},"written_at":"2026-11-19T09:01:11Z"}
+{"at":"2026-11-19T09:02:06Z","feature":"F-39","round":4,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/72","git.pr_number":72,"git.ci_status":"passed"}}
+{"at":"2026-11-19T09:02:06Z","feature":"F-39","round":4,"kind":"transition","head":"644c8aafaff6","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-19T09:02:06Z","feature":"F-39","round":4,"kind":"decision","decision":"HUMAN_APPROVAL","head":"644c8aafaff6","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","1076 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-19T09:02:13Z","feature":"F-39","round":4,"kind":"transition","head":"644c8aafaff6","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-19T09:02:13Z","feature":"F-39","round":4,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-19T09:02:13Z","feature":"F-39","round":4,"kind":"transition","head":"644c8aafaff6","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-19T09:02:14Z","feature":"F-39","round":4,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"c1181f15725f7b8a53e16e906d75ec1763d75e64"}}
+{"at":"2026-11-19T09:02:14Z","feature":"F-39","round":4,"kind":"transition","head":"644c8aafaff6","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-19T09:02:14Z","feature":"F-39","round":4,"kind":"transition","head":"644c8aafaff6","from":"MERGED","to":"DONE"}
