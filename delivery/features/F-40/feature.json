@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-40",
   "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -136,6 +136,18 @@
       ],
       "at": "2026-11-19T14:27:31Z",
       "seconds": 829.9,
+      "evidence_ref": "delivery/features/F-40/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 4,
+      "commit": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T14:50:31Z",
+      "seconds": 483.2,
       "evidence_ref": "delivery/features/F-40/round-3/checks.md"
     }
   ],
@@ -1064,6 +1076,14 @@
       "round": 3,
       "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
       "reason": "D-127: one extra gate attempt allowed by the design engineer"
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T14:50:32Z",
+      "round": 3,
+      "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "reason": null
     }
   ],
   "routing": {
@@ -1081,8 +1101,8 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 3,
-    "verdict": "FAIL",
+    "attempts": 4,
+    "verdict": "PASS",
     "commit": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
   },
   "blocked": null

@@ -3452,3 +3452,5 @@
 {"at":"2026-11-19T14:27:31Z","feature":"F-40","round":3,"kind":"gate","verdict":"FAIL","attempt":3,"exit_code":0,"seconds":829.9,"commit":"60ff597c130f","protected":["M delivery/config.json"]}
 {"at":"2026-11-19T14:28:03Z","feature":"F-40","round":3,"kind":"transition","head":"60ff597c130f","reason":"gate failed 3 times in round 3: attempts 1-2 were load-flaky tests (since fixed by PR #75); attempt 3 passed all tests (exit 0) but flagged delivery/config.json, because base_sha predated the dlv-00 merge (now corrected to a9bfa180bbb86754f4d9739419127e596b94b8b2). Needs a person to allow one more gate attempt.","from":"IMPLEMENTING","to":"BLOCKED"}
 {"at":"2026-11-19T14:30:19Z","feature":"F-40","round":3,"kind":"transition","head":"60ff597c130f","reason":"D-127: one extra gate attempt allowed by the design engineer","from":"BLOCKED","to":"IMPLEMENTING"}
+{"at":"2026-11-19T14:50:31Z","feature":"F-40","round":3,"kind":"gate","verdict":"PASS","attempt":4,"exit_code":0,"seconds":483.2,"commit":"60ff597c130f"}
+{"at":"2026-11-19T14:50:32Z","feature":"F-40","round":3,"kind":"transition","head":"60ff597c130f","from":"IMPLEMENTING","to":"IN_REVIEW"}
