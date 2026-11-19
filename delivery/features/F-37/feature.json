@@ -106,6 +106,18 @@
       "at": "2026-11-19T10:30:41Z",
       "seconds": 357.3,
       "evidence_ref": "delivery/features/F-37/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "befd93dcf5415e1791379530158a4fd4dd64c81a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:42:37Z",
+      "seconds": 340.1,
+      "evidence_ref": "delivery/features/F-37/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -937,7 +949,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
     "task_branch": "fe-rfp-response-requirements-answers",
-    "head_sha": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+    "head_sha": "befd93dcf5415e1791379530158a4fd4dd64c81a",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-37",
     "pr_url": null,
     "pr_number": null,
@@ -1088,9 +1100,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "befd93dcf5415e1791379530158a4fd4dd64c81a"
   },
   "blocked": null
 }
