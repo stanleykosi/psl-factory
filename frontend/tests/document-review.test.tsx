@@ -265,7 +265,7 @@ describe('what the page shows of the response', () => {
     await heading();
     await screen.findByRole('button', { name: /Edit as v3/ });
     for (const name of [/Edit as v3/, /Ask Tola to draft v3/]) {
-      const button = screen.getByRole('button', { name }) as HTMLButtonElement;
+      const button = (await screen.findByRole('button', { name })) as HTMLButtonElement;
       expect(button.disabled).toBe(true);
       fireEvent.click(button);
     }

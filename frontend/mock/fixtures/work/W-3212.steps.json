@@ -1,0 +1,9 @@
+{
+  "send_for_review": {
+    "status": 200,
+    "body": {
+      "outcome": "effect_uncertain",
+      "message": "We couldn't confirm the report reached the reviewer."
+    }
+  }
+}

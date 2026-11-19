@@ -357,7 +357,11 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
                 caseRevision={caseRevision}
                 field={field}
                 error={errors[field.name]}
-                onIds={(ids) => setEvidence((current) => ({ ...current, [field.name]: ids }))}
+                onIds={(ids) => {
+                  setEvidence((current) => ({ ...current, [field.name]: ids }));
+                  // a file now uploaded answers the "add proof" message
+                  if (ids.length > 0) setErrors((current) => (current[field.name] === undefined ? current : Object.fromEntries(Object.entries(current).filter(([name]) => name !== field.name))));
+                }}
                 onAccessError={onAccessError}
               />
             );

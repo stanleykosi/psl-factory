@@ -8,7 +8,12 @@
   "task_ids": [
     "FE-ALERTS"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-NOTIFICATIONS",
+    "E-NOTIFICATION-READ",
+    "E-ALERT-PREFS-READ",
+    "E-ALERT-PREFS"
+  ],
   "acceptance_criteria": [
     "**The overlay is verbatim v7 and the core never drifts.** `tests/alerts-mock.test.ts` asserts:",
     "**Local types match the overlay.** A test regenerates `openapi-typescript mock/proposals/alerts.json` into a temp file and compares it with the generated part of `src/features/alerts/contract-proposal.ts`. Verify: the same vitest run passes, and `git diff --stat <base>..HEAD -- frontend/src/api frontend/package.json frontend/tests/api-schema-drift.test.ts` is empty.",
@@ -16,7 +21,7 @@
     "**Own records only (wrong user).** `alerts-mock.test.ts` asserts:",
     "**CSRF on both writes.** Verify, in `alerts-mock.test.ts`:",
     "**The list matches the board at 1440.** With the mock on `board`, `/notifications` shows, in order: \"NOTIFICATIONS\", \"Notifications\", \"Alert settings\", the search \"Search notifications\", \"Filter\", \"4 ALERTS\", then four rows:",
-    "**The list matches the board at 390.** At 390 the page shows \"\u2190 Home\", \"Notifications\", the search, the \"Filter\" icon button, the same four rows, then \"Alert settings\". There is no eyebrow and no count line, and `document.documentElement.scrollWidth <= innerWidth`. Verify: `e2e/alerts.spec.ts` at 390.",
+    "**The list matches the board at 390.** At 390 the page shows \"← Home\", \"Notifications\", the search, the \"Filter\" icon button, the same four rows, then \"Alert settings\". There is no eyebrow and no count line, and `document.documentElement.scrollWidth <= innerWidth`. Verify: `e2e/alerts.spec.ts` at 390.",
     "**Every meta-line rule holds.** `alerts-model.test.ts` covers:",
     "**Absent proposal fields are never invented.** With `bare` (cookie `psl_mock_alerts=bare`):",
     "**Search and Filter send only the v7 parameters and show what is returned.** Verify, in `e2e/alerts.spec.ts`:",
@@ -186,7 +191,7 @@
       "owner": "frontend",
       "severity": "low",
       "blocking": false,
-      "summary": "Phone back links \"\u2190 Home\" and \"\u2190 Notifications\" sit level with the heading, not on their own line (build.md E-4). The builder discloses it. It needs the design engineer's approval and is not a code defect.",
+      "summary": "Phone back links \"← Home\" and \"← Notifications\" sit level with the heading, not on their own line (build.md E-4). The builder discloses it. It needs the design engineer's approval and is not a code defect.",
       "reproduction": null,
       "evidence_refs": [
         "delivery/features/F-12/round-1/review-technical.md"
@@ -337,7 +342,7 @@
   },
   "git": {
     "repository": "stanleykosi/psl-factory",
-    "task_id": "FE-M4",
+    "task_id": "FE-ALERTS",
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "92d029b21768858dd0d1402ea22d02c98827508e",
     "task_branch": "fe-alerts-a-person-sees-their-own-alerts-opens-one",

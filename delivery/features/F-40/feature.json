@@ -3,26 +3,66 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-40",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Scores.** One fidelity run per round covers all 8 boards in the Boards table: six live URLs and the two driver-frozen record pages. Every board has `coverageWithExceptions` = 100 and `visual` \u2265 90. A board at 70 or more but below 90 passes only with a D-83 waiver signed by the design engineer for that board in `fidelity-exceptions.json`, and only when the UI reviewer's side-by-side reading finds no fixable gap. No board passes under 70. \u2014 verify: the commands exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass and waiver; a re-run of `drive-states.mjs` reproduces the frozen pages.",
+    "**Exceptions limited.** Each entry has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply (a name, date, reference, tag, gap or sentence). \u2014 verify: file content; build.md.",
+    "**The row opens the item.** On `/projects/P-0101/delivery`, \"Handover to Support\" links to `/work/W-3704`, and the sub-nav's \"Handover\" links to the same. Every other row, tag and date is unchanged. `P-0101.json` differs from dlv-00 by exactly one added `work_id` line. \u2014 verify: the updated `delivery-overview.test.tsx` and `delivery-release-mock.test.ts` assertions; `git diff frontend/mock/fixtures/projects/P-0101.json`.",
+    "**Four states from data.** `/work/W-3701`, `/work/W-3703`, `/work/W-3704` and `/work/W-3705` each show their fixture's status label and tone, sections, steps, Next and links, and nothing else.",
+    "**The hold has no controls.** W-3702 shows \"Review needed?\" as \"Unknown\". It shows the returned Next sentence and no button, link, form or step of any kind in the workspace (beyond the frame's tabs and back link). A recording `fetch` sees no POST. \u2014 verify: component test.",
+    "**Publish writes once and claims nothing before the re-read.** On W-3701, pressing Publish sends one POST `/api/v1/work/W-3701/steps` with `{step: \"publish\", expected_revision: 1, idempotency_key}` and CSRF. A double press sends one; the mock log shows one send for the key. The words \"published 08 Apr\" appear only after the re-read serves `W-3701.next.json`. \u2014 verify: e2e with recorded requests and `GET /__mock/workspace-log`; component test with a held re-read showing no \"published\" until it resolves.",
+    "**Each uncertain path has a fixture and ends without a resend.**",
+    "**Draft v2 is Tola's work, never a verified result.** On W-3704, \"Ask Tola to draft v2\" sends one step. It shows \"Waiting: Tola is drafting v2.\", and then the re-read's \"Drafting v2\" status with the gaps still OPEN. No green banner, \"v2 published\" or \"acknowledged\" appears. \u2014 verify: component test; e2e.",
+    "**The form comes only from the response.** On W-3703 the form shows:",
+    "**Recording sends one guarded write after the proof.** With Gaps found, two gap lines, a time and `support-reply-10apr.pdf`, the network shows, in order:",
+    "one POST `/api/v1/cases/P-0101/evidence`;",
+    "one POST `/api/v1/tasks/T-3703/response` with `{expected_revision: 1, who: \"R-3701\", action: \"changes_requested\", responded_at, evidence_id, attested: true, case_revision, version_id: \"V-3701\", gaps: [\"No contact for the credit bureau outage\", \"Runbook misses the nightly export restart\"]}` and CSRF.",
+    "**No success before the re-read, on every path.**",
+    "**Recorded under the PM's name, never as Support.** The notice and the acknowledged banner attribute the record to the signed-in person, as returned. No text says Support logged in, signed or sent through the factory. `grep -rniE \"logged in|signed in as|support (sent|signed)\" frontend/src/features/response/SupportHandoverForm.tsx frontend/src/features/workspace` returns nothing. \u2014 verify: component test; grep.",
+    "**Verified only from the backend (INV-AGENT).** W-3711, whose Tola item \"Support acknowledged the handover\" is done, shows no green banner, no \"Handover acknowledged\" and no closure link. W-3705's banner is green only because `status.tone` is `verified`: a copy with the same text and tone `person` draws the warning banner. \u2014 verify: component tests.",
+    "**Unknown, not zero.** On W-3710 the unknown gap reads \"Unknown\", and Tola's checklist has no time line. W-3702's \"Review needed?\" reads \"Unknown\". Nothing shows blank, \"0\" or \"-\". \"GAPS \u00b7 2\" is drawn only from the returned label: a copy with three gap items and the label \"Gaps \u00b7 2\" still shows \"Gaps \u00b7 2\". The browser counts nothing. \u2014 verify: component tests.",
+    "**Links only from data.** \"See what closure needs\" appears only from a `work` link with a valid `work_id`. A copy with `work_id: \"../x\"`, or with no link, draws nothing. \u2014 verify: component test.",
+    "**Access.**",
+    "**Phone.** At 390, each state is one column, with the desktop sections in the desktop order (Conflicts 6), and there is no sideways scroll. Every target is at least 44px tall, measured: buttons, the segmented options, the date-time field, the file button, row links, standalone links, and the proof chip's remove \"\u00d7\", which is also at least 44px wide (D-92c). Record reply sits in the pinned action bar. \u2014 verify: e2e at 390 measuring `getBoundingClientRect`, including `.resp-chip__remove` after an upload.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 or 390 on W-3701 to W-3705, W-3702, W-3706.next, W-3709, the form with a 422, and the no-access view. Every field is labelled. Errors are announced. The remove button is named \"Remove support-reply-10apr.pdf\". Tags and status are text, not colour only. Focus is visible and returns to the page heading after a record. Nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/support-handover.spec.ts`.",
+    "**Tokens and components only.** New UI imports from `@/components` (`Panel`, `Button`, `Tag`, `Callout`, `Link`, `Unknown`) and F-18's response parts. It adds no local button, tag, panel, segmented control or upload. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\"` on this feature's CSS diff returns nothing. \u2014 verify: diff and grep.",
+    "**Mock matches the contract.**",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**` (including `schema.d.ts`), `apps/**`, `architecture/**`, `design/**`, `src/shell/**`, `src/features/decide/**`, `src/features/projects/**` or the protected paths. No existing fixture is edited except the one `work_id` key in `P-0101.json`. `gaps` exists only as a PROPOSAL-marked optional field in `features/response/contract.ts` and in the mock. Every proposal is listed in build.md. \u2014 verify: `git diff --stat`; grep for `PROPOSAL` beside `gaps`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes. The response, team-input, workspace, work-item, delivery-overview, release-gates, engagement-planning, decide and project-tab tests and their e2e specs pass. No assertion is removed or loosened. The only assertion edits are the two Handover-row expectations, which now expect `W-3704`. \u2014 verify: `delivery/checks.sh`; the e2e output in build.md; `git diff` of `frontend/tests/` and `frontend/e2e/`.",
+    "**No overclaim.** build.md and the PR carry the \"What is sent, and what stays held\" section: contract mock only, nothing sent to Support, no review rule set, and G-48-1 and G-48-2 open for the backend. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium for part 1. The page has four states, two step writes (one of them a send), a recorded response with proof and a proposed gaps field, all on the shared F-17 frame and the F-18 response form. That makes it a cross-layer contract with additive proposals (G-48-1 to -3; contract-change). `external-messaging` is ticked because \"Publish to Support\" is a send with no defined channel (G-48-2). On the mock, nothing is sent, and the existing uncertain and reconcile path covers an unknown result. `product-decision` is ticked because `delivery.handover_review` is a PSL rule that is still Not set; the page only shows the hold. Part 1 has no money, identity, migration or decision authority, so `auth` and `payments` are not ticked. Part 3 will be high risk with `auth` and `payments`: the PMO Lead's closure, the read-only lock, and Finance's open invoices shown next to it. PRODUCT-ACCEPTANCE is required because the handover flow and its wording are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-40/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,17 +75,68 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T04:01:47Z",
+      "seconds": 369.5,
+      "evidence_ref": "delivery/features/F-40/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:24:15Z",
+      "seconds": 487.6,
+      "evidence_ref": "delivery/features/F-40/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:36:35Z",
+      "seconds": 347.9,
+      "evidence_ref": "delivery/features/F-40/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T11:12:37Z",
+      "seconds": 398.6,
+      "evidence_ref": "delivery/features/F-40/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,17 +150,704 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-40/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`gaps` is sent in the E-RESPONSE body (useResponse.ts, contract.ts) but is not in the generated v7 schema. It is marked PROPOSAL G-48-1 and mock only; a real backend may reject it until G-48-1 is settled. Keep it listed as open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The fidelity visual scores (74.2 to 87.7) and 23 exceptions and 8 D-83 waivers are builder proposals, unsigned. The design engineer must sign them. This is not a code defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Steps.tsx` now casts `task as Parameters<typeof cannotActCopy>[1]`. It is scoped to not_your_role with required_role and is acceptable, but the cast hides any type drift.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "At 390, opening HND-0048 from /projects/P-0101/delivery shows the bar \"\u2190 Queue\" (/my-work) with History. SCR-48-mobile boards draw \"\u2190 Delivery\". Spec Conflict 7 keeps the built bar, but it must still return the PM to where they came from, and it lands on the Queue (the desktop crumb Delivery is correct). Fix: make the phone Back go to the project's Delivery tab for this line, or record a spec-approved exception that Back means Queue.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "phone Back reads \"\u2190 Delivery\" and returns to the project's Delivery tab (component and e2e tests)"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "At 390, PM opens W-3704 from the Delivery tab: bar reads \"\u2190 Delivery\"; clicking it returns to /projects/P-0101/delivery. At 1440 the crumb \"\u2190 Delivery\" also returns there."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "phone Back reads \"\u2190 Delivery\" and returns to the project's Delivery tab (component and e2e tests)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 390, PM opens W-3704 from the Delivery tab: bar reads \"\u2190 Delivery\"; clicking it returns to /projects/P-0101/delivery. At 1440 the crumb \"\u2190 Delivery\" also returns there."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 on W-3703 the attestation label measures 37px high, the checkbox 20px and the History link 24px. Spec item 17 lists other targets but the attest row is a tap target too; raise to 44px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "attestation row is 48px at 390 (e2e measures it)"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "At 390 on W-3703 the attestation row measures 48px."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "attestation row is 48px at 390 (e2e measures it)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 390 on W-3703 the attestation row measures 48px."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A ceo cookie opens /work/W-3704 and shows the full handover, while the Delivery tab refuses ceo. The build notes say this is static-fixture behaviour. The backend must refuse the item itself. Recorded for the integration.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "mock returns 404 for the handover items to ceo and none; the backend must do the same"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "ceo gets \"NO ACCESS - You can't open this work item\" on W-3704 at both widths; a persona with no roles gets \"No sections are open to your role yet\"."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "mock returns 404 for the handover items to ceo and none; the backend must do the same"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "ceo gets \"NO ACCESS - You can't open this work item\" on W-3704 at both widths; a persona with no roles gets \"No sections are open to your role yet\"."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "State chip colour restyled. The boards draw \"HANDOVER \u00b7 READY TO PUBLISH\" and \"HANDOVER \u00b7 PUBLISHED 08 APR\" as an amber/yellow chip; the page draws them red (desktop and 390 side-by-sides, W-3701 and record). Use the board's chip token, or add an honest exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "state chips take their tone from the fixture status (`uncertain` = amber), checked per state in a component test and an e2e colour check"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "Ready and Published chips are amber at 1440 (desktop and record side-by-sides) and at 390 (mobile-record), matching the boards."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "state chips take their tone from the fixture status (`uncertain` = amber), checked per state in a component test and an e2e colour check"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Ready and Published chips are amber at 1440 (desktop and record side-by-sides) and at 390 (mobile-record), matching the boards."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Handover section rows restyled. Board rows are plain label left, value right-aligned mono caps with row rules (Review needed? / NO \u00b7 BELOW THE RULE'S THRESHOLD / ATTACHED / DRAFT). The page puts each value in a grey chip inline after the label. No exception covers table/row styling; match the board or record one.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "Handover rows laid out like the board by CSS on the line key; DRAFT is the agent chip, other values plain mono caps at the row end"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "Handover rows at 1440: label left, mono caps value right (NO \u00b7 BELOW THE RULE'S THRESHOLD, ATTACHED), row rules; DRAFT is a chip as on the board."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Handover rows laid out like the board by CSS on the line key; DRAFT is the agent chip, other values plain mono caps at the row end"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Handover rows at 1440: label left, mono caps value right (NO \u00b7 BELOW THE RULE'S THRESHOLD, ATTACHED), row rules; DRAFT is a chip as on the board."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Reply form field structure. Board has one \"Support replied\" field (name, role and date-time together), with the Record reply button inside the card at desktop. The page splits it into \"Support replied\" and \"When they replied\", adds a \"One gap per line\" hint, a \"Proof\" label, and a \"I confirm this response is genuine\" checkbox, and puts the intro as a footnote. Only the intro position (Conflicts 3) and gap lines (Conflicts 4) are excepted. Either match the board or add exceptions for the split field, the hint and the confirm checkbox (the checkbox may be spec-required; say so).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "one \"Support replied\" field with name, role and date-time; Proof label and gaps hint visually hidden but still labelled; the confirm tick stays as an exception (Conflicts 5)"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "one \"Support replied\" field with name, role and date-time; Proof label and gaps hint visually hidden but still labelled; the confirm tick stays as an exception (Conflicts 5)"
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone screens drop the board's screen heading. The 390 boards title the screen \"Handover acknowledged\" and \"Support's reply\" (flagged only as a 20px vs 22px heading mismatch in the fidelity report); the page shows the project name as the heading, plus a wrapping card with its own \"RECORD SUPPORT'S REPLY\" caption on mobile-record where the board has no card. No exception covers this.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "390 headings come from `workspace.title`; the card and caption are gone on the phone record screen"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "At 390 the headings read \"Support's reply\" and the card is gone on the record screen."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "390 headings come from `workspace.title`; the card and caption are gone on the phone record screen"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "At 390 the headings read \"Support's reply\" and the card is gone on the record screen."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The waiver text says the gap is \"the shared frame\" and \"form position\". It should also name findings 1 to 4 if they stay, so the design engineer signs what is actually different.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "waivers rewritten to name what remains"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "waivers rewritten to name what remains"
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The History link in the shared line header is 24px tall at 390 (17px at 1440). It belongs to the shared F-22 header and the build records it. Not a blocker for F-40.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The \"Support replied\" field is still not the board's single box. Desktop and 390 record boards draw one text line (\"Femi Ojo \u00b7 Support lead \u00b7 10 Apr 2027, 11:00\"); the page draws a name/role input plus a separate native date-time picker (beside it at 1440, on its own row at 390). No exception covers the picker, and the round-2 waivers say the field \"now follows the boards\". Add an honest exception (a structured date-time is needed by the contract) and correct the waiver text, or merge into one field.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        },
+        {
+          "action": "fix",
+          "by": "coordinator (records-only round, D-123)",
+          "at": "2026-11-19T10:36:36Z",
+          "refs": [
+            "exception added for the separate date-time picker; record waivers corrected"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "coordinator (records-only round, D-123)",
+      "fix_refs": [
+        "exception added for the separate date-time picker; record waivers corrected"
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Proof card shows a remove \"\u00d7\" the board does not draw. Mention it under the F-18 Proof exception wording.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-40/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-40/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +867,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-DELIVERY-CLOSURE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "cc43884ecce27110928a512664a2fc32c79119f5",
+    "task_branch": "fe-delivery-closure-handover",
+    "head_sha": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-40",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +881,61 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/support-handover.spec.ts",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/response/W-3701.recorded.approved.json",
+      "frontend/mock/fixtures/response/W-3701.recorded.changes_requested.json",
+      "frontend/mock/fixtures/response/W-3703.recorded.approved.json",
+      "frontend/mock/fixtures/response/W-3703.recorded.changes_requested.json",
+      "frontend/mock/fixtures/response/W-3706.delivered.json",
+      "frontend/mock/fixtures/response/W-3706.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3706.recorded.approved.json",
+      "frontend/mock/fixtures/response/W-3706.recorded.changes_requested.json",
+      "frontend/mock/fixtures/response/W-3706.unknown.json",
+      "frontend/mock/fixtures/work/W-3701.json",
+      "frontend/mock/fixtures/work/W-3701.next.json",
+      "frontend/mock/fixtures/work/W-3701.steps.json",
+      "frontend/mock/fixtures/work/W-3702.json",
+      "frontend/mock/fixtures/work/W-3703.json",
+      "frontend/mock/fixtures/work/W-3704.json",
+      "frontend/mock/fixtures/work/W-3704.next.json",
+      "frontend/mock/fixtures/work/W-3704.steps.json",
+      "frontend/mock/fixtures/work/W-3705.json",
+      "frontend/mock/fixtures/work/W-3706.json",
+      "frontend/mock/fixtures/work/W-3706.next.json",
+      "frontend/mock/fixtures/work/W-3706.steps.json",
+      "frontend/mock/fixtures/work/W-3707.json",
+      "frontend/mock/fixtures/work/W-3707.next.json",
+      "frontend/mock/fixtures/work/W-3707.steps.json",
+      "frontend/mock/fixtures/work/W-3708.json",
+      "frontend/mock/fixtures/work/W-3708.next.json",
+      "frontend/mock/fixtures/work/W-3708.steps.json",
+      "frontend/mock/fixtures/work/W-3709.json",
+      "frontend/mock/fixtures/work/W-3710.json",
+      "frontend/mock/fixtures/work/W-3711.json",
+      "frontend/mock/fixtures/work/W-3720.json",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/features/response/ProofField.tsx",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/SupportHandoverForm.tsx",
+      "frontend/src/features/response/contract.ts",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/ResponseDrawer.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/support-handover-mock.test.ts",
+      "frontend/tests/support-handover.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +968,92 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T01:42:06Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T01:42:54Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T04:01:47Z",
+      "round": 1,
+      "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T09:22:42Z",
+      "round": 1,
+      "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T09:22:42Z",
+      "round": 2,
+      "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T10:24:17Z",
+      "round": 2,
+      "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T10:27:28Z",
+      "round": 2,
+      "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T10:27:29Z",
+      "round": 3,
+      "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-40/readiness.md",
+      "delivery/features/F-40/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 2,
+    "verdict": "FAIL",
+    "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
   },
   "blocked": null
 }

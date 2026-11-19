@@ -1,0 +1,190 @@
+{
+  "id": "W-3206",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Leadership review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Received",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-02T08:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3206",
+      "kind": "decide",
+      "title": "Review the monthly leadership report",
+      "required_role": "Leadership reviewer",
+      "you_can_act": false,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "Monthly report v1",
+          "number": 1,
+          "drafted_at": "2026-11-02T08:30:00Z"
+        },
+        "basis": "Approving sends this exact version to the audience. Who reviews is set in Setup › Rules.",
+        "prepared_by": {
+          "name": "Kemi Adebayo",
+          "role": "PMO Lead",
+          "is_you": true,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Leadership reviewer",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "prepared_by_you"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Gathered October's records",
+        "status": "done",
+        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+      },
+      {
+        "text": "Summarised milestones and money",
+        "status": "done",
+        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+      },
+      {
+        "text": "Drafted the escalations section",
+        "status": "done",
+        "source": "ESC-0011 · ESC-0012"
+      }
+    ],
+    "started_at": "2026-11-01T07:00:00Z"
+  },
+  "next_step": "A leadership reviewer approves and sends monthly report v1, or returns it with a note.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "review",
+    "status": {
+      "label": "AWAITING LEADERSHIP REVIEW",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "report",
+        "kind": "figures",
+        "title": "Monthly report v1",
+        "items": [
+          {
+            "id": "F-1",
+            "label": "Projects covered",
+            "value": "5 OF 5"
+          },
+          {
+            "id": "F-2",
+            "label": "Milestones completed",
+            "value": "3"
+          },
+          {
+            "id": "F-3",
+            "label": "Open escalations",
+            "value": "2"
+          },
+          {
+            "id": "F-4",
+            "label": "Invoices verified · paid is reported by Finance",
+            "value": "2"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_send",
+        "label": "Approve and send",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-3206",
+        "verdict": "approve"
+      },
+      {
+        "key": "return_note",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "task_id": "T-3206",
+        "verdict": "return"
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 1
+  }
+}

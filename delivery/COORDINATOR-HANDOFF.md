@@ -90,3 +90,60 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 - Merge practice that worked: one shared checks lock (`psl-factory-worktrees/.checks.lock`) plus a wait for 5-minute load < 14 before any full suite. Since then, no flaky failures. After each merge of dlv-00 into a branch, one Sonnet impact reviewer re-pins all round reviews; PMO re-runs only if its last verdict was CHANGES.
 - Follow-ups (not started): F-29 UX-2-1 (disabled "Ask Tola to draft v3" reads as plain text); F-30 PMO-3-5 (flaky `setup-rules`/`rfp` tests: raise testing-library's async timeout), PMO-3-6 (UX-1-2..1-4, TECH-1-1 non-blocking); F-30 PMO-3-3 note: some exceptions cover sample data and times (signed as a set by D-112); the backend panel title for "Owner follow-up" (UI-1-7).
 - Next candidates: assistant "can't" (SCR-05), mark milestone complete (SCR-19, needs FE-M2A-PROOF), engagement/planning (SCR-41/42), delivery line screens SCR-43..51, Finance workspaces SCR-53..58, leadership report (SCR-52). Still held by PSL: SCR-17, 20, 21, 27, 31, 39 and payroll.
+
+## Eighth session (18 Nov 2026 evening): handed off mid-wave — read this first
+
+Merged into dlv-00 today: F-31 #62, F-32 #63, F-33 #64, flaky-test fix #65, F-47 #66, F-41 #67, F-42 #68.
+Main synced through PR #61 (user merged). Next dlv-00 → main sync PR needs the user. Deadline: Friday 20 Nov.
+Full action log: `delivery/NIGHT-LOG-2026-11-18.md` (sign-off lists 1–3). Decisions D-112..D-120 in `OVERNIGHT-DECISIONS.md`.
+
+State at handoff (check `feature.py status` and each worktree; the agents below were started by the old
+session and report only there, so read their output files / worktree commits instead of waiting):
+
+| Feature | State | Next |
+|---|---|---|
+| F-34 hypercare | signed D-119; builder a8d96d0120b9daa3a merging dlv-00 + PMO-3-1/3-2 housekeeping | impact re-pin 7 round files + build.md COMMIT → PR → merge recipe → DONE |
+| F-36 RFP intake | signed D-120; builder a7f8dd4d5a60e4d45 merging dlv-00 | same merge recipe |
+| F-35 leadership report | round 2: security, technical, UX, UI all PASS (UI-2-1 Ask Tola link 51x20, inherited from F-33 footer; UX-2-1/2/3 non-blocking; UX-2-3 green banner on partial delivery → put on user's sign-off list 3) | advance to INTEGRATED_QA → QA (demo 4987, mock 4986) → PMO → approver → sign-off list 3 |
+| F-39 escalation | round 1: technical PASS; UX CHANGES (UX-1-1 blocking: desktop NOT ESCALATED page layout broken vs board; UX-1-2..6 non-blocking); UI review a6459e063fc7d322d still running when handed off | wait/read UI review-ui.md, then CHANGES_REQUESTED → round 2 builder fixes UX-1-1 (+ UI findings) |
+| F-37 RFP response | building, agent aff21ac6671c86c11, ports 4994-4997 | gate → reviews |
+| F-43 cash forecast | building, agent ad9305d22b02637a4 (Opus), ports 4894-4897 | gate → reviews |
+| F-48 assistant "can't" | builder a0ac9b1aac696b8f7 finished (result unread) | read its build.md / output, gate → reviews |
+| F-38, F-40, F-45 | specs accepted (D-118), not started | start builds as slots (max 3–4) and disk (stop < 3 GB; was 4.8 GB) allow |
+| F-36 part 2 (SCR-23), FE-MILESTONE-COMPLETE (SCR-19), F-47B | newly unblocked | readiness → spec |
+
+Agent output files: `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/0986a60c-391e-48d6-b2da-79de8713a755/tasks/<agentId>.output`.
+If a builder died mid-merge, resume by spawning a new builder on the same worktree with the round's instructions.
+
+Recipes (unchanged): gate wrapper waits on `/Users/Hunchoo/psl-factory-worktrees/.checks.lock` and loadavg field `$2`;
+merge recipe = builder merges origin/dlv-00 → impact reviewer re-pins → `gh pr create` (no AI footer) → `F set ci_status`
+→ PR_OPEN → decide → `gh pr merge --merge --match-head-commit` → AWAITING_USER_APPROVAL → approved → APPROVED → MERGED → DONE
+→ remove worktree. Stop on any tool refusal. Never merge to main without the user.
+
+Also requested by the user at handoff: a PDF of every decision PSL still has to take — what each means in plain business
+terms and where in the product it is taken (screen / configuration page / process ID). Sources: guide/10-POLICY-CONFIGURATION.md,
+BUILD-DECISIONS.md, delivery backend-handoff + readiness/spec "blocked by PSL" notes, memory product-decisions-2026-11.
+
+## Ninth session (18–19 Nov 2026): wave 3, usage limit, cost plan — read this first
+Merged into dlv-00 since the eighth-session notes: F-34 #69, F-36 #70, F-35 #71, F-39 #72. 40 of 50 tasks are DONE.
+Also delivered: the decisions pack, delivery/psl-decisions/PSL-DECISIONS.pdf (71 decisions; regenerate with build_decisions.py).
+The weekly usage limit stopped all agents at ~05:10 on 19 Nov. It resets **Sun 22 Nov 03:00 (Africa/Lagos)**.
+From then on, follow **D-123** (OVERNIGHT-DECISIONS.md) and **delivery/builder-checklist.md**:
+- Sonnet builders. UI and QA reviews on Sonnet. Opus only for high-risk security and technical review.
+- PMO and the approver run as one pass.
+- One fidelity run per round.
+- 2–3 builds at a time; features touching the same shared files go one after another.
+
+State when the agents stopped. Their saved work can be resumed with SendMessage after the reset, but only from the session that spawned them. From a new session, start fresh agents that pick up from the worktree and round files.
+| Feature | State | Next |
+|---|---|---|
+| F-43 cash forecast | INTEGRATED_QA round 2, head 5020a86b; all 4 reviews pass; QA cut off | QA (Sonnet) → PMO+approver → sign-off. Before merging, take in dlv-00 (brings the shared stale fix) and add a two-reviewer test |
+| F-45 ledger source | IN_REVIEW round 1, head 4dba97ab; 4 reviews cut off | reviews (security and technical on Opus: high risk) |
+| F-40 handover | IN_REVIEW round 1, head b051cfa7; demo 4975/4974 | reviews (security routed by plan) |
+| F-37 RFP response | IMPLEMENTING round 2 (UI-1-1..1-5 plus the desktop-hides-all-task-panels note); builder cut off mid-fix | finish round 2 (checks were running), gate, UI re-review |
+| F-48 assistant "can't" | IMPLEMENTING round 1, build.md READY at 0a7196f6; node_modules removed for disk | npm ci, gate, reviews |
+| F-38 RFP submit | READY (re-check 19 Nov), not started | build after F-37 merges (shares RfpFrame tab links) |
+| F-36 part 2, FE-MILESTONE-COMPLETE, F-47B | unblocked | readiness → spec |
+| F-44, F-46 | BLOCKED (PSL/backend) | — |
+Then the dlv-00 → main sync PR. Ask the user before merging into main.
+Follow-ups: F-33 income line needs its own two-reviewer stale test, and still says "approved" before the re-read; TECH-2-1 (F-43 tags on F-33/F-42 NOT SET facts); QA-4-1 (W-3602 send-for-review fixture); F-35 stale-notice polish (UX-3-1..3, TECH-3-1).

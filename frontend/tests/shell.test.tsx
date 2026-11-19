@@ -277,7 +277,7 @@ describe('phone bar menu', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(document.getElementById('phone-menu')).toBeNull();
     expect(button.getAttribute('aria-expanded')).toBe('false');
-    expect(document.activeElement).toBe(button);
+    await waitFor(() => expect(document.activeElement).toBe(button));
   });
 
   it('choosing a destination closes the menu', async () => {
@@ -316,7 +316,7 @@ describe('phone back link', () => {
     expect(document.getElementById('phone-menu')).toBeNull();
     expect(phoneBar().children[0]).toBe(link);
     link.focus();
-    expect(document.activeElement).toBe(link);
+    await waitFor(() => expect(document.activeElement).toBe(link));
     expect(link.tabIndex).toBe(0);
     expect(within(topNav()).getAllByRole('link').map((a) => a.textContent)).toContain('My work');
   });

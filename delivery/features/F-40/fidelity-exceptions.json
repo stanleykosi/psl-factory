@@ -1,0 +1,270 @@
+{
+ "exceptions": [
+  {
+   "role": "complementary",
+   "name": "",
+   "category": "frame layout",
+   "conflicts": 3,
+   "reason": "Conflicts 3: the record board draws the intro as a callout in a side column; the page draws the form in place and the returned intro as the form's footnote.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "PROJECTS",
+   "category": "frame item",
+   "conflicts": 12,
+   "reason": "Conflicts 12: The crumbs are the frame's list as returned (Projects / Lagoon Health / Delivery / HND-0048), not one text line; Lagoon Health is the sample project (Conflicts 13).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← Delivery",
+   "category": "frame item",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the visible text and the target now match the board (Delivery tab); the shared phone bar names the link 'Back to Delivery' (F-22 PhoneBar aria-label), so the tool reads a different accessible name.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Archive",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Closure",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Go-live",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Handover",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Hypercare",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Overview",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Planning",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Release",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tablist",
+   "name": "Delivery lines",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tablist",
+   "name": "Project",
+   "category": "frame item",
+   "conflicts": 8,
+   "reason": "Conflicts 8: The project tab bar on a line item has no tab current, and the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "1. No contact for the credit bureau outage. 2. Runbook misses the nightly export restart.",
+   "category": "sample data",
+   "conflicts": 4,
+   "reason": "Conflicts 4: The board draws one numbered sentence; the page draws the typed gaps one per line (Conflicts 4). The values are the PM's input.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DONE",
+   "category": "frame layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Drafted 08 Apr",
+   "category": "frame layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Drafted 08 Apr 14:30 Ask Tola",
+   "category": "frame layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Gaps",
+   "category": "wording",
+   "conflicts": 4,
+   "reason": "Conflicts 4: The page draws Gaps as a field label; the board draws it as text (Conflicts 4).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Open question for PSL: Support doesn't log in. Proposed: you record Support's reply with proof, like team input.",
+   "category": "wording",
+   "conflicts": 11,
+   "reason": "Conflicts 11: Not drawn: conflict C is closed (Support has no login; the PM records the reply with proof).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PROJECTS / TAMARIND LOANS / DELIVERY / HND-0048",
+   "category": "frame item",
+   "conflicts": 12,
+   "reason": "Conflicts 12: The crumbs are the frame's list as returned (Projects / Lagoon Health / Delivery / HND-0048), not one text line; Lagoon Health is the sample project (Conflicts 13).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Support received v2, no gaps. Verified 14 Apr.",
+   "category": "phone wording",
+   "conflicts": 6,
+   "reason": "Conflicts 6: The phone board's short sentence; the page shows the returned banner at both widths (Conflicts 6).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tola · PMO agent · done",
+   "category": "frame layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tunde Bello · PMO",
+   "category": "frame item",
+   "conflicts": 12,
+   "reason": "Conflicts 12: The signed-in name and role are the frame's top bar, as built (F-22), not the board's wording.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "checkbox",
+   "name": "I confirm this response is genuine.",
+   "category": "added control",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the record boards draw no confirmation, but the contract needs an attestation (the response body's attested flag) before Record reply is allowed; the tick is the F-18 control, kept (acceptance 10).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "textbox",
+   "name": "Support replied",
+   "category": "component",
+   "conflicts": null,
+   "reason": "UI-2-1 (coordinator, round 3): the record boards draw 'Support replied' as one text line (name · role · date and time). The page draws a name-and-role input plus a separate native date-time picker, because the step's contract takes the reply time as a structured date-time, not free text. The values drawn are the ones entered; nothing is computed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "button",
+   "name": "Remove",
+   "category": "component",
+   "conflicts": null,
+   "reason": "UI-2-2 (coordinator, round 3): the shared F-18 Proof card draws a remove (×) control for an uploaded file, which the record boards do not draw. It belongs to the shared proof component.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-48-desktop",
+   "width": 1440,
+   "visual": 79.4,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-desktop-gaps",
+   "width": 1440,
+   "visual": 83.4,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-desktop-received",
+   "width": 1440,
+   "visual": 77.8,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-mobile",
+   "width": 390,
+   "visual": 86.8,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-mobile-gaps",
+   "width": 390,
+   "visual": 88.2,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-mobile-received",
+   "width": 390,
+   "visual": 75.3,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-desktop-record",
+   "width": 1440,
+   "visual": 73.8,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, and the phone screen headings now follow the boards; the Support replied field is one name-and-role box plus a separate date-time picker (exception below, UI-2-1), and the Proof card shows a remove control (UI-2-2). The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-48-mobile-record",
+   "width": 390,
+   "visual": 82.5,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, and the phone screen headings now follow the boards; the Support replied field is one name-and-role box plus a separate date-time picker (exception below, UI-2-1), and the Proof card shows a remove control (UI-2-2). The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
+}

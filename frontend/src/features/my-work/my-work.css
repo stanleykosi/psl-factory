@@ -146,3 +146,6 @@
 .my-work__field { display: flex; flex-direction: column; gap: var(--space-6px); }
 .my-work__field .my-work__select, .my-work__field .my-work__select:hover, .my-work__field .my-work__select:focus { min-height: var(--control-md); appearance: none; padding-right: 36px; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 14px) 55%; background-size: 4px 4px; background-repeat: no-repeat; }
 .my-work__linkbutton { align-self: flex-start; padding: 0; border: none; background: none; font: inherit; }
+
+/* F-36: the notice after an RFP was assigned from the Unassigned panel */
+.my-work__notice { margin-bottom: var(--space-3); }

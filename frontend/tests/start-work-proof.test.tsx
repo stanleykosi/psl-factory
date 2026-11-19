@@ -246,7 +246,7 @@ describe('uploads', () => {
     expect((await uploaded()).textContent).toBe('Uploaded · 44 KB');
     expect(uploads.map((u) => u.body.case_revision)).toEqual([2, 3]);
     startPress('Record source');
-    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4402'));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4201'));
     expect(starts).toHaveLength(1);
     expect([starts[0].body.case_revision, starts[0].body.intake]).toEqual([4, { key: 'QB-JE-7741', proof: 'EV-SW-C-FIN-LEDGER-2' }]);
   });
@@ -291,7 +291,7 @@ describe('the start', () => {
     ['minutes', 'W-1403'],
     ['change_request', 'W-1405'],
     ['income_schedules', 'W-4401'],
-    ['ledger_sources', 'W-4402'],
+    ['ledger_sources', 'W-4201'],
   ])('%s: filled as on the board, one start for a double press, with the key made when the drawer opened', async (line, workId) => {
     const keys: string[] = [];
     const real = crypto.randomUUID.bind(crypto);
@@ -599,7 +599,7 @@ describe('upload errors', () => {
     await uploaded();
     expect(uploads.map((u) => u.body.case_revision)).toEqual([2, 3]);
     startPress('Record source');
-    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4402'));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4201'));
     expect([starts[0].body.case_revision, starts[0].body.intake.proof]).toEqual([4, 'EV-SW-C-FIN-LEDGER-2']);
   });
 });
@@ -615,7 +615,7 @@ describe('start errors with proof', () => {
     await within(dialog()).findByText(/This record changed since you opened the form/);
     expect(within(dialog()).getByText('qb.pdf')).toBeTruthy();
     startPress('Record source');
-    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4402'));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4201'));
     expect(starts.map((s) => s.body.case_revision)).toEqual([3, 4]);
     expect(starts[1].body.idempotency_key).not.toBe(starts[0].body.idempotency_key);
     expect(starts[1].body.intake.proof).toBe('EV-SW-C-FIN-LEDGER-1');
@@ -632,7 +632,7 @@ describe('start errors with proof', () => {
     expect(dialog().textContent!.replace('If it started, it will appear in My work.', '').replace('if it already started', '')).not.toMatch(/started/i);
     expect(within(proofBox()).getByRole('button', { name: 'Remove qb.pdf' }).matches(':disabled')).toBe(true);
     press('Check again');
-    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4402'));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-4201'));
     expect(starts[1].body).toEqual(starts[0].body);
     expect(mock.started.size).toBe(1);
   });

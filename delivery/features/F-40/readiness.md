@@ -1,4 +1,4 @@
-DECISION: NOT-READY
+DECISION: READY
 RISK: medium
 SURFACES: ui, api, contract-change, external-messaging, product-decision
 PRODUCT-ACCEPTANCE: required
@@ -100,3 +100,18 @@ PRODUCT-ACCEPTANCE is required because the handover flow and its wording are new
 None for part 1. The block is F-32's merge. Backend confirmations hold the real write, not the mock build: the G-48-1 mapping and gaps field, the G-48-2 Support channel, and what closes a gap (gaps-d-delivery.md:147-150).
 
 For part 3, PSL will need to answer: where "Finance confirmation" before closure comes from and who gives it (G-49-2, `delivery.closure_finance_confirmer`), and what "return" does on closure (D-RETURN).
+
+## Re-check 19 Nov
+**Verdict changed: NOT-READY to READY.** Risk (medium) and surfaces unchanged.
+
+What changed:
+- F-32 is merged into dlv-00 (Delivery tab, release gate). The Delivery tab and `delivery[]` rows exist in frontend/mock/fixtures/projects/P-0101.json. The Handover row (`line_key` delivery_handover, reference HND-0048, "Support listed 2 gaps") is there with no `work_id`, as expected: F-40 adds it. frontend/tests/delivery-overview.test.tsx:95 already asserts the row text, so the builder must keep that test passing.
+- F-34 is merged too, so its Hypercare `work_id` edit to the same fixture is already in. Keep it; add only Handover's.
+
+Spec re-check needed (spec was written against the F-32 branch head 5bab76ae, round 2):
+- Confirm `spec.md` names the merged paths, not branch paths, for `DeliveryTab`, `PROJECT_TABS`, `workspace.links[]` kind `work` and the sub-nav exception. If F-32 changed after round 2, the builder re-verifies each.
+- F-32's D-83 waivers were still unsigned at ESCALATE. If the merge went through with them signed, no action; otherwise the fidelity baseline for the shared frame may differ from what the spec assumed.
+- Fixture ids W-37xx/T-37xx: grep the merged mock for collisions before adding.
+- Rerun `design.py check` first.
+
+Still open, not blocking part 1: G-48-1/2/3, `delivery.handover_review` Not set. Parts 2 and 3 are separate features.

@@ -49,7 +49,7 @@ export function valueText(row: RuleRow): string | null {
 }
 
 const LINK_ROUTES: Record<string, string> = { 'costing-rule': '/setup/costing-rule' };
-const AREA_ROUTES: Record<string, string> = { finance: '/setup/rules/finance', delivery: '/setup/rules/delivery' };
+export const AREA_ROUTES: Record<string, string> = { finance: '/setup/rules/finance', delivery: '/setup/rules/delivery' };
 
 /** The screen a linked rule is edited on; an unknown slug has none. */
 export const linkHref = (row: RuleRow) => (row.link && Object.hasOwn(LINK_ROUTES, row.link) ? LINK_ROUTES[row.link] : undefined);

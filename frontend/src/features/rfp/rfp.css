@@ -111,3 +111,14 @@
 .rfp-eyebrow .rfp-history { margin-inline-start: var(--space-4); text-transform: none; }
 /* F-37: the requirements page draws the title at the board's 32px, so the deadline and PM tags sit beside it */
 .rfp-frame:has(.rfp-history) .rfp-title { font-size: var(--text-page-title-32-size); line-height: var(--text-page-title-32-line); }
+/* F-36: the "Assign accountable PM" panel (SCR-24): one column; 44px targets for the file button, its chip and Try again */
+.rfp-assign__body { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.rfp-assign__next { margin: 0; padding-top: var(--space-3); border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-hint-size); }
+/* the board's head: the eyebrow in capitals; the desktop footer's Cancel takes a third and Assign PM two thirds, 48px high */
+.rfp-assign .psl-drawer__eyebrow { text-transform: uppercase; }
+@media (min-width: 720px) {
+  .rfp-assign .psl-drawer__foot .psl-btn { flex: 2 1 0; min-height: var(--control-phone); }
+  .rfp-assign .psl-drawer__foot .psl-btn--secondary { flex: 1 1 0; }
+}
+.rfp-assign .resp-chip__remove, .rfp-assign .resp-filebtn, .rfp-assign .resp-chip__problem .psl-btn, .rfp-assign .resp-card__text .psl-btn { min-width: var(--control-phone); min-height: var(--control-phone); }
+.rfp-assign .psl-summary a { display: inline-block; padding: var(--space-2) 0; }

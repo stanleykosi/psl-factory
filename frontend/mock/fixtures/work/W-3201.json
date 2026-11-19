@@ -1,0 +1,128 @@
+{
+  "id": "W-3201",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "processing",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "current_agent"
+    },
+    {
+      "name": "Leadership review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Received",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Gathered October's records",
+        "status": "done",
+        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+      },
+      {
+        "text": "Summarised milestones and money",
+        "status": "done",
+        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+      },
+      {
+        "text": "Drafting the escalations section",
+        "status": "working",
+        "source": "ESC-0011 · ESC-0012"
+      },
+      {
+        "text": "Send for leadership review",
+        "status": "not_started"
+      }
+    ],
+    "started_at": "2026-11-01T07:00:00Z"
+  },
+  "next_step": "Tola is drafting the monthly report. It goes to leadership review when the draft is ready.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "drafting",
+    "status": {
+      "label": "DRAFTING",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "access",
+        "kind": "text",
+        "items": [],
+        "note": "The report only uses records you can see. Projects you can't see are left out and counted as left out, never counted as zero."
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_tola",
+        "label": "Ask Tola",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

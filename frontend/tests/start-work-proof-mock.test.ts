@@ -225,12 +225,12 @@ describe('routing (TECH-1-2)', () => {
 });
 
 describe('starts carrying proof', () => {
-  it('the ledger start after two uploads: case_revision 4 and the second id answer 201 W-4402', async () => {
+  it('the ledger start after two uploads: case_revision 4 and the second id answer 201 W-4201 (F-45 repoint)', async () => {
     await upload('C-FIN-LEDGER', { kind: 'ledger_source', case_revision: 2 });
     await upload('C-FIN-LEDGER', { kind: 'ledger_source', case_revision: 3 });
     expect((await start(ledgerStart('EV-SW-C-FIN-LEDGER-2', 2))).status).toBe(409);
     const ok = await start(ledgerStart('EV-SW-C-FIN-LEDGER-2', 4));
-    expect([ok.status, ok.body]).toEqual([201, { work_id: 'W-4402', state: 'processing' }]);
+    expect([ok.status, ok.body]).toEqual([201, { work_id: 'W-4201', state: 'processing' }]);
   });
 
   it('the schedule and minutes starts with proof answer W-4401 and W-1403', async () => {
@@ -301,7 +301,7 @@ describe('uncertain fixtures (psl_mock_start_work)', () => {
     const body = ledgerStart('EV-SW-C-FIN-LEDGER-1', 3);
     expect((await start(body, { extra })).status).toBe(500);
     const replay = await start(body, { extra });
-    expect([replay.status, replay.body]).toEqual([201, { work_id: 'W-4402', state: 'processing' }]);
+    expect([replay.status, replay.body]).toEqual([201, { work_id: 'W-4201', state: 'processing' }]);
     expect((await start({ ...body, intake: { key: 'other' } }, { extra })).status).toBe(409);
   });
 });

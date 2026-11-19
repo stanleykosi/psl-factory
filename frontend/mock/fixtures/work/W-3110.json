@@ -1,0 +1,219 @@
+{
+  "id": "W-3110",
+  "title": "Lagoon Health · patient app",
+  "line": "Hypercare",
+  "reference": "HYP-0062",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Hypercare",
+      "status": "current_agent"
+    },
+    {
+      "name": "Archive",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-01T22:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Checked the observations so far",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_hypercare",
+    "screen": "SCR-46",
+    "view": "hypercare",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HYP-0062",
+          "label": "HYP-0062"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 1,
+    "status": {
+      "label": "Hypercare · day 30 of 30",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "observations",
+        "kind": "table",
+        "title": "Observations so far",
+        "columns": [
+          {
+            "key": "ref",
+            "label": "Reference",
+            "kind": "reference"
+          },
+          {
+            "key": "what",
+            "label": "What",
+            "kind": "text"
+          },
+          {
+            "key": "state",
+            "label": "State",
+            "kind": "tag"
+          }
+        ],
+        "items": [
+          {
+            "id": "ISS-0301",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "ISS-0301"
+              },
+              {
+                "column": "what",
+                "text": "Login slow on older phones · medium"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "Open · owner set",
+                  "tone": "person"
+                }
+              }
+            ]
+          },
+          {
+            "id": "OBS-0012",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "OBS-0012"
+              },
+              {
+                "column": "what",
+                "text": "Peak load on day 3 handled"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "Noted",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          },
+          {
+            "id": "INC",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "—"
+              },
+              {
+                "column": "what",
+                "text": "Incidents"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "None",
+                  "tone": "verified"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "evaluation",
+        "kind": "checklist",
+        "title": "Hypercare evaluation",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "E-1",
+            "text": "Read the observations and issues",
+            "status": "done"
+          },
+          {
+            "id": "E-2",
+            "text": "Compared them with the criteria",
+            "status": "done"
+          },
+          {
+            "id": "E-3",
+            "text": "Mark hypercare qualified",
+            "status": "done"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "The factory checks Tola's work before anything is marked qualified."
+    ]
+  }
+}
