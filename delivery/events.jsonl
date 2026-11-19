@@ -3408,3 +3408,19 @@
 {"at":"2026-11-19T10:50:23Z","feature":"F-45","round":1,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"9fd0dfa6d72f381f68afd30c29c4f8e8fb5f53fb"}}
 {"at":"2026-11-19T10:50:24Z","feature":"F-45","round":1,"kind":"transition","head":"af1d1c8d3629","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T10:50:24Z","feature":"F-45","round":1,"kind":"transition","head":"af1d1c8d3629","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T11:03:30Z","feature":"F-48","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":396.7,"commit":"0a7196f6eaf9"}
+{"at":"2026-11-19T11:11:14Z","feature":"F-46","round":0,"kind":"transition","reason":"Duplicate of F-12 (FE-ALERTS delivered in PR #18, merge 537607ea); the other SCR-15 boards belong to FE-ALERTS-MENU part 2 (D-SIGNIN) and T-ALERTS (D-ALERT-PROVIDERS). Closed on the design engineer's instruction, 19 Nov.","from":"BLOCKED","to":"CLOSED"}
+{"at":"2026-11-19T11:12:37Z","feature":"F-40","round":3,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":1,"seconds":398.6,"commit":"1457df1c1d4a"}
+{"at":"2026-11-19T11:21:25Z","feature":"F-48","round":1,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":1,"seconds":501.5,"commit":"2900167babb5","protected":["M delivery/config.json"]}
+{"at":"2026-11-19T11:35:19Z","feature":"F-37","round":3,"kind":"finding","action":"fix","finding":"TECH-2-1","by":"builder"}
+{"at":"2026-11-19T11:35:19Z","feature":"F-37","round":3,"kind":"finding","action":"fix","finding":"UI-2-1","by":"builder"}
+{"at":"2026-11-19T11:35:19Z","feature":"F-37","round":3,"kind":"finding","action":"fix","finding":"UI-2-2","by":"builder"}
+{"at":"2026-11-19T11:35:19Z","feature":"F-37","round":3,"kind":"gate","verdict":"PASS","attempt":2,"exit_code":0,"seconds":417.1,"commit":"36db1217cc44"}
+{"at":"2026-11-19T11:35:20Z","feature":"F-37","round":3,"kind":"transition","head":"36db1217cc44","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-19T11:36:26Z","feature":"F-37","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"36db1217cc44","findings":{"TECH-2-1":"low","TECH-2-2":"low"},"written_at":"2026-11-19T11:35:39Z"}
+{"at":"2026-11-19T11:36:26Z","feature":"F-37","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"36db1217cc44","findings":{"UX-1-1":"low","UX-1-2":"low","UX-1-3":"low","UX-1-4":"low","UX-1-5":"low"},"written_at":"2026-11-19T11:35:39Z"}
+{"at":"2026-11-19T13:13:38Z","feature":"F-37","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"36db1217cc44","written_at":"2026-11-19T13:12:48Z"}
+{"at":"2026-11-19T13:13:38Z","feature":"F-37","round":3,"kind":"finding","action":"verify","finding":"UI-1-5","by":"reviewer-ui"}
+{"at":"2026-11-19T13:13:38Z","feature":"F-37","round":3,"kind":"finding","action":"verify","finding":"UI-2-1","by":"reviewer-ui"}
+{"at":"2026-11-19T13:17:23Z","feature":"F-37","round":3,"kind":"finding","action":"verify","finding":"UI-2-2","by":"reviewer-ui"}
+{"at":"2026-11-19T13:17:26Z","feature":"F-37","round":3,"kind":"transition","head":"36db1217cc44","from":"IN_REVIEW","to":"INTEGRATED_QA"}

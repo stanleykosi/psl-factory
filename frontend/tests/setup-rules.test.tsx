@@ -426,7 +426,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     const text = `${FORBIDDEN.message} ${EDITOR_GONE} ${NOT_SAVED}`;
     await waitFor(() => expect(desktop().getByRole('alert').textContent).toBe(text));
     expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull();
-    expect(document.activeElement).toBe(desktop().getByRole('alert'));
+    await waitFor(() => expect(document.activeElement).toBe(desktop().getByRole('alert')));
     expect(saves()).toHaveLength(1);
     expect(reads()).toHaveLength(2);
     expect(desktop().getAllByRole('alert')).toHaveLength(1);
@@ -447,7 +447,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await waitFor(() => expect(desktop().getByRole('alert').textContent).toBe(text));
     expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull();
     expect(desktop().queryByRole('button', { name: 'Set BU totals rules' })).toBeNull();
-    expect(document.activeElement).toBe(desktop().getByRole('alert'));
+    await waitFor(() => expect(document.activeElement).toBe(desktop().getByRole('alert')));
     // Opening another group clears the old outcome.
     fireEvent.click(desktop().getByRole('button', { name: 'Set payroll rules' }));
     expect(desktop().queryByRole('alert')).toBeNull();

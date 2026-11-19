@@ -378,7 +378,7 @@ describe('approve and return (AC 11, 12)', () => {
     await ready();
     await click('Return with a note');
     const message = await screen.findByText('Add a note to return it.');
-    expect(document.activeElement).toBe(note());
+    await waitFor(() => expect(document.activeElement).toBe(note()));
     expect(note().getAttribute('aria-invalid')).toBe('true');
     expect(note().getAttribute('aria-describedby')).toContain(message.id || message.closest('[id]')!.id);
     fireEvent.change(note(), { target: { value: '   ' } });
@@ -630,7 +630,7 @@ describe('phone (AC 18)', () => {
       await new Promise((r) => setTimeout(r, 30));
     });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement?.textContent).toBe('Return with a note');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Return with a note'));
   });
 
   it('the phone draws the same sections and words as desktop: the access note on W-3201, recipients and Next on W-3203', async () => {

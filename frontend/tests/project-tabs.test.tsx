@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { useMemo, useSyncExternalStore } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -262,11 +262,11 @@ describe('Registers (SCR-11)', () => {
     const tabs = within(screen.getByRole('tablist', { name: 'Register' })).getAllByRole('tab');
     tabs[0].focus();
     fireEvent.keyDown(tabs[0], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(tabs[1]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs[1]));
     fireEvent.keyDown(tabs[1], { key: 'End' });
-    expect(document.activeElement).toBe(tabs[3]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs[3]));
     fireEvent.keyDown(tabs[3], { key: 'Home' });
-    expect(document.activeElement).toBe(tabs[0]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs[0]));
   });
 
   it('search writes ?q= after the pause, requests q, and clearing removes it', async () => {
@@ -309,7 +309,7 @@ describe('Registers (SCR-11)', () => {
     expect(second.searchParams.get('cursor')).toBe('o20');
     expect(second.searchParams.get('register')).toBe('issues');
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(document.activeElement).not.toBe(document.body);
+    await waitFor(() => expect(document.activeElement).not.toBe(document.body));
     expect(nav.replaced).toEqual([]);
   });
 

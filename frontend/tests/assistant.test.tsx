@@ -656,7 +656,7 @@ describe('mentions', () => {
     await open('/assistant');
     fireEvent.click(screen.getByRole('button', { name: '@ Mention a project or record' }));
     const search = screen.getByRole('searchbox', { name: 'Search projects and records' });
-    expect(document.activeElement).toBe(search);
+    await waitFor(() => expect(document.activeElement).toBe(search));
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(bridge.gets(/\/assistant\/mentions/)).toEqual([]);
     fireEvent.change(search, { target: { value: 'harm' } });
@@ -699,7 +699,7 @@ describe('mentions', () => {
     fireEvent.keyDown(search, { key: 'Escape' });
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await waitFor(() => expect(screen.queryByRole('searchbox')).toBeNull());
-    expect(document.activeElement).toBe(opener);
+    await waitFor(() => expect(document.activeElement).toBe(opener));
   });
 });
 
@@ -784,7 +784,7 @@ describe('"Start this invoice" opens the normal Start work drawer, prefilled', (
     await openDrawer();
     fireEvent.click(within(dialog()).getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Start this invoice' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Start this invoice' })));
     expect(startsRequests()).toEqual([]);
   });
 

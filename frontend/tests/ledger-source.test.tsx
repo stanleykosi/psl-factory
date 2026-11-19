@@ -411,7 +411,7 @@ describe('record what you found (AC 10, 11)', () => {
     await submit();
     expect(posts()).toHaveLength(0);
     expect(await ws().findByText('Add what you found to continue.')).toBeTruthy();
-    expect(document.activeElement).toBe(found());
+    await waitFor(() => expect(document.activeElement).toBe(found()));
     expect(found().getAttribute('aria-invalid')).toBe('true');
     expect(describedBy(found())).toContain('Add what you found to continue.');
     expect(ws().getByText('Add proof to continue.').closest('[role="alert"]')).toBeTruthy();
@@ -575,7 +575,7 @@ describe('approve and reject (AC 9, 12)', () => {
     await click('Reject');
     expect(posts('/decision')).toHaveLength(0);
     expect(ws().getByText('Add a note to reject it.')).toBeTruthy();
-    expect(document.activeElement).toBe(note());
+    await waitFor(() => expect(document.activeElement).toBe(note()));
     expect(note().getAttribute('aria-invalid')).toBe('true');
     expect(describedBy(note())).toContain('Add a note to reject it.');
     fireEvent.change(note(), { target: { value: '   ' } });
@@ -875,7 +875,7 @@ describe('phone (AC 18)', () => {
       await new Promise((r) => setTimeout(r, 30));
     });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement?.textContent).toBe('Record observation');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Record observation'));
   });
 
   it('in the Drawer the observation sends one upload and one step', async () => {
@@ -908,7 +908,7 @@ describe('phone (AC 18)', () => {
       await new Promise((r) => setTimeout(r, 30));
     });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement?.textContent).toBe('Reject');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Reject'));
   });
 
   it('a stale reject from the Drawer keeps the stale sentence and the unsent note once the panel has gone', async () => {

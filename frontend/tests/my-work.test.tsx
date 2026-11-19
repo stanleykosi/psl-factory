@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MyWorkPage } from '@/features/my-work/MyWorkPage';
@@ -163,13 +163,13 @@ describe('queue tabs (A-MYWORK)', () => {
     tabs()[0].focus();
     expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1, -1]);
     fireEvent.keyDown(tabs()[0], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(tabs()[1]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[1]));
     fireEvent.keyDown(tabs()[1], { key: 'End' });
-    expect(document.activeElement).toBe(tabs()[3]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[3]));
     fireEvent.keyDown(tabs()[3], { key: 'Home' });
-    expect(document.activeElement).toBe(tabs()[0]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[0]));
     fireEvent.keyDown(tabs()[0], { key: 'ArrowLeft' });
-    expect(document.activeElement).toBe(tabs()[3]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[3]));
     expect(calls).toHaveLength(1);
     fireEvent.click(tabs()[3]);
     await until(() => expect(query(lastCall()).queue).toBe('unassigned'));
@@ -309,7 +309,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     expect(dialog.className).toContain('psl-pop');
     // Lines come from the response's filters.lines (A–Z in the mock); four show until "Show all 6 lines".
     const lines = () => within(dialog).getAllByRole('checkbox').map((r) => r.parentElement!.textContent);
-    expect(document.activeElement).toBe(within(dialog).getAllByRole('checkbox')[0]);
+    await waitFor(() => expect(document.activeElement).toBe(within(dialog).getAllByRole('checkbox')[0]));
     expect(lines()).toEqual(['Approve a payment exception', 'Plan a project', 'Prepare an invoice', 'Reconcile a bank statement']);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show all 6 lines' }));
     expect(lines()).toHaveLength(6);
@@ -333,7 +333,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     fireEvent.click(show);
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', line: 'invoice', state: 'action_needed' }));
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(filter);
+    await waitFor(() => expect(document.activeElement).toBe(filter));
     expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('2');
     expect(new URLSearchParams(window.location.search).get('line')).toBe('invoice');
     expect(new URLSearchParams(window.location.search).get('state')).toBe('action_needed');
@@ -363,7 +363,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: 'Plan a project' }));
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(filter);
+    await waitFor(() => expect(document.activeElement).toBe(filter));
     expect(filter.getAttribute('aria-expanded')).toBe('false');
     expect(calls.filter((c) => c.pathname === '/api/v1/work' && c.searchParams.get('limit') === '20')).toHaveLength(1);
     fireEvent.click(filter);
@@ -386,7 +386,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     expect(within(sheet).getByRole('button', { name: 'All 6 lines' })).toBeTruthy();
     fireEvent.click(document.querySelector('.cmp-layer > .psl-scrim')!);
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(filter);
+    await waitFor(() => expect(document.activeElement).toBe(filter));
   });
 });
 
@@ -408,7 +408,7 @@ describe('paging (D-PAGING r2)', () => {
     expect((more as HTMLButtonElement).disabled).toBe(false);
     await until(() => expect(rows()).toHaveLength(24));
     expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', cursor: 'o20' });
-    expect(document.activeElement).toBe(rows()[20].querySelector('a'));
+    await waitFor(() => expect(document.activeElement).toBe(rows()[20].querySelector('a')));
     expect(document.querySelector('.psl-showmore > span')!.textContent).toBe('All 24 showing');
     expect(screen.queryByRole('button', { name: /^Show .*more$/ })).toBeNull();
   });

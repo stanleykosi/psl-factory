@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { nextMilestoneText, type NextMilestone } from '@/features/projects/model';
@@ -176,7 +176,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
     tabs()[1].focus();
     fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(tabs()[2]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[2]));
     // Arrows only move focus (Tabs); Enter or Space opens the focused tab.
     fireEvent.click(tabs()[2]);
     await until(() => expect(rows()).toHaveLength(5));
@@ -185,10 +185,10 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     const sabi = [...rows()].find((r) => r.textContent?.startsWith('Sabi Market'))!;
     expect(sabi.querySelectorAll('td')[3].textContent).toBe('Unknown');
     expect(window.location.search).toBe('?status=all');
-    expect(document.activeElement).toBe(tabs()[2]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[2]));
     expect(tabs().map((t) => t.tabIndex)).toEqual([-1, -1, 0]);
     fireEvent.keyDown(tabs()[2], { key: 'Home' });
-    expect(document.activeElement).toBe(tabs()[0]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs()[0]));
     fireEvent.click(tabs()[0]);
     await until(() => expect(rows()).toHaveLength(4));
     expect(window.location.search).toBe('');
@@ -204,7 +204,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     expect(button.getAttribute('aria-expanded')).toBe('true');
     fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(button);
+    await waitFor(() => expect(document.activeElement).toBe(button));
     expect(calls).toHaveLength(1);
   });
 
@@ -324,7 +324,7 @@ describe('paging (D-PAGING r2)', () => {
     expect(titles()).toEqual(all.map((i) => i.title));
     expect(screen.getByText(`All ${all.length} showing`)).toBeTruthy();
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe(`${all.length} PROJECTS`);
-    expect(document.activeElement?.textContent).toBe(all[20].title);
+    await waitFor(() => expect(document.activeElement?.textContent).toBe(all[20].title));
   });
 
   it('Rows per page 10 sends limit=10 without a cursor and writes ?limit=10; a reload keeps it', async () => {
@@ -356,7 +356,7 @@ describe('paging (D-PAGING r2)', () => {
     fireEvent.keyDown(radios()[1], { key: 'ArrowRight' });
     await until(() => expect(rows()).toHaveLength(22));
     expect(radios()[2].getAttribute('aria-checked')).toBe('true');
-    expect(document.activeElement).toBe(radios()[2]);
+    await waitFor(() => expect(document.activeElement).toBe(radios()[2]));
     expect(radios().map((r) => r.tabIndex)).toEqual([-1, -1, 0]);
     expect(query(lastCall())).toEqual({ limit: '50' });
     fireEvent.keyDown(radios()[2], { key: 'ArrowRight' });

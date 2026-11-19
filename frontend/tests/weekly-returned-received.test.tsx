@@ -111,7 +111,7 @@ describe('returned (W-2209, W-2210)', () => {
     await open(item('W-2209'), item('W-2209.next'));
     await press('Edit your update');
     const f = within(screen.getByRole('form', { name: 'Edit your update' }));
-    expect(document.activeElement?.textContent).toBe('Edit your update');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Edit your update'));
     expect((f.getByLabelText('Status (optional)') as HTMLTextAreaElement).value).toBe('Milestone 2 complete; go-live work started');
     expect(f.getAllByRole('combobox')).toHaveLength(4);
     // the saved cites open with the words (QA-2-1)
