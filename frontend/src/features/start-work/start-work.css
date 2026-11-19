@@ -59,8 +59,8 @@
 .sw-range .psl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .sw-display { overflow-wrap: anywhere; }
 .sw-seg { display: flex; width: 100%; }
-/* four joined choices (F-49's submission method): a two by two block on the phone, as the sheet's width needs */
-@media (max-width: 719.98px) { .sw-seg--four { display: grid; grid-template-columns: 1fr 1fr; } }
+/* four joined choices (F-49's submission method): one row on the phone as well, as the SCR-23-mobile board draws them */
+.sw-seg--four > * { min-width: 0; }
 /* Proof (FE-M2A-PROOF): F-09's ProofField in the drawer; its label in the drawer's label weight, as the boards draw "Proof" */
 .sw-prooffield { min-width: 0; }
 .sw-prooffield .resp-label { font-weight: 600; }

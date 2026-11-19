@@ -344,7 +344,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
         return isNew(value) && value.new.name.trim() === '';
       });
       if (nameless) {
-        setFieldErrors({ [nameless.name]: `${nameless.label} is required.` });
+        setFieldErrors((current) => ({ ...current, [nameless.name]: `${nameless.label} is required.` }));
         return;
       }
     }
