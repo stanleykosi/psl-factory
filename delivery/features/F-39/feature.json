@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-39",
   "outcome": "Escalation: Tola checks a raised escalation, the PMO Lead decides \"Escalate to the client\" or \"Don't escalate\", and Tola drafts Message v1 for internal review, in four states (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
@@ -108,15 +108,29 @@
       "at": "2026-11-18T21:01:49Z",
       "seconds": 317.9,
       "evidence_ref": "delivery/features/F-39/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T01:52:10Z",
+      "seconds": 403.0,
+      "evidence_ref": "delivery/features/F-39/round-4/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -142,18 +156,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -767,14 +785,42 @@
         "delivery/features/F-39/round-3/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-19T01:19:58Z",
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T01:52:10Z",
+          "refs": [
+            "the stale notice and the unsent note stay on the page after a 409 whose re-read removes the decide panel (shared InlineDecide `onStale` plus a Workspace alert, the same as F-35's 971bf73a)"
+          ],
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:58:22Z",
+          "refs": [
+            "The `onStale` call (InlineDecide.tsx, stale branch before `reload()`) and `staleDecide`/`staleShown` (Workspace.tsx:236-246, 615-624) keep the stale sentence and the unsent note in a `role=\"alert\"` warning once the re-read closes T-3602. It clears on the next decide (`onDeciding`) and stays hidden while a step is pending or has a notice. The new unit tests serve the decided fixture from inside the 409 handler, so the panel really goes: desktop reject, phone Drawer reject, and escalate naming no note, each with one POST. The e2e uses two pages on the live mock's own 409 at 1440 and 390, checks the notice is still visible after 1.5 s, and checks that one decision body was sent and axe is clean. 76/76 tests pass on head. The fix is identical to F-35 971bf73a."
+          ],
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "the stale notice and the unsent note stay on the page after a 409 whose re-read removes the decide panel (shared InlineDecide `onStale` plus a Workspace alert, the same as F-35's 971bf73a)"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The `onStale` call (InlineDecide.tsx, stale branch before `reload()`) and `staleDecide`/`staleShown` (Workspace.tsx:236-246, 615-624) keep the stale sentence and the unsent note in a `role=\"alert\"` warning once the re-read closes T-3602. It clears on the next decide (`onDeciding`) and stays hidden while a step is pending or has a notice. The new unit tests serve the decided fixture from inside the 409 handler, so the panel really goes: desktop reject, phone Drawer reject, and escalate naming no note, each with one POST. The e2e uses two pages on the live mock's own 409 at 1440 and 390, checks the notice is still visible after 1.5 s, and checks that one decision body was sent and axe is clean. 76/76 tests pass on head. The fix is identical to F-35 971bf73a."
       ]
     },
     {
@@ -820,6 +866,52 @@
           "by": "qa",
           "at": "2026-11-19T01:19:58Z",
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-4-1",
+      "round": 4,
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Merging F-35 and F-39 adds one trivial conflict beyond the 4 Workspace.tsx conflicts that already existed between c706d6a7 and F-35: the `./labels` import line (Workspace.tsx:19). Git puts it in the same hunk as the identical `DECIDE_TEXT, InlineDecide` import change on the next line. Resolve it by taking F-35's import (`AGENT_BESIDE_LINES`, `STATION_LINES`) plus any name F-39 still uses. The stale-fix lines themselves merge cleanly (merge-tree result: lines 23, 261, 269, 642-647 and 722 come through once).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:58:22Z",
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-4-2",
+      "round": 4,
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "F-33 (income_schedules) gets the new notice but has no two-reviewer test (the builder's follow-up). Neither does F-16's separate decide page (`useDecision` views), which this change does not touch. Add an income-schedule lost-race test when F-33 is next opened.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:58:22Z",
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a"
         }
       ]
     }
@@ -1015,7 +1107,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
     "task_branch": "fe-emergency-escalation-escalate-or-not",
-    "head_sha": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+    "head_sha": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-39",
     "pr_url": null,
     "pr_number": null,
@@ -1183,6 +1275,22 @@
       "round": 4,
       "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T01:52:10Z",
+      "round": 4,
+      "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T01:58:22Z",
+      "round": 4,
+      "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "reason": null
     }
   ],
   "routing": {
@@ -1199,9 +1307,9 @@
   },
   "gate": {
     "round": 4,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "45ae7b660519ea32d5a7d5f08eff2817230ec33a"
   },
   "blocked": null
 }
