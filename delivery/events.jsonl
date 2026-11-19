@@ -3588,3 +3588,4 @@
 {"at":"2026-11-19T22:21:48Z","feature":"F-38","round":2,"kind":"finding","action":"fix","finding":"UI-1-10","by":"builder"}
 {"at":"2026-11-19T22:21:48Z","feature":"F-38","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":407.0,"commit":"273d81b5b7cb"}
 {"at":"2026-11-19T22:27:58Z","feature":"F-49","round":1,"kind":"gate","verdict":"PASS","attempt":2,"exit_code":0,"seconds":368.8,"commit":"9b8df3bbb9a3"}
+{"at":"2026-11-19T22:27:59Z","feature":"F-49","round":1,"kind":"transition","head":"9b8df3bbb9a3","from":"IMPLEMENTING","to":"IN_REVIEW"}
