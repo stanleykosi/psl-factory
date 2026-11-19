@@ -14,6 +14,6 @@ if (typeof window !== 'undefined') {
   const { cleanup, configure } = await import('@testing-library/react');
   // findBy*/waitFor default to 1 s, which loaded CI machines miss (work-item-board, start-work-prefill,
   // setup-rules and response failed only in full runs). 5 s keeps a real hang failing, but not a slow paint.
-  configure({ asyncUtilTimeout: 5000 });
+  configure({ asyncUtilTimeout: 10000 });
   afterEach(() => cleanup());
 }
