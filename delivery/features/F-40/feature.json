@@ -4,11 +4,19 @@
   "project_id": "psl-factory",
   "feature_id": "F-40",
   "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-WORK-STEP",
+    "E-TASK-CLAIM",
+    "E-RESPONSE",
+    "E-EVIDENCE-UPLOAD",
+    "E-WORK-ACTION",
+    "E-PROJECT"
+  ],
   "acceptance_criteria": [
     "**Scores.** One fidelity run per round covers all 8 boards in the Boards table: six live URLs and the two driver-frozen record pages. Every board has `coverageWithExceptions` = 100 and `visual` \u2265 90. A board at 70 or more but below 90 passes only with a D-83 waiver signed by the design engineer for that board in `fidelity-exceptions.json`, and only when the UI reviewer's side-by-side reading finds no fixable gap. No board passes under 70. \u2014 verify: the commands exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass and waiver; a re-run of `drive-states.mjs` reproduces the frozen pages.",
     "**Exceptions limited.** Each entry has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply (a name, date, reference, tag, gap or sentence). \u2014 verify: file content; build.md.",
@@ -156,24 +164,28 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-technical.md"
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -188,23 +200,25 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-ux.md"
       ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-ui.md"
+      ]
     },
     "security": {
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "delivery security review",
-      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-security.md"
       ]
@@ -548,7 +562,7 @@
         "delivery/features/F-40/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -565,11 +579,25 @@
           ],
           "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T14:52:13Z",
+          "refs": [
+            "The remaining part (date-time split) is covered by the same exception; the confirm tick is already excepted (Conflicts 5)."
+          ],
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "one \"Support replied\" field with name, role and date-time; Proof label and gaps hint visually hidden but still labelled; the confirm tick stays as an exception (Conflicts 5)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The remaining part (date-time split) is covered by the same exception; the confirm tick is already excepted (Conflicts 5)."
       ]
     },
     {
@@ -696,7 +724,7 @@
         "delivery/features/F-40/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -713,11 +741,25 @@
           ],
           "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T14:52:13Z",
+          "refs": [
+            "fidelity-exceptions.json has a \"Support replied\" textbox exception that states the separate date-time picker honestly (structured date-time per contract). The desktop-record and mobile-record waivers now say \"one name-and-role box plus a separate date-time picker (UI-2-1)\"; the single-field claim is gone from them."
+          ],
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+          "reason": null
         }
       ],
       "fix_by": "coordinator (records-only round, D-123)",
       "fix_refs": [
         "exception added for the separate date-time picker; record waivers corrected"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "fidelity-exceptions.json has a \"Support replied\" textbox exception that states the separate date-time picker honestly (structured date-time per contract). The desktop-record and mobile-record waivers now say \"one name-and-role box plus a separate date-time picker (UI-2-1)\"; the single-field claim is gone from them."
       ]
     },
     {
@@ -740,6 +782,121 @@
           "by": "reviewer-ui",
           "at": "2026-11-19T10:27:27Z",
           "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`operation_ids` in feature.json is empty. Set it before the PR to: E-WORK-ITEM, E-WORK-STEP, E-TASK-CLAIM, E-RESPONSE, E-EVIDENCE-UPLOAD, E-WORK-ACTION, E-PROJECT (spec.md line 3; all already in schema.d.ts, no new endpoint).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T14:58:51Z",
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`delivery/BACKEND-HANDOFF.md` on this head has no F-40 section (the last sections are F-43 and F-45). Add \"Added during F-40: handover to Support\" listing G-48-1 (`gaps: string[]` with `changes_requested`, blocking for the real write), G-48-2 (Support recipient and channel, blocking for the real send) and G-48-3 (`unknown` on plain items), pointing to delivery/backend-handoff/gaps-d-delivery.md:144-146. The gaps are recorded there and in build.md, so nothing is lost.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T14:58:51Z",
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "G-48-1: `gaps` is sent in the E-RESPONSE body but is not in the generated v7 schema (TECH-1-1). Mock only; a real backend may reject it until settled. Keep open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T14:58:51Z",
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-2-1: the History link in the shared F-22 line header is 17px tall at 1440 and 24px at 390. Shared component, not F-40. Needs a follow-up on the shared header.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T14:58:51Z",
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-5",
+      "round": 3,
+      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Dependencies: F-32 (Delivery tab) and F-34 (shares the P-0101 fixture) are in dlv-00; the `work_id` line merged cleanly. D-LINE-WORKSPACE and D-RESPONSE-VIEW stay `proposed` under the recorded contract-mock exception. `delivery.handover_review` is Not set, so the hold (W-3702) shows Unknown and no Publish.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T14:58:51Z",
+          "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
         }
       ]
     }
@@ -981,9 +1138,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-40/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -1081,6 +1240,22 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-19T14:50:32Z",
+      "round": 3,
+      "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T14:52:14Z",
+      "round": 3,
+      "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T14:58:51Z",
       "round": 3,
       "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
       "reason": null
