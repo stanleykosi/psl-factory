@@ -1,0 +1,163 @@
+{
+  "id": "W-3701",
+  "title": "Lagoon Health · patient app",
+  "line": "Handover to Support",
+  "reference": "HND-0048",
+  "state": "waiting",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Handover",
+      "status": "current_person"
+    },
+    {
+      "name": "Closure",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-08T13:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3701",
+      "kind": "record_response",
+      "title": "Record Support’s reply",
+      "required_role": "PM",
+      "you_can_act": true,
+      "revision": 1,
+      "response": {
+        "variant": "support_handover",
+        "responders": [
+          {
+            "id": "R-3701",
+            "name": "Femi Ojo",
+            "role": "Support lead"
+          }
+        ],
+        "actions": [
+          {
+            "value": "approved",
+            "label": "Received"
+          },
+          {
+            "value": "changes_requested",
+            "label": "Gaps found"
+          }
+        ],
+        "versions": [
+          {
+            "id": "V-3701",
+            "label": "Support handover v1",
+            "sent_at": "2026-04-08T14:00:00Z"
+          }
+        ],
+        "evidence_kind": "proof",
+        "intro": "Support doesn’t log in. You record their reply with proof, and the record keeps your name.",
+        "next": [
+          "gaps go back to Tola for v2 of the handover. If they received it with no gaps, the handover is acknowledged."
+        ]
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the support handover",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_handover",
+    "screen": "SCR-48",
+    "view": "handover",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HND-0048",
+          "label": "HND-0048"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 2,
+    "status": {
+      "label": "Handover · published 08 Apr",
+      "tone": "uncertain"
+    },
+    "sections": [],
+    "steps": [
+      {
+        "key": "record_reply",
+        "label": "Record Support’s reply",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-3701"
+      }
+    ],
+    "version": {
+      "label": "Support handover v1",
+      "document_id": "D-3701"
+    },
+    "title": "Support's reply"
+  }
+}

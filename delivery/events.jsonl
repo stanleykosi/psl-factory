@@ -3485,3 +3485,29 @@
 {"at":"2026-11-19T15:04:10Z","feature":"F-37","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"aa94a76c8484e6146a77ea33b870eedbdc16fd0e"}}
 {"at":"2026-11-19T15:04:11Z","feature":"F-37","round":3,"kind":"transition","head":"435ef7d9d8d5","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T15:04:11Z","feature":"F-37","round":3,"kind":"transition","head":"435ef7d9d8d5","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T15:05:01Z","feature":"F-38","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-19T15:05:03Z","feature":"F-38","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-19T15:05:50Z","feature":"F-38","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-19T15:08:17Z","feature":"F-40","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"60ff597c130f","written_at":"2026-11-19T15:08:16Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"bb47233b740f","findings":{"TECH-1-1":"low","TECH-1-2":"low","TECH-1-3":"low"},"written_at":"2026-11-19T15:31:04Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"bb47233b740f","written_at":"2026-11-19T15:31:03Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"bb47233b740f","findings":{"PMO-3-1":"medium","PMO-3-2":"medium","PMO-3-3":"medium","PMO-3-4":"low","PMO-3-5":"low"},"written_at":"2026-11-19T15:31:03Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"bb47233b740f","written_at":"2026-11-19T15:31:03Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"bb47233b740f","findings":{"UX-2-1":"low"},"written_at":"2026-11-19T15:31:03Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"bb47233b740f","written_at":"2026-11-19T15:31:03Z"}
+{"at":"2026-11-19T15:31:07Z","feature":"F-40","round":3,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"bb47233b740f","written_at":"2026-11-19T15:31:03Z"}
+{"at":"2026-11-19T15:32:17Z","feature":"F-40","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/77","git.pr_number":77,"git.ci_status":"passed"}}
+{"at":"2026-11-19T15:32:18Z","feature":"F-40","round":3,"kind":"transition","head":"bb47233b740f","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-19T15:32:19Z","feature":"F-40","round":3,"kind":"decision","decision":"HUMAN_APPROVAL","head":"bb47233b740f","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'external-messaging' always needs a human","surface 'product-decision' always needs a human","110 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-19T15:32:25Z","feature":"F-40","round":3,"kind":"transition","head":"bb47233b740f","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-19T15:32:26Z","feature":"F-40","round":3,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-19T15:32:27Z","feature":"F-40","round":3,"kind":"transition","head":"bb47233b740f","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-19T15:32:27Z","feature":"F-40","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"edc3d66d228224767259873d8f5acdf42964da90"}}
+{"at":"2026-11-19T15:32:28Z","feature":"F-40","round":3,"kind":"transition","head":"bb47233b740f","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-19T15:32:29Z","feature":"F-40","round":3,"kind":"transition","head":"bb47233b740f","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T15:46:33Z","feature":"F-48","round":2,"kind":"finding","action":"fix","finding":"TECH-1-1","by":"builder"}
+{"at":"2026-11-19T15:46:33Z","feature":"F-48","round":2,"kind":"finding","action":"fix","finding":"TECH-1-2","by":"builder"}
+{"at":"2026-11-19T15:46:33Z","feature":"F-48","round":2,"kind":"finding","action":"fix","finding":"TECH-1-3","by":"builder"}
+{"at":"2026-11-19T15:46:33Z","feature":"F-48","round":2,"kind":"finding","action":"fix","finding":"TECH-1-4","by":"builder"}
+{"at":"2026-11-19T15:46:33Z","feature":"F-48","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":439.2,"commit":"d28b8b98fe3f"}
+{"at":"2026-11-19T16:05:19Z","feature":"F-48","round":2,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":1,"seconds":350.7,"commit":"d28b8b98fe3f"}

@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
+COMMIT: bb47233b740f50132102bbe88167479f9645553f
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -29,3 +29,9 @@ Round 3 changed only fidelity-exceptions.json; the code is the same commit (1457
 
 ## Re-pinned to 60ff597c (coordinator)
 The head moved by merging dlv-00 (F-35, F-39, F-43, F-45, #75). tsc and eslint clean; e2e 152 passed; gate attempt 4 PASS. QA runs on this head.
+
+## Impact assessment (re-pin to bb47233b, coordinator, 19 Nov, D-123)
+- 60ff597c → bb47233b: the F-40 backend-handoff section, plus a dlv-00 merge (F-37). Conflicts were BACKEND-HANDOFF (both sections kept) and Workspace.tsx (F-37's formClose ref kept, plus F-40's screenHeading, gated on `delivery_handover`).
+- Checked against dlv-00: every F-40 Workspace change is gated on the handover line or the support_handover task variant.
+- Evidence (merge-checks.log): tsc and eslint clean; checks.sh exit 0; e2e 106 passed.
+- Verdicts carry forward.

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-40",
   "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -164,7 +164,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-technical.md"
       ]
@@ -173,7 +173,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "delivery integrated QA",
-      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-qa.md"
       ]
@@ -182,7 +182,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "delivery PMO acceptance",
-      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
       "evidence_refs": [
         "delivery/features/F-40/round-3/acceptance-pmo.md"
       ]
@@ -190,17 +190,19 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-40/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 19 Nov 2026 \u2014 D-128",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-ux.md"
       ]
@@ -209,7 +211,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
-      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-ui.md"
       ]
@@ -218,7 +220,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "delivery security review",
-      "snapshot_ref": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "snapshot_ref": "bb47233b740f50132102bbe88167479f9645553f",
       "evidence_refs": [
         "delivery/features/F-40/round-3/review-security.md"
       ]
@@ -1039,9 +1041,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1053,19 +1055,56 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "a9bfa180bbb86754f4d9739419127e596b94b8b2",
     "task_branch": "fe-delivery-closure-handover",
-    "head_sha": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+    "head_sha": "bb47233b740f50132102bbe88167479f9645553f",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-40",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/77",
+    "pr_number": 77,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-128",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "edc3d66d228224767259873d8f5acdf42964da90",
     "merge_policy": "not_configured",
     "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-37/decision.md",
+      "delivery/features/F-37/feature.json",
+      "delivery/features/F-37/fidelity-exceptions.json",
+      "delivery/features/F-37/round-3/acceptance-pmo.md",
+      "delivery/features/F-37/round-3/acceptance-product.md",
+      "delivery/features/F-37/round-3/build.md",
+      "delivery/features/F-37/round-3/merge-checks.log",
+      "delivery/features/F-37/round-3/review-qa.md",
+      "delivery/features/F-37/round-3/review-technical.md",
+      "delivery/features/F-37/round-3/review-ui.md",
+      "delivery/features/F-37/round-3/review-ux.md",
+      "delivery/features/F-38/feature.json",
+      "delivery/features/F-40/decision.md",
+      "delivery/features/F-40/feature.json",
+      "delivery/features/F-40/fidelity-exceptions.json",
+      "delivery/features/F-40/round-3/acceptance-pmo.md",
+      "delivery/features/F-40/round-3/acceptance-product.md",
+      "delivery/features/F-40/round-3/build.md",
+      "delivery/features/F-40/round-3/checks.md",
+      "delivery/features/F-40/round-3/merge-checks.log",
+      "delivery/features/F-40/round-3/review-qa.md",
+      "delivery/features/F-40/round-3/review-security.md",
+      "delivery/features/F-40/round-3/review-technical.md",
+      "delivery/features/F-40/round-3/review-ui.md",
+      "delivery/features/F-40/round-3/review-ux.md",
+      "delivery/features/F-48/feature.json",
+      "delivery/features/F-48/fidelity-exceptions.json",
+      "delivery/features/F-48/round-1/build.md",
+      "delivery/features/F-48/round-1/checks.md",
+      "delivery/features/F-48/round-1/review-technical.md",
+      "delivery/features/F-48/round-1/review-ui.md",
+      "delivery/features/F-48/round-1/review-ux.md",
       "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/rfp-requirements.spec.ts",
       "frontend/e2e/support-handover.spec.ts",
       "frontend/mock/fixtures/projects/P-0101.json",
       "frontend/mock/fixtures/response/W-3701.recorded.approved.json",
@@ -1077,6 +1116,17 @@
       "frontend/mock/fixtures/response/W-3706.recorded.approved.json",
       "frontend/mock/fixtures/response/W-3706.recorded.changes_requested.json",
       "frontend/mock/fixtures/response/W-3706.unknown.json",
+      "frontend/mock/fixtures/work/W-3401.json",
+      "frontend/mock/fixtures/work/W-3402.json",
+      "frontend/mock/fixtures/work/W-3402.next.accept.json",
+      "frontend/mock/fixtures/work/W-3402.next.accept_selected.json",
+      "frontend/mock/fixtures/work/W-3402.next.edit_accept.json",
+      "frontend/mock/fixtures/work/W-3402.next.write_own.json",
+      "frontend/mock/fixtures/work/W-3402.steps.json",
+      "frontend/mock/fixtures/work/W-3403.json",
+      "frontend/mock/fixtures/work/W-3403.next.json",
+      "frontend/mock/fixtures/work/W-3403.steps.json",
+      "frontend/mock/fixtures/work/W-3404.json",
       "frontend/mock/fixtures/work/W-3701.json",
       "frontend/mock/fixtures/work/W-3701.next.json",
       "frontend/mock/fixtures/work/W-3701.steps.json",
@@ -1099,16 +1149,23 @@
       "frontend/mock/fixtures/work/W-3710.json",
       "frontend/mock/fixtures/work/W-3711.json",
       "frontend/mock/fixtures/work/W-3720.json",
+      "frontend/mock/proposals/rfp-response.json",
       "frontend/mock/response.mjs",
       "frontend/mock/server.mjs",
+      "frontend/mock/workspace.mjs",
       "frontend/src/features/response/ProofField.tsx",
       "frontend/src/features/response/ResponseForm.tsx",
       "frontend/src/features/response/SupportHandoverForm.tsx",
       "frontend/src/features/response/contract.ts",
       "frontend/src/features/response/labels.ts",
       "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
       "frontend/src/features/work-item/WorkItemView.tsx",
       "frontend/src/features/workspace/ResponseDrawer.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
       "frontend/src/features/workspace/Steps.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
       "frontend/src/features/workspace/workspace.css",
@@ -1116,6 +1173,8 @@
       "frontend/tests/delivery-release-mock.test.ts",
       "frontend/tests/mock-contract.test.ts",
       "frontend/tests/response-mock.test.ts",
+      "frontend/tests/rfp-requirements-mock.test.ts",
+      "frontend/tests/rfp-requirements.test.tsx",
       "frontend/tests/support-handover-mock.test.ts",
       "frontend/tests/support-handover.test.tsx"
     ]
@@ -1143,9 +1202,16 @@
     "approver_reasons": [
       "delivery/features/F-40/decision.md"
     ],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "110 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "bb47233b740f50132102bbe88167479f9645553f",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1258,6 +1324,46 @@
       "at": "2026-11-19T14:58:51Z",
       "round": 3,
       "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-19T15:32:18Z",
+      "round": 3,
+      "head": "bb47233b740f50132102bbe88167479f9645553f",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-19T15:32:25Z",
+      "round": 3,
+      "head": "bb47233b740f50132102bbe88167479f9645553f",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-19T15:32:27Z",
+      "round": 3,
+      "head": "bb47233b740f50132102bbe88167479f9645553f",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-19T15:32:28Z",
+      "round": 3,
+      "head": "bb47233b740f50132102bbe88167479f9645553f",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-19T15:32:29Z",
+      "round": 3,
+      "head": "bb47233b740f50132102bbe88167479f9645553f",
       "reason": null
     }
   ],

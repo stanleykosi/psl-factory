@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { projects } from './projects.mjs';
+import { caseVisible, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
 import { documentRead } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
@@ -304,6 +304,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
+        // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
+        if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
       }
       if (TASK_OPERATIONS.includes(route.operationId)) {

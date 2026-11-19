@@ -11,3 +11,11 @@ Results
 - tsc --noEmit: clean. eslint src tests: clean.
 - delivery/checks.sh (under shared lock): django check, lint, typecheck, build OK. Vitest 2 failed / 3126 passed: ledger-source.test.tsx (401 sign-in link) and start-work.test.tsx (Esc focus return). Both pass when rerun alone (108/108); load flake, not merge-caused (neither file touched).
 - Playwright e2e support-handover, delivery-release, delivery-hypercare, escalation, leadership-report: 152 passed, 0 failed.
+
+== Merge prep (19 Nov) ==
+head: bb47233b (pushed, fe-delivery-closure-handover)
+backend handoff: "Added during F-40" section committed
+merge origin/dlv-00-delivery-setup: conflicts in delivery/BACKEND-HANDOFF.md (kept both sections) and frontend/src/features/workspace/Workspace.tsx (kept F-37 formClose ref and F-40 screenHeading titled condition)
+tsc -b: clean; eslint src: clean
+delivery/checks.sh (under shared lock, lock released): exit 0
+e2e support-handover, delivery-release, delivery-hypercare, rfp-requirements: 106 passed, exit 0

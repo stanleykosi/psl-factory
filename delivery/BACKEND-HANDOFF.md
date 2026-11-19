@@ -434,6 +434,18 @@ Screen: SCR-58 part 1 (investigating, observe, review, verified; `/work/W-4201..
 - **State and view names used** (please confirm): investigating `processing`/`investigating`; observe `action_needed`/`observe`; review `action_needed`/`review`; verified `verified`/`verified`; rejected `cancelled`/`rejected`; held after Unknown `waiting`/`check_held`; reviewer not set `setup_needed`/`setup_needed`; decide not confirmed `effect_uncertain`/`effect_uncertain`.
 - **Held to part 2**: the duplicate refusal and its compare table (G-58-1; two amounts only the backend may supply and flag), "Correct" with `continues` (G-58-2, G-C-6), "Open LED-0049" (G-C-3), the rejected board, and the F-47 landing repoint (`WORK_IDS.ledger_sources` to W-4201, whichever of F-45 and F-47 merges second; F-47 merged first, so this is the coordinator's follow-up).
 
+## Added during F-40: handover to Support (SCR-48, 19 Nov)
+
+Screen: SCR-48 (`/work/W-3701..W-3711`, line workspace item HND-0048), contract mock only (D-LINE-WORKSPACE and D-RESPONSE-VIEW proposed). Nothing is sent to Support and nobody at Support receives or acknowledges anything; every "published", "received" and "acknowledged" is fixture text returned after the write and re-read. Gap ids G-48-* are in [gaps-d-delivery.md](backend-handoff/gaps-d-delivery.md) (lines 135-150).
+
+- **The `support_handover` response variant**: `tasks[].response` with `variant: "support_handover"`. Fields the page reads: `responders[]` (`id`, `name`, `role`; the Support lead, who has no login), `actions[]` (`value`, `label`), `versions[]` (`id`, `label`, `sent_at`), `evidence_kind`, `intro`, `recorded` and `next[]`. The page offers only actions that carry a label.
+- **"Support replied"**: drawn as name and role (Femi Ojo, Support lead) from `responders[]`, plus a structured date-time the PM enters, sent as `responded_at` in the E-RESPONSE body. The page does not compose either from text.
+- **G-48-1 (mock only)**: the E-RESPONSE body carries a `gaps: string[]` field that is not in the v7 schema (marked PROPOSAL in `contract.ts`). The mock requires it when the action is `changes_requested` (422 `gaps`). A real backend may reject it until settled. Please settle the mapping Received = `approved`, Gaps found = `changes_requested`, and the list of gaps, each becoming an open `checklist` item with an id.
+- **G-48-2**: "Publish to Support" is a mock step with `sends: true`. No Support recipient, channel, receipt word or uncertain-send recovery exists in the integration list. After an uncertain result the page offers only reconcile, never a resend.
+- **HND-0048 `work_id`**: the Delivery tab's Handover row (`P-0101.json`) now carries `work_id: "W-3704"`, one added line. The row and the sub-nav's Handover link open the work item. Hypercare's W-3101 was already there.
+- **`delivery.handover_review` is not set**: the Setup rule has no value. W-3702 is a hold: "Review needed?" reads Unknown (never "No"), there are no controls and no Publish. No review decision, approver or recipient is built.
+- **Support never logs in**: the PM records Support's reply with the reply document as proof, and the record keeps the PM's name ("Recorded under your name"). Authority is only `tasks[].you_can_act`. Open question C (confirm the PM records it) and what closes a gap (a later "received, no gaps" reply on v2, or each gap) are still the backend's to answer.
+
 ## Added during F-37: RFP response requirements and answers (19 Nov)
 
 Screen: SCR-26 (`/work/W-3401..W-3404`), the RFP response workspace on the line workspace, contract mock only (D-LINE-WORKSPACE proposed). Gap ids G-26-* are in [gaps-b-rfp-planning.md](backend-handoff/gaps-b-rfp-planning.md); the overlay is `frontend/mock/proposals/rfp-response.json`.

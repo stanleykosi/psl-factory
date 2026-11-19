@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
+COMMIT: bb47233b740f50132102bbe88167479f9645553f
 BUILDER: coordinator (records-only round, D-123)
 LANE: full
 

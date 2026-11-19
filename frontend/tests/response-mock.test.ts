@@ -100,7 +100,10 @@ function recordBody(evidenceId: string, extra: Record<string, unknown> = {}) {
 describe('fixtures', () => {
   const validateItem = ajv.compile(byId('E-WORK-ITEM').responses['200'].content['application/json'].schema);
   it.each(files)('%s is valid v7 E-WORK-ITEM sample data', (name) => {
-    const body = JSON.parse(readFileSync(join(responseDir, name), 'utf8')) as { sample?: boolean };
+    const body = JSON.parse(readFileSync(join(responseDir, name), 'utf8')) as { sample?: boolean; workspace?: { links?: { key: string; label: string; target: { kind: string } }[] } };
+    // F-40: `workspace.links` is a proposal (F-32), not in the generated schema: each link is checked on its own, then removed
+    for (const link of body.workspace?.links ?? []) expect([link.key, link.label, ['assistant', 'work'].includes(link.target.kind)], name).toEqual([expect.any(String), expect.any(String), true]);
+    if (body.workspace) delete body.workspace.links;
     expect(validateItem(body), `${name}: ${ajv.errorsText(validateItem.errors)}`).toBe(true);
     expect(body.sample).toBe(true);
   });
