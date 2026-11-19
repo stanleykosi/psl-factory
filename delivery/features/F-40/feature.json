@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-40",
   "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -142,8 +142,327 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`gaps` is sent in the E-RESPONSE body (useResponse.ts, contract.ts) but is not in the generated v7 schema. It is marked PROPOSAL G-48-1 and mock only; a real backend may reject it until G-48-1 is settled. Keep it listed as open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The fidelity visual scores (74.2 to 87.7) and 23 exceptions and 8 D-83 waivers are builder proposals, unsigned. The design engineer must sign them. This is not a code defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Steps.tsx` now casts `task as Parameters<typeof cannotActCopy>[1]`. It is scoped to not_your_role with required_role and is acceptable, but the cast hides any type drift.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "At 390, opening HND-0048 from /projects/P-0101/delivery shows the bar \"\u2190 Queue\" (/my-work) with History. SCR-48-mobile boards draw \"\u2190 Delivery\". Spec Conflict 7 keeps the built bar, but it must still return the PM to where they came from, and it lands on the Queue (the desktop crumb Delivery is correct). Fix: make the phone Back go to the project's Delivery tab for this line, or record a spec-approved exception that Back means Queue.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 on W-3703 the attestation label measures 37px high, the checkbox 20px and the History link 24px. Spec item 17 lists other targets but the attest row is a tap target too; raise to 44px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A ceo cookie opens /work/W-3704 and shows the full handover, while the Delivery tab refuses ceo. The build notes say this is static-fixture behaviour. The backend must refuse the item itself. Recorded for the integration.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "State chip colour restyled. The boards draw \"HANDOVER \u00b7 READY TO PUBLISH\" and \"HANDOVER \u00b7 PUBLISHED 08 APR\" as an amber/yellow chip; the page draws them red (desktop and 390 side-by-sides, W-3701 and record). Use the board's chip token, or add an honest exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Handover section rows restyled. Board rows are plain label left, value right-aligned mono caps with row rules (Review needed? / NO \u00b7 BELOW THE RULE'S THRESHOLD / ATTACHED / DRAFT). The page puts each value in a grey chip inline after the label. No exception covers table/row styling; match the board or record one.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Reply form field structure. Board has one \"Support replied\" field (name, role and date-time together), with the Record reply button inside the card at desktop. The page splits it into \"Support replied\" and \"When they replied\", adds a \"One gap per line\" hint, a \"Proof\" label, and a \"I confirm this response is genuine\" checkbox, and puts the intro as a footnote. Only the intro position (Conflicts 3) and gap lines (Conflicts 4) are excepted. Either match the board or add exceptions for the split field, the hint and the confirm checkbox (the checkbox may be spec-required; say so).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone screens drop the board's screen heading. The 390 boards title the screen \"Handover acknowledged\" and \"Support's reply\" (flagged only as a 20px vs 22px heading mismatch in the fidelity report); the page shows the project name as the heading, plus a wrapping card with its own \"RECORD SUPPORT'S REPLY\" caption on mobile-record where the board has no card. No exception covers this.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The waiver text says the gap is \"the shared frame\" and \"form position\". It should also name findings 1 to 4 if they stay, so the design engineer signs what is actually different.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T09:22:41Z",
+          "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-40/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "b051cfa790dc4984060e6e236649aefb5c83e764",
+          "evidence_refs": [
+            "delivery/features/F-40/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -261,7 +580,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -287,6 +606,22 @@
       "round": 1,
       "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T09:22:42Z",
+      "round": 1,
+      "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T09:22:42Z",
+      "round": 2,
+      "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "reason": null
     }
   ],
   "routing": {
@@ -303,10 +638,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "b051cfa790dc4984060e6e236649aefb5c83e764"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
