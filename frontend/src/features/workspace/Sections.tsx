@@ -465,8 +465,9 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   );
 }
 
-/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
-export function SectionView({ section, level, controls, banner = 'warning', strip = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; banner?: 'warning' | 'success' | 'problem' }) {
+/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default
+ *  (information on the leadership report while the agent drafts, F-35). */
+export function SectionView({ section, level, controls, banner = 'warning', strip = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; banner?: 'warning' | 'success' | 'problem' | 'info' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
