@@ -285,3 +285,6 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-row { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0; }
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-row__end { order: -1; }
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-cite, .ws[data-line="fixed_assets"] .ws-rows--text .ws-ref { font-family: var(--font-sans); font-size: var(--text-body-size); color: var(--ink); text-transform: none; font-weight: 600; overflow-wrap: anywhere; }
+/* F-43: the cash forecast board draws its eight stations as equal columns that shrink to fit the main column (no sideways scroll) */
+.ws[data-line="cash_forecast"] .ws-stations .psl-track { grid-auto-columns: minmax(0, 1fr); }
+.ws[data-line="cash_forecast"] .ws-stations .psl-station { min-width: 0; }
