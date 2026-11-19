@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-40",
   "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -75,7 +75,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T04:01:47Z",
+      "seconds": 369.5,
+      "evidence_ref": "delivery/features/F-40/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -153,7 +166,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "cc43884ecce27110928a512664a2fc32c79119f5",
     "task_branch": "fe-delivery-closure-handover",
-    "head_sha": null,
+    "head_sha": "b051cfa790dc4984060e6e236649aefb5c83e764",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-40",
     "pr_url": null,
     "pr_number": null,
@@ -164,7 +177,58 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/support-handover.spec.ts",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/response/W-3701.recorded.approved.json",
+      "frontend/mock/fixtures/response/W-3701.recorded.changes_requested.json",
+      "frontend/mock/fixtures/response/W-3703.recorded.approved.json",
+      "frontend/mock/fixtures/response/W-3703.recorded.changes_requested.json",
+      "frontend/mock/fixtures/response/W-3706.delivered.json",
+      "frontend/mock/fixtures/response/W-3706.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3706.recorded.approved.json",
+      "frontend/mock/fixtures/response/W-3706.recorded.changes_requested.json",
+      "frontend/mock/fixtures/response/W-3706.unknown.json",
+      "frontend/mock/fixtures/work/W-3701.json",
+      "frontend/mock/fixtures/work/W-3701.next.json",
+      "frontend/mock/fixtures/work/W-3701.steps.json",
+      "frontend/mock/fixtures/work/W-3702.json",
+      "frontend/mock/fixtures/work/W-3703.json",
+      "frontend/mock/fixtures/work/W-3704.json",
+      "frontend/mock/fixtures/work/W-3704.next.json",
+      "frontend/mock/fixtures/work/W-3704.steps.json",
+      "frontend/mock/fixtures/work/W-3705.json",
+      "frontend/mock/fixtures/work/W-3706.json",
+      "frontend/mock/fixtures/work/W-3706.next.json",
+      "frontend/mock/fixtures/work/W-3706.steps.json",
+      "frontend/mock/fixtures/work/W-3707.json",
+      "frontend/mock/fixtures/work/W-3707.next.json",
+      "frontend/mock/fixtures/work/W-3707.steps.json",
+      "frontend/mock/fixtures/work/W-3708.json",
+      "frontend/mock/fixtures/work/W-3708.next.json",
+      "frontend/mock/fixtures/work/W-3708.steps.json",
+      "frontend/mock/fixtures/work/W-3709.json",
+      "frontend/mock/fixtures/work/W-3710.json",
+      "frontend/mock/fixtures/work/W-3711.json",
+      "frontend/mock/fixtures/work/W-3720.json",
+      "frontend/mock/response.mjs",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/SupportHandoverForm.tsx",
+      "frontend/src/features/response/contract.ts",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/workspace/ResponseDrawer.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/support-handover-mock.test.ts",
+      "frontend/tests/support-handover.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -215,6 +279,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T04:01:47Z",
+      "round": 1,
+      "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
+      "reason": null
     }
   ],
   "routing": {
@@ -232,9 +304,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "b051cfa790dc4984060e6e236649aefb5c83e764"
   },
   "blocked": null
 }

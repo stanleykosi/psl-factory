@@ -5,3 +5,7 @@ Post-merge fixes: mock-contract links guard and income-schedule-mock overlay gua
 Checks (1st run on d82570ec): exit 1, 2 failed / 2861 passed (the two guards above, fixed in eefaf6c5).
 Checks (2nd run on eefaf6c5): exit 1, 2 failed / 2861 passed of 2863; both in rfp-assign.test.tsx (422 acting_role focus), under load ~20-110. Re-run alone: 35/35 pass. Treated as load flake; full gate not re-run a third time.
 E2E (leadership-report, delivery-hypercare, rfp-assign specs): 85 passed.
+coordinator re-run on eefaf6c5e7f37793673e3d57fce297a55358fad1, load { 13.35 21.55 23.03 }
+checks exit 0
+ Test Files  120 passed (120)
+      Tests  2863 passed (2863)
