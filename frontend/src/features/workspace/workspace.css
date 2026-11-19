@@ -168,6 +168,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-table--stack:not(:has(.ws-table__steps)) tr { display: block; padding: var(--space-6px) 0; border-top: var(--rule-thin) solid var(--rule-soft); }
   .ws-table--stack td[data-label] { display: grid; grid-template-columns: 5rem minmax(0, 1fr); column-gap: var(--space-10px); white-space: normal; border: none; align-items: center; }
   .ws[data-line="rfp_response"] .ws-table--stack td[data-label] { justify-items: start; }
+  .ws[data-line="rfp_response"] .ws-cite a.ws-ref { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
   .ws-table--stack td.psl-check-cell, .ws-table--stack th.psl-check-cell { border: none; }
   .ws-table--stack td[data-label]::before { content: attr(data-label); font-size: var(--text-small-size); color: var(--ink-muted); text-transform: uppercase; }
   /* F-37: a stacked table with a select-all box keeps that one header cell on screen, so the box can be pressed */
