@@ -116,9 +116,9 @@
   {
    "role": "text",
    "name": "Unknown",
-   "category": "tool limit",
+   "category": "component",
    "conflicts": 1,
-   "reason": "Tool false-miss (D-119 precedent): every Unknown cell is on the page as the shared Unknown word in a span inside the td (Jan IN, Jan CLOSING, Feb–Apr OPENING and CLOSING; component and e2e tests); the check does not read text nested in a td. Not a missing value.",
+   "reason": "Conflicts 1, 14 (UI-1-4): the review board writes \"Unknown\" as plain body text in the table cell; the page draws the shared Unknown chip (the library's INV-UNKNOWN component, in words, never 0). The word is on the page at both widths; the tool also does not read a span inside a td, so the style difference is listed here for the design engineer to sign, not as a tool gap.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -195,86 +195,6 @@
   },
   {
    "role": "text",
-   "name": "CALCULATED",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "REVIEWED",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "DRAFTED",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "PUBLISHED",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "RECEIPTS",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "12 Nov",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "13 Nov",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "14 Nov",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "2 of 2",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "The forecast never moves cash or authorises a payment.",
-   "category": "tool limit",
-   "conflicts": 14,
-   "reason": "Tool false-miss (D-119 precedent): on the page as the backend sends it, in the shared Sections rows (figures and the limit sentence), each a span inside an li; the check does not read text nested in an li whose own text is empty (component test AC 12 and the round-1 page screenshot). Not a missing value; the dark one-line strip the board draws is a visual difference waived under D-83.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
    "name": "CALC",
    "category": "frame item",
    "conflicts": 9,
@@ -310,58 +230,60 @@
   {
    "board": "SCR-56-desktop-investigating",
    "width": 1440,
-   "visual": 84.6,
-   "reason": "D-83: measured 84.6 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell, crumbs as a list, the History link, page width; Conflicts 11); stations drawn by the shared StationTrack with a status line under each name and 15px names; the AgentCard head with no title and \"step 4 of 4\" from the steps sent (Conflicts 15).",
+   "visual": 84.4,
+   "reason": "D-83: measured 84.4 in round 2 on a production build (one run). Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell, crumbs as a list, the History link, page width; Conflicts 11); stations drawn by the shared StationTrack with a status line under each name; the AgentCard head with no title and \"step 4 of 4\" from the steps sent (Conflicts 15). The Sources tags are now drawn in their tone (UI-1-2).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-56-desktop-review",
    "width": 1440,
    "visual": 75.6,
-   "reason": "D-83: measured 75.6 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared frame (Conflicts 11); the station status lines; six table rows instead of three (Conflicts 2) with full amounts and Unknown tags (Conflicts 1); the basis drawn whole without bold and the note label (Conflicts 6); the backend's consequence lines under the buttons.",
+   "reason": "D-83: measured 75.6 in round 2 on a production build (one run). Remaining gaps: the shared frame (Conflicts 11); the station status lines; six table rows instead of three (Conflicts 2) with full amounts and the shared Unknown chip (Conflicts 1); the basis drawn whole without bold and the note label (Conflicts 6); the backend's consequence lines under the buttons.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-56-desktop-uncertain",
    "width": 1440,
-   "visual": 71.6,
-   "reason": "D-83: measured 71.6 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared frame (Conflicts 11); the station status lines; the existing ReconcilePanel with three choices in the side column instead of the one Record button, and no Cancel delivery (Conflicts 3, 4); the banner without a bold lead (Conflicts 12); the shorter Next sentence (Conflicts 3).",
+   "visual": 70.9,
+   "reason": "D-83: measured 70.9 in round 2 on a production build (one run). Remaining gaps: the shared frame (Conflicts 11); the station status lines; the existing ReconcilePanel with three choices in the side column instead of the one Record button, and no Cancel delivery (Conflicts 3, 4); the banner without a bold lead (Conflicts 12); the shorter Next sentence (Conflicts 3). The Confirmation tag is now drawn in its tone (UI-1-2).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-56-desktop-verified",
    "width": 1440,
-   "visual": 75.8,
-   "reason": "D-83: measured 75.8 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared frame (Conflicts 11); the station status lines; the figures drawn as the shared Sections rows instead of the dark one-line strip, and the limit sentence in its own panel (Conflicts 14); no Record actuals (Conflicts 5).",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 55.6,
+   "reason": "D-83: measured 55.6 in round 2 on a production build (one run). Remaining gaps: round 2 draws the board's dark six-cell strip and the caption (UI-1-1), but the strip now sits about 40px lower than the board's because the shared StationTrack draws a status line under each station name (frame, Conflicts 11), so a dark block lands on light board pixels and the score fell from 75.8 (when the figures were a white list). Other gaps: the shared frame (Conflicts 11); no Record actuals (Conflicts 5). Below the 70 floor: the gap is the frame's offset of a now-matching strip; asks a one-board floor exception (as D-112 for SCR-30-mobile-verified).",
+   "approved_by": "builder proposal, pending design engineer",
+   "floor_exception": true
   },
   {
    "board": "SCR-56-mobile-investigating",
    "width": 390,
-   "visual": 83.8,
-   "reason": "D-83: measured 83.8 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared phone frame and bar (Conflicts 11); the same sections and words as desktop in one column (Conflicts 10); the AgentCard (Conflicts 15).",
+   "visual": 83.1,
+   "reason": "D-83: measured 83.1 in round 2 on a production build (one run). Remaining gaps: the shared phone frame and bar (Conflicts 11); the same sections and words as desktop in one column (Conflicts 10); the AgentCard (Conflicts 15).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-56-mobile-review",
    "width": 390,
    "visual": 78.4,
-   "reason": "D-83: measured 78.4 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared phone frame (Conflicts 11); the full-amount table scrolling in its own region, six rows (Conflicts 1, 2); the desktop basis, note and step labels in one column (Conflicts 9, 10).",
+   "reason": "D-83: measured 78.4 in round 2 on a production build (one run). Remaining gaps: the shared phone frame (Conflicts 11); the full-amount table scrolling in its own region, six rows (Conflicts 1, 2); the desktop basis, note and step labels in one column (Conflicts 9, 10).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-56-mobile-uncertain",
    "width": 390,
-   "visual": 71.3,
-   "reason": "D-83: measured 71.3 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared phone frame (Conflicts 11); the banner, Delivery facts and Next the phone board drops, shown as desktop (Conflicts 10); the existing ReconcilePanel phone layout instead of one button (Conflicts 4).",
+   "visual": 74.5,
+   "reason": "D-83: measured 74.5 in round 2 on a production build (one run). Remaining gaps: the shared phone frame and the full item title on two lines (Conflicts 9, 11); the page now runs in the board's order (stations, banner, Delivery, Next, then the choices above the pinned button; UI-1-3), with the desktop Delivery facts and Next the board drops (Conflicts 10) and the existing ReconcilePanel's three choices instead of the one Record button (Conflicts 4).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-56-mobile-verified",
    "width": 390,
-   "visual": 72.6,
-   "reason": "D-83: measured 72.6 in round 1 on a production build (second run, after the round-1 layout fix). Remaining gaps: the shared phone frame (Conflicts 11); the desktop figure labels as Sections rows and the limit sentence and Next the phone board drops (Conflicts 9, 10, 14).",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 51.9,
+   "reason": "D-83: measured 51.9 in round 2 on a production build (one run). Remaining gaps: round 2 draws the board's dark 3x2 strip and the caption (UI-1-1), but the full item title on two lines, the status tag and History (Conflicts 9, 11) push the strip about 70px below the board's, so the dark block lands on light board pixels and the score fell from 72.6; the desktop labels and \"2 of 2\" (Conflicts 9), the caption and Next the board drops (Conflicts 10). Below the 70 floor: the gap is the frame's offset of a now-matching strip; asks a one-board floor exception (as D-112 for SCR-30-mobile-verified).",
+   "approved_by": "builder proposal, pending design engineer",
+   "floor_exception": true
   }
  ]
 }
