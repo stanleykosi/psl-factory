@@ -138,6 +138,10 @@ class ClientUATTests(ClientUATFixture,TestCase):
         with self.assertRaises(ValidationError):self.review(response,inspection)
         self.rule();review=self.review(response,inspection)
         self.assertEqual(review.result['decision'],'rejected')
+        self.client.force_login(self.actor)
+        page=self.client.get(reverse('client_uat',args=[self.case.pk,self.d.pk]))
+        self.assertContains(page,'The client has not approved this version')
+        self.assertNotContains(page,'Use reviewed response in delivery checks')
         with self.assertRaises(ValidationError):self.export(response,review)
         self.assertFalse(ClientUATGateBinding.objects.exists())
 
@@ -340,6 +344,12 @@ class ClientUATTests(ClientUATFixture,TestCase):
         for action in ['case.read','delivery.read','engagement.read','client_uat.export','pmo.gate_record','pmo.gate_verify']:
             Grant.objects.create(case=self.case,user=replacement,action=action)
         Grant.objects.filter(case=self.case,user=self.actor,action='client_uat.export').update(active=False)
+        self.client.force_login(replacement)
+        refused=self.client.post(reverse('client_uat',args=[self.case.pk,self.d.pk]),{'action':'export',
+            'revision':rev(self.case),'operation_key':str(uuid4()),'response':response.pk,'review':review.pk,'previous_binding':old.pk})
+        self.assertContains(refused,'Review the earlier delivery handoff and give a reason for replacing it')
+        self.assertNotContains(refused,'__all__')
+        self.assertContains(refused,'The earlier delivery handoff needs a reviewed replacement')
         with self.assertRaises(ValidationError):domain.export_gate(replacement,self.case.pk,response.pk,review.pk,rev(self.case))
         newer=domain.export_gate(replacement,self.case.pk,response.pk,review.pk,rev(self.case),previous_binding_id=old.pk,correction_reason='SAMPLE new current recorder reviewed the same source')
         self.assertNotEqual(newer.pk,old.pk);domain.gate_current(self.candidate,newer.verification)

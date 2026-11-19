@@ -420,7 +420,7 @@ def export_gate(actor,case_id,response_id,review_id,expected,*,previous_binding_
             full_gate_current(d.candidate,'uat_client',old.verification)
         except (PermissionDenied,ValidationError):
             if old.pk!=previous_binding_id or not isinstance(correction_reason,str) or not 1<=len(correction_reason.strip())<=2000:
-                raise ValidationError('Review the previous internal reference and record a reason before rebinding it')
+                raise ValidationError('Review the earlier delivery handoff and give a reason for replacing it')
         else:return old
     from .approvals import candidate_requests
     requests=candidate_requests(d.candidate,'uat_client')

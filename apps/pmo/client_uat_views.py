@@ -157,9 +157,13 @@ def desk(request,case_id,dossier_id):
         try:domain.current_response(request.user,response)
         except (PermissionDenied,ValidationError):
             visible_response=None;status='The recorded response needs a fresh source check';current=False;can_review=False
-    target_contact=None
+    target_contact=None;binding_current=False
     if target:
         try:target_contact=domain.current_target(request.user,target)[1].name
+        except (PermissionDenied,ValidationError):pass
+    if binding:
+        from .approvals import gate_current
+        try:gate_current(dossier.candidate,'uat_client',binding.verification);binding_current=True
         except (PermissionDenied,ValidationError):pass
     result=render(request,'pmo/client_uat.html',{'case':case,'dossier':dossier,'target':target,'response':visible_response,'return_work':return_work,
         'response_label':contract.OUTCOMES.get(visible_response.payload['outcome']) if visible_response else None,
@@ -167,6 +171,7 @@ def desk(request,case_id,dossier_id):
         'can_retract':bool(response and response.actor_id==request.user.pk and allowed(request.user,case,'client_uat.record')),
         'history':dossier.sources.filter(kind__in=contract.KINDS).defer('payload').select_related('actor').order_by('-pk')[:25],
         'target_contact':target_contact,
+        'binding_current':binding_current,'needs_rework':bool(current and response.payload['outcome'] not in ['approved','approved_with_workaround']),
         'target_form':target_form,'response_form':response_form,'decision_form':decision_form,'follow_form':follow_form,
         'can_record':allowed(request.user,case,'client_uat.record'),'can_upload':allowed(request.user,case,'evidence.add'),
         'can_rules':allowed(request.user,case,'policy.read') and allowed(request.user,case,'policy.configure'),
