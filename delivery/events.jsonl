@@ -3100,3 +3100,6 @@
 {"at":"2026-11-19T01:19:58Z","feature":"F-39","round":3,"kind":"finding","action":"add","finding":"QA-3-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-19T01:19:58Z","feature":"F-39","round":3,"kind":"transition","head":"c706d6a7df4c","from":"INTEGRATED_QA","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-19T01:19:59Z","feature":"F-39","round":4,"kind":"transition","head":"c706d6a7df4c","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-19T01:29:57Z","feature":"F-35","round":3,"kind":"finding","action":"fix","finding":"QA-2-1","by":"builder"}
+{"at":"2026-11-19T01:29:57Z","feature":"F-35","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":476.9,"commit":"971bf73adfb9"}
+{"at":"2026-11-19T01:29:58Z","feature":"F-35","round":3,"kind":"transition","head":"971bf73adfb9","from":"IMPLEMENTING","to":"IN_REVIEW"}
