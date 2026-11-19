@@ -11,6 +11,7 @@ import { poseFor } from '@/features/assistant/SidePanel';
 import { ThreadPage } from '@/features/assistant/ThreadPage';
 import { AppShell } from '@/shell/AppShell';
 
+import fixture2404 from '../mock/fixtures/assistant/CV-2404.json';
 import { json, startBridge } from './assistant-bridge';
 import { violations } from './components/a11y';
 
@@ -467,9 +468,41 @@ describe('thread (SCR-05-desktop-thread)', () => {
     expect(screen.queryByAltText('Zainab, can’t do this')).toBeNull();
     expect(screen.getByText('PMO · no payroll access')).toBeTruthy();
     // text and reason are separate lines; no new control
-    expect(screen.getByText(/I can’t share an individual’s pay/)).not.toBe(screen.getByText('Individual pay is restricted to HR roles.'));
+    const reason = screen.getByText('Individual pay is restricted to HR roles.');
+    expect(reason.closest('.cmp-chat__cannot')).toBe(reason);
+    expect(screen.getByText(/I can’t share an individual’s pay/).closest('.cmp-chat__cannot')).toBeNull();
     expect(screen.queryByRole('button', { name: /start this|edit draft|staff-cost|ask hr/i })).toBeNull();
     expect(bridge.seen.filter((s) => s.method !== 'GET')).toEqual([]);
+  });
+
+  it('CV-2404: the restricted record label is nowhere in the page, at 1440 and 390', async () => {
+    await open('/assistant/CV-2404');
+    await thread();
+    expect(document.body.textContent).not.toContain('ACCESS · payroll');
+    expect(document.body.textContent).toContain('Restricted');
+    cleanup();
+    phone();
+    await open('/assistant/CV-2404');
+    await thread();
+    expect(document.body.textContent).not.toContain('ACCESS · payroll');
+    expect(document.body.textContent).toContain('Restricted');
+  });
+
+  it('cannot_reason is text: markup and markdown render literally and make no element', async () => {
+    const reason = '<img src=x onerror=alert(1)> and **bold**';
+    const { container } = await open('/assistant/CV-2404', 'pm', (made) =>
+      made.override((request, url) => {
+        if (url.pathname !== '/api/v1/assistant/conversations/CV-2404') return undefined;
+        const base = JSON.parse(JSON.stringify(fixture2404));
+        base.messages[1].cannot_reason = reason;
+        return json(200, base);
+      }),
+    );
+    await thread();
+    const line = screen.getByText(reason);
+    expect(line.closest('.cmp-chat__cannot')).toBe(line);
+    expect(container.querySelector('.as__thread img[src="x"]')).toBeNull();
+    expect(container.querySelector('.cmp-chat__cannot b, .cmp-chat__cannot img')).toBeNull();
   });
 
   it('on a phone only the cannot_answer thread has the inline pose card', async () => {
@@ -519,6 +552,21 @@ describe('wrong user, unknown id, signed out', () => {
   it('CV-2499 is the reserved no-access id', async () => {
     await open('/assistant/CV-2499');
     expect(await screen.findByText('We could not find that conversation.')).toBeTruthy();
+  });
+
+  it('finance_lead opening CV-2404 sees nothing of the refusal', async () => {
+    const { container } = await open('/assistant/CV-2404', 'finance_lead');
+    expect(await screen.findByText('We could not find that conversation.')).toBeTruthy();
+    expect(container.textContent).not.toContain('A staff member');
+    expect(container.textContent).not.toContain('Individual pay is restricted');
+    expect(container.textContent).not.toContain('Zainab');
+    expect(screen.queryByAltText(/can’t do this/)).toBeNull();
+  });
+
+  it('anyone opening an unknown id next to CV-2404 sees nothing of it', async () => {
+    const { container } = await open('/assistant/CV-2498');
+    expect(await screen.findByText('We could not find that conversation.')).toBeTruthy();
+    expect(container.textContent).not.toContain('Individual pay');
   });
 
   it('401 on the read shows the signed-out callout with next = this URL', async () => {
