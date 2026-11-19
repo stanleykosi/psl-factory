@@ -3485,3 +3485,6 @@
 {"at":"2026-11-19T15:04:10Z","feature":"F-37","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"aa94a76c8484e6146a77ea33b870eedbdc16fd0e"}}
 {"at":"2026-11-19T15:04:11Z","feature":"F-37","round":3,"kind":"transition","head":"435ef7d9d8d5","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T15:04:11Z","feature":"F-37","round":3,"kind":"transition","head":"435ef7d9d8d5","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T15:05:01Z","feature":"F-38","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-19T15:05:03Z","feature":"F-38","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-19T15:05:50Z","feature":"F-38","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}

@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-38",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "RFP submission: the PM sends Tola's submission pack for review, the document reviewer decides on that exact pack, and the Submission tab shows \"Submitted\" and the receipt only as the backend returns them (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-RFP-SUBMIT"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Coverage and visual.** Each of the 8 boards (table under Boards) is checked at its width on a production build.",
+    "**Exceptions limited.**",
+    "**Draft from data.** `/work/W-3501` at 1440 shows:",
+    "**Submission tab link is additive.**",
+    "**The page computes nothing.**",
+    "**Unknown is never 0.** On W-3509, the deadline check reads \"Unknown\" and the forms part with no detail shows no \"0\", blank cell, \"-\" or \"\u2014\" in its place. No page in this feature contains \"\u20a6\" or an amount.",
+    "**Agent work is not a decision or an outcome.** Tola's card and its steps render in the agent style. No agent text appears as a check result, a decision or a \"Submitted\" state. The page offers no control that lets Tola submit.",
+    "**Controls only from `you_can_act` and the steps sent.**",
+    "**Send for review.** On W-3501, one press of \"Send for review\" sends exactly one POST `/api/v1/work/W-3501/steps` with CSRF, `expected_revision` = `workspace.revision`, `step: \"send_for_review\"`, `inputs: {}` and a UUID `idempotency_key`; a double press still sends one.",
+    "**Edit cover letter.** On W-3501, \"Edit cover letter\" opens the step form (the `Drawer` at 390) with the current letter text already in the field.",
+    "**Approve sends one decision on the exact version.** On W-3502:",
+    "**Return and Reject need a note.**",
+    "**The pack changed (409).** On W-3506, the first \"Approve and submit\" answers 409. The page re-reads, shows \"Submission pack v2\" with its new detail, keeps no stale \"approved\" text, and sends no second decision. Only a new press on the v2 task sends one, with `expected_revision: 2`.",
+    "**Uncertain paths, each with its own fixture, never a success before the re-read.**",
+    "**Receipts only as returned.**",
+    "**Record the outcome (F-18).** \"Record the outcome\" appears only on items that return `rfp_outcome` (W-3503, W-3504, W-3505.delivered). It links to `/work/W-3503/outcome`, where the F-18 outcome form opens showing \"Submission pack v1\" and the returned delivery. It is absent on W-3501, W-3502, W-3505.approve and W-3505.not_delivered.",
+    "**Open the full pack.** On W-3502, \"Open the full pack (PDF, 6.1 MB)\" sends exactly one GET `/api/v1/documents/D-3501/versions/1` and shows the title, the version and \"Test template\". A 404 shows \"You can't open this document.\" with no title.",
+    "**Access: 401, 403 and 404.**",
+    "**Nothing on load or on a timer.** Loading any W-35xx page sends only GETs. Advancing fake timers 60 s sends no POST. Every e2e request goes to port 4952.",
+    "**Phone.** At 390, each state is one column with the same sections, words and values as desktop.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in any CSS file, and no local copy of a component `@/components` exports (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`, `Segmented`). New UI imports from `@/components`.",
+    "**Mock matches the contract.** `tests/rfp-submission-mock.test.ts` checks:",
+    "**Contract not extended.**",
+    "**Existing tests green.** `delivery/checks.sh` passes, and every test listed under Context passes with no assertion removed or loosened. This includes F-18's `tests/rfp*.test.*` and `e2e/rfp.spec.ts`, F-33's inline decide tests (unchanged with no `decision.recipient`) and F-28's receipt tests. The F-18, F-28 and F-33 fidelity scores do not drop.",
+    "**No overclaim, and the `build.md` evidence.**"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. Approving this pack is the step that releases a priced commercial proposal to a client by email or portal. The release cannot be undone, and its main failures are a double or uncertain send and sending a pack other than the approved version (INV-RESEND, G-40-1). SURFACES: - `security`: CSRF, claim, and controls only from the response. - `external-messaging`: the submission. - `contract-change`: D-LINE-WORKSPACE `proposed` plus the G-40/G-26 proposals. - `product-decision`: G-40-3/5/6 and D-RETURN, settled at product acceptance. `payments` is excluded because no money moves and no amount is shown. Product acceptance is required because this is a new client-facing flow with new copy."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-38/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +87,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +101,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-38/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +152,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-RFP-SUBMIT",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "adcb61fa5781b4f3929dcb0298328bc6c6b52a48",
+    "task_branch": "fe-rfp-submit-send-response",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-38",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +199,41 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T15:05:03Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T15:05:50Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-38/readiness.md",
+      "delivery/features/F-38/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
