@@ -15,8 +15,7 @@ from apps.core.management.commands.seed_demo import ACTIONS
 def setup_case(kind='project', synthetic=True, username='human',case_id=None):
     actor = get_user_model().objects.create_user(username=username, password='test-only-password')
     case = Case.objects.create(**({'id':case_id} if case_id else {}),tenant='test-tenant',title='Test engagement',kind=kind,synthetic=synthetic)
-    for action in ACTIONS:
-        Grant.objects.create(user=actor,case=case,action=action)
+    Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in ACTIONS])
     return actor,case
 
 

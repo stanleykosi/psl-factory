@@ -10,13 +10,12 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.core.models import Case
-from apps.documents import controlled, delivery as publication_worker
-from apps.documents.models import PublicationReceipt
+from apps.core.services import add_evidence
 from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
-from apps.workflows import factory_change, factory_progress
+from apps.workflows import factory_accounting_intake, factory_change, factory_progress
 from apps.workflows.models import FactoryProgress, FactoryWork
 from tests import test_commercial_changes, test_delivery, test_factory_hypercare, test_project_archive_files, test_standard_changes
 from tests.helpers import rev
@@ -40,16 +39,6 @@ PREPARATION = {
 }
 
 
-def scoped_publish(entry, version):
-    if version.audience == 'client':
-        controlled.request_review(entry.actor, entry.case.pk, version.pk, rev(entry.case))
-        controlled.review_version(entry.actor, entry.case.pk, version.pk, 'approve',
-                                  'Sample setup review of the exact delivered document.', rev(entry.case))
-    publication = controlled.reserve_publication(entry.actor, entry.case.pk, version.pk, rev(entry.case))
-    publication_worker.run_publication_once(job_id=publication.job.pk)
-    return PublicationReceipt.objects.get(publication=publication)
-
-
 def pause_existing_background(actor, work):
     work.refresh_from_db()
     if FactoryProgress.objects.filter(work=work, status__in=factory_progress.ACTIVE).exists():
@@ -57,8 +46,7 @@ def pause_existing_background(actor, work):
 
 
 def prepare_stability(actor, case):
-    with (patch.object(test_delivery, 'setup_case', return_value=(actor, case)),
-          patch.object(test_delivery.DeliveryFixture, 'publish', scoped_publish)):
+    with patch.object(test_delivery, 'setup_case', return_value=(actor, case)):
         entry = test_factory_hypercare.setup()
         entry.accepted()
         entry.criteria()
@@ -67,8 +55,7 @@ def prepare_stability(actor, case):
 
 
 def prepare_archive(actor, case):
-    with (patch.object(test_delivery, 'setup_case', return_value=(actor, case)),
-          patch.object(test_delivery.DeliveryFixture, 'publish', scoped_publish)):
+    with patch.object(test_delivery, 'setup_case', return_value=(actor, case)):
         entry = test_project_archive_files.configured()
     return entry.work
 
@@ -184,6 +171,36 @@ def prepare_project(actor, key):
             'existing_work_preserved': not created}
 
 
+@transaction.atomic
+def prepare_accounting_intake(actor, *, missing_units):
+    from tests import finance_analysis_helpers
+
+    title, key = ('SAMPLE trial balance waiting for units', 'units') if missing_units else (
+        'SAMPLE trial balance held at intake', 'quarantined')
+    case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
+    reference = f'batch-intake-{key}'
+    if created:
+        Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        with patch.object(finance_analysis_helpers, 'setup_case', return_value=(actor, case)):
+            _, _, _, values, _, old_source, _, _ = finance_analysis_helpers.fixture(recipient_username=reference)
+        body = values['csv'] + '\n' if missing_units else 'unsupported,columns\n1,2'
+        source = add_evidence(actor, case.pk, 'financial_input', body, 'synthetic:design-batch-intake', rev(case))
+        context = {'entity': old_source.entity, 'period': old_source.batch.rows[0]['period'],
+                   'currency': old_source.batch.rows[0]['currency'], 'accounting_basis': old_source.accounting_basis,
+                   'extracted_at': old_source.extracted_at, 'completeness': old_source.completeness,
+                   'control_total': old_source.control_total, 'source_evidence_id': old_source.evidence_id}
+        result = factory_accounting_intake.submit(actor, case.pk, reference, source.pk, context, title, rev(case))
+        expected_status = 'source_units_needed' if missing_units else 'quarantined'
+        if result['status'] != expected_status:
+            raise RuntimeError('Sample trial balance did not reach its intended intake state.')
+    else:
+        receipt = case.audit.get(actor=actor, action=factory_accounting_intake.RECEIPT, data__key=reference)
+        result = factory_accounting_intake.latest(receipt)
+    return {'case': str(case.pk), 'intake_receipt': result['receipt'],
+            'path': f"{reverse('factory_create')}?definition=finance-accounts/v1&case={case.pk}",
+            'existing_work_preserved': not created}
+
+
 def run():
     if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'),
             os.getenv('PSL_COMPOSED_WALKTHROUGH')) != ('design-acceptance', PREVIEW_PROJECT, '1'):
@@ -193,6 +210,8 @@ def run():
 
     sessions = {key: lambda key=key: prepare_project(actor, key) for key in PREPARATION}
     sessions['rework'] = prepare_rework
+    sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
+    sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)
     failed = False
     for key, prepare in sessions.items():
         try:

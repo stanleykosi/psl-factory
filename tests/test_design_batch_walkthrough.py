@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, EmergencyAuthorization, EscalationDecision
 from apps.workflows.models import FactoryProgress, FactoryWork
-from tests.railway_batch_walkthrough_seed import PREPARATION, prepare_project
+from tests.railway_batch_walkthrough_seed import PREPARATION, prepare_accounting_intake, prepare_project
 
 
 class DesignBatchWalkthroughTests(TestCase):
@@ -26,3 +26,16 @@ class DesignBatchWalkthroughTests(TestCase):
         self.assertFalse(ChangeAuthorization.objects.exists())
         self.assertFalse(EmergencyAuthorization.objects.exists())
         self.assertFalse(EscalationDecision.objects.exists())
+
+    def test_accounting_intake_samples_remain_held_until_browser_review(self):
+        actor = get_user_model().objects.create_user('synthetic-batch-intake-reviewer')
+        self.client.force_login(actor)
+        for missing in (True, False):
+            with self.subTest(missing_units=missing):
+                prepared = prepare_accounting_intake(actor, missing_units=missing)
+                replay = prepare_accounting_intake(actor, missing_units=missing)
+                self.assertEqual(prepared['intake_receipt'], replay['intake_receipt'])
+                self.assertTrue(replay['existing_work_preserved'])
+                label = 'Confirm file units' if missing else 'Quarantined'
+                self.assertContains(self.client.get(prepared['path']), label)
+        self.assertFalse(FactoryWork.objects.exists())

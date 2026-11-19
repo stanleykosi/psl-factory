@@ -4,13 +4,15 @@ Append-only Audit receipts are serialized by the native case lock. Submission
 identity is distinct from content identity: a repeat submission gets a receipt,
 not a second import. These are local intake receipts, not QuickBooks receipts.
 """
+import json
 import re
 from datetime import datetime
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
+from apps.core.evidence_access import restricted
 from apps.core.models import Audit
-from apps.core.services import lock_case, event, bump
+from apps.core.services import add_evidence, lock_case, event, bump
 from apps.identity.services import require
 from apps.pmo.services import subject
 from apps.policy.services import require_operation, reference_values, PolicyHold
@@ -21,6 +23,8 @@ from . import factory_accounting as accounting
 
 RECEIPT = 'factory.accounting_intake_received'
 RESULT = 'factory.accounting_intake_result'
+UNITS_CONFIRMED = 'factory.accounting_intake_units_confirmed'
+UNIT_CHOICES = [('major_currency', 'Currency units as shown'), ('thousands_currency', 'Thousands')]
 
 
 def authority(actor, case):
@@ -151,6 +155,58 @@ def resume(actor, case_id, receipt_id, expected):
         return record(actor, case, receipt, 'followup_needed', exc.messages, batch=batch.pk, source=source.pk, validation=validation.pk)
     case.refresh_from_db()
     return record(actor, case, receipt, 'started', [], batch=batch.pk, validation=validation.pk, source=source.pk, work=work.pk)
+
+
+def can_confirm_units(receipt, result):
+    return result['status'] == 'source_units_needed' and not receipt.data['request'].get('unit_declaration')
+
+
+@transaction.atomic
+def confirm_units(actor, case_id, receipt_id, unit, proof_id, note, expected):
+    from apps.finance.source_units import ASSERTION, SCHEMA, evidence_identity
+
+    case = lock_case(actor, case_id, 'factory.start', expected)
+    authority(actor, case)
+    receipt = Audit.objects.filter(case=case, pk=receipt_id, action=RECEIPT, actor=actor).first()
+    if receipt is None:
+        raise PermissionDenied('Confirm units on your own held submission in this workspace.')
+    if not isinstance(unit, str) or unit not in dict(UNIT_CHOICES) or not isinstance(note, str) or not note.strip() or len(note) > 2000:
+        raise ValidationError('Choose the observed units and explain where you confirmed them.')
+    proof = subject(case, proof_id, 'finance_source', metadata_only=True)
+    if restricted(proof):
+        raise ValidationError('Choose available source evidence for the units.')
+    require(proof.created_by, case, 'evidence.add')
+    current = latest(receipt)
+    if not can_confirm_units(receipt, current):
+        raise ValidationError('Choose a submission held because its original file has no declared units.')
+    prior = Audit.objects.filter(case=case, action=UNITS_CONFIRMED, data__previous=receipt.pk).first()
+    confirmation = {'unit': unit, 'proof': proof.pk, 'reason': note.strip()}
+    if prior:
+        if any(prior.data.get(key) != value for key, value in confirmation.items()):
+            raise ValidationError('This held submission already has a successor. Open the newer submission.')
+        return latest(Audit.objects.get(case=case, actor=actor, action=RECEIPT, pk=prior.data['successor']))
+
+    payload = receipt.data['request']
+    batch = FinancialImport.objects.get(case=case, pk=current['batch'], source_sha256=payload['sha256'])
+    if batch.contexts.order_by('-pk').values_list('pk', flat=True).first() != current['source']:
+        raise ValidationError('The original extraction context changed. Open the latest source before continuing.')
+    input_key, feed = f'unit-confirmation:{receipt.pk}', 'trial-balance'
+    statement = {'schema': ASSERTION, 'batch_id': batch.pk, 'source_sha256': batch.source_sha256,
+                 'input_key': input_key, 'feed': feed, 'unit': unit}
+    evidence = add_evidence(actor, case.pk, 'finance_source_unit', json.dumps(statement, sort_keys=True),
+                            evidence_identity(batch.pk, input_key, feed), case.revision)
+    case.refresh_from_db()
+    context = {key: payload[key] for key in ('entity', 'period', 'currency', 'accounting_basis',
+                                             'completeness', 'control_total', 'source_evidence_id')}
+    context.update(extracted_at=datetime.fromisoformat(payload['extracted_at']), unit_declaration={
+        'schema': SCHEMA, 'batch': {'id': batch.pk, 'sha256': batch.source_sha256}, 'input_key': input_key,
+        'declarations': [{'feed': feed, 'unit': unit,
+                          'evidence': {'id': evidence.pk, 'version': evidence.version, 'sha256': evidence.sha256}}],
+    })
+    result = submit(actor, case.pk, input_key, payload['evidence_id'], context, payload['reference'], case.revision)
+    event(actor, case, UNITS_CONFIRMED, previous=receipt.pk, successor=result['receipt'],
+          unit_evidence=evidence.pk, **confirmation)
+    return result
 
 
 def provenance(actor, work, *, execution=False):

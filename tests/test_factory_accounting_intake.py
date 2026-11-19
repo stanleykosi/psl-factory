@@ -112,6 +112,53 @@ class AccountingSuppliedIntakeTests(TestCase):
         self.assertNotEqual(first['batch'],second['batch']);self.assertNotEqual(first['work'],second['work'])
         old.refresh_from_db();self.assertEqual(old.source_sha256,Audit.objects.get(pk=first['receipt']).data['request']['sha256'])
 
+    def test_http_confirm_units_starts_successor_from_the_same_unchanged_file(self):
+        a, c, evidence, *_ = self.data
+        held, source_file, _ = self.submit(with_units=False)
+        self.assertEqual(held['status'], 'source_units_needed')
+        import_count = FinancialImport.objects.count()
+        self.client.force_login(a)
+        start = reverse('factory_create') + f'?definition=finance-accounts/v1&case={c.pk}'
+        form_url = start + f"&units={held['receipt']}"
+        self.assertContains(self.client.get(start), 'Confirm file units')
+        self.assertContains(self.client.get(form_url), 'Confirm units and resubmit')
+        payload = {'action': 'confirm_units', 'unit': 'major_currency', 'proof': evidence['finance_source'].pk,
+                   'note': 'The synthetic export header confirms amounts are in currency units.', 'revision': rev(c)}
+        response = self.client.post(form_url, payload)
+        link = Audit.objects.get(action=intake.UNITS_CONFIRMED, data__previous=held['receipt'])
+        successor = Audit.objects.get(pk=link.data['successor'], action=intake.RECEIPT)
+        current = intake.latest(successor)
+        self.assertEqual(current['status'], 'started')
+        self.assertRedirects(response, reverse('factory_detail', args=[current['work']]), fetch_redirect_response=False)
+        self.assertEqual(successor.data['request']['evidence_id'], source_file.pk)
+        self.assertEqual(successor.data['request']['sha256'], source_file.sha256)
+        self.assertEqual(current['batch'], held['batch'])
+        self.assertEqual(FinancialImport.objects.count(), import_count)
+        self.assertEqual(intake.latest(Audit.objects.get(pk=held['receipt'])), held)
+        self.assertFalse(FinanceRun.objects.exists())
+        self.assertNotContains(self.client.get(start), 'Confirm file units')
+        repeated = intake.confirm_units(a, c.pk, held['receipt'], payload['unit'], payload['proof'], payload['note'], rev(c))
+        self.assertEqual(repeated, current)
+        self.assertEqual(Audit.objects.filter(action=intake.UNITS_CONFIRMED).count(), 1)
+
+    def test_confirming_thousands_records_evidence_but_keeps_calculation_on_hold(self):
+        a, c, evidence, *_ = self.data
+        held, _, _ = self.submit(with_units=False)
+        proof = evidence['finance_source'].pk
+        grant = Grant.objects.get(case=c, user=a, action='finance.source')
+        grant.active = False
+        grant.save(update_fields=['active'])
+        with self.assertRaises(PermissionDenied):
+            intake.confirm_units(a, c.pk, held['receipt'], 'thousands_currency', proof, 'Checked synthetic footer.', rev(c))
+        self.assertFalse(Audit.objects.filter(action=intake.UNITS_CONFIRMED).exists())
+        grant.active = True
+        grant.save(update_fields=['active'])
+        result = intake.confirm_units(a, c.pk, held['receipt'], 'thousands_currency', proof, 'Checked synthetic footer.', rev(c))
+        self.assertEqual(result['status'], 'source_units_needed')
+        self.assertEqual(result['source_units']['status'], 'unsupported')
+        self.assertFalse(FactoryWork.objects.exists())
+        self.assertFalse(FinanceRun.objects.exists())
+
     def test_http_supplied_intake_to_reviewed_accounts_and_recipient_receipt(self):
         from apps.policy.operator_drafts import draft_operator_policy
         from apps.documents.models import PublicationReceipt

@@ -1,5 +1,7 @@
 # Build progress log
 
+19 November 2026. Added distinct Finance close phases using current claims and the original report job, and a same-file units correction that preserves the held intake. Added accounting phase, lost-response and unit confirmation assertions to the batched tests. Batched synthetic grant creation and prepared separate missing-unit and quarantined browser records. Hosted 200 remained in place and passed in-app original and corrected report receipt checks on desktop and phone. `SCR-53-verified` reached scoped completion.
+
 19 November 2026. Grouped the observed 201 failures for the next candidate. Added exact archive worker progress, a bid-costing read through native evidence and decisions, two-way Railway test grouping and a guarded additive walkthrough pack. Reconciled earlier invitation acceptance with the single-workspace setup state. Hosted 200 was inspected in the in-app browser. Candidate 202 remains staged awaiting the original job result and PostgreSQL verification.
 
 19 November 2026. Pushed `ff83daa9` to the build branch. The grouped 201 job discovered 487 tests and began passing commercial rework and prior commercial regressions. Added release stability and archive copy status using native work claims and receipts. The shared refresh now prompts about unsaved edits inside the page. These changes and the additive rework fixture are grouped for the next candidate.

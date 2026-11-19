@@ -17,7 +17,7 @@ from apps.core.models import Evidence, Audit
 from . import factory_accounting_intake as intake
 from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
-from .models import FactoryActivity,HumanTask
+from .models import FactoryActivity,FactoryAttempt,HumanTask
 from .factory_views import ProfileForm, QUEUES
 from .factory_progress_views import StartWithBackground, start_work
 
@@ -71,6 +71,20 @@ class SuppliedIntakeForm(forms.Form):
         self.initial.update(key='supplied:'+str(uuid4()),revision=case.revision)
 
 
+class ConfirmUnitsForm(forms.Form):
+    unit = forms.ChoiceField(label='How are amounts shown in the file?', choices=[('', 'Choose units'), *intake.UNIT_CHOICES])
+    proof = forms.ModelChoiceField(queryset=Evidence.objects.none(), label='Source evidence for the units')
+    note = forms.CharField(label='Where did you confirm the units?', max_length=2000, widget=forms.Textarea(attrs={'rows': 3}))
+    revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+
+    def __init__(self, case, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        evidence = public_evidence(case.evidence.filter(kind='finance_source').defer('body'))
+        self.fields['proof'].queryset = evidence.filter(pk__in=evidence.order_by('-version').values('pk')[:50]).order_by('-version')
+        self.fields['proof'].label_from_instance = lambda record: f'{record.source} · version {record.version}'
+        self.initial['revision'] = case.revision
+
+
 def create(request):
     cases=[]
     for case in visible_cases(request.user).order_by('title'):
@@ -88,6 +102,18 @@ def create(request):
     action=request.POST.get('action','existing') if request.method=='POST' else None
     form=StartForm(case,request.POST if action=='existing' else None)
     supplied=SuppliedIntakeForm(case,request.POST if action=='supplied' else None,prefix='supplied')
+    unit_receipt = None
+    confirm_units = None
+    intake_view = request.path + '?' + urlencode({'definition': service.DEFINITION, 'case': str(case.pk)})
+    unit_selection = request.GET.get('units')
+    if unit_selection is not None:
+        if not unit_selection.isascii() or not unit_selection.isdecimal() or len(unit_selection) > 18:
+            raise Http404
+        intake.authority(request.user, case)
+        unit_receipt = get_object_or_404(Audit, case=case, actor=request.user, action=intake.RECEIPT, pk=int(unit_selection))
+        if not intake.can_confirm_units(unit_receipt, intake.latest(unit_receipt)):
+            raise Http404
+        confirm_units = ConfirmUnitsForm(case, request.POST if action == 'confirm_units' else None)
     result=None
     if request.method=='POST':
         try:
@@ -105,22 +131,38 @@ def create(request):
                 try:receipt_id=int(request.POST.get('receipt',''));revision=int(request.POST.get('revision',''))
                 except (ValueError,TypeError):raise ValidationError('Exact receipt and current revision required')
                 result=intake.resume(request.user,case.pk,receipt_id,revision)
+            elif action == 'confirm_units':
+                if confirm_units is None:
+                    raise Http404
+                if confirm_units.is_valid():
+                    values = confirm_units.cleaned_data
+                    result = intake.confirm_units(request.user, case.pk, unit_receipt.pk, values['unit'],
+                                                  values['proof'].pk, values['note'], values['revision'])
             if result:
                 if result['status']=='started':return redirect(reverse('factory_detail',args=[result['work']]))
                 messages.warning(request,'Intake preserved: '+result['status'].replace('_',' ')+'. '+str(result['findings']))
-                return redirect(request.get_full_path())
+                return redirect(intake_view if action == 'confirm_units' else request.get_full_path())
         except ValidationError as exc:
-            (supplied if action=='supplied' else form).add_error(None,str(exc))
+            target = confirm_units if action == 'confirm_units' else supplied if action == 'supplied' else form
+            target.add_error(None, exc)
     case.refresh_from_db()
     receipts=[{'receipt':r,'result':intake.latest(r)} for r in Audit.objects.filter(case=case,actor=request.user,action=intake.RECEIPT).order_by('-pk')[:30]]
-    response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'supplied_form':supplied,'receipts':receipts,'definition':service.DEFINITION});response['Cache-Control']='no-store';return response
+    superseded = set(Audit.objects.filter(case=case, actor=request.user, action=intake.UNITS_CONFIRMED,
+                                         data__previous__in=[item['receipt'].pk for item in receipts])
+                     .values_list('data__previous', flat=True))
+    for item in receipts:
+        item['missing_units'] = intake.can_confirm_units(item['receipt'], item['result'])
+        if item['missing_units'] and item['receipt'].pk not in superseded:
+            item['confirm_url'] = f"{intake_view}&units={item['receipt'].pk}"
+    response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'supplied_form':supplied,'receipts':receipts,
+        'definition':service.DEFINITION,'unit_form':confirm_units,'unit_receipt':unit_receipt,'intake_view':intake_view});response['Cache-Control']='no-store';return response
 
 @read_observation
-def presentation(actor,work):
+def presentation(actor,work,*,include_progress=False):
     from apps.agents.factory_coordinator import decorate
-    return decorate(actor,work,_presentation(actor,work))
+    return decorate(actor,work,_presentation(actor,work,include_progress=include_progress))
 
-def _presentation(actor,work):
+def _presentation(actor,work,*,include_progress=False):
     runtime.access(actor,work.case,envelope=service.DEFINITION)
     def permitted(action):
         try:runtime.access(actor,work.case,action,service.DEFINITION);return True
@@ -128,7 +170,7 @@ def _presentation(actor,work):
     tasks=list(HumanTask.objects.filter(case=work.case,kind='factory_accounting_review',context__work=work.pk).select_related('claimed_by').order_by('pk'))
     from .factory_execution import available_actor
     execution_owner=available_actor(work)
-    value=None;observed=None;finding='';current=False;planning_ready=False;formula=None;options=[]
+    value=None;observed=None;finding='';current=False;planning_ready=False;formula=None;options=[];jobs=[]
     try:
         _,value=runtime.profile(work,recovery=True);observed,latest,missing,stale,_,jobs=service.snapshot(work,value,reader=actor);current=True
         if work.status!='verified':options,_=service.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -195,13 +237,42 @@ def _presentation(actor,work):
     if source_followup:
         next_action = ('Review the returned report and recheck the source records' if can_reassess
                        else 'Wait for a source owner to check the returned report')
+    progress = accounting_progress(work, observed, options, jobs) if include_progress and current else None
     return {'work':work,'state':status,'next_action':next_action,'owner':owner,'needs_me':bool(actionable) or can_advance or (source_followup and can_reassess),
         'department_wait':bool(actionable),'tasks':tasks,'jobs':[],'can_advance':can_advance,'can_cancel':permitted('factory.manage') and work.status not in ['verified','cancelled','followup_needed'],
         'can_reconcile':permitted('factory.execute') and permitted('document.publish') and (execution_owner and actor.pk==execution_owner.pk or permitted('factory.manage')) and service.PublicationJob.objects.filter(publication__factory_work=work).filter(service.Q(status='unknown')|service.Q(status='leased',lease_until__lte=timezone.now())).exists() and not (work.lease_until and work.lease_until>timezone.now()),
         'can_reassess':can_reassess,
         'readiness_changed':changed,'blocker':blocker,'profile_available':value is not None,'adoption':adoption,
         'coordination_needed':current and not planning_ready and execution_owner is not None,'execution_owner_needed':current and execution_owner is None,'can_configure_coordination':permitted('policy.configure'),
-        'accounting':{'state':observed,'formula':formula,'value':value},'evidence_as_of':work.updated_at}
+        'accounting':{'state':observed,'formula':formula,'value':value,'progress':progress},'evidence_as_of':work.updated_at}
+
+
+def accounting_progress(work, observed, options, jobs):
+    if work.status == 'verified':
+        return None
+    now = timezone.now()
+    unresolved = [job for job in jobs if job.status in ('pending', 'unknown', 'leased', 'held')]
+    if any(job.status == 'unknown' or job.status == 'leased' and
+           (job.lease_until is None or job.lease_until <= now) for job in unresolved):
+        return {'label': 'Delivery is uncertain. Check the original report receipts.', 'watching': False}
+    if any(job.status == 'held' for job in unresolved):
+        return {'label': 'Report delivery needs recovery.', 'watching': False}
+    if any(job.status == 'leased' for job in unresolved):
+        return {'label': 'Report delivery is in progress.', 'watching': True}
+    if unresolved:
+        return {'label': 'The report is queued for delivery.', 'watching': True}
+
+    labels = {('ACT04',): 'Investigating the accounting sources.',
+              ('ACT08',): 'Calculating the accounting figures.',
+              ('ACT09',): 'Drafting the accounting report.',
+              ('ACT13',): 'Verifying the report receipts.'}
+    label = labels.get(tuple(options))
+    if label and work.lease_until and work.lease_until > now:
+        claim = FactoryAttempt.objects.filter(activity__work=work, activity__kind='ACT03',
+            phase='started', fence=work.fence, observation__hash=observed['hash']).values('activity_id', 'number').first()
+        if claim and not FactoryAttempt.objects.filter(**claim, phase__in=('observed', 'failed')).exists():
+            return {'label': label, 'watching': True}
+    return None
 
 def detail(request,work,focus=None):
     from .screen_focus import require_action
@@ -236,7 +307,7 @@ def detail(request,work,focus=None):
             messages.success(request,'Action recorded. Inspect the current native result and receipts.');return redirect(url)
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Complete the requested fields using current records.');return redirect(url)
-    row=presentation(request.user,work)
+    row=presentation(request.user,work,include_progress=not focus)
     source_choices=FinanceSource.objects.filter(case=work.case,batch_id=work.request['batch'],entity=work.request['entity']).order_by('-pk')
     current_inputs = {}
     if row['can_reassess'] and focus != 'decision':

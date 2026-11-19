@@ -1,4 +1,4 @@
-"""Audit the design ledger and run selected workflow suites against one test database."""
+"""Audit the design ledger and run workflow suites on Railway test databases."""
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -25,7 +25,7 @@ SUITES = {
         'factory_closure_recovery', 'client_uat', 'project_archive_files',
     ),
     'finance_reporting': (
-        'factory_leadership', 'factory_accounting', 'factory_accounting_provenance',
+        'factory_leadership', 'factory_accounting', 'factory_accounting_provenance', 'factory_accounting_intake',
         'factory_ppe', 'factory_schedules', 'factory_forecast', 'factory_group_forecast',
         'factory_invoice_recovery_priority', 'factory_payroll_restart',
     ),

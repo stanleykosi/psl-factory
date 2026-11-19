@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
 from apps.identity.models import Grant
+from apps.pmo import rfp
 from apps.pmo.models import CommercialDecision
 from tests import factory_rfp_helpers, test_rfp
 from tests.helpers import rev
@@ -40,3 +42,15 @@ class FactoryRFPPricingTests(TestCase):
         self.assertEqual(CommercialDecision.objects.filter(revision=response.commercial).count(), 3)
         Grant.objects.filter(case=case, user=actor, action='rfp.read').update(active=False)
         self.assertIn(self.client.get(url).status_code, (403, 404))
+
+    def test_original_security_contributor_revocation_holds_estimate(self):
+        actor, case, evidence = self.data['actor'], self.data['case'], self.data['evidence']
+        security = get_user_model().objects.create_user('sample-security-contributor')
+        grant = Grant.objects.create(case=case, user=security, action='rfp.contribute:Security')
+        rfp.contribute(security, case.pk, 'Security', evidence['security_estimate'].pk, rev(case))
+        self.client.force_login(actor)
+        url = reverse('factory_rfp_pricing', args=[self.work.pk])
+        self.assertNotContains(self.client.get(url), 'Total unknown until the Engineering and Security inputs are recorded.')
+        grant.active = False
+        grant.save(update_fields=['active'])
+        self.assertContains(self.client.get(url), 'Total unknown until the Engineering and Security inputs are recorded.')

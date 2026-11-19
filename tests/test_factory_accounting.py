@@ -82,15 +82,27 @@ class AccountingRecoveryTests(TestCase):
     def test_missing_receipt_remains_uncertain_without_a_second_delivery(self):
         from adapters.publications import InternalPublicationAdapter
         from apps.documents.models import PublicationJob,Publication
+        a,c,e,source,work,accounting,task=self.output_wait()
+        client = self.client
+        client.force_login(a)
+        url = reverse('factory_detail', args=[work.pk])
+        active_pages = []
+
         class LostBeforeCommit(InternalPublicationAdapter):
             deliveries=0
             def deliver(self,job_id,fence):
-                self.deliveries+=1;raise TimeoutError('Synthetic connection lost before any inbox commit')
-        a,c,e,source,work,accounting,task=self.output_wait()
+                active_pages.append(client.get(url))
+                self.deliveries+=1
+                raise TimeoutError('Synthetic connection lost before any inbox commit')
+
         task=accounting.claim(a,task.pk,task.revision)
         accounting.decide(a,task.pk,task.revision,'approve',e['finance_review'].pk,'Synthetic exact output approved')
         adapter=LostBeforeCommit();factory.run_until_wait(work.pk,adapter=adapter)
         work.refresh_from_db();self.assertEqual(work.status,'waiting_effect',work.finding);self.assertEqual(adapter.deliveries,1)
+        self.assertContains(active_pages[0], 'Report delivery is in progress.')
+        uncertain = self.client.get(url)
+        self.assertContains(uncertain, 'Delivery is uncertain. Check the original report receipts.')
+        self.assertNotContains(uncertain, 'Report delivery is in progress.')
         job=PublicationJob.objects.get(publication__factory_work=work);self.assertEqual(job.status,'unknown')
         spent=work.budget_used;accounting.reconcile(a,work.pk,work.revision)
         job.refresh_from_db();work.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(work.status,'waiting_effect')
@@ -105,12 +117,28 @@ class FactoryAccountingTests(TestCase):
         definition('finance-accounts/v1')
         from tests.factory_accounting_helpers import configured
         from apps.workflows import factory_accounting as accounting
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
         f=configured(a,c,e,source,template,METRICS)
-        work=f['work'];factory.run_until_wait(work.pk)
-        task=HumanTask.objects.get(case=c,kind='factory_accounting_review',status='open')
-        self.assertEqual(task.context['purpose'],'output')
+        work=f['work']
         client=Client();client.force_login(a)
         url=reverse('factory_detail',args=[work.pk])+'?queue=decisions&q=Accounts'
+        observed_phases = {}
+
+        class InspectNativeClaim(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                selection = super().choose(context)
+                activity = selection['activity']
+                if activity in ('ACT04', 'ACT08', 'ACT09') and activity not in observed_phases:
+                    observed_phases[activity] = client.get(url)
+                return selection
+
+        self.assertNotContains(client.get(url), 'Investigating the accounting sources.')
+        factory.run_until_wait(work.pk, provider=InspectNativeClaim())
+        self.assertContains(observed_phases['ACT04'], 'Investigating the accounting sources.')
+        self.assertContains(observed_phases['ACT08'], 'Calculating the accounting figures.')
+        self.assertContains(observed_phases['ACT09'], 'Drafting the accounting report.')
+        task=HumanTask.objects.get(case=c,kind='factory_accounting_review',status='open')
+        self.assertEqual(task.context['purpose'],'output')
         response=client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Review the prepared accounting report')
         task=accounting.claim(a,task.pk,task.revision)
         response=client.get(url);self.assertContains(response,'Approve exact Finance subject')
