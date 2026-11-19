@@ -212,3 +212,6 @@ Answered "Sign-off list 2" in delivery/NIGHT-LOG-2026-11-18.md. F-34 hypercare p
 
 ## D-120 · F-36 waiver, exceptions and product acceptance signed (18 Nov 2026, design engineer: "i have signed off f36. go ahead")
 F-36 RFP intake, assign the accountable PM (Sign-off list 3): the SCR-24 phone waiver (75.6), the 18 exceptions, product acceptance (the panel over My work's Unassigned list; the PM only from the backend's candidates; the mock-only `pmo_lead` persona). QA-2-2 (shared ValidationSummary) left as a follow-up. Merge into dlv-00 approved.
+
+## D-121 · F-35 waivers, exceptions and product acceptance signed (19 Nov 2026, design engineer: "go on with f35 sign off")
+F-35 leadership report (Sign-off list 3): the 8 visual waivers (71.9–86.6) and 23 exceptions, and product acceptance on the contract mock. Read as signing everything as presented. UX-2-3: the partial-delivery banner stays green as the board draws it. The stale-decision notice is accepted as built; its polish (UX-3-1..3: no next-step hint, gone on reload, focus not moved; TECH-3-1: not tied to the revision) is left as a follow-up. If the design engineer meant either differently, it's a small revertible change. Merge into dlv-00 approved.

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-19T01:37:43.149Z",
+  "generatedAt": "2026-11-19T01:55:32.173Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-26-mobile-review.dc.html",
   "boardName": "SCR-26-mobile-review.dc.html",
   "pageUrl": "http://localhost:4994/frozen/SCR-26-mobile-review-390.html",
@@ -33,7 +33,7 @@
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 2997,
+    "pageHeight": 3001,
     "cell": 12,
     "contentCells": 2293,
     "mismatchedCells": 644
@@ -176,7 +176,7 @@
         },
         "pageBox": {
           "x": 32,
-          "y": 2795,
+          "y": 2521,
           "w": 326,
           "h": 50
         }
@@ -379,7 +379,7 @@
         },
         "pageBox": {
           "x": 32,
-          "y": 2795,
+          "y": 2521,
           "w": 326,
           "h": 50
         },
@@ -666,30 +666,6 @@
         }
       },
       {
-        "kind": "Heading",
-        "role": "heading",
-        "name": "BEFORE REVIEW",
-        "container": "main",
-        "pageBox": {
-          "x": 18,
-          "y": 2203,
-          "w": 354,
-          "h": 37
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Team input 2 OF 4",
-        "container": "main",
-        "pageBox": {
-          "x": 72,
-          "y": 2422,
-          "w": 115,
-          "h": 21
-        }
-      },
-      {
         "kind": "Side panel",
         "role": "complementary",
         "name": "Review and decide",
@@ -699,42 +675,6 @@
           "y": 0,
           "w": 0,
           "h": 0
-        }
-      },
-      {
-        "kind": "Heading",
-        "role": "heading",
-        "name": "REVIEW TOLA’S SUGGESTION",
-        "container": "complementary",
-        "pageBox": {
-          "x": 18,
-          "y": 2477,
-          "w": 354,
-          "h": 37
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Edit answer",
-        "container": "complementary",
-        "pageBox": {
-          "x": 32,
-          "y": 2853,
-          "w": 326,
-          "h": 50
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Write my own",
-        "container": "complementary",
-        "pageBox": {
-          "x": 32,
-          "y": 2911,
-          "w": 326,
-          "h": 50
         }
       }
     ],

@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-58-desktop-investigating-1440	1440	86.7	100	80.1	False
+SCR-58-desktop-review-1440	1440	88.2	100	68.7	False
+SCR-58-desktop-verified-1440	1440	89.3	96.4	74.1	False
+SCR-58-mobile-investigating-390	390	77.8	100	83.2	False
+SCR-58-mobile-review-390	390	85.7	100	82.9	False
+SCR-58-mobile-verified-390	390	80	100	75.9	False
+SCR-58-desktop-observe-1440	1440	81.8	100	71.8	False
+SCR-58-mobile-observe-390	390	83.3	100	77.8	False

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-19T01:35:18.335Z",
+  "generatedAt": "2026-11-19T01:55:09.277Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-26-mobile.dc.html",
   "boardName": "SCR-26-mobile.dc.html",
   "pageUrl": "http://localhost:4995/work/W-3401",
@@ -33,7 +33,7 @@
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 2659,
+    "pageHeight": 2783,
     "cell": 12,
     "contentCells": 2223,
     "mismatchedCells": 656
@@ -148,7 +148,7 @@
         },
         "pageBox": {
           "x": 72,
-          "y": 2425,
+          "y": 2549,
           "w": 115,
           "h": 21
         }
@@ -175,9 +175,9 @@
         },
         "pageBox": {
           "x": 276,
-          "y": 2353,
+          "y": 2469,
           "w": 82,
-          "h": 44
+          "h": 50
         }
       },
       {
@@ -202,9 +202,9 @@
         },
         "pageBox": {
           "x": 276,
-          "y": 2296,
+          "y": 2402,
           "w": 82,
-          "h": 44
+          "h": 50
         }
       },
       {
@@ -566,12 +566,13 @@
         },
         "pageBox": {
           "x": 72,
-          "y": 2425,
+          "y": 2549,
           "w": 115,
           "h": 21
         },
         "reasons": [
-          "order: on the board it comes after Text \"DEADLINE 28 NOV · 16 DAYS\"; on the page it comes after Link \"Record\""
+          "order: on the board it comes after Text \"DEADLINE 28 NOV · 16 DAYS\"; on the page it comes after Link \"Record\"",
+          "inside the main area on the board, inside a side panel on the page"
         ]
       },
       {
@@ -586,12 +587,13 @@
         },
         "pageBox": {
           "x": 276,
-          "y": 2353,
+          "y": 2469,
           "w": 82,
-          "h": 44
+          "h": 50
         },
         "reasons": [
-          "order: on the board it comes after Text \"Team input\"; on the page it comes after Link \"Record\""
+          "order: on the board it comes after Text \"Team input\"; on the page it comes after Link \"Record\"",
+          "inside the main area on the board, inside a side panel on the page"
         ]
       },
       {
@@ -606,12 +608,13 @@
         },
         "pageBox": {
           "x": 276,
-          "y": 2296,
+          "y": 2402,
           "w": 82,
-          "h": 44
+          "h": 50
         },
         "reasons": [
-          "order: on the board it comes after Link \"Record\"; on the page it comes after Text \"Repayment by card, transfer and direct debit\""
+          "order: on the board it comes after Link \"Record\"; on the page it comes after Text \"Repayment by card, transfer and direct debit\"",
+          "inside the main area on the board, inside a side panel on the page"
         ]
       },
       {
@@ -838,54 +841,6 @@
           "y": 0,
           "w": 0,
           "h": 0
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Reviewers: PMO Lead and Engineering Lead.",
-        "container": "complementary",
-        "pageBox": {
-          "x": 16,
-          "y": 677,
-          "w": 358,
-          "h": 21
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Add a requirement from the RFP",
-        "container": "complementary",
-        "pageBox": {
-          "x": 16,
-          "y": 704,
-          "w": 175,
-          "h": 44
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Send for review",
-        "container": "complementary",
-        "pageBox": {
-          "x": 199,
-          "y": 704,
-          "w": 175,
-          "h": 44
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Available once every requirement has an answer and all four teams have given input.",
-        "container": "complementary",
-        "pageBox": {
-          "x": 199,
-          "y": 752,
-          "w": 175,
-          "h": 78
         }
       }
     ],

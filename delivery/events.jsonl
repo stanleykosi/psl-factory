@@ -3153,3 +3153,5 @@
 {"at":"2026-11-19T01:58:22Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"TECH-4-1","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
 {"at":"2026-11-19T01:58:22Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"TECH-4-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
 {"at":"2026-11-19T01:58:22Z","feature":"F-39","round":4,"kind":"transition","head":"45ae7b660519","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-19T02:11:14Z","feature":"F-39","round":4,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"45ae7b660519","findings":{"QA-4-1":"low","QA-4-2":"low"},"written_at":"2026-11-19T02:10:41Z"}
+{"at":"2026-11-19T02:11:29Z","feature":"F-35","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"971bf73adfb9","written_at":"2026-11-19T02:11:28Z"}
