@@ -91,8 +91,9 @@ def allowed(actor,case,action):
 
 @login_required
 @require_http_methods(['GET','HEAD','POST'])
+@transaction.atomic
 def desk(request,case_id,dossier_id):
-    case=accessible_case(request.user,case_id);domain.readable(request.user,case)
+    case=accessible_case(request.user,case_id);case=lock_case(request.user,case.pk,'case.read');domain.readable(request.user,case)
     dossier=get_object_or_404(DeliveryDossier.objects.select_related('candidate__requirements','case'),case=case,pk=dossier_id)
     return_work=None
     selected=request.GET.get('work','')
@@ -169,7 +170,7 @@ def desk(request,case_id,dossier_id):
         'response_label':contract.OUTCOMES.get(visible_response.payload['outcome']) if visible_response else None,
         'status':status,'current':current,'proofs':proofs,'inspection':inspection,'review':review,'binding':binding,'agent_drafts':agent_drafts,
         'can_retract':bool(response and response.actor_id==request.user.pk and allowed(request.user,case,'client_uat.record')),
-        'history':dossier.sources.filter(kind__in=contract.KINDS).defer('payload').select_related('actor').order_by('-pk')[:25],
+        'history':domain.history(request.user,dossier),
         'target_contact':target_contact,
         'binding_current':binding_current,'needs_rework':bool(current and response.payload['outcome'] not in ['approved','approved_with_workaround']),
         'target_form':target_form,'response_form':response_form,'decision_form':decision_form,'follow_form':follow_form,

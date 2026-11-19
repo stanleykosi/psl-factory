@@ -496,3 +496,32 @@ def context(candidate):
             except (PermissionDenied,ValidationError):result['status']='unavailable'
             else:result['status']='current'
     return result
+
+
+@transaction.atomic
+def history(actor,dossier):
+    """Bounded historical business metadata, never private proof or authority."""
+    from django.db.models import Case,When,F,Func,IntegerField
+    case=lock_case(actor,dossier.case_id,'case.read');readable(actor,case)
+    rows=list(DeliverySource.objects.filter(dossier=dossier,kind__in=contract.KINDS).defer('payload').select_related('actor').order_by('-pk')[:25])
+    authorities={};admitted=[]
+    for row in rows:
+        if row.actor_id not in authorities:
+            try:authorities[row.actor_id]=witness(row.actor,case)
+            except (PermissionDenied,ValidationError):authorities[row.actor_id]=None
+        if authorities[row.actor_id] is not None:admitted.append(row.pk)
+    # Select only closed metadata keys. Notes, workaround text, proof hashes,
+    # storage keys and full source JSON are never transferred by this reader.
+    metadata={row['pk']:row for row in DeliverySource.objects.filter(pk__in=admitted).annotate(
+        file_count=Case(When(kind=contract.RESPONSE,then=Func(F('payload__proofs'),function='jsonb_array_length')),output_field=IntegerField())
+    ).values('pk','file_count','payload__number','payload__outcome','payload__responded_at','payload__sent_at','payload__recording_authority')}
+    result=[]
+    for row in rows:
+        item={'label':'Testing request' if row.kind==contract.TARGET else 'Client response',
+              'recorded_at':row.created_at,'actor_name':row.actor.get_full_name() or row.actor.username,'available':False}
+        value=metadata.get(row.pk)
+        if value and value['payload__recording_authority']==authorities[row.actor_id]:
+            item.update(available=True,number=value['payload__number'],outcome=contract.OUTCOMES.get(value['payload__outcome']),
+                actual_at=value['payload__responded_at'] if row.kind==contract.RESPONSE else value['payload__sent_at'],file_count=value['file_count'])
+        result.append(item)
+    return result

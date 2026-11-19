@@ -338,6 +338,22 @@ class ClientUATTests(ClientUATFixture,TestCase):
         self.assertContains(response,'Save proof rule draft')
         with self.assertRaises(ValidationError):transition(self.actor,cfg.pk,'validated')
 
+    def test_history_reads_only_closed_metadata_after_original_witness_authority(self):
+        from django.test.utils import CaptureQueriesContext
+        self.rule();first=self.response();target=domain.exact(self.case,first.payload['target_id'],contract.TARGET)
+        self.response(target,'changes_requested',first)
+        revision=rev(self.case)
+        with CaptureQueriesContext(connection) as queries:items=domain.history(self.actor,self.d)
+        self.assertEqual([i['outcome'] for i in items if i.get('outcome')],['Asked for changes','Approved'])
+        self.assertEqual(rev(self.case),revision)
+        self.assertTrue(any('jsonb_array_length' in q['sql'] for q in queries))
+        self.assertFalse(any('"pmo_deliverysource"."payload" FROM' in q['sql'] for q in queries))
+        Grant.objects.filter(case=self.case,user=self.actor,action='client_uat.record').update(active=False)
+        with CaptureQueriesContext(connection) as denied:items=domain.history(self.actor,self.d)
+        self.assertTrue(all(not item['available'] for item in items))
+        self.assertFalse(any('jsonb_array_length' in q['sql'] for q in denied))
+        self.assertTrue(all('outcome' not in item for item in items))
+
     def test_rebind_requires_reason_after_exporter_loses_access_and_new_review_stales_it(self):
         self.rule();response=self.response();review=self.review(response);old=self.export(response,review)
         replacement=get_user_model().objects.create_user(username='sample-replacement-gate-recorder')
