@@ -33,6 +33,13 @@ class SuppliedPayrollAdapter:
   except ValidationError:raise PayrollExportError('timestamp_schema')
   if at>timezone.now() or (timezone.now()-at).total_seconds()>rules['max_age_seconds']:raise PayrollExportError('source_freshness')
   if v['completeness'] not in ['complete','partial','unknown'] or not isinstance(v['rows'],list) or len(v['rows'])>500:raise PayrollExportError('inventory_schema')
+  if rules.get('format')=='psl.payroll-access/v2':
+   from adapters.payroll_rows import project
+   if v['control_total'] is not None:
+    try:decimal(v['control_total'])
+    except ValidationError:raise PayrollExportError('control_total_schema')
+   projected,checks=project(v['rows'],request,rules)
+   return {**v,'rows':projected,'row_validation':checks}
   refs=set();pairs=set()
   for r in v['rows']:
    if not isinstance(r,dict) or set(r)!={'row_ref','employee_id','component','amount'}:raise PayrollExportError('out_of_contract_fields')

@@ -166,13 +166,13 @@ def capture(actor,case_id,request_id,provider,operation_key,body,expected,*,spre
   if spreadsheet is not None:
    body=json.dumps({**declared,'provider':provider,'unit':'major_currency',
     **{name:q.metadata[name] for name in ['entity','period','currency']},'rows':spreadsheet_rows(content,layout)})
-  p=SuppliedPayrollAdapter().read(body,q,provider,v);accepted=True;codes=[]
+  p=SuppliedPayrollAdapter().read(body,q,provider,v);accepted=True;codes=list(p.get('row_validation',{}).get('codes',[]))
   calculated=sum_values(r['amount'] for r in p['rows'])
   if p['control_total'] is None or calculated is None or decimal(p['control_total'])!=decimal(calculated):codes.append('source_control_unresolved')
   if p['completeness']!='complete':codes.append('source_inventory_incomplete')
  except PayrollExportError as exc:p={};accepted=False;codes=[exc.code]
  version=(q.inputs.filter(provider=provider).order_by('-version').values_list('version',flat=True).first() or 0)+1
- meta={'accepted':accepted,'status':'complete' if accepted and not codes else 'held','codes':codes,'access_policy_id':config.pk,'owner_authority':authority,'extracted_at':p.get('extracted_at'),'source_version':p.get('source_version'),'native_authenticity_verified':False,**import_pin}
+ meta={'accepted':accepted,'status':'complete' if accepted and not codes else 'held','codes':sorted(set(codes)),'access_policy_id':config.pk,'owner_authority':authority,'extracted_at':p.get('extracted_at'),'source_version':p.get('source_version'),'native_authenticity_verified':False,**import_pin}
  i=PayrollInput.objects.create(request=q,provider=provider,version=version,operation_key=operation_key,source_sha256=source_hash,sha256=digest({'payload':p,'metadata':meta,'source_sha256':source_hash}),metadata=meta,payload=p,retain_until=timezone.now()+timedelta(seconds=v['retention_seconds']),actor=actor)
  event(actor,c,'payroll.input',input=i.pk,accepted=accepted,codes=codes);bump(c);return i
 

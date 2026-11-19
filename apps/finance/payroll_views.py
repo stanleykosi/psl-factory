@@ -8,8 +8,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from apps.core.views import accessible_case
 from apps.identity.services import require
-from apps.policy.services import resolve
-from apps.policy.payroll_validators import SCHEMAS
+from apps.identity.models import Grant
+from apps.policy.services import resolve,active_component,reference_values
+from apps.policy.payroll_validators import SCHEMAS,REPORT
 from apps.policy.payroll_drafts import draft_payroll_policy
 from apps.agents.payroll import investigate
 from apps.agents.models import AgentRun
@@ -22,6 +23,22 @@ SECTIONS = {
  'matching': ('Payroll matching', {'match','review','investigate'}, {'combine','match'}),
  'corrections': ('Payroll corrections', {'hr_correction','investigate'}, {'match'}),
 }
+
+
+def aggregate_panel(actor,request_record):
+ """Recipient-only matching view: native reviewed totals, never employee rows."""
+ try:
+  require(actor,request_record.case,'payroll.report.read')
+  rules=reference_values(active_component(REPORT,request_record.case))[0]
+  if actor.pk not in rules['recipient_ids']:return None
+ except (PermissionDenied,ValidationError):return None
+ publication=PayrollPublication.objects.defer('payload').filter(request=request_record).order_by('-version').first()
+ if publication is None:return {'status':'waiting'}
+ try:
+  value=domain.read_publication(actor,publication.pk)
+  return {'status':'current','publication':publication.pk,'value':value}
+ except PermissionDenied:return None
+ except ValidationError:return {'status':'held'}
 
 @login_required
 @require_http_methods(['GET','HEAD','POST'])
@@ -89,12 +106,17 @@ def workbench(request,case_id,focus=None):
     working.update(record_id=selected_run.pk,selectable_record=True,
                    currency=selected_run.request.metadata['currency'],period=selected_run.request.metadata['period'])
    except (PermissionDenied,ValidationError):pass
+ recipient_report=aggregate_panel(request.user,selected_run.request) if focus=='matching' and selected_run and not selected_run.can_read_private else None
+ actions=set(Grant.objects.filter(case=case,user=request.user,active=True).values_list('action',flat=True))
  response=render(request,'finance/payroll.html',{'case':case,'title':title,'focus':focus,'navigation':navigation,
   'requests':PayrollRequest.objects.filter(case=case).order_by('-pk')[:30],'inputs':inputs,'runs':runs,
   'publications':PayrollPublication.objects.defer('payload').filter(request__case=case).order_by('-pk')[:30] if not focus else [],
   'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'request_schema':domain.REQUEST,
   'agents':AgentRun.objects.filter(case=case,provider='deterministic-payroll-v1').order_by('-pk')[:5],
-  'working':working,'selected_working_run':selected_run})
+  'working':working,'selected_working_run':selected_run,'recipient_report':recipient_report,
+  'can_configure_rows':{'policy.read','policy.configure'}<=actions,
+  'can_hr_view':'hrfinance.read' in actions,'can_finance_view':'finance.read' in actions,
+  'can_policy_view':'policy.read' in actions,'can_bu_view':'bu.read' in actions})
  response['Cache-Control']='no-store';return response
 
 @login_required

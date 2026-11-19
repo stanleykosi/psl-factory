@@ -28,7 +28,7 @@ from apps.agents import upload_views
 from apps.policy import delegation_views
 finance_intake_patterns=[path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',finance_followup_inbox,name='finance_followup_inbox')]
 from apps.documents import validation_views
-from apps.finance import payroll_views, payroll_correction_views, reminder_views
+from apps.finance import payroll_views, payroll_correction_views, payroll_row_controls, reminder_views
 from apps.identity import staff_views
 from apps.identity import staff_account_views
 from apps.identity import staff_profile_views
@@ -201,6 +201,7 @@ urlpatterns += [path(f'cases/<uuid:case_id>/finance/payroll/{key}/', payroll_vie
 urlpatterns += [path('cases/<uuid:case_id>/hr/payroll-corrections/', payroll_correction_views.desk, name='design_hr_payroll_corrections'),
                 path('cases/<uuid:case_id>/hr/payroll-corrections/<int:followup_id>/', payroll_correction_views.desk,
                      name='design_hr_payroll_correction')]
+urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/row-controls/', payroll_row_controls.settings,name='payroll_row_controls')]
 urlpatterns += [path('cases/<uuid:case_id>/staff/invitations/', staff_views.invites, name='staff_invites'),
                 path('cases/<uuid:case_id>/staff/invitations/<int:invitation_id>/renew/', staff_views.invites, name='staff_renew_invite'),
                 path('cases/<uuid:case_id>/staff/<int:person_id>/remove-access/', staff_views.departure, name='staff_departure'),

@@ -1,5 +1,6 @@
 """Typed finite payroll choices and explicit synthetic/owner oracles; no uploaded code."""
 from datetime import timedelta
+from copy import deepcopy
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -31,6 +32,28 @@ SCHEMAS={
  REPORT:('schema:psl/payroll-report/v1',obj({'components':{'type':'array','minItems':1,'maxItems':50,'items':obj({'component':KEY,'coefficient':{'type':'string'}})},'decimal_places':{'type':'integer','minimum':0,'maximum':8},'rounding':{'enum':['half_even','half_up','down']},'minimum_employees':{'type':'integer','minimum':1},'small_groups':{'const':'hold_all_publication'},'recipient_ids':IDS,'destination':KEY,'disclosure':{'const':'aggregate_only'},'oracles':{'type':'array','minItems':2,'maxItems':20,'items':obj({'amounts':{'type':'array','minItems':1,'maxItems':50,'items':obj({'component':KEY,'amount':DEC})},'expected':DEC})}})),
  AUTH:('schema:psl/payroll-authority/v1',obj({'human_only':{'const':True},'assignments':{'type':'array','minItems':1,'maxItems':100,'items':obj({'user_id':ID,'role':{'const':'Finance'},'purposes':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['input','combine','match','aggregate','publish']}}})},'independent_reviewer':{'type':'boolean'}}))}
 
+# Explicit successors. Existing reference IDs and v1 source behavior stay intact.
+ACCESS_V2=deepcopy(SCHEMAS[ACCESS][1])
+ACCESS_V2['properties'].update(format={'const':'psl.payroll-access/v2'},
+ row_handling={'enum':[None,'reject_export','hold_conflicting_rows']},
+ currency_mode={'enum':[None,'request_currency','row_currency']})
+ACCESS_V2['required']+=['format','row_handling','currency_mode']
+for layout in ACCESS_V2['properties']['providers']['items']['properties']['spreadsheet_layouts']['items']['oneOf']:
+ layout['properties']['columns']['properties']['currency']=deepcopy(HEADER)
+MERGE_V2=deepcopy(SCHEMAS[MERGE][1])
+MERGE_V2['properties'].update(format={'const':'psl.payroll-merge/v2'},
+ duplicate_within_source={'enum':[None,'reject','hold_conflicting_rows']})
+MERGE_V2['required']+=['format']
+SUCCESSOR_SCHEMAS={ACCESS:('schema:psl/payroll-access/v2',ACCESS_V2),
+                   MERGE:('schema:psl/payroll-merge/v2',MERGE_V2)}
+
+
+def schema_for(component,content):
+ successor=SUCCESSOR_SCHEMAS.get(component)
+ if successor and isinstance(content,dict) and content.get('format')==successor[1]['properties']['format']['const']:
+  return successor
+ return SCHEMAS[component]
+
 def merge_amount(left,right,overlap,method):
  from decimal import localcontext
  if left is None or overlap and right is None:return None
@@ -49,14 +72,19 @@ def report_amount(rows,rules):
   return format(sum(values,Decimal(0)).quantize(Decimal(1).scaleb(-rules['decimal_places']),rounding=ROUNDING[rules['rounding']]),'f')
 
 def validate_reference(component,target,case,runtime=False):
- v=typed(target,*SCHEMAS[component])
+ v=typed(target,*schema_for(component,target.content))
  if component==ACCESS:
   if v['from_period']>v['to_period'] or len({r['provider'] for r in v['providers']})!=2:raise ValidationError('Two distinct providers and ordered periods required')
   for provider in v['providers']:
    layouts=provider.get('spreadsheet_layouts',[])
    if len({layout['format'] for layout in layouts})!=len(layouts) or any(
-    len(set(layout['columns'].values()))!=len(FIELDS) for layout in layouts
+    len(set(layout['columns'].values()))!=len(layout['columns']) for layout in layouts
    ):raise ValidationError('Each export format needs a distinct, exact payroll header mapping')
+   if v.get('format')=='psl.payroll-access/v2':
+    if v['currency_mode']=='row_currency' and any('currency' not in layout['columns'] for layout in layouts):
+     raise ValidationError('Every mapped spreadsheet format needs its agreed row-currency header.')
+    if v['currency_mode']=='request_currency' and any('currency' in layout['columns'] for layout in layouts):
+     raise ValidationError('Choose a row-currency source contract before mapping a currency column.')
   ids=v['reader_ids']+[r['owner_id'] for r in v['providers']]
   if get_user_model().objects.filter(pk__in=set(ids),is_active=True).count()!=len(set(ids)):raise ValidationError('Active actual principals required')
   from apps.pmo.services import subject

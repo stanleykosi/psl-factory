@@ -18,7 +18,7 @@ def csv_rows(content, delimiter):
     yield from csv.reader(StringIO(content.decode('utf-8-sig'), newline=''), delimiter=delimiter, strict=True)
 
 
-def excel_rows(content, name):
+def excel_rows(content, name, width=4):
     index = dict(xml_parts(content, lambda path: path in ('xl/workbook.xml', 'xl/_rels/workbook.xml.rels')))
     workbook = index['xl/workbook.xml']
     links = index['xl/_rels/workbook.xml.rels']
@@ -34,10 +34,10 @@ def excel_rows(content, name):
     strings = [''.join(node.text or '' for node in item.iter(NS + 't'))
                for item in parts.get('xl/sharedStrings.xml', ())]
     for row in parts[str(path)].iter(NS + 'row'):
-        values = ['', '', '', '']
+        values = ['']*width
         seen = set()
         for cell in row.findall(NS + 'c'):
-            match = re.fullmatch(r'([A-D])([1-9][0-9]*)', cell.get('r', ''))
+            match = re.fullmatch(r'([A-'+('E' if width==5 else 'D')+r'])([1-9][0-9]*)', cell.get('r', ''))
             kind = cell.get('t', 'n')
             if not match or match[2] != row.get('r') or match[1] in seen or kind not in ('n', 's', 'inlineStr', 'str'):
                 raise ValueError
@@ -56,21 +56,23 @@ def excel_rows(content, name):
 
 
 def rows(content, layout):
-    """Return only the four authorized fields, rejecting extra columns and formulas."""
+    """Return only explicitly mapped authorized fields; reject extras/formulas."""
     from adapters.payroll import PayrollExportError
 
     expected = layout['columns']
+    if set(expected) not in [set(FIELDS),set(FIELDS)|{'currency'}]:
+        raise PayrollExportError('spreadsheet_columns')
     if not isinstance(content, bytes) or len(content) > 256000:
         raise PayrollExportError('spreadsheet_budget')
-    stream = csv_rows(content, layout['delimiter']) if layout['format'] == 'csv' else excel_rows(content, layout['sheet'])
+    stream = csv_rows(content, layout['delimiter']) if layout['format'] == 'csv' else excel_rows(content, layout['sheet'],len(expected))
     try:
         header = next(stream)
-        if len(header) != len(FIELDS) or set(header) != set(expected.values()):
+        if len(header) != len(expected) or set(header) != set(expected.values()):
             raise PayrollExportError('spreadsheet_columns')
-        positions = {field: header.index(expected[field]) for field in FIELDS}
+        positions = {field: header.index(expected[field]) for field in expected}
         result = []
         for number, row in enumerate(stream):
-            if number >= 500 or len(row) != len(FIELDS):
+            if number >= 500 or len(row) != len(expected):
                 raise PayrollExportError('spreadsheet_inventory')
             record = {field: row[position] for field, position in positions.items()}
             if record['amount'] == '':
