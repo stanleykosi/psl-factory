@@ -1,4 +1,47 @@
 {
-  "items": [],
-  "as_of": "2026-11-14T09:00:00Z"
+  "default_line": "hr_staff_list",
+  "as_of": "2026-11-14T09:00:00Z",
+  "items": [
+    {
+      "key": "hr_staff_list",
+      "title": "Send the staff list for payroll",
+      "subtitle": "Stand-in line, sample only: PSL has not yet defined HR’s role",
+      "group": "Staff records (stand-in)",
+      "case_scope": "fixed",
+      "case_id": "C-HR-STAFF",
+      "case_revision": 1,
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "month",
+          "label": "Month",
+          "type": "period",
+          "required": true
+        },
+        {
+          "name": "proof",
+          "label": "Staff list file",
+          "type": "evidence",
+          "required": true,
+          "evidence_kind": "staff_list",
+          "help": "Leave pay columns out; they are not needed here."
+        },
+        {
+          "name": "note",
+          "label": "Anything Zainab should know",
+          "type": "long_text",
+          "required": false,
+          "placeholder": "e.g. two joiners start on 3 November"
+        }
+      ],
+      "next": {
+        "station_count": 6,
+        "agent": "zainab",
+        "decided_by": [
+          "HR"
+        ],
+        "summary": "Stand-in line (sample). Zainab checks the list and business units · HR confirms it · Finance matches it to payroll."
+      }
+    }
+  ]
 }

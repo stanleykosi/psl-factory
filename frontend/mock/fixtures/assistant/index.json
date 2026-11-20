@@ -54,6 +54,51 @@
       "status": "drafted",
       "status_line": "Drafted · ready to start",
       "updated_at": "2026-11-16T08:17:00Z"
+    },
+    {
+      "conversation_id": "CV-2421",
+      "_persona": "hr",
+      "title": "Is the November staff list ready for Finance?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T09:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2422",
+      "_persona": "hr",
+      "title": "Fix the two staff with no business unit",
+      "agent": "zainab",
+      "status": "drafted",
+      "status_line": "Drafted · ready to review",
+      "updated_at": "2026-11-18T09:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2423",
+      "_persona": "hr",
+      "title": "Why did Finance ask about a leaver?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T10:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2424",
+      "_persona": "hr",
+      "title": "A staff member’s salary",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-18T11:01:00Z"
+    },
+    {
+      "conversation_id": "CV-2425",
+      "_persona": "hr",
+      "title": "Who joined or left in November?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T11:21:00Z"
     }
   ]
 }

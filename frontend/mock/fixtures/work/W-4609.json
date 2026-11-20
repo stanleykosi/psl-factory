@@ -1,0 +1,67 @@
+{
+  "id": "W-4609",
+  "title": "Leaver record · Bola Fashola",
+  "line": "Leaver record",
+  "reference": "HRL-0002",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Record the leaving date",
+      "status": "done"
+    },
+    {
+      "name": "Tell Finance",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Recorded 31 October as Bola Fashola’s last working day",
+        "status": "done",
+        "source": "Staff record · Bola Fashola"
+      },
+      {
+        "text": "Told Finance so payroll matching drops the name",
+        "status": "done",
+        "source": "Notice · Finance"
+      }
+    ]
+  },
+  "next_step": "Done. Finance has the leaving date.",
+  "sample": true
+}

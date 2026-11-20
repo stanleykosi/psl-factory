@@ -1,0 +1,78 @@
+{
+  "id": "W-4604",
+  "title": "November staff list · Finance matching",
+  "line": "Send the staff list for payroll",
+  "reference": "HRS-0010",
+  "state": "waiting",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Read the staff list",
+      "status": "done"
+    },
+    {
+      "name": "Check business units",
+      "status": "done"
+    },
+    {
+      "name": "Confirm the list",
+      "status": "done"
+    },
+    {
+      "name": "Send to Finance",
+      "status": "done"
+    },
+    {
+      "name": "Finance matching",
+      "status": "waiting"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the confirmed list to Finance (pay columns left out)",
+        "status": "done",
+        "source": "Staff list · confirmed"
+      },
+      {
+        "text": "Waiting for Finance to match it to payroll",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "Finance is matching the staff list to payroll. HR is told if a name does not match.",
+  "sample": true
+}

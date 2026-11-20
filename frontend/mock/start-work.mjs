@@ -53,6 +53,8 @@ const WORK_IDS = {
   // F-51: the F-42 fixed asset schedule and the F-43 cash forecast
   fixed_assets: 'W-3901',
   cash_forecast: 'W-4001',
+  // F-55: the HR stand-in line (fixtures/work/W-4611.json)
+  hr_staff_list: 'W-4611',
 };
 // F-51: what a forecast start answers with under the cookie value start_hold (F-43's "preparer not set" item).
 const HELD_FORECAST = { work_id: 'W-4006', state: 'setup_needed' };

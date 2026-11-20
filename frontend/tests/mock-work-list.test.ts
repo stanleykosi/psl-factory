@@ -212,7 +212,8 @@ describe('E-WORK-LIST fixture content', () => {
     for (const item of original) expect(byId(item.id)).toMatchObject(item);
     expect([byId('W-1004').state, byId('W-1005').state, byId('W-1006').state]).toEqual(['ready', 'effect_uncertain', 'verified']);
     expect(all.every((i) => i.sample === true)).toBe(true);
-    expect(all.some((i) => /payroll/i.test(i.line))).toBe(false);
+    // F-55: the HR stand-in line "Send the staff list for payroll" is the one payroll-named line, and it is HR's only
+    expect(rows.some((r) => /payroll/i.test(r.item.line) && !r.personas.includes('hr'))).toBe(false);
     expect(all.some((i) => i.id === 'W-1099')).toBe(false);
   });
 });

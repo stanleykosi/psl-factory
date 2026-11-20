@@ -27,6 +27,8 @@ const readJson = (name) => JSON.parse(readFileSync(join(dir, `${name}.json`), 'u
 
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
 const SAMPLE = 'Sample answer from the contract mock. No agent ran.';
+// F-55: the HR stand-in's answer to a new message; it never shows pay amounts.
+const HR_SAMPLE = 'Sample answer from the contract mock. No agent ran. I can help with staff lists and business units. I do not show pay amounts: who can see payroll has not been set up yet.';
 const STARTED = { work_id: 'W-1401', reference: 'INV-0415' };
 const HOOKS = { '[409]': 409, '[422]': 422, '[500]': 500 };
 const HOOK_BODIES = {
@@ -219,7 +221,7 @@ export function createAssistantMock({ openapi }) {
       : [{ text: 'Read your question' }];
     const placeholder = {
       role: 'agent',
-      text: wantsWork ? 'Working on it.' : SAMPLE,
+      text: wantsWork ? 'Working on it.' : persona === 'hr' ? HR_SAMPLE : SAMPLE,
       steps: steps.map((s) => s.text),
       sources: [],
       at,

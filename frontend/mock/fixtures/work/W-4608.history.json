@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "at": "2026-11-09T12:00:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Verified",
+      "restricted": false,
+      "detail": "Finance matching reread: every name matched"
+    },
+    {
+      "at": "2026-11-09T11:40:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Matched the staff list",
+      "restricted": false,
+      "detail": "All names matched",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-08T16:10:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Sent the list to Finance",
+      "restricted": false,
+      "detail": "Pay columns left out",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-08T16:00:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Confirmed the staff list",
+      "restricted": false,
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-08T14:31:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-08T14:30:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the staff list",
+      "restricted": false,
+      "detail": "hr_staff_oct.xlsx",
+      "_kind": "evidence"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}
