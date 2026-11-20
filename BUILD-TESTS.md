@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+20 November 2026. Browser read audited delegation 2037 on work 196's exact workspace. The distinct delegate approved task 129 under the recorded approval-only NGN 100.00 cap and window. Issuance was unavailable. October Month-end retained twelve-workspace page coverage, separate unknown cash and receivables, reviewed PBT 609.99 and basis. The exact workspace linked into its sealed history, and the populated Month-end page fit at 390/375. Scoped count 114 of 262. The F-10 board reads the checklist. Separate group sign-off remains owner-controlled.
+
+20 November 2026. Partial 242 summaries: Finance passed 4 in 331.228s. Commercial passed 10 of 11 in 159.872s, including all four private receipt tests. The failed assertion searched for any text containing the bid reference and matched the separate assignment-notification row. The test correction narrows the assertion to its exact due alert. Project and final gate pending at this checkpoint.
+
 20 November 2026. Native in-app work 197 and 203 both reached Verified using their previously uncertain original receipts. Work 197 read invoice version 1, receipt 7, and the original operation `invoice:17:issue:g1`; it recorded no new issue or customer payment. Work 203 checked receipt 92, then continued the paused work and showed Delivered for exact client minutes version 123. Both readbacks fit at 390/375 CSS pixels. Scoped count 112 of 262.
 
 20 November 2026. Hosted work 204 recorded original source proofs 3530, 3531 and 3532 with exact displayed receipt times. Native investigation 1242 cited all three and retained 2.125, zero and unknown separately. Work 199 kept readiness held while its CEO source was missing or merely captured, then the browser verified the exact owning record for candidate 57 / proof 3433. The worker reached Verified against readiness 271. Four phase groups and the retained actual-release hold read at 390/375 CSS pixels. Scoped count 109 of 262.

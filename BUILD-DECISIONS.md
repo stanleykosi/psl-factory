@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Engineering decision for the accepted Railway receipt paths. A missing or uncertain external receipt keeps the original operation available for lookup. When its exact native receipt becomes visible, the work coordinator verifies that receipt and respects any existing pause. A lookup creates no replacement delivery. Production provider authenticity and live authority remain separately reviewed. The Month-end F-10 screen reads authorized close evidence and retains unknown coverage. Any separate group sign-off requires an owner-approved rule.
+
 20 November 2026. Engineering decision: Keep browser acceptance grouped by native workflow and exact role. Parallel agents may prepare and run disjoint synthetic journeys. Record one outcome per affected state from durable evidence. Keep business mutations, scoped access and version checks in their owning Django services so a future HTTP interface can reuse the same operations. API consolidation and frontend migration follow walkthrough acceptance.
 
 20 November 2026. Minutes confirmation wakes only the existing authorized background request so the worker can prepare the internal document once the recorded human decision permits it. Work without a background request remains available for deliberate continuation. The remaining design gaps will be integrated as one candidate before a combined Railway and Codex browser acceptance run.
