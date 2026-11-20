@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import connection, transaction, DatabaseError
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 from apps.core.models import Case
 from apps.core.evidence_access import public_evidence, public_agent_runs
@@ -75,6 +76,45 @@ class UsageIntakeTests(TransactionTestCase):
             domain.receive(self.a, self.c.pk, r.evidence_id, r.control_evidence_id, 'delivery-1', 'different-operation')
         self.assertEqual(BillingUsage.objects.count(), 2)
         self.assertEqual(UsageIntakeAcceptance.objects.count(), 1)
+
+    def test_finance_reader_can_find_original_receipt_only_permitted_roles_see_write_commands(self):
+        receipt = self.received()
+        url = reverse('finance_usage_intake', args=[self.c.pk])
+        reader = get_user_model().objects.create_user('sample-usage-finance-reader')
+        Grant.objects.bulk_create([Grant(case=self.c, user=reader, action=key)
+                                   for key in ('case.read', 'finance.read')])
+        self.client.force_login(reader)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([command['action'] for command in response.context['commands']], ['lookup'])
+        self.assertContains(response, 'Look up uncertain operation before retry')
+        forbidden = {
+            'receive': {'source_evidence': receipt.evidence_id, 'control_evidence': receipt.control_evidence_id,
+                        'delivery_ref': 'reader-delivery', 'operation_key': 'reader-operation'},
+            'inspect': {'source': receipt.source_id},
+            'accept': {'source': receipt.source_id},
+            'withdraw': {'source': receipt.source_id},
+        }
+        for action, fields in forbidden.items():
+            with self.subTest(action=action):
+                denied = self.client.post(url, {'action': action, 'revision': rev(self.c), **fields})
+                self.assertEqual(denied.status_code, 403)
+        self.assertEqual(UsageIntakeReceipt.objects.filter(case=self.c).count(), 1)
+        self.assertFalse(UsageIntakeAcceptance.objects.filter(source=receipt.source).exists())
+        self.assertFalse(UsageIntakeWithdrawal.objects.filter(source=receipt.source).exists())
+
+        found = self.client.post(url, {'action': 'lookup', 'operation_key': receipt.operation_key,
+                                      'revision': rev(self.c)}, follow=True)
+        self.assertContains(found, f'Original receipt #{receipt.pk}')
+        Grant.objects.create(case=self.c, user=reader, action='agent.billing')
+        self.assertEqual([command['action'] for command in self.client.get(url).context['commands']],
+                         ['inspect', 'lookup'])
+        self.client.force_login(self.a)
+        self.assertEqual([command['action'] for command in self.client.get(url).context['commands']],
+                         ['receive', 'inspect', 'accept', 'withdraw', 'lookup'])
+        accepted = self.client.post(url, {'action': 'accept', 'source': receipt.source_id, 'revision': rev(self.c)})
+        self.assertRedirects(accepted, url, fetch_redirect_response=False)
+        self.assertEqual(UsageIntakeAcceptance.objects.get(source=receipt.source).actor_id, self.a.pk)
 
     def test_missing_c2_unknown_quantity_control_mismatch_and_explicit_zero(self):
         variants = [([self.payload['rows'][0]], 'Missing expected population'),

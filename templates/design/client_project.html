@@ -12,6 +12,38 @@
 {% for row in billing.amounts %}<tr><th scope="row">{{ row.customer }}</th><td>{{ row.currency }} · {{ row.basis|readable }}</td><td>{{ row.invoiced }}</td><td>{{ row.applied }}</td><td>{{ row.owed|default_if_none:'Unknown' }}</td></tr>{% endfor %}</tbody></table>
 {% else %}<p>Amounts are unknown until there is a verified invoice.</p>{% endif %}
 {% endif %}<p><a href="{% url 'finance_settlement' case.pk %}">Review invoices and receipts</a></p></section>{% endif %}
+{% if billing_identity %}<section class="card" aria-labelledby="client-billing-details">
+<h2 id="client-billing-details">Legal billing details</h2>
+{% for row in billing_identity.rows %}
+<article><h3>{{ row.customer }}</h3><dl class="decision-facts">
+  <dt>Legal business name</dt><dd>{{ row.identity.legal_name|default:'Unknown' }}</dd>
+  <dt>Billing address</dt><dd>{{ row.identity.billing_address|default:'Unknown'|linebreaksbr }}</dd>
+  <dt>Tax reference</dt><dd>{{ row.identity.tax_reference|default:'Unknown' }}</dd>
+</dl>
+{% if row.identity %}<p>Version {{ row.identity.number }} · {{ row.identity.created_at|date:'d M Y' }} · {{ row.identity.actor.get_full_name|default:row.identity.actor.username }} · Evidence {{ row.identity.evidence_id }}</p>{% endif %}
+</article>
+{% empty %}<p>No current billing customer is recorded for this workspace.</p>{% endfor %}
+{% if billing_identity.form %}
+<details{% if billing_identity.form.errors %} open{% endif %}><summary>Record legal billing details</summary>
+<p>Leave unknown fields blank. These details have their own history. Prior invoices and their decisions remain on their original records.</p>
+<form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="purpose" value="billing_identity">
+  {{ billing_identity.form.as_p }}<button>Save billing details</button>
+</form></details>
+{% endif %}
+{% if billing_identity.earlier %}
+<details><summary>Earlier billing details</summary><ol>
+{% for record in billing_identity.earlier %}
+  <li><strong>{{ record.customer_ref }} · version {{ record.number }}</strong>
+    <dl class="decision-facts">
+      <dt>Legal business name</dt><dd>{{ record.legal_name|default:'Unknown' }}</dd>
+      <dt>Billing address</dt><dd>{{ record.billing_address|default:'Unknown'|linebreaksbr }}</dd>
+      <dt>Tax reference</dt><dd>{{ record.tax_reference|default:'Unknown' }}</dd>
+    </dl>
+    <p>{{ record.created_at|date:'d M Y' }} · {{ record.actor.get_full_name|default:record.actor.username }} · Evidence {{ record.evidence_id }}</p>
+  </li>
+{% endfor %}</ol></details>
+{% endif %}
+</section>{% endif %}
 {% for section in sections %}<section class="card"><h2>{{ section.label }}</h2>
 {% for entry in section.entries %}<article class="floor-line"><div><strong>{{ entry.client_name }}</strong>{% if entry.customer %}<p>{{ entry.customer }}</p>{% endif %}<p>{{ entry.name }}{% if entry.role %} · {{ entry.role }}{% endif %}</p></div><div><p>{{ entry.email|default:'Email not recorded' }}</p><p>Version {{ entry.number }} · {{ entry.created_at|date:'d M Y' }}</p></div></article>{% empty %}<p>No contact is recorded.</p>{% endfor %}
 {% if section.form %}<details{% if section.form.errors %} open{% endif %}><summary>Record a contact</summary><form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="purpose" value="{{ section.purpose }}">{{ section.form.as_p }}<button>Save contact</button></form></details>{% endif %}

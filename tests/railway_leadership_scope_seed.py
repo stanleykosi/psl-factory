@@ -73,10 +73,10 @@ def activate(actor, configuration):
     return configuration
 
 
-def create(operator, home, second):
+def create(operator, home, second, *, sponsor_username=SPONSOR, reviewer_username=REVIEWER):
     users = get_user_model().objects
-    sponsor = users.create_user(SPONSOR, first_name='Sample report preparer')
-    reviewer = users.create_user(REVIEWER, first_name='Sample PMO reviewer')
+    sponsor = users.create_user(sponsor_username, first_name='Sample report preparer')
+    reviewer = users.create_user(reviewer_username, first_name='Sample PMO reviewer')
     grant(home, sponsor, (*READ, *SOURCE, *PREPARE))
     grant(second, sponsor, (*READ, *SOURCE))
     grant(home, operator, (*READ, *START))

@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Collective usage shows only actions supported by the current actor’s case grants. Finance readers retain receipt lookup. The native commands still enforce their own current write authority. Client legal billing details are immutable case-scoped revisions attached to current native coverage. A blank field stays Unknown. Updating this registry leaves prior issued documents, contacts and amounts intact.
+
 20 November 2026. The workbench retains the selected workflow on authorized work links, focus tabs and related action returns. A work-specific return carries a workflow only when it matches the open authorized record. The queue rechecks record access and inventory when loading the return.
 
 20 November 2026. Synthetic admission setup serializes account changes using PostgreSQL's no-key row lock, which also permits normal workflow references to commit. The regression uses two connections and proves both behaviors concurrently. Check successful setup exit and the current record before retrying an uncertain browser action.

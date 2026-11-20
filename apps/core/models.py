@@ -63,6 +63,23 @@ class ClientContactRevision(AppendOnly):
         constraints = [models.UniqueConstraint(fields=['case', 'purpose', 'customer', 'number'], name='client_contact_version')]
 
 
+class ClientBillingIdentityRevision(AppendOnly):
+    case = models.ForeignKey(Case, on_delete=models.PROTECT)
+    coverage = models.ForeignKey('finance.BillingCoverage', on_delete=models.PROTECT)
+    customer_ref = models.CharField(max_length=100)
+    number = models.PositiveIntegerField()
+    previous = models.OneToOneField('self', null=True, on_delete=models.PROTECT)
+    legal_name = models.CharField(max_length=160, null=True)
+    billing_address = models.CharField(max_length=600, null=True)
+    tax_reference = models.CharField(max_length=100, null=True)
+    evidence = models.ForeignKey(Evidence, on_delete=models.PROTECT)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['case', 'customer_ref', 'number'], name='client_billing_identity_version')]
+
+
 class Audit(AppendOnly):
     case = models.ForeignKey(Case, on_delete=models.PROTECT, related_name='audit')
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)

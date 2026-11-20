@@ -16,6 +16,7 @@ from apps.finance.models import BillingCoverage
 from apps.identity.services import active_case_grants, require, visible_cases
 
 from .evidence_access import public_evidence
+from . import client_billing_identity
 from .models import ClientContactRevision, Evidence
 from .read_budget import ReadLimit
 from .services import bump, event, lock_case
@@ -115,14 +116,16 @@ def project(request, case_id):
             return_work=FactoryWork.objects.filter(pk=selected_work,case=case,definition='engagement/v1').values_list('pk',flat=True).first()
     except (ValueError,PermissionDenied,ValidationError):pass
     selected = request.POST.get('purpose') if request.method == 'POST' else None
-    if request.method == 'POST' and (selected not in WRITE or WRITE[selected] not in actions):
-        raise PermissionDenied
+    if request.method == 'POST':
+        purpose = 'billing' if selected == client_billing_identity.PURPOSE else selected
+        if purpose not in WRITE or WRITE[purpose] not in actions:
+            raise PermissionDenied
     sections = []
     for purpose in READ:
         try:
             authorize(request.user, case, purpose)
         except (PermissionDenied, ValidationError):
-            if selected == purpose:
+            if selected == purpose or (purpose == 'billing' and selected == client_billing_identity.PURPOSE):
                 raise PermissionDenied
             continue
         records = ClientContactRevision.objects.filter(case=case, purpose=purpose).order_by('customer', '-number').distinct('customer')[:100]
@@ -146,8 +149,24 @@ def project(request, case_id):
         raise PermissionDenied
     billing = None
     billing_limited = False
+    identity = None
     billing_contacts = next((section['entries'] for section in sections if section['purpose'] == 'billing'), None)
     if billing_contacts is not None:
+        identity_post = selected == client_billing_identity.PURPOSE
+        identity = client_billing_identity.panel(case, can_edit=WRITE['billing'] in actions,
+                                                 data=request.POST if identity_post else None)
+        if identity_post:
+            form = identity['form']
+            if form and form.is_valid():
+                try:
+                    client_billing_identity.save(request.user, case, form.cleaned_data)
+                except ValidationError as exc:
+                    form.add_error(None, exc)
+                else:
+                    messages.success(request, 'Billing details recorded.')
+                    return redirect(request.path+'?work='+str(return_work)) if return_work else redirect('design_client_project', case.pk)
+            elif form is None:
+                messages.error(request, 'Record current billing coverage before adding these details.')
         try:
             billing = client_billing.overview(request.user, case)
         except ReadLimit:
@@ -159,4 +178,5 @@ def project(request, case_id):
             for cover in billing['coverage']:
                 cover.contact_recorded = cover.customer in contacts
     return render(request, 'design/client_project.html', {'case': case, 'sections': sections, 'billing': billing,
-                                                         'billing_limited': billing_limited,'return_work':return_work})
+                                                         'billing_limited': billing_limited, 'return_work': return_work,
+                                                         'billing_identity': identity})
