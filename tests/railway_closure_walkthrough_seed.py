@@ -4,7 +4,7 @@ import json
 import os
 from functools import partial
 from unittest.mock import patch
-from uuid import NAMESPACE_URL, uuid5
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -35,9 +35,13 @@ MARKER = 'sample.distinct_closure_prepared'
 READ = ('case.read', 'delivery.read', 'factory.read')
 HEAD_ACTIONS = (*READ, 'delivery.closure_decide')
 QUALITY_ACTIONS = (*READ, 'document.review_controlled', 'evidence.add', 'factory.execute', 'factory.manage')
+ADMITTED_GUARD = 'PSL_CLOSURE_ADMITTED_WALKTHROUGH_FIXTURE'
+ADMITTED_IDENTITY = (7, 243)
+ADMITTED_STAFF_CASE = UUID('f01c74c2-81f7-4be8-b9a5-6aae4c71a243')
+ADMITTED_USERNAME = 'sample-correction-preparer-20261120'
 
 
-def create_sample(case, quality, head):
+def create_sample(case, quality, head, identity):
     sponsor = get_user_model().objects.create_user(
         username=f'sample-closure-report-builder-{case.pk.hex[:8]}', first_name='Sample closure report builder')
     Grant.objects.bulk_create([Grant(case=case, user=user, action=action)
@@ -64,7 +68,7 @@ def create_sample(case, quality, head):
     # The seeded client report already has its exact receipt. The closure's pending
     # quality review belongs to the separately admitted operator.
     Grant.objects.filter(case=case, user=sponsor, action='document.review_controlled').update(active=False)
-    work = factory_closure.start(sponsor, case.pk, KEY, entry.d.pk, entry.inputs, TITLE, rev(case))
+    work = factory_closure.start(sponsor, case.pk, KEY, entry.d.pk, entry.inputs, case.title, rev(case))
     factory.run_until_wait(work.pk)
     work.refresh_from_db()
     version = factory_closure.document(work)
@@ -74,21 +78,31 @@ def create_sample(case, quality, head):
         raise RuntimeError('The sample must stop at the first distinct controlled quality review.')
     return event(sponsor, case, MARKER, work=work.pk, dossier=entry.d.pk, report=version.pk,
                  quality=quality.pk, head=head.pk, inputs=entry.inputs, corrected_evidence=correction.pk,
-                 decision_evidence=entry.e['requirements'].pk)
+                 decision_evidence=entry.e['requirements'].pk, **identity)
 
 
 @transaction.atomic
-def prepare(quality, head):
+def prepare(quality, head, *, admission=None):
     if len({quality.pk, head.pk}) != 2 or any(not user.is_active or user.is_staff or user.is_superuser
                                                for user in (quality, head)):
         raise RuntimeError('Current distinct ordinary sample operators are required.')
-    case, created = Case.objects.get_or_create(pk=uuid5(NAMESPACE_URL, f'{TENANT}/{quality.pk}/{head.pk}'),
-        defaults={'tenant': TENANT, 'kind': 'project', 'synthetic': True, 'title': TITLE})
-    if (case.tenant, case.kind, case.synthetic, case.title) != (TENANT, 'project', True, TITLE):
+    partition = f'{TENANT}/{quality.pk}/{head.pk}'
+    title, identity = TITLE, {}
+    if admission is not None:
+        if admission.user_id != quality.pk:
+            raise RuntimeError('Match the quality reviewer to the accepted synthetic admission.')
+        title = f'SAMPLE closure quality review for accepted invitation {admission.invitation_id}'
+        partition += f'/admission/{admission.pk}'
+        identity = {'invitation': admission.invitation_id, 'admission': admission.pk}
+    case, created = Case.objects.get_or_create(pk=uuid5(NAMESPACE_URL, partition),
+        defaults={'tenant': TENANT, 'kind': 'project', 'synthetic': True, 'title': title})
+    if (case.tenant, case.kind, case.synthetic, case.title) != (TENANT, 'project', True, title):
         raise RuntimeError('The target is outside the guarded closure sample.')
-    marker = create_sample(case, quality, head) if created else Audit.objects.get(case=case, action=MARKER)
+    marker = create_sample(case, quality, head, identity) if created else Audit.objects.get(case=case, action=MARKER)
     if (marker.data['quality'], marker.data['head']) != (quality.pk, head.pk):
         raise RuntimeError('Use the original distinct closure sample operators.')
+    if any(marker.data.get(key) != value for key, value in identity.items()):
+        raise RuntimeError('Preserve the closure sample bound to its original admission.')
     work = FactoryWork.objects.get(case=case, actor=marker.actor, definition=factory_closure.DEFINITION, key=KEY,
                                    pk=marker.data['work'])
     return {**marker.data, 'case': str(case.pk), 'author': marker.actor_id, 'preserved': not created,
@@ -108,3 +122,21 @@ def run(invitation_id, user_id):
     head = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
     _, quality = admitted_user(invitation_id, user_id, head)
     print('PSL_CLOSURE_WALKTHROUGH_FIXTURE=' + json.dumps(prepare(quality, head)), flush=True)
+
+
+@transaction.atomic
+def run_admitted():
+    if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'), os.getenv(ADMITTED_GUARD)) != (
+            'design-acceptance', PREVIEW_PROJECT, '1'):
+        raise RuntimeError('The exact Railway preview and admitted closure fixture guard are required.')
+    database = os.getenv('PGDATABASE', '')
+    if not database or database.startswith('test_'):
+        raise RuntimeError('Use the explicitly configured isolated preview database.')
+    head = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
+    admission, quality = admitted_user(*ADMITTED_IDENTITY, head)
+    if (admission.invitation.case_id, quality.username) != (ADMITTED_STAFF_CASE, ADMITTED_USERNAME):
+        raise RuntimeError('Match the exact synthetic invitation workspace and accepted account.')
+    if not Grant.objects.select_for_update().filter(
+            case_id=ADMITTED_STAFF_CASE, user=quality, action='case.read', active=True).first():
+        raise RuntimeError('The admitted reviewer must retain current access to the invitation workspace.')
+    print(ADMITTED_GUARD + '=' + json.dumps(prepare(quality, head, admission=admission)), flush=True)

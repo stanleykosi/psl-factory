@@ -13,6 +13,8 @@ from .hrfinance_validators import ID,IDS,MONTH
 ACCESS='F16.input_access_rules'
 MERGE='F16.merge_rules'
 MATCH='F17.match_rules'
+NAME_CHECK='F17.name_check'
+DEPARTURE_CHECK='F17.departure_payment_check'
 REPORT='F18.reporting_rules'
 AUTH='F18.review_authority'
 QUESTION_ROUTE='F18.hr_question_route'
@@ -36,6 +38,16 @@ SCHEMAS={
 SCHEMAS[QUESTION_ROUTE]=('schema:psl/payroll-hr-question-route/v1',obj({
  'owner_id':{'anyOf':[ID,{'type':'null'}]},'action':{'const':'answer_aggregate_question'},
  'disclosure':{'const':'report_identity_and_topic_only'},'reply':{'const':'closed_codes_only'}}))
+SCHEMAS[NAME_CHECK]=('schema:psl/payroll-name-check/v1',obj({
+ 'comparison':{'enum':[None,'exact_as_supplied']},
+ 'reader_ids':{'type':'array','maxItems':100,'uniqueItems':True,'items':ID}}))
+DEPARTURE_SOURCES={'employment':'agent_private_payroll_departure_source_contract',
+                   'settlement':'agent_private_payroll_settlement_source_contract'}
+SCHEMAS[DEPARTURE_CHECK]=('schema:psl/payroll-departure-payment-check/v1',obj({'check':{'anyOf':[
+ {'type':'null'},obj({'entity':KEY,'comparison':{'const':'settlement_after_effective_instant'},
+ 'employment_holder_id':ID,'settlement_holder_id':ID,'reviewer_id':ID,'reader_ids':IDS,
+ 'employment_contract_id':ID,'settlement_contract_id':ID,'proof_max_age_seconds':{'type':'integer','minimum':1}})
+]}}))
 
 # Explicit successors. Existing reference IDs and v1 source behavior stay intact.
 ACCESS_V2=deepcopy(SCHEMAS[ACCESS][1])
@@ -112,6 +124,23 @@ def validate_reference(component,target,case,runtime=False):
    if (actual is None)!=(r['expected'] is None) or actual is not None and decimal(actual)!=decimal(r['expected']):raise ValidationError('Merge implementation differs from supplied oracle')
    known|=actual is not None;unknown|=r['left'] is None;overlap|=r['overlap']
   if not known or not unknown or not overlap:raise ValidationError('Known, overlap and unknown-propagation merge oracles required')
+ elif component==NAME_CHECK:
+  readers=v['reader_ids']
+  if bool(readers)!=(v['comparison'] is not None):
+   raise ValidationError('Choose exact-source comparison and nominate its readers together.')
+  if not runtime and get_user_model().objects.filter(pk__in=readers,is_active=True).count()!=len(readers):
+   raise ValidationError('Name comparisons require current explicitly nominated readers.')
+ elif component==DEPARTURE_CHECK and v['check'] is not None:
+  check=v['check'];employment=check['employment_holder_id'];settlement=check['settlement_holder_id'];reviewer=check['reviewer_id']
+  if settlement in {employment,reviewer} or reviewer in check['reader_ids']:
+   raise ValidationError('Settlement and HR responsibility must be separate, and the HR reviewer must not run the comparison.')
+  principals={employment,settlement,reviewer,*check['reader_ids']}
+  if not runtime and get_user_model().objects.filter(pk__in=principals,is_active=True).count()!=len(principals):
+   raise ValidationError('Use current, expressly nominated source holders and reviewers.')
+  for side,kind in DEPARTURE_SOURCES.items():
+   latest=case.evidence.filter(kind=kind).order_by('-version').values_list('pk',flat=True).first()
+   if latest!=check[side+'_contract_id']:
+    raise ValidationError('Choose the current reviewed source contract for each payroll timing fact.')
  elif component==REPORT:
   if len({r['component'] for r in v['components']})!=len(v['components']):raise ValidationError('Duplicate pay-component inclusion')
   for r in v['components']:decimal(r['coefficient'])

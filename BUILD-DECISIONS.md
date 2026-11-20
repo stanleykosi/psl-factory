@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Group Forecast decision notes are available through the exact current authorized preparer and reviewer paths. Bound earlier decisions to the same work and approved source authority. Keep the returned report and a corrected version separately reviewable. Multi-project leadership reporting uses explicitly reviewed project coverage and per-source access at read and release. Bid attachment recovery checks the exact reserved object after interruption and retains its private ownership context.
+
 20 November 2026. Visible investigation, calculation and assembly use the exact current worker claim and existing record permissions. The indicator clears when that claim settles. The resulting draft or schedule still goes through its separate human decision.
 
 20 November 2026. An authorized sender can read a scoped hold for an unattempted bid release. An attempted release keeps the original receipt lookup. Later wording stays held while the earlier reservation is unresolved. Live recipients and delivery authority remain owner configuration.

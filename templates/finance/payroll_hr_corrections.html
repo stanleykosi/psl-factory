@@ -3,6 +3,8 @@
 {% block content %}
 <header class="page-heading"><div><h1>HR payroll corrections</h1><p>Review the request and record the HR decision.</p></div>
 <a class="button secondary" href="{% url 'hrfinance' case.pk %}">HR information</a></header>
+<p><a href="{% url 'payroll_name_checks' case.pk %}">Record staff name evidence</a></p>
+<p><a href="{% url 'payroll_departure_check' case.pk %}">Check payment timing</a></p>
 <section class="card">
   <h2>Correction requests</h2>
   <ul>{% for row in rows %}<li><a href="{% url 'design_hr_payroll_correction' case.pk row.pk %}">Correction {{ row.record_id }}</a> · {{ row.record.created_at }}</li>

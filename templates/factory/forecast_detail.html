@@ -13,7 +13,26 @@
 {% include 'factory/forecast_receipt_recovery.html' %}
 {% if row.forecast.can_correct %}<section class="card"><h2>Source-owned correction</h2><p>Earlier calculations, decisions, deliveries and spent allowance remain in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">{{ inputs_form.as_p }}<label>Reason<textarea name="reason" required maxlength="2000"></textarea></label><button>Apply exact source selection</button></form></section>{% endif %}
 {% endif %}
-{% if row.forecast.group_disclosure %}{% if not focus or focus == 'decision' %}<section class="card"><h2>Exact group disclosure decision</h2><p>Review the group artifact below and these pinned recipient accounts before approving.</p><ul>{% for recipient in row.forecast.group_disclosure.recipients %}<li>{{ recipient.username }} (account {{ recipient.id }})</li>{% endfor %}</ul><p>Disclosure configuration {{ row.forecast.group_disclosure.configuration }}. Exact payload SHA256: {{ row.forecast.group_disclosure.payload_sha256 }}.</p><p>Changed content, owner policy or destinations require fresh preparation and review.</p></section>{% endif %}{% endif %}
+{% if row.forecast.group_disclosure %}{% if not focus or focus == 'decision' %}
+<section class="card shared-mobile-controls">
+  <h2>Exact group disclosure decision</h2>
+  <p>Check the report below and who will receive it before you decide.</p>
+  <ul aria-label="Group report recipients">
+    {% for recipient in row.forecast.group_disclosure.recipients %}<li>{{ recipient.username }}</li>{% endfor %}
+  </ul>
+  <p>Changes to the report, disclosure rule or recipients require a fresh review.</p>
+  <details>
+    <summary>Verification details</summary>
+    <dl>
+      <div><dt>Disclosure rule record</dt><dd>{{ row.forecast.group_disclosure.configuration }}</dd></div>
+      <div><dt>Report fingerprint</dt><dd style="overflow-wrap:anywhere">{{ row.forecast.group_disclosure.payload_sha256 }}</dd></div>
+      {% for recipient in row.forecast.group_disclosure.recipients %}
+      <div><dt>{{ recipient.username }}</dt><dd>Account {{ recipient.id }}</dd></div>
+      {% endfor %}
+    </dl>
+  </details>
+</section>
+{% endif %}{% endif %}
 {% if commands %}<section class="card"><h2>{% if focus == 'response' %}Actual cash and matching{% else %}Human Finance decisions{% endif %}</h2>{% for command in commands %}<details><summary>{{ command.label }}</summary><form method="post">{% csrf_token %}<input type="hidden" name="work_revision" value="{{ row.work.revision }}"><input type="hidden" name="selected_scenario" value="{{ row.forecast.scenario.pk }}">{{ command.form.as_p }}<button>{% if command.action == 'review' or command.action == 'group_review' %}Record decision{% else %}Record update{% endif %}</button></form></details>{% endfor %}</section>{% endif %}
 {% if row.forecast.document %}
 {% if row.forecast.document.version.audience == 'group' %}

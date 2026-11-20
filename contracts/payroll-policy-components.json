@@ -129,6 +129,44 @@
       }
     },
     {
+      "id": "F17.name_check",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F17.name_check/v1",
+      "subject_scope": "Optional exact source-holder name comparison and separately nominated private readers for this case",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "F17.departure_payment_check",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F17.departure_payment_check/v1",
+      "subject_scope": "Optional private employment and completed settlement evidence for an exact employer, source row and current human reviewers",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "F18.reporting_rules",
       "parent_decision_id": "PAYROLL",
       "schema_ref": "schema:psl/policy-component/F18.reporting_rules/v1",
