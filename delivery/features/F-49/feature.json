@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-49",
   "outcome": "Log a received RFP: a person fills in the client, reference, RFP document, received time, submission method and deadline in the Start work drawer and lands on the new RFP (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-RFP-INTAKE"
   ],
@@ -95,15 +95,29 @@
       "at": "2026-11-19T22:27:58Z",
       "seconds": 368.8,
       "evidence_ref": "delivery/features/F-49/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T23:40:57Z",
+      "seconds": 373.1,
+      "evidence_ref": "delivery/features/F-49/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -129,18 +143,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -180,14 +198,28 @@
         "delivery/features/F-49/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T22:38:23Z",
           "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "field errors merged"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "field errors merged"
       ]
     },
     {
@@ -295,14 +327,42 @@
         "delivery/features/F-49/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T22:38:23Z",
           "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "driver captures the whole sheet (1202px tall page)"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T00:18:10Z",
+          "refs": [
+            "139eceeb"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": "round-2/review-ui.md: phone 59 is the tool's union scoring of a taller sheet, not a defect; floor exception accepted by the design engineer under D-131"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "driver captures the whole sheet (1202px tall page)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "139eceeb"
       ]
     },
     {
@@ -318,14 +378,42 @@
         "delivery/features/F-49/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T22:38:23Z",
           "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "six scroll-capture exceptions removed"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T00:17:45Z",
+          "refs": [
+            "fidelity-exceptions.json has 24 entries and none for Client or prospect, RFP reference, Received, Submit to, Deadline or Note labels; all six labels (plus the Note and Submit to labels) render in the live dialog at both widths."
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "six scroll-capture exceptions removed"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "fidelity-exceptions.json has 24 entries and none for Client or prospect, RFP reference, Received, Submit to, Deadline or Note labels; all six labels (plus the Note and Submit to labels) render in the live dialog at both widths."
       ]
     },
     {
@@ -341,14 +429,42 @@
         "delivery/features/F-49/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T22:38:23Z",
           "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "phone submission method in one row"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T00:17:45Z",
+          "refs": [
+            "live at 390: the four method options sit on one row (Email x=18, Client portal x=85, By hand x=194, Not stated x=277, all y=649); the deadline choice is one row of three (y=837). At 1440 both are single rows as well."
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "phone submission method in one row"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "live at 390: the four method options sit on one row (Email x=18, Client portal x=85, By hand x=194, Not stated x=277, all y=649); the deadline choice is one row of three (y=837). At 1440 both are single rows as well."
       ]
     },
     {
@@ -364,15 +480,24 @@
         "delivery/features/F-49/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T22:38:23Z",
           "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-20T00:17:42Z",
+          "refs": [],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": "accepted for sign-off: tool limit / waiver"
         }
-      ]
+      ],
+      "risk_authority": "D-131"
     },
     {
       "id": "UI-1-5",
@@ -477,7 +602,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "4fc80166d2df5ba46d5b305a63af05b471211959",
     "task_branch": "fe-rfp-intake-log-received-rfp",
-    "head_sha": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+    "head_sha": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-49",
     "pr_url": null,
     "pr_number": null,
@@ -583,6 +708,22 @@
       "round": 2,
       "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T23:40:58Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T00:18:13Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
     }
   ],
   "routing": {
@@ -599,9 +740,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
   },
   "blocked": null
 }

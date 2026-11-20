@@ -1,0 +1,685 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T22:56:57.815Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-49/design/canvas/project/SCR-23-mobile.dc.html",
+  "boardName": "SCR-23-mobile.dc.html",
+  "pageUrl": "http://localhost:4965/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-49/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "5 board item(s) are missing from the page and are not approved exceptions (coverage 78.3% with exceptions, needs 100%).",
+    "Visual match 59 is below 90."
+  ],
+  "scores": {
+    "coverage": 39.1,
+    "coverageWithExceptions": 78.3,
+    "visual": 59
+  },
+  "visual": {
+    "score": 59,
+    "allCellsScore": 69.5,
+    "width": 390,
+    "height": 1202,
+    "boardHeight": 844,
+    "pageHeight": 1202,
+    "cell": 12,
+    "contentCells": 2481,
+    "mismatchedCells": 1018
+  },
+  "coverage": {
+    "total": 23,
+    "found": 9,
+    "coverage": 39.1,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Log a received RFP",
+        "pageName": "Log a received RFP",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 96,
+          "w": 390,
+          "h": 748
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 1076
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Log a received RFP",
+        "pageName": "Log a received RFP",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 119,
+          "w": 164,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 149,
+          "w": 192,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client or prospect",
+        "pageName": "Client or prospect",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 184,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 220,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The RFP document",
+        "pageName": "The RFP document",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 348,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 406,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tamarind-Loans-RFP.pdf",
+        "pageName": "Tamarind-Loans-RFP.pdf",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 384,
+          "w": 161,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 450,
+          "w": 244,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 2.4 MB",
+        "pageName": "Uploaded · 2.4 MB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 404,
+          "w": 100,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 471,
+          "w": 244,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Log RFP",
+        "pageName": "Log RFP",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 778,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 1134,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 8: the phone form is a bottom sheet; the page bar is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Opens a new pre-engagement workspace",
+        "key": "text: Opens a new pre-engagement workspace",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 141,
+          "w": 242,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 · change line'.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "×",
+        "key": "text: ×",
+        "container": "dialog",
+        "boardBox": {
+          "x": 361,
+          "y": 119,
+          "w": 13,
+          "h": 39
+        },
+        "exception": {
+          "reason": "Conflicts 8: the close control is a button named Close, not text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tamarind Loans Ltd ▾",
+        "key": "text: Tamarind Loans Ltd ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 208,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RFP reference",
+        "key": "text: RFP reference",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 266,
+          "w": 358,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TL-RFP-2026-014",
+        "key": "text: TL-RFP-2026-014",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 290,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 11: text typed into an input, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Received",
+        "key": "text: Received",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 442,
+          "w": 358,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov, 09:40",
+        "key": "text: 12 Nov, 09:40",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 466,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Deadline",
+        "key": "text: Deadline",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 524,
+          "w": 358,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Deadline",
+        "key": "text: Deadline",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 606,
+          "w": 358,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "28 Nov, 17:00",
+        "key": "text: 28 Nov, 17:00",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 630,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submit by",
+        "key": "text: Submit by",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 688,
+          "w": 358,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 5: both widths use the desktop words ('How the client wants it submitted').",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submit to",
+        "key": "text: Submit to",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 770,
+          "w": 358,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "procurement@tamarindloans.example",
+        "key": "text: procurement@tamarindloans.example",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 794,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 11: text typed into an input, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 70,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 173,
+          "w": 192,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 89,
+          "y": 160,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 330,
+          "y": 148,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Client or prospect",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 247,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove Tamarind-Loans-RFP.pdf",
+        "container": "dialog",
+        "pageBox": {
+          "x": 312,
+          "y": 445,
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "How the client wants it submitted",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 620,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Email",
+        "container": "dialog",
+        "pageBox": {
+          "x": 18,
+          "y": 649,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Client portal",
+        "container": "dialog",
+        "pageBox": {
+          "x": 85,
+          "y": 649,
+          "w": 109,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "By hand",
+        "container": "dialog",
+        "pageBox": {
+          "x": 194,
+          "y": 649,
+          "w": 83,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Not stated",
+        "container": "dialog",
+        "pageBox": {
+          "x": 277,
+          "y": 649,
+          "w": 98,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission deadline",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 808,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Unknown",
+        "container": "dialog",
+        "pageBox": {
+          "x": 18,
+          "y": 837,
+          "w": 123,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Stated",
+        "container": "dialog",
+        "pageBox": {
+          "x": 141,
+          "y": 837,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Not stated",
+        "container": "dialog",
+        "pageBox": {
+          "x": 245,
+          "y": 837,
+          "w": 129,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 5
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-49/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

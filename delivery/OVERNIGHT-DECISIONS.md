@@ -265,3 +265,9 @@ F-48 assistant "can't" state (Sign-off list 3): the phone visual waiver (88.2) a
   - the Audience options from data ("Group" tied to the unset group-forecast rules).
 
 Differences the pages can't match become exceptions for signature after the build.
+
+## D-131 · F-38 and F-49 design items accepted so they can go to QA (20 Nov 2026, design engineer: "Accept all eight")
+- **F-38:** UI-1-4 (tab bar roles and names, the Submission chip fill, from the shared frame), UI-1-5 (h2 title under the frame's h1), UI-1-6 and UI-1-7 (shared-code colour and style differences), UI-1-9 (top bar from the shared shell; no PMO Lead persona), and UI-2-1 (the 8 visual waivers, 76.7–89).
+- **F-49:** UI-1-1 (phone floor exception: 59 is the tool's union scoring of a sheet taller than the board, with every extra row accepted under D-130) and UI-1-4 (desktop waiver, 74.2).
+
+Recorded as accepted risk. Final product sign-off still follows.
