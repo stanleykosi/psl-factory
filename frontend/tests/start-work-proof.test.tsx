@@ -381,11 +381,36 @@ describe('the start', () => {
     choose(file('harmattan.docx', 1024));
     await uploaded();
     expect([uploads[1].url.pathname, uploads[1].body.case_revision]).toEqual(['/api/v1/cases/C-0102/evidence', 3]);
-    // the mock serves no Harmattan meeting, so the start's answer is stubbed: only what is sent matters here
-    override = (_, url) => (url.pathname === '/api/v1/work' ? json(201, { work_id: 'W-1403', state: 'processing' }) : undefined);
+    // the mock serves no Harmattan meeting, so one and the start's answer are stubbed: only what is sent matters here
+    override = (_, url) => {
+      if (url.pathname.endsWith('/fields/meeting/options')) return json(200, { items: [{ value: 'MTG-0999', label: 'Harmattan sync' }] });
+      return url.pathname === '/api/v1/work' ? json(201, { work_id: 'W-1403', state: 'processing' }) : undefined;
+    };
+    await pick('Meeting', 'Harmattan sync');
+    fireEvent.click(within(dialog()).getByRole('radio', { name: 'Internal' }));
     startPress('Start minutes');
     await waitFor(() => expect(starts).toHaveLength(1));
     expect([starts[0].body.case_id, starts[0].body.case_revision, starts[0].body.intake.proof]).toEqual(['C-0102', 4, 'EV-SW-C-0102-1']);
+  });
+});
+
+describe('F-49 QA-2-1 (shared): required fields left empty send nothing', () => {
+  it('income schedules: each empty required field is named, focus goes to the first, nothing is sent', async () => {
+    await openLine('income_schedules');
+    startPress('Start schedule');
+    for (const label of ['Kind', 'Reference', 'Mapping note', 'Proof']) expect(await within(dialog()).findByText(`${label} is required.`)).toBeTruthy();
+    expect(starts).toHaveLength(0);
+    expect(dialog().querySelector('[data-field="kind"]')!.contains(document.activeElement)).toBe(true);
+  });
+
+  it('minutes (project first): the start stays off until a project is chosen; with one, the other empty fields are named and nothing is sent', async () => {
+    await openLine('minutes');
+    expect((within(dialog()).getByRole('button', { name: 'Start minutes' }) as HTMLButtonElement).disabled).toBe(true);
+    await pick('Project', 'Lagoon Health · patient app');
+    startPress('Start minutes');
+    for (const label of ['Meeting', 'Audience']) expect(await within(dialog()).findByText(`${label} is required.`)).toBeTruthy();
+    expect(within(dialog()).queryByText('Proof is required.')).toBeNull();
+    expect(starts).toHaveLength(0);
   });
 });
 

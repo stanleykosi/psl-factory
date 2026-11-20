@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "value": "PPE-0005",
+      "label": "PPE-0005 \u00b7 September",
+      "sample": true,
+      "_personas": [
+        "finance_lead"
+      ]
+    },
+    {
+      "value": "PPE-0004",
+      "label": "PPE-0004 \u00b7 August",
+      "sample": true,
+      "_personas": [
+        "finance_lead"
+      ]
+    }
+  ]
+}

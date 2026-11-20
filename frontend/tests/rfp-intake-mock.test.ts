@@ -129,7 +129,7 @@ describe('the line and who is served it (2, 21)', () => {
     expect(line.intake.find((f) => f.name === 'deadline_at')!.show_when).toEqual({ field: 'deadline_status', equals: ['stated'] });
   });
 
-  it('pm, ceo, finance_lead and none are not served the line; they keep 8, 8, 3 and 0 lines; /me equals their keys', async () => {
+  it('pm, ceo, finance_lead and none are not served the line; they keep 8, 8, 5 and 0 lines; /me equals their keys', async () => {
     const counts: Record<string, number> = {};
     for (const persona of ['pm', 'ceo', 'finance_lead', 'none']) {
       const keys = (await get('/api/v1/lines', persona)).body.items.map((l: Line) => l.key);
@@ -137,7 +137,7 @@ describe('the line and who is served it (2, 21)', () => {
       expect(keys).not.toContain('rfp_intake');
       expect((await get('/api/v1/me', persona)).body.startable_lines).toEqual(keys);
     }
-    expect(counts).toEqual({ pm: 8, ceo: 8, finance_lead: 3, none: 0 });
+    expect(counts).toEqual({ pm: 8, ceo: 8, finance_lead: 5, none: 0 });
   });
 
   it('client options: the three clients, schema-valid, narrowed by q, with no mock-only keys; 404 for every other persona', async () => {

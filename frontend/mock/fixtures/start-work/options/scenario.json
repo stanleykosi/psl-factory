@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "value": "FC-SC-4",
+      "label": "Base case \u00b7 v4",
+      "sample": true,
+      "_personas": [
+        "finance_lead"
+      ]
+    },
+    {
+      "value": "FC-SC-3",
+      "label": "Base case \u00b7 v3",
+      "sample": true,
+      "_personas": [
+        "finance_lead"
+      ]
+    }
+  ]
+}

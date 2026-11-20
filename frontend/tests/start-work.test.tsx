@@ -170,11 +170,11 @@ describe('the main button and the chooser', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('only lines E-LINES returned are offered (finance_lead: exactly 3; a /me key missing from E-LINES is absent)', async () => {
+  it('only lines E-LINES returned are offered (finance_lead: exactly 5; a /me key missing from E-LINES is absent)', async () => {
     persona = 'finance_lead';
     await openChooser();
-    expect(within(dialog()).getByText('LINES YOU CAN START · 3')).toBeTruthy();
-    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice', 'income_schedules', 'ledger_sources']);
+    expect(within(dialog()).getByText('LINES YOU CAN START · 5')).toBeTruthy();
+    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice', 'income_schedules', 'ledger_sources', 'fixed_assets', 'cash_forecast']);
   });
 
   it('E-LINES is read on every press, never before', async () => {
@@ -481,28 +481,21 @@ describe('the case and the start request', () => {
 });
 
 describe('server answers', () => {
-  it('422: the missing milestone is named inline, the callout counts it, focus moves there, and the next press uses a new key', async () => {
+  it('a required field left empty is named inline, focus moves to the first, and nothing is sent', async () => {
     await invoiceWith();
     press('Start the invoice');
     const message = await within(dialog()).findByText('Completed milestone is required.');
     const milestone = within(dialog()).getByRole('combobox', { name: 'Completed milestone' });
     expect(milestone.getAttribute('aria-invalid')).toBe('true');
     expect(milestone.getAttribute('aria-describedby')!.split(' ')).toContain(message.closest('.psl-error')!.id);
-    const callout = within(dialog()).getByRole('alert');
-    expect(callout.textContent).toBe('1 thing to fix before Chidi can start.');
-    await waitFor(() => expect(document.activeElement).toBe(callout));
-    // The count replaces the head's subline; the eyebrow stays (SCR-04-desktop-validation).
-    expect(within(dialog()).getByText('1 thing to fix')).toBeTruthy();
-    expect(within(dialog()).getByText('START WORK')).toBeTruthy();
-    // The start button is greyed until something changes (UX-1-3).
-    const start = within(dialog()).getByRole('button', { name: 'Start the invoice' }) as HTMLButtonElement;
-    expect(start.disabled).toBe(true);
+    await waitFor(() => expect(document.activeElement).toBe(milestone));
+    expect(posts).toHaveLength(0);
+    // the message goes when the field is changed, and the next press sends one start
     await pick('Completed milestone', 'Milestone 3');
-    expect(start.disabled).toBe(false);
+    expect(within(dialog()).queryByText('Completed milestone is required.')).toBeNull();
     press('Start the invoice');
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-1401'));
-    expect(posts).toHaveLength(2);
-    expect(posts[1].body.idempotency_key).not.toBe(posts[0].body.idempotency_key);
+    expect(posts).toHaveLength(1);
   });
 
   it('422: a message for a field the drawer does not render is drawn as its own box, as the validation board shows', async () => {
@@ -654,6 +647,9 @@ describe('server answers', () => {
     await openChooser();
     fireEvent.click(within(dialog()).getByRole('radio', { name: /Leadership report/ }));
     press('Next');
+    fireEvent.click(within(dialog()).getByRole('radio', { name: 'Internal Tuesday' }));
+    fireEvent.change(within(dialog()).getByLabelText('Period'), { target: { value: '17 Nov 2026' } });
+    fireEvent.blur(within(dialog()).getByLabelText('Period'));
     press('Start report');
     expect(await within(dialog()).findByText('You can no longer start this line.')).toBeTruthy();
     expect(within(dialog()).queryByRole('button', { name: 'Start report' })).toBeNull();

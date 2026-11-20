@@ -84,7 +84,7 @@ describe('the two Finance lines, their options and their landing items', () => {
   it('finance_lead is served invoice, income_schedules and ledger_sources, schema-valid, with /me startable_lines equal to them', async () => {
     const lines = await get('/api/v1/lines');
     expectValid('E-LINES', 200, lines.body);
-    expect(lines.body.items.map((l: Line) => l.key)).toEqual(['invoice', 'income_schedules', 'ledger_sources']);
+    expect(lines.body.items.map((l: Line) => l.key)).toEqual(['invoice', 'income_schedules', 'ledger_sources', 'fixed_assets', 'cash_forecast']);
     for (const persona of ['pm', 'finance_lead', 'ceo', 'none']) {
       const served = (await get('/api/v1/lines', persona)).body.items.map((l: Line) => l.key);
       expect((await get('/api/v1/me', persona)).body.startable_lines).toEqual(served);

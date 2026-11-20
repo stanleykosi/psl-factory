@@ -10,7 +10,7 @@ import { useId, type ReactNode } from 'react';
 import { DateField, Icon, Segmented, Select, TextArea, TextField } from '@/components';
 
 import { isNew, type FieldValue, type NewValue, type RangeValue } from './intake';
-import { fourSegments } from './labels';
+import { fourSegments, optionalAsLine, selectChoice } from './labels';
 import { NEW_CLIENT, RecordPicker } from './RecordPicker';
 import type { Field, LineOption } from './types';
 
@@ -34,11 +34,11 @@ type Props = {
 const NATIVE: Record<string, string> = { period: 'month', datetime: 'datetime-local', integer: 'number' };
 
 /** The label of a field whose control brings none of its own (a choice row, a range, a record picker, a display value). */
-function Label({ id, field, as = 'span' }: { id: string; field: Field; as?: 'span' | 'legend' }) {
+function Label({ id, field, as = 'span', plain = false }: { id: string; field: Field; as?: 'span' | 'legend'; plain?: boolean }) {
   const Tag = as;
   return (
     <Tag className="psl-label" id={id}>
-      {!field.required && field.type !== 'display' ? `${field.label} (optional)` : field.label}
+      {!field.required && !plain && field.type !== 'display' ? `${field.label} (optional)` : field.label}
     </Tag>
   );
 }
@@ -56,10 +56,13 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
   // F-49: a "New client" asks for a name; its message sits under that box.
   const adding = isNew(value);
   // The library fields take one hint line; the things this drawer says beside a control are joined into it.
+  // F-51: on that line an optional record or choice reads "Optional" as a muted line under the control (the boards).
+  const optionalLine = !field.required && (field.type === 'choice' || field.type === 'record') && optionalAsLine(lineKey);
   const lines: ReactNode[] = [
     waiting && <span key="wait" id={waitId}>Choose {parentLabel ?? 'the field above'} first</span>,
     hintText && <span key="help" id={helpId}>{hintText}</span>,
     note && <span key="note" id={noteId}>{note}</span>,
+    optionalLine && <span key="optional">Optional</span>,
   ].filter(Boolean);
   const hint = lines.length > 0 ? <span className="sw-hintlines">{lines}</span> : undefined;
   // For controls the library does not draw: the same messages under them.
@@ -85,6 +88,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
           {note}
         </span>
       )}
+      {optionalLine && <span className="psl-hint">Optional</span>}
       {error && !adding && (
         <span className="psl-error" id={`${id}-error`}>
           <Icon name="warn" />
@@ -97,7 +101,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     [waiting && waitId, (hintText || (movedHelp && !movedHelp.text)) && helpId, note && noteId, error && !adding && `${id}-error`].filter(Boolean).join(' ') || undefined;
   const common = { 'aria-required': field.required || undefined, 'aria-describedby': movedHelp && !movedHelp.text ? movedHelp.id : undefined };
   const label = !field.required ? field.label : field.label;
-  const optional = !field.required;
+  const optional = !field.required && !optionalLine;
   const text = typeof value === 'string' ? value : '';
   const frame = (children: ReactNode) => (
     <div className="psl-field sw-field" data-field={field.name}>
@@ -150,7 +154,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     case 'choice': {
       const options = field.options ?? [];
       // three or fewer are joined segments; the RFP line's submission method has four, drawn as segments too (SCR-23)
-      if (options.length > (fourSegments(lineKey) ? 4 : 3)) {
+      if (options.length > (fourSegments(lineKey) ? 4 : 3) || selectChoice(lineKey, field.name)) {
         return frame(
           <Select
             id={controlId}
@@ -186,7 +190,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     case 'records':
       return frame(
         <>
-          <Label id={labelId} field={field} />
+          <Label id={labelId} field={field} plain={optionalLine} />
           <RecordPicker
             key={parent ?? ''}
             lineKey={lineKey}

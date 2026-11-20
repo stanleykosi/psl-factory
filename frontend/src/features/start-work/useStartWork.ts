@@ -17,6 +17,7 @@ import { ApiError, errorFromResponse, networkError } from '@/api/errors';
 import {
   buildIntake,
   dependentsOf,
+  emptyRequired,
   fillable,
   isNew,
   newIdempotencyKey,
@@ -90,6 +91,17 @@ export type Notice =
   | { kind: 'uncertain' }
   | { kind: 'gone' };
 
+const requiredMessage = (field: Field) => `${field.label} is required.`;
+
+/** The option a choice field's `value` names (the line's default, from data); none is picked when it names none. */
+function defaultChoices(fields: Field[]): Values {
+  const chosen: Values = {};
+  for (const field of fields) {
+    if (field.type === 'choice' && field.value && field.options?.some((o) => o.value === field.value)) chosen[field.name] = field.value;
+  }
+  return chosen;
+}
+
 export const NO_LONGER_AVAILABLE = 'That choice is no longer available. Choose again.';
 
 /** How many pages of options are searched for a prefilled value before it counts as not served. */
@@ -139,7 +151,8 @@ async function findOptions(lineKey: string, field: string, parent: string | unde
  */
 export function useStartForm(line: Line, onStarted: (workId: string) => void, initialIntake?: Record<string, unknown>, onConflict?: () => void) {
   const fields = useMemo(() => shownFields(line), [line]);
-  const [values, setValues] = useState<Values>({});
+  // A choice field whose `value` names one of its options starts with it selected (D-130: the options, and so the default, are data).
+  const [values, setValues] = useState<Values>(() => defaultChoices(fields));
   // F-49: a field whose `show_when` is not met is not drawn and never sent.
   const drawn = useMemo(() => shownNow(fields, values), [fields, values]);
   // A fixed case's revision as last read from E-LINES (it changes only after a 409 re-read).
@@ -152,6 +165,8 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
   // Bumped with every new notice, so the drawer can move focus to it.
   const [noticeSeq, setNoticeSeq] = useState(0);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  // Bumped when a press finds required fields empty; `focusName` is the first of them (the drawer moves focus to it).
+  const [focus, setFocus] = useState<{ seq: number; name: string }>({ seq: 0, name: '' });
   const [fieldNotes, setFieldNotes] = useState<Record<string, string>>({});
   // After a 422 the start button waits for a change, as SCR-04-validation draws it greyed.
   const [awaitingChange, setAwaitingChange] = useState(false);
@@ -228,6 +243,11 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
     (name: string, value: FieldValue | undefined) => {
       const cleared = dependentsOf(fields, name);
       setAwaitingChange(false);
+      // the "is required" message goes once the field is changed
+      setFieldErrors((current) => {
+        const field = fields.find((f) => f.name === name);
+        return field && current[name] === requiredMessage(field) ? Object.fromEntries(Object.entries(current).filter(([k]) => k !== name)) : current;
+      });
       if (name === line.case_field && line.case_scope === 'project') {
         const caseOf = (v: FieldValue | undefined) => (v && typeof v === 'object' && 'case_id' in v ? v.case_id : undefined);
         if (caseOf(values[name]) !== caseOf(value)) {
@@ -267,6 +287,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
   const reportProof = useCallback((name: string, state: ProofState) => {
     setProof((current) => ({ ...current, [name]: state }));
     setAwaitingChange(false);
+    if (state.ids.length > 0) setFieldErrors((current) => Object.fromEntries(Object.entries(current).filter(([k]) => k !== name)));
     if (state.count > 0) setProofMoved(false);
     setProofRevision(state.revision);
   }, []);
@@ -349,6 +370,16 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
       }
     }
     const ids = Object.fromEntries(Object.entries(proof).map(([name, p]) => [name, p.ids]));
+    if (!(uncertain && sent.current)) {
+      // A required field left empty is named on the page and nothing is sent.
+      const empty = emptyRequired(drawn, values, ids);
+      if (empty.length > 0) {
+        setFieldErrors(Object.fromEntries(empty.map((f) => [f.name, requiredMessage(f)])));
+        setNotice(null);
+        setFocus((current) => ({ seq: current.seq + 1, name: empty[0].name }));
+        return;
+      }
+    }
     const body: StartBody | null =
       uncertain && sent.current
         ? sent.current
@@ -427,6 +458,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
     noticeSeq,
     fieldErrors,
     fieldNotes,
+    focus,
     awaitingChange,
     prefilling,
     submit,
