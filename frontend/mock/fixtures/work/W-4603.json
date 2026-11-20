@@ -1,0 +1,80 @@
+{
+  "id": "W-4603",
+  "title": "Finance question · last day of Segun Alade",
+  "line": "Answer a Finance question",
+  "reference": "HRQ-0014",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Question from Finance",
+      "status": "done"
+    },
+    {
+      "name": "HR answers",
+      "status": "current_person"
+    },
+    {
+      "name": "Finance updates matching",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4603",
+      "kind": "do",
+      "title": "Give the last working day for Segun Alade",
+      "required_role": "HR",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read Finance’s question about the leaver",
+        "status": "done",
+        "source": "Question · Finance"
+      },
+      {
+        "text": "Found Segun Alade’s record: leaving date not filled in",
+        "status": "done",
+        "source": "Staff record · Segun Alade"
+      }
+    ]
+  },
+  "next_step": "Next, HR gives Segun Alade’s last working day so Finance can finish matching the October staff list.",
+  "sample": true
+}

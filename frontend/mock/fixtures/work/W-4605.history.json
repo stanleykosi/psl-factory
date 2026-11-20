@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "at": "2026-11-16T11:45:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Sent the correction to the HR Lead",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-16T11:30:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Added a note",
+      "restricted": false,
+      "detail": "\"The second entry is the same person after a name change.\"",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-16T11:00:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Found a duplicate name",
+      "restricted": false,
+      "detail": "Used: Matching result · October",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-16T10:41:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-16T10:40:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Reported the mismatch",
+      "restricted": false,
+      "detail": "Staff list and matching differ by one name",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-16T10:35:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From a matching mismatch"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

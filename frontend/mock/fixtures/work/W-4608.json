@@ -1,0 +1,79 @@
+{
+  "id": "W-4608",
+  "title": "October staff list · matched by Finance",
+  "line": "Send the staff list for payroll",
+  "reference": "HRS-0009",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Read the staff list",
+      "status": "done"
+    },
+    {
+      "name": "Check business units",
+      "status": "done"
+    },
+    {
+      "name": "Confirm the list",
+      "status": "done"
+    },
+    {
+      "name": "Send to Finance",
+      "status": "done"
+    },
+    {
+      "name": "Finance matching",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the confirmed October list to Finance",
+        "status": "done",
+        "source": "Staff list · confirmed"
+      },
+      {
+        "text": "Finance matched every name; nothing left over",
+        "status": "done",
+        "source": "Matching result · October"
+      }
+    ]
+  },
+  "next_step": "Done. Finance matched the October staff list to payroll.",
+  "sample": true
+}

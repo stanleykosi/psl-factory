@@ -1,0 +1,66 @@
+{
+  "conversation_id": "CV-2423",
+  "agent": "zainab",
+  "title": "Why did Finance ask about a leaver?",
+  "status": "answered",
+  "context": {
+    "project": {
+      "case_id": "C-HR-STAFF",
+      "title": "Staff records for payroll"
+    },
+    "access": [
+      "HR · staff and business unit records",
+      "No payroll amounts (not set up yet)"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Why is Finance asking me about Segun Alade?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-18T10:30:00Z"
+    },
+    {
+      "role": "agent",
+      "steps": [
+        "Read Finance’s question",
+        "Opened Segun Alade’s staff record"
+      ],
+      "sources": [],
+      "at": "2026-11-18T10:31:00Z",
+      "text": "Finance needs Segun Alade’s last working day to close October matching, and the leaving date is blank in his staff record. Give the date on the work item and I will pass it to Finance. This is sample data from the HR stand-in.",
+      "step_details": [
+        {
+          "text": "Read Finance’s question",
+          "state": "done",
+          "reference": {
+            "label": "QUESTION · FINANCE"
+          }
+        },
+        {
+          "text": "Opened Segun Alade’s staff record",
+          "state": "done",
+          "reference": {
+            "label": "STAFF RECORD · SEGUN ALADE"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "QUESTION",
+          "label": "QUESTION · HRQ-0014",
+          "restricted": false,
+          "link": {
+            "work_id": "W-4603"
+          }
+        },
+        {
+          "kind": "STAFF RECORD",
+          "label": "STAFF RECORD · SEGUN ALADE",
+          "restricted": true
+        }
+      ]
+    }
+  ]
+}

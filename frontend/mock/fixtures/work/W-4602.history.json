@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "at": "2026-11-18T09:12:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked HR to choose",
+      "restricted": false,
+      "detail": "Payroll matching cannot start until both have a unit",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T09:10:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Suggested business units",
+      "restricted": false,
+      "detail": "Based on the project teams they worked on in October",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T09:08:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Listed 2 staff with no business unit",
+      "restricted": false,
+      "detail": "Ifeoma Nwosu, Sani Garba",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T09:07:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T09:06:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the business unit register",
+      "restricted": false,
+      "detail": "bu_register_nov.xlsx",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T09:05:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Opened the fix",
+      "restricted": false,
+      "detail": "From the November staff list check"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

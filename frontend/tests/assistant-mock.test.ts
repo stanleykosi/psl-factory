@@ -56,7 +56,7 @@ describe('fixtures', () => {
   const ids = readdirSync(dir).filter((n) => /^CV-\d+\.json$/.test(n)).map((n) => n.slice(0, -5));
 
   it('there are the eight board conversations, minus the reserved no-access id', () => {
-    expect(ids).toEqual(['CV-2401', 'CV-2402', 'CV-2403', 'CV-2404', 'CV-2405', 'CV-2406', 'CV-2411']);
+    expect(ids).toEqual(['CV-2401', 'CV-2402', 'CV-2403', 'CV-2404', 'CV-2405', 'CV-2406', 'CV-2411', 'CV-2421', 'CV-2422', 'CV-2423', 'CV-2424', 'CV-2425']);
   });
 
   for (const id of ids) {
