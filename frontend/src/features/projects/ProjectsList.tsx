@@ -162,12 +162,10 @@ export function ProjectsList() {
   const showMore = async (limit: ProjectsView['limit']) => {
     if (list.status !== 'ready' || !list.nextCursor) return;
     const mine = seq.current;
-    const before = list.items.length;
     setMore('loading');
     try {
       const data = await fetchPage({ ...view, limit }, list.nextCursor);
       if (mine !== seq.current) return;
-      focusRow.current = before;
       setList((prev) => (prev.status !== 'ready' ? prev : { ...prev, items: [...prev.items, ...data.items], nextCursor: data.next_cursor }));
       setMore('idle');
     } catch (error) {
@@ -189,24 +187,31 @@ export function ProjectsList() {
   }, [view]);
 
   const listReady = list.status === 'ready' ? list : undefined;
-  const { rows, paging } = usePagedRows({
+  const { rows, paging: basePaging } = usePagedRows({
     items: listReady?.items ?? [],
     next: Boolean(listReady?.nextCursor),
     busy: more === 'loading',
     failed: more === 'error',
     loadMore: (limit) => void showMore(limit),
     resetKey: `${view.q ?? ''}|${view.tab}`,
-    total: listReady?.total,
     size: view.limit,
     onSize: (limit) => navigate({ limit }),
   });
+  // Show more: the keyboard moves to the first row it added (not when the rows grow from a rows-per-page choice).
+  const paging = {
+    ...basePaging,
+    onMore: () => {
+      if (more !== 'error') focusRow.current = rows.length;
+      basePaging.onMore();
+    },
+  };
 
   useEffect(() => {
-    if (focusRow.current !== null && list.status === 'ready') {
+    if (focusRow.current !== null && list.status === 'ready' && rows.length > focusRow.current) {
       rowsRef.current?.querySelectorAll<HTMLElement>('[data-project-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [list]);
+  }, [list, rows.length]);
 
   // Search: the box keeps what the person typed; the URL takes the settled search (SearchField's pause).
   const [text, setText] = useState(view.q ?? '');

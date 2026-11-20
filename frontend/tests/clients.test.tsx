@@ -104,7 +104,7 @@ describe('Clients list (SCR-35)', () => {
   it('shows the six clients in the returned order from the data only', async () => {
     await openList();
     expect(reads()).toHaveLength(1);
-    expect(reads()[0]).toMatchObject({ path: '/api/v1/clients', search: '' });
+    expect(reads()[0]).toMatchObject({ path: '/api/v1/clients', search: '?limit=10' });
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['CLIENT', 'PROJECTS', 'OWED', 'BILLING CONTACT', 'STATE']);
     expect(bodyRows()).toEqual([
       ['Lagoon Health', '1', 'Unknown amount not known', 'Missing · invoices can’t start', 'Billing contact missing'],
@@ -155,10 +155,10 @@ describe('Clients list (SCR-35)', () => {
     });
     await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(20));
     expect(calls.filter((c) => c.search.includes('cursor='))).toHaveLength(1);
-    expect(reads()[1].search).toBe('?cursor=o10');
+    expect(reads()[1].search).toBe('?limit=10&cursor=o10');
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(25));
-    expect(reads()[2].search).toBe('?cursor=o20');
+    expect(reads()[2].search).toBe('?limit=10&cursor=o20');
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.getByText(/^25 clients as of .* · \d+ missing billing contact$/)).toBeTruthy();
     const names = [...document.querySelectorAll('[data-client-link]')].map((a) => a.textContent);

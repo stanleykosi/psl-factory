@@ -156,13 +156,11 @@ export function MyWork() {
   const showMore = async (limit: Limit) => {
     if (list.status !== 'ready' || !list.nextCursor) return;
     const mine = seq.current;
-    const before = list.items.length;
     setMore('loading');
     try {
       const data = await fetchPage(view, list.nextCursor, limit);
       if (mine !== seq.current) return;
       took(data);
-      focusRow.current = before;
       setList((prev) =>
         prev.status !== 'ready' ? prev : { ...prev, items: appendPage(prev.items, data.items), pages: prev.pages + 1, nextCursor: data.next_cursor },
       );
@@ -185,7 +183,7 @@ export function MyWork() {
     viewRef.current = view;
   }, [view]);
   const listReady = list.status === 'ready' ? list : undefined;
-  const { rows, paging } = usePagedRows({
+  const { rows, paging: basePaging } = usePagedRows({
     items: listReady?.items ?? [],
     next: Boolean(listReady?.nextCursor),
     busy: more === 'loading',
@@ -196,14 +194,22 @@ export function MyWork() {
     onSize: (limit) => navigate({ limit }),
     total: queueTotal(view, counts),
   });
+  // Show more: the keyboard moves to the first row it added (not when the rows grow from a rows-per-page choice).
+  const paging = {
+    ...basePaging,
+    onMore: () => {
+      if (more !== 'error') focusRow.current = rows.length;
+      basePaging.onMore();
+    },
+  };
 
   useEffect(() => {
     pollable.current = list.status === 'ready' && !signedOut;
-    if (focusRow.current !== null && list.status === 'ready') {
+    if (focusRow.current !== null && list.status === 'ready' && rows.length > focusRow.current) {
       panel.current?.querySelectorAll<HTMLElement>('[data-work-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [list, signedOut]);
+  }, [list, signedOut, rows.length]);
 
   // D-UPDATES: every 15 s while the tab is visible; on return, at once if the data is older than 15 s.
   const refreshRef = useRef(refresh);

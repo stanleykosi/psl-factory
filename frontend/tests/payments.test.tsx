@@ -329,7 +329,7 @@ describe('search, filter and paging go to the server (AC 8)', () => {
     vi.useRealTimers();
     await waitFor(() => expect(reads()).toHaveLength(2));
     expect(reads()[1].params.get('q')).toBe('Harm');
-    expect(reads()[1].params.get('limit')).toBe('20');
+    expect(reads()[1].params.get('limit')).toBe('10');
     expect(nav.replaced.at(-1)).toBe('/finance/payments?q=Harm');
     await waitFor(() => expect(screen.getAllByRole('row')).toHaveLength(2));
   });
@@ -391,24 +391,23 @@ describe('search, filter and paging go to the server (AC 8)', () => {
     expect(screen.getByRole('button', { name: 'Remove State filter' })).toBeTruthy();
   });
 
-  it('paged: Show more sends cursor=<next_cursor>, appends the next rows and moves focus to the first new one', async () => {
+  it('paged: a short page with a next_cursor is topped up by cursor until the window of 10 is full or the rows run out', async () => {
     cookies.psl_mock_invoices = 'paged';
     await open();
-    expect(table().getAllByRole('row')).toHaveLength(3);
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(table().getAllByRole('row')).toHaveLength(5));
     expect(reads()[1].params.get('cursor')).toBe('o2');
-    await waitFor(() => expect(document.activeElement?.textContent).toBe('INV-0402'));
+    expect(reads()[1].params.get('limit')).toBe('10');
+    expect(reads()).toHaveLength(2);
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    expect(screen.getByText('All 4 showing')).toBeTruthy();
     // the count stays the backend's total, not the rows shown
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('4 INVOICES');
   });
 
   it('a failed Show more keeps the rows and offers Try again', async () => {
     cookies.psl_mock_invoices = 'paged';
-    await open();
     override = (call) => (call.params.has('cursor') ? json(500, { code: 'server_error', message: 'x' }) : undefined);
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    await open();
     await screen.findByText(/We couldn’t load more invoices/);
     expect(table().getAllByRole('row')).toHaveLength(3);
     override = () => undefined;
