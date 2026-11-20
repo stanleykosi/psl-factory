@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Preview acceptance keeps specimen setup separate from operator actions. The invoice processing specimen reserves its native draft claim only when the exact authorized reader is ready to observe it. The original invoice and receipt are retained. Typed asset and Go-live specimens use separate guarded, synthetic scope and independent review.
+
 20 November 2026. Per-asset delivery and in-service dates use immutable evidence from their exact source holder. An independently reviewed rule supplies explicit date intervals and fractions only for the opted-in method. Missing dates, source authority or rule coverage hold that method and leave the amount Unknown. The optional verified Go-live mapping binds the exact signed baseline and uses the existing milestone command after a current project manager supplies separate completion evidence. The operator explicitly confirms that milestone, and its existing Finance handoff remains a separate process.
 
 20 November 2026. An eligible independent reviewer can compare the stale invoice packet's inbox with the current approved inbox. A fresh native review preserves the same obligation and amount. Recipient names and packet IDs stay outside ordinary invoice-reader projections. Go-live signed times and proof references are shown separately from confirmation when their exact source remains authorized.

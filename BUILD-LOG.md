@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. All three guarded 268 preview setups and both original preservation probes passed. In Codex the preparer verified work 233's stored signatures and original receipt. The native dated asset POST timed out at commit. The independent reviewer batch remains staged, and the asset submission needs exact readback before retry.
+
+20 November 2026. Hosted verified 267, including additive workflows 0095 and the normal matching worker. The admitted browser observed the named invoice responsibility hold without resolver authority. Isolated 268 passed all three specimen checks and both preservation probes. Submitted their guarded preview setup separately.
+
 20 November 2026. Isolated 267 passed all ten typed-date, milestone and governed invoice responsibility tests. Prepared exact workflows 0095 preview source and the separate three browser specimens for the next PostgreSQL gate. Operational asset date rules and Go-live milestone mapping remain unset.
 
 20 November 2026. Hosted 266 and all three guarded specimens. The admitted user started work 231 for the historical reporting-date discrepancy and verified stale invoice recipient privacy on work 229. Neither journey is counted before separate reviewer evidence. The trial session remains pending.
