@@ -1,6 +1,7 @@
 """Prepare isolated source records for a grouped browser walkthrough."""
 import json
 import os
+from functools import partial
 from pathlib import Path
 from unittest.mock import patch
 
@@ -15,7 +16,7 @@ from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
-from apps.workflows import factory_accounting_intake, factory_change, factory_progress
+from apps.workflows import factory, factory_accounting_intake, factory_change, factory_progress
 from apps.workflows.models import FactoryProgress, FactoryWork
 from tests import test_commercial_changes, test_delivery, test_factory_hypercare, test_project_archive_files, test_standard_changes
 from tests.helpers import rev
@@ -29,10 +30,14 @@ PREPARATION = {
     'archive': ('delivery-archive/v1', 'SAMPLE file archive walkthrough'),
     'standard': ('pmo-change/v1', 'SAMPLE standard change walkthrough'),
     'emergency': ('pmo-emergency/v1', 'SAMPLE emergency walkthrough'),
+    'emergency_authorized': ('pmo-emergency/v1', 'SAMPLE emergency authorized outcome walkthrough'),
+    'emergency_refused': ('pmo-emergency/v1', 'SAMPLE emergency refusal walkthrough'),
     'escalation': ('pmo-escalation/v1', 'SAMPLE escalation walkthrough'),
+    'invoice_release': ('pmo-finance/v1', 'SAMPLE invoice release walkthrough'),
     'leadership': ('pmo-leadership-report/v1', 'SAMPLE leadership report walkthrough'),
     'tuesday': ('pmo-leadership-report/v1', 'SAMPLE Tuesday report walkthrough'),
     'accounts': ('finance-accounts/v1', 'SAMPLE accounts close walkthrough'),
+    'accounts_continuation': ('finance-accounts/v1', 'SAMPLE accounts continuation walkthrough'),
     'assets': ('finance-ppe/v1', 'SAMPLE fixed asset walkthrough'),
     'schedules': ('finance-schedules/v1', 'SAMPLE schedules walkthrough'),
     'forecast': ('finance-forecast/v1', 'SAMPLE cash forecast walkthrough'),
@@ -81,7 +86,7 @@ def prepare_standard(actor, case):
     return work
 
 
-def prepare_emergency(actor, case):
+def prepare_emergency(actor, case, *, verified_sources=False, refusal=False):
     from tests import test_emergencies, test_factory_emergency
 
     with patch.object(test_emergencies, 'fixture', side_effect=lambda *, existing:
@@ -90,6 +95,12 @@ def prepare_emergency(actor, case):
         entry.setUp()
     entry.policies()
     entry.clocks()
+    if verified_sources:
+        entry.glpi()
+    if refusal:
+        from tests.document_helpers import artifact
+        artifact(actor, case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'CTO', 'actions': ['reject']}]}, entry.e['policy_decision'])
     return entry.start_work()
 
 
@@ -100,6 +111,16 @@ def prepare_escalation(actor, case):
         entry = test_factory_escalation.FactoryEscalationTests()
         entry.setUp()
     return entry.start()
+
+
+def prepare_invoice_release(actor, case):
+    from tests import factory_helpers
+    from tests.obligation_helpers import factory_identified
+
+    with patch.object(factory_helpers, 'setup_case', return_value=(actor, case)):
+        entry = factory_helpers.fixture(max_age_seconds=7 * 86400)
+    factory.run_until_wait(entry['work'].pk)
+    return factory_identified(entry)
 
 
 def prepare_leadership(actor, case, *, tuesday=False):
@@ -155,9 +176,12 @@ def prepare_project(actor, key):
     if created:
         Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
         prepare = {'stability': prepare_stability, 'archive': prepare_archive, 'standard': prepare_standard,
-                   'emergency': prepare_emergency, 'escalation': prepare_escalation,
+                   'emergency': prepare_emergency,
+                   'emergency_authorized': partial(prepare_emergency, verified_sources=True),
+                   'emergency_refused': partial(prepare_emergency, refusal=True), 'escalation': prepare_escalation,
+                   'invoice_release': prepare_invoice_release,
                    'leadership': prepare_leadership, 'tuesday': prepare_leadership,
-                   'accounts': prepare_accounts, 'assets': prepare_assets,
+                   'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts, 'assets': prepare_assets,
                    'schedules': prepare_schedules, 'forecast': prepare_forecast}[key]
         users = get_user_model().objects
         create_user = users.create_user
@@ -201,6 +225,35 @@ def prepare_accounting_intake(actor, *, missing_units):
             'existing_work_preserved': not created}
 
 
+@transaction.atomic
+def prepare_hr_payroll_correction(actor):
+    from apps.finance import payroll
+    from apps.finance.payroll_models import PayrollHRFollowup
+    from tests.payroll_helpers import approve, combined, fixture
+
+    case, created = Case.objects.get_or_create(tenant=TENANT, title='SAMPLE HR payroll correction walkthrough',
+                                               kind='project', synthetic=True)
+    request_source = 'synthetic:design-batch-payroll-correction'
+    if created:
+        Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        users = get_user_model().objects
+        sample = fixture(context=(actor, case),
+                         principal=lambda role: users.create_user(username=f'batch-payroll-correction-{role}'))
+        combination = combined(sample, 'walkthrough-combination')
+        approve(sample, combination)
+        matching = payroll.match(sample['preparer'], case.pk, combination.pk, sample['hr'].pk,
+                                 'walkthrough-matching', rev(case))
+        proof = add_evidence(actor, case.pk, 'hr_correction_request', 'Synthetic request to check the BU assignment.', request_source)
+        link = payroll.hr_correction(sample['preparer'], case.pk, matching.pk, 'walkthrough-hr-correction', proof.pk, rev(case))
+        add_evidence(actor, case.pk, 'hr_correction_response', 'Synthetic HR check of the exact correction request.',
+                     'synthetic:design-batch-payroll-decision-proof')
+    else:
+        link = PayrollHRFollowup.objects.get(run__request__case=case, record__evidence__source=request_source)
+    return {'case': str(case.pk), 'correction': link.pk, 'finance_preparer': link.actor_id,
+            'path': reverse('design_hr_payroll_correction', args=[case.pk, link.pk]),
+            'existing_work_preserved': not created}
+
+
 def run():
     if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'),
             os.getenv('PSL_COMPOSED_WALKTHROUGH')) != ('design-acceptance', PREVIEW_PROJECT, '1'):
@@ -212,6 +265,7 @@ def run():
     sessions['rework'] = prepare_rework
     sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)
+    sessions['hr_payroll_correction'] = lambda: prepare_hr_payroll_correction(actor)
     failed = False
     for key, prepare in sessions.items():
         try:

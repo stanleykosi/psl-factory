@@ -85,6 +85,33 @@ def glpi_snapshot(case,candidate):
     return result
 
 
+def required_decision_roles(profile, policy):
+    return (['Incident Lead', 'Engineering Lead'] + (['CTO'] if profile.p1 else []) +
+            ['GLPI exception:' + role for role in policy['exception_roles']])
+
+
+def current_refusal(case, profile):
+    """Read the current refusal on an exact profile, independent of GLPI receipts."""
+    if (profile.critical_production is not True or profile.p1 is None or
+            not profile.decisions.filter(verdict='reject').exists()):
+        return None
+    policy, pins = emergency_policy(case)
+    roles = required_decision_roles(profile, policy)
+    latest = (profile.decisions.filter(role__in=roles).select_related('actor')
+              .order_by('role', '-pk').distinct('role'))
+    for decision in latest:
+        role = policy['incident_lead_role'] if decision.role == 'Incident Lead' else decision.role.removeprefix('GLPI exception:')
+        if decision.verdict != 'reject' or decision.authority_role != role or (decision.policies and decision.policies != pins):
+            continue
+        try:
+            require(decision.actor, case, 'emergency.decide')
+            if decision_authority(decision.actor, case, role, 'reject') == decision.authority:
+                return decision
+        except (ValidationError, PermissionDenied):
+            continue
+    return None
+
+
 def preauthorization_inputs(case,profile,*,check_authority=True,historical=False):
     profile_for(case,profile.pk,current=not historical)
     if historical and (profile.version.change.current_id!=profile.version_id or
@@ -96,8 +123,7 @@ def preauthorization_inputs(case,profile,*,check_authority=True,historical=False
     if profile.critical_production is not True or profile.p1 is None:
         raise ValidationError('Confirm critical production applicability and explicit incident P1 basis; Critical never implies P1')
     policy,policies=emergency_policy(case)
-    roles=['Incident Lead','Engineering Lead']+(['CTO'] if profile.p1 else [])
-    roles+=['GLPI exception:'+r for r in policy['exception_roles']]
+    roles=required_decision_roles(profile,policy)
     decisions=[];people={}
     for role in roles:
         d=profile.decisions.filter(role=role).order_by('-pk').first()

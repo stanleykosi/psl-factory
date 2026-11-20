@@ -42,7 +42,7 @@ INTAKES=(
     ('pmo-minutes/v1','Record formal meeting minutes','Connect authorized notes, cited suggestions, human commitments and current native minutes.',('factory.start','meeting.read','evidence.add')),
     ('pmo-escalation/v1','Coordinate an escalation communication','Connect a source-bound issue request, human client decision and exact recipient receipts.',('factory.start','issue.read','evidence.add')),
     ('pmo-weekly-report/v1','Prepare a weekly client report','Connect selected period, cited client narrative, exact PMO Lead review and recipient receipts.',('factory.start','report.read','evidence.add')),
-    ('pmo-leadership-report/v1','Prepare a internal leadership report','Connect selected period, cited human narrative, exact configured leadership review and recipient receipts.',('factory.start','report.read','evidence.add')),
+    ('pmo-leadership-report/v1','Prepare an internal leadership report','Choose a period and project records, then prepare a report for the intended reviewers and recipients.',('factory.start','report.read','evidence.add')),
     ('finance-schedules/v1','Prepare an income detail or schedule inventory','Connect exact supplied income detail or selected inventory, native checks and human review.',('factory.start','schedules.read','finance.read','evidence.add')),
     ('finance-ppe/v1','Prepare an asset schedule','Connect exact asset register reviews, configured calculation and a reviewed read-only accounting note.',('factory.start','ppe.read','finance.read','evidence.add')),
     ('finance-forecast/v1','Prepare a reviewed cash forecast','Connect exact scenario sources, native human decisions and aggregate delivery.',('factory.start','finance.read','evidence.add')),
@@ -501,7 +501,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         if panel['readiness_changed']:row['state']='Communication evidence needs revalidation'
     if work.definition=='pmo-leadership-report/v1':
         from .factory_leadership import projection
-        row['reporting']=projection(actor,work);panel=row['reporting'];row['jobs']=panel['jobs']
+        row['reporting']=projection(actor,work,include_progress=include_progress);panel=row['reporting'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
@@ -535,6 +535,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         from .factory_emergency import projection
         row['emergency']=projection(actor,work);panel=row['emergency'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
+        if panel['status']['stage']=='refused':row['state']='Preauthorization refused'
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['readiness_changed']:row['state']='Retrospective evidence needs review'

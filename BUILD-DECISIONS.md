@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. Keep the sample approved invoice with stale sources and zero issue or delivery operations as evidence of the source freshness hold. Prepare a separate current synthetic invoice using the normal obligation identity and review services. The release exercise requires a new human approval of that exact invoice. Keep the HR correction fixture separate from the Finance example and leave its HR disposition to the authorised sample HR reviewer.
+
+20 November 2026. A current authorized Emergency refusal holds preauthorization on that exact request. Capturing what actually happened remains available, including an exception when implementation proceeded without authority. The next sample pack prepares separately scoped authorized-source and refused paths without seeding their decisions or outcomes. Leadership drafting progress uses only the currently claimed source-matching draft step.
+
 20 November 2026. The Finance forecast page lists the most recent opening source references after checking Finance read access in the workspace. It reads only source metadata. The shared evidence page continues to exclude the protected records, and native forecast capture still validates account, basis, date and source contents.
 
 20 November 2026. Standard Change closure eligibility on the read view uses the current validated observation of both exact publications. The same read checks the required signer role. The closure command still rechecks current receipts, source lineage, proof and authority when it records a decision. Shared closure validation remains part of final verification.

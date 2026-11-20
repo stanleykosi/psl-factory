@@ -53,6 +53,28 @@ class FactoryLeadershipTests(TestCase):
         self.start_work();self.advance();v=reporting.document(self.work);self.assertEqual(HumanTask.objects.get(version=v).required_role,'Head of PMO')
         self.review();self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertIn('performance',v.fields);self.assertIn('critical_incidents',v.fields)
+
+    def test_live_drafting_uses_the_current_claim_and_stops_at_review(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        self.start_work()
+        self.assertTrue(factory.run_once(self.work.pk))
+        self.client.force_login(self.actor)
+        url = reverse('factory_detail', args=[self.work.pk])
+        label = 'Drafting the leadership report from the selected sources.'
+        client = self.client
+        test = self
+
+        class ObserveDraft(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                test.assertEqual(context['eligible'], ['ACT09'])
+                test.assertContains(client.get(url), label)
+                return super().choose(context)
+
+        self.assertNotContains(self.client.get(url), label)
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveDraft()))
+        self.assertNotContains(self.client.get(url), label)
+        self.assertTrue(HumanTask.objects.filter(version=reporting.document(self.work), status='open').exists())
     def test_return_requires_fresh_version_without_budget_reset(self):
         artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['return']}]},self.owner)
         self.start_work();self.advance();old=self.review('return');self.advance();spent=self.work.budget_used

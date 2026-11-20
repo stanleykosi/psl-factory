@@ -129,6 +129,10 @@ def report(work,actor=None):
     result={'profile':p.pk,'change_version':p.version_id,'critical_production':p.critical_production,'p1':p.p1,'authorization':auth.pk if auth else None,'outcome':data['inputs']['outcome_id'],'stage':'preauthorization','finding':'','deployment_dispatched':False,'ordinary_change_closed':False}
     if not data['inputs']['outcome_id']:
         try:
+            refusal = native.current_refusal(work.case, p)
+            if refusal:
+                return dict(result, stage='refused', refusal=refusal.pk, refusal_role=refusal.role,
+                            finding='Emergency preauthorization was refused. Record actual implementation evidence if work nevertheless occurred.')
             expected=native.preauthorization_inputs(work.case,p)
             if not auth:raise ValidationError('Await actual native preauthorization and explicit selection; no deployment is dispatched')
             require(auth.actor,work.case,'emergency.authorize')
@@ -385,4 +389,6 @@ def projection(actor,work):
         if live and current and work.status!='verified':
             try:require(actor,work.case,action);permissions[name]=True
             except PermissionDenied:pass
+    if status['stage'] == 'refused':
+        permissions['authorize'] = False
     return {'profile':p,'data':data,'status':status,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,'human':permissions}

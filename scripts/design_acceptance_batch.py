@@ -48,6 +48,8 @@ CANDIDATE_GATE = (
     'project_archive_files.ArchiveFileTests.test_interrupted_copy_recovers_original_receipt_without_another_copy',
     'factory_hypercare.FactoryHypercareTests.test_release_stability_progress_follows_an_actual_claim_and_stops_at_observed_result',
     'factory_escalation.FactoryEscalationTests.test_decline_requires_its_own_role_and_records_no_communication',
+    'factory_emergency.FactoryEmergencyTests.test_current_cto_refusal_holds_preauthorization_and_preserves_actual_outcome_capture',
+    'factory_leadership.FactoryLeadershipTests.test_live_drafting_uses_the_current_claim_and_stops_at_review',
     'commercial_rework.CommercialReworkTests.test_rework_browser_fixture_is_additive_and_does_not_create_responses_or_model_jobs',
     'design_batch_walkthrough',
     'factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt',

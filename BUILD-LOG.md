@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. Confirmed original monthly report delivery 78. The sample invoice reached an expiry hold after its separate approval, and the Finance account was denied access to the private HR decision. Prepared distinct fresh synthetic examples for their positive paths alongside Emergency and accounting. The new cases await Railway verification before preview setup.
+
+20 November 2026. Exercised the accounting profile hold, original CTO decision and monthly report setup through its independent approval. Added local live drafting progress, Emergency refusal state and three isolated browser starting cases. The 205 regression continues.
+
 20 November 2026. The 205 gate passed and matching web and worker started. The in-app browser verified the signed Standard Change, no-send escalation and fresh current forecast. The full 520-test regression is active. Updated the 262-state ledger with exact test scopes.
 
 20 November 2026. The focused Finance reruns passed, along with the Change closure and escalation permission regressions. The single remaining 204 test expected the previous heading. Candidate 205 updates the assertion and adds private opening source metadata so a Finance operator can select new evidence. Staged both preview services pending the focused gate.

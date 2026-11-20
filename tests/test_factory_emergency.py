@@ -78,6 +78,30 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         before=self.work.revision;self.assertContains(self.client.get(url),'Inspect the recorded retrospective outcome');self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
         self.assertTrue(self.work.activities.filter(kind='ACT04',status='succeeded').exists())
 
+    def test_current_cto_refusal_holds_preauthorization_and_preserves_actual_outcome_capture(self):
+        from tests.document_helpers import artifact
+
+        self.policies('coexist')
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'CTO', 'actions': ['reject']}]}, self.e['policy_decision'])
+        self.start_work()
+        refusal = self.human('preauthorization_decision', role='CTO', authority_role='CTO', verdict='reject',
+                             evidence=self.decision.pk, note='Synthetic impact review refused the proposed rollback')
+        self.client.force_login(self.actor)
+        url = reverse('factory_detail', args=[self.work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Emergency preauthorization refused')
+        self.assertContains(page, f'Decision {refusal.pk} remains in the history')
+        self.assertNotContains(page, 'Check and record preauthorization')
+        self.assertContains(page, 'Attest actual implementation evidence')
+        with self.assertRaises(ValidationError):
+            self.human('authorize')
+        actual = self.human('capture_outcome', implemented_at=timezone.now(), evidence=self.implementation.pk,
+                            note='Synthetic implementation occurred despite refusal')
+        self.assertIsNone(actual.authorization_id)
+        self.assertFalse(EmergencyAuthorization.objects.exists())
+        self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=self.work).exists())
+
     def test_replace_policy_is_explicit_and_report_never_grants_deployment_or_ordinary_closure(self):
         auth,actual,record=self.ready_work('replace');self.assertEqual(auth.snapshot['glpi'],[]);proof=self.finish_report();self.assertEqual(proof['retrospective_status'],record.snapshot['status'])
 
