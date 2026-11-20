@@ -113,6 +113,8 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
   .as__home { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
   .as__state { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
   .as__composer, .as__open { flex: none; }
+  /* D-141: the agent's cards start after the avatar column (40px and a 12px gap); the right padding takes the same, so the visible content sits as far from the composer's left edge as from its right */
+  .as__thread { padding-right: calc(var(--space-6) + 40px + var(--space-3)); }
 }
 @media (min-width: 720px) and (max-width: 1079.98px) {
   .as { grid-template-rows: minmax(0, 1fr) minmax(0, auto); }

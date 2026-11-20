@@ -310,6 +310,10 @@ test('desktop: only the thread scrolls; both side footers and the composer keep 
   });
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
   expect(await page.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight)).toBe(true);
+  // D-141: the visible content is as far from the composer's left edge as from its right
+  const composer = (await page.locator('.as__composer').boundingBox())!;
+  const card = (await page.locator('.psl-msg--agent').first().boundingBox())!;
+  expect(Math.abs(card.x - composer.x - (composer.x + composer.width - (card.x + card.width)))).toBeLessThanOrEqual(1);
   // both footers sit inside the window
   for (const box of before.slice(0, 3)) expect(box.y + box.height).toBeLessThanOrEqual(520);
 });
