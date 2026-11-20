@@ -78,7 +78,7 @@
    "category": "frame",
    "conflicts": 5,
    "reason": "UI-1-4: the phone keeps F-05's signed bottom-sheet frame (design engineer signed the F-05/F-47 frame items on 14 and 19 Nov), so the board's page-style '← My work' bar is not drawn.",
-   "approved_by": "frame signed by the design engineer 14 and 19 Nov (F-05/F-47); this board's use pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135 (frame signed 14 and 19 Nov, F-05/F-47)"
   },
   {
    "role": "text",
@@ -86,7 +86,7 @@
    "category": "frame",
    "conflicts": 5,
    "reason": "UI-1-4: same signed F-05/F-47 sheet frame; the sheet head reads 'START WORK' and 'Step 2 of 2 · change line', the board draws a page bar with 'START' and '+ Start'.",
-   "approved_by": "frame signed by the design engineer 14 and 19 Nov (F-05/F-47); this board's use pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135 (frame signed 14 and 19 Nov, F-05/F-47)"
   },
   {
    "role": "button",
