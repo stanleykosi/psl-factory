@@ -1,5 +1,13 @@
 # Build progress log
 
+20 November 2026. The matching 262 worker resumed. The admitted browser supplied exact private PDF proof 1 on work 227. PostgreSQL 263 passed all eight console and regression cases and both preservation probes. Prepared the verified isolated payroll Assistant specimen and the next tested grouping for the closed checklist fix.
+
+20 November 2026. Scoped browser acceptance reached 143. Verified the admitted account navigation, final closure outcome and narrower Group Forecast rows. The current Group report retains the earlier Return and awaits separate approval. Work 219 and dossier 49 both confirm closure, with a separate readback gap in the closed checklist's retrospective selection.
+
+20 November 2026. Verified the independent Engineering approval of the exact corrected bid and raised scoped acceptance to 140. The admitted account compared separate payroll and HR facts, linked the reviewed Planning workaround and left a comment for the separate invoice reviewer. Railway 262 passed all five PostgreSQL tests and both original preservation probes. Prepared exact preview promotion for the private milestone PDF and returned closure specimens.
+
+20 November 2026. Hosted verified 261 and applied workflows 0093. The trial reviewed the exact invoice action through both Alerts filters and submitted private weekly draft 226 to native PMO review. Scoped browser completion reached 139. The Management Forecast displayed Unknown beside real zero and retained the native Return. The main console's decision readback and weekly template-hold wording remain engineering follow-ups.
+
 20 November 2026. The exact native Finance invoice test and original preservation probes passed in 261. Prepared a combined preview from the passing weekly drafts, invoice reviewer alerts, restricted Payroll Assistant and approved sample code. The Codex browser verified separate missing-citation errors for all four weekly report sections at phone width. Work 222 without a template still awaits its exact hold readback.
 
 20 November 2026. The trial session verified the corrected Finance schedules, recorded a separate Head approval and started the two-project leadership report. It activated the narrower Group Forecast rule, prepared the successor bid and submitted the HR-held payroll facts. Scoped browser completion reached 137. Isolated 259 passed the weekly draft cases and older Alerts cases. 260 runs the corrected invoice fixture with the next exact-source checks.

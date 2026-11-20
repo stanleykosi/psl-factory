@@ -242,10 +242,44 @@ class FactoryReportingTests(TestCase):
         self.start_work(inputs=dict(self.inputs, template_id=None))
         self.advance()
         self.assertIsNone(reporting.document(self.work))
-        self.assertNotEqual(self.work.status, 'verified')
+        self.assertEqual((self.work.status, self.work.finding), ('waiting', reporting.TEMPLATE_REQUIRED))
         self.assertTrue(self.work.activities.filter(kind='ACT04', status='succeeded').exists())
+        self.assertFalse(self.work.activities.filter(kind='ACT09').exists())
+        self.assertFalse(self.work.activities.filter(kind='ACT03', attempts__phase='failed').exists())
+        self.assertFalse(HumanTask.objects.exists())
         self.assertFalse(Publication.objects.exists())
-        self.correct()
+
+        self.client.force_login(self.actor)
+        detail = reverse('factory_detail', args=[self.work.pk])
+        held = self.client.get(detail)
+        self.assertContains(held, '<h2>Report template needed</h2>', html=True)
+        self.assertContains(held, f'<p role="status">{reporting.TEMPLATE_REQUIRED}</p>', html=True)
+        self.assertContains(held, 'href="#report-correction"')
+        self.assertContains(held, 'Source investigation')
+        self.assertNotContains(held, 'Prepare the native client-safe weekly report')
+        self.assertNotContains(held, 'Continue eligible work')
+        self.assertNotContains(held, 'Approve exact report')
+        self.assertTrue(held.context['row']['correction_required'])
+        self.assertTrue(held.context['row']['needs_me'])
+        self.assertContains(self.client.get(reverse('home'), {'queue': 'exceptions'}), 'Report template needed')
+
+        limited = Grant.objects.filter(case=self.case, user=self.actor, action='factory.manage')
+        limited.update(active=False)
+        read_only = self.client.get(detail)
+        self.assertContains(read_only, reporting.TEMPLATE_REQUIRED)
+        self.assertNotContains(read_only, 'href="#report-correction"')
+        self.assertFalse(read_only.context['row']['needs_me'])
+        limited.update(active=True)
+
+        original = self.work.source_head_id
+        spent = self.work.budget_used
+        corrected = self.client.post(detail, dict(self.inputs, action='correct', revision=self.work.revision,
+            case_revision=rev(self.case), reason='Select the existing controlled template for this report.'))
+        self.assertRedirects(corrected, detail, fetch_redirect_response=False)
+        self.work.refresh_from_db()
+        self.assertNotEqual(self.work.source_head_id, original)
+        self.assertEqual(self.work.budget_used, spent)
+        self.assertNotContains(self.client.get(detail), 'Report template needed')
         self.finish()
 
     def test_missing_preparer_holds_only_dependent_action(self):

@@ -5,6 +5,13 @@
 {% include 'factory/work_focus.html' with has_response=True response_label='Actual cash and matching' %}
 {% include 'factory/current_step.html' with progress=row.forecast.progress only %}
 {% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}
+{% if management_decision %}
+<section class="card" aria-label="Current management forecast decision">
+  <h2>{{ management_decision.verdict }}</h2>
+  <p>Calculation {{ management_decision.run }} · <time datetime="{{ management_decision.recorded_at|date:'c' }}">{{ management_decision.recorded_at|date:'d M Y, H:i T' }}</time></p>
+  <p>{{ management_decision.reason|linebreaksbr }}</p>
+</section>
+{% endif %}
 {% include 'factory/forecast_periods.html' with monthly_forecast=monthly_forecast only %}
 {% if group_rules_form %}<details class="card"><summary>Group report rules</summary><p>Select the items, values and recipients covered by the recorded owner decision. The independent expected report must match.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="group_rules"><input type="hidden" name="work_revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">{{ group_rules_form.as_p }}<button>Save group rules for review</button></form><p>Saving creates a rule version for review. Sharing needs its own approval.</p><p><a href="{% url 'policy' case.pk %}">Review rule versions</a></p></details>{% endif %}
 <section class="card"><h2>Selected sources</h2><p>{{ row.forecast.scenario.reference }} · revision {{ row.forecast.scenario.number }} · as of {{ row.forecast.selection.as_of }}</p><p>Exact horizon: {{ row.forecast.selection.months|join:', ' }}</p><p>Source inventory: {{ row.forecast.selection.source_ids|join:', ' }}</p><p>Audience: {{ row.forecast.selection.audience }}</p><p><a href="{% url 'finance_forecast' case.pk %}">Inspect native source evidence and scenario history</a></p></section>

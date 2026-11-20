@@ -171,6 +171,18 @@ def detail(request,work,focus=None):
             forms_list=[entry for entry in forms_list if
                         (entry['action']!='review' or row['forecast']['review_roles']) and
                         (entry['action']!='group_review' or row['forecast']['group_disclosure'])]
+    management_decision = None
+    if selected['audience'] == 'management' and focus in (None, 'decision'):
+        from .factory_forecast_decisions import management_readback
+        try:
+            management_decision = management_readback(request.user, work, row['forecast'])
+        except (ValidationError, PermissionDenied):
+            pass
+        if (management_decision and management_decision['code'] in ('return', 'reject')
+                and not work.cancel_requested and not row['readiness_changed'] and not row['forecast_original_job']):
+            row['state'] = management_decision['verdict']
+            row['next_action'] = ('Prepare a corrected calculation for fresh Finance review.'
+                                  if management_decision['code'] == 'return' else 'Review the decision before continuing.')
     group_decisions=None
     if selected['audience']=='group' and focus in (None,'decision'):
         from .factory_forecast_decisions import readback
@@ -203,7 +215,7 @@ def detail(request,work,focus=None):
             group_table={'headers':headers,'rows':[[item[name] for name in headers] for item in projected['rows']],
                          'metadata':projected['metadata']}
     response = render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
-        'group_table':group_table,'group_decisions':group_decisions,
+        'group_table':group_table,'group_decisions':group_decisions,'management_decision':management_decision,
         'monthly_forecast':monthly_forecast(row['forecast']) if focus in (None,'decision') else None,
         'group_rules_form':group_rules_form,
         'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),

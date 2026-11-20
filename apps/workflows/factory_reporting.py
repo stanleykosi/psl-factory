@@ -29,6 +29,7 @@ ID={'anyOf':[{'type':'integer','minimum':1,'maximum':9223372036854775807},{'type
 INPUT={'type':'object','properties':{'template_id':ID,'content_id':ID,'start_at':{'type':'string','maxLength':64},'end_at':{'type':'string','maxLength':64}},'required':['template_id','content_id','start_at','end_at'],'additionalProperties':False}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'inputs':INPUT,'manifest':{'type':'object'},'captured_at':{'type':'string'}},'required':['protocol','inputs','manifest','captured_at'],'additionalProperties':False}
 SECTIONS={'executive_summary','scope','status','risks','timeline','dependencies','next_steps'}
+TEMPLATE_REQUIRED = 'Choose a client report template before Tola can prepare the report.'
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
 
@@ -164,6 +165,9 @@ def snapshot(work,value,reader=None):
         'publication':Publication.objects.filter(version=v,factory_work=work).values_list('pk',flat=True).first() if v else None,
         'jobs':[(j.pk,j.status) for j in jobs],'receipts':list(PublicationReceipt.objects.filter(publication__factory_work=work).values_list('pk','payload_sha256'))}
     state['hash']=digest(state);state['work_revision']=work.revision
+    # The exact source hash already binds the template. Keep existing observation
+    # and investigation identities while exposing that selection to eligibility.
+    state['template_selected'] = data['inputs']['template_id'] is not None
     return state,latest,missing,stale,[],jobs
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
@@ -173,6 +177,8 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate selected report sources, unknowns and client-safe claims'
     if not state['inventory_current']:return [],state['source_finding']
     if missing or stale:return [],'Required report evidence missing or stale: '+', '.join(missing+stale)
+    if not state['document'] and not state['template_selected']:
+        return [], TEMPLATE_REQUIRED
     if not state['document']:return ['ACT09'],'Prepare the native client-safe weekly report'
     if not HumanTask.objects.filter(version_id=state['document']).exists():return ['ACT09'],'Request native PMO Lead review of the retained exact report'
     if state['review']['status']!='ready':return [],'Await current exact PMO Lead review or deliberate source-owned rework'
@@ -195,8 +201,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     data=source(work,work.execution_actor)
     if kind=='ACT09':
         from apps.documents.controlled import request_review
+        if not data['inputs']['template_id']:raise ValidationError(TEMPLATE_REQUIRED)
         u=principal(work,value,'preparer_id');inventory(u,case,data['inputs']);v=document(work)
-        if not data['inputs']['template_id']:raise ValidationError('Select the controlled weekly client template')
         if not v:
             start,end=input_rows(case,data['inputs']);client_content(case,inventory(u,case,data['inputs']),data['inputs']['content_id'])
             b=draft_period_report(u,case.pk,'weekly_client',start,end,data['inputs']['template_id'],'client',case.revision,client_safe=True,client_content_id=data['inputs']['content_id']);v=b.version
@@ -354,6 +360,10 @@ def projection(actor,work,*,include_progress=False):
     try:source(work,actor)
     except (ValidationError,PermissionDenied) as exc:issue=finding(exc);current=False
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
+    settled = not any(job.status in ('pending', 'unknown', 'leased', 'held') for job in jobs)
+    editable = not work.cancel_requested and work.status not in ('cancelled', 'followup_needed') and settled
+    template_required = (TEMPLATE_REQUIRED if data['inputs']['template_id'] is None and not v
+                         and editable and work.status != 'verified' else '')
     receipts=list(PublicationReceipt.objects.filter(publication__version=v,publication__factory_work=work).order_by('pk')) if v else []
     review=v.reviews.select_related('actor').order_by('-pk').first() if v else None
     selected_job=next((job for job in jobs if v and job.publication.version_id==v.pk),None)
@@ -372,6 +382,8 @@ def projection(actor,work,*,include_progress=False):
                 and current_plan_step(work, state['hash'], options) == 'ACT09'):
             progress = {'label': 'Assembling the weekly report', 'watching': True}
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
+    if template_required and not options:
+        next_action = template_required
     changed=False
     if work.status=='verified':
         try:verify(work,actor);next_action='Inspect the reviewed weekly report and every required recipient receipt'
@@ -379,8 +391,7 @@ def projection(actor,work,*,include_progress=False):
     can_correct=False;can_restart=False
     try:
         require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
-        settled=not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
-        can_correct=live and work.status not in ['cancelled','followup_needed'] and settled
+        can_correct=idle and editable
         can_restart=idle and work.cancel_requested and work.status=='cancelled' and settled and not PublicationReceipt.objects.filter(publication__factory_work=work).exists()
     except PermissionDenied:pass
     for j in jobs:
@@ -390,5 +401,5 @@ def projection(actor,work,*,include_progress=False):
             j.can_operate=idle and (j.status in ['pending','unknown','held'] or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now()) and not PublicationReceipt.objects.filter(publication=j.publication).exists()
             j.can_retry=j.can_operate and not work.cancel_requested and j.status=='held'
         except PermissionDenied:pass
-    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,
+    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts, 'template_required':template_required,
             'return_review':review if review and review.verdict in ['return','reject'] else None,'delivery':delivery,'progress':progress}

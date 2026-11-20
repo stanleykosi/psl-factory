@@ -1,17 +1,21 @@
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from adapters.forecast import OPENING_CONTRACT
 from apps.core.models import Case
 from apps.documents.models import Publication
+from apps.finance import forecast
 from apps.finance.models import ForecastReview, ForecastRun
 from apps.identity.models import Grant
 from apps.workflows import factory_forecast as flow
 from apps.workflows.models import FactoryProgress, FactoryWork
-from tests import railway_forecast_monthly_seed as seed
+from tests import forecast_helpers, railway_forecast_monthly_seed as seed
+from tests.billing_helpers import evidence
 from tests.helpers import rev
 from tests.railway_batch_walkthrough_seed import PREVIEW_PROJECT
 
@@ -52,6 +56,7 @@ class ForecastMonthlyWalkthroughTests(TestCase):
         decision = sample['decision_path']
         view = self.client.get(decision)
         self.assertContains(view, 'Cash forecast by month')
+        self.assertIsNone(view.context['management_decision'])
         self.assertContains(view, '<td>Unknown</td>', html=True)
         self.assertContains(view, '<td>0</td>', html=True)
         current = view.context['monthly_forecast']
@@ -67,11 +72,59 @@ class ForecastMonthlyWalkthroughTests(TestCase):
         self.client.force_login(other_actor)
         self.assertIn(self.client.get(decision).status_code, (403, 404))
         self.client.force_login(reviewer)
+        reason = 'Supply evidence that reconciles this sample opening.'
         response = self.client.post(decision, {'action': 'review', 'work_revision': work.revision,
             'revision': rev(case), 'selected_scenario': sample['scenario'], 'run': run.pk,
             'role': 'Finance', 'verdict': 'return', 'evidence': sample['review_evidence'],
-            'reason': 'Supply evidence that reconciles this sample opening.'})
+            'reason': reason})
         self.assertRedirects(response, decision, fetch_redirect_response=False)
-        self.assertEqual(ForecastReview.objects.get(run=run).actor_id, reviewer.pk)
-        self.assertEqual(ForecastReview.objects.get(run=run).verdict, 'return')
+        review = ForecastReview.objects.get(run=run)
+        self.assertEqual((review.actor_id, review.verdict), (reviewer.pk, 'return'))
+
+        maker = run.actor
+        unrelated_reason = 'A different-scoped calculation with a confidential reason.'
+        unrelated = forecast_helpers.scenario(maker, case, reference='OTHER-SYNTHETIC-SCENARIO')
+        unrelated_run = forecast.prepare(maker, case.pk, unrelated.pk, rev(case))
+        unrelated_proof = evidence(maker, case, 'forecast_review', 'Independent test proof for the other scenario.')
+        forecast.review(reviewer, case.pk, unrelated_run.pk, 'Finance', 'return', unrelated_proof.pk,
+                        unrelated_reason, rev(case))
+
+        with CaptureQueriesContext(connection) as visible_queries:
+            returned = self.client.get(decision)
+        self.assertContains(returned, 'Returned for correction')
+        self.assertContains(returned, 'Prepare a corrected calculation for fresh Finance review.')
+        self.assertContains(returned, reason)
+        self.assertNotContains(returned, unrelated_reason)
+        self.assertNotContains(returned, 'Await native readiness and exact human forecast review')
+        self.assertEqual(returned.context['management_decision']['id'], review.pk)
+        self.assertEqual(returned.context['management_decision']['run'], run.pk)
+        self.assertEqual(sum('"finance_forecastreview"."reason"' in q['sql'] for q in visible_queries), 1)
+
+        def assert_reason_held(actor):
+            self.client.force_login(actor)
+            with CaptureQueriesContext(connection) as queries:
+                page = self.client.get(decision)
+            self.assertEqual(page.status_code, 200)
+            self.assertIsNone(page.context['management_decision'])
+            self.assertNotContains(page, reason)
+            self.assertNotContains(page, unrelated_reason)
+            self.assertFalse(any('"finance_forecastreview"."reason"' in q['sql'] for q in queries))
+
+        for action in set(seed.REVIEWER_ACTIONS) - {'case.read'}:
+            Grant.objects.create(case=case, user=other_actor, action=action)
+        assert_reason_held(other_actor)
+
+        Grant.objects.create(case=case, user=maker, action='factory.manage')
+        self.client.force_login(maker)
+        self.assertContains(self.client.get(decision), reason)
+        reviewer_grant = scope.filter(case=case, action='finance.forecast.review')
+        reviewer_grant.update(active=False)
+        assert_reason_held(maker)
+        reviewer_grant.update(active=True)
+
+        successor = forecast_helpers.scenario(maker, case, reference=scenario.reference)
+        self.assertGreater(successor.number, scenario.number)
+        assert_reason_held(reviewer)
+        self.assertEqual(ForecastReview.objects.get(pk=review.pk).reason, reason)
+        self.assertFalse(FactoryProgress.objects.filter(work=work).exists())
         self.assertFalse(Publication.objects.filter(factory_work=work).exists())

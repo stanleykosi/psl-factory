@@ -330,16 +330,21 @@ def review(actor,case_id,run_id,role,verdict,evidence_id,reason,expected):
     r=ForecastReview.objects.create(run=run,snapshot=snapshot,role=role,verdict=verdict,authority=authority,evidence=subject(case,evidence_id,'forecast_review'),reason=reason,actor=actor)
     event(actor,case,'forecast.reviewed',review=r.pk,run=run.pk,verdict=verdict);bump(case);return r
 
+def review_authority_matches(current, recorded):
+    key = 'D05.decision_action_matrix'
+    return {name: pin for name, pin in current.items() if name != key} == {
+        name: pin for name, pin in recorded.items() if name != key}
+
+
 def approved(run,current=True):
-    r=ForecastReview.objects.filter(run=run).order_by('-pk').first()
+    r=ForecastReview.objects.filter(run=run).defer('reason').order_by('-pk').first()
     if not r or r.verdict!='approve':raise ValidationError('Exact configured human forecast approval is required')
     if not current:
         if r.snapshot.get('run_hash')!=run.sha256:raise ValidationError('Historical forecast review does not identify exact run')
         return r
     require(r.actor,run.case,'finance.forecast.review')
     auth=review_authority(r.actor,run.case,'forecast_rollover' if run.scenario.parent_id else 'forecast',r.role,r.verdict,run.actor_id)
-    strip=lambda v:{k:x for k,x in v.items() if k!='D05.decision_action_matrix'}
-    if strip(auth)!=strip(r.authority):raise ValidationError('Forecast review authority changed')
+    if not review_authority_matches(auth,r.authority):raise ValidationError('Forecast review authority changed')
     if current and r.snapshot!=review_snapshot(run):raise ValidationError('Exact current forecast review is stale')
     return r
 

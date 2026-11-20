@@ -1,10 +1,11 @@
-"""Scoped decision readback from the exact group artifacts prepared by one work item."""
+"""Scoped decision readback from the artifacts prepared by one forecast work item."""
 
 from functools import lru_cache
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models.fields.json import KeyTextTransform
 
 from apps.core.models import Audit, Case, Evidence
 from apps.documents.contracts import digest
@@ -28,6 +29,52 @@ PREPARER_ACTIONS = ('factory.manage', 'finance.publish', 'document.draft')
 SOURCE_ACTIONS = {'factory.forecast_intake': 'factory.start', 'factory.forecast_source': 'factory.manage'}
 
 
+@transaction.atomic
+def management_readback(actor, work, forecast_row):
+    """Read the latest native decision for the exact current management calculation."""
+    run = forecast_row['run']
+    if (forecast_row['selection']['audience'] != 'management' or not forecast_row['intake_current']
+            or forecast_row['status']['stage'] not in ('review', 'publication', 'complete') or run is None):
+        return None
+
+    case = Case.objects.select_for_update().get(pk=work.case_id)
+    access(actor, case, 'factory.read', flow.DEFINITION)
+    current_head = FactoryWork.objects.filter(case=case, pk=work.pk).values_list('source_head_id', flat=True).get()
+    if current_head != work.source_head_id or flow.observed(work, 'forecast_run') != run.pk:
+        return None
+
+    correction_actions = {'factory.manage', 'evidence.add'}
+    can_correct = (work.source_head.created_by_id == actor.pk and correction_actions == set(
+        Grant.objects.filter(case=case, user=actor, active=True, action__in=correction_actions)
+        .values_list('action', flat=True)))
+    if not can_correct:
+        require(actor, case, 'finance.forecast.review')
+
+    review = (ForecastReview.objects.filter(run_id=run.pk, run__case=case).select_related('actor')
+              .only('verdict', 'role', 'authority', 'created_at', 'evidence_id', 'actor__is_active')
+              .annotate(reviewed_run_hash=KeyTextTransform('run_hash', 'snapshot')).order_by('-pk').first())
+    if (not review or review.verdict not in DECISIONS or review.reviewed_run_hash != run.sha256
+            or not Evidence.objects.filter(pk=review.evidence_id, case=case, kind='forecast_review').exists()):
+        return None
+
+    purpose = 'forecast_rollover' if run.scenario.parent_id else 'forecast'
+    if not can_correct:
+        forecast.review_authority(actor, case, purpose, review.role, review.verdict, run.actor_id)
+    for action in ('case.read', 'finance.read', 'finance.forecast.review'):
+        require(review.actor, case, action)
+    authority = forecast.review_authority(review.actor, case, purpose, review.role, review.verdict, run.actor_id)
+    if not forecast.review_authority_matches(authority, review.authority):
+        return None
+
+    scenario, selection = flow.source(work, actor)
+    if selection['audience'] != 'management' or scenario.pk != run.scenario_id:
+        return None
+    forecast.ensure_current(run)
+    reason = ForecastReview.objects.values_list('reason', flat=True).get(pk=review.pk)
+    return {'id': review.pk, 'run': run.pk, 'code': review.verdict, 'verdict': DECISIONS[review.verdict],
+            'recorded_at': review.created_at, 'reason': reason}
+
+
 def current_source(case, intake, binding):
     origin = Audit.objects.filter(case=case, actor_id=intake.created_by_id, action__in=SOURCE_ACTIONS,
                                   data={'evidence_id': intake.pk, 'sha256': intake.sha256}).first()
@@ -43,9 +90,7 @@ def current_source(case, intake, binding):
     require(review.actor, case, 'finance.forecast.review')
     purpose = 'forecast_rollover' if binding.run.scenario.parent_id else 'forecast'
     authority = forecast.review_authority(review.actor, case, purpose, review.role, 'approve', binding.run.actor_id)
-    # Match the native forecast approval's authority comparison.
-    without_matrix = lambda value: {name: pin for name, pin in value.items() if name != 'D05.decision_action_matrix'}
-    if without_matrix(authority) != without_matrix(review.authority) or review.snapshot.get('run_hash') != binding.run.sha256:
+    if not forecast.review_authority_matches(authority, review.authority) or review.snapshot.get('run_hash') != binding.run.sha256:
         raise ValidationError('The original forecast approval no longer has its recorded authority.')
 
 

@@ -561,6 +561,8 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         row['reporting']=projection(actor,work,include_progress=include_progress);panel=row['reporting'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        if panel['template_required'] and not panel['next_options']:
+            row.update(state='Report template needed')
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['review_verdicts']:row.update(state='Awaiting PMO Lead review',owner=actor.get_full_name() or actor.username,needs_me=True,department_wait=True)
         if panel['readiness_changed']:row.update(state='Reviewed weekly report needs revalidation',can_advance=False,can_reassess=panel['can_correct'])
@@ -568,8 +570,8 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         # Native return/currentness/hold facts identify the correction need; native
         # can_correct remains the separate authority and settled-effect boundary.
         verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
-        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
-        row['correction_required'] = verdict in ['return', 'reject'] and not work.cancel_requested
+        row['correction_required'] = bool(panel['template_required'] or verdict in ['return', 'reject']) and not work.cancel_requested
+        correction_due=panel['can_correct'] and bool(row['correction_required'] or panel['readiness_changed'] or panel['finding'] or work.status in ['blocked','owner_needed','configuration_needed'])
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
