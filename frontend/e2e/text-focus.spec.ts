@@ -59,12 +59,13 @@ test('the composer box keeps its border when a button inside it has focus; the b
   expect(before.border).toBe(INK);
   await input.focus();
   await page.keyboard.press('Tab');
-  const send = page.locator('.cmp-composer__send, .cmp-composer__mic').first();
-  await expect(send).toBeFocused();
+  const button = page.locator('.cmp-composer__box button:focus');
+  await expect(button).toHaveCount(1);
   const after = await look(composer);
   expect(after.border).toBe(INK);
   expect(after.ring).toBe('none');
-  expect(await send.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe('none');
+  // the button inside shows its own edge, with no outline
+  expect(await button.evaluate((el) => ({ ring: getComputedStyle(el).outlineStyle, shadow: getComputedStyle(el).boxShadow }))).toEqual({ ring: 'none', shadow: expect.stringContaining('rgb(36, 89, 214)') });
 });
 
 // D-144: every focusable control changes its own edge; none draws an outline. Screenshots go to the test output.

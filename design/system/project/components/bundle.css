@@ -14,7 +14,7 @@
 .psl :focus { outline: none; }
 /* Controls drawn with an inset shadow edge (buttons, options, tabs, cards) turn that edge blue; a borderless control gets the
    same 2px edge as an inset shadow, so focus changes only a colour and nothing moves. */
-.psl :focus-visible, .psl .is-focus { outline: none !important; box-shadow: inset 0 0 0 2px var(--focus) !important; }
+.psl :focus-visible, .psl .is-focus { outline: none !important; box-shadow: inset 0 0 0 2px var(--focus) !important; transition: none !important; }
 /* filled and dark controls: the edge is on-strong (a blue edge on a dark or blue fill cannot be seen) */
 .psl-on-dark :focus-visible, .psl-on-dark .is-focus,
 .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):not(.psl-btn--text):focus-visible,

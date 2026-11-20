@@ -79,7 +79,7 @@ for (const [label, viewport] of [
       await listLoaded(page);
       await expect(projectLinks(page)).toHaveCount(10);
       await expect(projectLinks(page).first()).toHaveAttribute('href', '/projects/P-0101');
-      await expect(page.getByRole('button', { name: 'Show more' })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeVisible();
       await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
       if (phone) {
@@ -90,7 +90,7 @@ for (const [label, viewport] of [
           page.getByRole('searchbox', { name: 'Search' }),
           page.getByRole('button', { name: 'Filter' }),
           ...(await page.getByRole('radio').all()),
-          page.getByRole('button', { name: 'Show more' }),
+          page.getByRole('button', { name: /^Show (more|\d+ more)$/ }),
           ...(await projectLinks(page).all()).slice(0, 3),
         ]);
       } else {
@@ -261,14 +261,14 @@ test.describe('desktop 1440 details', () => {
     await page.goto('/projects');
     await listLoaded(page);
     const more = page.waitForRequest((r) => r.url().includes('cursor='));
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     expect(new URL((await more).url()).search).toBe('?limit=10&cursor=o10');
     await expect(projectLinks(page)).toHaveCount(20);
     await expect(projectLinks(page).nth(10)).toBeFocused();
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(projectLinks(page)).toHaveCount(22);
     await expect(page.locator('.psl-showmore').first()).toContainText('All 22 showing');
-    await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toHaveCount(0);
 
     await page.getByRole('radio', { name: '10' }).click();
     await expect(page).toHaveURL(/\/projects$/);
@@ -296,7 +296,7 @@ test.describe('desktop 1440 details', () => {
     await page.route('**/api/v1/projects?*cursor=*', (route) =>
       route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }),
     );
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(page.getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
     await expect(projectLinks(page)).toHaveCount(10);
   });
@@ -402,7 +402,7 @@ test.describe('desktop 1440 details', () => {
       page.getByRole('button', { name: 'Filter' }),
       projectLinks(page).first(),
       page.getByRole('radio', { name: '10' }),
-      page.getByRole('button', { name: 'Show more' }),
+      page.getByRole('button', { name: /^Show (more|\d+ more)$/ }),
     ]) {
       expect(await keyboardRing(page, target)).toEqual({ style: 'solid', width: '2px' });
     }

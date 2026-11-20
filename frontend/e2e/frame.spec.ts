@@ -34,7 +34,7 @@ async function focusOnStrong(page: Page) {
 async function outline(page: Page) {
   return page.evaluate(() => {
     const s = getComputedStyle(document.activeElement!);
-    return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px'), color: s.outlineColor };
+    return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px'), color: (s.boxShadow.match(/rgb\([^)]*\)/) ?? [''])[0] };
   });
 }
 

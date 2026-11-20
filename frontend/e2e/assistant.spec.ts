@@ -78,7 +78,7 @@ test('the composer is labelled by agent, the Talk to chips are pressed buttons, 
   await expect(chips.nth(1)).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('textbox', { name: 'Message Chidi' }).focus();
   // D-143: the box changes its own border, with no outer ring
-  const box = await page.locator('.cmp-composer__box').evaluate((el) => ({ ring: (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'), border: getComputedStyle(el).borderTopColor }));
+  const box = await page.locator('.cmp-composer__box').evaluate((el) => ({ ring: getComputedStyle(el).outlineStyle, border: getComputedStyle(el).borderTopColor }));
   expect(box).toEqual({ ring: 'none', border: 'rgb(36, 89, 214)' });
   await chips.first().focus();
   await page.keyboard.press('Tab');
