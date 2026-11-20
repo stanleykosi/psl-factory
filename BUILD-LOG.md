@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. Reconciled the earlier invoice reminder writes with current 390/375 browser evidence for the same invoice, amount, attachment, synthetic receipt and cancellation. Scoped acceptance reached 92 of 262. Operational messaging remains deferred.
+
+20 November 2026. Parallel browser evidence added the outward minutes exact return and fresh review under synthetic action matrix 1917. The scoped count is 91. The draft still needs the design's separate Send for review. Business Unit work 183 rebuilt its returned event calculation and independently approved version 2. Railway 236 began three grouped PostgreSQL suites for Commercial and Finance, with new migrations applied on the isolated test databases.
+
 20 November 2026. Grouped Business Unit acceptance verified the current staff and event inputs, an exact source approval, disclosure hold and validated successor, alternate internal publication, and final recipient acknowledgement. The ledger now records 90 of 262 completed scoped journeys. Guarded fixture 235 corrected the two duplicate-event seed failures in 234 without changing the hosted application. Separate agents now cover Project, Finance and Commercial, with one coordinator owning the ledger and deploy.
 
 20 November 2026. Verified in the grouped Railway browser pass that a separate client reply clears the due reminder. Confirmed internal minutes version 113 on desktop and phone and started a separate phone-width private notes intake. Started staff-cost and supplied-event Business Unit work from the currently eligible sources for the next grouped decision and receipt checks. Local multi-workspace technical access work remains outside the verified preview.
