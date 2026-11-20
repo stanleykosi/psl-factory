@@ -32,7 +32,7 @@
 .cmp-menu .psl-menuitem:focus-visible { outline-offset: calc(var(--rule-strong) * -1); }
 
 /* inputs that wrap an <input> (money, date): the ring sits on the box */
-.psl-input.cmp-wrapped:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); background: var(--surface); }
+.psl-input.cmp-wrapped:focus-within { outline: none; border-color: var(--focus); background: var(--surface); }
 .cmp-wrapped input:focus-visible { outline: none; }
 .psl-input.cmp-wrapped.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
 /* the button inside a wrapped field (calendar) is a full 44px target: it overlaps the box's 2px border top and bottom */
@@ -126,7 +126,7 @@
 .psl-tip.cmp-tip[hidden] { display: none; }
 
 /* file upload */
-.psl-drop.cmp-drop:has(input:focus-visible) { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.psl-drop.cmp-drop:has(input:focus-visible) { outline: none; border-color: var(--focus); }
 .cmp-drop__error { color: var(--signal-ink); }
 .psl-file.cmp-file--restricted { border-color: var(--rule-soft); }
 .psl-progress.cmp-progress { display: block; }
@@ -185,10 +185,10 @@
 .cmp-chat__cannot { color: var(--signal-ink); }
 .cmp-chat__sources { display: flex; flex-wrap: wrap; gap: var(--space-6px); }
 
-/* composer (Composer): the focus ring is on the whole box */
+/* composer (Composer): focus in the text area changes the box's own border (D-143); its buttons keep their own ring */
 .cmp-composer { display: flex; flex-direction: column; gap: var(--space-1); }
 .cmp-composer__box { display: flex; flex-direction: column; border: var(--rule-strong) solid var(--ink); background: var(--surface); }
-.cmp-composer__box:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-composer__box:has(textarea:focus) { border-color: var(--focus); }
 .cmp-composer__chips { list-style: none; margin: 0; padding: var(--space-10px) var(--space-3) 0; display: flex; flex-wrap: wrap; gap: var(--space-6px); }
 .cmp-composer__chip { display: inline-flex; align-items: center; gap: var(--space-6px); padding: 3px var(--space-2); background: var(--neutral-tint); color: var(--neutral-ink); font-size: var(--text-hint-size); font-weight: 500; }
 .cmp-composer__remove { border: none; background: none; padding: 0; font: inherit; color: var(--ink-muted); cursor: pointer; }

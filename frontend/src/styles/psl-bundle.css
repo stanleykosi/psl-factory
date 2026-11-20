@@ -94,8 +94,10 @@
 .psl-input::placeholder { color: var(--ink-subtle); }
 .psl-input.is-placeholder { color: var(--ink-subtle); }
 .psl-input:hover, .psl-input.is-hover { background: var(--surface-subtle); }
-.psl-input:focus-visible, .psl-input:focus, .psl-input.is-focus { outline: 2px solid var(--focus); outline-offset: 2px; background: var(--surface); }
+/* D-143: a text field shows focus by changing its own border in place: no outer ring, no offset, no layout shift */
+.psl-input:focus-visible, .psl-input:focus, .psl-input.is-focus { outline: none; border-color: var(--focus); background: var(--surface); }
 .psl-input.is-error, .psl-input[aria-invalid="true"] { border-color: var(--signal); }
+.psl-input.is-error:focus, .psl-input[aria-invalid="true"]:focus, .psl-input.is-error.is-focus { border-color: var(--focus); }
 .psl-input[disabled], .psl-input.is-disabled { background: var(--steel); border-color: var(--disabled); color: var(--ink-muted); cursor: not-allowed; }
 .psl-input[readonly], .psl-input.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
 .psl-input--area { min-height: 88px; padding: 10px 12px; align-items: flex-start; resize: vertical; line-height: 1.5; }
@@ -118,7 +120,7 @@
 .psl-select { justify-content: space-between; cursor: pointer; text-align: left; }
 .psl-select .psl-chev { transition: transform 120ms ease-out; }
 .psl-select.is-open .psl-chev { transform: rotate(180deg); }
-.psl-select.is-open { outline: 2px solid var(--focus); outline-offset: 2px; }
+.psl-select.is-open { outline: none; border-color: var(--focus); }
 
 /* popover surfaces: listbox, menu, filter panel, date picker */
 .psl-pop { background: var(--surface); border: 2px solid var(--ink); box-shadow: var(--shadow-pop); }
@@ -465,7 +467,7 @@
 .psl-msg__who { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--action-ink); font-weight: 600; }
 .psl-composer { display: flex; gap: 8px; align-items: flex-end; padding: 8px; background: var(--surface); border: 2px solid var(--ink); }
 .psl-composer textarea { flex: 1; border: none; resize: none; font: inherit; min-height: 44px; padding: 10px 6px; outline: none; background: none; }
-.psl-composer.is-focus { outline: 2px solid var(--focus); outline-offset: 2px; }
+.psl-composer.is-focus { outline: none; border-color: var(--focus); }
 .psl-suggest { display: flex; flex-wrap: wrap; gap: 8px; }
 .psl-suggestion { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 2px solid var(--ink); background: var(--surface); font: inherit; font-size: 14px; color: var(--ink); cursor: pointer; text-align: left; }
 .psl-suggestion:hover, .psl-suggestion.is-hover { background: var(--steel); }
