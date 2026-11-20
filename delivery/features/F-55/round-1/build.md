@@ -1,5 +1,5 @@
 STATUS: BLOCKED
-COMMIT: 91955c06f60ae2f8a98435390dbc1c2fbf840bc5
+COMMIT: af3e8affead32290818f6a9e7ec54bf52209a984
 BUILDER: builder
 LANE: full
 
@@ -38,4 +38,11 @@ None (round 1).
 - Not run: `bash delivery/checks.sh` (it runs `npm ci` and a production build, both forbidden here), the e2e, any fidelity run (no board owned).
 
 ## Blocked
-Disk free is 1.8 GB (below the 2.5 GB stop). Needed from the coordinator: free disk (F-54's build output is 319 MB and still running), restart the mock on 4953 from /Users/Hunchoo/psl-factory-worktrees/f-55/frontend (`MOCK_PORT=4953 node mock/server.mjs`) or permit me to, then I can run: full vitest, lint, typecheck, and `e2e/hr.spec.ts` against 4954 using the temp config at /private/tmp/claude-501/-Users-Hunchoo-psl-factory/a6d3a226-b687-417b-9a09-758687eb3f8d/scratchpad/pw.config.cjs.
+Paused: moved into the F-54 worktree, D-145. The coordinator told me to stop, push as is and run no more tests. Everything is pushed but not fully checked.
+
+Ran after the first build.md:
+- `npm run lint`: passed. `npm run typecheck`: passed.
+- `e2e/hr.spec.ts` against 4953/4954: 5 passed, 3 failed. The failures are in my spec, not known data faults:
+  - W-4601 and W-4605 item pages: my "next step" text locator found nothing (the page probably wraps or words it differently). To fix: match the page's real next-step element.
+  - hr refused /projects, /exceptions, /setup: my guessed refusal wording did not match (/exceptions showed none of it). To fix: read the real refusal text in the browser and use it.
+- Full vitest and the re-run of the three edited tests: not run. `checks.sh`: not run (gate will).
