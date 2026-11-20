@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, errorFromResponse, networkError } from '@/api/errors';
+import type { PageSize } from '@/components';
 
 import {
   buildIntake,
@@ -67,16 +68,16 @@ export function useLines() {
   return { state, reload: load };
 }
 
-export type OptionsQuery = { parent?: string; q?: string; cursor?: string };
+export type OptionsQuery = { parent?: string; q?: string; cursor?: string; limit?: PageSize };
 
-/** One page of E-LINE-OPTIONS; `q` is sent only when not empty and the page size is always 20. */
+/** One page of E-LINE-OPTIONS; `q` is sent only when not empty and the page size is 20 unless the picker's paging footer asks for another. */
 export function fetchOptions(lineKey: string, field: string, query: OptionsQuery) {
-  const { parent, q, cursor } = query;
+  const { parent, q, cursor, limit = OPTIONS_LIMIT } = query;
   return call(
     api.GET('/api/v1/lines/{line_key}/fields/{field}/options', {
       params: {
         path: { line_key: lineKey, field },
-        query: { parent, q: q ? q : undefined, cursor, limit: OPTIONS_LIMIT },
+        query: { parent, q: q ? q : undefined, cursor, limit },
       },
     }),
   );

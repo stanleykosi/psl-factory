@@ -5,7 +5,7 @@
 // the reason and can't be chosen. Search waits 250 ms; "Show more" appends the next page while next_cursor is present.
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 
-import { Button, Loading, SearchField, ShowMore } from '@/components';
+import { Button, DEFAULT_PAGE_SIZE, Loading, SearchField, ShowMore, usePagedRows, type PageSize } from '@/components';
 
 import { isNew, type NewValue } from './intake';
 import { allowsNew } from './showWhen';
@@ -52,12 +52,12 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
   const popupId = `${id}-popup`;
 
   const load = useCallback(
-    async (cursor?: string) => {
+    async (cursor?: string, limit: PageSize = DEFAULT_PAGE_SIZE) => {
       const seq = ++request.current;
       lastCursor.current = cursor;
       setList((current) => (cursor ? { status: 'ready', items: current.items, next: cursor, more: true } : { status: 'loading', items: [] }));
       try {
-        const page = await fetchOptions(lineKey, field.name, { parent, q: query, cursor });
+        const page = await fetchOptions(lineKey, field.name, { parent, q: query, cursor, limit });
         if (seq !== request.current) return;
         setList((current) => ({ status: 'ready', items: cursor ? [...current.items, ...page.items] : page.items, next: page.next_cursor, more: false }));
       } catch {
@@ -67,6 +67,15 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
     },
     [field.name, lineKey, parent, query],
   );
+
+  const { rows, paging } = usePagedRows({
+    items: list.items,
+    next: list.status === 'ready' && Boolean(list.next),
+    busy: list.status === 'ready' && list.more,
+    failed: list.status === 'error',
+    loadMore: (limit) => void load(list.status === 'ready' ? list.next : undefined, limit),
+    resetKey: query,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -175,7 +184,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
           {list.status === 'ready' && list.items.length === 0 && !allowsNew(field) && <p className="psl-hint sw-picker__empty">Nothing to choose from.</p>}
           {(list.items.length > 0 || (list.status === 'ready' && allowsNew(field))) && (
             <ul ref={listRef} className="psl-listbox" role="listbox" aria-labelledby={labelId} aria-multiselectable={multiple || undefined}>
-              {list.items.map((option) => {
+              {rows.map((option) => {
                 const selected = chosen.some((c) => c.value === option.value);
                 return (
                   <li
@@ -223,9 +232,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
               </Button>
             </p>
           )}
-          {list.status === 'ready' && list.next && (
-            <ShowMore shown={list.items.length} hasMore busy={list.more} onMore={() => void load(list.next)} />
-          )}
+          {list.status === 'ready' && list.items.length > 0 && <ShowMore solo {...paging} />}
         </div>
       )}
     </div>
