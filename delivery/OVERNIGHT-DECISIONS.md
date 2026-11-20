@@ -322,3 +322,6 @@ The design engineer: "lets make all this changes one by one so we use the same w
 
 ## D-146 (20 Nov): live design changes skip the review panel
 The design engineer: "no need for all this many reviews we are doing during this bug changes. it is taking so much time". For live design and bug changes the design engineer is watching (F-54 and what is folded into it), the gate (checks.sh plus e2e) and the design engineer's own sign-off on the live server replace the technical, UI, UX and QA review agents. Round-1 findings are verified by the coordinator from the builder's test evidence. Reviews stay for new features, money or security work, and anything going to main still needs the user's approval.
+
+## D-147 (20 Nov): an HR Lead stand-in persona; F-55 folded into F-54
+The design engineer: "lets switch to hr lead now". The F-55 HR sample data was merged into the F-54 branch (D-145) and an `hr_lead` stand-in persona is being added there: the HR Lead decides HR items (payroll corrections, staff record changes, business-unit moves before payroll matching). Stand-in only; PSL defines the real HR Lead authority (D-PAYROLL-VISIBILITY open). No amounts shown.

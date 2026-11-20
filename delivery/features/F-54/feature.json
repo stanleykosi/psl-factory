@@ -127,14 +127,42 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -150,14 +178,42 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -173,14 +229,42 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -196,15 +280,24 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-20T19:07:06Z",
+          "refs": [],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": "contract allows only 10/20/50; rounding up over-fetches at most 20 unseen rows; noted in limitFor and build.md"
         }
-      ]
+      ],
+      "risk_authority": "design engineer (D-146)"
     },
     {
       "id": "TECH-1-5",
@@ -219,14 +312,42 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -242,14 +363,42 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -265,14 +414,42 @@
         "delivery/features/F-54/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer (lead)",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "technical-reviewer (lead)",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -288,14 +465,42 @@
         "delivery/features/F-54/round-1/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -311,14 +516,42 @@
         "delivery/features/F-54/round-1/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -334,14 +567,42 @@
         "delivery/features/F-54/round-1/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     },
     {
@@ -357,14 +618,42 @@
         "delivery/features/F-54/round-1/review-ux.md"
       ],
       "raised_by": "ux-reviewer",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "ux-reviewer",
           "at": "2026-11-20T18:01:08Z",
           "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:06Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:06Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
       ]
     }
   ],
