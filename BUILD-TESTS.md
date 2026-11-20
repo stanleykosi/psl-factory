@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+20 November 2026. Hosted 205 browser work 133 reached Verified for the owner follow-up. Recorded synthetic notes 2327, retrospective 69 with one sample participant and a cited lesson, and linked action 13 with the assigned sample owner and an explicit 21 November 12:00 WAT deadline. The 390-pixel phone view fit at 375 pixels. No earlier closure evidence was replaced. Candidate 206 was frozen across 1,768 tracked application paths in checks, web and worker, with zero mismatches.
+
 20 November 2026. The 205 Shared group passed all 108 tests in 1,262.149s, exit 0. Project delivery remains active. The in-app browser captured private evidence 2324 and used the drawer to open fresh work 136 and lineage 5. Historical source 758 failed the exact observation check. Current evidence 2326 produced native observation 3, held as Unknown, without a decision or posting. The staged version shows that held observation directly and fixes duplicate field labels in the private capture form. The new client test setup leaves the actual request to the browser operator.
 
 20 November 2026. Candidate 206 checks, web and worker packages received the exact final Normal Change and sample files. Django and compilation passed. The five changed interface templates compiled. The complete focused gate discovers 14 tests without import errors. The newly scoped refusal scenario has evidence and current synthetic policy with no human decision seeded. Candidate 206 PostgreSQL and browser acceptance remain pending.
