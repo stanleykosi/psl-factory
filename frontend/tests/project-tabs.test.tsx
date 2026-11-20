@@ -292,11 +292,11 @@ describe('Registers (SCR-11)', () => {
     expect(nav.replaced.at(-1)).toBe('/projects/P-0101/registers');
   });
 
-  it('P-0102 pages by cursor: 20 rows, Show more appends the next, focus is kept, no cursor in the URL', async () => {
+  it('P-0102 pages by cursor: 10 rows, Show more appends the next, focus is kept, no cursor in the URL', async () => {
     vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     await open('P-0102', 'registers');
-    expect(rowsOf()).toHaveLength(20);
-    expect(text()).toContain('20 showing');
+    expect(rowsOf()).toHaveLength(10);
+    expect(text()).toContain('10 showing');
     expect(rowsOf()[1][1]).toContain('SAMPLE DATA');
     expect(rowsOf()[3][3]).toBe('No owner');
     expect(rowsOf()[4][4]).toBe('—');
@@ -304,6 +304,9 @@ describe('Registers (SCR-11)', () => {
     const more = screen.getByRole('button', { name: 'Show more' });
     more.focus();
     fireEvent.click(more);
+    await until(() => expect(rowsOf()).toHaveLength(20));
+    expect(tabCalls().at(-1)!.searchParams.get('cursor')).toBe('o10');
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await until(() => expect(rowsOf()).toHaveLength(25));
     const second = tabCalls().at(-1)!;
     expect(second.searchParams.get('cursor')).toBe('o20');
