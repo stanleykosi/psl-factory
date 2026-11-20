@@ -340,3 +340,6 @@ The design engineer, on the My work "TL-RFP-2026-014 is now with Ife Okoro." not
 
 ## D-152 (20 Nov): the 3D floor uses concept 1, the Isometric conveyor floor
 The design engineer: "for 3d floor line lets use Isometric conveyor floor from the concept designs we had". Reverts D-01 (concept 3, the tilted swimlane board). The Overview's 3D floor becomes concept 1 from design/concepts/floor-3d-concepts.html: lines as conveyor belts, stations as machines, waiting items as stacks, orange machines with lamps where a person is needed, a fixed orthographic camera. Fallbacks to Flat stay. F-54 criterion 11, queued after the toasts (D-145).
+
+## D-153 (20 Nov): test data matches who may see the Overview
+The design engineer asked who sees the floor, then "lets fix the test data that is missing". The v7 contract says E-OVERVIEW is for "Leads, CEO, CTO". The mock now gives the Overview to PMO Lead and HR Lead (they were missing it), and PMO Lead sees the projects list (it had none). Admin keeps the Overview in the mock for now although the contract does not list Admin; no CTO persona was added. Both are open for the design engineer.
