@@ -46,7 +46,7 @@ const STATE = { running: 'processing', waiting: 'waiting', done: 'verified', can
 const pad = (n, width) => String(n).padStart(width, '0');
 const iso = (ms) => new Date(ms).toISOString();
 
-export function createLineRuns({ now = Date.now, stepMs = LINE_STEP_MS, work, me, raise = () => {} }) {
+export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, work, me, raise = () => {} }) {
   const runs = new Map();
   const byKey = new Map();
   let counter = 0;
@@ -160,7 +160,7 @@ export function createLineRuns({ now = Date.now, stepMs = LINE_STEP_MS, work, me
       required_role: roleOf(run),
       you_can_act: mine,
       revision: run.taskRevision,
-      ...(mine ? {} : { cannot_act_reason: `Waiting for a ${roleOf(run)} to decide.` }),
+      ...(mine ? {} : { cannot_act_reason: 'not_your_role' }),
       decision: {
         version: { label: `Draft v${run.rework + 1}`, number: run.rework + 1 },
         basis: 'Sample draft from the live demo. No agent ran.',

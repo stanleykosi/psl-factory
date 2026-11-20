@@ -85,7 +85,7 @@ function canonical(value) {
   return JSON.stringify(value);
 }
 
-export function createAssistantMock({ openapi, now = Date.now }) {
+export function createAssistantMock({ openapi, now = () => Date.now() }) {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   addFormats(ajv);
   const ops = {};
