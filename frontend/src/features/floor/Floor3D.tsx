@@ -8,11 +8,11 @@ import { FloorScene } from './scene';
 import { floorLabel, type FloorProps } from './support';
 import './floor.css';
 
-const HINT = 'Point at, tap or tab to a station to read it. Drag sideways to turn the board.';
+const HINT = 'Point at, tap or tab to a station to read it. Drag sideways to turn the floor; arrow keys turn and tilt, R resets.';
 
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-/** The 3D factory floor (concept 3, the tilted swimlane board): the same lines, stations and counts as the flat view. */
+/** The 3D factory floor (concept 1, the isometric conveyor): the same lines, stations and counts as the flat view. */
 export default function Floor3D({ lines, onFailure }: FloorProps) {
   const stage = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
@@ -26,6 +26,22 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
     failed.current = onFailure;
     latest.current = lines;
   });
+
+  useEffect(() => {
+    // The stage takes the keys: arrows turn and tilt, R resets. Set here because it is a tab stop on a plain group.
+    const el = stage.current!;
+    const turns: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.target !== el) return;
+      if (turns[event.key]) floor.current?.turn(...turns[event.key]);
+      else if (event.key === 'r' || event.key === 'R') floor.current?.reset();
+      else return;
+      event.preventDefault();
+    };
+    el.tabIndex = 0;
+    el.addEventListener('keydown', onKey);
+    return () => el.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     // The canvas is made here, not by React, so a remount never reuses a context that was given back.
@@ -47,14 +63,14 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
         overlay.current!,
         {
           ink: cssVar('--ink'),
+          belt: cssVar('--ink-strong'),
           signal: cssVar('--signal'),
           signalTint: cssVar('--signal-tint'),
           surface: cssVar('--surface'),
-          steel: cssVar('--steel'),
-          ruleSoft: cssVar('--rule-soft'),
           board: cssVar('--surface-subtle'),
           plate: cssVar('--neutral-tint'),
-          tileEdge: cssVar('--nav-muted'),
+          muted: cssVar('--nav-muted'),
+          focus: cssVar('--focus'),
         },
         { onReadout: (text, person) => setReadout({ text, person }) },
       );
@@ -86,7 +102,7 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
 
   return (
     <div className="floor">
-      <div ref={stage} className="floor__stage">
+      <div ref={stage} className="floor__stage" role="group" aria-label="3D floor view. Arrow keys turn and tilt, R resets.">
         <div ref={overlay} className="floor__labels" />
       </div>
       <div className="floor__bar">

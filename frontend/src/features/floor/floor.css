@@ -1,4 +1,4 @@
-/* 3D floor (concept 3): the canvas with HTML labels laid over it, then a readout bar. Token variables only;
+/* 3D floor (concept 1, isometric conveyor): the canvas with HTML labels laid over it, then a readout bar. Token variables only;
    loaded with the floor module, so the flat Overview never fetches it. */
 
 .floor__stage { position: relative; height: clamp(460px, 50vw, 640px); overflow: hidden; background: var(--surface-subtle); }
