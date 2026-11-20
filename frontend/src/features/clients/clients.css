@@ -21,7 +21,6 @@
 .clients__card .clients__name::after { content: ""; position: absolute; inset: 0; }
 .clients__cardhead { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); width: 100%; }
 .clients__meta { font-size: var(--text-hint-size); color: var(--ink-muted); }
-.clients__more { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
 
 /* detail */
 /* a colour-only link inside the crumb text fails WCAG 1.4.1 */

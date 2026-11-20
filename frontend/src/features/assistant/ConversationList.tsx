@@ -52,7 +52,8 @@ export function ConversationList({ state, currentId, onMore, onRetry, pathname, 
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) latest.current(DEFAULT_PAGE_SIZE);
       },
-      { root },
+      // 1px tall and a margin below the column: a sentinel with no height, or one exactly at the bottom edge, never counts as in view
+      { root, rootMargin: '0px 0px 48px 0px' },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -83,7 +84,7 @@ export function ConversationList({ state, currentId, onMore, onRetry, pathname, 
           ))}
         </section>
       ))}
-      <div ref={sentinel} aria-hidden="true" />
+      <div ref={sentinel} className="as-list__end" aria-hidden="true" />
       {state.more === 'loading' && <Loading className="as-list__more">Loading…</Loading>}
       {state.more === 'error' && (
         <p className="psl-hint as-list__more" role="alert">

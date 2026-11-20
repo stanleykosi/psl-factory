@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { Button, Callout, EmptyState, usePagedRows, Unknown, When, type PageSize } from '@/components';
+import { EmptyState, usePagedRows, Unknown, When, type PageSize } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
@@ -89,17 +89,3 @@ export function useTabPaging<T extends ListTab>(state: TabState<T>, more: 'idle'
   return { rows: rows as TabRows[T], paging };
 }
 
-/** The failure of a later page, under the table. */
-export function RowsFailed({ more, onRetry }: { more: 'idle' | 'loading' | 'error'; onRetry: () => void }) {
-  if (more !== 'error') return null;
-  return (
-    <div className="ptabs__foot">
-      <Callout kind="problem">
-        We couldn&rsquo;t load more. Nothing was changed.{' '}
-        <Button kind="secondary" size="sm" onClick={onRetry}>
-          Try again
-        </Button>
-      </Callout>
-    </div>
-  );
-}

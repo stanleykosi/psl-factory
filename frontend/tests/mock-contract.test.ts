@@ -58,7 +58,7 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-CLIENTS': { none: 403 },
   'E-CLIENT': { none: 403 },
   'E-CLIENT-CONTACT': { none: 403 },
-  'E-EXCEPTIONS': { pm: 403 },
+  'E-EXCEPTIONS': { pm: 403, hr: 403 },
   'E-MONTH-END': { pm: 403, none: 403 },
   'E-INVOICES': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },

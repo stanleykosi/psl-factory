@@ -21,9 +21,6 @@
 .projects__meta { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .projects__attention { font-size: var(--text-small-size); font-weight: 600; color: var(--signal-ink); }
 
-/* a failed Show more, under the shared paging footer */
-.projects__foot { display: flex; flex-direction: column; }
-
 /* project page: breadcrumb on desktop, a back link on phones */
 .projects__header { display: flex; flex-direction: column; gap: var(--space-20px); }
 .projects__header .cmp-page-title { overflow-wrap: anywhere; }

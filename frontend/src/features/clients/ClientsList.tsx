@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
-import { Button, Callout, EmptyState, groupDigits, Money as MoneyValue, PageTitle, ShowMore, Table, type ShowMoreProps, Tag, usePagedRows, Unknown, useIsPhone, VisuallyHidden, type Column } from '@/components';
+import { EmptyState, groupDigits, Money as MoneyValue, PageTitle, ShowMore, Table, type ShowMoreProps, Tag, usePagedRows, Unknown, useIsPhone, VisuallyHidden, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
@@ -145,16 +145,6 @@ export function ClientsList() {
             <ClientTable items={shownRows} paging={footer} />
           )}
         </div>
-        {more === 'error' && (
-          <div className="clients__more">
-            <Callout kind="problem">
-              We couldn’t load more clients. Nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
-                Try again
-              </Button>
-            </Callout>
-          </div>
-        )}
       </>
     );
   }

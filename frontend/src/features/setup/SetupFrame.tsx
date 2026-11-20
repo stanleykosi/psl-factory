@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { Callout, EmptyState, PageTitle, Tabs, usePagedRows, type PageSize } from '@/components';
+import { EmptyState, PageTitle, Tabs, usePagedRows, type PageSize } from '@/components';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
@@ -102,7 +102,6 @@ export function PagingNotes({ notes }: { notes: Notes }) {
   }, [done]);
   return (
     <>
-      {notes.failed && <Callout kind="problem">We couldn’t load more {notes.noun}. Choose Show more to try again.</Callout>}
       {done && (
         <span ref={end} tabIndex={-1} className="cmp-sr">
           All {notes.total} {notes.noun} are shown.

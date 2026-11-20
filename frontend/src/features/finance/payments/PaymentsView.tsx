@@ -12,7 +12,6 @@ import {
   AgentAvatar,
   Button,
   buttonClass,
-  Callout,
   EmptyState,
   FilterPanel,
   ListToolbar,
@@ -292,6 +291,7 @@ export function PaymentsView() {
     failed: more === 'error',
     loadMore: (limit) => void showMore(limit),
     resetKey: `${query.q ?? ''}|${query.status ?? ''}`,
+    total: bodyReady?.total,
   });
 
   useEffect(() => {
@@ -352,16 +352,6 @@ export function PaymentsView() {
             <InvoiceTable items={shownRows} paging={footer} />
           )}
         </div>
-        {more === 'error' && (
-          <div className="payments__more">
-            <Callout kind="problem">
-              We couldn’t load more invoices. Nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
-                Try again
-              </Button>
-            </Callout>
-          </div>
-        )}
       </>
     );
   }

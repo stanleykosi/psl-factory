@@ -224,14 +224,6 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
               )}
             </ul>
           )}
-          {list.status === 'error' && list.items.length > 0 && (
-            <p className="psl-error sw-picker__error">
-              We couldn&rsquo;t load these options.{' '}
-              <Button kind="text" size="sm" onClick={() => void load(lastCursor.current)}>
-                Try again
-              </Button>
-            </p>
-          )}
           {list.status === 'ready' && list.items.length > 0 && <ShowMore solo {...paging} />}
         </div>
       )}

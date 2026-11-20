@@ -9,7 +9,7 @@ import { Button, ListToolbar, PriorityTag, ShowMore, Table, Tabs, Unknown, useIs
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { PANEL_ID } from './ProjectTabs';
-import { AsOf, NONE, TabEmpty, OwnerValue, RowLink, RowsFailed, useTabPaging, tabStateView } from './TabParts';
+import { AsOf, NONE, TabEmpty, OwnerValue, RowLink, useTabPaging, tabStateView } from './TabParts';
 import {
   ageText,
   parseTabView,
@@ -135,7 +135,6 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
               <Table className="ptabs__table" tableClassName="ptabs__registers-table" caption={registerOf(view.register).label} columns={columns} rows={rows} rowKey={(row) => `${row.reference}-${row.title}`} empty="" paging={paging} />
             )}
           </div>
-          <RowsFailed more={more} onRetry={paging.onMore} />
           <AsOf value={state.asOf} />
           <p className="ptabs__note">Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.</p>
         </>

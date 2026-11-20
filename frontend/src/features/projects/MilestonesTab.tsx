@@ -7,7 +7,7 @@ import { useRef } from 'react';
 
 import { ShowMore, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
 
-import { AmountValue, AsOf, NONE, TabEmpty, RowLink, RowsFailed, useTabPaging, tabStateView } from './TabParts';
+import { AmountValue, AsOf, NONE, TabEmpty, RowLink, useTabPaging, tabStateView } from './TabParts';
 import {
   completionText,
   hasChanges,
@@ -160,7 +160,6 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
           <Table className="ptabs__table" tableClassName={hasChanges(rows) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(hasChanges(rows))} rows={rows} rowKey={rowKey} empty="No milestones on this project yet." paging={paging} />
         )}
       </div>
-      <RowsFailed more={more} onRetry={paging.onMore} />
       {rows.length > 0 && <AsOf value={state.asOf} />}
       <p className="ptabs__note">
         Milestones and amounts come from the signed SOW. Completing a milestone is the PM&rsquo;s fact; invoicing and payment are Finance&rsquo;s, and each is shown separately.

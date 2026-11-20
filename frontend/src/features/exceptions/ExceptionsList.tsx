@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, Callout, EmptyState, formatDayTime, ListToolbar, PageTitle, ShowMore, type ShowMoreProps, Table, usePagedRows, Tag, useIsPhone, type Column } from '@/components';
+import { Button, EmptyState, formatDayTime, ListToolbar, PageTitle, ShowMore, type ShowMoreProps, Table, usePagedRows, Tag, useIsPhone, type Column } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
@@ -186,7 +186,6 @@ export function ExceptionsList({ limit: initialLimit = 10, compact = false, maxR
           {phone ? <ExceptionsCards rows={rows} /> : <ExceptionsTable rows={rows} asOf={state.asOf} paging={compact ? undefined : paging} />}
           {phone && !compact && <ShowMore solo {...paging} />}
           {asOf}
-          {!compact && state.more === 'failed' && <Callout kind="problem">We couldn’t load more exceptions. Choose Show more to try again.</Callout>}
           {seeAll}
           {!compact && (
             <p className="exc-footer">

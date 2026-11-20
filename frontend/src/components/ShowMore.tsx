@@ -20,7 +20,10 @@ export function usePageSize(initial: PageSize = DEFAULT_PAGE_SIZE) {
   return useState<PageSize>(initial);
 }
 
-/** The smallest page the server allows that covers `rows` more rows (the contract's limit is 10, 20 or 50). */
+/**
+ * The smallest page the server allows that covers `rows` more rows. The contract's limit is only 10, 20 or 50, so a
+ * request can load a few rows more than are shown; the extra rows wait unseen until they are asked for.
+ */
 export function limitFor(rows: number): PageSize {
   return PAGE_SIZES.find((n) => n >= rows) ?? 50;
 }
@@ -59,9 +62,28 @@ export function usePagedRows<T>({ items, next, busy, failed = false, loadMore, r
   useEffect(() => {
     latest.current = loadMore;
   });
+  // The automatic top-up asks once per growth of the loaded rows: a page that adds none (a cursor that leads nowhere) is
+  // not asked for again until the person presses Show more or picks a size.
+  const asked = useRef<{ len: number; key: unknown } | null>(null);
   useEffect(() => {
-    if (missing > 0 && next && !busy && !failed) latest.current(limitFor(missing));
-  }, [missing, next, busy, failed]);
+    if (missing <= 0 || !next || busy || failed) return;
+    if (asked.current?.len === items.length && asked.current.key === resetKey) return;
+    asked.current = { len: items.length, key: resetKey };
+    latest.current(limitFor(missing));
+  }, [missing, next, busy, failed, items.length, resetKey]);
+  // A larger choice that could not be loaded goes back: the selected option is the size actually shown.
+  const choice = useRef<PageSize | null>(null);
+  useEffect(() => {
+    if (choice.current !== null && missing <= 0) choice.current = null;
+  }, [missing]);
+  useEffect(() => {
+    if (!failed || choice.current === null) return;
+    const back = choice.current;
+    choice.current = null;
+    setOwn(back);
+    onSize?.(back);
+    setVisible(back);
+  }, [failed, setOwn, onSize]);
 
   const shown = Math.min(visible, items.length);
   const total = next ? known : items.length;
@@ -71,12 +93,16 @@ export function usePagedRows<T>({ items, next, busy, failed = false, loadMore, r
     total: total !== undefined && total > shown ? total : hasMore ? undefined : shown,
     hasMore,
     busy,
+    failed,
     onMore: () => {
+      asked.current = null;
       if (failed) latest.current(limitFor(Math.max(missing, 1)));
       else setVisible(shown + size);
     },
     size,
     onSize: (n) => {
+      asked.current = null;
+      choice.current = n > size ? size : null;
       setOwn(n);
       onSize?.(n);
       setVisible(n);
@@ -91,6 +117,8 @@ export type ShowMoreProps = {
   total?: number;
   onMore: () => void;
   busy?: boolean;
+  /** The last page could not be loaded: the footer says so and Show more tries again. */
+  failed?: boolean;
   /** For a list without a total: whether there is more to load. */
   hasMore?: boolean;
   /** Rows per page now, and the change handler. */
@@ -101,22 +129,20 @@ export type ShowMoreProps = {
   className?: string;
 };
 
-// A list that redraws itself on a new size may remount this footer; the chosen option takes focus again.
-let focusSize: PageSize | undefined;
-
-export function ShowMore({ shown, total, onMore, busy = false, hasMore, size, onSize, solo = false, className }: ShowMoreProps) {
+export function ShowMore({ shown, total, onMore, busy = false, failed = false, hasMore, size, onSize, solo = false, className }: ShowMoreProps) {
   const phone = usePhone();
   const rows = useRef<HTMLSpanElement>(null);
+  // The chosen option keeps keyboard focus; kept per footer, so a footer that goes away takes it with it.
+  const focusSize = useRef<PageSize | undefined>(undefined);
   const more = total !== undefined ? total > shown : Boolean(hasMore);
   const text = total === undefined ? `${shown} showing` : more ? `${shown} of ${total} showing` : `All ${total} showing`;
   const label = total === undefined ? 'Show more' : `Show ${Math.min(size, total - shown)} more`;
 
   useEffect(() => {
-    if (focusSize === undefined) return;
-    const option = rows.current?.querySelector<HTMLButtonElement>(`[role="radio"][aria-label="${focusSize}"]`);
-    // A copy that is not drawn (the other of a desktop and phone pair) leaves the focus for the one that is.
+    if (focusSize.current === undefined) return;
+    const option = rows.current?.querySelector<HTMLButtonElement>(`[role="radio"][aria-label="${focusSize.current}"]`);
     if (!option || option.checkVisibility?.() === false) return;
-    focusSize = undefined;
+    focusSize.current = undefined;
     option.focus();
   });
 
@@ -133,11 +159,16 @@ export function ShowMore({ shown, total, onMore, busy = false, hasMore, size, on
           onChange={(value) => {
             const next = PAGE_SIZES.find((n) => String(n) === value);
             if (next === undefined) return;
-            focusSize = next;
+            focusSize.current = next;
             onSize(next);
           }}
         />
       </span>
+      {failed && (
+        <p className="psl-showmore__fail" role="alert">
+          We couldn’t load more. Choose Show more to try again.
+        </p>
+      )}
       {more && (
         <Button kind="secondary" size="sm" className="psl-showmore__more" busy={busy} busyLabel="Loading…" onClick={onMore}>
           {label}

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, ShowMore, Table, Tabs, Unknown, useIsPhone, usePagedRows, type Column, type ShowMoreProps } from '@/components';
+import { Button, EmptyState, FilterPanel, ListToolbar, PageTitle, ShowMore, Table, Tabs, Unknown, useIsPhone, usePagedRows, type Column, type ShowMoreProps } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -187,6 +187,8 @@ export function ProjectsList() {
   }, [view]);
 
   const listReady = list.status === 'ready' ? list : undefined;
+  // The total the result count already uses: the response's own, or the tab's count when nothing is searched.
+  const total = listReady ? (listReady.total ?? (view.q ? undefined : countOf(listReady.counts?.[view.tab]))) : undefined;
   const { rows, paging: basePaging } = usePagedRows({
     items: listReady?.items ?? [],
     next: Boolean(listReady?.nextCursor),
@@ -194,6 +196,7 @@ export function ProjectsList() {
     failed: more === 'error',
     loadMore: (limit) => void showMore(limit),
     resetKey: `${view.q ?? ''}|${view.tab}`,
+    total,
     size: view.limit,
     onSize: (limit) => navigate({ limit }),
   });
@@ -275,16 +278,6 @@ export function ProjectsList() {
             <ProjectTable items={rows} closed={view.tab === 'closed'} paging={paging} />
           )}
         </div>
-        <div className="projects__foot">
-          {more === 'error' && (
-            <Callout kind="problem" className="projects__morefail">
-              We couldn&rsquo;t load more. Nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
-                Try again
-              </Button>
-            </Callout>
-          )}
-        </div>
         <p className="projects__note">You see projects your roles cover. Open one for its journey, documents, money and registers.</p>
       </>
     );
@@ -293,7 +286,6 @@ export function ProjectsList() {
   const counts = list.status === 'ready' ? list.counts : undefined;
   // The count beside the search is the result's (UX-2-1): `total` matches the tab and the search; without it, the
   // tab's count stands in only when no search is active.
-  const total = list.status !== 'ready' ? undefined : (list.total ?? (view.q ? undefined : countOf(counts?.[view.tab])));
 
   return (
     <div className="projects__page">

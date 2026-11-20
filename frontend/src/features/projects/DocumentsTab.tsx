@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ShowMore, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
 import { documentHref } from '@/features/documents/documentModel';
 
-import { AsOf, RowsFailed, useTabPaging, TabEmpty, tabStateView } from './TabParts';
+import { AsOf, useTabPaging, TabEmpty, tabStateView } from './TabParts';
 import { textOf } from './model';
 import type { DocumentRow } from './tabsModel';
 import { useFocusAfterMore } from './useFocusAfterMore';
@@ -81,7 +81,6 @@ export function DocumentsTab({ caseId }: { caseId: string }) {
               </>
             ) : <Table className="ptabs__table" caption="Documents" columns={columns} rows={rows} rowKey={(row) => `${row.document_id}-${row.version}`} empty="" paging={paging} />}
           </div>
-          <RowsFailed more={more} onRetry={paging.onMore} />
           <AsOf value={state.asOf} />
         </>
       );

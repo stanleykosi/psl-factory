@@ -388,16 +388,6 @@ export function MyWork() {
             <ShowMore solo {...paging} />
           </>
         )}
-        <div className="my-work__foot">
-          {more === 'error' && (
-            <Callout kind="problem" className="my-work__morefail">
-              We couldn&rsquo;t load more. Your work is safe; nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
-                Try again
-              </Button>
-            </Callout>
-          )}
-        </div>
       </>
     );
   }

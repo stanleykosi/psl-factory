@@ -6,7 +6,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormE
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, Link, ListToolbar, Loading, PageTitle, ShowMore, Skeleton, Tag, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type PageSize, VisuallyHidden } from '@/components';
+import { Button, EmptyState, Link, ListToolbar, Loading, PageTitle, ShowMore, Skeleton, Tag, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type PageSize, VisuallyHidden } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
@@ -198,14 +198,6 @@ function Notifications() {
           </ul>
           <ShowMore {...paging} />
         </div>
-        {more === 'error' && (
-          <Callout kind="problem">
-            We couldn&rsquo;t load more. Nothing was changed.{' '}
-            <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
-              Try again
-            </Button>
-          </Callout>
-        )}
       </>
     );
   }

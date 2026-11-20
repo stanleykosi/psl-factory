@@ -19,12 +19,24 @@ export type ListState =
 export function useConversationList() {
   const [state, setState] = useState<ListState>({ status: 'loading' });
   const seq = useRef(0);
+  // How many pages the list holds: a re-read of page 1 keeps the later pages (and their cursor) once there are any.
+  const pages = useRef(1);
 
   const refresh = useCallback(async () => {
     const mine = ++seq.current;
     try {
       const page = await fetchConversations(DEFAULT_PAGE_SIZE);
-      if (mine === seq.current) setState({ status: 'ready', items: page.items, next: page.next_cursor, asOf: page.as_of, more: 'idle' });
+      if (mine !== seq.current) return;
+      setState((current) => {
+        if (current.status !== 'ready' || pages.current === 1) {
+          pages.current = 1;
+          return { status: 'ready', items: page.items, next: page.next_cursor, asOf: page.as_of, more: 'idle' };
+        }
+        // Page 1 goes to the top; the conversations already loaded after it stay where they are, and so does the cursor.
+        const fresh = new Set(page.items.map((row) => row.conversation_id));
+        const items = [...page.items, ...current.items.filter((row) => !fresh.has(row.conversation_id))];
+        return { status: 'ready', items, next: current.next, asOf: page.as_of, more: current.more === 'loading' ? 'idle' : current.more };
+      });
     } catch (thrown) {
       if (mine !== seq.current) return;
       const error = thrown instanceof ApiError ? thrown : networkError();
@@ -40,6 +52,7 @@ export function useConversationList() {
     setState({ ...current, more: 'loading' });
     try {
       const page = await fetchConversations(limit, current.next);
+      if (mine === seq.current) pages.current += 1;
       if (mine === seq.current) setState({ status: 'ready', items: [...current.items, ...page.items], next: page.next_cursor, asOf: current.asOf, more: 'idle' });
     } catch {
       if (mine === seq.current) setState({ ...current, more: 'error' });

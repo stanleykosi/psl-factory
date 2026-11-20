@@ -7,6 +7,7 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__note { margin: auto 0 0; padding-top: var(--space-3); font-size: var(--text-small-size); color: var(--ink-muted); line-height: 1.5; }
 .as-list__group { display: flex; flex-direction: column; gap: var(--space-10px); }
 .as-list__day { margin: var(--space-2) 0 0; font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); }
+.as-list__end { height: 1px; flex: none; }
 .as-list__empty { margin: 0; color: var(--ink-muted); }
 .as .as-row { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-10px); align-items: center; padding: var(--space-2) var(--space-10px); color: var(--ink); text-decoration: none; background: var(--surface); }
 .as-row .psl-avatar { width: var(--space-6); height: var(--space-6); }

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ListToolbar, ShowMore, Table, Tag, Unknown, useIsPhone, type Column, type TagTone } from '@/components';
 
-import { AsOf, OwnerValue, TabEmpty, RowLink, RowsFailed, useTabPaging, tabStateView } from './TabParts';
+import { AsOf, OwnerValue, TabEmpty, RowLink, useTabPaging, tabStateView } from './TabParts';
 import { actionsSummaryText, dueText, fromText, parseTabView, tabSearch, type ActionRow } from './tabsModel';
 import { useFocusAfterMore } from './useFocusAfterMore';
 import { useProjectTab } from './useProjectTab';
@@ -123,7 +123,6 @@ export function ActionsTab({ caseId, base }: { caseId: string; base: string }) {
               </>
             ) : <Table className="ptabs__table" tableClassName="ptabs__actions-table" caption="Actions" columns={columns} rows={rows} rowKey={(row) => row.action_id} empty="" paging={paging} />}
           </div>
-          <RowsFailed more={more} onRetry={paging.onMore} />
           <AsOf value={state.asOf} />
           <p className="ptabs__note">Actions come from confirmed minutes.</p>
         </>

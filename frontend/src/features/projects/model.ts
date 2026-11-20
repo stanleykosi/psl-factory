@@ -58,7 +58,7 @@ export function parseProjectsView(params: URLSearchParams): ProjectsView {
   return { q, limit, tab };
 }
 
-/** The URL search for a view; q is left out when empty, limit when 20 and status when Active. Cursors are never written. */
+/** The URL search for a view; q is left out when empty, limit when 10 and status when Active. Cursors are never written. */
 export function projectsSearch(view: ProjectsView): string {
   const params = new URLSearchParams();
   if (view.tab !== DEFAULT_TAB) params.set('status', view.tab);
