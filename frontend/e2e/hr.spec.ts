@@ -45,7 +45,7 @@ for (const [id, title, agentStep, next] of [
     await expect(page.getByText('Restricted').first()).toBeVisible();
     await expect(page.getByText(/Zainab · HR agent/).first()).toBeVisible();
     await expect(page.getByText(/Amaka Obi · HR/).first()).toBeVisible();
-    expect(await page.locator('main li').count()).toBeGreaterThanOrEqual(5);
+    expect(await page.getByRole('table', { name: 'History, newest first' }).getByRole('row').count()).toBeGreaterThanOrEqual(6); // header + 5
   });
 }
 
@@ -100,4 +100,34 @@ test('hr is refused Projects, Exceptions and Setup', async ({ page }) => {
     await expect(page.getByText(words), path).toBeVisible();
     await expect(page.getByRole('link', { name: 'Go to My work' }), path).toBeVisible();
   }
+});
+
+test.describe('HR Lead (stand-in)', () => {
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([{ name: 'psl_mock_persona', value: 'hr_lead', url: test.info().project.use.baseURL! }]);
+  });
+
+  test('sees the decisions as Needs me, opens one and its history, and is refused Setup', async ({ page }) => {
+    await page.goto('/my-work');
+    await expect(page.getByText('Ngozi Adeyemi · HR Lead')).toBeVisible();
+    const panel = page.locator('#my-work-panel');
+    for (const title of ['Payroll correction · HR Lead decision', 'Staff record change · Chinedu Eze moves to Delivery', 'Business unit moves · confirm before payroll matching']) {
+      await expect(panel.getByRole('link', { name: new RegExp(title) }).first()).toBeVisible();
+    }
+    await page.goto('/work/W-4612');
+    await expect(page.getByRole('link', { name: 'Open the decision' })).toBeVisible();
+    await page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { name: /^History/ }).click();
+    await expect(page.getByText('Restricted').first()).toBeVisible();
+    await expect(page.getByText(/Zainab · HR agent/).first()).toBeVisible();
+    await page.goto('/setup');
+    await expect(page.getByText('This section isn’t open to your role.')).toBeVisible();
+  });
+
+  test('Assistant lists three conversations and Zainab declines a salary', async ({ page }) => {
+    await page.goto('/assistant/CV-2433');
+    await expect(page.getByText(/has not been set up yet/).first()).toBeVisible();
+    await page.goto('/assistant');
+    await expect(page.getByText('What is waiting for my decision?').first()).toBeVisible();
+    await expect(page.getByText('Are the business unit moves safe to confirm?').first()).toBeVisible();
+  });
 });
