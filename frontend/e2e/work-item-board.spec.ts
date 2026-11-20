@@ -69,7 +69,7 @@ for (const [label, viewport] of [
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
         await expect(page.locator('h1')).toHaveCount(1);
         const size = await page.locator('main h1').evaluate((el) => getComputedStyle(el).fontSize);
-        const phoneSize = path.endsWith('/history') ? '20px' : path === '/work/W-1099' ? '24px' : '22px';
+        const phoneSize = path === '/work/W-1099' ? '24px' : '22px';
         expect(size).toBe(viewport === DESKTOP ? (path === '/work/W-1099' ? '33px' : '40px') : phoneSize);
         expect(await page.locator('main h1').evaluate((el) => el.classList.contains('shell-title'))).toBe(true);
       });
@@ -122,7 +122,7 @@ test.describe('focus outlines (AC 20)', () => {
     await go(page, '/work/W-1705/history', 'finance_lead');
     expect(await tabTo(page, page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { selected: true }))).toEqual(ring); // one tab stop: the open tab
     expect(await tabTo(page, page.getByRole('radio', { name: /^All ?7$/ }))).toEqual(ring);
-    expect(await tabTo(page, page.getByRole('combobox', { name: 'Rows per page' }))).toEqual(ring);
+    expect(await tabTo(page, page.getByRole('radio', { name: '10', exact: true }))).toEqual(ring);
   });
 
   test('phone: the disclosures show a ring and toggle', async ({ page }) => {

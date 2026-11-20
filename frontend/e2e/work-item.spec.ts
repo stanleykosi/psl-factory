@@ -180,12 +180,12 @@ test.describe('agent step motion', () => {
   });
 });
 
-test('history: 10 rows, Show more appends to 12, then no Show more; focus rings on tabs, filter and Show more', async ({ page }) => {
+test('history: 10 rows first, Show more appends to 12, then no Show more; focus rings on tabs, filter and Show more', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await page.goto('/work/W-1004/history');
   await loaded(page);
   const rows = page.getByRole('table').locator('tbody tr');
-  await expect(rows).toHaveCount(12);
+  await expect(rows).toHaveCount(10);
 
   const ring = { style: 'solid', width: '2px' };
   expect(await tabTo(page, page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { selected: true }))).toEqual(ring); // one tab stop: the open tab
@@ -195,17 +195,45 @@ test('history: 10 rows, Show more appends to 12, then no Show more; focus rings 
   await expect(page.getByRole('radio', { name: 'Decisions' })).toHaveAttribute('aria-checked', 'true');
   await expect(rows).toHaveCount(4);
   await page.getByRole('radio', { name: 'All' }).click();
-
-  await page.getByRole('combobox', { name: 'Rows per page' }).click();
-  await page.getByRole('option', { name: '10' }).click();
   await expect(rows).toHaveCount(10);
+
   const more = page.getByRole('button', { name: 'Show more' });
   await expect(more).toBeVisible();
-  await page.getByRole('combobox', { name: 'Rows per page' }).focus();
   expect(await tabTo(page, more)).toEqual(ring);
   await page.keyboard.press('Enter');
   await expect(rows).toHaveCount(12);
   await expect(more).toHaveCount(0);
   await expect(rows.first().locator('time')).toHaveText('12 Nov 16:40');
+  // rows per page is part of the table frame, as buttons; a larger choice keeps focus on the chosen option
+  await expect(page.getByRole('combobox', { name: 'Rows per page' })).toHaveCount(0);
   await expectNoAxeViolations(page);
 });
+
+for (const [label, viewport] of [
+  ['desktop 1440', DESKTOP],
+  ['phone 390', PHONE],
+] as const) {
+  test(`history draws Overview's header and column grid (${label})`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    const boxes = async (path: string) => {
+      await page.goto(path);
+      await loaded(page);
+      const box = async (loc: Locator) => (await loc.first().boundingBox())!;
+      return {
+        tabs: await box(page.getByRole('tablist', { name: 'Work item' })),
+        title: await box(page.locator('main#main h1')),
+        main: await box(page.locator('.work-columns > .work-column')),
+        side: await box(page.locator('.work-columns > aside')),
+      };
+    };
+    const overview = await boxes('/work/W-1004');
+    const history = await boxes('/work/W-1004/history');
+    for (const key of ['tabs', 'title', 'main', 'side'] as const) {
+      // the side column is drawn only on desktop; on a phone it follows the main column
+      if (key === 'side' && viewport.width < 720) continue;
+      for (const edge of ['x', 'y', 'width'] as const) {
+        expect(Math.abs(history[key][edge] - overview[key][edge]), `${key}.${edge}`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+}
