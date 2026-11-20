@@ -325,3 +325,6 @@ The design engineer: "no need for all this many reviews we are doing during this
 
 ## D-147 (20 Nov): an HR Lead stand-in persona; F-55 folded into F-54
 The design engineer: "lets switch to hr lead now". The F-55 HR sample data was merged into the F-54 branch (D-145) and an `hr_lead` stand-in persona is being added there: the HR Lead decides HR items (payroll corrections, staff record changes, business-unit moves before payroll matching). Stand-in only; PSL defines the real HR Lead authority (D-PAYROLL-VISIBILITY open). No amounts shown.
+
+## D-148 (20 Nov): white focus edge on filled dark or blue controls
+The builder kept a white edge (--focus-on-strong) instead of blue on filled dark or blue controls (primary, dark and confirm buttons, selected tabs and options, the dark top bar, the send button), because blue on those fills cannot be seen. The design engineer: "thats good". Accepted as the one exception to D-144.
