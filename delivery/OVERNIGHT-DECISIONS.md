@@ -343,3 +343,6 @@ The design engineer: "for 3d floor line lets use Isometric conveyor floor from t
 
 ## D-153 (20 Nov): test data matches who may see the Overview
 The design engineer asked who sees the floor, then "lets fix the test data that is missing". The v7 contract says E-OVERVIEW is for "Leads, CEO, CTO". The mock now gives the Overview to PMO Lead and HR Lead (they were missing it), and PMO Lead sees the projects list (it had none). Admin keeps the Overview in the mock for now although the contract does not list Admin; no CTO persona was added. Both are open for the design engineer.
+
+## D-154 (20 Nov): "Response recorded" and "Outcome recorded" are toasts too
+The toast builder kept ResponseView's "Response recorded" and OutcomeView's "Outcome recorded" as success callouts because each was the whole page after the form. The design engineer: "Make them toasts". After the submit the toast shows and the page shows the recorded result read-only (what was recorded, by whom, when, what happens next) without a success callout; DecideStates stays on the allowlist only if it is not an action result. Queued after the conveyor floor (D-145).
