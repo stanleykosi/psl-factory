@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. Retain a typed release environment only when it is recorded against the exact release. Existing evidence keeps Unknown for the unrecorded environment. Escalation preparation stops at a human Send for review. Current native reviews and original receipts remain readable. File-required bid packs retain private PDF bytes and a verified hash, with outward transmission held when the configured carrier cannot transport the file. Amounts labelled Millions stay unconverted until an exact reviewed source conversion exists.
+
 20 November 2026. Group Forecast and weekly projections can reuse exact current observations within one rendered request. Native commands assess authority and evidence again and preserve original receipts. The Clients list filters individual authorized workspaces by current billing-contact status. Cross-workspace grouping requires an explicitly recorded stable customer identity. Local billing references and names do not establish that match.
 
 20 November 2026. Collective usage shows only actions supported by the current actor’s case grants. Finance readers retain receipt lookup. The native commands still enforce their own current write authority. Client legal billing details are immutable case-scoped revisions attached to current native coverage. A blank field stays Unknown. Updating this registry leaves prior issued documents, contacts and amounts intact.

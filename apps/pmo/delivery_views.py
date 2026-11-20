@@ -14,7 +14,7 @@ from apps.agents.delivery import investigate_delivery
 from apps.agents.models import AgentRun
 from apps.documents.models import Template,PublicationReceipt
 from .delivery import (SOURCE_OWNERS,open_dossier,capture_source,verify_source,decide_planning,record_progress,
-    record_release_request,prepare_readiness,capture_release)
+    record_release_request,prepare_readiness,capture_release,release_observations)
 from .delivery_closure import (accept_go_live,reaffirm_go_live,latest_go_live,evaluate_hypercare,archive_artifacts,acknowledge_handover,confirm_finance,decide_closure,finalize_closure)
 from .delivery_documents import draft_delivery_document
 from .delivery_workarounds import KIND as WORKAROUND_KIND
@@ -52,7 +52,9 @@ def workbench(request,case_id):
             elif action=='progress':record_progress(request.user,case.pk,d,p['kind'],evidence,note,expected,int(p['meeting']) if p.get('meeting') else None)
             elif action=='request':record_release_request(request.user,case.pk,d,p['external_ref'],evidence,note,expected)
             elif action=='ready':prepare_readiness(request.user,case.pk,d,expected)
-            elif action=='release':capture_release(request.user,case.pk,d,int(p['readiness']) if p.get('readiness') else None,p['released_at'],p['external_ref'],evidence,note,expected)
+            elif action=='release':
+                capture_release(request.user,case.pk,d,int(p['readiness']) if p.get('readiness') else None,
+                    p['released_at'],p['external_ref'],evidence,note,expected,deployment_environment=p.get('deployment_environment'))
             elif action=='draft':
                 purpose=p['purpose'];keys={'go_live':['checklist','incident_reporting','rollback'],'handover':['support_document','escalation_document'],'closure':['retrospective_id','report_evidence_id']}
                 if purpose not in keys:raise ValidationError('Unsupported delivery document')
@@ -88,7 +90,9 @@ def workbench(request,case_id):
     ).order_by('-pk')[:50])
     from .delivery import planning_inputs,readiness_inputs,dossier_for
     from .delivery_closure import hypercare_inputs
+    releases = release_observations(case, [d.pk for d in dossiers])
     for d in dossiers:
+        d.release_observation = releases.get(d.pk)
         d.go_live_head=latest_go_live(d,False);d.can_reaffirm_go_live=False
         if d.go_live_head and not d.records.filter(kind='closure').exists():
             try:

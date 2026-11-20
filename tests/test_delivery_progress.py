@@ -172,6 +172,7 @@ class DeliveryProgressTests(DeliveryFixture,TestCase):
         self.assertFalse(Publication.objects.exists())
         factory_escalation.decide(self.actor,work.pk,work.revision,rev(self.case),request.pk,'Head of PMO','approve','Exact human communication decision')
         factory.run_until_wait(work.pk);work.refresh_from_db();version=factory_escalation.document(work);self.assertIsNotNone(version,work.finding)
+        factory_escalation.request_communication_review(self.actor,work.pk,work.revision,rev(self.case),version.pk)
         factory_escalation.review(self.actor,work.pk,work.revision,rev(self.case),version.pk,'approve','Exact human document review')
         return request,work,version
 

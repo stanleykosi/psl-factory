@@ -1,0 +1,11 @@
+<section class="card" aria-labelledby="submission-pdf-title">
+  <h2 id="submission-pdf-title">Client pack file</h2>
+  <p><a href="{% url 'rfp_submission_pdf' case.pk submission_pdf.version %}">Open the full pack PDF</a> · {{ submission_pdf.file.size }} bytes</p>
+  {% if submission_pdf.findings %}
+    <ul role="status">{% for finding in submission_pdf.findings %}<li>{{ finding }}</li>{% endfor %}</ul>
+  {% elif submission_pdf.requirements %}
+    <p>Matches the recorded file requirements.</p>
+  {% else %}
+    <p>Readable PDF. No client file requirements recorded.</p>
+  {% endif %}
+</section>

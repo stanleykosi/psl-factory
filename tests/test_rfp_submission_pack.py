@@ -1,14 +1,22 @@
+from hashlib import sha256
+from io import BytesIO
+from types import SimpleNamespace
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import DatabaseError, connection, transaction
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
+from pypdf import PdfReader
 
+from adapters.rfp_pdf import render, verify_pdf
+from apps.core.models import Case
 from apps.documents.controlled import current_version, reserve_publication, review_version
 from apps.documents.models import Publication
 from apps.identity.models import Grant
 from apps.pmo import rfp, rfp_documents, rfp_submission_pack as packs
-from apps.pmo.models import RFPDocumentBinding, RFPSubmission, RFPSubmissionPack
+from apps.pmo.models import RFPDocumentBinding, RFPSubmission, RFPSubmissionArtifact, RFPSubmissionPack
+from apps.pmo.rfp_submission_artifacts import materialize, requirement_findings
 from apps.policy.services import register_reference
 from apps.workflows import factory, factory_rfp
 from tests import factory_rfp_helpers as fixture
@@ -50,6 +58,7 @@ class RFPSubmissionPackTests(TestCase):
                                     data['route']['key'], rev(case))
         original = RFPDocumentBinding.objects.get(version=legacy).snapshot
         self.assertNotIn('submission_pack', original)
+        self.assertFalse(RFPSubmissionArtifact.objects.exists())
         self.assertEqual(current_version(case, legacy.pk), legacy)
         decision_url = reverse('factory_invoice_decision', args=[work.pk])
 
@@ -61,17 +70,18 @@ class RFPSubmissionPackTests(TestCase):
         self.client.force_login(maker)
         self.assertContains(self.client.get(decision_url), 'Save pack draft')
         declared = {'pack-target': response.pk, 'pack-base': 0, 'pack-file_extension': 'PDF',
-                    'pack-file_count': 1, 'pack-file_size_bytes': 20_000_000}
+                    'pack-file_count': 1, 'pack-file_size_bytes': 100}
         invalid = command('submission_pack', **declared, **{'pack-cover_note': 'Draft note.'})
         self.assertContains(invalid, 'Enter both the stated byte limit')
         self.assertFalse(RFPSubmissionPack.objects.exists())
+        first_note = 'Draft note. Quoted cost ₦20.00. Procurement review <final> & evidence.'
         first = command('submission_pack', **declared, **{'pack-file_size_rule': 'less_than',
-                                                          'pack-cover_note': 'Draft note.'})
+                                                          'pack-cover_note': first_note})
         self.assertEqual(first.status_code, 302)
         pack = packs.current(response)
         self.assertEqual((pack.number, pack.source_id, pack.actor_id, pack.file_extension,
                           pack.file_count, pack.file_size_bytes, pack.file_size_rule),
-                         (1, response.intake.evidence_id, maker.pk, 'pdf', 1, 20_000_000, 'less_than'))
+                         (1, response.intake.evidence_id, maker.pk, 'pdf', 1, 100, 'less_than'))
         self.assertEqual(RFPDocumentBinding.objects.get(version=legacy).snapshot, original)
         with self.assertRaisesMessage(ValidationError, 'draft and review a new exact response'):
             current_version(case, legacy.pk)
@@ -85,19 +95,44 @@ class RFPSubmissionPackTests(TestCase):
         self.assertEqual(binding.snapshot['submission_pack'], pack.pk)
         self.assertEqual(binding.snapshot['costing_decisions'], original['costing_decisions'])
         self.assertEqual(binding.snapshot['reviews'], original['reviews'])
+        artifact = RFPSubmissionArtifact.objects.get(binding=binding)
+        self.assertEqual(materialize(binding).pk, artifact.pk)
+        self.assertEqual(artifact.payload_sha256, first_version.payload_sha256)
+        self.assertGreater(artifact.size, 100)
+        self.assertEqual(sha256(artifact.content).hexdigest(), artifact.sha256)
+        with self.assertRaises(DatabaseError), transaction.atomic():
+            RFPSubmissionArtifact.objects.filter(pk=artifact.pk).update(size=artifact.size + 1)
         with self.assertRaisesMessage(PermissionDenied, 'different authorised person'):
             review_version(maker, case.pk, first_version.pk, 'approve', 'Maker self-review.', rev(case))
 
         self.client.force_login(self.reviewer)
+        pdf_url = reverse('rfp_submission_pdf', args=[case.pk, first_version.pk])
+        file = self.client.get(pdf_url)
+        self.assertEqual(file.status_code, 200)
+        self.assertEqual(file.headers['Content-Type'], 'application/pdf')
+        self.assertIn('no-store', file.headers['Cache-Control'])
+        self.assertIn('inline;', file.headers['Content-Disposition'])
+        original_pdf = b''.join(file.streaming_content)
+        self.assertEqual(original_pdf, bytes(artifact.content))
+        original_text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(original_pdf)).pages)
+        for phrase in ('₦20.00', 'Procurement review <final> & evidence.', 'Cited coverage'):
+            self.assertIn(phrase, original_text.replace('\n', ' '))
+        other = Case.objects.create(tenant=case.tenant, kind='project', synthetic=True, title='Sample unrelated bid')
+        Grant.objects.bulk_create([Grant(user=self.reviewer, case=other, action=permission)
+                                   for permission in ('case.read', 'document.read', 'rfp.read')])
+        self.assertEqual(self.client.get(reverse('rfp_submission_pdf', args=[other.pk, first_version.pk])).status_code, 404)
         read_grant = Grant.objects.filter(case=case, user=self.reviewer, action='document.read')
         read_grant.update(active=False)
         self.assertNotContains(self.client.get(decision_url), 'Draft note.')
+        self.assertEqual(self.client.get(pdf_url).status_code, 403)
         read_grant.update(active=True)
         page = self.client.get(decision_url)
-        for phrase in ['Client submission pack', 'Draft note.', 'Format PDF', 'Under 20,000,000 bytes per file',
-                       'Final client response review']:
+        for phrase in ['Client submission pack', 'Draft note.', 'Format PDF', 'Under 100 bytes per file',
+                       'Final client response review', 'Open the full pack PDF', 'exceeds the requested file size']:
             self.assertContains(page, phrase)
         self.assertNotContains(page, 'Save pack draft')
+        with self.assertRaisesMessage(ValidationError, 'exceeds the requested file size'):
+            review_version(self.reviewer, case.pk, first_version.pk, 'approve', 'File too large.', rev(case))
         self.assertEqual(command('submission_pack', **declared, **{'pack-file_size_rule': 'less_than',
                                                                   'pack-cover_note': 'Reviewer edit.'}).status_code, 403)
         returned = command('document', target=first_version.pk, role='PMO Lead', verdict='return',
@@ -105,12 +140,12 @@ class RFPSubmissionPackTests(TestCase):
         self.assertEqual(returned.status_code, 302)
 
         self.client.force_login(maker)
-        revised = dict(declared, **{'pack-base': pack.pk, 'pack-file_size_rule': 'less_than',
+        revised = dict(declared, **{'pack-base': pack.pk, 'pack-file_size_rule': 'less_than', 'pack-file_size_bytes': 20_000_000,
                                     'pack-cover_note': 'Revised cover note.'})
         self.assertEqual(command('submission_pack', **revised).status_code, 302)
         successor = packs.current(response)
         self.assertEqual((successor.number, successor.supersedes_id), (2, pack.pk))
-        self.assertEqual(pack.cover_note, 'Draft note.')
+        self.assertEqual(pack.cover_note, first_note)
         self.assertContains(command('submission_pack', **revised), 'pack changed')
         with self.assertRaises(DatabaseError), transaction.atomic():
             RFPSubmissionPack.objects.filter(pk=pack.pk).update(cover_note='A rewritten original')
@@ -125,13 +160,41 @@ class RFPSubmissionPackTests(TestCase):
         self.assertEqual((exact.document_id, exact.number), (legacy.document_id, 3))
         self.assertNotEqual(exact.payload_sha256, first_version.payload_sha256)
         self.assertEqual(first_version.reviews.get().verdict, 'return')
+        successor_pdf = RFPSubmissionArtifact.objects.get(binding__version=exact)
+        self.assertNotEqual(successor_pdf.sha256, artifact.sha256)
+        self.assertEqual(requirement_findings(successor, successor_pdf), [])
         self.client.force_login(self.reviewer)
         self.assertContains(self.client.get(decision_url), 'Revised cover note.')
+        self.assertContains(self.client.get(decision_url), 'Matches the recorded file requirements.')
+        old_file = self.client.get(pdf_url)
+        self.assertEqual(b''.join(old_file.streaming_content), original_pdf)
         approved = command('document', target=exact.pk, role='PMO Lead', verdict='approve',
                            note='Reviewed the exact cover note, approved costing and declared file requirements.')
         self.assertEqual(approved.status_code, 302)
         self.assertEqual(exact.reviews.get().actor_id, self.reviewer.pk)
-        with self.assertRaisesMessage(ValidationError, 'Verify that the client files'):
+        with self.assertRaisesMessage(ValidationError, 'submission route does not carry the verified PDF'):
             reserve_publication(maker, case.pk, exact.pk, rev(case))
         self.assertFalse(Publication.objects.exists())
         self.assertFalse(RFPSubmission.objects.exists())
+
+
+class RFPSubmissionPdfTests(SimpleTestCase):
+    def test_render_exact_readable_text_and_check_the_actual_file_boundary(self):
+        text = 'Quoted amount ₦20.00. Scope <needs review> & evidence.'
+        payload = {'title': 'Sample client pack', 'sections': [{'heading': 'scope', 'text': text}]}
+        data = render(payload)
+        verify_pdf(data)
+        self.assertEqual(render(payload), data)
+        self.assertIn(text, PdfReader(BytesIO(data)).pages[0].extract_text())
+        with self.assertRaises(ValidationError):
+            verify_pdf(b'%PDF-not-a-valid-file')
+
+        asset = SimpleNamespace(size=len(data))
+        pack = SimpleNamespace(file_extension='pdf', file_count=1, file_size_rule='at_most', file_size_bytes=len(data))
+        self.assertFalse(requirement_findings(pack, asset))
+        pack.file_size_rule = 'less_than'
+        self.assertEqual(requirement_findings(pack, asset), ['The PDF exceeds the requested file size limit.'])
+        pack.file_size_bytes = None
+        pack.file_extension = 'docx'
+        pack.file_count = 2
+        self.assertEqual(len(requirement_findings(pack, asset)), 2)

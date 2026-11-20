@@ -82,13 +82,18 @@ def principal(work,value,name):
     except PermissionDenied:raise ValidationError('owner_needed: Escalation principal lacks current project permissions') from None
     return u
 
-def published(work,actor=None):
-    from .factory import profile
+def exact_document(work, actor=None):
     r,data=source(work,actor);decision=native.approved_request(work.case,r);v=document(work)
     if not v:raise ValidationError('Await exact controlled communication')
     b=EscalationDocumentBinding.objects.get(version=v)
     if b.request_id!=r.pk or b.decision_id!=(decision.pk if decision else None) or v.template_id!=data['template_id'] or v.audience!=('client' if r.target=='Client' else 'internal'):raise ValidationError('Exact current request, decision, template and audience required')
-    current_version(work.case,v.pk);review=validate_review(work.case,v);policies,recipients,retention=publication_requirements(work.case,v)
+    return r,decision,current_version(work.case,v.pk)
+
+
+def published(work,actor=None):
+    from .factory import profile
+    r,decision,v=exact_document(work,actor)
+    review=validate_review(work.case,v);policies,recipients,retention=publication_requirements(work.case,v)
     config,value=profile(work,recovery=True);principal(work,value,'preparer_id');user=principal(work,value,'executor_id')
     p=Publication.objects.filter(version=v,factory_work=work,factory_source=work.source_head,factory_policy=config,actor=user).first()
     if not p or p.review_id!=(review.pk if review else None) or p.policies!=policies or p.recipient_ids!=recipients or p.retention_days!=retention:raise ValidationError('Await current work-bound exact communication publication')
@@ -126,7 +131,12 @@ def snapshot(work,value,reader=None):
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'));v=document(work);review={'status':'unprepared'}
     if v:
-        try:current_version(work.case,v.pk);d=validate_review(work.case,v);review={'status':'ready','id':d.pk if d else None}
+        try:
+            current_version(work.case,v.pk)
+            if requires_review(v) and not HumanTask.objects.filter(version=v).exists():
+                review={'status':'request_needed'}
+            else:
+                d=validate_review(work.case,v);review={'status':'ready','id':d.pk if d else None}
         except (ValidationError,PermissionDenied) as exc:review={'status':'held','finding':finding(exc)}
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':n,'checks':{'request':r.pk,'decisions':list(r.decisions.values_list('pk',flat=True))},'document':v.pk if v else None,'review':review,'publication':Publication.objects.filter(version=v,factory_work=work).values_list('pk',flat=True).first() if v else None,'jobs':[(j.pk,j.status) for j in jobs]}
     state['hash']=digest(state);state['work_revision']=work.revision
@@ -141,7 +151,7 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if state['native']['stage'] in ('decision', 'returned', 'not_escalated'):return [],state['native']['finding']
     if state['native']['stage']=='complete':return ['ACT13'],'Verify the reviewed communication and every recipient receipt, not issue resolution'
     if not state['document']:return ['ACT09'],'Prepare the controlled native communication'
-    if state['review']['status']!='ready' and not HumanTask.objects.filter(version_id=state['document']).exists():return ['ACT09'],'Request native review of the retained exact communication'
+    if state['review']['status']=='request_needed':return [],'Send the exact communication for review.'
     if state['review']['status']!='ready':return [],'Await exact document review or explicit source-owned replacement'
     if not state['publication']:return ['ACT11'],'Reserve the reviewed communication for configured recipients'
     return [],state['native']['finding']
@@ -157,14 +167,10 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         run=investigate_escalations(work.execution_actor,c.pk,c.revision,profile_ids=[r.profile_id])
         return {'head':work.source_head_id,'investigation_run':run.pk,'investigation':run.result,'native':report(work,work.execution_actor),'approval_granted':False,'communications_dispatched':False}
     if kind=='ACT09':
-        from apps.documents.controlled import request_review
         native.approved_request(c,r);u=principal(work,value,'preparer_id');v=document(work)
         if not data['template_id']:raise ValidationError('Select the controlled communication template')
         if not v:v=native.draft_escalation(u,c.pk,r.pk,data['template_id'],c.revision)
-        task=None
-        if not (v.audience!='client' and v.template.definition.get('internal_review_required') is False) and not HumanTask.objects.filter(version=v).exists():
-            require(u,c,'document.request_review');c.refresh_from_db();task=request_review(u,c.pk,v.pk,c.revision)
-        return {'head':work.source_head_id,'request':r.pk,'document_version':v.pk,'native_review_task':task.pk if task else None}
+        return {'head':work.source_head_id,'request':r.pk,'document_version':v.pk}
     if kind in ['ACT11','ACT12']:
         job=pending_job(jobs)
         if job:return {'head':work.source_head_id,'publication_job':job.pk,'publication_lookup_only':kind=='ACT12'}
@@ -195,6 +201,42 @@ def settled(w):
     planning=pending(w)
     if planning and not has_receipt(planning):raise ValidationError('Resolve original planning response first')
 
+
+def requires_review(version):
+    return version.audience == 'client' or version.template.definition.get('internal_review_required') is not False
+
+
+def require_review_preparer(actor, work, version, value):
+    require(actor, work.case, 'document.request_review')
+    if actor.pk != version.created_by_id or actor.pk != principal(work, value, 'preparer_id').pk:
+        raise PermissionDenied('The current preparer of this exact communication can send it for review.')
+
+
+@transaction.atomic
+def request_communication_review(actor, work_id, expected, case_expected, version_id):
+    from apps.documents.controlled import request_review
+    from .factory import access, profile
+    from .factory_progress import wake_waiting
+
+    if any(type(number) is not int or number < 1 for number in (expected, case_expected, version_id)):
+        raise ValidationError('Select the current work, project and draft versions.')
+    work = Work.objects.select_for_update(of=('self',)).select_related('case', 'actor', 'source_head').get(pk=work_id, definition=DEFINITION)
+    access(actor, work.case, 'factory.read', DEFINITION)
+    work.case = lock_case(actor, work.case_id, 'document.request_review', case_expected)
+    list(Grant.objects.select_for_update().filter(case=work.case).order_by('pk'))
+    if work.revision != expected or work.cancel_requested or work.status in ('verified', 'cancelled', 'followup_needed'):
+        raise ValidationError('Refresh the current escalation before sending it for review.')
+    settled(work)
+    _, _, version = exact_document(work, actor)
+    if version.pk != version_id or not requires_review(version):
+        raise ValidationError('Select the exact current communication draft that requires review.')
+    _, value = profile(work, recovery=True)
+    require_review_preparer(actor, work, version, value)
+    task = request_review(actor, work.case_id, version.pk, case_expected)
+    wake_waiting(work.pk)
+    return task
+
+
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,request_id,template_id,reason):
     from .factory import access
@@ -210,8 +252,13 @@ def correct(actor,work_id,expected,case_expected,request_id,template_id,reason):
         if not v:raise ValidationError('Select a current successor request or changed template')
         cancelled=PublicationJob.objects.filter(publication__version=v,publication__factory_work=w,status='cancelled').exists() and not PublicationReceipt.objects.filter(publication__version=v).exists()
         if not cancelled:
-            try:current_version(c,v.pk);validate_review(c,v)
+            awaiting_submission = False
+            try:
+                current_version(c,v.pk)
+                awaiting_submission = requires_review(v) and not HumanTask.objects.filter(version=v).exists()
+                validate_review(c,v)
             except (ValidationError,PermissionDenied):
+                if awaiting_submission:raise ValidationError('Send the current draft for review or select a genuine source successor.')
                 # A pending human review is not permission to reset the work.
                 if HumanTask.objects.filter(version=v,status='open').exists() and not native.binding_findings(EscalationDocumentBinding.objects.get(version=v)):raise ValidationError('Current native review is pending; preserve that wait')
             else:
@@ -250,26 +297,38 @@ def decision_controls(actor, case, roles):
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     from .factory import access
+    from .factory_progress import wake_waiting
     from apps.documents.controlled import review_version
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);source(w,actor);v=document(w);settled(w)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or not v or v.pk!=version_id:raise ValidationError('Review exact current native communication')
-    return review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
+    result = review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
+    wake_waiting(w.pk)
+    return result
 
 def projection(actor,work,*,include_progress=False):
     from .factory import profile
     from .factory_progress import current_plan_step
     from apps.policy.services import decision_authority
     r,data=source(work,actor,False);v=document(work);issue='';options=[];next_action='Review current escalation source';n={};changed=False
-    progress = None
+    progress = None; review_request_needed = can_request_review = False
     try:
         _,value=profile(work,recovery=True);state,*args=snapshot(work,value,reader=actor);n=state['native'];options,next_action=eligible(work,value,state,*args)
+        review_request_needed = n['stage'] == 'communication' and state['review']['status'] == 'request_needed'
         if include_progress and current_plan_step(work, state['hash'], options) == 'ACT04':
             progress = {'label': 'Investigating the blocker and who needs to decide.', 'watching': True}
         if work.status=='verified':verify(work,actor);next_action='Inspect the communication receipts. Issue resolution is tracked separately.'
     except (ValidationError,PermissionDenied) as exc:issue=finding(exc);next_action=issue;changed=work.status=='verified'
     owners=[];roles=[];verdicts=[]
     live=not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
+    review_request_needed = bool(live and v and review_request_needed)
+    review_pending = False
+    if review_request_needed:
+        try:
+            settled(work)
+            require_review_preparer(actor, work, v, value)
+            can_request_review = True
+        except (ValidationError, PermissionDenied):pass
     if live and n.get('stage')=='decision':
         for user in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__action='issue.escalation_decide',grant__active=True).distinct():
             for role in ['PMO Lead','Head of PMO']:
@@ -279,7 +338,7 @@ def projection(actor,work,*,include_progress=False):
                 if user.pk==actor.pk:roles.append(role)
     if live and v and HumanTask.objects.filter(version=v,status='open').exists():
         try:
-            current_version(work.case,v.pk);require(actor,work.case,'document.review_controlled')
+            current_version(work.case,v.pk);review_pending=True;require(actor,work.case,'document.review_controlled')
             for verdict in ['approve','return','reject']:
                 try:decision_authority(actor,work.case,'PMO Lead',verdict);verdicts.append(verdict)
                 except (ValidationError,PermissionDenied):pass
@@ -299,7 +358,8 @@ def projection(actor,work,*,include_progress=False):
     for head in Evidence.objects.filter(case=work.case,kind=KIND,pk__in=heads).order_by('pk'):
         requests.append(json.loads(head.body)['request_id'])
     from apps.pmo.models import EscalationDecision
-    return {'request':r,'data':data,'native':n,'document':v,'jobs':jobs,'receipts':list(PublicationReceipt.objects.filter(publication__factory_work=work).order_by('pk')),'decision_history':list(EscalationDecision.objects.filter(request_id__in=requests).order_by('pk')),'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'owner_names':sorted(set(owners)),'decision_roles':roles,'review_verdicts':verdicts,'progress':progress}
+    return {'request':r,'data':data,'native':n,'document':v,'jobs':jobs,'receipts':list(PublicationReceipt.objects.filter(publication__factory_work=work).order_by('pk')),'decision_history':list(EscalationDecision.objects.filter(request_id__in=requests).order_by('pk')),'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'owner_names':sorted(set(owners)),'decision_roles':roles,'review_verdicts':verdicts,'progress':progress,
+        'review_request_needed':review_request_needed,'can_request_review':can_request_review,'review_pending':review_pending}
 
 def reconcile(actor,work_id,expected,adapter=None):
     from .factory import access,cancellation_status

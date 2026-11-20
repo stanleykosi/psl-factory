@@ -182,6 +182,10 @@ urlpatterns += [path('bids/private-uploads/', rfp_staged_upload_views.workbench,
 urlpatterns += [path('bids/unassigned/', rfp_assignment_views.index, name='rfp_assignment_queue'),
                 path('cases/<uuid:case_id>/rfp/assignment/', rfp_assignment_views.assign, name='rfp_assignment')]
 
+from apps.pmo import rfp_submission_artifacts
+urlpatterns += [path('cases/<uuid:case_id>/rfp/submission-pack/<int:version_id>/pdf/',
+                     rfp_submission_artifacts.open_pdf, name='rfp_submission_pdf')]
+
 from apps.finance import coverage_views
 urlpatterns += [path('cases/<uuid:case_id>/finance/contract-coverage/', coverage_views.workbench, name='finance_contract_coverage')]
 

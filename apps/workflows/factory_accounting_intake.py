@@ -24,7 +24,11 @@ from . import factory_accounting as accounting
 RECEIPT = 'factory.accounting_intake_received'
 RESULT = 'factory.accounting_intake_result'
 UNITS_CONFIRMED = 'factory.accounting_intake_units_confirmed'
-UNIT_CHOICES = [('major_currency', 'Currency units as shown'), ('thousands_currency', 'Thousands')]
+UNIT_CHOICES = [
+    ('major_currency', 'Currency units as shown'),
+    ('thousands_currency', 'Thousands'),
+    ('millions_currency', 'Millions'),
+]
 
 
 def authority(actor, case):

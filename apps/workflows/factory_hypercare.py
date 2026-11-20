@@ -174,7 +174,8 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     if kind=='release':
         if not panel['can_record_release']:raise PermissionDenied('Current actual-release recording authority required')
         if not public_evidence(Evidence.objects.filter(case=case,pk=data['evidence'])).exists():raise ValidationError('Available public event evidence required')
-        result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],case.revision)
+        result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],
+            case.revision,deployment_environment=data.get('deployment_environment'))
     elif kind=='acceptance':
         if not panel['can_accept_go_live'] or data['packet']!=panel['acceptance_packet']:raise ValidationError('STALE_VERSION: exact current go-live receipt and authority required')
         if data['receipt'] not in [r.pk for r in panel['go_live_receipts']]:raise ValidationError('Select an available current go-live receipt')

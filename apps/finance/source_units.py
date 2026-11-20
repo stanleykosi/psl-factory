@@ -7,7 +7,7 @@ from apps.pmo.services import subject
 
 SCHEMA = 'finance-source-units/v1'
 ASSERTION = 'finance-source-unit-assertion/v1'
-UNITS = {'major_currency', 'thousands_currency', 'unknown'}
+UNITS = {'major_currency', 'thousands_currency', 'millions_currency', 'unknown'}
 
 
 def evidence_identity(batch_id, input_key, feed):

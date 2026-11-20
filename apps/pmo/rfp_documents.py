@@ -73,7 +73,12 @@ def draft(actor,case_id,response_id,template_id,route_key,expected):
     fields = complete_native_client_sections(fields, 'client', [e.pk])
     version=create_version(actor,case.pk,t.pk,'RFP response '+v.rfp.reference,'client',fields,case.revision,
                            document_id=document_id)
-    RFPDocumentBinding.objects.create(version=version,response=v,snapshot=snapshot);sender(actor,version);return version
+    binding=RFPDocumentBinding.objects.create(version=version,response=v,snapshot=snapshot)
+    sender(actor,version)
+    if 'submission_pack' in snapshot:
+        from .rfp_submission_artifacts import materialize
+        materialize(binding)
+    return version
 
 def binding_findings(b):
     try:

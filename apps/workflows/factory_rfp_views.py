@@ -224,6 +224,9 @@ def decision_options(actor,work,current,document,submission):
                 require_independent_review(actor, document)
                 if HumanTask.objects.filter(version=document,status='open').exists():
                     choices=verdicts('document.review_controlled','PMO Lead')
+                    if 'approve' in choices:
+                        try:require_independent_review(actor, document, verdict='approve')
+                        except ValidationError:choices.remove('approve')
                     if choices:result.append({'kind':'document','target':document.pk,'role':'PMO Lead','verdicts':choices,'title':'Final client response review'})
             except (ValidationError,PermissionDenied):pass
     outcome_roles=[]
@@ -510,6 +513,8 @@ def detail(request,work,focus=None):
         mappings=Mappings(initial=value.get('matrix',[]),prefix='requirements',form_kwargs={'case':work.case})
     document=row['rfp']['document']
     pack_context=submission_pack.panel(request.user,work,row['rfp']['response'],pack_form) if focus in (None,'decision') else {}
+    from apps.pmo.rfp_submission_artifacts import panel as submission_pdf_panel
+    submission_pdf = submission_pdf_panel(request.user, work.case, document) if focus in (None,'decision') else None
     receipts=PublicationReceipt.objects.filter(publication__version__document__case=work.case).filter(
         Q(publication__factory_work=work)|Q(publication__version=document)).order_by('pk') if document else PublicationReceipt.objects.filter(publication__factory_work=work).order_by('pk')
     activities=list(FactoryActivity.objects.filter(work=work).prefetch_related('attempts').order_by('pk'))
@@ -593,6 +598,7 @@ def detail(request,work,focus=None):
         'loss_debrief':rfp_loss.debrief_proof(request.user,work.case,row['rfp']['outcome']),
         'can_review_requirement_answers':can_review_requirement_answers, 'final_costing':final_costing,
         'can_read_client_document':allowed(request.user,work.case,'document.read'),
+        'submission_pdf':submission_pdf,
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
         **pack_context,
         **followup_context,

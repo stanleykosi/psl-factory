@@ -64,7 +64,7 @@ SCREENS = {
         'recovery': ('reconcile', 'operate_delivery'),
     },
     'pmo-escalation/v1': {
-        'decision': ('decision', 'review'),
+        'decision': ('decision', 'request_review', 'review'),
         'recovery': ('reconcile', 'operate_delivery'),
     },
     'delivery-go-live/v1': {

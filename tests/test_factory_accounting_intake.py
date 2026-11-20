@@ -7,7 +7,7 @@ from django.test import TestCase, Client
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
-from apps.core.models import Audit, Case
+from apps.core.models import Audit, Case, Evidence
 from apps.core.services import add_evidence
 from apps.finance.models import FinancialImport, FinanceSource, FinanceRun, ImportValidation
 from apps.finance.services import capture_import
@@ -183,6 +183,54 @@ class AccountingSuppliedIntakeTests(TestCase):
         self.assertEqual(result['source_units']['status'], 'unsupported')
         self.assertFalse(FactoryWork.objects.exists())
         self.assertFalse(FinanceRun.objects.exists())
+
+    def test_http_confirm_millions_preserves_exact_source_and_holds_calculation(self):
+        actor, case, evidence, *_ = self.data
+        held, source_file, _ = self.submit(with_units=False)
+        original = Audit.objects.get(pk=held['receipt'])
+        source = FinanceSource.objects.get(pk=held['source'])
+        original_rows = source.batch.rows
+        import_count = FinancialImport.objects.count()
+        self.client.force_login(actor)
+        start = reverse('factory_create') + f'?definition=finance-accounts/v1&case={case.pk}'
+        units_form = start + f"&units={original.pk}"
+        self.assertContains(self.client.get(units_form), '<option value="millions_currency">Millions</option>', html=True)
+
+        proof = evidence['finance_source']
+        reason = 'The supplied synthetic footer states the amounts are in millions.'
+        response = self.client.post(units_form, {'action': 'confirm_units', 'unit': 'millions_currency',
+            'proof': proof.pk, 'note': reason, 'revision': rev(case)})
+        self.assertRedirects(response, start, fetch_redirect_response=False)
+        confirmation = Audit.objects.get(case=case, action=intake.UNITS_CONFIRMED, data__previous=original.pk)
+        successor = Audit.objects.get(pk=confirmation.data['successor'], action=intake.RECEIPT)
+        result = intake.latest(successor)
+        self.assertEqual(result['status'], 'source_units_needed')
+        self.assertEqual(result['source_units']['status'], 'unsupported')
+        self.assertEqual(confirmation.data['proof'], proof.pk)
+        self.assertEqual(confirmation.data['reason'], reason)
+        self.assertEqual(confirmation.data['unit'], 'millions_currency')
+        self.assertEqual(successor.data['request']['evidence_id'], source_file.pk)
+        self.assertEqual(successor.data['request']['sha256'], source_file.sha256)
+        self.assertEqual(result['batch'], source.batch_id)
+        self.assertEqual(result['validation'], held['validation'])
+        self.assertNotEqual(result['source'], source.pk)
+
+        recorded = FinanceSource.objects.get(pk=result['source'])
+        self.assertEqual(recorded.batch.rows, original_rows)
+        self.assertEqual(FinancialImport.objects.count(), import_count)
+        self.assertEqual(recorded.unit_declaration, result['source_units']['declaration'])
+        declaration = Evidence.objects.get(pk=confirmation.data['unit_evidence'])
+        self.assertEqual(recorded.unit_declaration['declarations'], [{'feed': 'trial-balance',
+            'unit': 'millions_currency', 'evidence': {'id': declaration.pk, 'version': declaration.version,
+                                                    'sha256': declaration.sha256}}])
+        self.assertEqual(json.loads(declaration.body)['source_sha256'], source_file.sha256)
+        self.assertEqual(intake.latest(original), held)
+        self.assertFalse(FactoryWork.objects.exists())
+        self.assertFalse(FinanceRun.objects.exists())
+        self.assertContains(self.client.get(start), 'File units: Millions. Calculation needs a reviewed conversion for this source.')
+        self.assertEqual(intake.confirm_units(actor, case.pk, original.pk, 'millions_currency', proof.pk,
+                                             reason, rev(case)), result)
+        self.assertEqual(Audit.objects.filter(case=case, action=intake.UNITS_CONFIRMED).count(), 1)
 
     def test_http_supplied_intake_to_reviewed_accounts_and_recipient_receipt(self):
         from apps.policy.operator_drafts import draft_operator_policy

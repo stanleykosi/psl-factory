@@ -567,7 +567,12 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
-        if panel['review_verdicts']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting exact document review')
+        if panel['review_request_needed']:
+            row.update(state='Message drafted', next_action='Send the exact communication for review.',
+                       needs_me=panel['can_request_review'], department_wait=False, can_advance=False,
+                       owner=(actor.get_full_name() or actor.username) if panel['can_request_review'] else 'Communication preparer')
+        if panel['review_pending']:row['state']='Awaiting exact document review'
+        if panel['review_verdicts']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username)
         if panel['native'].get('stage')=='decision':row.update(owner=', '.join(panel['owner_names']) or 'Unassigned PMO Lead / Head of PMO',needs_me=bool(panel['decision_roles']),department_wait=bool(panel['decision_roles']),state='Awaiting native client decision')
         if panel['native'].get('stage') == 'not_escalated':
             row.update(state='Not escalated', owner='No action required', needs_me=False, department_wait=False, can_advance=False)
@@ -1081,7 +1086,8 @@ def _detail(request,work_id,focus=None):
                 if kind=='release':
                     data={'readiness':int(request.POST['readiness']) if request.POST.get('readiness') else None,
                         'released_at':request.POST.get('released_at',''),'reference':request.POST.get('reference',''),
-                        'evidence':int(request.POST.get('evidence','0')),'note':request.POST.get('note','')}
+                        'evidence':int(request.POST.get('evidence','0')),'note':request.POST.get('note',''),
+                        'deployment_environment':request.POST.get('deployment_environment')}
                 elif kind=='acceptance':data={'receipt':int(request.POST.get('receipt','0')),'pm_signature':int(request.POST.get('pm_signature','0')),
                     'client_signature':int(request.POST.get('client_signature','0')),'attestation':parse_attestation(request.POST.get('attestation','')),'packet':request.POST.get('packet',''),'note':request.POST.get('note','')}
                 else:raise ValidationError('Choose an actual release or go-live acceptance observation')
@@ -1191,6 +1197,10 @@ def _detail(request,work_id,focus=None):
         row['owner_panels']=owner_panels(request.user,work)
         from apps.pmo.models import DeliverySource
         row['handoff']=DeliverySource.objects.filter(dossier__case=work.case,kind='scope_baseline',evidence_id=row['planning'].get('readiness_id')).first() if row['planning'].get('readiness_id') else None
+    if work.definition == 'delivery-hypercare/v1':
+        from apps.pmo.delivery import release_observations
+        dossier_id = row['hypercare']['dossier'].pk
+        row['hypercare']['release_observation'] = release_observations(work.case, [dossier_id]).get(dossier_id)
     template='factory/hypercare_detail.html' if work.definition=='delivery-hypercare/v1' else 'factory/delivery_detail.html' if work.definition=='delivery-release/v1' else 'factory/commercial_detail.html' if work.definition=='commercial/v1' else 'factory/planning_detail.html' if work.definition=='planning/v1' else 'factory/detail.html'
     response=render(request,template,{'case':work.case,'row':row,'activities':activities,'review_evidence':proofs,'effect_history':history,'can_configure':permitted(request.user,work,'policy.configure'),'queue':return_queue,'q':q,'as_of':timezone.now(),'focus':focus})
     response['Cache-Control']='no-store';return response

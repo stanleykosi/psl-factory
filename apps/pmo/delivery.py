@@ -3,6 +3,8 @@ import math
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import transaction,DatabaseError
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.policy.services import decision_authority
@@ -345,16 +347,44 @@ def prepare_readiness(actor,case_id,dossier_id,expected):
     return record(actor,case,d,'release_ready',latest(d,'glpi_request').evidence,{},inputs)
 
 
+def release_environment(value):
+    if value is None or value == '':
+        return None
+    if not isinstance(value, str) or not value.isprintable() or len(value) > 160:
+        raise ValidationError('Enter a release environment in plain text, up to 160 characters.')
+    return value.strip() or None
+
+
 @transaction.atomic
-def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_ref,evidence_id,note,expected):
+def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_ref,evidence_id,note,expected,*,deployment_environment=None):
     case=lock_case(actor,case_id,'delivery.release_record',expected);d=dossier_for(case,dossier_id,current=False);note_required(note)
     instant=aware(released_at)
     if instant>timezone.now() or not external_ref.strip() or len(external_ref)>240:raise ValidationError('Actual past release instant and source reference required')
     parent=d.records.filter(pk=readiness_id,kind='release_ready').first() if readiness_id else None
     if readiness_id and not parent:raise ValidationError('Readiness must belong to this exact dossier')
     if latest(d,'release_outcome',False):raise ValidationError('Release outcome already recorded; preserve original event history')
-    return record(actor,case,d,'release_outcome',subject(case,evidence_id),{'released_at':instant.isoformat(),'external_ref':external_ref,'note':note},
+    environment = release_environment(deployment_environment)
+    data = {'released_at': instant.isoformat(), 'external_ref': external_ref, 'note': note}
+    if environment is not None:
+        data['deployment_environment'] = environment
+    return record(actor,case,d,'release_outcome',subject(case,evidence_id),data,
         {'readiness_preceded':bool(parent and parent.created_at<=instant),'deployment_dispatched':False},parent)
+
+
+def release_observations(case, dossier_ids):
+    """Read only the named release facts whose exact proof is available in a delivery view."""
+    proof = public_evidence(case.evidence.all()).values('pk')
+    rows = DeliveryRecord.objects.filter(dossier__case=case, dossier_id__in=dossier_ids,
+        kind='release_outcome', evidence_id__in=proof).values('dossier_id', 'dossier__candidate__reference',
+        'evidence_id', 'evidence__version', 'data__released_at', 'data__external_ref', 'data__deployment_environment')
+    return {row['dossier_id']: {
+        'candidate': row['dossier__candidate__reference'],
+        'released_at': parse_datetime(row['data__released_at']),
+        'reference': row['data__external_ref'],
+        'environment': row['data__deployment_environment'],
+        'evidence_id': row['evidence_id'],
+        'evidence_version': row['evidence__version'],
+    } for row in rows}
 
 
 @observed_fact

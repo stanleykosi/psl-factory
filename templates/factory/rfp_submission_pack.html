@@ -10,7 +10,7 @@
     <h3>Client file requirements</h3>
     {% if submission_pack_requirements %}
       <ul>{% for requirement in submission_pack_requirements %}<li>{{ requirement }}</li>{% endfor %}</ul>
-      <p>Automatic delivery is held until the client files can be verified.</p>
+      {% if not submission_pdf %}<p>The file check is waiting for pack preparation.</p>{% endif %}
     {% else %}
       <p>No file requirements recorded.</p>
     {% endif %}

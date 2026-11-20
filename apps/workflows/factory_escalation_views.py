@@ -67,6 +67,7 @@ def detail(request,work,focus=None):
                 if not form.is_valid():raise ValidationError(form.errors.as_text())
                 domain.correct(request.user,work.pk,revision,case_revision,*form.ids(),p.get('reason',''))
             elif action=='decision':domain.decide(request.user,work.pk,revision,case_revision,int(p.get('request','0')),p.get('role',''),p.get('verdict',''),p.get('note',''),p.get('delegated')=='on')
+            elif action=='request_review':domain.request_communication_review(request.user,work.pk,revision,case_revision,int(p.get('version','0')))
             elif action=='review':domain.review(request.user,work.pk,revision,case_revision,int(p.get('version','0')),p.get('verdict',''),p.get('note',''))
             elif action=='cancel':domain.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')

@@ -120,11 +120,17 @@ def bound_pack(binding):
 
 def require_verified_files(binding):
     pack = bound_pack(binding)
-    if pack and requirements(pack):
-        raise ValidationError('Verify that the client files meet the stated requirements before sending from the factory.')
+    if pack:
+        from .rfp_submission_artifacts import approved_format, metadata
+        artifact = metadata(binding=binding)
+        if artifact:
+            approved_format(binding, artifact)
+            raise ValidationError('This submission route does not carry the verified PDF.')
+        if requirements(pack):
+            raise ValidationError('Verify that the client files meet the stated requirements before sending from the factory.')
 
 
-def require_independent_review(actor, version):
+def require_independent_review(actor, version, *, verdict=None):
     from .models import RFPDocumentBinding
 
     if version.audience != 'client' or version.template.definition['document_type'] not in ('rfp_response', 'project_artifact'):
@@ -135,3 +141,8 @@ def require_independent_review(actor, version):
         require(actor, version.document.case, 'document.read')
         if bound_pack(binding).actor_id == actor.pk:
             raise PermissionDenied('A different authorised person must review this exact submission pack.')
+        if verdict == 'approve':
+            from .rfp_submission_artifacts import approved_format, metadata
+            artifact = metadata(binding=binding)
+            if artifact:
+                approved_format(binding, artifact)

@@ -151,8 +151,12 @@ def create(request):
     superseded = set(Audit.objects.filter(case=case, actor=request.user, action=intake.UNITS_CONFIRMED,
                                          data__previous__in=[item['receipt'].pk for item in receipts])
                      .values_list('data__previous', flat=True))
+    unit_labels = dict(intake.UNIT_CHOICES)
     for item in receipts:
         item['missing_units'] = intake.can_confirm_units(item['receipt'], item['result'])
+        units = item['result'].get('source_units', {})
+        if units.get('status') == 'unsupported':
+            item['held_unit_label'] = unit_labels.get(units['declaration']['declarations'][0]['unit'])
         if item['missing_units'] and item['receipt'].pk not in superseded:
             item['confirm_url'] = f"{intake_view}&units={item['receipt'].pk}"
     response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'supplied_form':supplied,'receipts':receipts,

@@ -8,6 +8,7 @@ from .rfp_models import RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPRespo
 from .rfp_models import RFPIntakeSourceContext
 from .rfp_upload_models import RFPStagedUpload
 from .rfp_submission_pack_models import RFPSubmissionPack
+from .rfp_submission_artifact_models import RFPSubmissionArtifact
 from .rfp_portal_models import RFPPortalReceipt
 from .rfp_message_models import RFPFollowupDispatch, RFPFollowupAttempt, RFPFollowupMailbox, RFPFollowupReceipt, RFPFollowupCursor
 from .rfp_estimate_request_models import RFPEstimateRequest, RFPEstimateDispatch, RFPEstimateMailbox, RFPEstimateReceipt

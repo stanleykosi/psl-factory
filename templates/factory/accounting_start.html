@@ -3,7 +3,7 @@
 {% if unit_form %}
 <section class="card"><h2>Confirm the file’s units</h2>
   <p>{{ unit_receipt.data.request.reference }} · {{ unit_receipt.data.request.period }} · {{ unit_receipt.data.request.currency }}</p>
-  <p>Use the same file in a new submission. The original submission stays on hold. Amounts in thousands still need a reviewed rule before they can be calculated.</p>
+  <p>Use the same file in a new submission. The original submission stays on hold. Calculation of amounts in thousands or millions requires a reviewed conversion for this source.</p>
   <form method="post">{% csrf_token %}<input type="hidden" name="action" value="confirm_units">
     {{ unit_form.as_p }}<button>Confirm units and resubmit</button> <a href="{{ intake_view }}">Cancel</a>
   </form>
@@ -14,9 +14,9 @@
 <h3>Start from a supplied trial balance</h3><p>Select unchanged CSV evidence already supplied to this workspace. No QuickBooks connection or ledger posting is performed. Invalid inputs remain quarantined; missing validation rules can be configured and retried.</p>
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="supplied">{{ supplied_form.as_p }}<button>Receive trial balance and prepare accounts</button></form>
 {% if receipts %}<h3>Your recent submissions</h3><p>Showing up to 30 submissions, newest first. Repeat submissions use the original imported rows.</p>
-{% for item in receipts %}<article><h4>{{ item.receipt.data.request.reference }} · {% if item.missing_units %}File units missing{% else %}{{ item.result.status|readable }}{% endif %}</h4>
+{% for item in receipts %}<article><h4>{{ item.receipt.data.request.reference }} · {% if item.missing_units %}File units missing{% elif item.held_unit_label %}Calculation on hold{% else %}{{ item.result.status|readable }}{% endif %}</h4>
 <p>{{ item.receipt.data.request.entity }} · {{ item.receipt.data.request.period }}</p>
-{% if item.missing_units %}<p>Confirm how the amounts are shown before preparing accounts.</p>{% else %}{% for finding in item.result.findings %}<p>{{ finding }}</p>{% endfor %}{% endif %}
+{% if item.missing_units %}<p>Confirm how the amounts are shown before preparing accounts.</p>{% elif item.held_unit_label %}<p>File units: {{ item.held_unit_label }}. Calculation needs a reviewed conversion for this source.</p>{% else %}{% for finding in item.result.findings %}<p>{{ finding }}</p>{% endfor %}{% endif %}
 {% if item.confirm_url %}<a class="button secondary" href="{{ item.confirm_url }}">Confirm file units</a>
 {% elif item.result.work %}<a href="{% url 'factory_detail' item.result.work %}">Open accounting work</a>
 {% elif not item.missing_units %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="receipt" value="{{ item.receipt.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Recheck this submission</button></form>{% endif %}

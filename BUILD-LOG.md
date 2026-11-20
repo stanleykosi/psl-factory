@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Candidate 278 passed 18 exact PostgreSQL cases. The preview web applied the two additive migrations and the matching worker processed normal work. Trial verified the exact Hypercare lead queue and its retained Engineering correction through Verified. Candidate 279 adds the prospective manual PDF receipt and the authorized Finance rule and Planning route surfaces.
+
+21 November 2026. Hosted 277 verified the repaired mobile weekly drawer, exact weekly Return and Delivery rules. The 188-state count covers the original UI outcome and backend records. Guarded samples 237–239 are ready for their separate actors. Verified 277 source is pushed at `2009a413`.
+
 21 November 2026. Reconciled the older browser evidence with the exact design boards and checked current Go-live, asset and Forecast readback in the same trial session. The acceptance ledger now verifies 184 of 262. Candidate 277 passed all 42 grouped PostgreSQL tests and both preservation probes. The matching preview deployment was submitted.
 
 20 November 2026. Trial verified work 226 through separate weekly approval, original delivery and receipt, bringing the ledger to 169. The phone test uncovered one drawer submission defect, fixed in candidate 277. The 276 protected Finance and Commercial suites passed. The Project import defect was corrected and the full focused gate is running again.

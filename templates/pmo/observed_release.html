@@ -1,0 +1,7 @@
+<dl>
+  <dt>Version</dt><dd>{{ release.candidate }}</dd>
+  <dt>Released on</dt><dd>{{ release.released_at|date:'d M Y, H:i:s T' }}</dd>
+  <dt>Environment</dt><dd>{{ release.environment|default:'Not recorded' }}</dd>
+  <dt>Deployment reference</dt><dd>{{ release.reference }}</dd>
+  <dt>Proof</dt><dd>Evidence {{ release.evidence_id }} · version {{ release.evidence_version }}</dd>
+</dl>
