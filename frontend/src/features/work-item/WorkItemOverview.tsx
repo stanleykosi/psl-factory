@@ -728,10 +728,10 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
   // F-33, F-35, F-42: on the lines that decide in place a decided task has nothing left to open; the workspace shows what it became.
-  // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page.
+  // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page. F-38: nor do the submission boards.
   const settled = (task: WorkItem['tasks'][number]) =>
     (AGENT_BESIDE_LINES.has(item.workspace?.line_key ?? '') && task.cannot_act_reason === 'already_decided') ||
-    (item.workspace?.line_key === 'escalation' && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
+    ((item.workspace?.line_key === 'escalation' || item.workspace?.line_key === 'rfp_submission') && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
   // F-37: on the RFP requirements page the team-input task is reached from the Team input tab and each team's Record; the board draws no second panel for it
   const rfpPage = !phone && item.workspace?.line_key === 'rfp_response' && item.rfp !== undefined;
   const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task) && !(rfpPage && (task.response as { variant?: string } | undefined)?.variant === 'team_input'));
@@ -747,7 +747,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
           {!(item.workspace && forecastLine(item.workspace.line_key)) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
           {aside}
           {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
-          <RfpOutcomeLink id={id} item={item} />
+          {item.workspace?.line_key !== 'rfp_submission' && <RfpOutcomeLink id={id} item={item} />}
           {view?.task_note && shownTasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>

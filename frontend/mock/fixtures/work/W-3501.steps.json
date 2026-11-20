@@ -1,0 +1,16 @@
+{
+  "edit_cover_letter": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Cover letter saved."
+    },
+    "next": false
+  },
+  "send_for_review": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  }
+}

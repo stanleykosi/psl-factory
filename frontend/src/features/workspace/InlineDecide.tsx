@@ -33,6 +33,7 @@ export const DECIDE_TEXT = {
   loadFailed: 'We couldn’t load this review. Nothing was changed.',
   notOpen: 'This review isn’t open to you here.',
   stale: 'This review changed while you were reading it, so nothing was recorded.',
+  goesTo: (recipient: string) => `Goes to ${recipient}`,
   noteNotSent: (note: string) => `Your note wasn’t sent: “${note}”`,
   latest: 'Review the latest',
   unconfirmed: 'We couldn’t confirm whether your decision was recorded, and we couldn’t reload this item to check, so the decision buttons stay off. Try again reloads the item; it doesn’t send your decision again.',
@@ -227,6 +228,12 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
     </>
   );
 
+  // F-38: a step the backend holds says why, in words beside the buttons (never a disabled button with no reason)
+  const holds = offered.filter(({ step }) => step.disabled_reason).map(({ step }) => (
+    <p key={step.key} id={`${headId}-hold-${step.key}`} className="ws-consequence">
+      {step.disabled_reason}
+    </p>
+  ));
   const buttons = offered.map(({ step, verdict }) => (
     <Button
       key={step.key}
@@ -237,8 +244,8 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
       size="lg"
       busy={busy && submit.verdict === verdict && !sheet}
       busyLabel={VERDICT_WORDS[verdict].busy}
-      disabled={!ready || off || (busy && submit.verdict !== verdict)}
-      aria-describedby={claim?.status === 'pending' ? waiting : undefined}
+      disabled={!ready || off || (busy && submit.verdict !== verdict) || Boolean(step.disabled_reason)}
+      aria-describedby={[claim?.status === 'pending' ? waiting : undefined, step.disabled_reason ? `${headId}-hold-${step.key}` : undefined].filter(Boolean).join(' ') || undefined}
       aria-haspopup={phone && verdict !== 'approve' ? 'dialog' : undefined}
       onClick={() => press(step, verdict)}
     >
@@ -322,6 +329,14 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
   }
 
   const basis = task.decision.basis;
+  // F-38: where the approved output goes, only when the response says (a sent version names its recipient)
+  // and the exact version being decided on (decision.version.label) is named with it (TECH-1-1)
+  const recipient = task.decision.recipient?.trim() ? (
+    <>
+      {task.decision.version?.label && <p className="ws-consequence">{task.decision.version.label}</p>}
+      <p className="ws-consequence">{DECIDE_TEXT.goesTo(task.decision.recipient)}</p>
+    </>
+  ) : null;
   // the steps' consequences close the panel as its small print (muted, hint size), as the board draws them
   const consequences = (
     <div className="ws-idecide__after">
@@ -335,6 +350,7 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
       <>
         <div className="ws-idecide__words">
           {basis && <p className="ws-consequence">{basis}</p>}
+          {recipient}
           {consequences}
           {review.uncertain && <UncertainNotice />}
         </div>
@@ -342,6 +358,7 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
           <>
             {notices}
             <div className="ws-idecide__buttons">{buttons}</div>
+            {holds}
           </>,
           false,
         )}
@@ -372,9 +389,11 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
       {panel(
         <>
           {basis && <p className="ws-consequence">{basis}</p>}
+          {recipient}
           {needsNote && noteField(noteRef)}
           {notices}
           <div className="ws-idecide__buttons">{buttons}</div>
+          {holds}
           {consequences}
         </>,
         false,
