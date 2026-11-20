@@ -331,3 +331,6 @@ The builder kept a white edge (--focus-on-strong) instead of blue on filled dark
 
 ## D-149 (20 Nov): phone work-item tabs get their own row
 The design engineer, on /work/W-1713/history at phone width: "no idea why the overview and history tab are so tight in this resolution". The tabs were squeezed onto the tag line with negative margins that pulled them into the title and the filter. On phones they now sit on their own full-width row under the tag line, two equal halves, 44px tall, with normal spacing. Same on Overview and History.
+
+## D-150 (20 Nov): CEO sample data
+The design engineer, viewing as CEO: "add data for ceo so i can see how it looks". The ceo persona had no work rows, projects or conversations. Added to the F-54 branch (D-145) as sample data: CEO decisions where the source puts the CEO in the chain (SOW and plan approval after PMO and PMO Lead, change requests, emergency changes, escalations, leadership reports), the projects list, the business overview, alerts and Assistant conversations. Sample only; no new authority or money rule.
