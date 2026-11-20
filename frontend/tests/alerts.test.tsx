@@ -316,10 +316,10 @@ describe('states', () => {
     expect(rows()).toHaveLength(10);
     hook = () => json(500, { code: 'server_error', message: 'Broke.' });
     fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(screen.getByText('We couldn’t load more. Nothing was changed.')).toBeTruthy());
+    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
     expect(rows()).toHaveLength(10);
     hook = () => undefined;
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await until(() => expect(rows()).toHaveLength(20));
     expect(lists().at(-1)!.url.searchParams.get('cursor')).toBe('o10');
     fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));

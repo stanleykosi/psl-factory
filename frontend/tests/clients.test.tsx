@@ -180,7 +180,7 @@ describe('Clients list (SCR-35)', () => {
     const alert = await screen.findByRole('alert');
     expect(document.querySelectorAll('tbody tr')).toHaveLength(10);
     fail = false;
-    fireEvent.click(within(alert).getByRole('button', { name: 'Try again' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(20));
     expect(screen.queryByRole('alert')).toBeNull();
   });

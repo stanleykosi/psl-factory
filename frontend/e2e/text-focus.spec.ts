@@ -65,3 +65,55 @@ test('the composer box keeps its border when a button inside it has focus; the b
   expect(after.ring).toBe('none');
   expect(await send.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe('none');
 });
+
+// D-144: every focusable control changes its own edge; none draws an outline. Screenshots go to the test output.
+test('keyboard focus on a button, a tab, a checkbox, a table row link and a link is an edge in the focus colour, with no outline', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const edge = (loc: Locator) =>
+    loc.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { ring: s.outlineStyle, shadow: s.boxShadow, underline: `${s.textDecorationLine} ${s.textDecorationColor}`, border: s.borderTopColor, offset: s.outlineOffset };
+    });
+  await page.goto('/my-work');
+  await expect(page.getByRole('tab').first()).toBeVisible();
+  await page.keyboard.press('Tab');
+
+  const button = page.getByRole('button', { name: /^Filter/ });
+  await button.focus();
+  let e = await edge(button);
+  expect(e.ring).toBe('none');
+  expect(e.shadow).toContain('rgb(36, 89, 214)');
+  await page.screenshot({ path: test.info().outputPath('focus-button.png') });
+
+  const tab = page.getByRole('tab').nth(1);
+  await tab.focus();
+  e = await edge(tab);
+  expect(e.ring).toBe('none');
+  expect(e.shadow).toMatch(/rgb\(36, 89, 214\)|rgb\(255, 255, 255\)/);
+  await page.screenshot({ path: test.info().outputPath('focus-tab.png') });
+
+  const rowLink = page.locator('tbody tr [data-work-link]').first();
+  await rowLink.focus();
+  e = await edge(rowLink);
+  expect(e.ring).toBe('none');
+  expect(e.shadow).toContain('rgb(36, 89, 214)');
+  await page.screenshot({ path: test.info().outputPath('focus-table-row.png') });
+
+  await button.click();
+  const checkbox = page.getByRole('dialog').getByRole('checkbox').first();
+  await checkbox.focus();
+  e = await edge(checkbox);
+  expect(e.ring).toBe('none');
+  expect(e.border).toBe('rgb(36, 89, 214)');
+  await page.screenshot({ path: test.info().outputPath('focus-checkbox.png') });
+  await page.keyboard.press('Escape');
+
+  await page.goto('/work/W-1408');
+  const crumb = page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link').first();
+  await expect(crumb).toBeVisible();
+  await crumb.focus();
+  e = await edge(crumb);
+  expect(e.ring).toBe('none');
+  expect(e.underline).toContain('rgb(36, 89, 214)');
+  await page.screenshot({ path: test.info().outputPath('focus-link.png') });
+});

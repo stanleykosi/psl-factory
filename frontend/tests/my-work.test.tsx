@@ -437,11 +437,10 @@ describe('paging (D-PAGING r2)', () => {
     await open();
     work = () => json(500, { code: 'boom', message: 'x' });
     fireEvent.click(screen.getByRole('button', { name: 'Show 10 more' }));
-    await until(() => expect(screen.getByText('We couldn’t load more. Your work is safe; nothing was changed.')).toBeTruthy());
-    expect(document.querySelector('.psl-callout--problem')).toBeTruthy();
-    expect(rows()).toHaveLength(10);
+    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
+        expect(rows()).toHaveLength(10);
     work = (url) => mockResponse(url);
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await until(() => expect(rows()).toHaveLength(20));
     expect(lastCall().searchParams.get('cursor')).toBe('o10');
   });

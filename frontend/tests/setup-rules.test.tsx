@@ -657,7 +657,7 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     showFifty();
     expect(desktop().getAllByRole('row')).toHaveLength(51);
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(desktop().getByText('We couldn’t load more rules. Choose Show more to try again.')).toBeTruthy());
+    await waitFor(() => expect(desktop().getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
     expect(desktop().getAllByRole('row')).toHaveLength(51);
     failMore = false;
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));

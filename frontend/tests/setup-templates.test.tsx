@@ -739,7 +739,7 @@ describe('paging (AC 13)', () => {
     await open();
     fireEvent.click(desktop().getByRole('radio', { name: '50' }));
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(desktop().getByText('We couldn’t load more templates. Choose Show more to try again.')).toBeTruthy());
+    await waitFor(() => expect(desktop().getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
     expect(names()).toHaveLength(50);
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(names()).toHaveLength(60));

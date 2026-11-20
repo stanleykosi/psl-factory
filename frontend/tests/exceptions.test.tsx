@@ -185,7 +185,7 @@ describe('exceptions list', () => {
     render(<ExceptionsList />);
     await settled();
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await screen.findByText('We couldn’t load more exceptions. Choose Show more to try again.');
+    await screen.findByText('We couldn’t load more. Choose Show more to try again.');
     expect(rowTitles()).toHaveLength(10);
     expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy();
   });

@@ -408,10 +408,10 @@ describe('search, filter and paging go to the server (AC 8)', () => {
     cookies.psl_mock_invoices = 'paged';
     override = (call) => (call.params.has('cursor') ? json(500, { code: 'server_error', message: 'x' }) : undefined);
     await open();
-    await screen.findByText(/We couldn’t load more invoices/);
+    await screen.findByText(/We couldn’t load more/);
     expect(table().getAllByRole('row')).toHaveLength(3);
     override = () => undefined;
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await waitFor(() => expect(table().getAllByRole('row')).toHaveLength(5));
   });
 });

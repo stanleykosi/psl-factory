@@ -214,7 +214,7 @@ describe('the list (AC 3)', () => {
     expect(rows()).toHaveLength(10);
     failNext = true;
     fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
-    await waitFor(() => expect(desktop().getByText('We couldn’t load more delegations. Choose Show more to try again.')).toBeTruthy());
+    await waitFor(() => expect(desktop().getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
     expect(rows()).toHaveLength(10);
     fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
     await waitFor(() => expect(rows()).toHaveLength(20));
