@@ -1001,6 +1001,12 @@ def _detail(request,work_id,focus=None):
                         int(request.POST.get('task_revision','0')),request.POST.get('comment',''))
                 messages.success(request,'Comment recorded for this invoice review.')
                 return redirect(request.get_full_path())
+            elif operation=='invoice_milestone_proof':
+                if work.definition!='pmo-finance/v1':raise ValidationError('Use the exact invoice evidence request')
+                from .factory_invoice_information_views import supply
+                supply(request,work)
+                messages.success(request,'Private milestone proof recorded. It does not approve the invoice.')
+                return redirect(request.get_full_path())
             elif operation=='reassess':
                 if work.definition=='delivery-hypercare/v1':
                     from .factory_hypercare import reassess
@@ -1084,7 +1090,9 @@ def _detail(request,work_id,focus=None):
     row=presentation(request.user,work)
     if work.definition == 'pmo-finance/v1' and focus in (None, 'decision'):
         from .factory_invoice_review import annotate_comments, context
+        from .factory_invoice_information_views import decorate
         row['invoice_context'] = context(request.user, row)
+        decorate(request.user,row)
         if focus == 'decision' and row['invoice_context']:
             annotate_comments(row)
             if request.method == 'POST' and request.POST.get('action') == 'invoice_comment':

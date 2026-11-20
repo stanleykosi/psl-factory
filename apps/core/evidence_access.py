@@ -2,7 +2,8 @@
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.expressions import RawSQL
 PLANNING_PRIVATE=['planning_packet','planning_prd_alignment','planning_scope_alignment','planning_contract_comparison','planning_readiness','planning_department_review']
-PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source','issue_message_receipt','rfp_estimate_receipt']+PLANNING_PRIVATE
+INVOICE_MILESTONE_PROOF = 'invoice_milestone_proof'
+PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source','issue_message_receipt','rfp_estimate_receipt',INVOICE_MILESTONE_PROOF]+PLANNING_PRIVATE
 PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_')
 CONFIRMED_CHANGE_SOURCE='psl:p56-confirmed-request/v1'
 PPE_OPENING_SOURCE = 'psl:ppe-private-opening-proof/v1'
@@ -57,7 +58,7 @@ def public_agent_runs(queryset):
  return queryset.filter(Exists(sources)).exclude(provider='deterministic-finance-lineage-v1',result__has_key='statement_inputs',result__statement_inputs__contains=[{'source_type':'ppe_schedule'}]).exclude(provider='deterministic-finance-lineage-v1',result__has_key='run',result__run__in=RawSQL('SELECT to_jsonb(statement_id) FROM finance_financestatementppeinput',[]))
 
 def public_timeline(case):
- private_ids=list(case.evidence.filter(ppe_statement_private_query()|forecast_private_query()|Q(source__in=PRIVATE_SOURCES)|Q(kind__startswith='agent_private_')|Q(kind__startswith='coverage_')|Q(kind__startswith='usage_intake_')|Q(kind__in=['qbo_native_intent','qbo_native_observation','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review']+PLANNING_PRIVATE)).values_list('pk',flat=True))
+ private_ids=list(case.evidence.filter(ppe_statement_private_query()|forecast_private_query()|Q(source__in=PRIVATE_SOURCES)|Q(kind__startswith='agent_private_')|Q(kind__startswith='coverage_')|Q(kind__startswith='usage_intake_')|Q(kind__in=['qbo_native_intent','qbo_native_observation','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review',INVOICE_MILESTONE_PROOF]+PLANNING_PRIVATE)).values_list('pk',flat=True))
  from apps.workflows.readiness_models import IntegrationContract,IntegrationObservation,IntegrationReview,IntegrationSelection
  private_contracts=IntegrationContract.objects.filter(case=case).filter(Q(payload__family__in=['supportresponse','supportchannel','ledgerdata'])|Q(finance_publication_readiness__isnull=False)|Q(private_protection_readiness__isnull=False)|Q(private_file_readiness__isnull=False))
  private_ids+=list(private_contracts.values_list('evidence_id',flat=True))

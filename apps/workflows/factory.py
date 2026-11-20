@@ -188,6 +188,10 @@ def _snapshot(work,value,reader=None):
         from apps.finance.fixed_charge import preparation_access
         preparation_access(reader or work.execution_actor,work.preparation)
     records=sources(work);latest={}
+    if work.definition=='pmo-finance/v1':
+        from .factory_invoice_information import current as milestone_proof
+        proof=milestone_proof(work,value)
+        if proof is not None:records.append(proof.evidence)
     for e in records:latest.setdefault(e.kind,e)
     missing=[kind for kind in value['required_evidence_kinds'] if kind not in latest]
     stale=[kind for kind in value['required_evidence_kinds'] if kind in latest and latest[kind].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
@@ -457,6 +461,10 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         run=extract_evidence(work.execution_actor,case.pk,evidence.pk,'P34')
         return {'agent_run':run.pk,'evidence_ids':[evidence.pk]}
     if kind=='ACT05':
+        from apps.core.evidence_access import INVOICE_MILESTONE_PROOF
+        if INVOICE_MILESTONE_PROOF in missing:
+            from .factory_invoice_information import handoff_for
+            handoff_for(work)
         resolver=value['information_resolver_id']
         if resolver is None:raise ValidationError('owner_needed: information resolver is not configured')
         user=get_user_model().objects.get(pk=resolver);access(user,case,'factory.information')
@@ -873,6 +881,8 @@ def advance(actor,work_id,expected,provider=None,adapter=None):
 
 @transaction.atomic
 def provide_information(actor,task_id,expected,case_revision,kind,body,source):
+    from apps.core.evidence_access import INVOICE_MILESTONE_PROOF
+    if kind==INVOICE_MILESTONE_PROOF:raise ValidationError('Choose the original private PDF for this milestone proof')
     t=HumanTask.objects.select_for_update().select_related('case').get(pk=task_id)
     if t.context.get('purpose')=='hr_scope_clarification_v1':raise ValidationError('Use the dedicated private HR scope workflow')
     access(actor,t.case,'factory.information')

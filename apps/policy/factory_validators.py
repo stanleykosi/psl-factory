@@ -112,8 +112,13 @@ def validate_reference(component,target,case,runtime=False):
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
     from types import SimpleNamespace
-    from apps.core.evidence_access import restricted
-    if any(restricted(SimpleNamespace(kind=k)) and not (component==BU_COMPONENT and k=='agent_private_bu_intake' or component==SCHEDULES_COMPONENT and k=='agent_private_schedules_intake' or component==ENGAGEMENT_COMPONENT and k=='agent_private_engagement_intake') and not (component==LEDGER_COMPONENT and k in ['agent_private_ledger_intake','ledger_source']) for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    from apps.core.evidence_access import INVOICE_MILESTONE_PROOF, restricted
+    native_private = {BU_COMPONENT: {'agent_private_bu_intake'}, SCHEDULES_COMPONENT: {'agent_private_schedules_intake'},
+                      ENGAGEMENT_COMPONENT: {'agent_private_engagement_intake'}, LEDGER_COMPONENT: {'agent_private_ledger_intake', 'ledger_source'},
+                      COMPONENT: {INVOICE_MILESTONE_PROOF}}
+    if any(restricted(SimpleNamespace(kind=k)) and k not in native_private.get(component, set())
+           for k in value['required_evidence_kinds']):
+        raise ValidationError('Restricted evidence requires its native domain provider interface')
     if component==LEDGER_COMPONENT and any(k not in ['agent_private_ledger_intake','ledger_source'] for k in value['required_evidence_kinds']):raise ValidationError('Selected private ledger intake only')
     from django.contrib.auth import get_user_model
     from apps.identity.models import Grant

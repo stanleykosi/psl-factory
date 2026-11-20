@@ -205,6 +205,9 @@ from apps.finance import month_end
 from apps.pmo import project_action_views
 
 urlpatterns += [path('work/<int:work_id>/background/', factory_progress_views.change, name='factory_background')]
+from apps.workflows import factory_invoice_information_views
+urlpatterns += [path('work/<int:work_id>/invoice-proof/<int:proof_id>/', factory_invoice_information_views.download,
+                     name='factory_invoice_milestone_proof')]
 urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'focus': 'decision'}, name='factory_invoice_decision'),
                 path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery'),
                 path('work/<int:work_id>/response/', factory_views.detail, {'focus': 'response'}, name='factory_work_response')]

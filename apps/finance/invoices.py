@@ -112,11 +112,16 @@ def review_packet(invoice):
     # publication packet. Factory send guards still check their own current sources.
     preserve_native = work and work.request.get('mode') == 'existing-preparation/v1' and work.request.get('existing_invoice') == invoice.pk
     if work and work.policy_id and not preserve_native:
-        from apps.core.evidence_access import public_evidence
+        from apps.core.evidence_access import INVOICE_MILESTONE_PROOF, public_evidence
         from apps.core.models import Evidence
-        required=reference_values(work.policy)[0]['required_evidence_kinds'];latest={}
+        value=reference_values(work.policy)[0];required=value['required_evidence_kinds'];latest={}
         for e in public_evidence(Evidence.objects.filter(case=invoice.case,kind__in=required)).order_by('kind','-version'):
             latest.setdefault(e.kind,{'id':e.pk,'version':e.version,'sha256':e.sha256})
+        if INVOICE_MILESTONE_PROOF in required:
+            from apps.workflows.factory_invoice_information import current
+            proof=current(work,value)
+            if proof is not None:
+                latest[INVOICE_MILESTONE_PROOF]={'id':proof.evidence_id,'version':proof.evidence.version,'sha256':proof.evidence.sha256}
         if set(latest)!=set(required):raise ValidationError('Required factory source evidence is missing from publication packet')
         packet['factory_sources']={'work':work.pk,'profile':work.policy_id,'evidence':latest}
         from apps.workflows.factory_routing import binding

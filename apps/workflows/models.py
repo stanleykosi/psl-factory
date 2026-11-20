@@ -56,3 +56,4 @@ from .change_intake_models import ChangeIntakeConfirmation
 
 from .factory_models import FactoryInvoicePreparationBinding
 from .factory_reporting_draft_models import WeeklyReportDraftVersion
+from .factory_invoice_information_models import InvoiceMilestoneProof

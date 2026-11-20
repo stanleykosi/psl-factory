@@ -44,6 +44,16 @@
 {% if row.adoption %}<section class="card"><h2>Review changed execution rules</h2><p>Active profile revision {{ row.adoption.revision }} differs from this work. Adopting it does not erase history or reset spent allowance. Any changed review packet needs a fresh decision.</p><p>Effective allowance: {{ row.adoption.effective_allowance }}; already reserved: {{ row.work.budget_used }}.</p><details><summary>Review the exact active profile values</summary><pre>{{ row.adoption.value }}</pre></details><form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt_profile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="configuration" value="{{ row.adoption.id }}"><label for="profile-adoption-reason">Reason for adopting this version</label><textarea id="profile-adoption-reason" name="reason" maxlength="2000" required></textarea><button>Adopt reviewed profile version</button></form></section>{% endif %}
 {% endif %}
 {% if focus != 'recovery' %}
+{% if row.invoice_milestone_proof %}
+{% with proof=row.invoice_milestone_proof %}
+<section class="card"><h2>Private milestone proof</h2>
+  <p>{{ proof.handoff.milestone.name }} · {{ proof.created_at|date:'d M Y, H:i T' }}</p>
+  <p><a href="{% url 'factory_invoice_milestone_proof' row.work.pk proof.pk %}">Download {{ proof.upload.name }}</a></p>
+  {% if proof.note %}<p>{{ proof.note|linebreaksbr }}</p>{% endif %}
+  {% if proof.previous_id %}<p>This version replaces the earlier supplied proof. Both records are kept.</p>{% endif %}
+</section>
+{% endwith %}
+{% endif %}
 {% include 'factory/responsibility_wait.html' %}
 {% for task in row.tasks %}{% if task.kind != 'factory_governance' %}<section class="card"><h2>{% if task.kind == 'factory_review' %}Approve this invoice for issuance and delivery?{% else %}Requested information{% endif %}</h2><p>{{ task.status|readable }} · {% if task.claimed_by %}{{ task.claimed_by.get_full_name|default:task.claimed_by.username }}{% else %}Not claimed{% endif %}</p>
 {% if task.kind == 'factory_review' %}<dl class="decision-facts"><dt>Amount</dt><dd>{{ task.context.packet.currency }} {{ task.context.packet.amount }}</dd><dt>Invoice version</dt><dd>{{ task.context.packet.version }}</dd><dt>Destination</dt><dd>{{ task.recipient_name|default:'Current recipient needs verification' }}</dd></dl><p>Approval applies to this exact invoice, destination and source version. It does not record customer payment.</p><details><summary>Review the source information</summary>{% for source in task.source_records %}<article><h3>{{ source.kind|readable }} · version {{ source.version }}</h3><p>{{ source.source }} · {{ source.created_at|date:'d M Y, H:i T' }}</p><pre>{{ source.body }}</pre></article>{% empty %}<p>Current source versions are unavailable in this view. Use the workspace evidence before deciding.</p>{% endfor %}</details><details><summary>Evidence and packet references</summary><pre>{{ task.context.packet }}</pre></details>{% else %}<p>Required source types: {% for kind in task.context.missing %}{{ kind|readable }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
@@ -58,6 +68,30 @@
   <textarea id="invoice-comment-{{ task.pk }}" name="comment" maxlength="2000" required>{% if row.comment_task == task.pk|stringformat:'s' %}{{ row.comment_draft }}{% endif %}</textarea>
   <button class="button secondary">Add comment</button>
 </form>{% endif %}
-{% if task.can_supply %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="information"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><label for="source-kind-{{ task.pk }}">Requested source type</label><select id="source-kind-{{ task.pk }}" name="kind">{% for k in task.context.missing %}<option value="{{ k }}">{{ k|readable }}</option>{% endfor %}</select><label for="source-body-{{ task.pk }}">Source information</label><textarea id="source-body-{{ task.pk }}" name="body" required></textarea><label for="source-ref-{{ task.pk }}">Source reference</label><input id="source-ref-{{ task.pk }}" name="source" required><button>Record information</button></form>{% endif %}
+{% if task.can_supply and task.proof_operation %}
+  <p><strong>{{ task.milestone.name }}</strong>. Supply the private PDF for this milestone. Finance still reviews the invoice separately.</p>
+  <p><a href="{% url 'case_uploads' case.pk %}">Upload a private PDF</a>, then return here and choose it.</p>
+  {% if task.proof_files %}<form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="invoice_milestone_proof">
+    <input type="hidden" name="task" value="{{ task.pk }}">
+    <input type="hidden" name="task_revision" value="{{ task.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    <input type="hidden" name="proof_operation" value="{{ task.proof_operation }}">
+    {% if task.prior_proof %}<input type="hidden" name="previous" value="{{ task.prior_proof.pk }}">{% endif %}
+    <label for="milestone-proof-{{ task.pk }}">Original private PDF</label>
+    <select id="milestone-proof-{{ task.pk }}" name="upload" required>
+      <option value="">Choose a file</option>
+      {% for file in task.proof_files %}<option value="{{ file.pk }}">{{ file.name }}</option>{% endfor %}
+    </select>
+    <label for="milestone-proof-note-{{ task.pk }}">Note for the Finance reviewer (optional)</label>
+    <textarea id="milestone-proof-note-{{ task.pk }}" name="proof_note" maxlength="2000"></textarea>
+    <button>{% if task.prior_proof %}Supply corrected proof{% else %}Supply evidence{% endif %}</button>
+  </form>{% endif %}
+{% endif %}
+{% if task.can_supply %}
+  {% if not task.private_milestone_request or task.other_source_kinds %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="information"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><label for="source-kind-{{ task.pk }}">Requested source type</label><select id="source-kind-{{ task.pk }}" name="kind">{% for k in task.other_source_kinds|default:task.context.missing %}<option value="{{ k }}">{{ k|readable }}</option>{% endfor %}</select><label for="source-body-{{ task.pk }}">Source information</label><textarea id="source-body-{{ task.pk }}" name="body" required></textarea><label for="source-ref-{{ task.pk }}">Source reference</label><input id="source-ref-{{ task.pk }}" name="source" required><button>Record information</button></form>
+  {% endif %}
+{% endif %}
 </section>{% endif %}{% endfor %}<section class="card"><h2>Execution setup</h2>{% if row.work.policy_id %}<p>Token reservation: {{ row.work.budget_used }} of {{ row.work.budget_limit }}. No allowance is reset by a retry.</p>{% else %}<p>The execution allowance is bound when processing begins.</p>{% endif %}{% if can_configure %}<a href="{% url 'factory_configuration' case.pk %}">Execution profile →</a>{% endif %}</section>
 {% endif %}</aside></div>{% endblock %}
