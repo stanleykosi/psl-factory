@@ -188,7 +188,7 @@ describe('send (AC 15)', () => {
     expect(statusTag()).not.toMatch(/SENT/);
     await act(async () => land(json(200, item('W-3801.next.send_reminder'))));
     await waitFor(() => expect(statusTag()).toBe('SENT · CHECKING DELIVERY'));
-    expect(screen.getByText('Done: Send reminder.')).toBeTruthy();
+    expect(await screen.findByText('Done: Send reminder.')).toBeTruthy();
   });
 
   it('W-3802: "Received" for each recipient only from receipt: received, with its time; the status is the backend’s DELIVERED', async () => {

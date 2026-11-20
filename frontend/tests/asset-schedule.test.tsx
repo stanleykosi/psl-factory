@@ -441,7 +441,7 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     expect(ws().getByText(/Ada Okafor returned the October register on 13 Nov/)).toBeTruthy();
     expect(buttons()).toEqual([]);
     expect(document.body.textContent).not.toMatch(/every return|backend only waits|Correct and resubmit/i);
-    expect(screen.getByText('October register was returned')).toBeTruthy();
+    expect(await screen.findByText('October register was returned')).toBeTruthy();
   });
 
   it('reject with a note on W-3903 shows the rejected state the re-read returns', async () => {

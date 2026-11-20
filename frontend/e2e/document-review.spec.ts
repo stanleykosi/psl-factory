@@ -204,7 +204,7 @@ test.describe('desktop 1440', () => {
       await expect(page.getByText(/Statement of work|Scope/)).toHaveCount(0);
     }
     await page.unroute('**/api/v1/documents/**');
-    await setCookies(context, { psl_mock_persona: 'ceo' });
+    await setCookies(context, { psl_mock_persona: 'admin' }); // the CEO sees every project since D-150; Admin has no access to this one
     await open(page);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('You can’t open this document');
     await expect(page.getByText(/Scope|Lagoon/)).toHaveCount(0);
