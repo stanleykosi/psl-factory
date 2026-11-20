@@ -3880,3 +3880,6 @@
 {"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"UX-1-1","by":"ux-reviewer","severity":"medium","owner":"frontend","blocking":true,"role":"ux"}
 {"at":"2026-11-20T18:01:12Z","feature":"F-54","round":1,"kind":"transition","head":"b73aff3f69fb","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-20T18:01:12Z","feature":"F-54","round":2,"kind":"transition","head":"b73aff3f69fb","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-20T18:17:24Z","feature":"F-55","round":0,"kind":"created","tasks":["FE-HR-MOCK-DATA"]}
+{"at":"2026-11-20T18:17:24Z","feature":"F-55","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-20T18:17:25Z","feature":"F-55","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
