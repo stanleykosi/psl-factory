@@ -102,7 +102,7 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__listscroll, .as__sidebody, .as__scroll { display: contents; }
 @media (min-width: 720px) {
   html:has(.as) { overflow: hidden; }
-  .as { height: calc(100dvh - var(--space-7) - var(--space-3)); min-height: 0; overflow: hidden; grid-template-rows: minmax(0, 1fr); }
+  .as { height: calc(100dvh - var(--space-7) - var(--space-3) - 1px); min-height: 0; overflow: hidden; grid-template-rows: minmax(0, 1fr); }
   .as__list, .as__side, .as__center { min-height: 0; overflow: hidden; }
   .as__listscroll, .as__sidebody, .as__scroll { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
   .as__listscroll { gap: var(--space-10px); }
