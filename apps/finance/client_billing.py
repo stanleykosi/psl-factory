@@ -12,7 +12,8 @@ from .models import BillingCoverage, BillingPreparation, InvoiceCorrectionAccept
 
 
 def current_coverages(case):
-    successors = BillingCoverage.objects.filter(case=case, reference=OuterRef('reference'), version__gt=OuterRef('version'))
+    successors = BillingCoverage.objects.filter(case_id=OuterRef('case_id'), reference=OuterRef('reference'),
+                                               version__gt=OuterRef('version'))
     return BillingCoverage.objects.filter(case=case).filter(~Exists(successors))
 
 

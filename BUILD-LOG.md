@@ -1,5 +1,11 @@
 # Build progress log
 
+21 November 2026. Reconciled the older browser evidence with the exact design boards and checked current Go-live, asset and Forecast readback in the same trial session. The acceptance ledger now verifies 184 of 262. Candidate 277 passed all 42 grouped PostgreSQL tests and both preservation probes. The matching preview deployment was submitted.
+
+20 November 2026. Trial verified work 226 through separate weekly approval, original delivery and receipt, bringing the ledger to 169. The phone test uncovered one drawer submission defect, fixed in candidate 277. The 276 protected Finance and Commercial suites passed. The Project import defect was corrected and the full focused gate is running again.
+
+20 November 2026. Hosted 274 trial kept one signed-in session through bill details, independent cash review, native costing, read-only Setup and the two-workspace invitation. 167 browser states are verified and 95 remain open. Candidate 275 passed the bid-pack suite and both preservation probes, with three Finance and Project failures. Candidate 276 is running the combined regression and the new bounded projections. Preview remains at 274.
+
 20 November 2026. Verified the selected-line desktop Start drawer, raising scoped completion to 164. 273 passed 19 of 20, with a bounded weekly review count in the project directory still open. 274 isolated the passing usage, billing identity and fixture paths, passed seven checks and both preservation probes, and started the web preview with additive core 0006. The trial account remains signed in.
 
 20 November 2026. Continued with the trial account at the user’s request. Recorded eight current or reconciled browser journeys for 163 of 262 and confirmed that trial cannot amend usage as the preparer. Candidate 271 verified the Finance commands and the exact live leadership claim, with one older test omitted from its staging snapshot. Its corrected gate must pass before rollout.

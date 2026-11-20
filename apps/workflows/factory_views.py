@@ -122,13 +122,18 @@ def intake(request):
     response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q})
     response['Cache-Control']='no-store';return response
 
-def visible(actor, *, work_id=None, case_id=None):
+def work_grant_scope(actor):
+    """Grant-level discovery scope. Protected native records may narrow it further."""
     active(actor)
     scope=Q(pk__in=[])
     for name,spec in DEFINITIONS.items():
         actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
         scope|=Q(definition=name,case_id__in=granted(actor,actions).values('pk'))
-    query=FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
+    return FactoryWork.objects.filter(scope)
+
+
+def visible(actor, *, work_id=None, case_id=None):
+    query=work_grant_scope(actor).select_related('case','actor','invoice','source_head')
     if work_id is not None:
         query=query.filter(pk=work_id)
     if case_id is not None:
@@ -139,6 +144,26 @@ def visible(actor, *, work_id=None, case_id=None):
         try:preparation_access(actor,work.preparation)
         except (PermissionDenied,ValidationError):inaccessible.append(work.pk)
     return query.exclude(pk__in=inaccessible)
+
+
+def decision_inbox_row(row):
+    return not (row.get('review_needs_update') or row.get('review_ready')) and (
+        row.get('department_wait') or any(task.status == 'open' and task.kind == 'factory_review' for task in row['tasks'])
+    )
+
+
+def exception_inbox_row(row, status):
+    if status == 'verified':
+        return bool(row.get('readiness_changed') or row.get('correction_required'))
+    if status in ('ready', 'waiting'):
+        holds = ('correction_required', 'review_needs_update', 'adoption', 'coordination_needed',
+                 'execution_owner_needed', 'source_instruction_needed', 'source_followup_needed',
+                 'operation_followup_needed', 'outcome_selection_needed', 'held_publication_needs_operator')
+        return (any(row.get(hold) for hold in holds) or any(d.uncertain_job(job) for job in row['jobs'])
+                or row['state'] == 'Execution rules need review')
+    return status in ('blocked', 'owner_needed', 'configuration_needed', 'waiting_effect', 'followup_needed') or any(
+        d.uncertain_job(job) for job in row['jobs']
+    )
 
 def permitted(actor,work,action):
     try:d.access(actor,work.case,action,work.definition);return True
@@ -167,10 +192,14 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         return accounting_presentation(actor,work)
     from .factory_execution import available_actor,can_control
     execution_owner=available_actor(work);controlled=can_control(actor,work)
-    try:d.profile(work);profile_available=True
-    except (ValidationError,PermissionDenied):profile_available=False
-    try:d.profile(work,recovery=True);recovery_available=True
-    except (ValidationError,PermissionDenied):recovery_available=False
+    execution_profile=None
+    try:
+        execution_profile=d.profile(work)
+        profile_available=recovery_available=True
+    except (ValidationError,PermissionDenied):
+        profile_available=False
+        try:d.profile(work,recovery=True);recovery_available=True
+        except (ValidationError,PermissionDenied):recovery_available=False
     tasks=list(HumanTask.objects.filter(case=work.case,factory_key__startswith=f'factory:{work.pk}:').select_related('claimed_by').order_by('pk'))
     jobs=d.invoice_jobs(work)
     state={'ready':'Ready to continue','waiting':'Waiting','blocked':'Action needed','owner_needed':'Owner needed','configuration_needed':'Setup needed','verified':'Verified','cancelled':'Cancelled','waiting_effect':'Awaiting reconciliation','followup_needed':'Stopped; invoice follow-up needed'}.get(work.status,'Check required')
@@ -565,7 +594,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting import projection
-        row['reporting']=projection(actor,work,include_progress=include_progress);panel=row['reporting'];row['jobs']=panel['jobs']
+        row['reporting']=projection(actor,work,include_progress=include_progress,execution_profile=execution_profile);panel=row['reporting'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['template_required'] and not panel['next_options']:
@@ -576,8 +605,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         # Optional editing is not an obligation while another principal reviews.
         # Native return/currentness/hold facts identify the correction need; native
         # can_correct remains the separate authority and settled-effect boundary.
-        verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
-        row['correction_required'] = bool(panel['template_required'] or verdict in ['return', 'reject']) and not work.cancel_requested
+        row['correction_required'] = bool(panel['template_required'] or panel['return_review']) and not work.cancel_requested
         correction_due=panel['can_correct'] and bool(row['correction_required'] or panel['readiness_changed'] or panel['finding'] or work.status in ['blocked','owner_needed','configuration_needed'])
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
@@ -687,17 +715,10 @@ def index(request):
             continue
         evaluated+=1
         if queue=='verified' and row.get('readiness_changed'):continue
-        if queue=='exceptions' and work.status=='verified' and not (row.get('readiness_changed') or row.get('correction_required')):continue
-        if queue=='exceptions' and work.status in ['ready','waiting']:
-            holds = ('correction_required', 'review_needs_update', 'adoption', 'coordination_needed',
-                     'execution_owner_needed', 'source_instruction_needed', 'source_followup_needed',
-                     'operation_followup_needed', 'outcome_selection_needed', 'held_publication_needs_operator')
-            if not (any(row.get(hold) for hold in holds) or any(d.uncertain_job(job) for job in row['jobs'])
-                    or row['state'] == 'Execution rules need review'):
-                continue
+        if queue=='exceptions' and not exception_inbox_row(row,work.status):continue
         if queue=='needs_me' and not row['needs_me']:continue
         if queue=='waiting' and row['needs_me']:continue
-        if queue=='decisions' and (row.get('review_needs_update') or row.get('review_ready') or not (row.get('department_wait') or any(t.status=='open' and t.kind=='factory_review' for t in row['tasks']))):continue
+        if queue=='decisions' and not decision_inbox_row(row):continue
         if queue=='unassigned' and row['owner']!='Unassigned':continue
         items.append(row)
     from apps.finance.payroll_questions import queue_cards as payroll_question_cards

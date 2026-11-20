@@ -99,8 +99,9 @@ def engagement_facts(actor, case):
     facts = {'route': source.data['route'], 'reference': source.data['reference']}
     try:
         assignment = engagement.current_assignment(case)
-        pm = get_user_model().objects.get(pk=assignment.data['pm_id'], is_active=True)
-        facts['manager'] = pm.get_full_name() or pm.get_username()
+        if public_evidence(case.evidence.filter(pk=assignment.evidence_id)).exists():
+            pm = get_user_model().objects.get(pk=assignment.data['pm_id'], is_active=True)
+            facts['manager'] = pm.get_full_name() or pm.get_username()
     except (ValidationError, PermissionDenied, get_user_model().DoesNotExist):
         facts['manager'] = None
     return facts

@@ -73,8 +73,11 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
         self.client.force_login(reviewer)
         assert_money('0', '32.25', applied=False)
         page = self.client.get(sample['corrections_path'])
+        self.assertEqual([command['action'] for command in page.context['commands']], ['review'])
         self.assertContains(page, f'original lot #{original_lot.pk}')
         self.assertContains(page, 'proposed amount 40 NGN')
+        self.assertNotContains(page, 'Capture corrected cash statement')
+        self.assertNotContains(page, 'Verify and accept corrected successor lot')
         self.assertEqual(Decimal(request.payload['amount']), Decimal('40.00'))
         self.assertEqual(correct('apply_successor').status_code, 403)
         decision = correct('review', kind='cash', verdict='approve', evidence=sample['review_proof'],
@@ -85,8 +88,25 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
         self.assertFalse(CashSuccessorAcceptance.objects.filter(request=request).exists())
 
         self.client.force_login(maker)
+        page = self.client.get(sample['corrections_path'])
+        self.assertEqual([command['action'] for command in page.context['commands']], ['apply_successor'])
+        self.assertContains(page, 'Verify and accept corrected successor lot')
         self.assertEqual(correct('review', kind='cash', verdict='return', evidence=sample['review_proof'],
                                  reason='Wrong person for this decision.').status_code, 403)
+        verify_grant = Grant.objects.filter(user=maker, case=case, action='finance.cash.verify')
+        verify_grant.update(active=False)
+        self.assertEqual(self.client.get(sample['corrections_path']).context['commands'], [])
+        self.assertEqual(correct('apply_successor').status_code, 403)
+        self.assertFalse(CashSuccessorAcceptance.objects.filter(request=request).exists())
+        verify_grant.update(active=True)
+
+        for permission, effect in (('finance.invoice.correct', 'adjust'),
+                                   ('finance.invoice.correction_deliver', 'adjust_deliver')):
+            grant = Grant.objects.create(user=maker, case=case, action=permission)
+            forms = self.client.get(sample['corrections_path']).context['commands']
+            reserve = next(command for command in forms if command['action'] == 'reserve')
+            self.assertEqual(list(reserve['form'].fields['effect'].choices), [(effect, effect)])
+            Grant.objects.filter(pk=grant.pk).update(active=False)
         applied = correct('apply_successor')
         self.assertRedirects(applied, sample['corrections_path'], fetch_redirect_response=False)
         acceptance = CashSuccessorAcceptance.objects.get(request=request, review=approved, parent=original_lot)
@@ -114,4 +134,16 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
         self.assertFalse(InvoiceDelivery.objects.filter(invoice__case=case).exists())
         self.assertEqual(list(InvoiceJob.objects.filter(invoice__case=case).values_list('kind', 'status')),
                          [('issue', 'confirmed')])
+
+        reader = get_user_model().objects.create_user('sample-cash-history-reader')
+        Grant.objects.bulk_create([Grant(case=case, user=reader, action=action) for action in ('case.read', 'finance.read')])
+        self.client.force_login(reader)
+        accepted_history = self.client.get(sample['corrections_path'])
+        self.assertEqual(accepted_history.context['commands'], [])
+        self.assertContains(accepted_history, 'Read-only access to correction history.')
+        self.assertContains(accepted_history, f'Accepted lot #{lot.pk}')
+        self.assertContains(accepted_history, f'Review #{approved.pk}')
+        self.assertContains(accepted_history, f'original lot #{original_lot.pk}')
+        self.assertEqual(correct('apply_successor').status_code, 403)
+        self.assertEqual(CashSuccessorAcceptance.objects.filter(request=request).count(), 1)
         self.assertEqual(seed.prepare(invitation.pk, maker.pk), sample)

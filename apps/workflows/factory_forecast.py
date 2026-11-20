@@ -104,10 +104,20 @@ def principal(work, value, name, *, calculation_only=False):
     return u
 
 
-def report(work, actor=None):
+def report(work, actor=None, *, read_verified_group=False):
     _, value = source(work, actor)
+    verification_finding = None
+    if read_verified_group and value['audience'] == 'group' and work.status == 'verified':
+        # Final verification includes the native calculation, approval and disclosure checks.
+        try:
+            result = verify(work, actor)
+            return {'stage': 'complete', 'audience': 'group', 'run': result['forecast_run'], 'finding': ''}
+        except (ValidationError, PermissionDenied) as exc:
+            # Identify the earliest withheld station without rereading final delivery.
+            verification_finding = finding(exc)
     r = calculation(work, actor)
-    status = {'stage':'calculate','audience':value['audience'], 'run':r.pk if r else None, 'finding':''}
+    status = {'stage':'calculate','audience':value['audience'], 'run':r.pk if r else None,
+              'finding':verification_finding or ''}
     if not r:
         return status
     try:
@@ -124,8 +134,9 @@ def report(work, actor=None):
                 status['stage']='group_review'
                 group_forecast.approved(binding.version)
         status['stage'] = 'publication'
-        verify(work, actor)
-        status['stage'] = 'complete'
+        if verification_finding is None:
+            verify(work, actor)
+            status['stage'] = 'complete'
     except (ValidationError, PermissionDenied) as exc:
         status['finding'] = finding(exc)
     return status
@@ -144,7 +155,7 @@ def snapshot(work, value, reader=None):
     missing = [k for k in value['required_evidence_kinds'] if k not in latest]
     cutoff = timezone.now()-timedelta(seconds=value['max_age_seconds'])
     stale = [k for k in value['required_evidence_kinds'] if any(e.kind == k and e.created_at < cutoff for e in rows)]
-    native = report(work, actor)
+    native = report(work, actor, read_verified_group=reader is not None)
     jobs = list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
     state = {'case_revision':work.case.revision, 'profile':work.policy_id, 'sources':[(e.pk, e.sha256) for e in rows]+[(work.source_head_id,work.source_head.sha256)], 'native':native, 'checks':{'selection':digest(selected)}, 'jobs':[(j.pk,j.status) for j in jobs]}
     state['hash'] = digest(state)
@@ -366,13 +377,17 @@ def projection(actor, work, *, include_progress=False):
     access(actor,work.case,'factory.read',DEFINITION)
     scenario,selected = source(work,actor,False)
     status={'stage':'source','finding':''};options=[];next_action='Review selected forecast sources';issue=''
+    group = selected['audience'] == 'group'
     current=True
     step = None
     try:
         source(work,actor)
-        status=report(work,actor)
+        if not group:
+            status=report(work,actor)
         _,value=profile(work)
         state,*args=snapshot(work,value,reader=actor)
+        if group:
+            status=state['native']
         options,next_action=eligible(work,value,state,*args)
         if include_progress:
             step = current_plan_step(work, state['hash'], options)
@@ -381,8 +396,14 @@ def projection(actor, work, *, include_progress=False):
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
     changed=False
     if work.status=='verified':
-        try:verify(work,actor)
-        except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
+        if group and current:
+            # The read snapshot already checked the original publication and recipients.
+            changed = status['stage'] != 'complete'
+            if changed:
+                issue = status['finding']
+        else:
+            try:verify(work,actor)
+            except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     can_correct=False
     try:
         require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')

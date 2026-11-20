@@ -207,6 +207,8 @@ def review_version(actor,case_id,version_id,verdict,note,expected,delegated=Fals
     from apps.pmo.leadership_reporting import lock_report_scope
     lock_report_scope(actor, case, version_id)
     version=current_version(case,version_id)
+    from apps.pmo.rfp_submission_pack import require_independent_review
+    require_independent_review(actor, version)
     from apps.pmo.leadership_reporting import binding_access
     binding_access(actor,version)
     if version.audience=='group':raise ValidationError('Use the exact native group disclosure review')
@@ -289,6 +291,8 @@ def validate_review(case,version):
         return None
     if not review or review.verdict!='approve' or review.payload_sha256!=version.payload_sha256:
         raise ValidationError('A PMO Lead approval of this exact outward projection is required')
+    from apps.pmo.rfp_submission_pack import require_independent_review
+    require_independent_review(review.actor, version)
     require(review.actor,case,'document.review_controlled')
     if dict(decision_authority(review.actor,case,role,'approve',review.delegated),**pins)!=review.authority:
         raise ValidationError('Review authority changed; create a fresh version and review')

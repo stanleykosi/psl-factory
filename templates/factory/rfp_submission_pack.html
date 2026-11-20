@@ -1,0 +1,32 @@
+<section class="card" id="client-submission-pack">
+  <h2>Client submission pack</h2>
+  <p>Response version {{ submission_pack_response.number }} · Costing version {{ submission_pack_response.commercial.number }}.</p>
+  {% with intake=submission_pack_response.intake %}
+  <p>Received bid version {{ intake.number }} · {% if intake.deadline_at %}Deadline {{ intake.deadline_at|date:'j M Y H:i T' }}{% elif intake.deadline_status == 'not_stated' %}No deadline stated{% else %}Deadline unknown{% endif %}.</p>
+  {% endwith %}
+  {% if submission_pack %}
+    <h3>Cover note · draft {{ submission_pack.number }}</h3>
+    <p>{{ submission_pack.cover_note|default:'No cover note supplied.'|linebreaksbr }}</p>
+    <h3>Client file requirements</h3>
+    {% if submission_pack_requirements %}
+      <ul>{% for requirement in submission_pack_requirements %}<li>{{ requirement }}</li>{% endfor %}</ul>
+      <p>Automatic delivery is held until the client files can be verified.</p>
+    {% else %}
+      <p>No file requirements recorded.</p>
+    {% endif %}
+  {% endif %}
+  {% if submission_pack_form %}
+    <details{% if not submission_pack or submission_pack_form.errors %} open{% endif %}>
+      <summary>{% if submission_pack %}Edit cover note and file requirements{% else %}Draft cover note and file requirements{% endif %}</summary>
+      <p>Use the received bid to confirm the file requirements. Leave any unknown details blank. A different authorised person reviews the resulting pack.</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="submission_pack">
+        <input type="hidden" name="revision" value="{{ row.work.revision }}">
+        <input type="hidden" name="case_revision" value="{{ case.revision }}">
+        {{ submission_pack_form.as_p }}
+        <button type="submit">Save pack draft</button>
+      </form>
+    </details>
+  {% endif %}
+</section>

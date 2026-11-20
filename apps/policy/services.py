@@ -3,7 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import hashlib
 import json
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
 from jsonschema import Draft202012Validator, FormatChecker
@@ -377,8 +377,24 @@ def reference_values(configuration, *, budget=None):
     return values
 
 
+def _decision_matrix_actions(case, role):
+    matrix = active_component('D05.decision_action_matrix', case)
+    actions = {action for row in reference_values(matrix)[0].get('rules', []) if row['role'] == role
+               for action in row['actions']}
+    return matrix, actions
+
+
+def assigned_decision_options(actor, case, role, actions):
+    """Observe available decisions for one assigned role in the current request."""
+    role_policy(actor, case, role)
+    try:
+        _, configured = _decision_matrix_actions(case, role)
+    except (PermissionDenied, ValidationError):
+        configured = set()
+    return [action for action in actions if action == 'approve' or action in configured]
+
+
 def decision_authority(actor,case,role,action='approve',delegated=False,delegation_context=None):
-    from django.core.exceptions import PermissionDenied
     pinned={}
     if type(delegated) is not bool:raise ValidationError('Delegated authority mode must be boolean')
     if delegation_context is not None and not isinstance(delegation_context,dict):raise ValidationError('Typed delegation context required')
@@ -430,8 +446,8 @@ def decision_authority(actor,case,role,action='approve',delegated=False,delegati
                 'scope_sha256':hashlib.sha256(json.dumps(record['decision_scope'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),
                 'scope_checks':{'project':'matched','decision':'matched','action':'matched','currency':'matched','amount':'within_configured_limit'}}
     if action!='approve':
-        matrix=active_component('D05.decision_action_matrix',case)
-        if not any(r['role']==role and action in r['actions'] for r in reference_values(matrix)[0].get('rules',[])):
+        matrix,configured=_decision_matrix_actions(case,role)
+        if action not in configured:
             raise PermissionDenied('Decision action is not granted by configured authority')
         pinned[matrix.component]=matrix.pk
     return pinned

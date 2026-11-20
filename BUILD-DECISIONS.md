@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Group Forecast and weekly projections can reuse exact current observations within one rendered request. Native commands assess authority and evidence again and preserve original receipts. The Clients list filters individual authorized workspaces by current billing-contact status. Cross-workspace grouping requires an explicitly recorded stable customer identity. Local billing references and names do not establish that match.
+
 20 November 2026. Collective usage shows only actions supported by the current actor’s case grants. Finance readers retain receipt lookup. The native commands still enforce their own current write authority. Client legal billing details are immutable case-scoped revisions attached to current native coverage. A blank field stays Unknown. Updating this registry leaves prior issued documents, contacts and amounts intact.
 
 20 November 2026. The workbench retains the selected workflow on authorized work links, focus tabs and related action returns. A work-specific return carries a workflow only when it matches the open authorized record. The queue rechecks record access and inventory when loading the return.

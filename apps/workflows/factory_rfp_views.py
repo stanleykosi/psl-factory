@@ -220,6 +220,8 @@ def decision_options(actor,work,current,document,submission):
         if document and allowed(actor,case,'document.review_controlled'):
             try:
                 controlled.current_version(case,document.pk)
+                from apps.pmo.rfp_submission_pack import require_independent_review
+                require_independent_review(actor, document)
                 if HumanTask.objects.filter(version=document,status='open').exists():
                     choices=verdicts('document.review_controlled','PMO Lead')
                     if choices:result.append({'kind':'document','target':document.pk,'role':'PMO Lead','verdicts':choices,'title':'Final client response review'})
@@ -384,6 +386,7 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
 
 def detail(request,work,focus=None):
     from . import factory_rfp as service
+    from . import factory_rfp_submission_pack as submission_pack
     from .screen_focus import require_action
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
     navigation=work_queue_params(request.GET,work=work)
@@ -401,13 +404,19 @@ def detail(request,work,focus=None):
     if request.GET.get('submission') and chosen:navigation['submission']=chosen.pk
     if request.GET.get('submission_page'):navigation['submission_page']=request.GET['submission_page']
     url=request.path+'?'+urlencode(navigation)
-    source=None;mappings=None
+    source=None;mappings=None;pack_form=None
     if request.method=='POST':
         try:
             action=request.POST.get('action');revision=int(request.POST.get('revision','0'))
             require_action(work, focus, action)
             if action=='advance':runtime.advance(request.user,work.pk,revision)
             elif action=='reconcile':runtime.reconcile(request.user,work.pk,revision)
+            elif action=='submission_pack':
+                pack_form=submission_pack.SubmissionPackForm(request.POST,prefix='pack')
+                if not pack_form.is_valid():
+                    raise ValidationError('Check the highlighted cover note and client file fields.')
+                submission_pack.record(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),
+                                       pack_form.cleaned_data)
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')
             elif action=='adopt_profile':runtime.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             elif action=='portal_receipt':
@@ -489,6 +498,8 @@ def detail(request,work,focus=None):
                 url=request.path+'?'+urlencode(navigation)
             messages.success(request,'Action recorded. Inspect current decisions, output and receipts.');return redirect(url)
         except (ValidationError,ValueError,TypeError,KeyError) as exc:
+            if pack_form is not None and isinstance(exc,ValidationError) and not pack_form.errors:
+                pack_form.add_error(None,exc)
             messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Use complete current record references.')
     work.refresh_from_db();work.case.refresh_from_db();row=presentation(request.user,work,chosen.pk if chosen else None)
     if source is None:
@@ -498,6 +509,7 @@ def detail(request,work,focus=None):
         source=SourceForm(work.case,initial=initial)
         mappings=Mappings(initial=value.get('matrix',[]),prefix='requirements',form_kwargs={'case':work.case})
     document=row['rfp']['document']
+    pack_context=submission_pack.panel(request.user,work,row['rfp']['response'],pack_form) if focus in (None,'decision') else {}
     receipts=PublicationReceipt.objects.filter(publication__version__document__case=work.case).filter(
         Q(publication__factory_work=work)|Q(publication__version=document)).order_by('pk') if document else PublicationReceipt.objects.filter(publication__factory_work=work).order_by('pk')
     activities=list(FactoryActivity.objects.filter(work=work).prefetch_related('attempts').order_by('pk'))
@@ -580,7 +592,9 @@ def detail(request,work,focus=None):
         'loss_catalog':loss_catalog,'loss_reasons':loss_reasons,'debrief_choices':debrief_choices,
         'loss_debrief':rfp_loss.debrief_proof(request.user,work.case,row['rfp']['outcome']),
         'can_review_requirement_answers':can_review_requirement_answers, 'final_costing':final_costing,
+        'can_read_client_document':allowed(request.user,work.case,'document.read'),
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
+        **pack_context,
         **followup_context,
         'portal_receipt':getattr(row['rfp']['submission'],'portal_receipt',None),
         'portal_pack':portal_pack if not row['rfp']['submission'] and allowed(request.user,work.case,'rfp.submit') and allowed(request.user,work.case,'document.read') else None,

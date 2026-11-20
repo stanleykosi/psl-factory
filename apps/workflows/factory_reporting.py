@@ -55,8 +55,8 @@ def inventory(actor,case,inputs):
     snapshot['manifest']=client_manifest(snapshot,content)
     return snapshot
 
-def source(work,actor=None,current=True):
-    reader=actor or work.actor;require(reader,work.case,'report.read');e=work.source_head
+def _source_binding(work, reader):
+    require(reader,work.case,'report.read');e=work.source_head
     if not e or e.case_id!=work.case_id or e.kind!=KIND or e.sha256!=hashlib.sha256(e.body.encode()).hexdigest():raise ValidationError('Exact private weekly reporting intake required')
     try:data=json.loads(e.body)
     except (TypeError,ValueError):raise ValidationError('Typed weekly report intake required') from None
@@ -64,9 +64,23 @@ def source(work,actor=None,current=True):
     report_source_access(reader,work.case,data['manifest'])
     audit=Audit.objects.filter(case=work.case,actor_id=e.created_by_id,action__in=['factory.reporting_intake','factory.reporting_source'],data={'evidence_id':e.pk,'sha256':e.sha256}).first()
     if not audit or any(data['inputs'][k]!=work.request[k] for k in ['start_at','end_at']):raise ValidationError('Exact selected report period and source-owned provenance required')
+    return data, audit.action
+
+
+def _assert_current_source(work, reader, data, action):
+    for grant in ['case.read','report.read','evidence.add','factory.start' if action=='factory.reporting_intake' else 'factory.manage']:
+        require(work.source_head.created_by,work.case,grant)
+    current_inventory = inventory(reader, work.case, data['inputs'])
+    if current_inventory['manifest'] != data['manifest']:
+        raise ValidationError('Selected native report inventory changed; explicitly review the current source snapshot')
+    return current_inventory
+
+
+def source(work,actor=None,current=True):
+    reader = actor or work.actor
+    data, action = _source_binding(work, reader)
     if current:
-        for action in ['case.read','report.read','evidence.add','factory.start' if audit.action=='factory.reporting_intake' else 'factory.manage']:require(e.created_by,work.case,action)
-        if inventory(reader,work.case,data['inputs'])['manifest']!=data['manifest']:raise ValidationError('Selected native report inventory changed; explicitly review the current source snapshot')
+        _assert_current_source(work, reader, data, action)
     return data
 
 def capture(actor,case,inputs,action):
@@ -106,13 +120,12 @@ def principal(work,value,name):
     except PermissionDenied:raise ValidationError('owner_needed: Weekly report principal lacks current exact project permissions') from None
     return u
 
-def bound_document(work,actor=None):
-    data=source(work,actor);v=document(work)
+def _bound_document(work, data, v, current_inventory):
     if not v:raise ValidationError('Await exact native weekly client report draft')
     b=MinutesReportBinding.objects.get(version=v);start,end=input_rows(work.case,data['inputs'])
     if b.report.start_at!=start or b.report.end_at!=end or b.manifest!=data['manifest'] or v.template_id!=data['inputs']['template_id'] or v.audience!='client':raise ValidationError('Exact period, template, client audience and selected native source snapshot required')
     if {x['heading'] for x in v.payload['sections']}!=SECTIONS:raise ValidationError('All four client-report topics and summary are required')
-    content,sections=client_content(work.case,inventory(actor or work.actor,work.case,data['inputs']),data['inputs']['content_id'])
+    content,sections=client_content(work.case,current_inventory,data['inputs']['content_id'])
     projection=Evidence.objects.filter(case=work.case,pk__in=[x['id'] for x in v.source_manifest],kind='ops_client_report_projection',source='psl:weekly-client-projection:'+str(b.report_id),created_by_id=v.created_by_id).first()
     if not projection or len(v.source_manifest)!=1 or any(x['evidence_ids']!=[projection.pk] for x in v.fields.values()) or any(v.fields.get(k,{}).get('text')!=x['text'] for k,x in sections.items()):raise ValidationError('Exact substantive narrative, private native citations and generated-only outward projection required')
     from apps.pmo.reporting import CLIENT_SCOPE_COVERAGE, CLIENT_DEPENDENCY_COVERAGE
@@ -120,6 +133,13 @@ def bound_document(work,actor=None):
         if v.fields.get(key, {}).get('text') != text or not any(s['heading'] == key and s['text'] == text for s in v.payload['sections']):
             raise ValidationError('Exact generated client scope and dependency coverage statements required')
     current_version(work.case,v.pk);return data,v,b
+
+
+def bound_document(work,actor=None):
+    reader = actor or work.actor
+    data, action = _source_binding(work, reader)
+    current_inventory = _assert_current_source(work, reader, data, action)
+    return _bound_document(work, data, document(work), current_inventory)
 
 def published(work,actor=None):
     from .factory import profile
@@ -151,14 +171,28 @@ def investigate(work,actor):
 def snapshot(work,value,reader=None):
     from .factory import access
     actor=reader or work.execution_actor;access(actor,work.case,'factory.read' if reader is not None else 'factory.execute',DEFINITION)
-    data=source(work,actor,False);current=True;issue=''
-    try:source(work,actor)
-    except (ValidationError,PermissionDenied) as exc:current=False;issue=finding(exc)
+    data, action = _source_binding(work, actor)
+    current_inventory, issue = _observe_source(work, actor, data, action)
+    jobs = list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
+    return _snapshot(work, value, data, current_inventory, issue, document(work), jobs)
+
+
+def _observe_source(work, actor, data, action):
+    try:
+        return _assert_current_source(work, actor, data, action), ''
+    except (ValidationError, PermissionDenied) as exc:
+        return None, finding(exc)
+
+
+def _snapshot(work, value, data, current_inventory, issue, v, jobs):
+    current = current_inventory is not None
     latest={KIND:work.source_head};missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
-    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'));v=document(work);review={'status':'unprepared'}
-    if v:
-        try:bound_document(work,actor);r=validate_review(work.case,v);review={'status':'ready','id':r.pk}
+    review={'status':'unprepared'}
+    if v and not current:
+        review={'status':'held','finding':issue}
+    elif v:
+        try:_bound_document(work,data,v,current_inventory);r=validate_review(work.case,v);review={'status':'ready','id':r.pk}
         except (ValidationError,PermissionDenied) as exc:review={'status':'held','finding':finding(exc)}
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(work.source_head_id,work.source_head.sha256)],'inventory_current':current,'source_finding':issue,
         'checks':{'inventory_current':current},'native':{'stage':'report','manifest':data['manifest']},'document':v.pk if v else None,'review':review,
@@ -350,15 +384,14 @@ def restart(actor,work_id,expected,case_expected,reason):
     old=w.source_head_id;w.source_head=capture(actor,case,data['inputs'],'factory.reporting_source');w.cancel_requested=False;w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
     event(actor,case,'factory.reporting_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
-def projection(actor,work,*,include_progress=False):
+def projection(actor,work,*,include_progress=False,execution_profile=None):
     from .factory import access,profile
     from .factory_progress import current_plan_step
     from apps.documents.delivery_readback import recipient_rows
-    from apps.policy.services import decision_authority
-    access(actor,work.case,'factory.read',DEFINITION);data=source(work,actor,False);v=document(work)
-    issue='';options=[];next_action='Review selected weekly report sources';current=True;progress=None
-    try:source(work,actor)
-    except (ValidationError,PermissionDenied) as exc:issue=finding(exc);current=False
+    from apps.policy.services import assigned_decision_options
+    access(actor,work.case,'factory.read',DEFINITION);data, action=_source_binding(work,actor);v=document(work)
+    current_inventory, issue=_observe_source(work,actor,data,action)
+    options=[];next_action='Review selected weekly report sources';current=current_inventory is not None;progress=None
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
     settled = not any(job.status in ('pending', 'unknown', 'leased', 'held') for job in jobs)
     editable = not work.cancel_requested and work.status not in ('cancelled', 'followup_needed') and settled
@@ -372,12 +405,11 @@ def projection(actor,work,*,include_progress=False):
     if live and current and v and HumanTask.objects.filter(version=v,status='open').exists():
         try:
             current_version(work.case,v.pk);require(actor,work.case,'document.review_controlled')
-            for verdict in ['approve','return','reject']:
-                try:decision_authority(actor,work.case,'PMO Lead',verdict);verdicts.append(verdict)
-                except (ValidationError,PermissionDenied):pass
+            verdicts=assigned_decision_options(actor,work.case,'PMO Lead',('approve','return','reject'))
         except (ValidationError,PermissionDenied):pass
     try:
-        _,value=profile(work);state,*args=snapshot(work,value,reader=actor);options,next_action=eligible(work,value,state,*args)
+        _,value=execution_profile or profile(work)
+        state,*args=_snapshot(work,value,data,current_inventory,issue,v,jobs);options,next_action=eligible(work,value,state,*args)
         if (include_progress and not state['document'] and data['inputs']['template_id'] and data['inputs']['content_id']
                 and current_plan_step(work, state['hash'], options) == 'ACT09'):
             progress = {'label': 'Assembling the weekly report', 'watching': True}

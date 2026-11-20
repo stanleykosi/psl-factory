@@ -12,6 +12,7 @@ from .rfp import current_response,reviewed,public_terms_for
 from .commercial import valid_approvals
 from .services import subject
 from .rfp_pricing import quote_text
+from . import rfp_submission_pack as packs
 
 def inputs(v,key,*,dispatch=False):
     return _inputs(v.rfp,v.pk,key,dispatch=dispatch)
@@ -28,8 +29,12 @@ def _inputs(r,response_id,key,*,dispatch=False):
     route=routes[0];i=v.intake
     if dispatch and i.deadline_status=='unknown':raise ValidationError('Verify the actual submission deadline or attest explicitly that none is stated')
     if dispatch and i.deadline_status=='stated' and timezone.now()>i.deadline_at:raise ValidationError('Submission deadline has passed; record an evidenced revised intake before new dispatch')
-    return {'response':v.pk,'sources':v.snapshot,'reviews':reviews,'costing_decisions':decisions,'route_config':c.pk,'route':route,
+    snapshot = {'response':v.pk,'sources':v.snapshot,'reviews':reviews,'costing_decisions':decisions,'route_config':c.pk,'route':route,
         'deadline_status':i.deadline_status,'deadline_at':i.deadline_at.isoformat() if i.deadline_at else None}
+    pack = packs.current(v)
+    if pack:
+        snapshot['submission_pack'] = pack.pk
+    return snapshot
 
 def sender(actor,version):
     b=RFPDocumentBinding.objects.filter(version=version).first()
@@ -55,16 +60,34 @@ def draft(actor,case_id,response_id,template_id,route_key,expected):
         'scope':{'text':e.body,'evidence_ids':[e.pk]},
         mapping:{'text':'\n'.join(row['key']+': '+row['disposition']+' — '+row['response'] for row in v.matrix),'evidence_ids':sorted(set(row['evidence_id'] for row in v.matrix))},
         terms:{'text':quote_text(public_terms)+'\nTimeline: '+plan.body,'evidence_ids':[public_terms.pk,plan.pk]}}
+    document_id = None
+    if 'submission_pack' in snapshot:
+        pack = packs.current(v)
+        summary = fields['executive_summary']
+        summary['text'] = packs.summary(pack, summary['text'])
+        summary['evidence_ids'].append(pack.source_id)
+        document_id = RFPDocumentBinding.objects.filter(response=v).order_by('-pk').values_list(
+            'version__document_id', flat=True).first()
     from apps.documents.pmo_sections import complete_native_client_sections
     fields['timeline'] = {'text': plan.body, 'evidence_ids': [plan.pk]}
     fields = complete_native_client_sections(fields, 'client', [e.pk])
-    version=create_version(actor,case.pk,t.pk,'RFP response '+v.rfp.reference,'client',fields,case.revision)
+    version=create_version(actor,case.pk,t.pk,'RFP response '+v.rfp.reference,'client',fields,case.revision,
+                           document_id=document_id)
     RFPDocumentBinding.objects.create(version=version,response=v,snapshot=snapshot);sender(actor,version);return version
 
 def binding_findings(b):
     try:
         if b.version.template.definition.get('internal_review_required',True) is not True:return ['RFP client responses require final controlled document review']
         if b.snapshot!=inputs(b.response,b.snapshot['route']['key']):return ['RFP sources, reviews or route changed; draft and review a new exact response']
+        pack = packs.bound_pack(b)
+        if pack:
+            response = b.response
+            introduction = f'RFP {response.rfp.reference} response {response.number}'
+            if b.version.fields.get('executive_summary') != {
+                    'text': packs.summary(pack, introduction),
+                    'evidence_ids': [response.evidence_id, pack.source_id],
+            }:
+                return ['The client document must contain the exact recorded cover note and file requirements.']
     except (ValidationError,PermissionDenied) as exc:return ['RFP publication held: '+str(exc)]
     return []
 
@@ -76,6 +99,8 @@ def dispatch_requirements(version):
         raise ValidationError('This response uses manual client portal submission. Record the original portal receipt.')
     if binding and binding.snapshot!=inputs(binding.response,binding.snapshot['route']['key'],dispatch=True):
         raise ValidationError('Review the current RFP submission sources and destination before sending')
+    if binding:
+        packs.require_verified_files(binding)
 
 def recipient_requirements(b,recipients):
     if sorted(b.snapshot['route']['recipient_ids'])!=recipients:raise ValidationError('RFP route must equal the exact configured client recipients')

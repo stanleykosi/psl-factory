@@ -73,7 +73,11 @@ def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifec
     next_cursor=None
     if more:
         last=rows[-1];next_cursor=signing.dumps({'actor':actor.pk,'filters':filters,'size':page_size,'last':[last.created_at.isoformat(),str(last.pk)]},salt=CURSOR_SALT,compress=True)
-    return {'cases':rows,'next_cursor':next_cursor,'filters':filters}
+    result = {'cases': rows, 'next_cursor': next_cursor, 'filters': filters}
+    if kind == 'project' and not area:
+        from .project_list import summaries
+        result['project_rows'] = summaries(actor, rows)
+    return result
 
 def _row(kind,case,pk,reference,status,path,**extra):
     labels={'assigned_action':'Assigned action','owned_support':'Recorded Support ownership','eligible_document_review':'Available document review','initiated_finance_intent':'Your financial intent','eligible_summary_review':'Available complaint summary review','received_department_request':'Received department request','assigned_rfp':'Assigned RFP coordination'}

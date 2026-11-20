@@ -3,9 +3,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods, require_safe
@@ -17,10 +15,10 @@ from apps.identity.services import active_case_grants, require, visible_cases
 
 from .evidence_access import public_evidence
 from . import client_billing_identity
+from .client_directory import BILLING_FILTERS, page as client_directory_page
 from .models import ClientContactRevision, Evidence
 from .read_budget import ReadLimit
 from .services import bump, event, lock_case
-from .workbench import granted
 
 
 READ = {'project': 'engagement.read', 'billing': 'finance.read'}
@@ -89,15 +87,13 @@ def save(actor, case, purpose, fields):
 @require_safe
 @never_cache
 def index(request):
-    project_grants = granted(request.user, ['engagement.read'])
-    billing_grants = granted(request.user, ['finance.read'])
-    recorded = ClientContactRevision.objects.filter(case_id=OuterRef('pk'), purpose='project', case__in=project_grants).order_by('-number')
-    query = (project_grants | billing_grants).annotate(client_name=Subquery(recorded.values('client_name')[:1]))
     term = request.GET.get('q', '').strip()[:100]
-    if term:
-        query = query.filter(Q(title__icontains=term) | Q(client_name__icontains=term))
-    page = Paginator(query.filter(kind='project').order_by('title', 'pk'), 25).get_page(request.GET.get('page'))
-    return render(request, 'design/clients.html', {'projects': page, 'query': term})
+    billing = request.GET.get('billing', '')
+    if billing not in dict(BILLING_FILTERS):
+        billing = ''
+    projects = client_directory_page(request.user, term, billing, request.GET.get('page'))
+    return render(request, 'design/clients.html',
+                  {'projects': projects, 'query': term, 'billing': billing, 'billing_filters': BILLING_FILTERS})
 
 
 @login_required

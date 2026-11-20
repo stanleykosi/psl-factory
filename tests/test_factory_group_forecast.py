@@ -101,6 +101,52 @@ class GroupForecastFactoryTests(TestCase):
         self.assertEqual(PublicationReceipt.objects.filter(publication__factory_work=self.w).count(),1)
         self.assertEqual(group_forecast.verified(service.document(self.w).version)['recipient_count'],1)
 
+    def test_group_queue_presentation_reuses_verified_report_and_rechecks_revocation(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        from apps.core.read_observation import observation_scope
+        from apps.identity.models import Grant
+        from apps.workflows.factory_views import presentation
+
+        self.start();self.advance();self.review();self.advance()
+        self.assertEqual(connection.vendor, 'postgresql')
+        self.assertEqual(self.w.status, 'verified')
+        receipt = PublicationReceipt.objects.get(publication__factory_work=self.w)
+        with observation_scope():
+            with (patch.object(service, 'report', wraps=service.report) as reports,
+                  patch.object(service, 'verify', wraps=service.verify) as verification,
+                  CaptureQueriesContext(connection) as scoped_queries):
+                row = presentation(self.a, self.w)
+            reports.assert_called_once()
+            verification.assert_called_once()
+            self.assertEqual(row['forecast']['status']['stage'], 'complete')
+            self.assertFalse(row['readiness_changed'])
+            with CaptureQueriesContext(connection) as duplicate_queries:
+                self.assertEqual(service.report(self.w, self.a)['stage'], 'complete')
+                self.assertEqual(service.verify(self.w, self.a)['receipt_ids'], [receipt.pk])
+        print(f'Group Forecast queue presentation statements: {len(scoped_queries)}; '
+              f'additional statements in the former duplicate checks: {len(duplicate_queries)}')
+        self.assertLess(len(scoped_queries), 1400)
+        self.assertGreater(len(duplicate_queries), 0)
+
+        recipient = Grant.objects.filter(case=self.c, user=self.reader, action='document.receive:group')
+        self.assertEqual(recipient.filter(active=True).count(), 1)
+        recipient.update(active=False)
+        with patch.object(service, 'verify', wraps=service.verify) as verification:
+            held = presentation(self.a, self.w)
+        verification.assert_called_once()
+        self.assertTrue(held['readiness_changed'])
+        self.assertNotEqual(held['forecast']['status']['stage'], 'complete')
+        recipient.update(active=True)
+        self.assertFalse(presentation(self.a, self.w)['readiness_changed'])
+
+        disclosure = active_component('D10.audience_projection_rules', self.c)
+        transition(self.a, disclosure.pk, 'revoked')
+        stale = presentation(self.a, self.w)
+        self.assertTrue(stale['readiness_changed'])
+        self.assertNotEqual(stale['forecast']['status']['stage'], 'complete')
+        self.assertTrue(PublicationReceipt.objects.filter(pk=receipt.pk, recipient=self.reader).exists())
+
     def test_missing_group_policy_stops_group_only_without_draft_or_investigation_leak(self):
         projection=reference_values(active_component('D10.audience_projection_rules',self.c))[0];projection.pop('group')
         policy(self.a,self.c,'D10.audience_projection_rules',projection)

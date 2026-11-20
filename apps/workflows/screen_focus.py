@@ -8,7 +8,7 @@ SCREENS = {
         'recovery': ('reconcile', 'replace_preparation', 'resume', 'cancel', 'adopt_profile'),
     },
     'rfp-response/v1': {
-        'decision': ('response', 'commercial', 'document'),
+        'decision': ('response', 'commercial', 'document', 'submission_pack'),
         'response': ('outcome','portal_receipt','followup_draft','followup_review','followup_send','followup_confirm','followup_lookup','followup_route'),
         'recovery': ('reconcile', 'cancel'),
     },

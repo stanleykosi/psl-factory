@@ -101,7 +101,7 @@
         link.href = href.pathname === create.pathname ? carryContext(href, current) : href;
       }
       for (const form of panel.querySelectorAll('form')) {
-        form.action = new URL(form.getAttribute('action') || current.href, current);
+        form.setAttribute('action', new URL(form.getAttribute('action') || current.href, current).href);
       }
       body.replaceChildren(...panel.childNodes);
       back.hidden = current.pathname === chooser.pathname;
@@ -146,10 +146,12 @@
 
   dialog.addEventListener('submit', (event) => {
     const form = event.target;
-    const action = new URL(form.action);
+    // The weekly report has submit buttons named action. Read the attribute
+    // directly so a named control cannot shadow the native form property.
+    const action = new URL(form.getAttribute('action') || location.href, location.href);
     if (!intakePage(action)) return;
     event.preventDefault();
-    if (form.method === 'post') {
+    if ((form.getAttribute('method') || 'get').toLowerCase() === 'post') {
       if (!body.hasAttribute('aria-busy')) void load(action, new FormData(form, event.submitter));
       return;
     }
