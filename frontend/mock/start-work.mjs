@@ -36,7 +36,7 @@ const OPTION_FILES = { from_issue: 'issue', status_cites: 'records', risks_cites
 // F-21, F-23: the weekly report's cite fields and the minutes' action owner are step fields of the work item, not intake fields; the mock lists this week's records for them.
 const STEP_RECORD_FIELDS = { weekly_report: ['status_cites', 'risks_cites', 'timeline_cites', 'next_steps_cites'], minutes: ['owner'] };
 // The work item each line's 201 answers with (fixtures/work/W-14xx.json, in fixture table order).
-const WORK_IDS = {
+export const WORK_IDS = {
   invoice: 'W-1401',
   weekly_report: 'W-1402',
   minutes: 'W-1403',

@@ -38,6 +38,7 @@ import { invoices } from './invoices.mjs';
 import { overview } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
+import { createLineRuns } from './line-runs.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
@@ -153,9 +154,11 @@ function findTask(taskId, fixtures, work, overrides) {
 }
 
 function taskResponse(operationId, url, raw, ctx) {
-  const { fixtures, work, overrides, validators, me } = ctx;
+  const { fixtures, work, overrides, validators, me, runs, persona } = ctx;
   const taskId = decodeCookie(url.pathname.split('/')[4] ?? '');
-  const found = findTask(taskId, fixtures, work, overrides);
+  // D-155: a task of a demo line run (line-runs.mjs) is decided there; every other task is a fixture's.
+  const run = runs.findTask(taskId, persona);
+  const found = run ?? findTask(taskId, fixtures, work, overrides);
   if (!found) return [404, SCENARIO_BODIES[404]];
   let body;
   try {
@@ -177,6 +180,7 @@ function taskResponse(operationId, url, raw, ctx) {
   if (!task.you_can_act) return [403, SCENARIO_BODIES[403]];
   if (!decide) return [200, { task_id: task.id, revision: task.revision, claimed_by: me.name }];
 
+  if (run) return [200, { task_id: task.id, verdict: body.verdict, decided_by: me.name, decided_at: new Date().toISOString(), work_state: runs.decide(task.id, body.verdict, body.note, persona) }];
   const next = work[`${workId}.next`];
   if (next && !overrides.has(workId)) {
     overrides.set(workId, next);
@@ -186,6 +190,14 @@ function taskResponse(operationId, url, raw, ctx) {
   if (decided) overrides.set(workId, decided);
   const result = { task_id: task.id, verdict: body.verdict, decided_by: me.name, decided_at: new Date().toISOString() };
   return [200, { ...result, work_state: (decided ?? item).state }];
+}
+
+/** D-155: a start made with the demo on creates a line run, and the 201 names its work item; any other reply stands. */
+function demoStart(runs, reply, raw, persona) {
+  if (reply[0] !== 201) return reply;
+  const body = JSON.parse(raw);
+  const run = runs.start({ key: body.idempotency_key, lineKey: body.line, persona });
+  return [201, { work_id: run.id, state: 'processing' }];
 }
 
 export function loadRoutes(openapi) {
@@ -237,6 +249,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const overrides = new Map();
   const alerts = createAlertsMock({ openapi });
   const assistant = createAssistantMock({ openapi });
+  // D-155: the live demo's line runs; they exist only after a start made with the demo on.
+  const runs = createLineRuns({ work, me, raise: (persona, alert) => alerts.raise(persona, alert) });
 
   return http.createServer((req, res) => {
     const chunks = [];
@@ -258,6 +272,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetWorkspace();
         resetClients();
         assistant.reset();
+        runs.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
@@ -296,10 +311,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) {
         return send(res, 403, CSRF_FAILED);
       }
+      const demo = demoOn(cookies);
+      if (demo) runs.tick();
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
-      if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo: demoOn(cookies) }));
+      if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECT-TAB') { const r = projectTab({ url, persona, cookies }); return send(res, r.status, r.body); }
@@ -313,16 +330,22 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
         if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });
+        // D-155: the item and history of a demo line run
+        const runId = decodeCookie(url.pathname.split('/')[4] ?? '');
+        if (runs.owns(runId)) return send(res, 200, route.operationId === 'E-WORK-ITEM' ? runs.item(runId, persona) : historyPage(runs.history(runId), url.searchParams));
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides, persona));
       }
       if (TASK_OPERATIONS.includes(route.operationId)) {
-        return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
+        return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona], runs, persona }));
       }
       if (route.operationId === 'E-WORK-START') {
         const fromDraft = assistant.draftStart(raw, persona);
         if (fromDraft) return send(res, ...fromDraft);
       }
-      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona, cookies }));
+      if (START_OPERATIONS.includes(route.operationId)) {
+        const reply = startWork.handle(route.operationId, { url, raw, persona, cookies });
+        return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona) : reply));
+      }
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }

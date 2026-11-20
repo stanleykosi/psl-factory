@@ -70,7 +70,7 @@ const loggedRow = ({ work_id: id, reference, client }) => ({
   },
 });
 
-export function workList({ url, persona, dataset: name }) {
+export function workList({ url, persona, dataset: name, extra = [] }) {
   const params = url.searchParams;
   const queue = params.get('queue');
   const limit = params.has('limit') ? Number(params.get('limit')) : 20;
@@ -90,8 +90,17 @@ export function workList({ url, persona, dataset: name }) {
   const gone = drawn.rows.filter((row) => row.queue === 'unassigned' && assigned.has(row.item.id)).length;
   const kept = gone === 0 ? drawn : { ...drawn, rows: drawn.rows.filter((row) => !(row.queue === 'unassigned' && assigned.has(row.item.id))), counts: { ...drawn.counts, unassigned: drawn.counts.unassigned - gone } };
   // F-49: an RFP logged from Start work is one more Unassigned row for the PMO Lead, until the mock is reset.
-  const added = persona === 'pmo_lead' ? loggedRfps().filter((rfp) => !assigned.has(rfp.work_id)).map(loggedRow) : [];
-  const data = added.length === 0 ? kept : { ...kept, rows: [...added, ...kept.rows], counts: { ...kept.counts, unassigned: kept.counts.unassigned + added.length }, lines: kept.lines.some((l) => l.key === 'rfp_intake') ? kept.lines : [...kept.lines, { key: 'rfp_intake', title: 'RFP received' }] };
+  const logs = persona === 'pmo_lead' ? loggedRfps().filter((rfp) => !assigned.has(rfp.work_id)).map(loggedRow) : [];
+  const withLogged = logs.length === 0 ? kept : { ...kept, rows: [...logs, ...kept.rows], counts: { ...kept.counts, unassigned: kept.counts.unassigned + logs.length }, lines: kept.lines.some((l) => l.key === 'rfp_intake') ? kept.lines : [...kept.lines, { key: 'rfp_intake', title: 'RFP received' }] };
+
+  // D-155: the live demo's line runs (line-runs.mjs) are more rows for the persona; the board sample stays as drawn.
+  const added = name === 'board' ? [] : extra;
+  const data = added.length === 0 ? withLogged : {
+    ...withLogged,
+    rows: [...added, ...withLogged.rows],
+    counts: Object.fromEntries(Object.entries(withLogged.counts).map(([queue, count]) => [queue, count + added.filter((row) => row.queue === queue).length])),
+    lines: [...withLogged.lines, ...added.map((row) => ({ key: row.item.line_key, title: row.item.line })).filter((l, i, all) => !withLogged.lines.some((x) => x.key === l.key) && all.findIndex((x) => x.key === l.key) === i)],
+  };
 
   const state = params.get('state');
   const line = params.get('line');
