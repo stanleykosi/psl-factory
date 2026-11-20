@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. Hosted verified 258 and prepared scoped sample records. In one admitted account session, Engineering returned exact bid response 25 and the payroll source holder submitted private name and settlement facts against input 61. The native timing form issued proof 33567. The trial reviewer sign-in was requested once after the preparer batch. Scoped browser count remains 134.
+
 20 November 2026. Candidate 258 passed all 18 PostgreSQL tests and the original preservation probes. Weekly report sections now have separate exact citations. The Finance Forecast review displays the current month totals while keeping unknown amounts distinct from zero and omitting private calculations from Group Forecast. The distinct-reviewer bid and private payroll sample gates passed.
 
 20 November 2026. Promoted verified 255 and its matching worker. The preview applied bid upload and leadership scope migrations and accepted the guarded two-project leadership sample. The browser confirmed the private Group Forecast Return, the original asset Return in native history and restricted Payroll intake. Candidate 258 runs the corrected bid and separate payroll fixtures alongside both report improvements.
