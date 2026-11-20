@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.db import transaction,connection
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.utils import timezone
+from apps.core.models import Case
 from apps.core.services import lock_case,event,bump
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -295,7 +296,12 @@ def publish(actor,case_id,work_id,key,expected):
 
 @transaction.atomic
 def read_report(actor,report_id):
- r=BUReport.objects.defer('payload').select_related('work__case').get(pk=report_id);c=locked(actor,r.work.case_id,'bu.report.read');policy,v=config(DISCLOSE,c)
+ r=BUReport.objects.defer('payload','work__payload','work__metadata').select_related('work').get(pk=report_id)
+ # Hold the source and grants stable during the read without entering a command scope.
+ c=Case.objects.select_for_update().get(pk=r.work.case_id)
+ list(Grant.objects.select_for_update().filter(case=c).order_by('pk').values_list('pk',flat=True))
+ for action in ['case.read','bu.read','bu.report.read']:require(actor,c,action)
+ policy,v=config(DISCLOSE,c)
  if actor.pk not in v['recipient_ids']:raise PermissionDenied('Not a configured aggregate recipient')
  w=exact(c,r.work_id);current(w);require(r.actor,c,'bu.publish');private_access(r.actor,w)
  if review_current(w).pk!=r.review_id or authority(r.actor,w,'publish')!={k:pk for k,pk in r.policy_ids.items() if k!=DISCLOSE} or policy.pk!=r.policy_ids[DISCLOSE]:raise ValidationError('Report review/authority/disclosure changed')

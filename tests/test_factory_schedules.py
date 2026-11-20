@@ -41,7 +41,9 @@ class FactorySchedulesTests(TestCase):
         inventory_source = evidence(f, 'schedule_inventory', json.dumps(f['values']['inventory']))
         self.client.force_login(f['actor'])
         url = reverse('factory_create') + '?definition=' + flow.DEFINITION + '&case=' + str(f['case'].pk)
-        self.assertContains(self.client.get(url), 'Leave this blank to use the exact selected evidence.')
+        page = self.client.get(url)
+        self.assertContains(page, 'Leave this blank to use the exact selected evidence.')
+        self.assertNotContains(page, '>null</textarea>')
         for kind, source, parent in [('income', income_source, f['parent'].pk), ('inventory', inventory_source, '')]:
             with self.subTest(kind=kind):
                 values = {'definition': flow.DEFINITION, 'case': f['case'].pk, 'key': f'drawer-{kind}', 'kind': kind,

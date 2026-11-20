@@ -4,6 +4,7 @@ from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 from copy import deepcopy
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import connection,transaction,DatabaseError
@@ -120,6 +121,25 @@ class FactoryBUTests(TestCase):
         self.start();self.assertEqual(bu.start(self.f['preparer'],self.f['case'].pk,'OTHER',self.inputs,'Same scope').pk,self.work.pk)
         with self.assertRaises(ValidationError):bu.start(self.f['preparer'],self.f['case'].pk,'BU-1',self.inputs,'Changed description')
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_drawer_requires_current_sources_and_refreshes_its_choices(self):
+        from apps.workflows.factory_bu_views import InputsForm
+
+        f = self.f
+        sample_event = source(f)
+        self.client.force_login(f['preparer'])
+        url = reverse('factory_create') + '?definition=' + bu.DEFINITION + '&case=' + str(f['case'].pk)
+        available = self.client.get(url)
+        self.assertContains(available, f'Payroll match {f["match"].pk}')
+        self.assertContains(available, f'Accepted event source {sample_event.pk}')
+        later = timezone.now() + timedelta(days=90)
+        with patch('apps.finance.payroll.timezone.now', return_value=later):
+            # Simulate source age at the form boundary without expiring the test login session.
+            unavailable = InputsForm(f['case'], f['preparer'], starting=True)
+        self.assertFalse(unavailable.has_current_sources)
+        self.assertFalse(unavailable.fields['payroll_id'].queryset.exists())
+        self.assertFalse(unavailable.fields['source_id'].queryset.exists())
+        self.assertFalse(FactoryWork.objects.exists())
     def test_cross_case_and_wrong_native_kind_inputs_denied(self):
         self.start();bad=dict(self.inputs,payroll_id=999999)
         with self.assertRaises(ValidationError):bu.inputs_checked(self.f['preparer'],self.f['case'],bad)

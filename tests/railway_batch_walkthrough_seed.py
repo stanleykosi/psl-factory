@@ -456,6 +456,57 @@ def prepare_schedule_drawer_sources(actor):
 
 
 @transaction.atomic
+def prepare_bu_drawer_sources(actor):
+    from apps.finance.bu_models import BUWork
+    from apps.finance.payroll_models import PayrollRun
+    from tests import bu_helpers, payroll_helpers
+
+    case, created = Case.objects.get_or_create(tenant=TENANT, title='SAMPLE fresh business-unit drawer sources',
+                                               kind='project', synthetic=True)
+    if created:
+        users = get_user_model().objects
+        owner = users.create_user('batch-bu-drawer-owner')
+        Grant.objects.bulk_create([Grant(user=owner, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+
+        def principal(role):
+            return actor if role == 'preparer' else users.create_user(f'batch-bu-drawer-{role}')
+
+        with patch.object(bu_helpers, 'payroll_fixture', side_effect=partial(
+                payroll_helpers.fixture, context=(owner, case), principal=principal)):
+            data = bu_helpers.fixture()
+        for record in (bu_helpers.rule(data), bu_helpers.source(data)):
+            bu_helpers.review(data, record)
+        value = json.loads(Path('fixtures/factory-bu.json').read_text())
+        value.pop('classification')
+        cfg = draft_operator_policy(actor, case.pk, 'OPS.factory_bu_execution', value,
+                                    data['e']['policy_decision'].pk, timezone.now())
+        transition(actor, cfg.pk, 'validated')
+        transition(actor, cfg.pk, 'active')
+    refs = dict(BUWork.objects.filter(case=case, kind__in=['rule', 'source']).values_list('kind', 'pk'))
+    refs['match'] = PayrollRun.objects.get(request__case=case, kind='match').pk
+    return {'case': str(case.pk), 'sources': refs, 'existing_sources_preserved': not created}
+
+
+@transaction.atomic
+def prepare_minutes_drawer_sources(actor):
+    from apps.documents.models import Template
+    from tests import document_helpers, test_factory_minutes
+
+    case, created = Case.objects.get_or_create(tenant=TENANT, title='SAMPLE formal minutes document upload',
+                                               kind='project', synthetic=True)
+    if created:
+        Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        people = get_user_model().objects
+        create_user = people.create_user
+        with (patch.object(document_helpers, 'setup_case', return_value=(actor, case)),
+              patch.object(people, 'create_user', side_effect=lambda username, **kw:
+                           create_user(username=f'batch-minutes-drawer-{username}', **kw))):
+            test_factory_minutes.FactoryMinutesTests().setUp()
+    template = Template.objects.get(case=case, name='Formal minutes')
+    return {'case': str(case.pk), 'template': template.pk, 'existing_sources_preserved': not created}
+
+
+@transaction.atomic
 def prepare_independent_finance_review(actor, key):
     from tests import finance_analysis_helpers, ppe_helpers, schedule_helpers, test_factory_ppe, test_factory_schedules
 
@@ -675,6 +726,8 @@ def run():
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)
     sessions['hr_payroll_correction'] = lambda: prepare_hr_payroll_correction(actor)
     sessions['schedule_drawer_sources'] = lambda: prepare_schedule_drawer_sources(actor)
+    sessions['bu_drawer_sources'] = lambda: prepare_bu_drawer_sources(actor)
+    sessions['minutes_drawer_sources'] = lambda: prepare_minutes_drawer_sources(actor)
     sessions['unreadable_invoice'] = prepare_unreadable_invoice
     failed = False
     for key, prepare in sessions.items():

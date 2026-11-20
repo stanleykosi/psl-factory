@@ -27,27 +27,34 @@ STAGES = {
 }
 
 class RefField(forms.ModelChoiceField):
-    def label_from_instance(self,obj):return f'{getattr(obj,"kind","Native reference")} #{obj.pk}'
+    def label_from_instance(self,obj):
+        labels = {'match': 'Payroll match', 'source': 'Accepted event source', 'allocation': 'Company allocation'}
+        return f'{labels.get(obj.kind, "Source reference")} {obj.pk}'
 class RefsField(forms.ModelMultipleChoiceField):
     def label_from_instance(self,obj):return f'Exception rule #{obj.pk} / version {obj.version}'
 
 class InputsForm(forms.Form):
     mode=forms.ChoiceField(choices=[('staff','Payroll exceptions and staff aggregate'),('event','Supplied-event attribution reference')])
-    def __init__(self,case,actor,*args,**kwargs):
+    def __init__(self,case,actor,*args,starting=False,**kwargs):
         super().__init__(*args,**kwargs)
         payroll=[];sources=[];rules=[]
         for p in PayrollRun.objects.defer('result').filter(request__case=case,kind='match').order_by('-pk')[:100]:
-            try:bu.inputs_checked(actor,case,{'mode':'staff','payroll_id':p.pk,'source_id':None,'rule_ids':[],'comparison':None},False);payroll.append(p.pk)
+            try:bu.inputs_checked(actor,case,{'mode':'staff','payroll_id':p.pk,'source_id':None,'rule_ids':[],'comparison':None},starting);payroll.append(p.pk)
             except (PermissionDenied,ValidationError):pass
         for w in BUWork.objects.defer('payload').filter(case=case,kind__in=['rule','source']).order_by('-pk')[:200]:
             try:
                 if w.kind=='rule':
                     if w.payroll_id in payroll:rules.append(w.pk)
-                else:bu.native.private_access(actor,w);sources.append(w.pk)
+                else:
+                    bu.native.private_access(actor,w)
+                    if starting:
+                        bu.native.current(w)
+                    sources.append(w.pk)
             except (PermissionDenied,ValidationError):pass
-        self.fields['payroll_id']=RefField(PayrollRun.objects.defer('result').filter(pk__in=payroll),required=False,label='Exact F17 payroll match')
+        self.fields['payroll_id']=RefField(PayrollRun.objects.defer('result').filter(pk__in=payroll),required=False,label='Exact payroll match')
         self.fields['rule_ids']=RefsField(BUWork.objects.defer('payload').filter(pk__in=rules),required=False,label='Exceptions to exclude from the standard pool',help_text='Explicitly select every exception. Selection declares each rule’s subject and component. It does not approve a ratio.')
         self.fields['source_id']=RefField(BUWork.objects.defer('payload').filter(pk__in=sources,metadata__accepted=True),required=False,label='Exact accepted supplied-event source')
+        self.has_current_sources = bool(payroll or sources)
         from apps.identity.services import require
         try:require(actor,case,'finance.calculate');comparisons=FinanceRun.objects.defer('result','snapshot').filter(case=case,kind='allocation')
         except PermissionDenied:comparisons=FinanceRun.objects.none()
@@ -79,7 +86,7 @@ def create(request):
     data=request.POST if request.method=='POST' else None
     try:form=StartForm(request.user,data,case_id=(data or request.GET).get('case'))
     except (ValueError,ValidationError):form=StartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available workspace')
-    inputs=InputsForm(form.selected,request.user,data) if form.selected else None
+    inputs=InputsForm(form.selected,request.user,data,starting=True) if form.selected else None
     if request.method=='POST' and form.is_valid() and inputs and inputs.is_valid():
         try:
             d=form.cleaned_data

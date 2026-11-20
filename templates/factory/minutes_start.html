@@ -3,7 +3,7 @@
 <p>Confirm the actual decisions, action owners and deadlines using the meeting notes.</p>
 {% include 'factory/project_intake_picker.html' %}
 {{ form.non_field_errors }}
-{% if inputs_form %}<form method="post">{% csrf_token %}{{ form.case.as_hidden }}{{ form.definition }}{{ form.revision }}{{ form.key }}
+{% if inputs_form %}<form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.case.as_hidden }}{{ form.definition }}{{ form.revision }}{{ form.key }}
   {{ form.reference.as_field_group }}{{ inputs_form.as_p }}{{ form.background.as_field_group }}
   <button>Start formal minutes work</button>
 </form>{% endif %}

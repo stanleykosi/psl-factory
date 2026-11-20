@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Starting business-unit work checks source freshness before presenting choices. Reading a published aggregate uses the original publisher, current disclosure rule and exact authorized recipient while holding the same native case and grant locks. Formal minutes accept one source. A new upload retains its private original and pins the extracted meeting evidence to the exact original uploader and fingerprint. Human confirmation still owns the meeting and commitments.
+
 20 November 2026. The Security drafting form uses the existing Tola conversation and only the exact selected received bid metadata. The web reserves work with the configured model name and scoped access. The worker holds the provider credential and performs the model call. Human review seals any edited wording, due date, selected recipient route and file reference before release.
 
 20 November 2026. An authenticated request to open an opaque work link records only the account and the submitted work reference. The acknowledgement is the same for denied or missing work. Current technical workspace administrators may review matching requests through People and access. An earlier unmatched reference cannot attach to a record created later. Recording a request has no grant or business-role effect.

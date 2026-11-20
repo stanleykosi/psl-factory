@@ -38,9 +38,14 @@ class DuplicateResolutionForm(forms.Form):
         return {row['key']: self.cleaned_data[field.name] for row, field in self.rows}
 
 
+class ScheduleOverrideField(forms.JSONField):
+    def prepare_value(self, value):
+        return '' if value is None else super().prepare_value(value)
+
+
 class InputsForm(forms.Form):
     kind=forms.ChoiceField(choices=[('income','Income detail'),('inventory','Selected schedule inventory')])
-    payload=forms.JSONField(required=False,widget=forms.Textarea,label='Reviewed income detail override')
+    payload=ScheduleOverrideField(required=False,widget=forms.Textarea,label='Reviewed income detail override')
     def __init__(self,case,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['parent_id']=forms.ModelChoiceField(queryset=FinanceRun.objects.filter(case=case,kind='mapping').order_by('-pk'),required=False,label='Exact mapping note (income only)')

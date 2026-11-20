@@ -4,9 +4,13 @@ from datetime import timedelta
 from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection,transaction,DatabaseError
+from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from apps.agents.models import CaseUpload
+from apps.core.models import Audit
 from apps.core.services import add_evidence
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
@@ -65,6 +69,41 @@ class FactoryMinutesTests(TestCase):
         bad=dict(self.data,audience='client',publish=True)
         with self.assertRaises(ValidationError):flow.start(self.actor,self.case.pk,'MINUTES-1','FORMAL-1',bad,rev(self.case))
         transition(self.actor,self.policy.pk,'revoked');self.confirm();self.advance();self.assertEqual(self.work.status,'configuration_needed');self.assertTrue(Meeting.objects.filter(reference='FORMAL-1').exists())
+
+    def test_start_upload_connects_exact_notes_and_original_source_authority(self):
+        self.client.force_login(self.actor)
+        path = reverse('factory_create') + '?definition=' + flow.DEFINITION + '&case=' + str(self.case.pk)
+        self.assertContains(self.client.get(path), 'Upload meeting notes')
+        command = {'definition': flow.DEFINITION, 'case': self.case.pk, 'key': 'sample-notes-upload',
+                   'reference': 'SAMPLE-NEW-MINUTES', 'revision': rev(self.case), 'audience': 'internal',
+                   'template_id': self.template.pk, 'meeting_version_id': ''}
+        raw = b'Confirm the current delivery plan.\nInvestigate the dependency before the next review.'
+
+        def notes():
+            return SimpleUploadedFile('sample-meeting-notes.txt', raw, 'text/plain')
+
+        with patch('adapters.case_uploads.put') as store:
+            invalid = self.client.post(path, {**command, 'evidence_id': self.notes.pk, 'notes_file': notes()})
+            self.assertContains(invalid, 'Select existing notes or upload one notes file.')
+            self.assertFalse(CaseUpload.objects.exists())
+            store.assert_not_called()
+            accepted = self.client.post(path, {**command, 'notes_file': notes()})
+            self.assertEqual(accepted.status_code, 302)
+            self.work = FactoryWork.objects.get(key='sample-notes-upload')
+            upload = CaseUpload.objects.get(case=self.case, actor=self.actor)
+            selection, evidence, _ = flow.source(self.work, self.actor)
+            self.assertEqual((selection['evidence_id'], evidence.body), (evidence.pk, raw.decode()))
+            self.assertTrue(Audit.objects.filter(case=self.case, action=flow.UPLOADED_NOTES_AUDIT,
+                                                data__upload=upload.pk, data__file_sha256=upload.sha256).exists())
+            repeat = self.client.post(path, {**command, 'notes_file': notes()})
+            self.assertRedirects(repeat, accepted.url, fetch_redirect_response=False)
+            store.assert_called_once_with(upload.key, raw)
+        self.advance()
+        self.assertIsNotNone(flow.extraction(self.work), self.work.finding)
+        self.assertFalse(Meeting.objects.filter(reference=command['reference']).exists())
+        Grant.objects.filter(case=self.case, user=self.actor, action='evidence.add').update(active=False)
+        with self.assertRaises(PermissionDenied):
+            flow.source(self.work, self.actor)
     def test_scoped_source_denial_and_hostile_attribution_do_not_create_meeting(self):
         self.start();self.advance();fields=self.fields();fields['decisions'][0]['evidence_id']=self.owner.pk
         with self.assertRaises(ValidationError):self.confirm(fields=fields)

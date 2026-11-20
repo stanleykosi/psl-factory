@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. Repaired the aggregate recipient read boundary and the simulated source-age test together. Added formal minutes intake from a bounded original file with a retained source fingerprint and separate human confirmation. All seven 227 tests and both preservation probes passed, then the matching build served the new sample forms. Implemented the project Journey's chronological scoped work and Finance facts for the next grouped gate. HOD choices remain deferred.
+
 20 November 2026. All three 225 PostgreSQL groups and both preservation probes passed. Deployed both matching services with the new append-only access request table. Verified the generic request in the browser with no grant and verified actual model drafting, exact human review and one sample inbox receipt. Verified both submitted schedule variants through their native approval waits, including stale revision recovery. All 262 states have been observed, with 79 scoped journeys complete.
 
 20 November 2026. Restored the ordinary worker after verifying publication. The browser submitted exact accounting and asset inputs through the drawer and reopened the original records. Replaced the accounting picker’s internal labels and per-workspace authorization reads. Schedule intake can use its selected structured proof directly. Grouped the changes with the opaque-access test assertion correction for the next Railway gate.

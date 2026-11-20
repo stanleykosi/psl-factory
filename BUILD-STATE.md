@@ -4,7 +4,7 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 ## Current implementation and verification
 
-The 225 Railway preview serves opaque work access requests, Tola drafting with the worker-held credential and named Finance intake. Identity `0011`, Finance `0082` and Project `0074` are applied and immutable. All 20 grouped PostgreSQL tests and both preservation probes passed after correcting the 224 masked-token assertion. The browser verified the Tola draft, human edit and sample receipt, equal opaque denial for a missing or unavailable target, and the original asset and accounts work and two new exact schedule intakes.
+The 227 Railway preview adds current business-unit intake, aggregate-only recipient readback and formal minutes from uploaded notes. PostgreSQL passed all seven grouped tests and both preservation probes. Browser submission of the new minutes file and the fresh aggregate walkthrough remain open. Candidate 228 adds chronological project work, scoped progress facts and a project-specific Tola entry. Identity `0011`, Finance `0082` and Project `0074` are applied and immutable. The prior 225 browser verified the real Tola draft through separately reviewed sample delivery, equal opaque work denial and source-bound Finance intake.
 
 Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate 201 finished all 487 PostgreSQL tests across 36 modules in 7,478.882 seconds. The final result was four failures, three errors and exit 1. The seven traces cover the bid form, Standard Change fixture authority, invoice test setup and database scope, and the fixed-asset linked-note authority check.
 

@@ -19,16 +19,29 @@ from .factory_minutes_forms import apply_suggestions,capture_forms,command_keys,
 
 class InputsForm(forms.Form):
     audience=forms.ChoiceField(choices=[('internal','Internal repository only'),('client','Client, with separately authorized publication')])
-    publish=forms.BooleanField(required=False,label='I request outward publication after exact P53 review')
-    def __init__(self,case,*args,**kwargs):
+    publish=forms.BooleanField(required=False,label='I request client publication after a separate review')
+    def __init__(self,case,*args,upload_allowed=False,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['meeting_version_id']=forms.ModelChoiceField(queryset=MeetingVersion.objects.filter(meeting__case=case,meeting__current_id=F('pk')).order_by('-pk'),required=False,label='Existing meeting current version (blank only for a new meeting reference)')
         self.fields['meeting_version_id'].label_from_instance=lambda version:version.meeting.reference+' · revision '+str(version.number)+' · '+version.purpose
-        self.fields['evidence_id']=forms.ModelChoiceField(queryset=Evidence.objects.filter(case=case,kind='meeting_notes').order_by('-pk'),label='Authorized meeting notes')
+        self.fields['evidence_id']=forms.ModelChoiceField(queryset=Evidence.objects.filter(case=case,kind='meeting_notes').order_by('-pk'),
+                                                         label='Authorized meeting notes',required=not upload_allowed)
+        if upload_allowed:
+            self.fields['notes_file']=forms.FileField(required=False,label='Upload meeting notes',
+                help_text='Text, Word, Excel or readable PDF, up to 5 MiB. The notes become source evidence for this project.',
+                widget=forms.ClearableFileInput(attrs={'accept':'.txt,.docx,.xlsx,.pdf'}))
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type='minutes').order_by('-pk'),label='Minutes template')
+
+    def clean(self):
+        values = super().clean()
+        if 'notes_file' in self.fields and not (self.errors.get('notes_file') or self.errors.get('evidence_id')):
+            if bool(values.get('notes_file')) == bool(values.get('evidence_id')):
+                raise ValidationError('Select existing notes or upload one notes file.')
+        return values
+
     def selection(self):
         d=self.cleaned_data
-        return {'protocol':domain.PROTOCOL,'meeting_version_id':d['meeting_version_id'].pk if d['meeting_version_id'] else None,'evidence_id':d['evidence_id'].pk,'template_id':d['template_id'].pk,'audience':d['audience'],'publish':d['publish']}
+        return {'protocol':domain.PROTOCOL,'meeting_version_id':d['meeting_version_id'].pk if d['meeting_version_id'] else None,'evidence_id':d['evidence_id'].pk if d['evidence_id'] else None,'template_id':d['template_id'].pk,'audience':d['audience'],'publish':d['publish']}
 
 class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
@@ -48,13 +61,16 @@ def create(request):
     data=request.POST if request.method=='POST' else None
     try:form=StartForm(request.user,data,case_id=(data or request.GET).get('case'))
     except (ValueError,ValidationError):form=StartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available project')
-    inputs=InputsForm(form.selected,data) if form.selected else None
+    inputs=InputsForm(form.selected,data,request.FILES if data is not None else None,upload_allowed=True) if form.selected else None
     if request.method=='POST' and form.is_valid() and inputs and inputs.is_valid():
         try:
             d=form.cleaned_data
-            if d['definition']!=domain.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Exact typed minutes intake required')
-            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'], d['reference'],
-                              inputs.selection(), d['revision']), d['background'])
+            if (d['definition']!=domain.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}
+                    or set(request.FILES)-{'notes_file'} or len(request.FILES.getlist('notes_file')) > 1):
+                raise ValidationError('Choose one notes source for this meeting.')
+            args=(request.user,d['case'].pk,d['key'],d['reference'],inputs.selection(),d['revision'])
+            uploaded=inputs.cleaned_data.get('notes_file')
+            return start_work(request, lambda: domain.start_uploaded(*args,uploaded) if uploaded else domain.start(*args), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/minutes_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

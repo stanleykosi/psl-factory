@@ -18,7 +18,7 @@ from apps.documents.models import Template,Publication,PublicationJob,Publicatio
 from apps.pmo import meetings,reporting
 from apps.pmo.models import Meeting,MeetingVersion,ActionItem,MinutesReportBinding
 from apps.pmo.services import subject
-from apps.agents.models import AgentRun
+from apps.agents.models import AgentRun, CaseUpload
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
 from .models import HumanTask
 from .factory_delivery import investigation_key
@@ -27,11 +27,14 @@ from .factory_handover import pending_job
 DEFINITION='pmo-minutes/v1'
 KIND='agent_private_minutes_intake'
 PROTOCOL='factory-minutes-intake/v1'
+UPLOADED_NOTES='psl:minutes-notes-upload:'
+UPLOADED_NOTES_AUDIT='factory.minutes_upload_admitted'
 ID={'type':'integer','minimum':1}
 NULLID={'anyOf':[ID,{'type':'null'}]}
 def obj(properties):return {'type':'object','properties':properties,'required':list(properties),'additionalProperties':False}
 def text(limit):return {'type':'string','minLength':1,'maxLength':limit}
 SELECTION=obj({'protocol':{'const':PROTOCOL},'meeting_version_id':NULLID,'evidence_id':ID,'template_id':ID,'audience':{'enum':['internal','client']},'publish':{'type':'boolean'}})
+UPLOAD_SELECTION = obj({**SELECTION['properties'], 'evidence_id': {'type': 'null'}})
 FIELDS=obj({'kind':{'enum':meetings.MEETING_KINDS},'occurred_at':text(80),'purpose':text(240),'summary':text(16000),'participant_ids':{'type':'array','maxItems':50,'uniqueItems':True,'items':ID},
  'decisions':{'type':'array','maxItems':50,'items':obj({'text':text(2000),'evidence_id':ID,'change_evidence_id':NULLID})},
  'actions':{'type':'array','maxItems':50,'items':obj({'reference':text(160),'description':text(1000),'owner_id':NULLID,'due_at':{'anyOf':[text(80),{'type':'null'}]},'evidence_id':ID,'change_evidence_id':NULLID,'reason':text(4000)})},
@@ -48,6 +51,15 @@ def selection(actor,case,data):
     if case.kind!='project' or data['publish']!=(data['audience']=='client'):raise ValidationError('Choose internal repository minutes or explicitly requested client publication')
     e=subject(case,data['evidence_id'],'meeting_notes')
     if restricted(e) or not e.body.strip() or len(e.body)>16000:raise ValidationError('Bounded authorized meeting notes required')
+    if e.source.startswith(UPLOADED_NOTES):
+        pin = Audit.objects.filter(case=case, actor_id=e.created_by_id, action=UPLOADED_NOTES_AUDIT,
+                                   data__evidence=e.pk, data__notes_sha256=e.sha256).first()
+        upload_id = pin.data.get('upload') if pin else None
+        upload = CaseUpload.objects.filter(case=case, actor_id=e.created_by_id, pk=upload_id).first() if type(upload_id) is int else None
+        if not upload or e.source != UPLOADED_NOTES + str(upload.pk) or upload.sha256 != pin.data.get('file_sha256'):
+            raise ValidationError('The exact uploaded notes and their source proof are required')
+        readable(e.created_by, case)
+        require(e.created_by, case, 'evidence.add')
     t=Template.objects.filter(case=case,pk=data['template_id'],definition__document_type='minutes').first()
     if not t or data['audience'] not in t.definition['audience_fields']:raise ValidationError('Same-project minutes template and supported audience required')
     if data['meeting_version_id'] is not None and not MeetingVersion.objects.filter(pk=data['meeting_version_id'],meeting__case=case).exists():raise ValidationError('Select an existing meeting version from this project')
@@ -93,6 +105,58 @@ def start(actor,case_id,key,reference,data,expected):
     meeting_intent(c,reference,data)
     w=Work.objects.create(case=c,actor=actor,key=key,definition=DEFINITION,request=request,request_hash=sha,business_key=business,source_head=capture(actor,c,data,'factory.minutes_intake'))
     event(actor,c,'factory.started',work=w.pk,definition=DEFINITION);return w
+
+
+@transaction.atomic
+def start_uploaded(actor, case_id, key, reference, data, expected, file):
+    from pathlib import PurePath
+    from xml.etree.ElementTree import ParseError
+    from zipfile import BadZipFile
+    from pypdf.errors import PdfReadError
+    from adapters import case_uploads, upload_text
+    from apps.agents.upload_views import upload_file
+    from .factory import access
+
+    case = lock_case(actor, case_id, 'factory.start')
+    access(actor, case, 'factory.start', DEFINITION)
+    require(actor, case, 'evidence.add')
+    if file is None or not 0 < file.size <= case_uploads.LIMIT or PurePath(file.name).suffix.lower() not in ('.txt', '.docx', '.pdf', '.xlsx'):
+        raise ValidationError('Choose a readable text, Word, Excel or PDF file up to 5 MiB.')
+    if (not isinstance(key, str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,100}', key)
+            or not isinstance(reference, str) or not reference.strip() or len(reference) > 160):
+        raise ValidationError('Provide a valid meeting reference.')
+    validate(UPLOAD_SELECTION, data)
+    template = Template.objects.filter(case=case, pk=data['template_id'], definition__document_type='minutes').first()
+    if not template or data['audience'] not in template.definition['audience_fields'] or data['publish'] != (data['audience'] == 'client'):
+        raise ValidationError('Choose a current minutes template for the intended audience.')
+    file_bytes = file.read(case_uploads.LIMIT + 1)
+    file.seek(0)
+    if len(file_bytes) != file.size:
+        raise ValidationError('The file changed while it was read. Choose it again.')
+    fingerprint = hashlib.sha256(file_bytes).hexdigest()
+    upload = CaseUpload.objects.filter(case=case, actor=actor, sha256=fingerprint).order_by('pk').first()
+    note = (Evidence.objects.filter(case=case, created_by=actor, kind='meeting_notes',
+                                    source=UPLOADED_NOTES + str(upload.pk)).first() if upload else None)
+    if note:
+        return start(actor, case.pk, key, reference, {**data, 'evidence_id': note.pk}, expected)
+    if case.revision != expected:
+        raise ValidationError('Stale revision; refresh before retrying')
+    meeting_intent(case, reference, data)
+    try:
+        text = upload_text.extract(file.name, file_bytes)
+    except (BadZipFile, ParseError, PdfReadError, ValueError, IndexError) as exc:
+        raise ValidationError('The file could not be read as meeting notes. Choose another copy.') from exc
+    try:
+        upload = upload_file(actor, case, file)
+    except OSError as exc:
+        raise ValidationError('Private storage is unavailable. Try again later.') from exc
+    if upload.sha256 != fingerprint:
+        raise ValidationError('The file changed during upload. Choose it again.')
+    note = add_evidence(actor, case.pk, 'meeting_notes', text, UPLOADED_NOTES + str(upload.pk))
+    event(actor, case, UPLOADED_NOTES_AUDIT, evidence=note.pk, notes_sha256=note.sha256,
+          upload=upload.pk, file_sha256=upload.sha256)
+    case.refresh_from_db(fields=['revision'])
+    return start(actor, case.pk, key, reference, {**data, 'evidence_id': note.pk}, case.revision)
 
 def observed(work,field):
     return Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,**{'result__has_key':field}).order_by('-pk').values_list('result__'+field,flat=True).first()
