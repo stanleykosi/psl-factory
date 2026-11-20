@@ -18,6 +18,7 @@
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 // Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -25,6 +26,7 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { delayMs, delayReply } from './demo.mjs';
 import { caseVisible, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
 import { documentRead } from './documents.mjs';
@@ -243,6 +245,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const raw = Buffer.concat(chunks).toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
       const method = (req.method ?? 'GET').toLowerCase();
+      // D-155: in the live demo every answer to the API waits a realistic time (demo.mjs); off, there is no wait.
+      if (url.pathname.startsWith('/api/')) delayReply(res, delayMs(method, parseCookies(req.headers.cookie)));
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
         startWork.reset();
