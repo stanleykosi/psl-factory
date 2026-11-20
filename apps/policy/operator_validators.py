@@ -130,8 +130,12 @@ from .short_payment_validators import COMPONENT as SHORT_PAYMENT, SCHEMA as SHOR
 SCHEMAS[SHORT_PAYMENT] = (SHORT_PAYMENT_SCHEMA, SHORT_PAYMENT_VALUE)
 from .bid_adjustment_validators import COMPONENT as BID_ADJUSTMENT, SCHEMA as BID_ADJUSTMENT_SCHEMA, VALUE as BID_ADJUSTMENT_VALUE, validate_reference as validate_bid_adjustment
 SCHEMAS[BID_ADJUSTMENT] = (BID_ADJUSTMENT_SCHEMA, BID_ADJUSTMENT_VALUE)
+from .rfp_estimate_request_validators import COMPONENT as RFP_ESTIMATE, SCHEMA as RFP_ESTIMATE_SCHEMA, VALUE as RFP_ESTIMATE_VALUE, validate_reference as validate_rfp_estimate
+SCHEMAS[RFP_ESTIMATE] = (RFP_ESTIMATE_SCHEMA, RFP_ESTIMATE_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == RFP_ESTIMATE:
+        return validate_rfp_estimate(target, case)
     if component == BID_ADJUSTMENT:
         return validate_bid_adjustment(target, case)
     if component == SHORT_PAYMENT:

@@ -1,0 +1,103 @@
+import json
+from datetime import timedelta
+
+from django.core.exceptions import ValidationError
+from django.db import DatabaseError, transaction
+from django.test import TestCase
+from django.urls import reverse
+from django.utils import timezone
+
+from adapters.rfp_estimate_requests import receipt_fields
+from apps.core.evidence_access import public_evidence
+from apps.core.services import add_evidence
+from apps.pmo import rfp, rfp_estimate_requests as service
+from apps.pmo.models import RFPEstimateDispatch, RFPEstimateMailbox, RFPEstimateReceipt, RFPSubmission
+from apps.policy.operator_drafts import draft_operator_policy
+from apps.policy.rfp_estimate_request_validators import COMPONENT
+from apps.policy.services import transition
+from tests import factory_rfp_helpers
+from tests.helpers import rev
+
+
+class RFPEstimateRequestTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.sample = factory_rfp_helpers.configured(include_security=False)
+        cls.work = factory_rfp_helpers.start(cls.sample)
+        cls.actor, cls.case = cls.work.actor, cls.work.case
+        cls.evidence = cls.sample['evidence']['policy_decision']
+        cls.path = reverse('factory_rfp_security_estimate', args=[cls.work.pk])
+
+    def configure(self, method='synthetic_mailbox', *, channel='email', destination='security@example.invalid'):
+        value = {'routes': [{'channel': channel, 'contact': 'Sample Security', 'destination': destination,
+                            'method': method, 'allow_attachment': False}]}
+        cfg = draft_operator_policy(self.actor, self.case.pk, COMPONENT, value, self.evidence.pk, timezone.now())
+        transition(self.actor, cfg.pk, 'validated')
+        transition(self.actor, cfg.pk, 'active')
+        return cfg
+
+    def prepared(self):
+        return service.prepare(self.actor, self.work.pk, rev(self.case))
+
+    def review(self, draft, *, channel='email'):
+        return service.review(self.actor, self.work.pk, rev(self.case), draft.pk, channel,
+                              timezone.localdate()+timedelta(days=1), 'Human-edited sample estimate request', self.evidence.pk)
+
+    def test_unknown_estimate_can_be_drafted_without_contact_and_released_after_human_review(self):
+        self.client.force_login(self.actor)
+        page = self.client.get(self.path)
+        self.assertContains(page, 'Owner needed')
+        self.assertContains(page, 'Record an estimate that has arrived')
+        self.assertContains(self.client.get(reverse('factory_rfp_pricing', args=[self.work.pk])), 'Ask Security for an estimate')
+        self.assertContains(self.client.post(self.path, {'action': 'prepare', 'revision': rev(self.case)}, follow=True), 'Prepared draft')
+        draft = self.prepared()
+        self.assertFalse(public_evidence(self.case.evidence.filter(pk=draft.evidence_id)).exists())
+        with self.assertRaisesMessage(ValidationError, 'reviewed Security contact'):
+            self.review(draft)
+        self.configure()
+        post = {'action': 'review', 'revision': rev(self.case), 'draft': draft.pk, 'channel': 'email',
+                'due_on': timezone.localdate().isoformat(), 'body': 'Human-edited sample estimate request',
+                'evidence': self.evidence.pk}
+        self.assertContains(self.client.post(self.path, post, follow=True), 'Release reviewed request')
+        self.assertFalse(RFPEstimateDispatch.objects.exists())
+        reviewed = self.work.estimate_requests.get()
+        result = {'action': 'release', 'revision': rev(self.case), 'request': reviewed.pk}
+        self.assertContains(self.client.post(self.path, result, follow=True), 'Delivery confirmed')
+        dispatch = RFPEstimateDispatch.objects.get()
+        self.assertEqual(dispatch.request.payload['body'], post['body'])
+        self.assertEqual(RFPEstimateMailbox.objects.get().sha256, reviewed.sha256)
+        self.assertEqual(RFPEstimateReceipt.objects.get().reference, dispatch.mailbox.reference)
+        self.assertEqual(service.release(self.actor, self.work.pk, rev(self.case), reviewed.pk).pk, dispatch.pk)
+        with self.assertRaises(DatabaseError), transaction.atomic():
+            RFPEstimateReceipt.objects.filter(dispatch=dispatch).update(reference='changed')
+        self.assertFalse(RFPSubmission.objects.exists())
+        root = rfp.root(self.case)
+        self.assertFalse(root.current_intake.contributions.filter(team='Security').exists())
+        rfp.contribute(self.actor, self.case.pk, 'Security', self.sample['evidence']['security_estimate'].pk, rev(self.case))
+        self.assertContains(self.client.get(self.path), 'Delivery confirmed')
+        with self.assertRaisesMessage(ValidationError, 'estimate is already recorded'):
+            self.prepared()
+
+    def test_changed_destination_holds_original_and_manual_receipt_requires_matching_evidence(self):
+        rule = self.configure('manual_receipt')
+        draft = self.prepared()
+        reviewed = self.review(draft)
+        transition(self.actor, rule.pk, 'revoked')
+        with self.assertRaisesMessage(ValidationError, 'current source, destination or authority changed'):
+            service.release(self.actor, self.work.pk, rev(self.case), reviewed.pk)
+        self.assertFalse(RFPEstimateDispatch.objects.exists())
+        self.configure('manual_receipt', channel='whatsapp', destination='+15555550121')
+        reviewed = self.review(draft, channel='whatsapp')
+        dispatch = service.release(self.actor, self.work.pk, rev(self.case), reviewed.pk)
+        self.assertFalse(RFPEstimateReceipt.objects.exists())
+        self.assertFalse(RFPEstimateMailbox.objects.exists())
+        wrong_proof = add_evidence(self.actor, self.case.pk, 'rfp_estimate_receipt', '{}', 'synthetic:witness')
+        with self.assertRaisesMessage(ValidationError, 'original request'):
+            service.record_receipt(self.actor, self.work.pk, rev(self.case), dispatch.pk, 'sample-receipt', True,
+                                   wrong_proof.pk)
+        proof = add_evidence(self.actor, self.case.pk, 'rfp_estimate_receipt',
+                             json.dumps(receipt_fields(dispatch, 'sample-receipt', True)), 'synthetic:witness')
+        receipt = service.record_receipt(self.actor, self.work.pk, rev(self.case), dispatch.pk, 'sample-receipt', True, proof.pk)
+        self.assertTrue(receipt.delivered)
+        self.assertFalse(public_evidence(self.case.evidence.filter(pk=proof.pk)).exists())
+        self.assertEqual(RFPEstimateReceipt.objects.count(), 1)

@@ -127,6 +127,14 @@ def detail(request,work):
         work.refresh_from_db()
     row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
     files = archive_transfer.projection(request.user, work)
+    if files['plan'] and not files['finding'] and not work.cancel_requested:
+        recovering = any(file.display_status in ('Original copy needs checking', 'Confirmation missing',
+                                                  'File not found', 'Needs review') for file in files['files'])
+        if not recovering and files['watching']:
+            row.update(state='Copying selected files' if files['copying'] else 'Archive work in progress',
+                       next_action='Wait for the selected file receipts', blocker='', can_advance=False)
+        elif files['verified'] and work.status not in ('verified', 'cancelled', 'followup_needed'):
+            row.update(next_action='Verify the archive and the original file receipts', blocker='')
     from django.urls import reverse
     from urllib.parse import urlencode
     from .models import FactoryWork

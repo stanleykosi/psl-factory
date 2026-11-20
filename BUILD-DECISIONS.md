@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Security estimate requests cite the exact received bid, current assignment and selected requirements. The draft can be prepared while contact settings are missing. A separate human review pins wording, due date, route and any permitted private attachment. Release records one original operation. The synthetic inbox has its own stored copy and receipt. Manual channels require matching original delivery evidence. The actual contributor still records the estimate. Real contact, channel and attachment choices are deferred.
+
 20 November 2026. Bid adjustments modify only named currency inputs in the exact reviewed calculator under a configured cumulative limit. The assigned project manager records the amount and reason. The native calculator produces a new source and the bid needs fresh human decisions. The agreement with the client retains its separate approved terms. The calculator mapping and permitted limits are deferred owner settings.
 
 20 November 2026. A short-payment decision records how Finance follows up an exact issued balance and a currently allocated receipt. The native invoice, cash, debt and release services retain authority over their own records. The project-scoped rule selects a current Finance principal and allowed decisions. A missing rule keeps the payment facts readable. Real approvers and short-payment treatments await owner decisions. The configured acceptance case is synthetic.

@@ -40,3 +40,21 @@ class ObservableWorkerTests(TestCase):
                     self.assertNotContains(self.client.get(sample['path']), label)
         regular = prepare_project(actor, 'assets_live')
         self.assertIsNone(worker.sample_key(FactoryWork.objects.select_related('case').get(pk=regular['work'])))
+
+    def test_report_samples_stop_before_the_exact_draft_and_original_publication(self):
+        from apps.documents.models import PublicationJob
+        from apps.workflows import factory_accounting
+
+        actor = get_user_model().objects.create_user('synthetic-report-observation-reviewer')
+        for key, step in [('accounts_draft_observable', 'ACT09'), ('accounts_publish_observable', 'ACT11')]:
+            with self.subTest(sample=key):
+                sample = prepare_project(actor, key)
+                work = FactoryWork.objects.select_related('case').get(pk=sample['work'])
+                _, value = factory.profile(work)
+                state, latest, missing, stale, tasks, jobs = factory_accounting.snapshot(work, value)
+                options, _ = factory_accounting.eligible(work, value, state, latest, missing, stale, tasks, jobs)
+                self.assertEqual(options, [step])
+                self.assertTrue(state['formula'])
+                self.assertEqual(bool(state['document']), step == 'ACT11')
+                self.assertFalse(PublicationJob.objects.filter(publication__factory_work=work).exists())
+                self.assertEqual(prepare_project(actor, key)['work'], work.pk)

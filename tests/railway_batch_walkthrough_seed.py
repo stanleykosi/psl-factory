@@ -40,6 +40,8 @@ PREPARATION = {
     'invoice_release': ('pmo-finance/v1', 'SAMPLE invoice release walkthrough'),
     'bid_final_costing': ('rfp-response/v1', 'SAMPLE bid final costing review'),
     'bid_cost_adjustment': ('rfp-response/v1', 'SAMPLE bid costing adjustment'),
+    'bid_security_request': ('rfp-response/v1', 'SAMPLE bid Security estimate request'),
+    'bid_security_hold': ('rfp-response/v1', 'SAMPLE bid Security contact needed'),
     'leadership': ('pmo-leadership-report/v1', 'SAMPLE leadership report walkthrough'),
     'tuesday': ('pmo-leadership-report/v1', 'SAMPLE Tuesday report walkthrough'),
     'accounts': ('finance-accounts/v1', 'SAMPLE accounts close walkthrough'),
@@ -78,6 +80,10 @@ OBSERVABLE_PREPARATION = {
     'schedules_observable': ('schedules', 'SAMPLE observable income investigation'),
     'forecast_observable': ('forecast', 'SAMPLE observable cash forecast investigation'),
     'archive_observable': ('archive', 'SAMPLE observable archive copy'),
+    'accounts_draft_observable': ('accounts', 'SAMPLE observable exact report drafting'),
+    'accounts_publish_observable': ('accounts', 'SAMPLE observable reviewed report delivery'),
+    'assets_observable_repeat': ('assets', 'SAMPLE observable asset source check'),
+    'archive_observable_repeat': ('archive', 'SAMPLE observable archive instructions'),
 }
 ORIGINAL_WORK_KEYS = {
     'standard': 'SAMPLE-BATCH-STANDARD',
@@ -243,6 +249,22 @@ def prepare_bid_cost_adjustment(actor, case):
     return work
 
 
+def prepare_bid_security_request(actor, case, *, configured=True):
+    from apps.policy.rfp_estimate_request_validators import COMPONENT
+    from tests.factory_rfp_helpers import configured as bid_fixture, start
+
+    reference = 'SAMPLE-SECURITY-REQUEST' if configured else 'SAMPLE-SECURITY-CONTACT-HOLD'
+    data = bid_fixture(reference, context=(actor, case), include_security=False)
+    if configured:
+        policy = draft_operator_policy(actor, case.pk, COMPONENT, {'routes': [
+            {'channel': 'email', 'contact': 'SAMPLE Security estimator', 'destination': 'security@example.invalid',
+             'method': 'synthetic_mailbox', 'allow_attachment': False},
+        ]}, data['evidence']['policy_decision'].pk, timezone.now())
+        transition(actor, policy.pk, 'validated')
+        transition(actor, policy.pk, 'active')
+    return start(data, key=reference)
+
+
 def prepare_independent_invoice_reviewer(actor, case, work):
     from tests.billing_helpers import policy
     from tests.helpers import activate
@@ -312,24 +334,45 @@ def prepare_accounts(actor, case, *, independent_allocation=False):
     return factory_accounting_helpers.configured(actor, case, evidence, ledger, template, source.METRICS)['work']
 
 
-def prepare_accounts_uncertain_receipt(actor, case):
-    from adapters.publications import PublicationTimeoutAfterAccept
-    from apps.documents.models import PublicationJob
+def prepare_reviewed_accounts(actor, case, work):
     from apps.workflows import factory_accounting
     from apps.workflows.models import HumanTask
 
-    work = prepare_accounts(actor, case)
     factory.run_until_wait(work.pk)
     task = HumanTask.objects.get(case=case, kind='factory_accounting_review', status='open', context__purpose='output')
     task = factory_accounting.claim(actor, task.pk, task.revision)
     evidence = case.evidence.get(kind='finance_review', source='synthetic:finance')
     factory_accounting.decide(actor, task.pk, task.revision, 'approve', evidence.pk,
-                              'The synthetic setup simulates an exact Finance review before the response is lost.')
+                              'The isolated synthetic setup approves these exact report figures for the internal sample inbox.')
+
+
+def prepare_accounts_uncertain_receipt(actor, case):
+    from adapters.publications import PublicationTimeoutAfterAccept
+    from apps.documents.models import PublicationJob
+
+    work = prepare_accounts(actor, case)
+    prepare_reviewed_accounts(actor, case, work)
     for _ in range(25):
         factory.run_once(work.pk, adapter=PublicationTimeoutAfterAccept())
         if PublicationJob.objects.filter(publication__factory_work=work, status='unknown').exists():
             return work
     raise RuntimeError('The sample must retain an original accepted report with its response still uncertain')
+
+
+def stage_accounts_before_publication_step(actor, case, work, step):
+    from apps.workflows import factory_accounting
+
+    prepare_reviewed_accounts(actor, case, work)
+    for _ in range(30):
+        work.refresh_from_db()
+        _, profile = factory.profile(work)
+        state, latest, missing, stale, tasks, jobs = factory_accounting.snapshot(work, profile)
+        options, _ = factory_accounting.eligible(work, profile, state, latest, missing, stale, tasks, jobs)
+        if options == [step]:
+            return
+        if not factory.run_once(work.pk):
+            break
+    raise RuntimeError('The sample did not reach the intended native report step.')
 
 
 def prepare_assets(actor, case):
@@ -446,6 +489,8 @@ def prepare_project(actor, key):
                    'emergency_refused': partial(prepare_emergency, refusal=True), 'escalation': prepare_escalation,
                    'invoice_release': prepare_invoice_release,
                    'bid_final_costing': prepare_final_costing, 'bid_cost_adjustment': prepare_bid_cost_adjustment,
+                   'bid_security_request': prepare_bid_security_request,
+                   'bid_security_hold': partial(prepare_bid_security_request, configured=False),
                    'leadership': prepare_leadership, 'tuesday': prepare_leadership,
                    'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts,
                    'accounts_reviewer_needed': partial(prepare_accounts, independent_allocation=True),
@@ -458,6 +503,8 @@ def prepare_project(actor, key):
         with patch.object(users, 'create_user', side_effect=lambda username, **values:
                           create_user(username=f'batch-{key}-{username}', **values)):
             work = prepare(actor, case, tuesday=True) if key == 'tuesday' else prepare(actor, case)
+        if key in ('accounts_draft_observable', 'accounts_publish_observable'):
+            stage_accounts_before_publication_step(actor, case, work, 'ACT09' if key == 'accounts_draft_observable' else 'ACT11')
         pause_existing_background(actor, work)
     else:
         candidates = FactoryWork.objects.filter(case=case, actor=actor, definition=definition)

@@ -7,6 +7,7 @@
   <section class="card"><h2>Inputs</h2>
     <dl>{% for label, version in pricing.inputs %}<dt>{{ label }}</dt><dd>{% if version %}Recorded · version {{ version }}{% else %}Not provided yet{% endif %}</dd>{% endfor %}</dl>
     <p><a href="{% url 'rfp' case.pk %}">Review team inputs</a></p>
+    {% if can_open_security_request %}<p><a href="{% url 'factory_rfp_security_estimate' work.pk %}">{% if pricing.security_estimate_missing %}Ask Security for an estimate{% else %}Review Security estimate requests{% endif %}</a></p>{% endif %}
   </section>
   <section class="card"><h2>Calculation</h2>
     {% if pricing.amounts %}<div class="table-scroll"><table><thead><tr><th>Item</th><th>Amount or value</th><th>Unit</th></tr></thead>

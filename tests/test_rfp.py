@@ -20,7 +20,7 @@ from . import test_commercial_changes as commercial_helpers
 DEFINITION={'document_type':'rfp_response','required_fields':['executive_summary','scope','requirements_mapping','commercial_terms'],
     'audience_fields':{'client':['executive_summary', 'scope', 'requirements_mapping', 'commercial_terms', 'timeline', 'risks', 'dependencies', 'status']}}
 
-def fixture(reference='RFP-001', *, record_intake=True, portal=False, context=None):
+def fixture(reference='RFP-001', *, record_intake=True, portal=False, context=None, include_security=True):
     a,c,e,_=commercial_helpers.fixture(context=context);commercial_helpers.change_roles(a,c,e['policy_decision'])
     for k in ['rfp_commercial_terms','rfp_intake','rfp_deadline','rfp_response','rfp_outcome','rfp_lessons','qa_estimate','product_input']:
         e[k]=add_evidence(a,c.pk,k,'Synthetic '+k+' source','synthetic:rfp')
@@ -36,7 +36,9 @@ def fixture(reference='RFP-001', *, record_intake=True, portal=False, context=No
     if record_intake:
         rfp.intake(a,c.pk,reference,e['rfp_intake'].pk,timezone.now()-timedelta(hours=1),'not_stated',None,None,'Source explicitly has no deadline',rev(c))
         rfp.assign(a,c.pk,a,'CEO',e['policy_decision'].pk,'Actual assignment evidence',rev(c))
-        for team,kind in rfp.TEAMS.items():rfp.contribute(a,c.pk,team,e[kind].pk,rev(c))
+        for team, kind in rfp.TEAMS.items():
+            if include_security or team != 'Security':
+                rfp.contribute(a,c.pk,team,e[kind].pk,rev(c))
     return a,c,e,t,route
 
 def response(a,c,e):

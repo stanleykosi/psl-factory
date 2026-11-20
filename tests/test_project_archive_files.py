@@ -80,6 +80,8 @@ class ArchiveFileTests(TestCase):
         def check_progress(adapter, file, data):
             page = self.client.get(url)
             self.assertContains(page, 'Copying 1 file to the synthetic acceptance store.')
+            self.assertContains(page, 'Wait for the selected file receipts')
+            self.assertNotContains(page, '<p role="status">Confirm the original file receipts')
             self.assertContains(page, 'data-work-watch')
             return copy_to_store(adapter, file, data)
 

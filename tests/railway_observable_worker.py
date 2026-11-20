@@ -21,6 +21,8 @@ STEPS = {
     'assets_observable': {'ACT04'},
     'schedules_observable': {'ACT04'},
     'forecast_observable': {'ACT04'},
+    'accounts_draft_observable': {'ACT09'},
+    'assets_observable_repeat': {'ACT04'},
 }
 
 
@@ -78,7 +80,7 @@ def work_publications():
 
     def deliver(adapter, job_id, fence):
         publication = PublicationJob.objects.select_related('publication__factory_work__case').get(pk=job_id).publication
-        if publication.factory_work_id and sample_key(publication.factory_work) == 'accounts_observable':
+        if publication.factory_work_id and sample_key(publication.factory_work) in ('accounts_observable', 'accounts_publish_observable'):
             sleep(WINDOW_SECONDS)
         return normal(adapter, job_id, fence)
 
@@ -91,7 +93,7 @@ def work_archive():
     normal = SyntheticObjectArchive.copy
 
     def copy(adapter, file, data):
-        if sample_key(file.plan.work) == 'archive_observable':
+        if sample_key(file.plan.work) in ('archive_observable', 'archive_observable_repeat'):
             sleep(WINDOW_SECONDS)
         return normal(adapter, file, data)
 

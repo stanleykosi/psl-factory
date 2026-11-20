@@ -11,8 +11,9 @@ from tests import test_rfp as native
 from tests.helpers import rev
 
 
-def configured(reference='RFP-001', *, portal=False, context=None):
-    actor,case,evidence,template,route=native.fixture(reference=reference,portal=portal,context=context)
+def configured(reference='RFP-001', *, portal=False, context=None, include_security=True):
+    actor,case,evidence,template,route=native.fixture(reference=reference,portal=portal,context=context,
+                                                     include_security=include_security)
     value=json.loads(Path('fixtures/factory-rfp.json').read_text())
     value.pop('classification')
     value.update(executor_id=actor.pk,template_id=template.pk,route_key=route['key'])

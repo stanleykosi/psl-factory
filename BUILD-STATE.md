@@ -4,7 +4,7 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 ## Current implementation and verification
 
-The 218 Railway preview serves native bid adjustments and fresh decisions after six PostgreSQL checks and browser verification. Finance migration `0082` is applied in the retained test database and preview. 217 passed four grouped Finance and sample-preparation checks. The next focused batch gives the browser a longer observation window for transient sample steps.
+The 220 Railway preview serves the reviewed Security request and corrected archive guidance. Finance `0082` and Project `0074` are applied and immutable on the preview. All eight grouped 220 tests passed. The browser verified the missing Security contact and synthetic release through original receipt and native input. Candidate 221 found a missing approval prerequisite in the drafting fixture. The corrected 222 batch is running.
 
 Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate 201 finished all 487 PostgreSQL tests across 36 modules in 7,478.882 seconds. The final result was four failures, three errors and exit 1. The seven traces cover the bid form, Standard Change fixture authority, invoice test setup and database scope, and the fixed-asset linked-note authority check.
 
@@ -12,7 +12,7 @@ Candidate 202 groups the corrections, release and archive progress, in-page hand
 
 The grouped 205 PostgreSQL regression passed all 520 tests. Candidate 206 passed all four Finance tests and found three Project test setup errors. Candidate 207 corrected them together and passed all ten Project tests and both original receipt probes. The 208 PostgreSQL regression verified that preparation finds the original sample after a second native report was created in its workspace.
 
-The 262-state ledger records 255 directly observed, with 64 completed scoped journeys, 191 observed with open checks and 7 unseen. Hosted 218 verified the bounded bid adjustment and separate fresh approvals. Hosted 217 observed live accounting investigation. Hosted 216 verified the exact short-payment decision with unchanged debt. [State ledger](docs/design/screen-state-acceptance.md).
+The 262-state ledger records 259 directly observed, with 67 completed scoped journeys, 192 observed with open checks and three unseen. Hosted 220 observed the Security request and intake handoff. Hosted 219 observed active archive, income and forecast steps and verified all three Assistant entry routes. [State ledger](docs/design/screen-state-acceptance.md).
 
 In the signed-agreement browser journey, sample case11f14978 retained the exact receipt and private Word proof. It refused future response time and adoption before both signatures were checked. The model cited the original sample file, a human reviewed the draft, and separate human signature checks preceded adoption and the Finance intake receipt. Desktop and phone checks passed. The revised-agreement branch, historical recovery and browser correction cases stay open.
 

@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from apps.core.evidence_access import public_evidence
 from apps.core.models import Evidence
 from apps.core.read_observation import read_observation
-from apps.identity.services import require
+from apps.identity.services import active_case_grants, require
 from apps.pmo import commercial, costing, rfp
 from apps.pmo.costing_models import CostingBinding
 from . import factory, factory_rfp, factory_rfp_adjustments
@@ -125,7 +125,8 @@ def inspect(actor, work):
                 except (ValidationError, PermissionDenied):
                     status = 'Earlier decision needs fresh review'
         approvals.append((label, status, decision.created_at if decision else None))
-    return {'estimate_missing': any(estimates.get(team) not in visible for team in ('Engineering', 'Security')),
+    return {'security_estimate_missing': estimates.get('Security') not in visible,
+            'estimate_missing': any(estimates.get(team) not in visible for team in ('Engineering', 'Security')),
             'inputs': inputs, 'amounts': amounts, 'costing_note': note,
             'can_open_calculator': can_open_calculator, 'approvals': approvals,
             'revision': revision.number if revision else None, 'revision_id': revision.pk if revision else None,
@@ -169,6 +170,8 @@ def detail(request, work_id):
         'case': work.case, 'work': work, 'pricing': report, 'adjustment_form': form,
         'adjustment_note': adjustment_note, 'adjustment_currency': adjustment_currency,
         'can_configure': factory_rfp_adjustments.can_configure(actor, work),
+        'can_open_security_request': (work.case_id, 'rfp.estimate.read') in active_case_grants(
+            actor, [work.case_id], actions=['rfp.estimate.read']),
         'adjustments': factory_rfp_adjustments.history(actor, work),
     })
     result['Cache-Control'] = 'no-store'
