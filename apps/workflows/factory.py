@@ -922,23 +922,64 @@ def reconcile(actor,work_id,expected):
     if Work.objects.filter(pk=work_id,definition='planning/v1').exists():
         from .factory_planning import reconcile as planning_reconcile
         return planning_reconcile(actor,work_id,expected)
+    from apps.identity.models import Grant
+    from .factory_execution import require_control
+    from .factory_invoice_receipts import confirmed_waiting_job, current_receipt, reconcile_confirmed, record_reconciliation
     with transaction.atomic():
-        work=Work.objects.select_for_update().select_related('case','actor').get(pk=work_id)
-        access(actor,work.case,'factory.execute')
-        from .factory_execution import require_control
+        work=Work.objects.select_for_update(of=('self',)).select_related('case','actor').get(pk=work_id)
         require_control(actor,work)
         if work.revision!=expected:raise ValidationError('STALE_VERSION: work changed')
         if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: worker owns this work')
         profile(work,recovery=True)
-        job=next((job for job in invoice_jobs(work) if uncertain_job(job)),None)
-        if not job:raise ValidationError('No uncertain native invoice operation to reconcile')
+        jobs=invoice_jobs(work)
+        job=next((item for item in jobs if uncertain_job(item)),None)
+        if not job:
+            original = confirmed_waiting_job(work, jobs)
+            if original:
+                return reconcile_confirmed(actor, work, original)
+            raise ValidationError('No original native invoice operation awaiting reconciliation')
         event(actor,work.case,'factory.reconciliation_requested',work=work.pk,job=job.pk)
     invoice_delivery.run_once(adapter_for(work),case_id=work.case_id,job_id=job.pk,lookup_only=True)
     with transaction.atomic():
         work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','invoice').get(pk=work_id)
-        job.refresh_from_db();_,value=profile(work,recovery=True)
-        work.status=cancellation_status(work) if work.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'ready'
-        work.finding='The original provider result remains uncertain' if job.status=='unknown' else 'Cancellation requires native follow-up for any issued invoice' if work.cancel_requested else ''
-        observed,*_=snapshot(work,value);work.observation_hash=observed['hash'] if job.status=='unknown' else ''
+        if work.revision!=expected:raise ValidationError('STALE_VERSION: work changed while checking the original receipt')
+        if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: worker now owns this work')
+        work.case = lock_case(actor, work.case_id, 'factory.execute')
+        list(Grant.objects.select_for_update().filter(case=work.case).order_by('pk'))
+        require_control(actor, work)
+        _, value = profile(work, recovery=True)
+        job = InvoiceJob.objects.select_for_update(of=('self',)).select_related('invoice__case', 'actor').get(pk=job.pk)
+        jobs = invoice_jobs(work)
+        if job not in jobs:
+            raise ValidationError('The original operation changed while checking its receipt.')
+        if work.cancel_requested:
+            work.status = cancellation_status(work)
+            work.finding = 'Cancellation requires native follow-up for any issued invoice'
+        else:
+            work.status = 'waiting_effect'
+            if job.status == 'confirmed':
+                try:
+                    if any(item.status in ('pending', 'leased', 'unknown', 'held') for item in jobs):
+                        raise ValidationError('Review the other unresolved original invoice operations.')
+                    receipt = current_receipt(work, job)
+                except (PermissionDenied, ValidationError):
+                    work.finding = 'Finance needs to verify the original receipt and current scope before continuing.'
+                else:
+                    return record_reconciliation(actor, work, job, receipt)
+            else:
+                work.finding = {
+                    'leased': 'The invoice worker is checking the original operation.',
+                    'held': 'The original invoice receipt needs authorised Finance recovery.',
+                    'unknown': 'The original provider result remains uncertain',
+                }.get(job.status, 'Review the current original invoice reservation before continuing.')
+        if work.status == 'waiting_effect':
+            try:
+                observed, *_ = snapshot(work, value)
+                work.observation_hash = observed['hash']
+            except (PermissionDenied, ValidationError):
+                # A changed source or reader must not clear the native receipt wait.
+                pass
+        else:
+            work.observation_hash = ''
         work.revision+=1;work.save()
     return work

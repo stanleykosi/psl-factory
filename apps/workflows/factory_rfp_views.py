@@ -1,4 +1,6 @@
 """Structured RFP operating settings; native RFP records retain business authority."""
+from hashlib import sha256
+
 from django import forms
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db.models import Q
@@ -27,6 +29,7 @@ from apps.policy.models import Configuration
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
 from apps.policy.rfp_outcome_validators import COMPONENT as OUTCOME_COMPONENT,METHOD as OUTCOME_METHOD
+from apps.policy.rfp_loss_validators import COMPONENT as LOSS_COMPONENT, validate_reason_names
 from apps.pmo import rfp,commercial
 from apps.pmo.models import RFPCase,RFPDocumentBinding,RFPSubmission,RFPOutcome,RFPDisposition
 from apps.documents.models import Publication,PublicationJob,PublicationReceipt
@@ -346,7 +349,7 @@ def presentation(actor,work,submission_id=None):
 @transaction.atomic
 def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,evidence,note,observed_at=None,
                   selection_context=None,*,followup_on=None,award_amount=None,award_currency=None,
-                  customer_expected_on=None,remind_at=None):
+                  customer_expected_on=None,remind_at=None,loss_reason_key='',loss_catalog_id=None,debrief_version_id=None):
     from . import factory_rfp as service
     work=FactoryWork.objects.select_for_update().select_related('case').get(pk=work_id,definition=service.DEFINITION)
     runtime.access(actor,work.case,envelope=service.DEFINITION)
@@ -371,7 +374,8 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
         rfp.outcome(actor,case.pk,submission.pk,verdict,observed_at,role,evidence,note,case.revision,
                     selection_context=selection_context,followup_on=followup_on,
                     award_amount=award_amount,award_currency=award_currency,customer_expected_on=customer_expected_on,
-                    remind_at=remind_at)
+                    remind_at=remind_at,loss_reason_key=loss_reason_key,loss_catalog_id=loss_catalog_id,
+                    debrief_version_id=debrief_version_id)
     else:raise ValidationError('Choose a current human decision')
     work.status='ready';work.finding='';work.revision+=1;work.save(update_fields=['status','finding','revision','updated_at'])
     from .factory_progress import wake_waiting
@@ -458,18 +462,23 @@ def detail(request,work,focus=None):
                     int(request.POST.get('evidence','0')),timezone.now())
             elif action in ['response','commercial','document','outcome']:
                 observed=None;selection_context=None;followup_on=None;customer_expected_on=None;remind_at=None
+                loss_reason_key='';loss_catalog_id=None;debrief_version_id=None
                 if action=='outcome':
                     observed=forms.DateTimeField().clean(request.POST.get('observed_at'))
                     followup_on=forms.DateField(required=False).clean(request.POST.get('followup_on'))
                     customer_expected_on=forms.DateField(required=False).clean(request.POST.get('customer_expected_on'))
                     remind_at=forms.DateTimeField(required=False).clean(request.POST.get('remind_at'))
+                    loss_reason_key=request.POST.get('loss_reason','')
+                    loss_catalog_id=forms.IntegerField(min_value=1,required=False).clean(request.POST.get('loss_catalog')) if loss_reason_key else None
+                    debrief_version_id=forms.IntegerField(min_value=1,required=False).clean(request.POST.get('debrief_version'))
                     if request.POST.get('selection_acknowledged')=='on':
                         selection_context={'packet':request.POST.get('selection_packet',''),'acknowledged':True}
                 human_command(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),action,int(request.POST.get('target','0')),
                     request.POST.get('role',''),request.POST.get('verdict',''),int(request.POST.get('evidence') or '0'),
                     request.POST.get('note',''),observed,selection_context,followup_on=followup_on,
                     award_amount=request.POST.get('award_amount') or None,award_currency=request.POST.get('award_currency') or None,
-                    customer_expected_on=customer_expected_on,remind_at=remind_at)
+                    customer_expected_on=customer_expected_on,remind_at=remind_at,loss_reason_key=loss_reason_key,
+                    loss_catalog_id=loss_catalog_id,debrief_version_id=debrief_version_id)
             elif action=='correct':
                 source=SourceForm(work.case,request.POST);mappings=Mappings(request.POST,prefix='requirements',form_kwargs={'case':work.case})
                 if source.is_valid() and mappings.is_valid():
@@ -537,7 +546,21 @@ def detail(request,work,focus=None):
             pricing = inspect(request.user, work)
             if pricing['current'] and pricing['revision_id'] == final_decision['target']:
                 final_costing = pricing
+    from apps.pmo import rfp_loss
+    loss_catalog, loss_reasons, debrief_choices = None, [], []
+    if outcome_variant == 'lost' and row['rfp']['outcome_roles'] and focus in [None, 'response']:
+        try:
+            loss_catalog, loss_reasons = rfp_loss.catalog(request.user, work.case)
+        except PermissionDenied:
+            pass
+        try:
+            debrief_choices = list(rfp_loss.current_debriefs(request.user, work.case).order_by('-occurred_at', '-pk').values(
+                'pk', 'meeting__reference', 'number', 'occurred_at')[:40])
+        except PermissionDenied:
+            pass
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
+        'loss_catalog':loss_catalog,'loss_reasons':loss_reasons,'debrief_choices':debrief_choices,
+        'loss_debrief':rfp_loss.debrief_proof(request.user,work.case,row['rfp']['outcome']),
         'can_review_requirement_answers':can_review_requirement_answers, 'final_costing':final_costing,
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
         'followup':followup,
@@ -566,17 +589,49 @@ class OutcomeSettingsForm(forms.Form):
         self.fields['evidence'].label_from_instance=lambda evidence:evidence.source+' · version '+str(evidence.version)
 
 
+class LossCatalogForm(forms.Form):
+    revision = forms.IntegerField(widget=forms.HiddenInput, min_value=1)
+    base = forms.IntegerField(widget=forms.HiddenInput, min_value=0)
+    names = forms.CharField(required=False, max_length=2100, label='Loss reasons, one per line', widget=forms.Textarea(attrs={'rows': 4}))
+    evidence = forms.ModelChoiceField(queryset=Evidence.objects.none(), label='Recorded policy decision')
+
+    def __init__(self, case, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        proofs = public_evidence(case.evidence.filter(kind='policy_decision')).order_by('-pk')
+        self.fields['evidence'].queryset = proofs.filter(pk__in=proofs.values('pk')[:50])
+        self.fields['evidence'].label_from_instance = lambda evidence: f'{evidence.source} · version {evidence.version}'
+
+    def clean_names(self):
+        names = [line.strip() for line in self.cleaned_data['names'].splitlines() if line.strip()]
+        reasons = [{'key': 'reason_' + sha256(name.encode()).hexdigest()[:32], 'label': name} for name in names]
+        validate_reason_names(reasons)
+        return reasons
+
+
 @login_required
 def outcome_configuration(request,case_id):
+    from apps.pmo.rfp_loss import catalog_source_access
+
     case=get_object_or_404(visible_cases(request.user),pk=case_id)
     require(request.user,case,'policy.read')
     versions=Configuration.objects.filter(case=case,component=OUTCOME_COMPONENT).prefetch_related('states').order_by('-revision')
     latest=versions.first();initial={'revision':case.revision,'base':latest.pk if latest else 0}
     if latest:initial['method']=reference_values(latest)[0]['method'] or ''
-    form=OutcomeSettingsForm(case,request.POST if request.method=='POST' and request.POST.get('action')=='draft' else None,initial=initial)
+    action=request.POST.get('action') if request.method == 'POST' else None
+    form=OutcomeSettingsForm(case,request.POST if action=='draft' else None,initial=initial)
+    catalogs=Configuration.objects.filter(case=case,component=LOSS_COMPONENT).prefetch_related('states').order_by('-revision')
+    latest_catalog=catalogs.first()
+    loss_initial={'revision':case.revision,'base':latest_catalog.pk if latest_catalog else 0}
+    can_configure_loss=allowed(request.user,case,'policy.configure')
+    if latest_catalog:
+        try:
+            catalog_source_access(request.user,latest_catalog)
+            loss_initial['names']='\n'.join(row['label'] for row in reference_values(latest_catalog)[0]['reasons'])
+        except PermissionDenied:
+            can_configure_loss=False
+    loss_form=LossCatalogForm(case,request.POST if action=='draft_loss_catalog' else None,initial=loss_initial,prefix='loss')
     if request.method=='POST':
         try:
-            action=request.POST.get('action')
             if action=='draft' and form.is_valid():
                 data=form.cleaned_data
                 with transaction.atomic():
@@ -585,21 +640,40 @@ def outcome_configuration(request,case_id):
                     if data['base']!=(current.pk if current else 0):raise ValidationError('STALE_VERSION: refresh the current outcome settings')
                     draft_operator_policy(request.user,locked.pk,OUTCOME_COMPONENT,{'method':data['method'] or None},data['evidence'].pk,timezone.now())
                 return redirect(request.path)
+            elif action=='draft_loss_catalog' and loss_form.is_valid():
+                if not can_configure_loss:
+                    raise PermissionDenied('Current authority over the loss catalog is required.')
+                data=loss_form.cleaned_data
+                with transaction.atomic():
+                    locked=lock_case(request.user,case.pk,'policy.configure',data['revision'])
+                    current=catalogs.only('pk').first()
+                    if data['base']!=(current.pk if current else 0):
+                        raise ValidationError('The loss reasons changed. Reload and review the current list.')
+                    draft_operator_policy(request.user,locked.pk,LOSS_COMPONENT,{'reasons':data['names']},data['evidence'].pk,timezone.now())
+                return redirect(request.path)
             elif action in ['validated','active','revoked']:
                 try:configuration_id=int(request.POST.get('configuration',''))
                 except (ValueError,TypeError):raise ValidationError('Choose an exact settings revision') from None
-                configuration=get_object_or_404(versions,pk=configuration_id)
+                configuration=get_object_or_404(Configuration.objects.filter(case=case,component__in=[OUTCOME_COMPONENT,LOSS_COMPONENT]),pk=configuration_id)
+                if configuration.component==LOSS_COMPONENT:catalog_source_access(request.user,configuration)
                 transition(request.user,configuration.pk,action);return redirect(request.path)
-            elif action!='draft':raise ValidationError('Choose a current settings action')
+            elif action not in ['draft','draft_loss_catalog']:raise ValidationError('Choose a current settings action')
         except ValidationError as exc:
-            if form.is_bound:form.add_error(None,exc)
+            if loss_form.is_bound:loss_form.add_error(None,exc)
+            elif form.is_bound:form.add_error(None,exc)
             else:messages.error(request,'; '.join(exc.messages))
     rows=list(versions)
-    for version in rows:
+    catalog_rows=list(catalogs.filter(scope_application__isnull=True)[:30])
+    for version in [*rows, *catalog_rows]:
         state=max(version.states.all(),key=lambda item:item.pk).state
-        version.method_label='Explicit selection by the currently authorised outcome owner' if reference_values(version)[0].get('method')==OUTCOME_METHOD else 'Not decided'
+        value=reference_values(version)[0]
+        if version.component==LOSS_COMPONENT:
+            version.reason_names=[reason['label'] for reason in value['reasons']]
+        else:
+            version.method_label='Explicit selection by the currently authorised outcome owner' if value.get('method')==OUTCOME_METHOD else 'Not decided'
         version.can_validate=state=='draft' and allowed(request.user,case,'policy.configure')
         version.can_activate=state=='validated' and allowed(request.user,case,'policy.activate')
         version.can_revoke=state=='active' and allowed(request.user,case,'policy.activate')
     return response(request,'factory/rfp_outcome_settings.html',{'case':case,'form':form,'versions':rows,
+        'loss_form':loss_form,'catalogs':catalog_rows,'can_configure_loss':can_configure_loss,
         'can_configure':allowed(request.user,case,'policy.configure')})

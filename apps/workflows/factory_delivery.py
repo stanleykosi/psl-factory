@@ -12,7 +12,7 @@ from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.policy.services import decision_authority
 from apps.documents.contracts import digest,validate
-from apps.pmo import delivery
+from apps.pmo import delivery, delivery_workarounds
 from apps.pmo.models import DeliveryDossier,DeliveryRecord
 from adapters.delivery import LocalDeliveryAdapter
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
@@ -220,32 +220,60 @@ def projection(actor,work):
     prior = delivery.latest(d, 'planning_decision', False)
     returned = prior if prior and prior.data['verdict'] in ('return', 'reject') else None
     remedy_finding = ''
+    remedy = None
     return_issue = None
     return_issues = []
-    if returned:
+    blocking_origin = None
+    try:
+        blocking_origin = delivery_workarounds.origin(d, prior)
+    except ValidationError as exc:
+        remedy_finding = exc.messages[0]
+    if returned or blocking_origin:
         try:
-            if returned.data.get('blocking_issue'):
+            blocking = (returned or blocking_origin).data.get('blocking_issue')
+            if blocking:
                 require(actor, work.case, 'issue.read')
-                return_issue = delivery.planning_issue(d, returned.data['blocking_issue']['issue'])
+                return_issue = delivery.planning_issue(d, blocking['issue'])
             if observed['planning_sources']['status'] == 'ready':
-                delivery.planning_remedy(d, returned, observed['planning_sources']['inputs'], actor=actor)
+                remedy = delivery.planning_remedy(d, prior, observed['planning_sources']['inputs'], actor=actor)
             else:
                 remedy_finding = 'Verify the current Planning prerequisites before requesting another decision.'
         except PermissionDenied:
             remedy_finding = 'The linked issue needs review by someone with project issue access.'
         except ValidationError as exc:
             remedy_finding = exc.messages[0]
-    if current and not remedy_finding and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and observed['planning_sources']['status']=='ready' and observed['planning_decision']['status']=='held':
+    workaround = remedy if remedy and remedy.get('kind') == delivery_workarounds.KIND else None
+    workaround_statement = None
+    if workaround:
+        try:workaround_statement = delivery_workarounds.approval_statement(actor, d, workaround)
+        except (PermissionDenied, ValidationError):pass
+    awaiting_decision = (current and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed']
+                         and observed['planning_sources']['status']=='ready' and observed['planning_decision']['status']=='held')
+    workaround_option = None
+    if awaiting_decision and remedy_finding and blocking_origin:
+        workaround_option = delivery_workarounds.option(actor, d, blocking_origin, return_issue)
+    if awaiting_decision and (not remedy_finding or (blocking_origin and not returned)):
         try:
             require(actor,work.case,'delivery.planning_decide')
             for verdict in ['approve','return','reject']:
+                if verdict == 'approve' and (remedy_finding or (workaround and (
+                        workaround['recorder_id'] == actor.pk or not workaround_statement))):
+                    continue
                 try:authorities[verdict]=decision_authority(actor,work.case,'PMO Lead',verdict)
                 except (ValidationError,PermissionDenied):pass
         except (ValidationError,PermissionDenied):pass
     can_decide=bool(authorities)
-    packet=digest({'inputs':observed['planning_sources']['inputs'],'authorities':authorities,
-                   'previous_decision': prior.pk if prior else None}) if can_decide else None
-    if 'return' in authorities or 'reject' in authorities:
+    packet_data = {'inputs': observed['planning_sources'].get('inputs'), 'authorities': authorities,
+                   'previous_decision': prior.pk if prior else None}
+    if remedy:
+        packet_data['issue_remedy'] = remedy
+        packet_data['blocking_decision_id'] = blocking_origin.pk
+    packet = digest(packet_data) if can_decide else None
+    if ('return' in authorities or 'reject' in authorities) and blocking_origin and return_issue and (
+            return_issue.current.status not in ('Resolved', 'Closed')) and (
+            prior.data.get('issue_remedy') or delivery_workarounds.head(d, blocking_origin)):
+        return_issues = [return_issue]
+    elif 'return' in authorities or 'reject' in authorities:
         from apps.pmo.issue_access import state_public
         from apps.pmo.models import Issue
         try:
@@ -280,8 +308,26 @@ def projection(actor,work):
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
         'planning_owner_names':owner_names,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
         'last_decision':prior,'returned':returned,'remedy_finding':remedy_finding,'return_issue':return_issue,'return_issues':return_issues,
+        'workaround_option':workaround_option,'reviewed_workaround':bool(workaround),'workaround_statement':workaround_statement,
         'progress_tracking':optional_report(actor,d),'phase_evidence':phase_projection(actor,work.case_id,d.pk),
         'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_decide else []}
+
+@transaction.atomic
+def link_client_workaround(actor, work_id, expected, case_expected, *, return_id, issue_state_id, response_id, review_id, note):
+    from .factory import access
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case', 'actor', 'source_head').get(
+        pk=work_id, definition=DEFINITION)
+    access(actor, work.case, envelope=DEFINITION)
+    if work.revision != expected or work.cancel_requested or work.status in ('verified', 'cancelled', 'followup_needed'):
+        raise ValidationError('Open the current returned Planning work before linking the client proof.')
+    work.case = lock_case(actor, work.case_id, 'delivery.manage', case_expected)
+    list(Grant.objects.select_for_update().filter(case=work.case).order_by('pk'))
+    dossier = subject(work, actor)
+    return delivery_workarounds.record(actor, work.case_id, dossier.pk, case_expected, return_id=return_id,
+                                       issue_state_id=issue_state_id, response_id=response_id, review_id=review_id,
+                                       note=note)
+
 
 @transaction.atomic
 def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_sha256,*,issue_id=None):

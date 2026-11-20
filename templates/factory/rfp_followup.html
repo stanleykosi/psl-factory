@@ -1,5 +1,5 @@
 {% load studio_ui %}{% if followup %}<section class="card" aria-label="Customer follow-up"><h2>Customer follow-up</h2>
-<p>Submission {{ followup.outcome.submission_id }}{% if followup.outcome.followup_on %} · Check again {{ followup.outcome.followup_on|date:'j M Y' }}{% endif %}.</p>
+<p>Submission {{ followup.outcome.submission_id }}{% if followup.outcome.remind_at %} · Check again {{ followup.outcome.remind_at|date:'d M Y H:i:s T' }}{% elif followup.outcome.followup_on %} · Check again {{ followup.outcome.followup_on|date:'j M Y' }}{% endif %}.</p>
 <form method="post">{% csrf_token %}
   <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
   <input type="hidden" name="target" value="{{ followup.outcome.pk }}">

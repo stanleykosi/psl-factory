@@ -35,6 +35,20 @@
       <label>Internal reminder time ({{ current_timezone }})<input name="remind_at" type="datetime-local" step="1" value="{{ outcome_values.remind_at }}" aria-describedby="bid-reminder-hint"></label>
       <p id="bid-reminder-hint">Remind the currently assigned project manager in Alerts.</p>
     {% endif %}
+    {% if outcome_variant == 'lost' %}
+      {% if loss_reasons %}
+        <input type="hidden" name="loss_catalog" value="{{ loss_catalog.pk }}">
+        <label>Main reason the customer gave (optional)<select name="loss_reason">
+          <option value="">No reason selected</option>
+          {% for reason in loss_reasons %}<option value="{{ reason.key }}"{% if outcome_values.loss_reason == reason.key %} selected{% endif %}>{{ reason.label }}</option>{% endfor %}
+        </select></label>
+      {% endif %}
+      {% if debrief_choices %}<label>Recorded debrief (optional)<select name="debrief_version">
+          <option value="">Choose a recorded debrief</option>
+          {% for debrief in debrief_choices %}<option value="{{ debrief.pk }}"{% if outcome_values.debrief_version == debrief.pk|stringformat:'s' %} selected{% endif %}>{{ debrief.meeting__reference }} · {{ debrief.occurred_at|date:'d M Y' }}</option>{% endfor %}
+        </select></label>{% endif %}
+      {% if row.can_view_outcome_settings %}<p><a href="{% url 'factory_rfp_outcome_configuration' case.pk %}#loss-reasons">Review loss reasons</a></p>{% endif %}
+    {% endif %}
     <label>{% if outcome_variant == 'lost' %}Customer reason and notes{% else %}Explanation{% endif %}<textarea name="note" required maxlength="4000">{{ outcome_values.note }}</textarea></label>
     {% if row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'won' or row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'lost' %}
       <input type="hidden" name="selection_packet" value="{{ row.rfp.selection.packet }}"><label><input type="checkbox" name="selection_acknowledged"> I reviewed the submitted responses and this evidence identifies the result</label>

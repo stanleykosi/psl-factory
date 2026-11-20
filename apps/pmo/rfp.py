@@ -187,7 +187,8 @@ def _reviewed(r,response_id):
 
 @transaction.atomic
 def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None,*,
-            followup_on=None,award_amount=None,award_currency=None,customer_expected_on=None,remind_at=None):
+            followup_on=None,award_amount=None,award_currency=None,customer_expected_on=None,remind_at=None,
+            loss_reason_key='',loss_catalog_id=None,debrief_version_id=None):
     from .models import RFPSubmission
     case=lock_case(actor,case_id,'rfp.outcome',expected);r=root(case);ensure_open(r);note(note_text);past(observed_at)
     require(actor,case,'case.read');require(actor,case,'rfp.read')
@@ -210,6 +211,8 @@ def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note
         raise ValidationError('Choose one internal reminder time on or after the pending or unconfirmed observation.')
     if customer_expected_on is not None and (result != 'pending' or type(customer_expected_on) is not date):
         raise ValidationError('Record a customer-stated decision date only for an evidenced pending outcome.')
+    if result != 'lost' and (loss_reason_key or loss_catalog_id is not None or debrief_version_id is not None):
+        raise ValidationError('Add a loss reason or debrief only to a customer loss.')
     evidence = None
     if evidence_id:
         evidence = subject(case,evidence_id,'rfp_outcome')
@@ -221,12 +224,15 @@ def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note
         raise ValidationError('Choose the evidence for the customer response')
     from .rfp_pricing import verify_award
     verify_award(evidence, s, result, amount, currency)
+    from .rfp_loss import check_debrief, reason_pin
+    reason = reason_pin(actor, case, loss_reason_key, loss_catalog_id) if loss_reason_key else {}
+    debrief = check_debrief(actor, case, debrief_version_id) if debrief_version_id is not None else None
     selection=selection_authority(case,s,selection_context)
     if selection:auth['_selection_context']=selection
     x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,
                                evidence=evidence,note=note_text,actor=actor,followup_on=followup_on,
                                award_amount=amount,award_currency=currency,customer_expected_on=customer_expected_on,
-                               remind_at=remind_at)
+                               remind_at=remind_at,loss_reason=reason,debrief_version_id=debrief)
     event(actor,case,'rfp.outcome_recorded',outcome=x.pk,result=result);bump(case);return x
 
 @transaction.atomic

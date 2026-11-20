@@ -317,6 +317,25 @@
       }
     },
     {
+      "id": "OPS.rfp_loss_catalog",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.rfp_loss_catalog/v1",
+      "subject_scope": "Optional approved loss reasons. No initial values, business appointment, debrief scheduling or archive approval.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/rfp-loss-catalog/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.rfp_outcome_reconciliation",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.rfp_outcome_reconciliation/v1",

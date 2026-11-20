@@ -115,6 +115,8 @@ from .factory_rfp_validators import COMPONENT as FACTORY_RFP,SCHEMA as FACTORY_R
 SCHEMAS[FACTORY_RFP]=(FACTORY_RFP_SCHEMA,RFP_VALUE)
 from .rfp_outcome_validators import COMPONENT as RFP_OUTCOME,SCHEMA as RFP_OUTCOME_SCHEMA,VALUE as RFP_OUTCOME_VALUE,validate_reference as validate_rfp_outcome
 SCHEMAS[RFP_OUTCOME]=(RFP_OUTCOME_SCHEMA,RFP_OUTCOME_VALUE)
+from .rfp_loss_validators import COMPONENT as RFP_LOSS, SCHEMA as RFP_LOSS_SCHEMA, VALUE as RFP_LOSS_VALUE, validate_reference as validate_rfp_loss
+SCHEMAS[RFP_LOSS] = (RFP_LOSS_SCHEMA, RFP_LOSS_VALUE)
 
 from .factory_forecast_validators import COMPONENT as FACTORY_FORECAST,SCHEMA as FORECAST_SCHEMA,VALUE as FORECAST_VALUE,validate_reference as validate_forecast_factory
 SCHEMAS[FACTORY_FORECAST]=(FORECAST_SCHEMA,FORECAST_VALUE)
@@ -157,6 +159,7 @@ def validate_reference(component,target,case,runtime=False):
         return validate_archive_transfer(target, case)
     if component==FACTORY_FORECAST:return validate_forecast_factory(component,target,case,runtime)
     if component==RFP_OUTCOME:return validate_rfp_outcome(component,target,case,runtime)
+    if component==RFP_LOSS:return validate_rfp_loss(target,case)
     if component==FACTORY_RFP:return validate_factory_rfp(component,target,case,runtime)
     if component==RECEIPT_RECOVERY:return validate_receipt_recovery(component,target,case,runtime)
     if component==FACTORY_RECOVERY:return validate_factory_recovery(component,target,case,runtime)

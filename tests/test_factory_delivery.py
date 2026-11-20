@@ -14,7 +14,7 @@ from apps.pmo.models import DeliveryRecord,DeliverySourceVerification
 from apps.workflows import factory,factory_delivery
 from apps.workflows.models import FactoryWork,HumanTask
 from tests.test_delivery import DeliveryFixture
-from tests.helpers import rev
+from tests.helpers import rev, worker_test_environment
 
 
 def setup(configure=True):
@@ -243,9 +243,9 @@ from django.test import TransactionTestCase
 
 class FactoryDeliveryConcurrencyTests(TransactionTestCase):
     def test_real_process_interruption_after_native_preparation_rolls_back_then_recovers_once(self):
-        import os,sys,subprocess
+        import sys,subprocess
         from datetime import timedelta
-        f=setup();release_sources(f);env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        f=setup();release_sources(f);env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'interrupt_after_action'],env=env,capture_output=True,timeout=60)
         self.assertEqual(result.returncode,38,result.stderr.decode())
         f.work.refresh_from_db();spent=f.work.budget_used;self.assertGreaterEqual(spent,200)

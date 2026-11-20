@@ -72,7 +72,7 @@ SCREENS = {
         'recovery': ('reconcile', 'operate_delivery', 'settle_stop'),
     },
     'delivery-release/v1': {
-        'decision': ('delivery_decision',),
+        'decision': ('delivery_decision', 'delivery_workaround'),
         'recovery': ('advance', 'reassess', 'resume', 'cancel', 'adopt_profile'),
     },
     'delivery-closure/v1': {

@@ -15,6 +15,8 @@
     <p>{{ row.delivery.return_issue.reference }} · {{ row.delivery.return_issue.current.status }}</p>
     <a class="button secondary" href="{% url 'issues' case.pk %}#issue-{{ row.delivery.return_issue.pk }}">Open linked issue</a>
   {% endif %}
+  {% if row.delivery.reviewed_workaround %}<p>A reviewed client workaround is linked to this issue. The issue remains open.</p>{% endif %}
+  {% if row.delivery.workaround_statement %}<p>{{ row.delivery.workaround_statement }}</p>{% endif %}
   {% if row.delivery.last_decision.parent %}
     <details><summary>Previous decision</summary><p>{{ row.delivery.last_decision.parent.data.verdict|readable }}</p><p>{{ row.delivery.last_decision.parent.data.note }}</p></details>
   {% endif %}
@@ -29,6 +31,23 @@
 {% if not focus %}<section class="card"><h2>Agent activity</h2>{% for activity in activities %}<details><summary>{{ activity.title }} · {{ activity.status|readable }}</summary>{% for attempt in activity.attempts.all %}<p>{{ attempt.summary }}</p><details><summary>Observed references</summary><pre>{{ attempt.display_result }}</pre></details>{% endfor %}</details>{% empty %}<p>No activity recorded yet.</p>{% endfor %}</section>{% endif %}</div>
 <aside class="factory-action-panel">
 {% if focus != 'decision' %}<section class="card"><h2>Next permitted action</h2>{% if row.can_advance %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue eligible work</button></form>{% else %}<p>{{ row.next_action }}</p>{% endif %}{% if row.can_manage %}{% if row.work.status == 'blocked' or row.work.status == 'owner_needed' or row.work.status == 'configuration_needed' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Recheck corrected prerequisites</button></form>{% endif %}{% if row.can_cancel %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Request cancellation</button></form>{% endif %}{% endif %}</section>{% endif %}
+{% if focus != 'recovery' and row.delivery.workaround_option %}
+<section class="card"><h2>Client-approved workaround</h2>
+  <p>Link the reviewed client response to this returned Planning decision for independent review.</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="delivery_workaround">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    {% with option=row.delivery.workaround_option %}
+    <input type="hidden" name="return_id" value="{{ option.return_id }}">
+    <input type="hidden" name="issue_state_id" value="{{ option.issue_state_id }}">
+    <input type="hidden" name="response_id" value="{{ option.response_id }}">
+    <input type="hidden" name="review_id" value="{{ option.review_id }}">
+    {% endwith %}
+    <label>Reason for linking this workaround<textarea name="note" required maxlength="4000"></textarea></label>
+    <button>Link reviewed client workaround</button>
+  </form>
+</section>{% endif %}
 {% if focus != 'recovery' and row.delivery.can_decide %}
 <section class="card"><h2>Planning exit decision</h2><p>Review this exact delivery candidate and its source-owned design, test and UAT prerequisites.</p>
   <form method="post">{% csrf_token %}<input type="hidden" name="action" value="delivery_decision"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="packet" value="{{ row.delivery.decision_packet }}">

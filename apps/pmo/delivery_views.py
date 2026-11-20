@@ -3,9 +3,12 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.db.models import Prefetch
 from django.shortcuts import render,redirect
+from adapters.client_uat import KINDS as CLIENT_KINDS
+from apps.core.evidence_access import public_evidence
 from apps.core.views import accessible_case
-from apps.identity.services import require
+from apps.identity.services import active_case_grants, require
 from apps.policy.change_drafts import draft_standard_policy
 from apps.agents.delivery import investigate_delivery
 from apps.agents.models import AgentRun
@@ -14,7 +17,8 @@ from .delivery import (SOURCE_OWNERS,open_dossier,capture_source,verify_source,d
     record_release_request,prepare_readiness,capture_release)
 from .delivery_closure import (accept_go_live,reaffirm_go_live,latest_go_live,evaluate_hypercare,archive_artifacts,acknowledge_handover,confirm_finance,decide_closure,finalize_closure)
 from .delivery_documents import draft_delivery_document
-from .models import DeliveryDossier,DeliveryRecord,DeliveryCandidate,MeetingVersion,DeliveryDocumentBinding
+from .delivery_workarounds import KIND as WORKAROUND_KIND
+from .models import DeliveryDossier,DeliveryRecord,DeliverySource,DeliveryCandidate,MeetingVersion,DeliveryDocumentBinding
 
 
 def optional_bool(value):return {'true':True,'false':False,'unknown':None}.get(value)
@@ -73,7 +77,15 @@ def workbench(request,case_id):
             messages.success(request,'Delivery evidence recorded; no deployment or financial transaction was dispatched')
             return redirect('delivery',case_id=case.pk)
         except (ValidationError,ValueError,KeyError) as exc:messages.error(request,str(exc));case.refresh_from_db()
-    dossiers=list(DeliveryDossier.objects.filter(case=case).select_related('candidate').order_by('-pk')[:50])
+    evidence = public_evidence(case.evidence.exclude(kind='client_uat_metadata'))
+    sources = (DeliverySource.objects.filter(evidence_id__in=evidence.values('pk'))
+               .exclude(kind__in=CLIENT_KINDS | {WORKAROUND_KIND})
+               .only('dossier_id', 'kind', 'external_ref', 'evidence_id').order_by('-pk')[:50])
+    records = DeliveryRecord.objects.only('dossier_id', 'kind', 'created_at').order_by('-pk')[:50]
+    dossiers = list(DeliveryDossier.objects.filter(case=case).select_related('candidate').prefetch_related(
+        Prefetch('sources', queryset=sources, to_attr='visible_sources'),
+        Prefetch('records', queryset=records, to_attr='visible_records'),
+    ).order_by('-pk')[:50])
     from .delivery import planning_inputs,readiness_inputs,dossier_for
     from .delivery_closure import hypercare_inputs
     for d in dossiers:
@@ -94,9 +106,9 @@ def workbench(request,case_id):
         for key,fn in [('Planning',planning_inputs),('Release evidence',readiness_inputs),('Hypercare',hypercare_inputs)]:
             try:dossier_for(case,d.pk);d.checks[key]={'state':'Source evidence available','details':fn(d)}
             except (ValidationError,PermissionDenied) as exc:d.checks[key]={'state':'Needs attention','details':str(exc)}
-    from adapters.client_uat import KINDS as CLIENT_KINDS
-    return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':{k:v for k,v in SOURCE_OWNERS.items() if k not in CLIENT_KINDS},
-        'candidates':DeliveryCandidate.objects.filter(case=case),'evidence':case.evidence.all(),
+    return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':{k:v for k,v in SOURCE_OWNERS.items() if k not in CLIENT_KINDS and k != WORKAROUND_KIND},
+        'can_view_client_testing':(case.pk, 'engagement.read') in active_case_grants(request.user, [case.pk], actions=('engagement.read',)),
+        'candidates':DeliveryCandidate.objects.filter(case=case),'evidence':evidence.defer('body'),
         'meetings':MeetingVersion.objects.filter(meeting__case=case).order_by('-pk')[:100],
         'templates':Template.objects.filter(case=case,definition__document_type='project_artifact'),
         'receipts':PublicationReceipt.objects.filter(publication__version__deliverydocumentbinding__dossier__case=case),

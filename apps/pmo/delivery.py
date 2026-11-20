@@ -1,6 +1,6 @@
 """Planning/delivery and release evidence. No deployment command exists here."""
 import math
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import transaction,DatabaseError
 from django.utils import timezone
 from apps.core.services import lock_case,event,bump
@@ -10,6 +10,7 @@ from apps.documents.controlled import baseline_manifest
 from apps.documents.contracts import validate,digest
 from .services import subject
 from .commercial import note_required
+from . import delivery_workarounds
 from .clocks import aware
 from .models import DeliveryDossier,DeliverySource,DeliverySourceVerification,DeliveryRecord,DeliveryCandidate,MeetingVersion
 from apps.core.read_observation import observed_fact
@@ -18,6 +19,7 @@ SOURCE_OWNERS={'registration':'PMO','scope_baseline':'PMO','ui_applicability':'P
     'ui_client':'Client','technical_design':'Engineering Lead','test_strategy':'QA Lead','uat_approach':'Product Owner',
     'hypercare_engineering':'Engineering','hypercare_infrastructure':'Infrastructure','technical_finalization':'Engineering'}
 SOURCE_OWNERS.update(uat_client_target='PMO',uat_client_response='Client')
+SOURCE_OWNERS[delivery_workarounds.KIND] = 'PMO'
 PLANNING=['registration','scope_baseline','technical_design','test_strategy','uat_approach','ui_applicability']
 UPSTREAM_GATES=['qa_exit','uat_product_manager','uat_product_owner','uat_client','engineering_go']
 GLPI_GATES=['glpi_security','glpi_cto','glpi_ceo']
@@ -99,6 +101,7 @@ def validate_source_payload(kind,payload):
 def capture_source(actor,case_id,dossier_id,kind,external_ref,evidence_id,payload,expected):
     from adapters.client_uat import KINDS as CLIENT_KINDS
     if kind in CLIENT_KINDS:raise ValidationError('Use the human client-response workflow for these records')
+    if kind == delivery_workarounds.KIND:raise ValidationError('Use the exact returned Planning workaround action')
     case=lock_case(actor,case_id,'delivery.source',expected);d=dossier_for(case,dossier_id);ensure_open(d)
     if kind not in SOURCE_OWNERS or not isinstance(external_ref,str) or not external_ref.strip() or len(external_ref)>240:
         raise ValidationError('Choose an owned source kind and bounded external reference')
@@ -138,6 +141,7 @@ def verify_source(actor,case_id,source_id,expected,adapter=None):
     if not s:raise ValidationError('Source is outside this case')
     from adapters.client_uat import KINDS as CLIENT_KINDS
     if s.kind in CLIENT_KINDS:raise ValidationError('Agent or synthetic source checks cannot confirm a human client response')
+    if s.kind == delivery_workarounds.KIND:raise ValidationError('Use the current human-reviewed client workaround')
     if not case.synthetic:raise ValidationError('Operational source capture is available; authoritative verification needs an accepted remote adapter contract')
     adapter=adapter or SyntheticDeliverySourceAdapter();result=adapter.read(s)
     validate(source_result_schema(s),result)
@@ -186,8 +190,16 @@ def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*
     authority=decision_authority(actor,case,'PMO Lead',verdict)
     inputs = planning_inputs(d)
     prior = latest(d, 'planning_decision', False)
-    remedy = planning_remedy(d, prior, inputs, actor=actor)
+    remedy = planning_remedy(d, prior, inputs, actor=actor) if verdict == 'approve' or (
+        prior and prior.data['verdict'] in ('return', 'reject')) else None
     data = {'verdict': verdict, 'authority': authority, 'note': note}
+    returned = delivery_workarounds.origin(d, prior)
+    if verdict != 'approve' and returned and (prior.data.get('issue_remedy') or delivery_workarounds.head(d, returned)):
+        ongoing = planning_issue(d, returned.data['blocking_issue']['issue'])
+        if ongoing.current.status not in ('Resolved', 'Closed'):
+            if issue_id is not None and issue_id != ongoing.pk:
+                raise ValidationError('Keep the original linked issue on a new return while it still needs work.')
+            issue_id = ongoing.pk
     if issue_id is not None:
         if verdict not in ('return', 'reject'):
             raise ValidationError('Link a blocking issue when returning or rejecting delivery.')
@@ -197,7 +209,12 @@ def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*
             raise ValidationError('Choose an issue that still needs work.')
         data['blocking_issue'] = {'issue': issue.pk, 'state': issue.current_id}
     if remedy and verdict == 'approve':
+        if remedy.get('kind') == delivery_workarounds.KIND:
+            if remedy['recorder_id'] == actor.pk:
+                raise PermissionDenied('A different assigned PMO Lead must approve the linked client workaround.')
+            delivery_workarounds.approval_statement(actor, d, remedy)
         data['issue_remedy'] = remedy
+        data['blocking_decision_id'] = returned.pk
     return record(actor,case,d,'planning_decision',subject(case,evidence_id),data,inputs,parent=prior)
 
 
@@ -215,17 +232,23 @@ def planning_issue(d, issue_id):
 
 def planning_remedy(d, prior, inputs, *, actor=None):
     """An unchanged packet cannot replace a negative decision by replay."""
-    if not prior or prior.data.get('verdict') not in ('return', 'reject'):
+    returned = delivery_workarounds.origin(d, prior)
+    if not prior or (not returned and prior.data.get('verdict') not in ('return', 'reject')):
         return None
-    blocking = prior.data.get('blocking_issue')
+    blocking = (returned or prior).data.get('blocking_issue')
     if blocking:
         if actor is not None:
             require(actor, d.case, 'issue.read')
         issue = planning_issue(d, blocking['issue'])
         current = issue.current
-        if (current.pk == blocking['state'] or current.status not in ('Resolved', 'Closed') or not current.fix_id):
-            raise ValidationError('Record the fix for the linked issue before requesting another decision.')
-        return {'issue': issue.pk, 'state': current.pk, 'fix': current.fix_id}
+        if current.pk != blocking['state'] and current.status in ('Resolved', 'Closed') and current.fix_id:
+            return {'issue': issue.pk, 'state': current.pk, 'fix': current.fix_id}
+        if returned and returned.data.get('verdict') == 'return':
+            workaround = delivery_workarounds.current(d, returned, issue)
+            if workaround:
+                return workaround
+            raise ValidationError('Record the fix for the linked issue or link its reviewed client-approved workaround before requesting another decision.')
+        raise ValidationError('Record the fix for the linked issue before requesting another decision.')
     previous = prior.snapshot
     old_sources = previous.get('sources', {})
     pairs = [(old_sources.get(kind, [None])[0], pin[0]) for kind, pin in inputs['sources'].items()]
@@ -244,8 +267,15 @@ def approved_plan(d):
         raise ValidationError('Current exact Planning exit approval required')
     remedy = r.data.get('issue_remedy')
     if remedy:
-        current = planning_issue(d, remedy['issue']).current
-        if current.status not in ('Resolved', 'Closed') or current.fix_id != remedy['fix']:
+        require(r.actor, d.case, 'issue.read')
+        returned = delivery_workarounds.origin(d, r)
+        issue = planning_issue(d, remedy['issue'])
+        if remedy.get('kind') == delivery_workarounds.KIND:
+            if (r.actor_id == remedy['recorder_id'] or not returned or returned.data.get('verdict') != 'return' or
+                    delivery_workarounds.current(d, returned, issue) != remedy):
+                raise ValidationError('The client workaround used for Planning approval needs review.')
+            delivery_workarounds.approval_statement(r.actor, d, remedy)
+        elif issue.current.status not in ('Resolved', 'Closed') or issue.current.fix_id != remedy['fix']:
             raise ValidationError('The issue fix used for the Planning approval needs review.')
     return r
 

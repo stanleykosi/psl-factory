@@ -104,6 +104,9 @@ class RFPOutcome(AppendOnly):
     customer_expected_on = models.DateField(null=True, blank=True)
 
     remind_at = models.DateTimeField(null=True, blank=True)
+
+    loss_reason = models.JSONField(default=dict, blank=True)
+    debrief_version = models.ForeignKey('pmo.MeetingVersion', on_delete=models.PROTECT, null=True, blank=True)
     role=models.CharField(max_length=50)
     authority=models.JSONField()
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT,null=True,blank=True)

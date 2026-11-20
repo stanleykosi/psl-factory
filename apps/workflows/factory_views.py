@@ -240,6 +240,12 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         row['preparation_history']=work.preparation_bindings.select_related('actor','preparation').order_by('sequence')
     if work.definition=='pmo-finance/v1' and work.invoice_id:
         from apps.finance.models import InvoiceReview
+        if work.status == 'waiting_effect' and recovery_available and controlled and not row['can_reconcile'] and not (
+                work.lease_until and work.lease_until > timezone.now()):
+            from .factory_invoice_receipts import confirmed_waiting_job
+            if confirmed_waiting_job(work, jobs):
+                row.update(state='Original receipt recorded', blocker='', can_reconcile=True, needs_me=True,
+                           recorded_invoice_receipt=True, next_action='Check the recorded invoice receipt before continuing')
         row['invoice_decisions']=InvoiceReview.objects.filter(invoice=work.invoice).select_related('actor').order_by('-pk')[:10]
         from .factory_routing import evaluate,task_authority_current
         row['routing']=evaluate(work)
@@ -979,6 +985,19 @@ def _detail(request,work_id,focus=None):
                 from .factory_delivery import decide
                 decide(request.user,work.pk,revision,request.POST.get('verdict'),int(request.POST.get('evidence','0')),request.POST.get('note',''),int(request.POST.get('case_revision','0')),request.POST.get('packet',''),
                        issue_id=int(request.POST['blocking_issue']) if request.POST.get('blocking_issue') else None)
+            elif operation=='delivery_workaround':
+                if work.definition!='delivery-release/v1':raise ValidationError('Delivery work required')
+                from .factory_delivery import link_client_workaround
+
+                fields = {'return_id', 'issue_state_id', 'response_id', 'review_id'}
+                expected_fields = fields | {'action', 'revision', 'case_revision', 'note'}
+                if set(request.POST) - expected_fields - {'csrfmiddlewaretoken'} or any(
+                        len(request.POST.getlist(key)) != 1 for key in expected_fields):
+                    raise ValidationError('Choose the exact current return, issue and reviewed client response.')
+                link_client_workaround(request.user, work.pk, revision, int(request.POST['case_revision']),
+                                       **{key: int(request.POST[key]) for key in fields}, note=request.POST['note'])
+                messages.success(request, 'Client workaround linked for a fresh Planning decision.')
+                return redirect(request.get_full_path())
             elif operation=='hypercare_observation':
                 if work.definition!='delivery-hypercare/v1':raise ValidationError('Release follow-up work required')
                 from .factory_hypercare import observe

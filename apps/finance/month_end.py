@@ -1,6 +1,6 @@
 """Review close inputs and recorded receivables at each permitted workspace."""
 from calendar import monthrange
-from datetime import date
+from datetime import date, datetime, time
 from decimal import Decimal, localcontext
 
 from django import forms
@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import Subquery
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -18,14 +18,15 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST, require_safe
 
 from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
+from apps.core.presentation import workspace_name
 from apps.core.services import lock_case
 from apps.core.workbench import granted
 from apps.identity.services import active_case_grants, require
 from apps.workflows.factory_definitions import DEFINITIONS
-from apps.workflows.factory_views import visible
+from apps.workflows.models import FactoryWork
 
 from .cash import lot_payload
-from .fixed_charge import case_access
+from .fixed_charge import case_access, preparation_access
 from .models import BillingPreparation, CashVerification, FinancePeriod, ReceivableSnapshot
 from .performance import period_acceptance
 from .statement_ppe import recipient_access
@@ -44,6 +45,29 @@ CLOSE_STATIONS = (
     ('payroll', 'Restricted payroll and staff costs', ('payroll.read',)),
     ('bu', 'Business unit attribution', ('bu.read',)),
 )
+FINANCE_WORK = {
+    'finance-accounts/v1': 'Management accounts',
+    'finance-schedules/v1': 'Income detail and schedules',
+    'finance-ppe/v1': 'Fixed asset schedule',
+    'finance-forecast/v1': 'Cash forecast',
+    'finance-bu/v1': 'Business-unit totals',
+    'finance-payroll/v1': 'Payroll',
+    'finance-ledger/v1': 'Transaction evidence',
+    'pmo-finance/v1': 'Invoices and delivery',
+}
+WORK_LIMIT = 25
+WORK_CHECK_LIMIT = 50
+WORK_STATES = {
+    'verified': ('done', 'Verified'),
+    'cancelled': ('stopped', 'Cancelled'),
+    'blocked': ('waiting', 'Action needed'),
+    'owner_needed': ('waiting', 'Owner needed'),
+    'configuration_needed': ('waiting', 'Rules needed'),
+    'waiting_effect': ('waiting', 'Receipt needs reconciliation'),
+    'followup_needed': ('waiting', 'Finance follow-up needed'),
+    'waiting': ('waiting', 'Waiting'),
+    'ready': ('waiting', 'Ready to continue'),
+}
 
 
 class MonthForm(forms.Form):
@@ -91,10 +115,11 @@ def show(request, case, tabs):
     require(request.user, case, 'finance.read')
     form, month = selection(request)
     close = workspace_close(request.user, case, month) if month else None
+    overview = month_overview(request.user, [close], month) if close else None
     return render(request, 'design/month_end.html', {
         'case': case, 'tab': 'month-end', 'tabs': tabs, 'periods': close['periods'] if close else [],
         'close': close,
-        'form': form, 'month': month,
+        'form': form, 'month': month, 'overview': overview,
     })
 
 
@@ -191,6 +216,114 @@ def workspace_close(actor, case, month):
     return sections
 
 
+def authorized_work_read(actor, item, actions):
+    if item.preparation_kind == 'fixed_contract':
+        preparation_access(actor, item.preparation)
+    if item.definition == 'finance-ledger/v1':
+        from apps.workflows.factory_ledger import source
+        source(item, actor, False)
+    elif item.definition == 'finance-schedules/v1':
+        from apps.workflows.factory_schedules import source
+        source(item, actor, False)
+    elif item.definition == 'finance-ppe/v1':
+        from apps.workflows.factory_ppe import source
+        source(item, actor, False)
+    elif item.definition == 'finance-forecast/v1':
+        from apps.workflows.factory_forecast import source
+        source(item, actor, False)
+    elif item.definition in ('finance-bu/v1', 'finance-payroll/v1'):
+        from apps.workflows import factory_bu, factory_payroll
+
+        if item.definition == 'finance-bu/v1':
+            service, private, receipt_reader = factory_bu, 'bu.private.read', factory_bu.native.read_report
+        else:
+            service, private, receipt_reader = factory_payroll, 'payroll.private.read', factory_payroll.native.read_publication
+        if private in actions:
+            try:
+                service.source(item, actor, False)
+                return
+            except (PermissionDenied, ValidationError):
+                pass
+        publication = service.publication(item)
+        if publication is None:
+            raise PermissionDenied('Current source or aggregate access required')
+        receipt_reader(actor, publication.pk)
+
+
+def work_in_month(actor, entries, start, as_of):
+    ids = {entry['case'].pk for entry in entries}
+    grants = {case_id: set() for case_id in ids}
+    for case_id, action in active_case_grants(actor, ids):
+        grants[case_id].add(action)
+    common = {'case.read', 'factory.read', 'finance.read'}
+    scope = Q(pk__in=[])
+    for definition in FINANCE_WORK:
+        actions = common | {DEFINITIONS[definition]['read']}
+        if definition == 'finance-ledger/v1':
+            actions.add('ledger.private.read')
+        permitted = [case_id for case_id, values in grants.items() if actions <= values]
+        if permitted:
+            scope |= Q(definition=definition, case_id__in=permitted)
+
+    last = start.replace(day=monthrange(start.year, start.month)[1])
+    window = (timezone.make_aware(datetime.combine(start, time.min)),
+              timezone.make_aware(datetime.combine(last, time.max)))
+    candidates = FactoryWork.objects.filter(scope, updated_at__range=window).select_related('case').only(
+        'case__title', 'case__kind', 'case__synthetic', 'definition', 'status', 'updated_at',
+        'cancel_requested', 'lease_until', 'preparation_id', 'source_head_id',
+    ).annotate(preparation_kind=F('preparation__kind')).order_by('-updated_at', '-pk')[:WORK_CHECK_LIMIT]
+    rows = []
+    try:
+        with limit_queries(180):
+            for item in candidates:
+                try:
+                    authorized_work_read(actor, item, grants[item.case_id])
+                except (PermissionDenied, ValidationError):
+                    continue
+                state, label = WORK_STATES.get(item.status, ('waiting', 'Check current work'))
+                if state == 'waiting':
+                    if item.cancel_requested:
+                        label = 'Cancellation requested'
+                    elif item.lease_until and item.lease_until > as_of:
+                        state, label = 'in_progress', 'Processing'
+                rows.append({'title': FINANCE_WORK[item.definition], 'workspace_id': str(item.case_id),
+                             'workspace': workspace_name(item.case),
+                             'state': state, 'label': label, 'at': item.updated_at,
+                             'url': reverse('factory_detail', args=[item.pk])})
+                if len(rows) == WORK_LIMIT:
+                    break
+    except ReadLimit:
+        pass
+    return rows
+
+
+def cash_in_month(entries):
+    # The visible workspace page can contain several organizations. Separate
+    # their receipts as well as currencies and amount bases.
+    by_workspace = len({entry['case'].tenant for entry in entries}) > 1
+    totals = {}
+    with localcontext() as context:
+        context.prec = 512
+        for entry in entries:
+            case = entry['case']
+            workspace = (str(case.pk), workspace_name(case)) if by_workspace else (None, None)
+            for currency, basis, amount in entry['cash']:
+                key = (workspace, currency, basis)
+                totals[key] = totals.get(key, Decimal(0)) + amount
+    groups = [{'workspace_id': case_id, 'workspace': name, 'currency': currency, 'basis': basis, 'amount': amount}
+              for ((case_id, name), currency, basis), amount in totals.items()]
+    return {'groups': groups[:12], 'more_groups': len(groups) > 12}
+
+
+def month_overview(actor, entries, month):
+    as_of = timezone.now()
+    start = date.fromisoformat(month + '-01')
+    work = work_in_month(actor, entries, start, as_of)
+    return {'as_of': as_of, 'month_start': start, 'work': work, 'work_limit': WORK_LIMIT, 'workspaces': len(entries),
+            'counts': {state: sum(row['state'] == state for row in work)
+                       for state in ('done', 'waiting', 'in_progress', 'stopped')}, 'cash': cash_in_month(entries)}
+
+
 @login_required
 @require_POST
 @transaction.atomic
@@ -223,9 +356,8 @@ def company(request):
     page = Paginator(cases, 12).get_page(request.GET.get('page'))
     report = []
     coverage = None
-    work = []
+    overview = None
     if month:
-        start = date.fromisoformat(month + '-01')
         report = [workspace_close(request.user, case, month) for case in page]
         coverage = {
             'workspaces': len(report),
@@ -234,16 +366,7 @@ def company(request):
                             entry['receivables']['date'] == entry['receivables']['cutoff'] for entry in report),
             'cash': sum(bool(entry['cash']) for entry in report),
         }
-        line_keys = [key for key in DEFINITIONS if key.startswith(('finance-', 'pmo-finance/'))
-                     and key not in {'finance-bu/v1', 'finance-payroll/v1'}]
-        window = visible(request.user).filter(case_id__in=Subquery(cases.values('pk')), updated_at__year=start.year,
-                                              updated_at__month=start.month, definition__in=line_keys)
-        for item in window.select_related(None).select_related('case').only(
-            'case__title', 'definition', 'status', 'updated_at',
-        ).order_by('-updated_at', '-pk')[:26]:
-            work.append({'id': item.pk, 'case': item.case, 'title': DEFINITIONS[item.definition]['title'],
-                         'state': item.status, 'at': item.updated_at})
+        if report:
+            overview = month_overview(request.user, report, month)
     return render(request, 'design/company_month_end.html', {'form': form, 'month': month, 'page': page, 'report': report,
-                                                             'coverage': coverage,
-                                                             'work': work[:25], 'work_limited': len(work) > 25,
-                                                             'as_of': timezone.now()})
+                                                             'coverage': coverage, 'overview': overview})
