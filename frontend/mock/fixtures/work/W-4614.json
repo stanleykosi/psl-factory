@@ -1,0 +1,70 @@
+{
+  "id": "W-4614",
+  "title": "Payroll correction · Finance applying (September)",
+  "line": "Payroll correction",
+  "reference": "PCR-0003",
+  "state": "waiting",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Spot the difference",
+      "status": "done"
+    },
+    {
+      "name": "HR Lead decides",
+      "status": "done"
+    },
+    {
+      "name": "Finance applies",
+      "status": "waiting"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the approved correction to Finance",
+        "status": "done",
+        "source": "Correction note"
+      },
+      {
+        "text": "Waiting for Finance to apply it",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "Finance applies the approved correction. The HR Lead is told when it is done.",
+  "sample": true
+}

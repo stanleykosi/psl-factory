@@ -53,8 +53,8 @@ function shifted(list) {
 /** The data a persona starts with: finance_lead's follows the scenario, the others keep their own records. */
 function initialState(persona, scenario) {
   const own = persona !== 'finance_lead';
-  const who = persona === 'admin' || persona === 'ceo' || persona === 'pmo_lead' || persona === 'hr' ? 'none' : persona; // admin, ceo and pmo_lead have no alert records of their own yet; they start with the empty person's
-  let list = own ? read(`alerts/notifications.${persona === 'hr' ? 'hr' : who}.json`) : read('E-NOTIFICATIONS.json');
+  const who = persona === 'admin' || persona === 'ceo' || persona === 'pmo_lead' || persona === 'hr' || persona === 'hr_lead' ? 'none' : persona; // admin, ceo and pmo_lead have no alert records of their own yet; they start with the empty person's
+  let list = own ? read(`alerts/notifications.${persona === 'hr' || persona === 'hr_lead' ? persona : who}.json`) : read('E-NOTIFICATIONS.json');
   if (scenario === 'empty') list = read('alerts/notifications.empty.json');
   else if (scenario === 'many' && !own) list = read('alerts/notifications.many.json');
   else if (scenario === 'needs-you' && !own) {

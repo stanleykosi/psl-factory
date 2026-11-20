@@ -1,0 +1,84 @@
+{
+  "id": "W-4613",
+  "title": "Business unit moves · confirm before payroll matching",
+  "line": "Confirm business unit moves",
+  "reference": "HRM-0008",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "List the moves",
+      "status": "done"
+    },
+    {
+      "name": "Check with unit heads",
+      "status": "done"
+    },
+    {
+      "name": "HR Lead confirms",
+      "status": "current_person"
+    },
+    {
+      "name": "Release to matching",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4613",
+      "kind": "do",
+      "title": "Confirm the 4 business unit moves",
+      "required_role": "HR Lead",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Listed 4 staff whose business unit changed since October",
+        "status": "done",
+        "source": "Business unit register"
+      },
+      {
+        "text": "Noted that Finance matching starts after these are confirmed",
+        "status": "done",
+        "source": "Payroll calendar"
+      }
+    ]
+  },
+  "next_step": "Next, the HR Lead confirms the 4 moves. Finance payroll matching waits until they are confirmed.",
+  "sample": true
+}

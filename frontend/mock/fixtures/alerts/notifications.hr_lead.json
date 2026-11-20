@@ -1,0 +1,55 @@
+{
+  "items": [
+    {
+      "id": "N-0311",
+      "work_id": "W-4605",
+      "agent": "zainab",
+      "text": "A payroll correction is waiting for your decision",
+      "at": "2026-11-18T09:50:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-18T09:50:00Z"
+    },
+    {
+      "id": "N-0312",
+      "work_id": "W-4612",
+      "agent": "zainab",
+      "text": "Chinedu Eze’s move to Delivery needs your approval",
+      "at": "2026-11-18T13:10:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-18T13:10:00Z"
+    },
+    {
+      "id": "N-0313",
+      "work_id": "W-4613",
+      "agent": "zainab",
+      "text": "4 business unit moves need your confirmation before payroll matching",
+      "at": "2026-11-18T08:30:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-18T08:30:00Z"
+    },
+    {
+      "id": "N-0314",
+      "work_id": "W-4616",
+      "agent": "zainab",
+      "text": "Finance applied the September payroll correction",
+      "at": "2026-11-05T15:00:00Z",
+      "read": true,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-05T15:00:00Z"
+    }
+  ],
+  "as_of": "2026-11-18T15:00:00Z",
+  "total": 4,
+  "unread_count": 3
+}

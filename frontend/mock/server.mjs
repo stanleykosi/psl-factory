@@ -1,7 +1,7 @@
 // Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
-// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead | hr; default finance_lead). hr is a stand-in (D-142): PSL has not defined what HR staff may see..
+// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead | hr | hr_lead; default finance_lead). hr is a stand-in (D-142): PSL has not defined what HR staff may see..
 // Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.
@@ -48,7 +48,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
 export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
-export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead', 'hr'];
+export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead', 'hr', 'hr_lead'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
@@ -99,12 +99,14 @@ function historyPage(history, query) {
   return page;
 }
 
-function workResponse(operationId, url, fixtures, work, overrides) {
+function workResponse(operationId, url, fixtures, work, overrides, persona) {
   const workId = decodeCookie(url.pathname.split('/')[4] ?? '');
   if (workId === NO_ACCESS_WORK_ID) return [404, SCENARIO_BODIES[404]];
   // Only plain ids ("W-1003") pick a per-id file, so "W-1004.history" or other sidecar names never answer as an item.
   const own = (name) => (/^W-\d+$/.test(workId) && Object.hasOwn(work, name) ? work[name] : undefined);
-  if (operationId === 'E-WORK-ITEM') return [200, overrides.get(workId) ?? own(workId) ?? fixtures['E-WORK-ITEM']];
+  // F-55: <id>.<persona>.json is that persona's own copy of an item (W-4605 reads differently for hr and hr_lead)
+  const forPersona = /^W-\d+$/.test(workId) && Object.hasOwn(work, `${workId}.${persona}`) ? work[`${workId}.${persona}`] : undefined;
+  if (operationId === 'E-WORK-ITEM') return [200, overrides.get(workId) ?? forPersona ?? own(workId) ?? fixtures['E-WORK-ITEM']];
   return [200, historyPage(own(`${workId}.history`) ?? fixtures['E-WORK-HISTORY'], url.searchParams)];
 }
 
@@ -306,7 +308,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
         if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });
-        return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
+        return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides, persona));
       }
       if (TASK_OPERATIONS.includes(route.operationId)) {
         return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));

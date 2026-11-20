@@ -41,7 +41,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
-const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201', hr: 'N-0301' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201', hr: 'N-0301', hr_lead: 'N-0311' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
@@ -58,7 +58,7 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-CLIENTS': { none: 403 },
   'E-CLIENT': { none: 403 },
   'E-CLIENT-CONTACT': { none: 403 },
-  'E-EXCEPTIONS': { pm: 403, hr: 403 },
+  'E-EXCEPTIONS': { pm: 403, hr: 403, hr_lead: 403 },
   'E-MONTH-END': { pm: 403, none: 403 },
   'E-INVOICES': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },
@@ -286,6 +286,7 @@ describe('mock server matches openapi.json', () => {
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
       ['Kemi Adebayo', ['my_work', 'projects', 'assistant'], 'mock-csrf-pmo_lead'],
       ['Amaka Obi', ['my_work', 'assistant'], 'mock-csrf-hr'],
+      ['Ngozi Adeyemi', ['my_work', 'assistant'], 'mock-csrf-hr_lead'],
     ]);
   });
 

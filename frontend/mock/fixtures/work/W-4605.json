@@ -3,7 +3,7 @@
   "title": "Payroll correction · HR Lead decision",
   "line": "Payroll correction",
   "reference": "PCR-0004",
-  "state": "waiting",
+  "state": "action_needed",
   "revision": 1,
   "stations": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "name": "HR Lead decides",
-      "status": "waiting"
+      "status": "current_person"
     },
     {
       "name": "Finance applies",
@@ -59,7 +59,7 @@
       "kind": "do",
       "title": "Decide the payroll correction",
       "required_role": "HR Lead",
-      "you_can_act": false,
+      "you_can_act": true,
       "revision": 1
     }
   ],
@@ -79,6 +79,6 @@
       }
     ]
   },
-  "next_step": "The HR Lead decides whether to correct the October matching. Amounts are not shown here.",
+  "next_step": "Next, the HR Lead decides whether to correct the October matching. Amounts are not shown here.",
   "sample": true
 }

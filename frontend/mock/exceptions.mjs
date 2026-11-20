@@ -35,7 +35,7 @@ function matches(row, q, what) {
 }
 
 export function exceptionsList({ url, persona, cookies }) {
-  if (persona === 'pm' || persona === 'hr') return { status: 403, body: NOT_A_LEAD };
+  if (persona === 'pm' || persona === 'hr' || persona === 'hr_lead') return { status: 403, body: NOT_A_LEAD };
   if (persona === 'none' || cookies.psl_mock_exceptions === 'empty') {
     return { status: 200, body: { items: [], as_of: fixture.as_of, open_count: 0 } };
   }

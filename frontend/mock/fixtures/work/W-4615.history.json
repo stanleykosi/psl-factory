@@ -1,0 +1,55 @@
+{
+  "items": [
+    {
+      "at": "2026-11-18T14:02:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Started reading the register",
+      "restricted": false,
+      "detail": "December business unit register",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T14:01:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T14:00:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the register",
+      "restricted": false,
+      "detail": "bu_register_dec.xlsx",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T13:58:00Z",
+      "actor_kind": "person",
+      "actor": "Ngozi Adeyemi · HR Lead",
+      "event": "Asked for the December list",
+      "restricted": false,
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-18T13:57:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Opened the line",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T13:55:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "Send the staff list for payroll · stand-in line"
+    }
+  ],
+  "as_of": "2026-11-18T15:00:00Z"
+}

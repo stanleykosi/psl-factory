@@ -1,0 +1,66 @@
+{
+  "id": "W-4617",
+  "title": "Staff record change · Bola Fashola’s unit",
+  "line": "Approve a staff record change",
+  "reference": "HRC-0004",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Change proposed",
+      "status": "done"
+    },
+    {
+      "name": "HR Lead approves",
+      "status": "done"
+    },
+    {
+      "name": "Update the record",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Updated the record after approval",
+        "status": "done",
+        "source": "Staff record · Bola Fashola"
+      }
+    ]
+  },
+  "next_step": "Done. The record shows the new business unit.",
+  "sample": true
+}

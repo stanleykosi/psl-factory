@@ -99,6 +99,33 @@
       "status": "answered",
       "status_line": "Answered",
       "updated_at": "2026-11-18T11:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2431",
+      "_persona": "hr_lead",
+      "title": "What is waiting for my decision?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T15:11:00Z"
+    },
+    {
+      "conversation_id": "CV-2432",
+      "_persona": "hr_lead",
+      "title": "Are the business unit moves safe to confirm?",
+      "agent": "zainab",
+      "status": "drafted",
+      "status_line": "Drafted · ready to review",
+      "updated_at": "2026-11-18T15:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2433",
+      "_persona": "hr_lead",
+      "title": "Can I see Ifeoma’s pay?",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-18T15:31:00Z"
     }
   ]
 }

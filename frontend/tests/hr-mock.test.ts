@@ -81,10 +81,12 @@ describe('hr work rows', () => {
     const files = [
       ...readdirSync(join(dir, 'work')).filter((n) => /^W-46\d\d/.test(n)).map((n) => join(dir, 'work', n)),
       join(dir, 'alerts/notifications.hr.json'),
+      join(dir, 'alerts/notifications.hr_lead.json'),
       join(dir, 'start-work/lines.hr.json'),
-      ...readdirSync(join(dir, 'assistant')).filter((n) => /^CV-242\d\.json$/.test(n)).map((n) => join(dir, 'assistant', n)),
+      join(dir, 'start-work/lines.hr_lead.json'),
+      ...readdirSync(join(dir, 'assistant')).filter((n) => /^CV-24[23]\d\.json$/.test(n)).map((n) => join(dir, 'assistant', n)),
     ];
-    expect(files.length).toBeGreaterThan(20);
+    expect(files.length).toBeGreaterThan(40);
     for (const file of files) {
       const text = readFileSync(file, 'utf8');
       expect(text, file).not.toMatch(/"money"|"amount"|₦|\bNGN\b|\bN\s?\d[\d,]{4,}/);
@@ -166,5 +168,56 @@ describe('hr is still refused Exceptions', () => {
   it('answers 403 where it did before; Projects and Setup stay out of the destinations', async () => {
     expect((await get('/api/v1/exceptions')).status).toBe(403);
     expect((await get('/api/v1/me')).body.destinations).toEqual(['my_work', 'assistant']);
+  });
+});
+
+describe('hr_lead (the HR Lead stand-in)', () => {
+  const lead = (path: string) => get(path, 'hr_lead');
+  const rows = async (name: string) => (await lead(`/api/v1/work?queue=${name}&limit=50`)).body.items as any[];
+
+  it('decides: the payroll correction hr waits on is Needs me, with two more decisions', async () => {
+    const needs = (await rows('needs_me')).map((i) => i.id);
+    expect(needs).toEqual(expect.arrayContaining(['W-4605', 'W-4612', 'W-4613']));
+    expect((await rows('waiting_on_others')).length).toBeGreaterThanOrEqual(2);
+    expect((await rows('done')).length).toBeGreaterThanOrEqual(2);
+    expect((await queue('waiting_on_others')).map((i) => i.id)).toContain('W-4605');
+    expect((await lead('/api/v1/work?queue=unassigned')).status).toBe(403);
+  });
+
+  it('gives every row an item page and a history of five or more with one Restricted entry', async () => {
+    const all = [...(await rows('needs_me')), ...(await rows('waiting_on_others')), ...(await rows('done'))];
+    for (const row of all) {
+      const item = (await lead(`/api/v1/work/${row.id}`)).body;
+      expect([item.title, item.reference], row.id).toEqual([row.title, row.reference]);
+      const history = (await lead(`/api/v1/work/${row.id}/history?limit=50`)).body.items as any[];
+      expect(history.length, row.id).toBeGreaterThanOrEqual(5);
+      expect(history.filter((h) => h.restricted), row.id).toHaveLength(1);
+    }
+  });
+
+  it('can act on W-4605 where hr only waits', async () => {
+    expect((await lead('/api/v1/work/W-4605')).body.tasks[0].you_can_act).toBe(true);
+    expect((await get('/api/v1/work/W-4605')).body.tasks[0].you_can_act).toBe(false);
+  });
+
+  it('has its own alerts, three or more Assistant conversations and the stand-in line', async () => {
+    const alerts = (await lead('/api/v1/notifications')).body;
+    expect(alerts.items.length).toBeGreaterThanOrEqual(3);
+    for (const a of alerts.items) expect((await lead(`/api/v1/work/${a.work_id}`)).body.id).toBe(a.work_id);
+    const list = (await lead('/api/v1/assistant/conversations')).body.items as any[];
+    expect(list.map((c) => c.conversation_id)).toEqual(['CV-2431', 'CV-2432', 'CV-2433']);
+    for (const c of list) expect((await lead(`/api/v1/assistant/conversations/${c.conversation_id}`)).body.messages).toHaveLength(2);
+    expect((await lead('/api/v1/assistant/conversations/CV-2433')).body.messages[1].text).toMatch(/has not been set up yet/);
+    expect((await get('/api/v1/assistant/conversations/CV-2431')).status).toBe(404);
+    expect((await lead('/api/v1/me')).body).toMatchObject({ roles: ['HR Lead'], startable_lines: ['hr_staff_list'], destinations: ['my_work', 'assistant'], assistant_agents: ['zainab'] });
+    expect((await lead('/api/v1/lines')).body.items.map((l: any) => l.key)).toEqual(['hr_staff_list']);
+  });
+
+  it('is refused Exceptions, and other personas do not see its rows', async () => {
+    expect((await lead('/api/v1/exceptions')).status).toBe(403);
+    for (const persona of ['hr', 'finance_lead', 'pm']) {
+      const ids = (await get('/api/v1/work?queue=needs_me&limit=50', persona)).body.items.map((i: any) => i.id);
+      expect(ids.filter((id: string) => ['W-4612', 'W-4613'].includes(id)), persona).toEqual([]);
+    }
   });
 });

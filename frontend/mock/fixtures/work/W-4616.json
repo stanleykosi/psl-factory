@@ -1,0 +1,71 @@
+{
+  "id": "W-4616",
+  "title": "Payroll correction · September",
+  "line": "Payroll correction",
+  "reference": "PCR-0002",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Spot the difference",
+      "status": "done"
+    },
+    {
+      "name": "HR Lead decides",
+      "status": "done"
+    },
+    {
+      "name": "Finance applies",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Finance applied the correction",
+        "status": "done",
+        "source": "Matching result · September"
+      },
+      {
+        "text": "Reread the matching: no differences left",
+        "status": "done",
+        "source": "Matching result · September"
+      }
+    ]
+  },
+  "next_step": "Done. The September matching has no differences left.",
+  "sample": true
+}

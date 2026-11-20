@@ -1,0 +1,84 @@
+{
+  "id": "W-4612",
+  "title": "Staff record change · Chinedu Eze moves to Delivery",
+  "line": "Approve a staff record change",
+  "reference": "HRC-0006",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Change proposed",
+      "status": "done"
+    },
+    {
+      "name": "Zainab checks",
+      "status": "done"
+    },
+    {
+      "name": "HR Lead approves",
+      "status": "current_person"
+    },
+    {
+      "name": "Update the record",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4612",
+      "kind": "do",
+      "title": "Approve the staff record change",
+      "required_role": "HR Lead",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the change HR proposed for Chinedu Eze",
+        "status": "done",
+        "source": "Change request · HRC-0006"
+      },
+      {
+        "text": "Checked that Delivery has an open place and the project team agrees",
+        "status": "done",
+        "source": "Business unit register"
+      }
+    ]
+  },
+  "next_step": "Next, the HR Lead approves or returns the change. Zainab then updates the staff record.",
+  "sample": true
+}

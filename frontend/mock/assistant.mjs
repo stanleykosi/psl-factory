@@ -221,7 +221,7 @@ export function createAssistantMock({ openapi }) {
       : [{ text: 'Read your question' }];
     const placeholder = {
       role: 'agent',
-      text: wantsWork ? 'Working on it.' : persona === 'hr' ? HR_SAMPLE : SAMPLE,
+      text: wantsWork ? 'Working on it.' : persona === 'hr' || persona === 'hr_lead' ? HR_SAMPLE : SAMPLE,
       steps: steps.map((s) => s.text),
       sources: [],
       at,

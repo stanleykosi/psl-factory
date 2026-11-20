@@ -1,0 +1,51 @@
+{
+  "conversation_id": "CV-2433",
+  "agent": "zainab",
+  "title": "Can I see Ifeoma’s pay?",
+  "status": "cannot_answer",
+  "context": {
+    "project": {
+      "case_id": "C-HR-STAFF",
+      "title": "Staff records for payroll"
+    },
+    "access": [
+      "HR Lead · decisions on staff record changes and corrections",
+      "No payroll amounts (not set up yet)"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Can I see Ifeoma Nwosu’s monthly salary?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-18T15:30:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "I can’t show pay amounts, even to the HR Lead. Who may see payroll has not been set up yet, so no one sees an individual’s pay in this app for now. PSL has to decide who can; I can help with staff records, corrections and business unit moves meanwhile. This is sample data from the HR Lead stand-in.",
+      "steps": [
+        "Checked who can see payroll records"
+      ],
+      "sources": [],
+      "at": "2026-11-18T15:31:00Z",
+      "step_details": [
+        {
+          "text": "Checked who can see payroll records",
+          "state": "done",
+          "reference": {
+            "label": "ACCESS · payroll (not set up)"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "ACCESS",
+          "label": "ACCESS · payroll (not set up)",
+          "restricted": true
+        }
+      ],
+      "cannot_reason": "Who can see payroll is not set up yet."
+    }
+  ]
+}
