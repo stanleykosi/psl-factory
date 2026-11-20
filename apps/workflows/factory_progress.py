@@ -10,6 +10,7 @@ from django.utils import timezone
 from apps.agents import factory_coordinator
 from apps.core.services import event
 from apps.documents.models import PublicationJob
+from apps.finance.models import InvoiceIssue
 from apps.pmo.approval_models import ApprovalRouteJob
 
 from . import factory
@@ -74,6 +75,30 @@ def set_progress(actor, work_id, expected, enabled, *, initial=False):
     job.save()
     event(actor, work.case, 'factory.background_enrolled' if enabled else 'factory.background_paused',
           work=work.pk, request=job.pk)
+    return job
+
+
+def invoice_release_ready(work):
+    if (work.definition != 'pmo-finance/v1' or not work.invoice_id or work.status != 'ready'
+            or work.cancel_requested or work.lease_until and work.lease_until > timezone.now()):
+        return False
+    _, profile = factory.profile(work)
+    current = factory.snapshot(work, profile)
+    jobs = current[-1]
+    if jobs or InvoiceIssue.objects.filter(invoice_id=work.invoice_id).exists():
+        return False
+    actions, _ = factory.eligible(work, profile, *current)
+    return actions == ['ACT11']
+
+
+@transaction.atomic
+def queue_invoice_release(actor, work_id, expected):
+    work = FactoryWork.objects.select_for_update(of=('self',)).select_related('case', 'invoice').get(pk=work_id)
+    require_control(actor, work)
+    if work.revision != expected or not invoice_release_ready(work):
+        raise ValidationError('The invoice is not ready to issue. Review the current sources and Finance approval.')
+    job = set_progress(actor, work.pk, expected, True)
+    wake_waiting(work.pk)
     return job
 
 

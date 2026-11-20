@@ -933,6 +933,11 @@ def _detail(request,work_id,focus=None):
                     messages.success(request,'Release work will continue in the background.')
                     return redirect(request.get_full_path())
                 d.advance(request.user,work.pk,revision)
+            elif operation=='release_invoice':
+                from .factory_progress import queue_invoice_release
+                queue_invoice_release(request.user,work.pk,revision)
+                messages.success(request,'Invoice issuance and delivery queued. Check for the original receipts.')
+                return redirect(request.get_full_path())
             elif operation=='reassess':
                 if work.definition=='delivery-hypercare/v1':
                     from .factory_hypercare import reassess
@@ -1001,6 +1006,16 @@ def _detail(request,work_id,focus=None):
             messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
+    if work.definition == 'pmo-finance/v1' and focus is None and row['can_advance'] and not row['jobs']:
+        from .factory_progress import ACTIVE, invoice_release_ready
+        from .models import FactoryProgress
+        if not FactoryProgress.objects.filter(work=work, status__in=ACTIVE).exists():
+            try:
+                if invoice_release_ready(work):
+                    row.update(advance_label='Issue and send invoice', advance_action='release_invoice',
+                               state='Approved; ready to send')
+            except (ValidationError, PermissionDenied):
+                pass
     if work.definition=='delivery-hypercare/v1' and request.method=='POST' and request.POST.get('action')=='stability_source':
         from .stability_forms import observation_forms
         row['hypercare']['observation_forms']=observation_forms(request.user,work,request.POST)

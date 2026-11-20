@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. Connected the design's explicit Issue and send action to the existing fenced worker. It checks the current invoice and exact Finance approval before queuing, and keeps original receipt lookup and automatic progression in their existing paths. Browser and PostgreSQL acceptance remain pending for this source.
+
 20 November 2026. Confirmed original monthly report delivery 78. The sample invoice reached an expiry hold after its separate approval, and the Finance account was denied access to the private HR decision. Prepared distinct fresh synthetic examples for their positive paths alongside Emergency and accounting. The new cases await Railway verification before preview setup.
 
 20 November 2026. Exercised the accounting profile hold, original CTO decision and monthly report setup through its independent approval. Added local live drafting progress, Emergency refusal state and three isolated browser starting cases. The 205 regression continues.

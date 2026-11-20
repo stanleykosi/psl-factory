@@ -77,6 +77,40 @@ class FactoryProgressTests(TransactionTestCase):
         self.assertEqual(InvoiceIssue.objects.filter(invoice=work.invoice).count(), 1)
         self.assertEqual(InvoiceDelivery.objects.filter(invoice=work.invoice).count(), 1)
 
+    def test_explicit_invoice_release_rechecks_sources_and_queues_the_original_work(self):
+        from unittest.mock import patch
+
+        from apps.workflows import factory
+        from apps.workflows.models import FactoryProgress
+
+        data = fixture()
+        work, actor = data['work'], data['actor']
+        factory.run_until_wait(work.pk)
+        self.client.force_login(actor)
+        url = reverse('factory_detail', args=[work.pk])
+        self.assertNotContains(self.client.get(url), 'Issue and send invoice')
+        factory_approve_identified(data)
+        work.refresh_from_db()
+        self.assertContains(self.client.get(url), 'Issue and send invoice')
+        request = {'action': 'release_invoice', 'revision': work.revision}
+
+        later = timezone.now() + timedelta(days=2)
+        with patch.object(timezone, 'now', return_value=later):
+            self.assertContains(self.client.post(url, request), 'The invoice is not ready to issue.')
+        self.assertFalse(FactoryProgress.objects.filter(work=work).exists())
+        self.assertFalse(InvoiceJob.objects.filter(invoice=work.invoice).exists())
+
+        self.assertEqual(self.client.post(url, request).status_code, 302)
+        self.assertEqual(self.client.post(url, request).status_code, 302)
+        job = FactoryProgress.objects.get(work=work)
+        self.assertEqual(job.status, 'queued')
+        self.assertFalse(InvoiceIssue.objects.filter(invoice=work.invoice).exists())
+        with TemporaryDirectory() as path, override_settings(FACTORY_ADAPTERS={str(work.case_id): MockFactoryInvoiceAdapter(path)}):
+            self.assertEqual(self.drain(job), 'finished')
+        self.assertEqual(InvoiceIssue.objects.filter(invoice=work.invoice).count(), 1)
+        self.assertEqual(InvoiceDelivery.objects.filter(invoice=work.invoice).count(), 1)
+        self.assertNotContains(self.client.get(url), 'Issue and send invoice')
+
     def test_uncertain_send_stops_until_native_recovery(self):
         data = fixture()
         work, actor = data['work'], data['actor']
