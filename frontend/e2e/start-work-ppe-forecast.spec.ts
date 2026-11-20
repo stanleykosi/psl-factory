@@ -129,8 +129,18 @@ for (const [label, viewport, phone] of [
       await expect(dialog(page).locator('input[type="file"]')).toHaveCount(0);
       await expect(dialog(page).getByText('Choose a file')).toHaveCount(0);
       await expect(dialog(page).getByText('All 3 accepted')).toBeVisible();
-      await expect(dialog(page).getByRole('radio', { checked: true })).toHaveCount(0);
+      // Audience starts on the option the line's data names; Months and As of start empty
+      await expect(dialog(page).getByRole('radio', { checked: true })).toHaveText('Management');
       await expectNoAxeViolations(page, 'forecast empty');
+      // pressing Start with the required fields empty names each, focuses the first and sends nothing
+      await dialog(page).getByRole('button', { name: 'Start forecast' }).click();
+      await expect(dialog(page).getByText('Months is required.')).toBeVisible();
+      await expect(dialog(page).getByRole('combobox', { name: 'Scenario' })).toBeFocused();
+      expect(log.starts()).toHaveLength(0);
+      await expectNoAxeViolations(page, 'forecast required messages');
+      // As of and Months share one row
+      const [asOfBox, monthsBox] = [await dialog(page).locator('[data-field="as_of"]').boundingBox(), await dialog(page).locator('[data-field="months"]').boundingBox()];
+      expect(Math.abs(asOfBox!.y - monthsBox!.y)).toBeLessThan(4);
       await fillForecast(page);
       if (phone) {
         await atLeast44(dialog(page).getByRole('button', { name: 'Start forecast' }), 'Start');

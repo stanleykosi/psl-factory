@@ -37,6 +37,16 @@ const EYEBROW_GROUP = new Set(['rfp_intake']);
 /** Lines whose board draws a four-way choice as joined segments instead of a select (SCR-23's submission method). */
 const FOUR_SEGMENTS = new Set(['rfp_intake']);
 
+/** Fields the boards draw as a select though they have few options, by line key (SCR-04-*-ppe "Accounting note"). */
+const SELECT_CHOICES: Record<string, string[]> = { fixed_assets: ['accounting_note'] };
+
+/** Two fields drawn side by side in one row, by line key (SCR-04-*-forecast "As of" and "Months"). */
+const PAIRED: Record<string, [string, string]> = { cash_forecast: ['as_of', 'months'] };
+
+/** Lines whose optional record and choice fields read "Optional" as a muted line under the control, as the F-51 boards
+ *  draw them, instead of "(optional)" in the label. */
+const OPTIONAL_LINE = new Set(['fixed_assets']);
+
 /** Lines whose help stays under its own field; elsewhere a field's help moves under the Proof box that follows it (SCR-04-*-change). */
 const HELP_STAYS = new Set(['rfp_intake']);
 
@@ -86,4 +96,16 @@ export function helpMovesBelowProof(lineKey: string): boolean {
 
 export function fourSegments(lineKey: string): boolean {
   return FOUR_SEGMENTS.has(lineKey);
+}
+
+export function selectChoice(lineKey: string, field: string): boolean {
+  return SELECT_CHOICES[lineKey]?.includes(field) ?? false;
+}
+
+export function optionalAsLine(lineKey: string): boolean {
+  return OPTIONAL_LINE.has(lineKey);
+}
+
+export function pairedFields(lineKey: string): [string, string] | undefined {
+  return PAIRED[lineKey];
 }

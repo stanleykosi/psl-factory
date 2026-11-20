@@ -144,6 +144,16 @@ function submitted(field: Field, value: FieldValue | undefined): unknown {
   }
 }
 
+/** The required fields left empty, in the order drawn: nothing is sent while any is (the server's 422 is for the rest).
+ *  A field is empty when it would add nothing to the body; evidence counts the confirmed ids. */
+export function emptyRequired(fields: Field[], values: Values, proof: Record<string, string[]> = {}): Field[] {
+  return fields.filter((field) => {
+    if (!field.required || !KINDS.has(field.type) || field.type === 'display') return false;
+    if (field.type === 'evidence') return uploadable(field) && (proof[field.name] ?? []).length === 0;
+    return submitted(field, values[field.name]) === undefined;
+  });
+}
+
 /** intake: only the fields the person filled, keyed by Field.name; display fields and unhandled kinds are never sent.
  *  An evidence field sends the evidence_ids whose upload the backend confirmed (`proof`, by field name, in upload
  *  order): the last one, or all of them when the field is `multiple`. */

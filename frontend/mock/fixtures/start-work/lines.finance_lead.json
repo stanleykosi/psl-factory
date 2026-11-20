@@ -40,7 +40,7 @@
         "decided_by": [
           "Finance Lead"
         ],
-        "summary": "Chidi drafts the invoice from the signed SOW \u00b7 issue, delivery and verification are automatic.",
+        "summary": "Chidi drafts the invoice from the signed SOW · issue, delivery and verification are automatic.",
         "journey_url": "/projects"
       }
     },
@@ -157,19 +157,11 @@
           "options": [
             {
               "value": "sample_note_a",
-              "label": "Sample note A"
+              "label": "Sample: note A"
             },
             {
               "value": "sample_note_b",
-              "label": "Sample note B"
-            },
-            {
-              "value": "sample_note_c",
-              "label": "Sample note C"
-            },
-            {
-              "value": "sample_note_d",
-              "label": "Sample note D"
+              "label": "Sample: note B"
             }
           ]
         }
@@ -221,7 +213,8 @@
               "value": "group",
               "label": "Group"
             }
-          ]
+          ],
+          "value": "management"
         },
         {
           "name": "sources",

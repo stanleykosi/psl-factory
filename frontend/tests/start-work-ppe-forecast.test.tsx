@@ -155,12 +155,30 @@ describe('1 and 2: the drawers are drawn from data', () => {
     expect(within(dialog()).getByText(/^Accounting note/)).toBeTruthy();
     expect(within(proofBox()).getByRole('button', { name: 'Choose a file' })).toBeTruthy();
     expect(within(dialog()).queryByText(/Proof \(optional\)/)).toBeNull();
-    // F-05: the server names what is missing; the page sends the start and shows the sentence under the field
+    // the required Proof is named on the page, focus moves there and nothing is sent
     press('Start schedule');
     await waitFor(() => expect(dialog().querySelector('[data-field="proof"]')!.textContent).toContain('Proof is required.'));
-    expect(starts).toHaveLength(1);
-    expect(starts[0].body.intake).toEqual({});
+    expect(starts).toHaveLength(0);
+    expect(dialog().querySelector('[data-field="proof"]')!.contains(document.activeElement)).toBe(true);
     expect(nav.push).not.toHaveBeenCalled();
+  });
+
+  it('UI-1-2 and UX-1-2: Optional is its own muted line under Prior schedule and Accounting note; two sample notes', async () => {
+    await openLine('fixed_assets');
+    for (const name of ['prior_schedule', 'accounting_note']) {
+      const box = dialog().querySelector(`[data-field="${name}"]`)!;
+      expect(box.textContent).not.toContain('(optional)');
+      expect(within(box as HTMLElement).getByText('Optional').closest('.psl-hint')).toBeTruthy();
+    }
+    fireEvent.click(within(dialog()).getByRole('combobox', { name: /Accounting note/ }));
+    const notes = await within(dialog()).findAllByRole('option');
+    expect(notes.map((o) => o.textContent).filter((t) => t?.startsWith('Sample'))).toEqual(['Sample: note A', 'Sample: note B']);
+  });
+
+  it('UI-1-1: As of and Months share one row', async () => {
+    await openLine('cash_forecast');
+    const row = dialog().querySelector('.sw-pair')!;
+    expect([...row.querySelectorAll('[data-field]')].map((b) => b.getAttribute('data-field'))).toEqual(['as_of', 'months']);
   });
 
   it('forecast: four fields and Sources as returned, no Proof box, no file input, "Start forecast"', async () => {
@@ -189,17 +207,28 @@ describe('1 and 2: the drawers are drawn from data', () => {
 });
 
 describe('3: nothing is computed or defaulted', () => {
-  it('starts empty, nothing preselected, Start off until the four required fields are filled', async () => {
+  it('Months and As of start empty; Audience starts on the option the line’s data names (Management); nothing is sent while a required field is empty', async () => {
     await openLine('cash_forecast');
-    expect(within(dialog()).getAllByRole('radio').every((r) => r.getAttribute('aria-checked') !== 'true')).toBe(true);
+    expect(within(dialog()).getAllByRole('radio').filter((r) => r.getAttribute('aria-checked') === 'true').map((r) => r.textContent)).toEqual(['Management']);
     expect(months().value).toBe('');
     expect(asOf().value).toBe('');
     expect(dialog().textContent).not.toMatch(/accepted.*accepted/);
-    // nothing is sent for a field not filled; the server's own "<Label> is required." sentences show under each
     press('Start forecast');
-    for (const label of ['Scenario', 'As of', 'Months', 'Audience']) expect(await within(dialog()).findByText(`${label} is required.`)).toBeTruthy();
-    expect(starts[0].body.intake).toEqual({});
+    for (const label of ['Scenario', 'As of', 'Months']) expect(await within(dialog()).findByText(`${label} is required.`)).toBeTruthy();
+    expect(within(dialog()).queryByText('Audience is required.')).toBeNull();
+    expect(starts).toHaveLength(0);
+    expect(document.activeElement).toBe(within(dialog()).getByRole('combobox', { name: 'Scenario' }));
     expect(nav.push).not.toHaveBeenCalled();
+  });
+
+  it('a line whose data names no default selects nothing', async () => {
+    override = (_, url) => {
+      if (url.pathname !== '/api/v1/lines') return undefined;
+      const lines = mock.handle('E-LINES', { url, raw: '', persona: 'finance_lead' })[1] as Lines;
+      return json(200, { ...lines, items: lines.items.map((l: Line) => (l.key === 'cash_forecast' ? { ...l, intake: l.intake.map((f) => ({ ...f, value: f.name === 'audience' ? undefined : f.value })) } : l)) });
+    };
+    await openLine('cash_forecast');
+    expect(within(dialog()).getAllByRole('radio').every((r) => r.getAttribute('aria-checked') !== 'true')).toBe(true);
   });
 });
 
