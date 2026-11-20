@@ -143,9 +143,9 @@ describe('list (SCR-15-desktop)', () => {
     expect(links[1].textContent).toBe('The UAT response for Lagoon Health is due tomorrow, Tola · Email · 09:00 daily digest');
   });
 
-  it('the first read sends no limit and no other parameter', async () => {
+  it('the first read sends limit=10 and no other parameter', async () => {
     await open();
-    expect([...lists()[0].url.searchParams.keys()]).toEqual([]);
+    expect(Object.fromEntries(lists()[0].url.searchParams)).toEqual({ limit: '10' });
   });
 
   it('an unknown agent gets a neutral circle and its key as the name', async () => {
@@ -219,7 +219,7 @@ describe('search and Filter', () => {
     await until(() => expect(window.location.search).toBe('?q=payroll'));
     await until(() => expect(rows()).toHaveLength(1));
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 ALERT');
-    expect(Object.fromEntries(lists().at(-1)!.url.searchParams)).toEqual({ q: 'payroll' });
+    expect(Object.fromEntries(lists().at(-1)!.url.searchParams)).toEqual({ limit: '10', q: 'payroll' });
   });
 
   it('Filter: Agent Chidi and Unread only apply on Show results; the hint reads "1 unread"', async () => {
@@ -237,7 +237,7 @@ describe('search and Filter', () => {
     fireEvent.click(within(screen.getByRole('dialog')).getByRole('checkbox'));
     fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Show results' }));
     await until(() => expect(rows()).toHaveLength(1));
-    expect(Object.fromEntries(lists().at(-1)!.url.searchParams)).toEqual({ agent: 'chidi', unread: 'true' });
+    expect(Object.fromEntries(lists().at(-1)!.url.searchParams)).toEqual({ limit: '10', agent: 'chidi', unread: 'true' });
     expect(screen.getByRole('button', { name: /^Filter\s*2\s*on$/ })).toBeTruthy();
   });
 
@@ -310,18 +310,21 @@ describe('states', () => {
     await until(() => expect(screen.getByRole('alert').textContent).toContain('Last loaded 11:00. Reference network_error for support.'));
   });
 
-  it('many: Show more loads rows 21-25 and goes; a failed Show more keeps the 20 rows', async () => {
+  it('many: Show more loads rows 11-20 then 21-25 and goes; a failed Show more keeps the 10 rows', async () => {
     scenario = 'many';
     await open();
-    expect(rows()).toHaveLength(20);
+    expect(rows()).toHaveLength(10);
     hook = () => json(500, { code: 'server_error', message: 'Broke.' });
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await until(() => expect(screen.getByText('We couldn’t load more. Nothing was changed.')).toBeTruthy());
-    expect(rows()).toHaveLength(20);
+    expect(rows()).toHaveLength(10);
     hook = () => undefined;
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(lists().at(-1)!.url.searchParams.get('cursor')).toBe('o10');
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await until(() => expect(rows()).toHaveLength(25));
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeNull();
     expect(lists().at(-1)!.url.searchParams.get('cursor')).toBe('o20');
   });
 
@@ -349,6 +352,6 @@ describe('absent proposal fields are never invented (bare)', () => {
     await until(() => expect(rows()).toHaveLength(4));
     expect(nav.router.replace).toHaveBeenCalledWith('/notifications', { scroll: false });
     // The page's two reads, with the shell's alert bell (F-15) reading the default page between them.
-    expect(lists().map((c) => c.url.search)).toEqual(['?q=pay&agent=chidi', '', '']);
+    expect(lists().map((c) => c.url.search)).toEqual(['?limit=10&q=pay&agent=chidi', '', '?limit=10']);
   });
 });
