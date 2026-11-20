@@ -2,11 +2,12 @@
 import json
 import re
 from datetime import date, datetime
+from decimal import Decimal
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, bump, event, add_evidence
-from apps.core.evidence_access import public_evidence
+from apps.core.evidence_access import public_evidence, restricted
 from apps.core.read_observation import observed_fact
 from apps.finance.rules import decimal
 from apps.identity.services import require
@@ -14,6 +15,7 @@ from apps.policy.services import active_component, reference_values, decision_au
 from .models import (RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,
     RFPReview,RFPOutcome,RFPDisposition,Baseline,CommercialCase)
 from .services import subject
+from .clocks import aware
 
 TEAMS={'Engineering':'engineering_estimate','QA':'qa_estimate','Security':'security_estimate','Product':'product_input'}
 REVIEW_ROLES=['PMO Lead','Engineering Lead']
@@ -79,12 +81,51 @@ def assign(actor,case_id,pm,role,evidence_id,note_text,expected):
     a=RFPAssignment.objects.create(intake=r.current_intake,pm=pm,role=role,authority=auth,evidence=subject(case,evidence_id),note=note_text,actor=actor)
     event(actor,case,'rfp.assigned',assignment=a.pk,pm=pm.pk);bump(case);return a
 
+def _team_target(actor, case_id, team, expected):
+    if not isinstance(team, str) or team not in TEAMS:raise ValidationError('Select Engineering, QA, Security or Product')
+    case=lock_case(actor,case_id,'rfp.contribute:'+team,expected);r=root(case);ensure_open(r)
+    return case, r.current_intake
+
+
+def _append_contribution(actor, case, intake_record, team, evidence, **facts):
+    x=RFPContribution.objects.create(intake=intake_record,team=team,evidence=evidence,actor=actor,**facts)
+    event(actor,case,'rfp.input',contribution=x.pk,team=team);bump(case);return x
+
+
 @transaction.atomic
 def contribute(actor,case_id,team,evidence_id,expected):
-    if team not in TEAMS:raise ValidationError('Select Engineering, QA, Security or Product')
-    case=lock_case(actor,case_id,'rfp.contribute:'+team,expected);r=root(case);ensure_open(r)
-    x=RFPContribution.objects.create(intake=r.current_intake,team=team,evidence=subject(case,evidence_id,TEAMS[team]),actor=actor)
-    event(actor,case,'rfp.input',contribution=x.pk,team=team);bump(case);return x
+    """Retain the evidence-only interface for legacy integrations."""
+    case, intake_record = _team_target(actor, case_id, team, expected)
+    return _append_contribution(actor, case, intake_record, team, subject(case,evidence_id,TEAMS[team],metadata_only=True))
+
+
+@transaction.atomic
+def record_team_input(actor, case_id, team, evidence_id, expected, *, received_at, source_party, summary, person_days, attested):
+    if type(expected) is not int or expected < 1 or type(evidence_id) is not int or evidence_id < 1:
+        raise ValidationError('Choose the current bid and exact team evidence.')
+    case, intake_record = _team_target(actor, case_id, team, expected)
+    require(actor, case, 'case.read')
+    require(actor, case, 'rfp.read')
+    if attested is not True:
+        raise ValidationError('Confirm this input came from the named team.')
+    evidence = subject(case, evidence_id, TEAMS[team], metadata_only=True)
+    if restricted(evidence):
+        raise ValidationError('Choose available evidence from the named team.')
+    received = aware(received_at, 'Actual received time')
+    past(received)
+    if not isinstance(source_party, str) or not source_party.strip() or len(source_party) > 160:
+        raise ValidationError('Record who supplied the team input.')
+    note(summary)
+    days = None
+    if person_days is not None:
+        if not isinstance(person_days, (str, Decimal)):
+            raise ValidationError('Use an exact person-day amount.')
+        days = decimal(str(person_days), nonnegative=True)
+        if days > Decimal('999999999.999') or days != days.quantize(Decimal('.001')):
+            raise ValidationError('Use person-days with no more than three decimal places.')
+    return _append_contribution(actor, case, intake_record, team, evidence, received_at=received,
+                                source_party=source_party.strip(), summary=summary.strip(), person_days=days)
+
 
 @observed_fact
 def current_assignment(r):
@@ -99,11 +140,18 @@ def current_assignment(r):
 @observed_fact
 def source_snapshot(r):
     case=r.case;i=r.current_intake;a=current_assignment(r)
+    rows = {row.team: row for row in i.contributions.filter(team__in=TEAMS).order_by('team','-pk').distinct('team')
+            .select_related('actor','evidence').defer('actor__password','evidence__body')}
     inputs={}
     for team in TEAMS:
-        x=i.contributions.filter(team=team).order_by('-pk').first()
+        x=rows.get(team)
         if not x:raise ValidationError('Capture '+team+' input')
-        require(x.actor,case,'rfp.contribute:'+team);inputs[team]={'id':x.pk,'evidence':x.evidence_id,'sha256':x.evidence.sha256}
+        require(x.actor,case,'rfp.contribute:'+team)
+        if x.received_at is not None:
+            require(x.actor,case,'case.read');require(x.actor,case,'rfp.read')
+            if not public_evidence(case.evidence.filter(pk=x.evidence_id,kind=TEAMS[team])).exists():
+                raise ValidationError('Review current cited evidence for '+team)
+        inputs[team]={'id':x.pk,'evidence':x.evidence_id,'sha256':x.evidence.sha256}
     return {'intake':i.pk,'assignment':a.pk,'assignment_authority':a.authority,'inputs':inputs}
 
 def current_response(case,pk):

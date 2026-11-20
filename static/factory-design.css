@@ -135,6 +135,23 @@
 .start-work-dialog-body { padding: 24px; min-width: 0; }
 .start-work-dialog-body > h1, .start-work-dialog-body .page-heading h1 { font-size: 30px; }
 .start-work-dialog .intake-chooser .back-link { display: none; }
+.schedule-correction-drawer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: auto;
+}
+.schedule-correction-drawer button, .schedule-correction-drawer select, [data-open-correction] { min-height: 44px; }
+[data-open-correction][hidden] { display: none; }
+.schedule-correction-drawer fieldset label { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 .intake-chooser { max-width: 720px; }
 .start-chooser-form fieldset { margin: 16px 0; border: 0; padding: 0; }
 .start-chooser-form legend { font-weight: 700; padding: 0; margin-bottom: 8px; }

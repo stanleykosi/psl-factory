@@ -18,7 +18,8 @@ SCREENS = {
     },
     'finance-schedules/v1': {
         'decision': ('review',),
-        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'resolve_duplicates', 'export', 'adopt_profile'),
+        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'resubmit_returned_row', 'resolve_duplicates',
+                     'export', 'adopt_profile'),
     },
     'finance-ppe/v1': {
         'decision': ('review',),

@@ -158,6 +158,88 @@ class FactorySchedulesTests(TestCase):
         old=f['discovery_source'];v.capture_source(f['actor'],f['case'].pk,old.reference,old.evidence_id,old.metadata,rev(f['case']))
         with self.assertRaises((ValidationError,PermissionDenied)):flow.verify(self.work,f['actor'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_returned_income_row_requires_explicit_treatment_and_fresh_exact_review(self):
+        from apps.core.models import Audit
+        from apps.workflows import factory_progress
+
+        f = self.f
+        selected = dict(row(f, 'reviewed-timing-difference', '0'), duplicate_state='separately_justified')
+        self.payload['rows'].append(selected)
+        self.start()
+        self.advance()
+        original = flow.schedule(self.work)
+        url = reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.client.force_login(f['actor'])
+        self.assertNotContains(self.client.get(url), 'Row relationship')
+        original_return = flow.review(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), original.pk,
+                                      'return', f['e']['finance_review'].pk, 'Review the timing difference relationship.')
+        self.work.refresh_from_db()
+        values = {'action': 'resubmit_returned_row', 'target': original.pk, 'return_id': original_return.pk,
+                  'row_key': selected['key'], 'revision': self.work.revision, 'case_revision': rev(f['case'])}
+        before = self.work.source_head_id
+
+        self.client.force_login(f['reviewer'])
+        self.assertNotContains(self.client.get(url), 'Row relationship')
+        with self.assertRaises(PermissionDenied):
+            flow.resubmit_returned_row(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), original.pk,
+                                       original_return.pk, selected['key'], 'reclassification')
+
+        self.client.force_login(f['actor'])
+        response = self.client.get(url)
+        self.assertContains(response, 'Review the timing difference relationship.')
+        self.assertContains(response, 'schedule-correction-drawer')
+        self.assertContains(response, 'Select corrected sources and rebuild')
+        relationship = response.context['correction_form']['relationship']
+        self.assertIsNone(relationship.value())
+        self.assertNotIn('checked', str(relationship))
+        self.assertEqual([choice for choice, _ in relationship.field.choices],
+                         ['disaggregation', 'reclassification', 'additive'])
+        invalid = (
+            values,
+            dict(values, relationship='disaggregation'),
+            dict(values, relationship='reclassification', target=original.pk + 1),
+            dict(values, relationship='reclassification', return_id=original_return.pk + 1),
+            dict(values, relationship='reclassification', case_revision=rev(f['case']) - 1),
+            dict(values, relationship=['additive', 'reclassification']),
+            dict(values, relationship='reclassification', row_key='another-row'),
+        )
+        for command in invalid:
+            with self.subTest(command=command):
+                self.assertContains(self.client.post(url, command), 'errorlist')
+                self.work.refresh_from_db()
+                self.assertEqual(self.work.source_head_id, before)
+        command = dict(values, relationship='reclassification')
+        self.assertRedirects(self.client.post(url, command), url, fetch_redirect_response=False)
+        self.assertNotEqual(self.client.post(url, command).status_code, 302)
+
+        job = self.work.background_progress
+
+        def drain_progress(target_status):
+            for _ in range(15):
+                self.assertEqual(factory_progress.run_once(), job.pk)
+                job.refresh_from_db()
+                if job.status != 'queued':
+                    break
+            self.assertEqual(job.status, target_status, job.observation)
+            self.work.refresh_from_db()
+
+        drain_progress('waiting')
+        successor = flow.schedule(self.work)
+        self.assertIsNotNone(successor)
+        self.assertEqual(successor.version, original.version + 1)
+        self.assertEqual((successor.parent_id, successor.evidence_id), (original.parent_id, original.evidence_id))
+        self.assertEqual(successor.payload['rows'], original.payload['rows'][:-1] + [dict(selected, relationship='reclassification')])
+        self.assertEqual(original.reviews.get().pk, original_return.pk)
+        self.assertFalse(successor.reviews.exists())
+        self.assertNotEqual(self.work.status, 'verified')
+        audit = Audit.objects.get(case=f['case'], action='finance.schedule_returned_row_corrected')
+        self.assertEqual(audit.data['return_review'], original_return.pk)
+        self.assertEqual(audit.data['current_source'], self.work.source_head_id)
+        approved = flow.review(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), successor.pk,
+                               'approve', f['e']['finance_review'].pk, 'Independent decision on the new exact version.')
+        drain_progress('finished')
+        self.assertEqual(flow.verify(self.work, f['actor'])['schedule_review'], approved.pk)
     def test_current_review_wait_is_not_rebuild_and_is_in_decision_queue(self):
         f=self.f;self.start();self.advance();s=flow.schedule(self.work)
         with self.assertRaises(ValidationError):flow.correct(f['actor'],self.work.pk,self.work.revision,rev(f['case']),*self.args,'Do not bypass the exact pending review')

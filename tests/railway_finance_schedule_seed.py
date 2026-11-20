@@ -23,6 +23,7 @@ TENANT = 'design-schedule-review-walkthrough'
 TITLES = {
     'income': 'SAMPLE income review, corrected detail and adjustment',
     'inventory': 'SAMPLE selected statutory schedule inventory review',
+    'row-treatment': 'SAMPLE income review and one returned row relationship',
 }
 
 
@@ -46,6 +47,8 @@ def prepare(reviewer, kind):
         sample.setUp()
 
     context = sample.f
+    native_kind = 'income' if kind == 'row-treatment' else kind
+    relationship_row = None
     if kind == 'income':
         addition = schedule_helpers.row(context, 'reviewed-training', '20', 'additive',
                                         lines=[{'account': 'sales', 'amount': '20'}])
@@ -62,12 +65,20 @@ def prepare(reviewer, kind):
         source = schedule_helpers.evidence(context, 'income_detail', json.dumps(initial))
         successor = schedule_helpers.evidence(context, 'income_detail', json.dumps(replacement))
         parent = context['parent'].pk
+    elif kind == 'row-treatment':
+        relationship_row = 'row-12'
+        timing_difference = dict(schedule_helpers.row(context, relationship_row, '0'),
+                                 duplicate_state='separately_justified')
+        initial = dict(sample.payload, rows=[*sample.payload['rows'], timing_difference])
+        source = schedule_helpers.evidence(context, 'income_detail', json.dumps(initial))
+        successor = None
+        parent = context['parent'].pk
     else:
         source = schedule_helpers.evidence(context, 'schedule_inventory', json.dumps(context['values']['inventory']))
         successor = None
         parent = None
 
-    work = factory_schedules.start(maker, case.pk, f'BATCH-SCHEDULE-{kind.upper()}', kind, parent, source.pk, None,
+    work = factory_schedules.start(maker, case.pk, f'BATCH-SCHEDULE-{kind.upper()}', native_kind, parent, source.pk, None,
                                   f'sample-{kind}-review', rev(case))
     factory.run_until_wait(work.pk)
     work.refresh_from_db()
@@ -85,6 +96,7 @@ def prepare(reviewer, kind):
         'adjustment_evidence': context['e']['finance_adjustment'].pk,
         'mapping': parent,
         'prepared_schedule': result.pk,
+        **({'relationship_row': relationship_row} if relationship_row else {}),
     }
 
 
@@ -99,10 +111,18 @@ def browser_record(work, *, preserved):
     }
 
 
-def run():
+def fixture_reviewer():
     if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'),
             os.getenv('PSL_COMPOSED_WALKTHROUGH')) != ('design-acceptance', PREVIEW_PROJECT, '1'):
         raise RuntimeError('Exact Railway acceptance environment and explicit fixture guard required')
-    reviewer = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
-    for kind in TITLES:
+    return get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
+
+
+def run():
+    reviewer = fixture_reviewer()
+    for kind in ('income', 'inventory'):
         print('PSL_FINANCE_SCHEDULE_FIXTURE=' + json.dumps(prepare(reviewer, kind)), flush=True)
+
+
+def run_returned_row():
+    print('PSL_FINANCE_RETURNED_ROW_FIXTURE=' + json.dumps(prepare(fixture_reviewer(), 'row-treatment')), flush=True)

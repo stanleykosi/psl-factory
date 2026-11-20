@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from apps.policy.document_validators import ROLES
@@ -10,7 +11,7 @@ class CommandForm(forms.Form):
     action=forms.CharField(widget=forms.HiddenInput)
     revision=forms.IntegerField(widget=forms.HiddenInput)
 
-def forms_for(case,data=None):
+def forms_for(case,data=None,*,team_choices=()):
     def evidence(kinds=None):return forms.ModelChoiceField(case.evidence.filter(kind__in=kinds) if kinds else case.evidence.all())
     def choices(values):return forms.ChoiceField(choices=[(v,v) for v in values])
     def text():return forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))
@@ -19,7 +20,6 @@ def forms_for(case,data=None):
         'intake':('Log received RFP',{'reference':forms.CharField(max_length=160),'evidence':evidence(['rfp_intake']),'received_at':forms.DateTimeField(help_text='Actual received date/time with timezone'),
             'deadline_status':choices(['unknown','stated','not_stated']),'deadline_at':forms.DateTimeField(required=False),'deadline_evidence':evidence(['rfp_deadline']),'note':text()}),
         'assign':('Assign accountable PM',{'pm':forms.ModelChoiceField(get_user_model().objects.filter(grant__case=case,grant__action='rfp.prepare',grant__active=True).distinct()),'role':choices(ROLES),'evidence':evidence(),'note':text()}),
-        'contribute':('Capture team input',{'team':choices(TEAMS),'evidence':evidence(list(TEAMS.values()))}),
         'prepare':('Prepare response revision',{'evidence':evidence(['rfp_response']),'public_terms':evidence(['rfp_commercial_terms']),'matrix':forms.JSONField(widget=forms.Textarea(attrs={'rows':5}),help_text='Array of {key, evidence_id, response, disposition}; disposition addressed / clarification / out_of_scope'),**{k:evidence([k]) for k in ['requirements','plan','costing']}}),
         'review':('Record response review',{'response':response(),'role':choices(REVIEW_ROLES),'verdict':choices(['approve','return','reject']),'evidence':evidence(),'note':text()}),
         'draft':('Prepare controlled submission',{'response':response(),'template':forms.ModelChoiceField(Template.objects.filter(case=case,definition__document_type__in=['rfp_response','project_artifact'])),'route_key':forms.CharField(max_length=40)}),
@@ -30,6 +30,19 @@ def forms_for(case,data=None):
         'dispose':('Convert win or archive loss',{'outcome':forms.ModelChoiceField(RFPOutcome.objects.filter(submission__response__rfp__case=case)),'lessons':evidence(['rfp_lessons'])}),
         'policy':('Save RFP policy draft',{'component':choices(['D05.decision_action_matrix','D11.adapter_configuration_refs']),'content':forms.JSONField(widget=forms.Textarea(attrs={'rows':5})),'evidence':evidence(['policy_decision']),'effective_from':forms.DateTimeField()}),
         'investigate':('Investigate evidence and next work',{})}
+    if team_choices:
+        proofs = public_evidence(case.evidence.filter(kind__in=[TEAMS[team] for team in team_choices])).defer('body').order_by('-pk')
+        definitions['contribute'] = ('Record team input', {
+            'team': choices(team_choices),
+            'source_party': forms.CharField(label='Who supplied this input?', max_length=160),
+            'summary': forms.CharField(label='What did the team supply?', max_length=4000, widget=forms.Textarea(attrs={'rows': 3})),
+            'evidence': forms.ModelChoiceField(queryset=proofs, label='Supporting evidence'),
+            'received_at': forms.DateTimeField(label=f'Received at ({timezone.get_current_timezone_name()})',
+                widget=forms.DateTimeInput(format='%Y-%m-%dT%H:%M:%S', attrs={'type': 'datetime-local', 'step': '1'})),
+            'person_days': forms.DecimalField(required=False, min_value=0, max_digits=12, decimal_places=3,
+                label='Estimate in person-days', help_text='Leave blank if the team did not supply an amount.'),
+            'attested': forms.BooleanField(label='I confirm this input came from the named team.'),
+        })
     result=[]
     for action,(label,fields) in definitions.items():
         f=CommandForm(data if data and data.get('action')==action else None,initial={'action':action,'revision':case.revision},auto_id=action+'_%s')

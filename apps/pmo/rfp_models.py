@@ -41,7 +41,12 @@ class RFPAssignment(AppendOnly):
 
 class RFPContribution(AppendOnly):
     intake=models.ForeignKey(RFPIntake,on_delete=models.PROTECT,related_name='contributions')
-    team=models.CharField(max_length=30)
+    team=models.CharField(max_length=30)
+
+    received_at = models.DateTimeField(null=True, blank=True)
+    source_party = models.CharField(max_length=160, null=True, blank=True)
+    summary = models.CharField(max_length=4000, null=True, blank=True)
+    person_days = models.DecimalField(max_digits=12, decimal_places=3, null=True, blank=True)
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     created_at=models.DateTimeField(auto_now_add=True)

@@ -20,12 +20,14 @@ SUITES = {
         'factory_rfp_console_flow', 'factory_rfp_outcome_console', 'factory_rfp_pricing', 'rfp_estimate_requests',
         'factory_rfp', 'rfp_pending_dates', 'rfp_outcome_time', 'rfp_portal_pricing',
         'rfp_loss_proof', 'commercial_loss_walkthrough_seed', 'independent_commercial_recording',
+        'rfp_team_input_facts',
     ),
     'project_delivery': (
         'factory_change', 'factory_change_branches', 'standard_changes', 'factory_emergency',
         'factory_escalation', 'factory_go_live', 'factory_hypercare', 'factory_archive',
         'factory_closure_recovery', 'client_uat', 'client_testing_pack', 'project_archive_files', 'factory_minutes', 'factory_minutes_console',
         'factory_delivery', 'delivery_planning_workaround', 'project_delivery_walkthrough',
+        'delayed_minutes_receipt',
     ),
     'finance_reporting': (
         'factory_leadership', 'factory_accounting', 'factory_accounting_provenance', 'factory_accounting_intake',

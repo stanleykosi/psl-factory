@@ -48,8 +48,16 @@ def intake_revision_findings(actor, rfp):
 @transaction.atomic
 def investigate_rfp(actor,case_id,expected):
     case=lock_case(actor,case_id,'agent.rfp',expected);require(actor,case,'rfp.read');r=root(case);result=LocalRFPAdapter().read(r);findings=intake_revision_findings(actor,r)
-    try:source_snapshot(r)
+    try:snapshot=source_snapshot(r)
     except (ValidationError,PermissionDenied) as exc:findings.append(str(exc))
+    else:
+        current=r.current_intake.contributions.filter(pk__in=[record['id'] for record in snapshot['inputs'].values()],
+            received_at__isnull=False).only('pk','team','received_at','person_days','evidence_id').order_by('team')
+        facts=[{'team': row.team, 'input_id': row.pk, 'evidence_id': row.evidence_id,
+            'received_at': row.received_at.isoformat(), 'person_days': str(row.person_days) if row.person_days is not None else None}
+            for row in current]
+        if facts:
+            result['recorded_team_inputs']=facts
     from apps.pmo.models import RFPDisposition
     disposition=RFPDisposition.objects.filter(rfp=r).first()
     v=r.current_response

@@ -21,6 +21,7 @@ from .factory_delivery import investigation_key
 DEFINITION='finance-schedules/v1'
 KIND='agent_private_schedules_intake'
 PROTOCOL='factory-schedules-intake/v1'
+INCOME_RELATIONSHIPS = tuple(native.ROW['properties']['relationship']['enum'])
 ID={'anyOf':[{'type':'integer','minimum':1},{'type':'null'}]}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'kind':{'enum':['income','inventory']},'parent_id':ID,'evidence_id':{'type':'integer','minimum':1},'payload':{'anyOf':[native.DETAIL,{'type':'null'}]}},'required':['protocol','kind','parent_id','evidence_id','payload'],'additionalProperties':False}
 
@@ -179,6 +180,57 @@ def correct(actor,work_id,expected,case_expected,kind,parent_id,evidence_id,payl
     from .factory_progress import wake_waiting
     wake_waiting(w.pk)
     return w
+
+
+def returned_income_review(schedule):
+    if schedule is None or schedule.kind != 'income' or schedule.result['status'] != 'ready':
+        return None
+    review = schedule.reviews.order_by('-pk').first()
+    if review and review.verdict == 'return' and review.snapshot == schedule.snapshot:
+        return review
+    return None
+
+
+@transaction.atomic
+def resubmit_returned_row(actor, work_id, expected, case_expected, target, return_id, row_key, relationship):
+    from .factory_execution import require_control
+    from .factory_progress import set_progress
+
+    if any(type(value) is not int or value < 1 for value in (work_id, expected, case_expected, target, return_id)):
+        raise ValidationError('Open the current returned schedule before submitting a correction.')
+    work = Work.objects.select_for_update(of=('self',)).select_related('source_head', 'case').get(
+        pk=work_id, definition=DEFINITION)
+    if actor.pk != work.actor_id:
+        raise PermissionDenied('The assigned preparer corrects the returned row.')
+    require_control(actor, work)
+    case = native.locked(actor, work.case_id, 'schedules.prepare', case_expected)
+    work.case = case
+    for action in ('factory.manage', 'schedules.report', 'evidence.add'):
+        require(actor, case, action)
+    if work.revision != expected or work.cancel_requested or work.status in ('cancelled', 'followup_needed'):
+        raise ValidationError('Open the current returned schedule before submitting a correction.')
+    settled(work)
+    current = schedule(work)
+    returned = returned_income_review(current)
+    if not returned or current.pk != target or returned.pk != return_id:
+        raise ValidationError('Correct the exact schedule and decision that Finance returned.')
+    data, evidence, parent, body = source(work, actor)
+    match(work, current, data, evidence, parent, body)
+    selected = next((row for row in body['rows'] if row['key'] == row_key), None)
+    if selected is None or relationship not in INCOME_RELATIONSHIPS:
+        raise ValidationError('Choose a row from the returned schedule and its relationship.')
+    if relationship == selected['relationship']:
+        raise ValidationError('Choose a different relationship for the selected row.')
+    corrected = dict(body, rows=[dict(row, relationship=relationship) if row is selected else row for row in body['rows']])
+    native.inputs(actor, case, 'income', parent, corrected)
+    native.income_result(case, parent, corrected)
+    revised = correct(actor, work.pk, expected, case_expected, 'income', parent.pk, evidence.pk, corrected,
+                      'Preparer corrected one relationship on the returned schedule.')
+    event(actor, case, 'finance.schedule_returned_row_corrected', work=work.pk, previous_schedule=current.pk,
+          return_review=returned.pk, row=row_key, previous_relationship=selected['relationship'],
+          relationship=relationship, current_source=revised.source_head_id)
+    set_progress(actor, revised.pk, revised.revision, True)
+    return revised
 
 
 def duplicate_rows(schedule):

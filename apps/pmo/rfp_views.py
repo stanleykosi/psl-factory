@@ -2,8 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import render,redirect
+from apps.core.evidence_access import restricted
 from apps.core.views import accessible_case
-from apps.identity.services import require
+from apps.identity.services import active_case_grants, require
 from apps.policy.change_drafts import draft_standard_policy
 from apps.agents.rfp import investigate_rfp
 from apps.agents.models import AgentRun
@@ -13,7 +14,10 @@ from .rfp_forms import forms_for
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'rfp.read');forms=forms_for(case,request.POST if request.method=='POST' else None)
+    case=accessible_case(request.user,case_id);require(request.user,case,'rfp.read')
+    available=active_case_grants(request.user,[case.pk],actions=[f'rfp.contribute:{team}' for team in rfp.TEAMS])
+    teams=[team for team in rfp.TEAMS if (case.pk,f'rfp.contribute:{team}') in available]
+    forms=forms_for(case,request.POST if request.method=='POST' else None,team_choices=teams)
     if request.method=='POST':
         try:
             command=next((x for x in forms if x['action']==request.POST.get('action')),None)
@@ -21,7 +25,9 @@ def workbench(request,case_id):
             d=command['form'].cleaned_data;a=request.user;c=case.pk;v=d['revision'];action=d['action']
             if action=='intake':rfp.intake(a,c,d['reference'],d['evidence'].pk,d['received_at'],d['deadline_status'],d['deadline_at'],d['deadline_evidence'].pk if d['deadline_evidence'] else None,d['note'],v)
             elif action=='assign':rfp.assign(a,c,d['pm'],d['role'],d['evidence'].pk,d['note'],v)
-            elif action=='contribute':rfp.contribute(a,c,d['team'],d['evidence'].pk,v)
+            elif action=='contribute':
+                rfp.record_team_input(a,c,d['team'],d['evidence'].pk,v,received_at=d['received_at'],source_party=d['source_party'],
+                                      summary=d['summary'],person_days=d['person_days'],attested=d['attested'])
             elif action=='prepare':rfp.prepare_response(a,c,d['evidence'].pk,d['matrix'],{k:d[k].pk for k in ['requirements','plan','costing']},v,public_terms_id=d['public_terms'].pk)
             elif action=='review':rfp.review(a,c,d['response'].pk,d['role'],d['verdict'],d['evidence'].pk,d['note'],v)
             elif action=='draft':rfp_documents.draft(a,c,d['response'].pk,d['template'].pk,d['route_key'],v)
@@ -37,6 +43,11 @@ def workbench(request,case_id):
             messages.success(request,'RFP history updated');return redirect('rfp',case_id=c)
         except (ValidationError,ValueError,KeyError) as exc:messages.error(request,str(exc));case.refresh_from_db()
     r=RFPCase.objects.filter(case=case).first()
-    return render(request,'pmo/rfp.html',{'case':case,'rfp':r,'commands':forms,'responses':RFPResponse.objects.filter(rfp=r).order_by('-pk'),
+    current_inputs = []
+    if r and r.current_intake_id:
+        rows = r.current_intake.contributions.filter(team__in=rfp.TEAMS).order_by('team', '-pk').distinct('team')
+        current_inputs = [row for row in rows.select_related('evidence').defer('evidence__body') if not restricted(row.evidence)]
+    return render(request,'pmo/rfp.html',{'case':case,'rfp':r,'commands':forms,'current_inputs':current_inputs,
+        'responses':RFPResponse.objects.filter(rfp=r).order_by('-pk'),
         'submissions':RFPSubmission.objects.filter(response__rfp=r).select_related('portal_receipt'),'outcomes':RFPOutcome.objects.filter(submission__response__rfp=r),
         'disposition':RFPDisposition.objects.filter(rfp=r).first(),'runs':AgentRun.objects.filter(case=case,provider='deterministic-rfp-investigation-v1').order_by('-pk')[:5]})

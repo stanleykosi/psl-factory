@@ -38,6 +38,20 @@ class DuplicateResolutionForm(forms.Form):
         return {row['key']: self.cleaned_data[field.name] for row, field in self.rows}
 
 
+class ReturnedIncomeCorrectionForm(forms.Form):
+    target = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    return_id = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    row_key = forms.ChoiceField(label='Returned schedule row')
+    relationship = forms.ChoiceField(label='Row relationship', widget=forms.RadioSelect,
+                                     choices=[(value, value.title()) for value in domain.INCOME_RELATIONSHIPS])
+
+    def __init__(self, schedule, returned, data=None):
+        super().__init__(data, initial={'target': schedule.pk, 'return_id': returned.pk}, auto_id='id_returned_%s')
+        self.fields['row_key'].choices = [('', 'Choose the row')] + [
+            (row['key'], f"{row['key']} · {row['relationship'].title()}") for row in schedule.payload['rows']
+        ]
+
+
 class ScheduleOverrideField(forms.JSONField):
     def prepare_value(self, value):
         return '' if value is None else super().prepare_value(value)
@@ -96,7 +110,7 @@ def detail(request,work,focus=None):
     initial=dict(data)
     if not permitted(request.user,work,'schedules.report'):initial['payload']=None
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=initial)
-    duplicate_form = None
+    duplicate_form = correction_form = None
     can_resolve = (focus != 'decision' and not work.cancel_requested and work.status not in ['cancelled','followup_needed']
                    and work.request['kind'] == 'income' and can_control(request.user, work)
                    and all(permitted(request.user, work, action) for action in
@@ -107,12 +121,18 @@ def detail(request,work,focus=None):
         if rows:
             posted = request.POST if request.method == 'POST' and request.POST.get('action') == 'resolve_duplicates' else None
             duplicate_form = DuplicateResolutionForm(work.case, held, rows, posted)
+        if (request.user.pk == work.actor_id and permitted(request.user, work, 'finance.calculate')
+                and (returned := domain.returned_income_review(held))):
+            posted = request.POST if request.method == 'POST' and request.POST.get('action') == 'resubmit_returned_row' else None
+            correction_form = ReturnedIncomeCorrectionForm(held, returned, posted)
     if request.method=='POST':
         try:
             p=request.POST;a=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
             allowed={'advance':set(),'resume':set(),'cancel':set(),'restart':{'reason'},'correct':{'kind','parent_id','evidence_id','payload','reason'},'review':{'target','verdict','evidence','note'},'export':{'target','kind','evidence'},'adopt_profile':{'configuration','reason'}}
             if duplicate_form is not None:
                 allowed['resolve_duplicates'] = set(duplicate_form.fields)
+            if correction_form is not None:
+                allowed['resubmit_returned_row'] = set(correction_form.fields)
             if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed schedule command')
             require_action(work, focus, a)
             if a=='advance':set_progress(request.user,work.pk,revision,True)
@@ -120,6 +140,11 @@ def detail(request,work,focus=None):
             elif a=='correct':
                 if not form.is_valid():raise ValidationError('Choose exact native sources')
                 domain.correct(request.user,work.pk,revision,case_revision,*form.ids(),p.get('reason',''))
+            elif a == 'resubmit_returned_row':
+                single_values = all(len(p.getlist(field)) == 1 for field in correction_form.fields)
+                if not correction_form.is_valid() or not single_values:
+                    raise ValidationError('Choose one returned row and one relationship before resubmitting.')
+                domain.resubmit_returned_row(request.user, work.pk, revision, case_revision, **correction_form.cleaned_data)
             elif a == 'resolve_duplicates':
                 if not duplicate_form.is_valid():
                     raise ValidationError('Supply evidence and choose a treatment for every shown addition.')
@@ -131,7 +156,12 @@ def detail(request,work,focus=None):
             elif a=='export':domain.export(request.user,work.pk,revision,case_revision,int(p.get('target','0')),p.get('kind',''),int(p.get('evidence','0')))
             elif a=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             messages.success(request,'Native schedule work updated');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
+        except (ValidationError,ValueError) as exc:
+            if a == 'resubmit_returned_row' and correction_form is not None:
+                correction_form.add_error(None, domain.finding(exc))
+            else:
+                messages.error(request,str(exc))
+            work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work,include_progress=not focus);panel=row['schedules'];s=panel['schedule'];reviews=[]
     preview = None
     stage = panel['native'].get('stage')
@@ -139,6 +169,8 @@ def detail(request,work,focus=None):
     if can_read_report and s.kind == 'income' and stage in ('output_review', 'returned', 'withdrawn', 'complete'):
         preview = s.result
     latest = s.reviews.select_related('actor').order_by('-pk').first() if s else None
+    if correction_form is not None and (stage != 'returned' or latest is None or latest.pk != correction_form.initial['return_id']):
+        correction_form = None
     if s and focus != 'recovery' and not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
         try:schedules.authority(request.user,s)
         except (ValidationError,PermissionDenied):pass
@@ -150,7 +182,7 @@ def detail(request,work,focus=None):
                 verdicts=('approve',)
             if verdicts:reviews.append({'target':s.pk,'verdicts':verdicts})
     return render(request,'factory/schedules_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
-        'inputs_form':form,'duplicate_form':duplicate_form,'prepared_figures':preview,
+        'inputs_form':form,'duplicate_form':duplicate_form,'correction_form':correction_form,'prepared_figures':preview,
         'can_open_reviewed_report':can_read_report and stage == 'complete',
         'reviews':reviews,'latest_review':latest,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),
         'adjustment_evidence':Evidence.objects.filter(case=work.case,kind='finance_adjustment').order_by('-pk'),

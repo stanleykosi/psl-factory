@@ -437,9 +437,10 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         if work.status=='followup_needed':row.update(state='Stopped; recorded closure needs follow-up',next_action='Inspect the existing native closure; stopping work cannot reopen it')
         row['can_reassess']=False
     if work.definition=='pmo-minutes/v1':
-        from .factory_minutes import projection
+        from .factory_minutes import confirmed_waiting_job, projection
         row['minutes']=projection(actor,work);panel=row['minutes'];row['jobs']=panel['jobs']
-        row['can_reconcile']=recovery_available and controlled and any(d.uncertain_job(j) for j in panel['jobs'])
+        idle = not (work.lease_until and work.lease_until > timezone.now())
+        row['can_reconcile'] = recovery_available and controlled and idle and any(d.uncertain_job(j) for j in panel['jobs'])
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if not panel['confirmation']:
@@ -450,6 +451,10 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
             row.update(state='Awaiting exact outward review or delivery',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
         if any(d.uncertain_job(job) for job in panel['jobs']):
             row.update(state='Delivery uncertain',next_action='Check the original recipient delivery',can_advance=False)
+        elif (recovery_available and controlled and idle and panel['native']['stage'] == 'complete'
+                and confirmed_waiting_job(work, panel['jobs'])):
+            row.update(state='Original receipt recorded', next_action='Check the recorded minutes receipts before continuing',
+                       blocker='', can_reconcile=True, can_advance=False, needs_me=True, recorded_minutes_receipt=True)
         if panel['readiness_changed']:row.update(state='Current meeting or action changes need new minutes',needs_me=permitted(actor,work,'factory.manage'),can_reassess=permitted(actor,work,'factory.manage'),can_advance=False)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger import projection

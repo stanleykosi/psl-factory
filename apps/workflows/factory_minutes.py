@@ -284,7 +284,10 @@ def verify(work,actor=None):
     p=Publication.objects.filter(version=b.version,factory_work=work,factory_source=work.source_head,factory_policy=config,actor=u).first()
     if not p or p.review_id!=review.pk or p.policies!=policies or p.recipient_ids!=recipients or p.retention_days!=retention:raise ValidationError('Await exact reviewed outward minutes publication')
     receipts=list(PublicationReceipt.objects.filter(publication=p).order_by('pk'))
-    if not receipts or {r.recipient_id for r in receipts}!=set(recipients) or any(r.payload!=b.version.payload or r.payload_sha256!=b.version.payload_sha256 for r in receipts):raise ValidationError('Every exact outward minutes recipient receipt required')
+    if not receipts or {r.recipient_id for r in receipts}!=set(recipients) or any(
+            r.payload!=b.version.payload or r.payload_sha256!=b.version.payload_sha256 or
+            r.operation_key!=f'{p.operation_key}:user:{r.recipient_id}' for r in receipts):
+        raise ValidationError('Every exact outward minutes recipient receipt required')
     result.update(publication=p.pk,receipt_ids=[r.pk for r in receipts]);return result
 
 def report(work,actor):
@@ -424,7 +427,7 @@ def projection(actor,work):
             if actor.pk == u.pk:
                 review_verdicts = available
     m=Meeting.objects.filter(case=work.case,reference=work.request['reference']).first()
-    return {'can_review':bool(review_verdicts),'can_request_review':can_request_review,'review_verdicts':review_verdicts,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
+    return {'can_review':bool(review_verdicts),'can_request_review':can_request_review,'review_verdicts':review_verdicts,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
 
 
 def delivery_readback(work, actor):
@@ -443,22 +446,77 @@ def delivery_readback(work, actor):
     return recipient_rows(job, binding.version, receipts)
 
 
+def confirmed_waiting_job(work, jobs):
+    if work.status != 'waiting_effect' or work.cancel_requested or any(
+            job.status in ('pending', 'leased', 'unknown', 'held') for job in jobs):
+        return None
+    from apps.agents.factory_coordinator import pending
+
+    if pending(work) is not None:
+        return None
+    version_id = observed(work, 'document_version')
+    return next((job for job in jobs if job.status == 'confirmed'
+                 and job.publication.version_id == version_id
+                 and job.publication.factory_source_id == work.source_head_id
+                 and job.publication.factory_policy_id == work.policy_id), None)
+
+
+def acknowledge_original_receipt(work, actor, job):
+    if job.status != 'confirmed' or PublicationJob.objects.filter(publication__factory_work=work,
+            status__in=('pending', 'leased', 'unknown', 'held')).exists():
+        raise ValidationError('Resolve the original minutes delivery before continuing.')
+    proof = verify(work, actor)
+    if not proof['receipt_ids'] or proof['publication'] != job.publication_id:
+        raise ValidationError('Check the original exact minutes receipts before continuing.')
+    work.status = 'ready'
+    work.finding = ''
+    work.observation_hash = ''
+    work.revision += 1
+    work.save(update_fields=['status', 'finding', 'observation_hash', 'revision', 'updated_at'])
+    event(actor, work.case, 'factory.minutes_receipt_checked', work=work.pk, publication_job=job.pk,
+          receipts=proof['receipt_ids'])
+    return work
+
+
 def reconcile(actor,work_id,expected,adapter=None):
     from .factory import access,cancellation_status
     from .factory_execution import require_control
     from apps.documents.delivery import run_publication_once
+    from apps.identity.models import Grant
+
     with transaction.atomic():
         w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
         access(actor,w.case,'factory.execute',DEFINITION);require_control(actor,w)
         if type(expected) is not int or w.revision!=expected or w.lease_until and w.lease_until>timezone.now():raise ValidationError('Refresh exact original minutes delivery')
-        job=PublicationJob.objects.filter(publication__factory_work=w).filter(Q(status='unknown')|Q(status='leased',lease_until__lte=timezone.now())).order_by('pk').first()
-        if not job:raise ValidationError('No original uncertain minutes delivery')
+        w.case = lock_case(actor, w.case_id, 'factory.execute')
+        list(Grant.objects.select_for_update().filter(case=w.case).order_by('pk'))
+        require_control(actor, w)
+        jobs = list(PublicationJob.objects.select_for_update(of=('self',)).filter(publication__factory_work=w)
+                    .select_related('publication').order_by('pk'))
+        now = timezone.now()
+        job = next((item for item in jobs if item.status == 'unknown' or
+                    (item.status == 'leased' and item.lease_until and item.lease_until <= now)), None)
+        if not job:
+            original = confirmed_waiting_job(w, jobs)
+            if original:
+                return acknowledge_original_receipt(w, actor, original)
+            raise ValidationError('No original uncertain minutes delivery')
         event(actor,w.case,'factory.reconciliation_requested',work=w.pk,publication_job=job.pk)
     # Receipt lookup only: even authoritative absence cannot silently resend.
     run_publication_once(adapter,case_id=w.case_id,job_id=job.pk,lookup_only=True)
     with transaction.atomic():
-        w=Work.objects.select_for_update().get(pk=work_id);job.refresh_from_db()
-        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked' if job.status=='held' else 'ready'
+        w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id)
+        if w.revision != expected or w.lease_until and w.lease_until > timezone.now():
+            return w
+        w.case = lock_case(actor, w.case_id, 'factory.execute')
+        list(Grant.objects.select_for_update().filter(case=w.case).order_by('pk'))
+        require_control(actor, w)
+        job = PublicationJob.objects.select_for_update(of=('self',)).get(pk=job.pk)
+        if job.status == 'leased':
+            return w
+        if job.status == 'confirmed' and not w.cancel_requested:
+            return acknowledge_original_receipt(w, actor, job)
+        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked'
         w.finding=job.error if job.status in ['held','unknown'] else '';w.observation_hash='';w.revision+=1;w.save()
     return w
 
