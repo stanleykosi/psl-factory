@@ -337,3 +337,6 @@ The design engineer, viewing as CEO: "add data for ceo so i can see how it looks
 
 ## D-151 (20 Nov): action results are toasts, app-wide
 The design engineer, on the My work "TL-RFP-2026-014 is now with Ife Okoro." notice: "things like this should be a toast notification instead ... build our system in app toast notif for actions like this all around the platform end to end". The design system already has Toast (success, success with Undo, problem, dismissible) and a Toast component exists in code, but nothing uses it and there is no app-wide host. F-54 criterion 10: one toast host and hook; every action-result notice becomes a toast; Callouts stay for errors needing action and persistent record state. Queued after the CEO data (D-145, one change at a time).
+
+## D-152 (20 Nov): the 3D floor uses concept 1, the Isometric conveyor floor
+The design engineer: "for 3d floor line lets use Isometric conveyor floor from the concept designs we had". Reverts D-01 (concept 3, the tilted swimlane board). The Overview's 3D floor becomes concept 1 from design/concepts/floor-3d-concepts.html: lines as conveyor belts, stations as machines, waiting items as stacks, orange machines with lamps where a person is needed, a fixed orthographic camera. Fallbacks to Flat stay. F-54 criterion 11, queued after the toasts (D-145).
