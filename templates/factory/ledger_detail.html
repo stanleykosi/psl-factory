@@ -14,6 +14,9 @@
 <p><a href="{% url 'ledger' case.pk %}?lineage={{ conflict.pk }}">Open earlier reference</a></p><p><a href="{% url 'factory_invoice_recovery' row.work.pk %}#source-correction">Correct the original lineage</a></p></section>{% endif %}
 {% if rejected %}<section class="card"><h2>Observation rejected</h2>{% if rejection %}<p>{{ rejection }}</p>{% endif %}<a href="{% url 'factory_invoice_recovery' row.work.pk %}#source-correction">Correct the same lineage</a></section>{% endif %}
 {% if row.ledger.lineage %}<section class="card"><h2>Exact native reference</h2><p>Lineage {{ row.ledger.lineage.pk }} · supplied evidence {{ row.ledger.lineage.evidence_id }} · predecessor {{ row.ledger.lineage.predecessor_id|default:'None' }}</p><p><a href="{% url 'ledger_report' case.pk row.ledger.lineage.pk %}">Open current reviewed supplied report</a></p></section>{% endif %}
+{% if check and not conflict %}<section class="card"><h2>Latest supplied observation</h2>
+<p><strong>{{ check.payload.state|readable }}</strong> · Recorded {{ check.created_at|date:'j M Y, H:i T' }} · Evidence {{ check.evidence_id }}</p>
+{% if check.status == 'held' %}<p>Needs further evidence before Finance can verify the reference.</p>{% endif %}</section>{% endif %}
 {% if mcp_read %}
 <section class="card">
   <h2>QuickBooks read status</h2>

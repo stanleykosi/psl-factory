@@ -12,6 +12,10 @@ from tests.railway_batch_walkthrough_seed import (
 
 class DesignBatchWalkthroughTests(TestCase):
     def test_native_preparations_open_and_preserve_existing_journeys(self):
+        from django.urls import reverse
+        from adapters.client_uat import TARGET
+        from apps.pmo.models import DeliveryDossier, DeliverySource
+
         actor = get_user_model().objects.create_user('synthetic-batch-browser-reviewer')
         self.client.force_login(actor)
         for key, (definition, _) in PREPARATION.items():
@@ -32,6 +36,10 @@ class DesignBatchWalkthroughTests(TestCase):
         self.assertFalse(EmergencyDecision.objects.exists())
         self.assertFalse(EmergencyOutcome.objects.exists())
         self.assertFalse(EscalationDecision.objects.exists())
+        delivery = DeliveryDossier.objects.get(case__title=PREPARATION['client_testing_wait'][1])
+        self.assertFalse(DeliverySource.objects.filter(dossier=delivery, kind=TARGET).exists())
+        page = self.client.get(reverse('client_uat', args=[delivery.case_id, delivery.pk]))
+        self.assertContains(page, 'Record testing request')
         invoice = FactoryWork.objects.get(case__title=PREPARATION['invoice_release'][1]).invoice
         self.assertIsNotNone(invoice)
         approval = HumanTask.objects.get(case=invoice.case, kind='factory_review', status='open')

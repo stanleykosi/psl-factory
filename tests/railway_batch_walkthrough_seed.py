@@ -27,6 +27,7 @@ PREVIEW_PROJECT = 'f957481b-c6f7-43af-bc66-449a330a9d53'
 TENANT = 'design-composed-delivery-walkthrough'
 PREPARATION = {
     'stability': ('delivery-hypercare/v1', 'SAMPLE release stability walkthrough'),
+    'client_testing_wait': ('delivery-release/v1', 'SAMPLE client testing request walkthrough'),
     'archive': ('delivery-archive/v1', 'SAMPLE file archive walkthrough'),
     'standard': ('pmo-change/v1', 'SAMPLE standard change walkthrough'),
     'normal_change_refusal': ('pmo-change/v1', 'SAMPLE Normal Change refusal walkthrough'),
@@ -58,6 +59,29 @@ def prepare_stability(actor, case):
         entry.criteria()
         entry.observations()
     return entry.work
+
+
+def prepare_client_testing_wait(actor, case):
+    from apps.core import client_contacts
+    from apps.workflows import factory_delivery
+
+    entry = test_delivery.DeliveryFixture()
+    entry.setup_delivery(context=(actor, case))
+    entry.plan()
+    entry.gates(['qa_exit', 'uat_product_manager', 'uat_product_owner', 'engineering_go'])
+    profile = json.loads(Path('fixtures/factory-delivery.json').read_text())
+    profile.pop('classification')
+    config = draft_operator_policy(actor, case.pk, 'OPS.factory_delivery_execution', profile,
+                                   entry.e['policy_decision'].pk, timezone.now())
+    transition(actor, config.pk, 'validated')
+    transition(actor, config.pk, 'active')
+    client_contacts.save(actor, case, 'project', {
+        'customer': '', 'client_name': 'SAMPLE Client', 'name': 'SAMPLE Client Test Witness',
+        'email': 'sample-client-test@example.invalid', 'role': 'SAMPLE test contact',
+        'evidence': entry.e['policy_decision'], 'revision': rev(case),
+    })
+    return factory_delivery.start(actor, case.pk, 'SAMPLE-BATCH-CLIENT-WAIT', entry.d.pk,
+                                  'SAMPLE client testing and response', rev(case))
 
 
 def prepare_archive(actor, case):
@@ -192,7 +216,8 @@ def prepare_project(actor, key):
     case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
     if created:
         Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
-        prepare = {'stability': prepare_stability, 'archive': prepare_archive, 'standard': prepare_standard,
+        prepare = {'stability': prepare_stability, 'client_testing_wait': prepare_client_testing_wait,
+                   'archive': prepare_archive, 'standard': prepare_standard,
                    'normal_change_refusal': prepare_normal_change_refusal,
                    'emergency': prepare_emergency,
                    'emergency_authorized': partial(prepare_emergency, verified_sources=True),
