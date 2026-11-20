@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Synthetic admission setup serializes account changes using PostgreSQL's no-key row lock, which also permits normal workflow references to commit. The regression uses two connections and proves both behaviors concurrently. Check successful setup exit and the current record before retrying an uncertain browser action.
+
 20 November 2026. Preview acceptance keeps specimen setup separate from operator actions. The invoice processing specimen reserves its native draft claim only when the exact authorized reader is ready to observe it. The original invoice and receipt are retained. Typed asset and Go-live specimens use separate guarded, synthetic scope and independent review.
 
 20 November 2026. Per-asset delivery and in-service dates use immutable evidence from their exact source holder. An independently reviewed rule supplies explicit date intervals and fractions only for the opted-in method. Missing dates, source authority or rule coverage hold that method and leave the amount Unknown. The optional verified Go-live mapping binds the exact signed baseline and uses the existing milestone command after a current project manager supplies separate completion evidence. The operator explicitly confirms that milestone, and its existing Finance handoff remains a separate process.

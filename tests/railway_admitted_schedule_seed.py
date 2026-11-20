@@ -30,7 +30,9 @@ MAKER_ACTIONS = ('case.read', 'evidence.add', 'finance.calculate', 'finance.read
 def admitted_user(invitation_id, user_id, reviewer):
     if any(type(pk) is not int or pk < 1 for pk in (invitation_id, user_id)) or user_id == reviewer.pk:
         raise RuntimeError('Match an explicit accepted sample invitation and its distinct admitted user.')
-    admission = StaffAdmission.objects.select_for_update(of=('self', 'user')).select_related(
+    # Fixture setup serializes changes to this admission and account while ordinary
+    # workflow writes can still commit foreign keys to the existing account.
+    admission = StaffAdmission.objects.select_for_update(of=('self', 'user'), no_key=True).select_related(
         'user', 'invitation__case', 'invitation__authority',
     ).filter(invitation_id=invitation_id, user_id=user_id, invitation__case__tenant=ADMISSION_TENANT,
              invitation__case__synthetic=True, invitation__profile_key=ADMISSION_PROFILE,

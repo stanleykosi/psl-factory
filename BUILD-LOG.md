@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. The admitted browser verified the overview coverage and exact phone station drilldowns. The scoped count reached 147. The filtered invoice Exceptions queue found both intended native holds but lost its workflow filter on detail return. Railway 269 passed the account lock regression and all three related fixture reruns. The fixture change affects test setup only.
+
+20 November 2026. Live Codex phone observation followed exact invoice work 234 from active preparation to NGN 42 draft 22 and separate open review 155. Both preservation probes and the guarded observe job passed. Scoped completion is 146. The admitted asset retry also succeeded and reached independent register review. A test-only account lock fix is staged for an isolated PostgreSQL concurrency regression.
+
 20 November 2026. All three guarded 268 preview setups and both original preservation probes passed. In Codex the preparer verified work 233's stored signatures and original receipt. The native dated asset POST timed out at commit. The independent reviewer batch remains staged, and the asset submission needs exact readback before retry.
 
 20 November 2026. Hosted verified 267, including additive workflows 0095 and the normal matching worker. The admitted browser observed the named invoice responsibility hold without resolver authority. Isolated 268 passed all three specimen checks and both preservation probes. Submitted their guarded preview setup separately.
