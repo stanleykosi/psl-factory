@@ -74,10 +74,10 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('list default (Active): 20 projects, Filter, Show more, rows per page; tabs, total and note from 720px', async ({ page }) => {
+    test('list default (Active): 10 projects, Filter, Show more, rows per page; tabs, total and note from 720px', async ({ page }) => {
       await page.goto('/projects');
       await listLoaded(page);
-      await expect(projectLinks(page)).toHaveCount(20);
+      await expect(projectLinks(page)).toHaveCount(10);
       await expect(projectLinks(page).first()).toHaveAttribute('href', '/projects/P-0101');
       await expect(page.getByRole('button', { name: 'Show more' })).toBeVisible();
       await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
@@ -113,14 +113,14 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
       await shot(page, `projects-${w}-no-results`);
       await page.getByRole('button', { name: 'Clear search' }).click();
-      await expect(projectLinks(page)).toHaveCount(20);
+      await expect(projectLinks(page)).toHaveCount(10);
       await expect(page).toHaveURL(/\/projects$/);
 
       let fail = true;
       await page.route('**/api/v1/projects*', (route) =>
         fail ? route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : route.continue(),
       );
-      await page.getByRole('radio', { name: '10' }).click();
+      await page.getByRole('tab', { name: /All I can see/ }).click();
       const card = page.getByRole('main').getByRole('alert');
       await expect(card).toContainText('We couldn’t load your projects. Your work is safe; nothing was changed.');
       await expect(card).toContainText('Reference server_error for support.');
@@ -247,42 +247,47 @@ test.describe('desktop 1440 details', () => {
     await listLoaded(page);
     const request = page.waitForRequest((r) => r.url().includes('/api/v1/projects?') && r.url().includes('q=lagoon'));
     await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
-    expect(new URL((await request).url()).search).toBe('?limit=20&q=lagoon');
+    expect(new URL((await request).url()).search).toBe('?limit=10&q=lagoon');
     await expect(page).toHaveURL(/\/projects\?q=lagoon$/);
     await expect(projectLinks(page)).toHaveText(['Lagoon Health · patient app']);
     await expect(page.locator('.psl-resultcount')).toHaveText('1 PROJECT');
     await page.getByRole('searchbox', { name: 'Search' }).fill('zzz');
     await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
     await page.getByRole('button', { name: 'Clear search' }).click();
-    await expect(projectLinks(page)).toHaveCount(20);
+    await expect(projectLinks(page)).toHaveCount(10);
   });
 
-  test('paging: Show more appends; 10 rows per page is kept across a reload; ?limit=7 falls back to 20', async ({ page }) => {
+  test('paging: Show more appends; 20 rows per page is kept across a reload; ?limit=7 falls back to 10', async ({ page }) => {
     await page.goto('/projects');
     await listLoaded(page);
     const more = page.waitForRequest((r) => r.url().includes('cursor='));
     await page.getByRole('button', { name: 'Show more' }).click();
-    expect(new URL((await more).url()).search).toBe('?limit=20&cursor=o20');
+    expect(new URL((await more).url()).search).toBe('?limit=10&cursor=o10');
+    await expect(projectLinks(page)).toHaveCount(20);
+    await expect(projectLinks(page).nth(10)).toBeFocused();
+    await page.getByRole('button', { name: 'Show more' }).click();
     await expect(projectLinks(page)).toHaveCount(22);
-    await expect(projectLinks(page).nth(20)).toBeFocused();
-    await expect(page.locator('.psl-showmore')).toContainText('All 22 showing');
+    await expect(page.locator('.psl-showmore').first()).toContainText('All 22 showing');
     await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
 
     await page.getByRole('radio', { name: '10' }).click();
-    await expect(page).toHaveURL(/\?limit=10$/);
+    await expect(page).toHaveURL(/\/projects$/);
     await expect(projectLinks(page)).toHaveCount(10);
+    await page.getByRole('radio', { name: '20' }).click();
+    await expect(page).toHaveURL(/\?limit=20$/);
+    await expect(projectLinks(page)).toHaveCount(20);
     await page.reload();
     await listLoaded(page);
-    await expect(projectLinks(page)).toHaveCount(10);
-    await expect(page.getByRole('radio', { name: '10' })).toHaveAttribute('aria-checked', 'true');
-    await page.getByRole('radio', { name: '10' }).focus();
-    await page.keyboard.press('ArrowRight');
+    await expect(projectLinks(page)).toHaveCount(20);
+    await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');
+    await page.getByRole('radio', { name: '20' }).focus();
+    await page.keyboard.press('ArrowLeft');
     await expect(page).toHaveURL(/\/projects$/);
-    await expect(page.getByRole('radio', { name: '20' })).toBeFocused();
+    await expect(page.getByRole('radio', { name: '10' })).toBeFocused();
 
     await page.goto('/projects?limit=7');
     await listLoaded(page);
-    await expect(projectLinks(page)).toHaveCount(20);
+    await expect(projectLinks(page)).toHaveCount(10);
   });
 
   test('a failed Show more keeps the rows and shows the inline problem', async ({ page }) => {
@@ -293,7 +298,7 @@ test.describe('desktop 1440 details', () => {
     );
     await page.getByRole('button', { name: 'Show more' }).click();
     await expect(page.getByText('We couldn’t load more. Nothing was changed.')).toBeVisible();
-    await expect(projectLinks(page)).toHaveCount(20);
+    await expect(projectLinks(page)).toHaveCount(10);
   });
 
   test('a journey line opens its work item: Invoice · Milestone 2 is W-1001', async ({ page }) => {
@@ -314,7 +319,7 @@ test.describe('desktop 1440 details', () => {
     await expect(projectLinks(page)).toHaveCount(4);
     const closed = page.waitForRequest((r) => r.url().includes('status=closed'));
     await page.getByRole('tab', { name: /Closed/ }).click();
-    expect(new URL((await closed).url()).search).toBe('?limit=20&status=closed');
+    expect(new URL((await closed).url()).search).toBe('?limit=10&status=closed');
     await expect(page).toHaveURL(/\?status=closed$/);
     await expect(projectLinks(page)).toHaveText(['Sabi Market · web store']);
     await page.getByRole('tab', { name: /Closed/ }).focus();
@@ -396,7 +401,7 @@ test.describe('desktop 1440 details', () => {
       page.getByRole('searchbox', { name: 'Search' }),
       page.getByRole('button', { name: 'Filter' }),
       projectLinks(page).first(),
-      page.getByRole('radio', { name: '20' }),
+      page.getByRole('radio', { name: '10' }),
       page.getByRole('button', { name: 'Show more' }),
     ]) {
       expect(await keyboardRing(page, target)).toEqual({ style: 'solid', width: '2px' });

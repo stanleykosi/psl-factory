@@ -123,9 +123,11 @@ for (const [label, viewport] of [
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto('/clients');
       await listLoaded(page);
-      await expect(clientLinks(page)).toHaveCount(20);
-      await expect(page.getByText(/^20 clients loaded as of /)).toBeVisible();
+      await expect(clientLinks(page)).toHaveCount(10);
+      await expect(page.getByText(/^10 clients loaded as of /)).toBeVisible();
       if (phone) await expectTouchTargets([page.getByRole('button', { name: 'Show more' })]);
+      await page.getByRole('button', { name: 'Show more' }).click();
+      await expect(clientLinks(page)).toHaveCount(20);
       await page.getByRole('button', { name: 'Show more' }).click();
       await expect(clientLinks(page)).toHaveCount(25);
       await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
@@ -137,7 +139,7 @@ for (const [label, viewport] of [
 
     test('list: signed-out and error states', async ({ page }) => {
       let status = 500;
-      await page.route('**/api/v1/clients', (route) =>
+      await page.route('**/api/v1/clients?*', (route) =>
         status === 0 ? route.continue() : route.fulfill({ status, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }),
       );
       await page.goto('/clients');

@@ -59,15 +59,15 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('default and lead-view: four tabs with counts, 20 rows, footer', async ({ page }) => {
+    test('default and lead-view: four tabs with counts, 10 rows, footer', async ({ page }) => {
       await page.goto('/my-work');
       await loaded(page);
       const tabs = page.getByRole('tab');
       await expect(tabs).toHaveText(['Needs me 24', 'Waiting on others 12', 'Done 6', 'Unassigned 2']);
       if (!phone) await expect(page.getByText('44 records you can see · updated 10:42')).toBeVisible();
-      await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
-      await expect(page.locator('.psl-showmore')).toContainText('20 of 24 showing');
-      await expect(page.getByRole('button', { name: 'Show 4 more' })).toBeVisible();
+      await expect(panel(page).locator('[data-work-link]')).toHaveCount(10);
+      await expect(page.locator('.psl-showmore').first()).toContainText('10 of 24 showing');
+      await expect(page.getByRole('button', { name: 'Show 10 more' })).toBeVisible();
       await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
       expect(await noHorizontalScroll(page)).toBe(true);
       // the boards draw every queue tab 44px high, on desktop and on the phone
@@ -100,7 +100,7 @@ for (const [label, viewport] of [
       await expect(show).toBeVisible();
       await shot(page, `my-work-${viewport.width}-filter`);
       await expectNoAxeViolations(page);
-      const request = page.waitForRequest((r) => r.url().includes('/api/v1/work?') && r.url().includes('limit=20'));
+      const request = page.waitForRequest((r) => r.url().includes('/api/v1/work?') && r.url().includes('limit=10'));
       await show.click();
       expect(new URL((await request).url()).search).toContain('line=invoice&state=action_needed');
       await expect(dialog).toHaveCount(0);
@@ -187,23 +187,29 @@ test.describe('desktop 1440 details', () => {
   test.use({ viewport: DESKTOP });
 
   test('rows per page 10 is kept in the URL and across a reload; Show more appends', async ({ page }) => {
-    await page.goto('/my-work?limit=10');
+    await page.goto('/my-work');
     await loaded(page);
     await expect(panel(page).locator('[data-work-link]')).toHaveCount(10);
     await expect(page.getByRole('radio', { name: '10' })).toHaveAttribute('aria-checked', 'true');
+    const firstRow = await panel(page).locator('[data-work-link]').first().elementHandle();
     await page.getByRole('radio', { name: '20' }).click();
-    await expect(page).toHaveURL(/\/my-work$/);
+    await expect(page).toHaveURL(/\?limit=20$/);
     await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
-    await page.getByRole('radio', { name: '10' }).click();
-    await expect(page).toHaveURL(/\?limit=10$/);
+    await expect(page.getByRole('radio', { name: '20' })).toBeFocused();
+    // the rows already shown stay in place
+    expect(await panel(page).locator('[data-work-link]').first().evaluate((el, h) => el === h, firstRow)).toBe(true);
     await page.reload();
     await loaded(page);
+    await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');
+    await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
+    await page.getByRole('radio', { name: '10' }).click();
+    await expect(page).toHaveURL(/\/my-work$/);
     await expect(panel(page).locator('[data-work-link]')).toHaveCount(10);
     await page.getByRole('button', { name: 'Show 10 more' }).click();
     await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
     await expect(panel(page).locator('[data-work-link]').nth(10)).toBeFocused();
     await page.getByRole('button', { name: 'Show 4 more' }).click();
-    await expect(page.locator('.psl-showmore')).toContainText('All 24 showing');
+    await expect(page.locator('.psl-showmore').first()).toContainText('All 24 showing');
     await expect(page.getByRole('button', { name: /more$/ })).toHaveCount(0);
   });
 
@@ -216,13 +222,13 @@ test.describe('desktop 1440 details', () => {
       page.getByRole('button', { name: /^Filter/ }),
       page.getByRole('button', { name: 'Remove State filter' }),
       panel(page).locator('[data-work-link]').first(),
-      page.getByRole('radio', { name: '20' }),
+      page.getByRole('radio', { name: '10' }),
     ]) {
       expect(await keyboardRing(page, target)).toEqual(ring);
     }
     await page.goto('/my-work');
     await loaded(page);
-    expect(await keyboardRing(page, page.getByRole('button', { name: 'Show 4 more' }))).toEqual(ring);
+    expect(await keyboardRing(page, page.getByRole('button', { name: 'Show 10 more' }))).toEqual(ring);
   });
 });
 
@@ -248,7 +254,7 @@ test.describe('phone 390 card headers', () => {
           };
         }),
       );
-    expect(headers).toHaveLength(20);
+    expect(headers).toHaveLength(10);
     const first = headers[0];
     expect(first.stacked).toBe(true);
     expect(first.titleLeft).toBe(first.tagLeft);

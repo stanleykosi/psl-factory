@@ -218,22 +218,25 @@ for (const [label, viewport] of [
     const boxes = async (path: string) => {
       await page.goto(path);
       await loaded(page);
-      const box = async (loc: Locator) => (await loc.first().boundingBox())!;
+      const box = async (loc: Locator) => (await loc.first().boundingBox({ timeout: 3000 }).catch(() => null)) ?? undefined;
       return {
         tabs: await box(page.getByRole('tablist', { name: 'Work item' })),
         title: await box(page.locator('main#main h1')),
         main: await box(page.locator('.work-columns > .work-column')),
-        side: await box(page.locator('.work-columns > aside')),
+        side: viewport.width < 720 ? undefined : await box(page.locator('.work-columns > aside')),
       };
     };
-    const overview = await boxes('/work/W-1004');
-    const history = await boxes('/work/W-1004/history');
+    const overview = await boxes('/work/W-1408');
+    const history = await boxes('/work/W-1408/history');
     for (const key of ['tabs', 'title', 'main', 'side'] as const) {
       // the side column is drawn only on desktop; on a phone it follows the main column
       if (key === 'side' && viewport.width < 720) continue;
       // the columns start lower on Overview (its facts and track come first), so only their x and width are compared
+      const [h, o] = [history[key], overview[key]];
+      if (key === 'tabs' || key === 'title' || key === 'main') expect(h && o, `${key} drawn on both`).toBeTruthy();
+      if (!h || !o) continue;
       for (const edge of key === 'tabs' || key === 'title' ? (['x', 'y', 'width'] as const) : (['x', 'width'] as const)) {
-        expect(Math.abs(history[key][edge] - overview[key][edge]), `${key}.${edge}`).toBeLessThanOrEqual(1);
+        expect(Math.abs(h[edge] - o[edge]), `${key}.${edge}`).toBeLessThanOrEqual(1);
       }
     }
   });

@@ -103,7 +103,7 @@ test.describe('desktop', () => {
     await panel.getByLabel('File').setInputFiles(FILE);
     await panel.getByLabel('Note (optional)').fill('Real template from PSL legal');
     await panel.getByRole('button', { name: 'Upload version' }).dblclick();
-    await expect(page.locator('[aria-live="polite"]')).toHaveText('Version 2 uploaded for Invoice');
+    await expect(page.locator('[aria-live="polite"]:not(.psl-showmore__count)')).toHaveText('Version 2 uploaded for Invoice');
     expect(seen.filter((r) => r.method === 'POST')).toHaveLength(1);
     expect(seen.filter((r) => r.method === 'GET')).toHaveLength(2);
     expect(csrf).toBe('mock-csrf-admin');
@@ -185,6 +185,8 @@ test.describe('desktop', () => {
 
   test('many: Show more appends the next page', async ({ page, context }) => {
     await openAs(page, context, { psl_mock_templates: 'many' });
+    await expect(page.locator('.setup-desktop table tbody tr')).toHaveCount(10);
+    await page.locator('.setup-desktop').getByRole('radio', { name: '50' }).click();
     await expect(page.locator('.setup-desktop table tbody tr')).toHaveCount(50);
     await expect(page.getByText('50 SHOWN · 50 TEST')).toBeVisible();
     await expect(page.getByText(/^Every document currently uses a test template\./)).toHaveCount(0);
@@ -234,7 +236,7 @@ test.describe('phone', () => {
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
     await panel.getByRole('button', { name: 'Upload version' }).click();
-    await expect(page.locator('[aria-live="polite"]')).toHaveText('Version 2 uploaded for Minutes');
+    await expect(page.locator('[aria-live="polite"]:not(.psl-showmore__count)')).toHaveText('Version 2 uploaded for Minutes');
     await expect(card).toContainText('Version 2');
     await expect(card.locator('strong')).toBeFocused();
   });

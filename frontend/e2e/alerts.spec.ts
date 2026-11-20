@@ -146,7 +146,7 @@ test.describe('list at 390 (SCR-15-mobile)', () => {
 test.describe('search, Filter and opening at 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('search and Filter send only q, agent, unread and cursor and show what is returned', async ({ page }) => {
+  test('search and Filter send only limit, q, agent, unread and cursor and show what is returned', async ({ page }) => {
     const sent: URL[] = [];
     page.on('request', (r) => {
       const url = new URL(r.url());
@@ -182,7 +182,7 @@ test.describe('search, Filter and opening at 1440', () => {
     await expect(rows(page)).toHaveCount(4);
 
     const keys = new Set(sent.flatMap((u) => [...u.searchParams.keys()]));
-    expect([...keys].every((k) => ['q', 'agent', 'unread', 'cursor'].includes(k))).toBe(true);
+    expect([...keys].every((k) => ['limit', 'q', 'agent', 'unread', 'cursor'].includes(k))).toBe(true);
     expect(sent.some((u) => u.searchParams.get('unread') === 'true')).toBe(true);
   });
 
@@ -236,13 +236,13 @@ test.describe('list states', () => {
     test(`error at ${label}: the card, then Try again shows the rows`, async ({ page }) => {
       await page.setViewportSize(viewport);
       const fail = (route: import('@playwright/test').Route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '404' } });
-      await page.route('**/api/v1/notifications', fail);
+      await page.route('**/api/v1/notifications?*', fail);
       await page.goto('/notifications');
       const card = page.locator('main').getByRole('alert');
       await expect(card).toContainText('We couldn’t load your alerts. Your work is safe; nothing was changed.');
       await expect(card).toContainText('Reference not_found for support.');
       await expectNoAxeViolations(page);
-      await page.unroute('**/api/v1/notifications', fail);
+      await page.unroute('**/api/v1/notifications?*', fail);
       await page.getByRole('button', { name: 'Try again' }).click();
       await expect(rows(page)).toHaveCount(4);
     });
@@ -274,18 +274,20 @@ test.describe('list states', () => {
     await expect(page.locator('main').getByRole('alert')).toContainText(/Last loaded \d\d:\d\d\. Reference network_error for support\./);
   });
 
-  test('many: Show more loads rows 21-25 and goes; a failed Show more keeps the 20 rows', async ({ page, context }) => {
+  test('many: Show more loads rows 11-20 then 21-25 and goes; a failed Show more keeps the 10 rows', async ({ page, context }) => {
     await page.setViewportSize(DESKTOP);
     await scenario(context, 'many');
     await page.goto('/notifications');
     await listLoaded(page);
-    await expect(rows(page)).toHaveCount(20);
+    await expect(rows(page)).toHaveCount(10);
     const fail = (route: import('@playwright/test').Route) => route.abort();
-    await page.route('**/api/v1/notifications?cursor=*', fail);
+    await page.route('**/api/v1/notifications?*cursor=*', fail);
     await page.getByRole('button', { name: 'Show more' }).click();
     await expect(page.getByText('We couldn’t load more. Nothing was changed.')).toBeVisible();
+    await expect(rows(page)).toHaveCount(10);
+    await page.unroute('**/api/v1/notifications?*cursor=*', fail);
+    await page.getByRole('button', { name: 'Show more' }).click();
     await expect(rows(page)).toHaveCount(20);
-    await page.unroute('**/api/v1/notifications?cursor=*', fail);
     await page.getByRole('button', { name: 'Show more' }).click();
     await expect(rows(page)).toHaveCount(25);
     await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
