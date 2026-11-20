@@ -349,6 +349,9 @@ describe('first save (AC 8, 9, 15)', () => {
   });
 });
 
+/** Every rule on screen: the footer starts at 10 rows, so these tests choose 50. */
+const showFifty = () => fireEvent.click(desktop().getByRole('radio', { name: '50' }));
+
 describe('save outcomes (AC 10, 11, 13, 14)', () => {
   it('409: shows the message in a focused alert, reloads the newer version, clears every edit, never re-applies', async () => {
     let page = fixture('rules.desktop');
@@ -441,6 +444,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
       return json(403, FORBIDDEN);
     };
     await open(<FinancePageView />);
+    showFifty();
     fireEvent.click(desktop().getByRole('button', { name: 'Set BU totals rules' }));
     fireEvent.click(saveButton());
     const text = `${FORBIDDEN.message} ${EDITOR_GONE} ${NOT_SAVED}`;
@@ -649,6 +653,8 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     };
     let failMore = true;
     await open();
+    expect(desktop().getAllByRole('row')).toHaveLength(11);
+    showFifty();
     expect(desktop().getAllByRole('row')).toHaveLength(51);
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(desktop().getByText('We couldn’t load more rules. Choose Show more to try again.')).toBeTruthy());
@@ -659,7 +665,8 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     expect(desktop().queryByRole('button', { name: 'Show more' })).toBeNull();
     // the button that was pressed is gone: focus goes to the end of the list instead of the page top (QA-3-1); the
     // focus moves after the rows render, so wait for it (it can land a tick later under a loaded parallel run)
-    await waitFor(() => expect(document.activeElement).toBe(desktop().getByText('All 55 rules are shown.')));
+    // the page draws a desktop and a phone copy; CSS shows one, so either copy may hold the focus here
+    await waitFor(() => expect(screen.getAllByText('All 55 rules are shown.')).toContain(document.activeElement));
     expect(desktop().getAllByRole('row')[55].textContent).toContain('Sample rule 55');
     expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 55');
   });
@@ -680,6 +687,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
     answers.rules = () => json(200, fixture('finance.desktop'));
     await open(<FinancePageView />);
     expect(reads()[0].query).toBe('?area=finance');
+    showFifty();
     expect(desktop().getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('SETUP / RULES / FINANCE');
     expect(desktop().getByRole('heading', { level: 1, name: 'Finance rules' })).toBeTruthy();
     expect(desktop().getByText('All 25 values are Not set. Real reviewers and approvers come from PSL; none are invented here.')).toBeTruthy();
@@ -726,6 +734,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
     delete page.not_set_count;
     answers.rules = () => json(200, page);
     await open(<FinancePageView />);
+    showFifty();
     expect(screen.queryAllByRole('button', { name: /^Set / })).toHaveLength(0);
     expect(desktop().getAllByRole('heading', { level: 2 }).at(-1)!.textContent).toBe('Other Finance rules');
     expect(desktop().getByText('Monthly')).toBeTruthy();
@@ -744,7 +753,8 @@ describe('finance and delivery views (AC 16, 17)', () => {
     expect(rowCells('Hypercare window')).toEqual(['Hypercare window', 'NOT SET', 'Hypercare']);
     expect(desktop().getByText(/^These are PSL’s decisions\. Until a rule is set/)).toBeTruthy();
     expect(desktop().getByText('Each rule is versioned. Changing one doesn’t change work already finished.')).toBeTruthy();
-    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell)')).toHaveLength(0);
+    // no controls but the paging footer's rows per page
+    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell):not(.psl-seg__opt)')).toHaveLength(0);
   });
 });
 
