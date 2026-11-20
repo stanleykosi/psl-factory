@@ -42,8 +42,16 @@ beforeAll(async () => {
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
+// F-52: the keep-alive socket from the last test can be reset under the next request; the reset is safe to repeat
 beforeEach(async () => {
-  await fetch(`${base}/__mock/reset`, { method: 'POST' });
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await fetch(`${base}/__mock/reset`, { method: 'POST' });
+      return;
+    } catch (error) {
+      if (attempt === 3) throw error;
+    }
+  }
 });
 
 const cookie = (persona: string, extra = '') => `psl_mock_persona=${persona}${extra ? `; ${extra}` : ''}`;
