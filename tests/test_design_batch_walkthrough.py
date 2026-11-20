@@ -1,6 +1,7 @@
 """Check that grouped browser staging leaves operator decisions for the walkthrough."""
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
+from django.urls import reverse
 
 from apps.finance.models import InvoiceIssue, InvoiceJob, InvoiceReview
 from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, ChangeDecision, EmergencyAuthorization, EmergencyDecision, EmergencyOutcome, EscalationDecision
@@ -12,7 +13,6 @@ from tests.railway_batch_walkthrough_seed import (
 
 class DesignBatchWalkthroughTests(TestCase):
     def test_native_preparations_open_and_preserve_existing_journeys(self):
-        from django.urls import reverse
         from adapters.client_uat import TARGET
         from apps.pmo.models import DeliveryDossier, DeliverySource
 

@@ -88,7 +88,7 @@ class FactoryChangeTests(TestCase):
         self.assertNotContains(page, 'Client · Reject')
 
         artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
-                 {'rules': [{'role': 'Client', 'actions': ['approve', 'reject']}]}, self.e['policy_decision'])
+                 {'rules': [{'role': 'Client', 'actions': ['reject']}]}, self.e['policy_decision'])
         page = self.client.get(url)
         self.assertContains(page, 'Client · Reject')
         posted = self.client.post(url, {'action': 'decide', 'decision_action': 'Client:reject',
