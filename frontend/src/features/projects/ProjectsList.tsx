@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, ShowMore, Table, Tabs, Unknown, useIsPhone, type Column, type ShowMoreProps } from '@/components';
+import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, ShowMore, Table, Tabs, Unknown, useIsPhone, usePagedRows, type Column, type ShowMoreProps } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -159,13 +159,13 @@ export function ProjectsList() {
     [fetchPage],
   );
 
-  const showMore = async () => {
+  const showMore = async (limit: ProjectsView['limit']) => {
     if (list.status !== 'ready' || !list.nextCursor) return;
     const mine = seq.current;
     const before = list.items.length;
     setMore('loading');
     try {
-      const data = await fetchPage(view, list.nextCursor);
+      const data = await fetchPage({ ...view, limit }, list.nextCursor);
       if (mine !== seq.current) return;
       focusRow.current = before;
       setList((prev) => (prev.status !== 'ready' ? prev : { ...prev, items: [...prev.items, ...data.items], nextCursor: data.next_cursor }));
@@ -177,12 +177,29 @@ export function ProjectsList() {
     }
   };
 
+  // A new search or tab reloads from page 1; a new rows-per-page choice only grows or trims the shown rows.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const reloadView = useMemo(() => view, [view.q, view.tab]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load(reloadView);
+  }, [reloadView, load]);
   useEffect(() => {
     viewRef.current = view;
-    // A new view (search or rows per page) reloads from page 1.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load(view);
-  }, [view, load]);
+  }, [view]);
+
+  const listReady = list.status === 'ready' ? list : undefined;
+  const { rows, paging } = usePagedRows({
+    items: listReady?.items ?? [],
+    next: Boolean(listReady?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: `${view.q ?? ''}|${view.tab}`,
+    total: listReady?.total,
+    size: view.limit,
+    onSize: (limit) => navigate({ limit }),
+  });
 
   useEffect(() => {
     if (focusRow.current !== null && list.status === 'ready') {
@@ -241,32 +258,23 @@ export function ProjectsList() {
   } else if (list.items.length === 0) {
     body = <EmptyState title="No projects you can see yet.">You see projects your roles cover.</EmptyState>;
   } else {
-    const paging: ShowMoreProps = {
-      shown: list.items.length,
-      total: list.nextCursor ? undefined : list.items.length,
-      hasMore: Boolean(list.nextCursor),
-      busy: more === 'loading',
-      onMore: () => void showMore(),
-      size: view.limit,
-      onSize: (limit) => navigate({ limit }),
-    };
     body = (
       <>
         <div ref={rowsRef}>
           {phone ? (
             <>
-              <ProjectCards items={list.items} />
+              <ProjectCards items={rows} />
               <ShowMore solo {...paging} />
             </>
           ) : (
-            <ProjectTable items={list.items} closed={view.tab === 'closed'} paging={paging} />
+            <ProjectTable items={rows} closed={view.tab === 'closed'} paging={paging} />
           )}
         </div>
         <div className="projects__foot">
           {more === 'error' && (
             <Callout kind="problem" className="projects__morefail">
               We couldn&rsquo;t load more. Nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => void showMore()}>
+              <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
                 Try again
               </Button>
             </Callout>

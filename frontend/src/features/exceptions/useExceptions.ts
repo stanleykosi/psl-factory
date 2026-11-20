@@ -21,28 +21,27 @@ export type ExceptionsState =
     };
 
 /** E-EXCEPTIONS (D-PAGING): rows in the order returned; cursor "Show more" appends. The backend filters by grants. */
-export function useExceptions({ limit: initialLimit = 20 }: { limit?: ExceptionsLimit } = {}) {
-  const [limit, setLimit] = useState<ExceptionsLimit>(initialLimit);
+export function useExceptions({ limit: firstLimit = 10 }: { limit?: ExceptionsLimit } = {}) {
   const [filters, setFilters] = useState<ExceptionsFilters>({});
   const [state, setState] = useState<ExceptionsState>({ status: 'loading' });
   // Answers to an earlier limit, search, filter or Try again are dropped.
   const request = useRef(0);
 
   const fetchPage = useCallback(
-    async (cursor?: string) => {
+    async (limit: ExceptionsLimit, cursor?: string) => {
       const query: ExceptionsQuery = cursor ? { limit, cursor } : { limit };
       if (filters.q) query.q = filters.q;
       if (filters.what) query.what = filters.what;
       return (await call(api.GET('/api/v1/exceptions', { params: { query } }))) as ExceptionsPage;
     },
-    [limit, filters],
+    [filters],
   );
 
   const load = useCallback(async () => {
     const n = ++request.current;
     setState({ status: 'loading' });
     try {
-      const page = await fetchPage();
+      const page = await fetchPage(firstLimit);
       if (n === request.current) {
         setState({
           status: 'ready',
@@ -56,21 +55,21 @@ export function useExceptions({ limit: initialLimit = 20 }: { limit?: Exceptions
     } catch (error) {
       if (n === request.current) setState({ status: 'error', error: error instanceof ApiError ? error : networkError() });
     }
-  }, [fetchPage]);
+  }, [fetchPage, firstLimit]);
 
   useEffect(() => {
-    // First page on open and whenever the limit, search or filter changes.
+    // First page on open and whenever the search or filter changes.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, [load]);
 
   const cursor = state.status === 'ready' ? state.nextCursor : undefined;
-  const showMore = useCallback(async () => {
+  const showMore = useCallback(async (limit: ExceptionsLimit) => {
     if (!cursor) return;
     const n = request.current;
     setState((s) => (s.status === 'ready' ? { ...s, more: 'loading' } : s));
     try {
-      const page = await fetchPage(cursor);
+      const page = await fetchPage(limit, cursor);
       if (n !== request.current) return;
       setState((s) =>
         s.status === 'ready'
@@ -92,5 +91,5 @@ export function useExceptions({ limit: initialLimit = 20 }: { limit?: Exceptions
     }
   }, [cursor, fetchPage]);
 
-  return { state, limit, setLimit, filters, setFilters, retry: load, showMore };
+  return { state, filters, setFilters, retry: load, showMore };
 }

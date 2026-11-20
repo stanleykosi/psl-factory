@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, Callout, EmptyState, formatDayTime, ListToolbar, PageTitle, ShowMore, type ShowMoreProps, Table, Tag, useIsPhone, type Column } from '@/components';
+import { Button, Callout, EmptyState, formatDayTime, ListToolbar, PageTitle, ShowMore, type ShowMoreProps, Table, usePagedRows, Tag, useIsPhone, type Column } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
@@ -96,7 +96,16 @@ export type ExceptionsListProps = {
 };
 
 export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxRows, seeAllHref = '/exceptions' }: ExceptionsListProps) {
-  const { state, limit, setLimit, filters, setFilters, retry, showMore } = useExceptions({ limit: initialLimit });
+  const { state, filters, setFilters, retry, showMore } = useExceptions({ limit: initialLimit });
+  const ready = state.status === 'ready' ? state : null;
+  const { rows: pagedRows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: !compact && Boolean(ready?.nextCursor),
+    busy: ready?.more === 'loading',
+    failed: ready?.more === 'failed',
+    loadMore: (n) => void showMore(n),
+    resetKey: `${filters.q ?? ''}|${filters.what ?? ''}`,
+  });
   const pathname = usePathname() ?? '/exceptions';
   const phone = useIsPhone();
   const [filterOpen, setFilterOpen] = useState(false);
@@ -118,7 +127,6 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   };
 
   const narrowed = Boolean(filters.q || filters.what);
-  const ready = state.status === 'ready' ? state : null;
 
   let body;
   if (state.status === 'error') {
@@ -172,15 +180,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
         </>
       );
     } else {
-      const paging: ShowMoreProps = {
-        shown: state.items.length,
-        hasMore: Boolean(state.nextCursor),
-        busy: state.more === 'loading',
-        onMore: () => void showMore(),
-        size: limit,
-        onSize: setLimit,
-      };
-      const rows = compact && maxRows !== undefined ? state.items.slice(0, maxRows) : state.items;
+      const rows = compact && maxRows !== undefined ? state.items.slice(0, maxRows) : compact ? state.items : pagedRows;
       body = (
         <>
           {phone ? <ExceptionsCards rows={rows} /> : <ExceptionsTable rows={rows} asOf={state.asOf} paging={compact ? undefined : paging} />}

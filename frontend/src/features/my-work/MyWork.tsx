@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
+import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
 import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -23,7 +23,7 @@ import {
   QUEUES,
   recordsText,
   resultCount,
-  pagingTotal,
+  queueTotal,
   stateTag,
   formatTime,
   viewSearch,
@@ -86,10 +86,11 @@ export function MyWork() {
     [router],
   );
 
-  const fetchPage = useCallback(async (v: View, cursor?: string) => {
+  // The first page is always 10 rows; the paging footer grows the list from there with the cursor.
+  const fetchPage = useCallback(async (v: View, cursor?: string, limit: Limit = DEFAULT_PAGE_SIZE) => {
     inFlight.current += 1;
     try {
-      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery(v, cursor) } }));
+      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
     } finally {
       inFlight.current -= 1;
     }
@@ -152,13 +153,13 @@ export function MyWork() {
     }
   }, [fetchPage, took]);
 
-  const showMore = async () => {
+  const showMore = async (limit: Limit) => {
     if (list.status !== 'ready' || !list.nextCursor) return;
     const mine = seq.current;
     const before = list.items.length;
     setMore('loading');
     try {
-      const data = await fetchPage(view, list.nextCursor);
+      const data = await fetchPage(view, list.nextCursor, limit);
       if (mine !== seq.current) return;
       took(data);
       focusRow.current = before;
@@ -173,12 +174,28 @@ export function MyWork() {
     }
   };
 
+  // A new queue, search or filter reloads from page 1; a new rows-per-page choice only grows or trims the shown rows.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const reloadView = useMemo(() => view, [view.queue, view.q, view.line, view.project, view.state, view.waiting]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load(reloadView);
+  }, [reloadView, load]);
   useEffect(() => {
     viewRef.current = view;
-    // A new view (queue, search, filters or rows per page) reloads from page 1.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load(view);
-  }, [view, load]);
+  }, [view]);
+  const listReady = list.status === 'ready' ? list : undefined;
+  const { rows, paging } = usePagedRows({
+    items: listReady?.items ?? [],
+    next: Boolean(listReady?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: reloadView,
+    size: view.limit,
+    onSize: (limit) => navigate({ limit }),
+    total: queueTotal(view, counts),
+  });
 
   useEffect(() => {
     pollable.current = list.status === 'ready' && !signedOut;
@@ -355,23 +372,13 @@ export function MyWork() {
   } else if (list.items.length === 0) {
     body = <EmptyState title={current.empty}>New work will appear here.</EmptyState>;
   } else {
-    const hasNext = Boolean(list.nextCursor);
-    const paging = {
-      shown: list.items.length,
-      total: pagingTotal(view, counts, list.items.length, hasNext),
-      hasMore: hasNext,
-      busy: more === 'loading',
-      onMore: () => void showMore(),
-      size: view.limit,
-      onSize: (limit: Limit) => navigate({ limit }),
-    };
     body = (
       <>
         {!phone ? (
-          <WorkTable items={list.items} hrefFor={rowHref} paging={paging} />
+          <WorkTable items={rows} hrefFor={rowHref} paging={paging} />
         ) : (
           <>
-            {view.queue === 'waiting_on_others' ? <StartedCards items={list.items} /> : <WorkCards items={list.items} hrefFor={rowHref} />}
+            {view.queue === 'waiting_on_others' ? <StartedCards items={rows} /> : <WorkCards items={rows} hrefFor={rowHref} />}
             <ShowMore solo {...paging} />
           </>
         )}
@@ -379,7 +386,7 @@ export function MyWork() {
           {more === 'error' && (
             <Callout kind="problem" className="my-work__morefail">
               We couldn&rsquo;t load more. Your work is safe; nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => void showMore()}>
+              <Button kind="secondary" size="sm" onClick={() => paging.onMore()}>
                 Try again
               </Button>
             </Callout>
