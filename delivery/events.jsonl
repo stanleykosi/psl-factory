@@ -3861,3 +3861,8 @@
 {"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-20T15:37:26Z","feature":"F-54","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-20T17:33:07Z","feature":"F-54","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":321.5,"commit":"b73aff3f69fb"}
+{"at":"2026-11-20T17:33:22Z","feature":"F-54","round":1,"kind":"transition","head":"b73aff3f69fb","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-20T17:37:36Z","feature":"F-54","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"ui-reviewer","commit":"b73aff3f69fb","written_at":"2026-11-20T17:37:04Z"}
+{"at":"2026-11-20T17:39:38Z","feature":"F-54","round":1,"kind":"review","role":"technical","verdict":"CHANGES","reviewer":"technical-reviewer (lead)","commit":"b73aff3f69fb","findings":{"TECH-1-1":"medium","TECH-1-2":"medium","TECH-1-3":"medium","TECH-1-4":"low","TECH-1-5":"low","TECH-1-6":"low","TECH-1-7":"low"},"written_at":"2026-11-20T17:39:05Z"}
+{"at":"2026-11-20T17:41:35Z","feature":"F-54","round":1,"kind":"review","role":"ux","verdict":"CHANGES","reviewer":"ux-reviewer","commit":"b73aff3f69fb","findings":{"UX-1-1":"medium"},"written_at":"2026-11-20T17:40:45Z"}

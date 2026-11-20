@@ -310,3 +310,6 @@ The design engineer: "in the chat area, the padding on the left is more than tha
 
 ## D-142 (20 Nov): an HR stand-in persona in the mock
 The design engineer asked to view the app as HR (not HR Lead). No HR persona existed. Added mock persona `hr` (Amaka Obi, role HR): My work and Assistant, Zainab only, no startable lines, empty queues and alerts. This is a stand-in for viewing only; what HR staff may see is PSL's to define (D-PAYROLL-VISIBILITY open). Committed with F-54.
+
+## D-143 (20 Nov): text fields show focus by their own border
+The design engineer, on the assistant composer: "i hate the focus on this. it is too bogus and confusing", then chose "Every text field". Every text field shows focus by turning its own border to the focus blue in place: no outer ring, no gap. On the composer only typing focus changes the box; its buttons keep their own keyboard-only ring. Checkboxes, radios, buttons, links and segmented options keep the keyboard-only ring. Added to F-54 as criterion 9.
