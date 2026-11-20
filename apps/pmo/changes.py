@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from apps.core.services import lock_case, event, bump
 from apps.documents.controlled import baseline_manifest
@@ -80,6 +80,37 @@ def required_roles(flags):
     return ['Product','Engineering'] + (['Client'] if flags['client_facing'] else []) + (['Engineering Lead','Security Manager'] if flags['timeline_impact'] else [])
 
 
+def require_current_decision_authority(case, decision):
+    from apps.identity.services import require
+
+    require(decision.actor, case, 'change.decide')
+    if decision_authority(decision.actor, case, decision.role, decision.verdict) != decision.authority:
+        raise ValidationError('Change decision authority changed')
+
+
+def normal_decision_status(version):
+    """Present the same assessment-bound roles enforced for authorization."""
+    ids, flags = impact(version)
+    roles = required_roles(flags)
+    latest = {d.role: d for d in version.decisions.filter(role__in=roles).select_related('actor').order_by('pk')}
+    states = []
+    labels = {'approve': 'Approved', 'return': 'Returned', 'reject': 'Rejected'}
+    for role in roles:
+        decision = latest.get(role)
+        status = 'Waiting'
+        if decision is not None:
+            status = 'Needs review'
+            if decision.assessment_ids == ids:
+                try:
+                    require_current_decision_authority(version.change.case, decision)
+                except (PermissionDenied, ValidationError):
+                    pass
+                else:
+                    status = labels.get(decision.verdict, 'Needs review')
+        states.append({'role': role, 'status': status, 'decision': decision})
+    return states
+
+
 @transaction.atomic
 def decide_change(actor, case_id, version_id, role, verdict, evidence_id, note, expected):
     from .commercial import note_required
@@ -118,11 +149,8 @@ def authorization_inputs(case, version, adopted_manifest=None, *, check_authorit
         d = latest.get(role)
         if not d or d.verdict != 'approve' or d.assessment_ids != ids:
             raise ValidationError('Current assessment-bound decision required: '+role)
-        from apps.identity.services import require
         if check_authority:
-            require(d.actor, case, 'change.decide')
-            if decision_authority(d.actor,case,d.role,d.verdict) != d.authority:
-                raise ValidationError('Change decision authority changed')
+            require_current_decision_authority(case, d)
         decision_ids.append(d.pk)
     return ids, flags, decision_ids
 

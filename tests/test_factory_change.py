@@ -68,6 +68,46 @@ class FactoryChangeTests(TestCase):
         self.assertEqual(FactoryWork.objects.filter(case=self.case).count(),1)
         with self.assertRaises(ValidationError):change.start(self.actor,self.case.pk,'CHANGE-1',self.cv.pk,dict(self.inputs,authorization_id=999),'Controlled change')
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=old).update(status='verified')
+    def test_normal_change_displays_current_required_roles_and_hides_unconfigured_refusal(self):
+        from apps.pmo.changes import decide_change
+        from tests.document_helpers import artifact
+
+        self.start()
+        self.assessments(cost=False, timeline=True, client=True)
+        for role in ['Product', 'Engineering', 'Client']:
+            decide_change(self.actor, self.case.pk, self.cv.pk, role, 'approve', self.source.pk,
+                          'Synthetic decision for the exact current assessments', rev(self.case))
+        self.client.force_login(self.actor)
+        url = reverse('factory_detail', args=[self.work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Product · Approved')
+        self.assertContains(page, 'Engineering · Approved')
+        self.assertContains(page, 'Client · Approved')
+        self.assertContains(page, 'Engineering Lead · Waiting')
+        self.assertContains(page, 'Security Manager · Waiting')
+        self.assertNotContains(page, 'Client · Reject')
+
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'Client', 'actions': ['approve', 'reject']}]}, self.e['policy_decision'])
+        page = self.client.get(url)
+        self.assertContains(page, 'Client · Reject')
+        posted = self.client.post(url, {'action': 'decide', 'decision_action': 'Client:reject',
+            'revision': self.work.revision, 'case_revision': rev(self.case), 'change_version': self.cv.pk,
+            'evidence': self.source.pk, 'note': 'The fictional client declined this exact revision.'})
+        self.assertEqual(posted.status_code, 302)
+        page = self.client.get(url)
+        self.assertContains(page, 'Client · Rejected')
+        self.assertContains(page, 'Change rejected')
+        self.assertNotContains(page, 'Check and record native authorization')
+        self.assertFalse(ChangeAuthorization.objects.filter(version=self.cv).exists())
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        self.assertEqual(list(self.cv.decisions.filter(role='Client').order_by('pk').values_list('verdict', flat=True)),
+                         ['approve', 'reject'])
+
+        self.assessments(cost=False, timeline=True, client=True)
+        page = self.client.get(url)
+        self.assertContains(page, 'Client · Needs review')
+        self.assertNotContains(page, 'Client · Rejected')
     def test_emergency_holds_on_separate_native_route_without_ordinary_authorization(self):
         incident=add_evidence(self.actor,self.case.pk,'incident','Synthetic critical incident','synthetic:incident')
         v=log_change(self.actor,self.case.pk,'CR-001','Emergency','Production','Actual incident','Incident evidence',self.source.pk,rev(self.case),incident.pk)

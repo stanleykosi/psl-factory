@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 
 from apps.finance.models import InvoiceIssue, InvoiceJob, InvoiceReview
-from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, EmergencyAuthorization, EmergencyDecision, EmergencyOutcome, EscalationDecision
+from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, ChangeDecision, EmergencyAuthorization, EmergencyDecision, EmergencyOutcome, EscalationDecision
 from apps.workflows.models import FactoryProgress, FactoryWork, HumanTask
 from tests.railway_batch_walkthrough_seed import (
     PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_project, prepare_unreadable_invoice,
@@ -27,6 +27,7 @@ class DesignBatchWalkthroughTests(TestCase):
                 self.assertEqual(self.client.get(prepared['path']).status_code, 200)
         self.assertFalse(ArchiveCopyPlan.objects.exists())
         self.assertFalse(ChangeAuthorization.objects.exists())
+        self.assertFalse(ChangeDecision.objects.exists())
         self.assertFalse(EmergencyAuthorization.objects.exists())
         self.assertFalse(EmergencyDecision.objects.exists())
         self.assertFalse(EmergencyOutcome.objects.exists())

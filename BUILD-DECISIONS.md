@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. The Normal Change screen shows the roles required by the existing exact native impact assessment. An earlier decision counts only against the same assessments and with its original authority still current. Only currently permitted role and verdict pairs appear as choices. A refused normal revision shows its current outcome while original outstanding effects retain recovery priority. This supplies no actual roles, rejection permissions or additional requiredness rules.
+
 20 November 2026. Use the same workspace name presentation across intake forms that list scoped workspace records. This changes option labels only. The form still posts an exact identity and each workflow still checks its own current permissions and revision.
 
 20 November 2026. The explicit invoice action queues the existing worker only when the current invoice can enter its native issue step. The request rechecks the work revision, execution authority, source freshness, current Finance approval and absence of an original effect. An already enrolled automatic workflow still follows its original native rules. The page shows issuance and delivery only from their original receipts.

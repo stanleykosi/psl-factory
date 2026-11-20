@@ -29,6 +29,7 @@ PREPARATION = {
     'stability': ('delivery-hypercare/v1', 'SAMPLE release stability walkthrough'),
     'archive': ('delivery-archive/v1', 'SAMPLE file archive walkthrough'),
     'standard': ('pmo-change/v1', 'SAMPLE standard change walkthrough'),
+    'normal_change_refusal': ('pmo-change/v1', 'SAMPLE Normal Change refusal walkthrough'),
     'emergency': ('pmo-emergency/v1', 'SAMPLE emergency walkthrough'),
     'emergency_authorized': ('pmo-emergency/v1', 'SAMPLE emergency authorized outcome walkthrough'),
     'emergency_refused': ('pmo-emergency/v1', 'SAMPLE emergency refusal walkthrough'),
@@ -84,6 +85,22 @@ def prepare_standard(actor, case):
                                 {'template_id': template.pk, 'authorization_id': None},
                                 'SAMPLE standard change with recorded procedure', rev(case))
     return work
+
+
+def prepare_normal_change_refusal(actor, case):
+    from tests import test_factory_change
+    from tests.document_helpers import artifact
+
+    with patch.object(test_commercial_changes, 'fixture', side_effect=lambda *, existing:
+                      test_commercial_changes.fixture(existing=existing, context=(actor, case))):
+        entry = test_factory_change.FactoryChangeTests()
+        entry.setUp()
+    entry.assessments(cost=False, timeline=True, client=True)
+    artifact(actor, case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+             {'rules': [{'role': 'Client', 'actions': ['approve', 'reject']}]}, entry.e['policy_decision'])
+    add_evidence(actor, case.pk, 'document', 'The fictional client declined the sample change for this phase.',
+                 'synthetic:design-batch-normal-change-refusal')
+    return entry.start()
 
 
 def prepare_emergency(actor, case, *, verified_sources=False, refusal=False):
@@ -176,6 +193,7 @@ def prepare_project(actor, key):
     if created:
         Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
         prepare = {'stability': prepare_stability, 'archive': prepare_archive, 'standard': prepare_standard,
+                   'normal_change_refusal': prepare_normal_change_refusal,
                    'emergency': prepare_emergency,
                    'emergency_authorized': partial(prepare_emergency, verified_sources=True),
                    'emergency_refused': partial(prepare_emergency, refusal=True), 'escalation': prepare_escalation,
