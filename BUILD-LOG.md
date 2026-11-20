@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. The Finance intake drawer showed raw record identities in its workspace choices. Added shared workspace labels for scoped choices and a focused incumbent Finance intake check. The existing preview still has the original display until promotion.
+
+20 November 2026. Verified the drawer opening unchanged work for a previously followed issue and starting new work for a separate open issue. New work 133 reached its native owner wait and accepted its acknowledgement. Linked the verified monthly report delivery to the separate Start work state. The audit records 40 scoped completions.
+
 20 November 2026. The broader Railway run completed the 137-test Finance group successfully. Added a separate restricted synthetic work item for the remaining access-denied board. Its owner has no usable password. The trial account has no grant on that workspace.
 
 20 November 2026. Completed the phone work-filter exercise across all eight views and retained invoice history with the two original receipts. The original report and invoice records were preserved. The state audit reports 38 completed scoped journeys.

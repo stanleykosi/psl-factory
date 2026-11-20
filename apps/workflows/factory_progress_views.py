@@ -6,11 +6,20 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 
+from apps.core.models import Case
+from apps.core.presentation import workspace_name
 from .factory_progress import set_progress
 
 
 class StartWithBackground(forms.Form):
     background = forms.BooleanField(required=False, initial=True, label='Continue in background after starting')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        workspace = self.fields.get('case')
+        if isinstance(workspace, forms.ModelChoiceField) and workspace.queryset.model is Case:
+            workspace.label = workspace.label or 'Workspace'
+            workspace.label_from_instance = workspace_name
 
 
 def enroll(request, work, background):

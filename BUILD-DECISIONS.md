@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Use the same workspace name presentation across intake forms that list scoped workspace records. This changes option labels only. The form still posts an exact identity and each workflow still checks its own current permissions and revision.
+
 20 November 2026. The explicit invoice action queues the existing worker only when the current invoice can enter its native issue step. The request rechecks the work revision, execution authority, source freshness, current Finance approval and absence of an original effect. An already enrolled automatic workflow still follows its original native rules. The page shows issuance and delivery only from their original receipts.
 
 20 November 2026. Keep the sample approved invoice with stale sources and zero issue or delivery operations as evidence of the source freshness hold. Prepare a separate current synthetic invoice using the normal obligation identity and review services. The release exercise requires a new human approval of that exact invoice. Keep the HR correction fixture separate from the Finance example and leave its HR disposition to the authorised sample HR reviewer.

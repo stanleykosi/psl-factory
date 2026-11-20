@@ -77,8 +77,8 @@ A journey below records what the operator observed. It leaves layout and device 
 | `SCR-04-escalation` | Opened escalation communication intake from the drawer. | Submit from the drawer and check the new exact work. |
 | `SCR-04-forecast` | Opened cash forecast intake from the drawer. | Submit selected sources and verify the next step. |
 | `SCR-04-incident` | Opened Emergency evidence intake from the drawer. | Submit linked incident evidence and exercise both authority paths. |
-| `SCR-04-issue` | Opened issue investigation intake from the drawer. | Start an owner follow-up from the drawer. |
-| `SCR-04-leadership` | Opened internal leadership report intake from the drawer. | Submit a selected report period and check its actual downstream work. |
+| `SCR-04-issue` | Hosted 205 recorded new synthetic issue 20 from requirements 1857. The drawer selected that exact open issue and created work 133. The worker requested the assigned owner's update and acknowledged it through the native decision form. The original issue 10 still opened its existing work 100. | Complete for the tested open-issue intake, native worker wait and owner acknowledgement. Issue resolution is separate. |
+| `SCR-04-leadership` | Hosted 205 selected the monthly executive workflow, exact sample project, elapsed period and cited coverage through the drawer. Work 132 prepared and separately reviewed the report and confirmed original delivery 78 for recipient 137. | Complete for the tested selected-project monthly intake and its reviewed report. The broader reporting scope and live drafting are tracked under SCR-52. |
 | `SCR-04-ledger` | Opened incumbent transaction reference intake from the drawer. | Submit an exact synthetic transaction reference and verify the native result. |
 | `SCR-04-lines` | Searched for the weekly line, selected it and reached its native form. Reopened the chooser at phone width. | Walk all policy-specific unavailable lines with different actors. |
 | `SCR-04-minutes` | Opened formal minutes intake from the drawer. | Submit newly uploaded notes through this entry point. |

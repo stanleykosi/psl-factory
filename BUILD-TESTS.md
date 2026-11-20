@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+20 November 2026. A direct 205 in-app ledger intake check found `Case object` and raw workspace identities in the scoped chooser. Candidate 206 now supplies the existing operator-facing name through the shared intake form. The focused Finance HTTP regression checks the visible name and successful exact intake together. Browser retest follows PostgreSQL approval and deployment.
+
+20 November 2026. Hosted 205 browser selected original issue 10 through the drawer and reopened work 100. Recorded fresh synthetic issue 20 from requirements 1857 and selected it through the drawer. New work 133 queued, reached its exact owner wait, accepted the assigned sample owner's acknowledgement with the same source, and completed the follow-up task without recording severity or resolution. The selected-project monthly report intake is also closed for its exact scope by existing work 132 and delivery 78.
+
 20 November 2026. The 205 Finance group passed all 137 PostgreSQL tests in 4,236.464s with exit 0. The returned group forecast passed after the fixed-date fixture. The native invoice crash test recorded child exit 53 and real lease expiry before recovering the original receipt, with 38.156 seconds of observed wait. Commercial began and project delivery continued. The overall 520-test result remains pending. Candidate 206 includes a truly separate unloginable synthetic invoice owner so an exact denied-work check can be exercised without changing the trial account's authority.
 
 20 November 2026. Hosted 205 Codex browser on work 62 confirmed original issuance receipt 3 and delivery receipt 1. Its Decisions page retained the returned task and separate completed approval, with the matching invoice version and no reissue. Phone viewport 390 pixels, content and body 375 pixels. Desktop viewport restored.

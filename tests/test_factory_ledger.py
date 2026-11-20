@@ -112,7 +112,14 @@ class FactoryLedgerTests(TestCase):
 
     def test_exact_http_intake_and_commands_reject_extra_fields(self):
         f=self.f;self.client.force_login(f['actor'])
-        response=self.client.post(__import__('django.urls',fromlist=['reverse']).reverse('factory_create'),{'definition':flow.DEFINITION,'case':str(f['case'].pk),'key':'http-ledger','revision':rev(f['case']),'evidence_id':self.source.pk,'predecessor_id':''})
+        from django.urls import reverse
+        from apps.core.presentation import workspace_name
+        create_url=reverse('factory_create')
+        choice=self.client.get(create_url, {'definition':flow.DEFINITION})
+        self.assertContains(choice, workspace_name(f['case']))
+        self.assertContains(choice, 'Choose workspace')
+        self.assertNotContains(choice, 'Case object (')
+        response=self.client.post(create_url,{'definition':flow.DEFINITION,'case':str(f['case'].pk),'key':'http-ledger','revision':rev(f['case']),'evidence_id':self.source.pk,'predecessor_id':''})
         self.assertEqual(response.status_code,302,response.content);self.work=FactoryWork.objects.get(key='http-ledger');self.advance()
         before=self.rows();r=self.client.post('/work/'+str(self.work.pk)+'/',{'action':'observe','revision':self.work.revision,'case_revision':rev(f['case']),'target':flow.lineage(self.work).pk,'evidence':self.source.pk,'post_to_quickbooks':'yes'});self.assertEqual(r.status_code,200);self.assertEqual(before,self.rows())
     def test_recheck_current_observation_reuses_lineage_and_budget(self):
