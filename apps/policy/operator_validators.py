@@ -138,8 +138,12 @@ from .bid_adjustment_validators import COMPONENT as BID_ADJUSTMENT, SCHEMA as BI
 SCHEMAS[BID_ADJUSTMENT] = (BID_ADJUSTMENT_SCHEMA, BID_ADJUSTMENT_VALUE)
 from .rfp_estimate_request_validators import COMPONENT as RFP_ESTIMATE, SCHEMA as RFP_ESTIMATE_SCHEMA, VALUE as RFP_ESTIMATE_VALUE, validate_reference as validate_rfp_estimate
 SCHEMAS[RFP_ESTIMATE] = (RFP_ESTIMATE_SCHEMA, RFP_ESTIMATE_VALUE)
+from .go_live_milestone_validators import COMPONENT as GO_LIVE_MILESTONE, SCHEMA as GO_LIVE_MILESTONE_SCHEMA, VALUE as GO_LIVE_MILESTONE_VALUE, validate_reference as validate_go_live_milestone
+SCHEMAS[GO_LIVE_MILESTONE] = (GO_LIVE_MILESTONE_SCHEMA, GO_LIVE_MILESTONE_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == GO_LIVE_MILESTONE:
+        return validate_go_live_milestone(target, case)
     if component == RFP_ESTIMATE:
         return validate_rfp_estimate(target, case)
     if component == BID_ADJUSTMENT:

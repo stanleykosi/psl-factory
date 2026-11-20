@@ -7,7 +7,8 @@ PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source',
 PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_')
 CONFIRMED_CHANGE_SOURCE='psl:p56-confirmed-request/v1'
 PPE_OPENING_SOURCE = 'psl:ppe-private-opening-proof/v1'
-PRIVATE_SOURCES = (CONFIRMED_CHANGE_SOURCE, PPE_OPENING_SOURCE)
+PPE_ASSET_DATES_SOURCE = 'psl:ppe-private-asset-dates/v1'
+PRIVATE_SOURCES = (CONFIRMED_CHANGE_SOURCE, PPE_OPENING_SOURCE, PPE_ASSET_DATES_SOURCE)
 def forecast_private(e):
  if e.kind.startswith('forecast_') or e.kind=='finance_group_snapshot' or e.kind=='finance_report_snapshot' and getattr(e,'source','').startswith('derived:forecast:'):return True
  if not getattr(e,'pk',None) or not getattr(e,'case_id',None):return False

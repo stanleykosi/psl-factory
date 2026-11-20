@@ -12,7 +12,7 @@ from django.views.decorators.cache import never_cache
 from adapters import case_uploads
 from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
-from apps.finance import ppe
+from apps.finance import ppe, ppe_dates
 from apps.finance.models import ScheduleWork,FinanceRun
 from . import factory,factory_ppe as domain, factory_ppe_opening
 from .factory_progress import set_progress
@@ -125,13 +125,17 @@ def detail(request,work,focus=None):
         opening_attachment = factory_ppe_opening.attachment_for(request.user, work, row['ppe']['register'])
     except PermissionDenied:
         opening_attachment = None
-    candidates=[(r,['register','basis'] if r.result['date_basis_ambiguous'] else ['register']),(s,['schedule'])]
+    candidates=[(r,['register','basis'] if ppe_dates.needs_review(r) else ['register']),(s,['schedule'])]
+    date_returned = False
     for target,purposes in candidates:
         if not target:continue
         for purpose in purposes:
             title={'register':'Asset register','basis':'Reporting dates','schedule':'Calculated schedule'}[purpose]
             prior=ppe.latest(target,purpose)
             if prior:decisions.append({'title':title,'decision':prior})
+            if (purpose == 'basis' and prior and prior.verdict in ('return', 'reject')
+                    and row['ppe']['native'].get('stage') == 'basis_review'):
+                date_returned = True
             if focus=='recovery' or work.cancel_requested or work.status in ['cancelled','followup_needed']:continue
             try:ppe.authority(request.user,target,purpose)
             except (ValidationError,PermissionDenied):continue
@@ -145,9 +149,12 @@ def detail(request,work,focus=None):
             kind='ppe_basis_explanation' if purpose=='basis' else 'finance_review'
             reviews.append({'target':target.pk,'purpose':purpose,'title':title,'verdicts':verdicts,
                             'evidence':Evidence.objects.filter(case=work.case,kind=kind).order_by('-pk')})
+    if date_returned:
+        row.update(state='Reporting dates need correction', next_action='Supply corrected date evidence for a fresh Finance review.')
     return render(request,'factory/ppe_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
         'inputs_form':form,'reviews':reviews,'decisions':decisions,'activities':work.activities.order_by('pk') if not focus else (),
-        'proof_form': proof_form, 'opening_attachment': opening_attachment,
+        'proof_form': proof_form, 'opening_attachment': opening_attachment, 'date_returned': date_returned,
+        'has_asset_dates': ppe.date_facts_visible(r),
         'can_open_reviewed_report': row['ppe']['native'].get('stage') == 'complete' and permitted(request.user, work, 'ppe.report'),
         'can_correct':focus!='decision' and permitted(request.user,work,'factory.manage') and not work.cancel_requested,
         'can_restart':focus!='decision' and work.status=='cancelled' and permitted(request.user,work,'factory.manage'),

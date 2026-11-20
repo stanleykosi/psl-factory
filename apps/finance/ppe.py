@@ -6,8 +6,8 @@ from django.db import transaction
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from apps.core.evidence_access import PPE_OPENING_SOURCE
-from apps.core.services import lock_case,event,bump
+from apps.core.evidence_access import PPE_ASSET_DATES_SOURCE, PPE_OPENING_SOURCE
+from apps.core.services import add_evidence,lock_case,event,bump
 from apps.identity.services import require
 from apps.identity.models import Grant
 from apps.pmo.services import subject
@@ -21,9 +21,10 @@ from adapters.ppe import SuppliedPPEAdapter
 from .models import ScheduleWork,ScheduleReview,FinanceRun
 from .rules import decimal,number,total
 from .ppe_math import charge
-from . import analysis
+from . import analysis,ppe_dates
 DATE={'type':'string','pattern':r'^\d{4}-\d{2}-\d{2}$'}
 ASSET=obj(dict({'asset_id':KEY,'category':KEY,'capitalisation':{'enum':['capitalise','undecided']},'classification_evidence_id':ID},**{k:DEC for k in ['opening_cost','opening_accumulated','residual','life','fraction']}))
+ASSET['properties']['dates'] = ppe_dates.ASSET_DATES
 EVENT=obj({'event_id':KEY,'asset_id':KEY,'date':DATE,'kind':{'enum':['addition','disposal','reclassification']},'cost_delta':DEC,'accumulated_delta':DEC,'evidence_id':ID})
 READ_ACTIONS = ('case.read', 'finance.read', 'ppe.read')
 OPENING_OWNER_ACTIONS = ('ppe.capture', 'ppe.report', 'evidence.add', 'factory.manage')
@@ -43,6 +44,19 @@ def require_opening_source(case, evidence_id):
  if opening.source==PPE_OPENING_SOURCE:
   author=get_user_model().objects.only('id','is_active').get(pk=opening.created_by_id)
   require_opening_owner(author,case)
+
+def require_date_source(case, evidence):
+ if evidence.source == PPE_ASSET_DATES_SOURCE:
+  author = get_user_model().objects.only('id','is_active').get(pk=evidence.created_by_id)
+  readable(author,case);require(author,case,'ppe.capture');require(author,case,'evidence.add')
+
+def date_facts_visible(register):
+ if not register.result.get('asset_date_count'):return False
+ try:
+  require_date_source(register.case,subject(register.case,register.evidence_id,'ppe_register',metadata_only=True))
+  ppe_dates.checked_sources(register.case,register.payload['assets'],check_values=True)
+ except (PermissionDenied,ValidationError):return False
+ return True
 
 def locked(actor,case_id,action,expected=None):
  c=lock_case(actor,case_id,action,expected);list(Grant.objects.select_for_update().filter(case=c).order_by('pk'));readable(actor,c);return c
@@ -67,7 +81,10 @@ def approved(w,purpose):
 def current(w,depth=0):
  if depth>36:raise ValidationError('Prior-schedule chain budget exceeded')
  readable(w.actor,w.case);require(w.actor,w.case,'ppe.capture' if w.kind=='ppe_register' else 'ppe.prepare')
- if w.kind=='ppe_register':require_opening_source(w.case,w.payload['opening_evidence_id'])
+ if w.kind=='ppe_register':
+  require_opening_source(w.case,w.payload['opening_evidence_id'])
+  require_date_source(w.case,subject(w.case,w.evidence_id,'ppe_register',metadata_only=True))
+  ppe_dates.checked_sources(w.case,w.payload['assets'],check_values=True)
  if ScheduleWork.objects.filter(case=w.case,kind=w.kind,reference=w.reference,version__gt=w.version).exists():raise ValidationError('PPE source/output superseded; create a reviewed successor')
  if w.kind=='ppe_schedule' and snapshot(w.actor,w.case,w.payload,w.parent,depth)!=w.snapshot:raise ValidationError('PPE register/prior/policy/review/basis/ledger changed; rebuild')
  if w.kind=='ppe_schedule' and calculate(w.case,w.payload,w.snapshot,w.parent)!=w.result:raise ValidationError('PPE current calculation/freshness differs; preserve history and rebuild')
@@ -87,12 +104,15 @@ def store(a,c,kind,ref,payload,pins,result,e,parent=None):
 
 @transaction.atomic
 def capture(a,case_id,reference,evidence_id,expected=None):
- c=locked(a,case_id,'ppe.capture',expected);e=subject(c,evidence_id,'ppe_register');v=SuppliedPPEAdapter().read(e);validate(REGISTER,v)
+ c=locked(a,case_id,'ppe.capture',expected);e=subject(c,evidence_id,'ppe_register',metadata_only=True)
+ require_date_source(c,e)
+ v=SuppliedPPEAdapter().read(e);validate(REGISTER,v)
  try:start,end,label=[date.fromisoformat(v[k]) for k in ['period_start','period_end','label_as_of']]
  except ValueError:raise ValidationError('Actual calendar dates required')
  if start>end or end>timezone.localdate() or label>timezone.localdate() or timestamp(v['extracted_at'])>timezone.now():raise ValidationError('Ordered actual period/as-of/extraction dates required')
  if len({r['asset_id'] for r in v['assets']})!=len(v['assets']) or len({r['event_id'] for r in v['events']})!=len(v['events']):raise ValidationError('Duplicate asset/event identity')
  require_opening_source(c,v['opening_evidence_id'])
+ ppe_dates.checked_sources(c,v['assets'],check_values=True)
  for r in v['assets']:
   subject(c,r['classification_evidence_id'],'ppe_classification')
   for k in ['opening_cost','opening_accumulated','residual','life','fraction']:
@@ -108,12 +128,38 @@ def capture(a,case_id,reference,evidence_id,expected=None):
   if r['kind']=='disposal' and any(r[k] is not None and decimal(r[k])>0 for k in ['cost_delta','accumulated_delta']):raise ValidationError('Disposals use signed nonpositive supplied balances')
  for x in v['closing_controls'].values():
   if x is not None:decimal(x,nonnegative=True)
- return store(a,c,'ppe_register',reference,v,{'source_hash':e.sha256},{'status':'captured','asset_count':len(v['assets']),'event_count':len(v['events']),'date_basis_ambiguous':label!=end},e)
+ result={'status':'captured','asset_count':len(v['assets']),'event_count':len(v['events']),'date_basis_ambiguous':label!=end}
+ dated = sum('dates' in asset for asset in v['assets'])
+ if dated:result['asset_date_count']=dated
+ return store(a,c,'ppe_register',reference,v,{'source_hash':e.sha256},result,e)
+
+
+@transaction.atomic
+def record_dates(actor, case_id, register_id, asset_id, delivery_date, in_service_date, fraction_basis, evidence_id, expected):
+    case = locked(actor, case_id, 'ppe.capture', expected)
+    register = current(exact(case, register_id, 'ppe_register'))
+    facts = {'contract': ppe_dates.DATE_CONTRACT, 'delivery_date': delivery_date, 'in_service_date': in_service_date,
+             'fraction_basis': fraction_basis, 'support_evidence_id': evidence_id}
+    native = {'asset_id': asset_id, **facts}
+    validate(ppe_dates.SOURCE_FACT, native)
+    ppe_dates.check_facts(case, facts)
+    asset = next((row for row in register.payload['assets'] if row['asset_id'] == asset_id), None)
+    if asset is None or all(asset.get('dates', {}).get(key) == value for key, value in facts.items()):
+        raise ValidationError('Choose an exact asset with new or corrected date evidence.')
+    source = add_evidence(actor, case.pk, ppe_dates.FACT_KIND, json.dumps(native, sort_keys=True), PPE_ASSET_DATES_SOURCE)
+    facts['evidence_id'] = source.pk
+    payload = dict(register.payload, assets=[dict(row, dates=facts) if row == asset else row
+                                            for row in register.payload['assets']])
+    original = add_evidence(actor, case.pk, 'ppe_register', json.dumps(payload, sort_keys=True), PPE_ASSET_DATES_SOURCE)
+    successor = capture(actor, case.pk, register.reference, original.pk)
+    event(actor, case, 'finance.ppe_asset_dates', previous=register.pk, current=successor.pk, evidence=source.pk)
+    return successor
 
 def snapshot(actor,c,payload,parent,depth=0):
  r=exact(c,payload['register_id'],'ppe_register');current(r,depth);readable(actor,c)
  decision=latest(r,'register');basis=latest(r,'basis');pins={'register':[r.pk,r.sha256],'register_review':decision.pk if decision else None,'basis_review':basis.pk if basis else None,'policies':{}}
- for key in [SOURCE,CALC]:
+ components = [SOURCE,CALC] + ([ppe_dates.COMPONENT] if ppe_dates.needs_fraction(r.payload) else [])
+ for key in components:
   p=resolve(key,c);pins['policies'][key]={'status':p.status,'id':p.configuration.pk if p.configuration else None}
  for purpose in ['register','basis']:
   try:approved(r,purpose);pins[purpose+'_approved']=True
@@ -142,9 +188,11 @@ def snapshot(actor,c,payload,parent,depth=0):
 def calculate(c,payload,pins,parent):
  r=exact(c,payload['register_id'],'ppe_register');v=r.payload;findings=[];rows=[]
  if not pins['register_approved']:findings.append('register_human_review_required')
- if v['label_as_of']!=v['period_end'] and not pins['basis_approved']:findings.append('date_basis_explanation_required')
+ if ppe_dates.needs_review(r) and not pins['basis_approved']:findings.append('date_basis_explanation_required')
  source=config(c,SOURCE) if pins['policies'][SOURCE]['status']=='ACTIVE' else None
  calc=config(c,CALC)['rules'] if pins['policies'][CALC]['status']=='ACTIVE' else []
+ date_pin = pins['policies'].get(ppe_dates.COMPONENT)
+ date_rules = config(c,ppe_dates.COMPONENT) if date_pin and date_pin['status']=='ACTIVE' else None
  if not source:findings.append('source_rules_missing')
  if not calc:findings.append('calculation_rules_missing')
  if source:
@@ -180,14 +228,27 @@ def calculate(c,payload,pins,parent):
    if cost is None or accum is None:codes.append('movement_or_opening_unknown')
    elif cost<0 or accum<0 or accum>cost:codes.append('closing_asset_basis_invalid');cost=None;accum=None
    amount=None
+   fraction=asset['fraction']
+   dates=asset.get('dates',{})
+   derived=dates.get('fraction_basis')==ppe_dates.DERIVED
+   if derived:
+    fraction = None
+    if not dates['in_service_date']:codes.append('in_service_date_unknown')
+    if not pins['basis_approved']:codes.append('asset_dates_review_required')
+    if date_rules is None:codes.append('in_service_fraction_rule_required')
+    if not codes:
+     fraction=ppe_dates.lookup(date_rules,asset['category'],v['period_start'],v['period_end'],dates['in_service_date'])
+     if fraction is None:codes.append('in_service_fraction_uncovered')
    if rule and not codes:
-    got=charge(rule,asset['opening_cost'] if rule['cost_basis']=='opening' else number(cost),number(accum),asset['residual'],asset['life'],asset['fraction']);amount=got['charge']
+    got=charge(rule,asset['opening_cost'] if rule['cost_basis']=='opening' else number(cost),number(accum),asset['residual'],asset['life'],fraction);amount=got['charge']
     if got['finding']:codes.append(got['finding'])
    if amount is not None and cost-accum-decimal(amount)<0:codes.append('charge_exceeds_closing_book');amount=None
    closing=None if amount is None or accum is None else accum+decimal(amount);book=None if closing is None or cost is None else cost-closing
    for value in [cost,closing,book]:
     if value is not None:decimal(number(value),nonnegative=True)
-   rows.append({'asset_id':asset['asset_id'],'category':asset['category'],'closing_cost':number(cost),'charge':amount,'closing_accumulated':number(closing),'book_value':number(book),'event_refs':[e['event_id'] for e in events],'findings':codes})
+   row={'asset_id':asset['asset_id'],'category':asset['category'],'closing_cost':number(cost),'charge':amount,'closing_accumulated':number(closing),'book_value':number(book),'event_refs':[e['event_id'] for e in events],'findings':codes}
+   if derived:row.update(fraction_basis=ppe_dates.DERIVED,used_fraction=fraction)
+   rows.append(row)
   totals={k:number(total(row[f] for row in rows)) for k,f in [('cost','closing_cost'),('accumulated','closing_accumulated'),('book_value','book_value'),('charge','charge')]}
   for key in ['cost','accumulated','book_value']:
    actual,control=totals[key],v['closing_controls'][key]

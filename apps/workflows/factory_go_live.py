@@ -558,6 +558,7 @@ def projection(actor,work):
         'client_responses':responses,'can_prepare_reply_successor':can_prepare_reply,
         'document':v,'publication':p,'receipts':receipts,'delivery_complete':delivery_complete,'jobs':jobs,'acceptance':accepted,'previous_acceptance':previous,
         'sign_off':_sign_off_readback(work.case, verified_acceptance) if verified_acceptance else None,
+        'verified_acceptance_id':verified_acceptance.pk if verified_acceptance else None,
         'legacy_unbound':bool(previous and not previous.data.get('attestation')),'finding':issue,'readiness_changed':changed,'intake_current':intake_current,'pending_review':pending_review,
         'review_names':[u.get_full_name() or u.username for u in owners(work.case,'PMO Lead','document.review_controlled')],
         'pm_names':[u.get_full_name() or u.username for u in attestation_owners(work,d)],

@@ -15,7 +15,7 @@ from apps.documents.models import PublicationReceipt, Template
 from apps.pmo import delivery
 from apps.pmo.go_live_attestations import PROTOCOL, PURPOSE, parse_attestation, pin, subject_pins
 from .factory_handover_views import StartForm as DossierStartForm
-from . import factory,factory_go_live as go_live
+from . import factory,factory_go_live as go_live, factory_go_live_milestone as milestone
 from .factory_progress_views import enroll
 
 
@@ -131,6 +131,16 @@ def detail(request,work,focus=None):
                 attestation=supplied_signer_facts(request,work,version,receipt,pm,client,signer_forms)
                 go_live.accept(request.user,work.pk,revision,case_revision,version,receipt,pm,client,p.get('note',''),
                     int(p['previous_acceptance']) if p.get('previous_acceptance') else None,attestation=attestation,mode=p.get('mode','fresh_signatures'))
+            elif action=='draft_milestone_mapping':
+                milestone.draft_mapping(request.user,work.pk,revision,case_revision,p.get('milestone_name',''),
+                    int(p.get('owner_decision','0')))
+                messages.success(request,'Milestone mapping saved for policy review.')
+                return redirect('policy',case_id=work.case_id)
+            elif action=='record_milestone':
+                milestone.record(request.user,work.pk,revision,case_revision,int(p.get('milestone_mapping','0')),
+                    int(p.get('acceptance','0')),int(p.get('completion_evidence','0')))
+                messages.success(request,'Milestone completion recorded.')
+                return redirect(request.get_full_path())
             elif action in ['client_reply','client_decline_issue','client_decline_handoff','client_decline_candidate','client_reply_rules']:
                 go_live.client_response_action(request.user,work.pk,revision,case_revision,action,p)
             elif action in ['cancel','settle_stop']:go_live.cancel(request.user,work.pk,revision)
@@ -147,6 +157,7 @@ def detail(request,work,focus=None):
     row=presentation(request.user,work,focus=focus);activities=list(work.activities.prefetch_related('attempts').order_by('pk')) if not focus else []
     from apps.pmo.go_live_reply_forms import panels as reply_panels
     row['client_reply_panels']=reply_panels(request.user,work,row['go_live'],request.POST,request.POST.get('action'))
+    milestone_panel=milestone.panel(request.user,work,row['go_live']) if not focus else {}
     for activity in activities:
         activity.title={'ACT03':'Plan permitted work','ACT04':'Investigate go-live evidence','ACT09':'Prepare the client report','ACT10':'Resolve current authority',
             'ACT11':'Deliver the exact reviewed report','ACT12':'Reconcile original delivery','ACT13':'Verify actual go-live acceptance'}.get(activity.kind,'Review permitted work')
@@ -161,5 +172,5 @@ def detail(request,work,focus=None):
         'signer_note':signer_input.get('note','') if signer_input is not None else '',
         'signature_choices':list(signatures[:100]) if row['go_live']['can_accept'] and focus in [None,'response'] else [],
         'signature_limited':row['go_live']['can_accept'] and focus in [None,'response'] and signatures.count()>100,
-        'can_configure':permitted(request.user,work,'policy.configure')})
+        'can_configure':permitted(request.user,work,'policy.configure'),'milestone_panel':milestone_panel})
     response['Cache-Control']='no-store';return response

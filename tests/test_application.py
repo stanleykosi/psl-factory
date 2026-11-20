@@ -132,13 +132,13 @@ class ApplicationTests(TestCase):
         self.assertEqual(resolve(config.component,self.case).status,'EXPIRED')
 
     def test_all_components_accept_drafts_and_reject_invalid_activation(self):
-        self.assertEqual(len(components()),155) # Accepted154 interfaces plus the explicit Q09 signature contract; no appointment is inferred.
+        self.assertEqual(len(components()),179) # Includes the optional in-service fraction rules.
         for key in components():
             with self.subTest(component=key):
                 self.assertEqual(resolve(key,self.case).status,'MISSING')
                 draft=save_draft(self.actor,self.case.pk,{'component_id':key,'value':None})
                 with self.assertRaises(ValidationError): transition(self.actor,draft.pk,'validated')
-        self.assertEqual(Configuration.objects.count(),155)
+        self.assertEqual(Configuration.objects.count(),179)
 
     def test_role_text_and_admin_cannot_forge_approval(self):
         e=project_evidence(self.actor,self.case)

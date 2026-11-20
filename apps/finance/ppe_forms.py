@@ -1,6 +1,7 @@
 from django import forms
 from apps.identity.models import Grant
 from apps.policy.ppe_validators import SCHEMAS
+from . import ppe_dates
 from .forms import CommandForm
 from .models import ScheduleWork,FinanceRun
 def commands(actor,c,data=None):
@@ -8,6 +9,15 @@ def commands(actor,c,data=None):
  def work(kind=None,required=True):return forms.ModelChoiceField(ScheduleWork.objects.filter(case=c,kind=kind) if kind else ScheduleWork.objects.filter(case=c,kind__startswith='ppe_'),required=required)
  def ev(kinds):return forms.ModelChoiceField(c.evidence.filter(kind__in=kinds))
  defs={'capture':('Capture supplied asset register','ppe.capture',{'reference':forms.CharField(max_length=100),'evidence':ev(['ppe_register'])}),
+ 'record_dates':('Record delivery and in-service dates','ppe.capture',{
+    'register':work('ppe_register'),
+    'asset_id':forms.CharField(label='Asset reference',max_length=100),
+    'delivery_date':forms.DateField(required=False,widget=forms.DateInput(attrs={'type':'date'})),
+    'in_service_date':forms.DateField(required=False,widget=forms.DateInput(attrs={'type':'date'})),
+    'fraction_basis':forms.ChoiceField(label='How to determine the period fraction',choices=[
+        ('','Choose a basis'),(ppe_dates.SUPPLIED,'Use the supplied fraction'),
+        (ppe_dates.DERIVED,'Use a reviewed in-service date and an approved rule')]),
+    'evidence':ev(ppe_dates.SUPPORT_KINDS)}),
  'prepare':('Reconcile and calculate a schedule','ppe.prepare',{'reference':forms.CharField(max_length=100),'register':work('ppe_register'),'prior':work('ppe_schedule',False),'ledger':forms.ModelChoiceField(FinanceRun.objects.filter(case=c,kind='mapping'),required=False)}),
  'review':('Record actual human source, date-basis or schedule decision','ppe.review',{'work':work(),'purpose':choice(['register','basis','schedule']),'verdict':choice(['approve','return','reject','revoke']),'evidence':ev(['finance_review','ppe_basis_explanation']),'note':forms.CharField(max_length=4000,widget=forms.Textarea)}),
  'policy':('Draft typed PPE policy and supplied oracles','policy.configure',{'component':choice(SCHEMAS),'content':forms.JSONField(widget=forms.Textarea(attrs={'rows':12})),'evidence':ev(['policy_decision']),'effective_from':forms.DateTimeField()}),

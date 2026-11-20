@@ -10,7 +10,7 @@ from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.documents.contracts import digest,validate
-from apps.finance import ppe,analysis
+from apps.finance import ppe,analysis,ppe_dates
 from apps.finance.models import FinanceRun,ScheduleWork
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
 from .factory_delivery import investigation_key
@@ -79,13 +79,13 @@ def report(work,actor):
         if prior and prior.verdict in ('return', 'reject'):
             return dict(result, stage='returned', finding='Select a corrected version of the asset register for Finance review.')
         ppe.approved(r,'register')
-        if r.result['date_basis_ambiguous']:
+        if ppe_dates.needs_review(r):
             result['stage']='basis_review';ppe.approved(r,'basis')
         result['stage']='calculation'
         if not w:return result
         ppe.current(w)
         if w.payload!={'register_id':r.pk,'prior_id':data['prior_id']} or w.parent_id!=data['ledger_id']:raise ValidationError('Exact selected register, prior and accounting note required')
-        if w.result['status']!='ready':raise ValidationError(w.result['findings'])
+        if w.result['status']!='ready':raise ValidationError(ppe_dates.wait_reason(w.result) or w.result['findings'])
         prior = ppe.latest(w, 'schedule')
         if prior and prior.verdict in ('return', 'reject'):
             return dict(result, stage='returned', finding='Correct the asset inputs and prepare a new version for Finance review.')
@@ -145,7 +145,7 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT04':return {'head':work.source_head_id,'investigation':report(work,work.execution_actor),'questions':['Finance must supply unknown classification, useful life, residual and method values.','Review exact source, period basis and output. A selected note is read-only, not a ledger posting.'],'financial_values_read':False,'approval_granted':False}
     if kind=='ACT08':
         ppe.approved(r,'register')
-        if r.result['date_basis_ambiguous']:ppe.approved(r,'basis')
+        if ppe_dates.needs_review(r):ppe.approved(r,'basis')
         w=ppe.prepare(work.execution_actor,c.pk,work.request['reference'],r.pk,data['prior_id'],data['ledger_id'],c.revision)
         return {'head':work.source_head_id,'schedule':w.pk,'status':w.result['status'],'ledger_posted':False}
     if kind=='ACT13':
@@ -207,7 +207,7 @@ def projection(actor,work,*,include_progress=False):
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     pending_reviews=[];reviewer_names=[];can_review=False
     if not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
-        candidates=[(r,'register')]+([(r,'basis')] if r.result['date_basis_ambiguous'] else [])
+        candidates=[(r,'register')]+([(r,'basis')] if ppe_dates.needs_review(r) else [])
         if s and s.result['status']=='ready':candidates.append((s,'schedule'))
         from django.contrib.auth import get_user_model
         for target,purpose in candidates:

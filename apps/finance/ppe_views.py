@@ -23,6 +23,9 @@ def workbench(request,case_id):
    if not f or not f.is_valid() or set(request.POST)-set(f.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Valid permitted typed command required; no extra authority fields')
    v=f.cleaned_data;a=request.user;k=v['action'];rev=v['revision'];e=v['evidence'].pk if v.get('evidence') else None
    if k=='capture':d.capture(a,c.pk,v['reference'],e,rev)
+   elif k=='record_dates':
+    dates = [v[name].isoformat() if v[name] else None for name in ('delivery_date','in_service_date')]
+    d.record_dates(a,c.pk,v['register'].pk,v['asset_id'],*dates,v['fraction_basis'],e,rev)
    elif k=='prepare':d.prepare(a,c.pk,v['reference'],v['register'].pk,v['prior'].pk if v['prior'] else None,v['ledger'].pk if v['ledger'] else None,rev)
    elif k=='review':d.review(a,c.pk,v['work'].pk,v['purpose'],v['verdict'],e,v['note'],rev)
    elif k=='investigate':investigate(a,c.pk,rev)
@@ -34,6 +37,7 @@ def workbench(request,case_id):
  for w in rows:
   try:d.current(w);w.current=True
   except (ValidationError,PermissionDenied):w.current=False
+  if w.kind=='ppe_register':w.date_facts_visible=d.date_facts_visible(w)
   try:d.approved(w,'register' if w.kind=='ppe_register' else 'schedule');w.reviewed=w.current
   except (ValidationError,PermissionDenied):w.reviewed=False
  response=render(request,'finance/ppe.html',{'case':c,'works':rows,'commands':forms,'policies':[resolve(k,c) for k in SCHEMAS],'schema':d.REGISTER,'schemas':SCHEMAS,'agents':AgentRun.objects.filter(case=c,provider='deterministic-ppe-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response

@@ -2011,6 +2011,25 @@
       }
     },
     {
+      "id": "OPS.go_live_milestone_mapping",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.go_live_milestone_mapping/v1",
+      "subject_scope": "Optional P34 milestone name approved for one exact project delivery dossier and signed baseline. Requires a separate human PM completion with independent evidence. Billing authority is configured separately.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.leadership_audience",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.leadership_audience/v1",
