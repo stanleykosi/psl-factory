@@ -20,6 +20,17 @@
   <p>{% if row.invoice_context.prepared_here %}You prepared this invoice. {% endif %}Current Finance reviewers: {{ row.invoice_context.reviewers|join:', ' }}.</p>
 </section>
 {% endif %}
+{% if row.invoice_context.recipient_change %}
+<section class="card" aria-label="Change to the invoice recipient">
+  <h2>The invoice recipient changed</h2>
+  <dl class="decision-facts">
+    <dt>Earlier destination</dt><dd>{{ row.invoice_context.recipient_change.earlier|default:'Earlier recipient no longer available' }}</dd>
+    <dt>Current destination</dt><dd>{{ row.invoice_context.recipient_change.current|default:'Current recipient needs verification' }}</dd>
+    <dt>Amount</dt><dd>{{ row.work.invoice.currency }} {{ row.work.invoice.payload.amount }} · unchanged</dd>
+  </dl>
+  <p>The earlier review can no longer be approved. A fresh review is needed for the updated destination.</p>
+</section>
+{% endif %}
 <div class="factory-case-layout"><div>
 <section class="card"><h2>Work and outcome</h2><p>Current owner: {{ row.owner }}. Evidence last checked: {{ row.evidence_as_of|date:'d M Y, H:i:s T'|default:'Not yet checked' }}.</p>{% if row.blocker %}<p role="status">{{ row.blocker }}</p><details><summary>Why this action is waiting</summary><p>{{ row.work.finding }}</p></details>{% endif %}{% if row.work.invoice %}<p><strong>{{ row.work.invoice.currency }} {{ row.work.invoice.payload.amount }}</strong> · Invoice {{ row.work.invoice.reference }}, version {{ row.work.invoice.version }}</p><p>The Finance service calculated this amount from the exact native preparation and configured terms.</p>{% else %}<p>A Finance draft has not yet been prepared.</p>{% endif %}<p>Due date: {{ row.work.invoice.due_date|default:'Not recorded' }}. Work deadline: not recorded.</p>{% if row.work.status == 'verified' %}<p class="verified-output">Invoice issuance and document delivery are verified against their native receipts. This records no customer payment.</p>{% endif %}</section>
 {% if not focus %}<section class="card"><h2>Agent activity</h2><p>Plans show intended work. Activity observations and native receipts show what happened.</p>{% for activity in activities %}<details><summary>{{ activity.title }} · {{ activity.status|readable }}</summary>{% for attempt in activity.attempts.all %}<article class="activity-event"><strong>{{ attempt.phase|readable }}</strong><time datetime="{{ attempt.created_at|date:'c' }}">{{ attempt.created_at|date:'d M, H:i:s T' }}</time><p>{{ attempt.summary }}</p>{% if attempt.result.reason %}<p>{{ attempt.result.reason }}</p>{% endif %}<details><summary>Record references</summary><pre>{{ attempt.result }}</pre></details></article>{% endfor %}</details>{% empty %}<p>No agent activity yet. Execution needs a valid profile and current permissions.</p>{% endfor %}</section>{% endif %}
@@ -56,7 +67,16 @@
 {% endif %}
 {% include 'factory/responsibility_wait.html' %}
 {% for task in row.tasks %}{% if task.kind != 'factory_governance' %}<section class="card"><h2>{% if task.kind == 'factory_review' %}Approve this invoice for issuance and delivery?{% else %}Requested information{% endif %}</h2><p>{{ task.status|readable }} · {% if task.claimed_by %}{{ task.claimed_by.get_full_name|default:task.claimed_by.username }}{% else %}Not claimed{% endif %}</p>
-{% if task.kind == 'factory_review' %}<dl class="decision-facts"><dt>Amount</dt><dd>{{ task.context.packet.currency }} {{ task.context.packet.amount }}</dd><dt>Invoice version</dt><dd>{{ task.context.packet.version }}</dd><dt>Destination</dt><dd>{{ task.recipient_name|default:'Current recipient needs verification' }}</dd></dl><p>Approval applies to this exact invoice, destination and source version. It does not record customer payment.</p><details><summary>Review the source information</summary>{% for source in task.source_records %}<article><h3>{{ source.kind|readable }} · version {{ source.version }}</h3><p>{{ source.source }} · {{ source.created_at|date:'d M Y, H:i T' }}</p><pre>{{ source.body }}</pre></article>{% empty %}<p>Current source versions are unavailable in this view. Use the workspace evidence before deciding.</p>{% endfor %}</details><details><summary>Evidence and packet references</summary><pre>{{ task.context.packet }}</pre></details>{% else %}<p>Required source types: {% for kind in task.context.missing %}{{ kind|readable }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+{% if task.kind == 'factory_review' %}
+<dl class="decision-facts">
+  <dt>Amount</dt><dd>{{ task.context.packet.currency }} {{ task.context.packet.amount }}</dd>
+  <dt>Invoice version</dt><dd>{{ task.context.packet.version }}</dd>
+  <dt>Destination</dt><dd>{% if task.can_read_invoice_destination %}{{ task.recipient_name|default:'Current recipient needs verification' }}{% else %}Visible to the assigned Finance reviewer{% endif %}</dd>
+</dl>
+<p>Approval applies to this exact invoice, destination and source version. It does not record customer payment.</p>
+<details><summary>Review the source information</summary>{% for source in task.source_records %}<article><h3>{{ source.kind|readable }} · version {{ source.version }}</h3><p>{{ source.source }} · {{ source.created_at|date:'d M Y, H:i T' }}</p><pre>{{ source.body }}</pre></article>{% empty %}<p>Current source versions are unavailable in this view. Use the workspace evidence before deciding.</p>{% endfor %}</details>
+<details><summary>Evidence and packet references</summary><pre>{{ task.display_packet }}</pre></details>
+{% else %}<p>Required source types: {% for kind in task.context.missing %}{{ kind|readable }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
 {% if task.authority_label %}<p>{{ task.authority_label }}. Current authority is checked again when deciding and publishing.</p>{% endif %}
 {% if task.can_claim %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="claim"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><button>Claim task</button></form>{% endif %}
 {% if task.can_release %}<details><summary>Release this task for a current eligible owner</summary><form method="post">{% csrf_token %}<input type="hidden" name="action" value="release_claim"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><label for="release-reason-{{ task.pk }}">Reason for releasing the claim</label><textarea id="release-reason-{{ task.pk }}" name="reason" maxlength="2000" required></textarea><button class="button secondary">Release task claim</button></form></details>{% endif %}

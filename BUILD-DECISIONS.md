@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. An eligible independent reviewer can compare the stale invoice packet's inbox with the current approved inbox. A fresh native review preserves the same obligation and amount. Recipient names and packet IDs stay outside ordinary invoice-reader projections. Go-live signed times and proof references are shown separately from confirmation when their exact source remains authorized.
+
 20 November 2026. A closed delivery checklist follows the finalized record to the exact prescribed decision, report and supporting references. It omits preparation controls. If original evidence authority becomes unavailable, the checklist hides those references and retains the recorded closure.
 
 20 November 2026. An invoice request may require private PDF proof bound to the exact recorded milestone and Finance handoff. The current configured supplier links the existing verified file and may record an explicit successor while the task is open. The operator observes the file and native approval separately. The proof neither replaces the original milestone nor confirms a client signature by itself.

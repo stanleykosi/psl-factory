@@ -63,6 +63,19 @@ def assigned_alerts(actor):
 def context(actor, row):
     work = row['work']
     invoice = work.invoice
+    routing = row.get('routing', {})
+    eligible = routing.get('eligible_principals', [])
+    review_tasks = [task for task in row['tasks'] if task.kind == 'factory_review']
+    recipient_ids = set()
+    for task in review_tasks:
+        packet = task.context.get('packet', {})
+        recorded = task.context.get('routing_at_creation', {}).get('eligible_principals', [])
+        task.can_read_invoice_destination = actor.pk in eligible and actor.pk in recorded
+        task.display_packet = packet if task.can_read_invoice_destination else {
+            key: value for key, value in packet.items() if key != 'recipient_id'
+        }
+        if task.can_read_invoice_destination and type(packet.get('recipient_id')) is int:
+            recipient_ids.add(packet['recipient_id'])
     if invoice is None:
         return None
     preparation_access(actor, invoice.preparation)
@@ -72,9 +85,18 @@ def context(actor, row):
             preparation_access(actor, successor.preparation)
         except (PermissionDenied, ValidationError):
             successor = None
-    routing = row.get('routing', {})
-    eligible = routing.get('eligible_principals', [])
-    open_review = any(t.kind == 'factory_review' and t.status == 'open' for t in row['tasks'])
+    comparison = None
+    if successor is None and row['review_needs_update'] and actor.pk in eligible:
+        comparison = changed_recipient(invoice, review_tasks)
+        if comparison is not None:
+            recipient_ids.update(comparison.values())
+    recipients = recipient_names(work.case, recipient_ids)
+    for task in review_tasks:
+        if task.can_read_invoice_destination:
+            task.recipient_name = recipients.get(task.context['packet'].get('recipient_id'))
+    if comparison is not None:
+        comparison = {label: recipients.get(pk) for label, pk in comparison.items()}
+    open_review = any(task.status == 'open' for task in review_tasks)
     waiting_for_other = (open_review and bool(eligible) and not row['review_needs_update']
                          and actor.pk not in eligible and work.status in {'ready', 'waiting'})
     reviewers = []
@@ -82,8 +104,33 @@ def context(actor, row):
         routed = (get_user_model().objects.filter(pk__in=eligible).order_by('pk')
                   .only('username', 'first_name', 'last_name')[:10])
         reviewers = [user.get_full_name() or user.username for user in routed]
-    return {'successor': successor, 'prepared_here': invoice.actor_id == actor.pk,
+    return {'successor': successor, 'recipient_change': comparison, 'prepared_here': invoice.actor_id == actor.pk,
             'waiting_for_other': waiting_for_other, 'reviewers': reviewers}
+
+
+def changed_recipient(invoice, review_tasks):
+    earlier = next((task.context['packet'] for task in reversed(review_tasks)
+                    if task.can_read_invoice_destination and task.status in ('open', 'completed')
+                    and task.context['packet'].get('invoice') == invoice.pk), None)
+    if earlier is None:
+        return None
+    try:
+        current = invoices.review_packet(invoice)
+    except (ValidationError, PermissionDenied):
+        return None
+    old_id, new_id = earlier.get('recipient_id'), current.get('recipient_id')
+    if (type(old_id) is int and type(new_id) is int and old_id != new_id
+            and earlier.get('payload_hash') == current['payload_hash']):
+        return {'earlier': old_id, 'current': new_id}
+    return None
+
+
+def recipient_names(case, recipient_ids):
+    users = get_user_model().objects.filter(
+        pk__in=recipient_ids, is_active=True, grant__case=case, grant__active=True,
+        grant__action='finance.invoice.receive',
+    ).only('username', 'first_name', 'last_name').distinct()
+    return {user.pk: user.get_full_name() or user.username for user in users}
 
 
 @transaction.atomic

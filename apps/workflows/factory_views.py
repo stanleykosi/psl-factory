@@ -181,8 +181,6 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
     elif work.invoice_id and InvoiceDelivery.objects.filter(invoice_id=work.invoice_id).exists() and work.status!='verified':state='Awaiting verification'
     for t in tasks:
         if t.kind=='factory_review':
-            recipient=get_user_model().objects.filter(pk=t.context['packet']['recipient_id'],is_active=True,grant__case=work.case,grant__active=True,grant__action='finance.invoice.receive').first()
-            t.recipient_name=(recipient.get_full_name() or recipient.username) if recipient else None
             refs=t.context['packet'].get('factory_sources',{}).get('evidence',{})
             exact={r['id']:(r['version'],r['sha256']) for r in refs.values()}
             t.source_records=[e for e in public_evidence(Evidence.objects.filter(case=work.case,pk__in=exact)) if (e.version,e.sha256)==exact[e.pk]]

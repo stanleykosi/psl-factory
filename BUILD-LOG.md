@@ -1,5 +1,11 @@
 # Build progress log
 
+20 November 2026. Hosted 266 and all three guarded specimens. The admitted user started work 231 for the historical reporting-date discrepancy and verified stale invoice recipient privacy on work 229. Neither journey is counted before separate reviewer evidence. The trial session remains pending.
+
+20 November 2026. The exact 266 recipient privacy and fresh-review rerun passed PostgreSQL and both preservation probes. Prepared the verified runtime with the already passed reporting-period and Go-live signature changes. The next isolated candidate includes the optional typed asset dates and Go-live milestone mapping. No live owner choice was entered.
+
+20 November 2026. Isolated 265 passed four PostgreSQL cases and both preservation probes. The separate stale-recipient specimen failed at its own setup call. Staged the exact correction for 266. Captured the next typed per-asset date evidence, optional governed Go-live milestone and named invoice resolver paths for isolated verification.
+
 20 November 2026. Hosted 264 and verified the closed checklist in Codex. Dossier 49 shows exact recorded retrospective 91 and project manager report 3809 with no preparation form. Scoped completion reached 145. Isolated 265 tests changing invoice recipient, asset dates and Go-live signatures.
 
 20 November 2026. Isolated 264 passed all seven closure tests and both preservation probes. The combined preview rollout includes the previously passed Forecast and weekly fixes and the closed checklist's recorded source references. Staged the next review batch for invoice recipient privacy, asset reporting dates and Go-live signatures.

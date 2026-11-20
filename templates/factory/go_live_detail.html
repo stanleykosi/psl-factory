@@ -7,7 +7,25 @@
 <div class="factory-case-layout"><div>
 <section class="card"><h2>Required outputs</h2><p>{{ row.go_live.dossier.candidate.reference }}</p>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}{% for check in row.go_live.report.checks %}<details><summary><strong>{{ check.title }}</strong> · {% if check.status == 'current' %}Evidence available{% elif check.status == 'closed' %}Closure recorded{% elif check.status == 'unknown' %}Not yet provided{% else %}Needs attention{% endif %}</summary><p>{{ check.summary }}</p>{% if check.finding %}<p>{{ check.finding }}</p>{% endif %}{% if check.references %}<p>Recorded references: {{ check.references|join:', ' }}</p>{% endif %}</details>{% endfor %}<p><a href="{% url 'delivery' case.pk %}">Review actual release and source records →</a></p></section>
 {% if row.go_live.document %}<section class="card"><h2>Exact client report</h2><p>{{ row.go_live.document.document.title }} · version {{ row.go_live.document.number }}</p>{% for section in row.go_live.document.payload.sections %}<h3>{{ section.heading|readable }}</h3><p>{{ section.text|linebreaksbr }}</p>{% endfor %}<details><summary>Exact report version</summary><p>Version {{ row.go_live.document.pk }} · {{ row.go_live.document.payload_sha256 }}</p></details></section>{% endif %}
-<section class="card"><h2>Delivery and sign-off</h2>{% for receipt in row.go_live.receipts %}<p>Client document delivered · {{ receipt.created_at|date:'d M Y, H:i:s T' }}</p><details><summary>Exact delivery reference</summary><p>{{ receipt.pk }} · {{ receipt.payload_sha256 }}</p></details>{% empty %}<p>No client delivery receipt is recorded for this report yet.</p>{% endfor %}{% if row.go_live.acceptance %}<p>Actual PM and Client sign-off recorded · {{ row.go_live.acceptance.created_at|date:'d M Y, H:i:s T' }}</p><p>{{ row.go_live.acceptance.data.note }}</p>{% else %}<p>Delivery does not establish PM or Client sign-off. A currently authorised PM records actual signature evidence for this exact report.</p>{% endif %}{% if row.work.status == 'verified' and not row.readiness_changed %}<p><a class="button primary" href="{% url 'factory_create' %}?definition=delivery-hypercare/v1&amp;case={{ case.pk }}&amp;dossier={{ row.go_live.dossier.pk }}">Continue release stability follow-up</a></p>{% endif %}</section>
+<section class="card"><h2>Delivery and sign-off</h2>
+{% for receipt in row.go_live.receipts %}<p>Client document delivered · {{ receipt.created_at|date:'d M Y, H:i:s T' }}</p><details><summary>Exact delivery reference</summary><p>{{ receipt.pk }} · {{ receipt.payload_sha256 }}</p></details>{% empty %}<p>No client delivery receipt is recorded for this report yet.</p>{% endfor %}
+{% if row.go_live.sign_off %}{% with sign_off=row.go_live.sign_off %}
+  <h3>Recorded signatures</h3>
+  <dl>{% for signature in sign_off.signatures %}
+    <dt>{{ signature.role }}</dt>
+    <dd>{% if signature.evidence_id %}
+      Signed <time datetime="{{ signature.signed_at|date:'c' }}">{{ signature.signed_at|date:'d M Y, H:i:s T' }}</time><br>
+      Signature evidence {{ signature.evidence_id }} · version {{ signature.evidence_version }}
+    {% else %}Recorded signature evidence is unavailable with current access.{% endif %}</dd>
+  {% endfor %}</dl>
+  <h3>Confirmation</h3>
+  <p>Actual PM and Client sign-off recorded <time datetime="{{ sign_off.confirmed_at|date:'c' }}">{{ sign_off.confirmed_at|date:'d M Y, H:i:s T' }}</time>.</p>
+  <p>Report version {{ sign_off.report_number }} · reference {{ sign_off.report_version_id }} · delivery receipt {{ sign_off.receipt_id }}</p>
+  <p>{{ row.go_live.acceptance.data.note }}</p>
+{% endwith %}{% elif row.go_live.acceptance %}
+  <p>Earlier sign-off is retained. Review the current evidence before confirming this report.</p>
+{% else %}<p>Delivery does not establish PM or Client sign-off. A currently authorised PM records actual signature evidence for this exact report.</p>{% endif %}
+{% if row.work.status == 'verified' and not row.readiness_changed %}<p><a class="button primary" href="{% url 'factory_create' %}?definition=delivery-hypercare/v1&amp;case={{ case.pk }}&amp;dossier={{ row.go_live.dossier.pk }}">Continue release stability follow-up</a></p>{% endif %}</section>
 {% if not focus %}
 <section class="card"><h2>Agent activity</h2>{% for activity in activities %}<details><summary>{{ activity.title }} · {{ activity.status|readable }}</summary>{% for attempt in activity.attempts.all %}<p>{{ attempt.created_at|date:'d M Y, H:i:s T' }} · {{ attempt.phase|readable }}</p><details><summary>Recorded references and findings</summary><pre>{{ attempt.display_result }}</pre></details>{% endfor %}</details>{% empty %}<p>No agent activity recorded yet.</p>{% endfor %}</section>
 {% endif %}

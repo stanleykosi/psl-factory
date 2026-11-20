@@ -455,6 +455,30 @@ def restart(actor,work_id,expected,case_expected,reason):
     w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
     event(actor,case,'factory.go_live_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
+
+def _sign_off_readback(case, acceptance):
+    """Exact, already checked signatures, limited to currently visible source metadata."""
+    from apps.pmo.go_live_attestations import instant
+
+    attestation = acceptance.data['attestation']
+    signatures = attestation['signatures']
+    pins = {role: signature['evidence'] for role, signature in signatures.items()}
+    visible = set(public_evidence(Evidence.objects.filter(
+        case=case, kind='signature', pk__in=[pin['id'] for pin in pins.values()],
+    )).values_list('pk', 'version', 'sha256'))
+    rows = []
+    for role, label in (('PM', 'Project Manager'), ('Client', 'Client')):
+        pin = pins[role]
+        row = {'role': label}
+        if (pin['id'], pin['version'], pin['sha256']) in visible:
+            row.update(signed_at=instant(signatures[role]['signed_at']),
+                       evidence_id=pin['id'], evidence_version=pin['version'])
+        rows.append(row)
+    return {'confirmed_at': acceptance.created_at, 'signatures': rows,
+            'report_number': attestation['report']['number'], 'report_version_id': attestation['report']['version_id'],
+            'receipt_id': acceptance.data['receipt_id']}
+
+
 @read_observation
 @read_observation
 def projection(actor,work):
@@ -533,6 +557,7 @@ def projection(actor,work):
     return {'dossier':d,'data':data,'report':LocalDeliveryAdapter().read_go_live(d,selected(data),data['inputs']['template_id']),
         'client_responses':responses,'can_prepare_reply_successor':can_prepare_reply,
         'document':v,'publication':p,'receipts':receipts,'delivery_complete':delivery_complete,'jobs':jobs,'acceptance':accepted,'previous_acceptance':previous,
+        'sign_off':_sign_off_readback(work.case, verified_acceptance) if verified_acceptance else None,
         'legacy_unbound':bool(previous and not previous.data.get('attestation')),'finding':issue,'readiness_changed':changed,'intake_current':intake_current,'pending_review':pending_review,
         'review_names':[u.get_full_name() or u.username for u in owners(work.case,'PMO Lead','document.review_controlled')],
         'pm_names':[u.get_full_name() or u.username for u in attestation_owners(work,d)],
@@ -542,6 +567,6 @@ def projection(actor,work):
 
 def attempt_projection(attempt):
     allowed={'head','dossier','checks','observed_at','document_version','native_review_task','preparer','publication','publisher','verified','verification_scope',
-        'receipt_ids','acceptance','pm_signature','client_signature','sign_off_inferred','deployment_authorized','financial_release_granted',
+        'receipt_ids','acceptance','sign_off_inferred','deployment_authorized','financial_release_granted',
         'external_authenticity_verified','current_authority_checked','waiting','client_response_refs'}
     return {k:v for k,v in attempt.result.items() if k in allowed}
