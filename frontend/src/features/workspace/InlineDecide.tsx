@@ -38,6 +38,7 @@ export const DECIDE_TEXT = {
   latest: 'Review the latest',
   unconfirmed: 'We couldn’t confirm whether your decision was recorded, and we couldn’t reload this item to check, so the decision buttons stay off. Try again reloads the item; it doesn’t send your decision again.',
   recorded: (label: string) => `Decision recorded on ${label}`,
+  staleNext: 'Read the current version above; nothing was recorded for you.',
   notConfirmed: (label: string) => `${label}: result not confirmed`,
   cancel: 'Cancel',
   tryAgain: 'Try again',
