@@ -106,7 +106,8 @@ async function tabTo(page: Page, target: Locator) {
 }
 const ring = (target: Locator) =>
   target.evaluate((el) => {
-    const s = getComputedStyle(el);
+    // A shared date field draws its ring on the box around the text and the calendar button.
+    const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
     return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
   });
 
@@ -138,7 +139,7 @@ test('team input Tab order is Team, the fields, Proof and its confirmation, Rece
     page.getByLabel('What they gave'),
     page.getByRole('button', { name: 'Choose a file' }),
     page.getByRole('checkbox'),
-    page.getByLabel('Received'),
+    page.getByLabel('Received', { exact: true }),
     page.getByLabel(/^Note/),
   ];
   for (const target of order) {

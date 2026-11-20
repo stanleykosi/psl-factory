@@ -84,9 +84,9 @@ test('W-2211 and W-2214 send nothing and offer no button', async ({ page }) => {
 test('W-2212: reconcile is the only action; no step is posted and a reload keeps it', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openItem(page, 'W-2212');
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   expect(requests.filter((r) => r.method === 'POST' && new URL(r.url).pathname.endsWith('/steps'))).toEqual([]);
 });
 
