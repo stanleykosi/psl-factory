@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-49",
   "outcome": "Log a received RFP: a person fills in the client, reference, RFP document, received time, submission method and deadline in the Start work drawer and lands on the new RFP (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-RFP-INTAKE"
   ],
@@ -761,9 +761,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -777,14 +777,14 @@
     "task_branch": "fe-rfp-intake-log-received-rfp",
     "head_sha": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-49",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/82",
+    "pr_number": 82,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-132",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "9fc9dc0bc03fc3805609fc97a3f7a9ce297aae6a",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
@@ -831,9 +831,16 @@
     "approver_reasons": [
       "delivery/features/F-49/decision.md"
     ],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "19 changed files exceed the auto-merge limit of 15",
+      "finding UI-1-4 was accepted as a risk",
+      "finding QA-2-1 was accepted as a risk",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -904,6 +911,46 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-20T08:23:44Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T08:25:36Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T08:25:41Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T08:25:42Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T08:25:43Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T08:25:44Z",
       "round": 2,
       "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
       "reason": null
