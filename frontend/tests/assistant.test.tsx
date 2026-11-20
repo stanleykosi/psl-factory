@@ -721,6 +721,28 @@ describe('mentions', () => {
     expect(assistantPosts()[1].body).toEqual({ text: 'Where are we', mentions: [{ kind: 'project', id: 'P-0102' }] });
   });
 
+  it('Down and Up move between the box and the options, Enter picks, Escape closes', async () => {
+    await open('/assistant');
+    const opener = screen.getByRole('button', { name: '@ Mention a project or record' });
+    fireEvent.click(opener);
+    const search = screen.getByRole('searchbox', { name: 'Search projects and records' });
+    fireEvent.change(search, { target: { value: 'harm' } });
+    const options = await screen.findAllByRole('button', { name: /^Harmattan Bank/ });
+    fireEvent.keyDown(search, { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(options[0]);
+    fireEvent.keyDown(options[0], { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(options[1]);
+    fireEvent.keyDown(options[1], { key: 'ArrowUp' });
+    fireEvent.keyDown(options[0], { key: 'ArrowUp' });
+    expect(document.activeElement).toBe(search);
+    fireEvent.keyDown(search, { key: 'Enter' });
+    expect(screen.getByText('@Harmattan Bank · mobile onboarding')).toBeTruthy();
+    expect(screen.queryByRole('searchbox', { name: 'Search projects and records' })).toBeNull();
+    fireEvent.click(opener);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('searchbox', { name: 'Search projects and records' })).toBeNull();
+  });
+
   it('removing the chip removes it from the body', async () => {
     await open('/assistant');
     fireEvent.click(screen.getByRole('button', { name: '@ Mention a project or record' }));

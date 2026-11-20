@@ -102,7 +102,7 @@ for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 800 });
     await openItem(page, 'W-2205');
     await page.getByRole('button', { name: 'Approve and send' }).click();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     for (const b of await page.locator('.ws-steps button').all()) await expect(b).toHaveAttribute('aria-disabled', 'true');
     await page.getByRole('button', { name: 'Approve and send' }).click({ force: true });
     await page.reload();

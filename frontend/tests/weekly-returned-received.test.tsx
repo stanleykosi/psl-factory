@@ -224,7 +224,7 @@ describe('received (W-2211 to W-2214)', () => {
     expect(rows[2]).toMatch(/Uncertain/);
     expect(rows[2]).not.toMatch(/Delivered|Received/);
     expect(t).toContain('1 delivery confirmed, 1 not confirmed yet.');
-    await screen.findByRole('radiogroup', { name: 'Confirm what happened' });
+    await screen.findByRole('group', { name: 'Confirm what happened' });
     expect(screen.queryAllByRole('button', { name: /send again|resend|approve|send/i }).filter((b) => b.textContent !== 'Start work')).toEqual([]);
     fireEvent.click(screen.getByRole('radio', { name: /It didn’t arrive/ }));
     await act(async () => {
@@ -306,7 +306,7 @@ describe('an uncertain item with no reconcile (QA-2-3)', () => {
     await open(body);
     expect(screen.getByText('We are checking what happened. Nothing was sent again.')).toBeTruthy();
     expect(within(screen.getByText('We are checking what happened. Nothing was sent again.').closest('[role="alert"]') as HTMLElement).getAllByRole('button').map((b) => b.textContent)).toEqual(['Reload']);
-    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Confirm what happened' })).toBeNull();
     expect(sent.filter((r) => r.method === 'POST')).toEqual([]);
   });
 
@@ -316,7 +316,7 @@ describe('an uncertain item with no reconcile (QA-2-3)', () => {
     delete body.allowed_actions;
     await open(body);
     expect(screen.getByText('We are checking what happened. Nothing was sent again.')).toBeTruthy();
-    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Confirm what happened' })).toBeNull();
     const steps = within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button');
     expect(steps.length).toBeGreaterThan(0);
     for (const b of steps) expect(b.getAttribute('aria-disabled')).toBe('true');

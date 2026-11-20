@@ -204,7 +204,7 @@ describe('receipts are per person (AC 6, 8)', () => {
 describe('an uncertain send keeps the lock (AC 7, INV-RESEND)', () => {
   it('W-2312: reconcile is the only action; Open actions and Open the minutes still read; one reconcile press is one POST to /actions only; same after a reload', async () => {
     const view = await open(item('W-2312'));
-    expect(await screen.findByRole('radiogroup', { name: 'Confirm what happened' })).toBeTruthy();
+    expect(await screen.findByRole('group', { name: 'Confirm what happened' })).toBeTruthy();
     expect(ws().getByRole('link', { name: 'Open actions' }).getAttribute('href')).toBe('/projects/C-0211/actions');
     for (const control of ws().queryAllByRole('button')) if (control.getAttribute('aria-disabled') !== 'true' && control.textContent !== 'Open the minutes') throw new Error(`live control: ${control.textContent}`);
     fireEvent.click(ws().getByRole('button', { name: 'Open the minutes' }));

@@ -5,7 +5,7 @@
 // startable_lines is not empty; which lines appear, and whether the main part opens one directly, come from E-LINES.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { buttonClass, Icon } from '@/components';
+import { Button, Icon } from '@/components';
 
 import { StartWorkDrawer, type StartEntry } from './StartWorkDrawer';
 
@@ -34,34 +34,36 @@ export function StartWorkButton({ variant }: { variant: 'bar' | 'phone' }) {
     <>
       {variant === 'bar' ? (
         <span className="psl-split sw-split">
-          <button type="button" className={buttonClass('start', 'sm')} onClick={(e) => open('default', e.currentTarget)}>
+          <Button kind="start" size="sm" onClick={(e) => open('default', e.currentTarget)}>
             <Icon name="plus" />
             <span>
               Start <span className="sw-word">work</span>
             </span>
-          </button>
-          <button
-            type="button"
-            className={`${buttonClass('start', 'sm')} psl-split__more${entry === 'chooser' ? ' is-open' : ''}`}
+          </Button>
+          <Button
+            kind="start"
+            size="sm"
+            className={`psl-split__more${entry === 'chooser' ? ' is-open' : ''}`}
             aria-label="More ways to start"
             aria-haspopup="dialog"
             aria-expanded={entry === 'chooser'}
             onClick={(e) => open('chooser', e.currentTarget)}
           >
             <Icon name="chev" />
-          </button>
+          </Button>
         </span>
       ) : (
-        <button
-          type="button"
-          className={`${buttonClass('start', 'sm')} sw-phonestart`}
+        <Button
+          kind="start"
+          size="sm"
+          className="sw-phonestart"
           aria-label="Start work"
           aria-haspopup="dialog"
           onClick={(e) => open('chooser', e.currentTarget)}
         >
           <Icon name="plus" />
           Start
-        </button>
+        </Button>
       )}
       {entry && <StartWorkDrawer entry={entry} onClose={close} />}
     </>

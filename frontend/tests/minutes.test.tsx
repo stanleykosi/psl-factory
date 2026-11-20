@@ -521,7 +521,7 @@ describe('an uncertain send keeps the lock (AC 19, INV-RESEND)', () => {
     }
     expect(ws().queryAllByRole('link', { name: /Approve and send|Return with a note/ })).toEqual([]);
     expect(screen.getByText('Confirm what happened first.')).toBeTruthy();
-    expect(await screen.findByRole('radiogroup', { name: 'Confirm what happened' })).toBeTruthy();
+    expect(await screen.findByRole('group', { name: 'Confirm what happened' })).toBeTruthy();
     expect(posts()).toHaveLength(0);
     expect(sent.filter((r) => r.method === 'POST')).toHaveLength(0);
     view.unmount();

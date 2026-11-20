@@ -130,9 +130,9 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
 
   return (
     <div className="sw-picker">
-      <button
+      <Button
         ref={buttonRef}
-        type="button"
+        kind="bare"
         role="combobox"
         className={`psl-input psl-select${open ? ' is-open' : ''}${shown ? '' : ' is-placeholder'}`}
         aria-labelledby={labelId}
@@ -147,7 +147,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
       >
         <span className="sw-picker__value">{shown || placeholder}</span>
         <span className="psl-chev cmp-selectarrow" aria-hidden="true" />
-      </button>
+      </Button>
       {open && (
         // The popup only catches Esc for its own controls; it is not itself interactive.
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions

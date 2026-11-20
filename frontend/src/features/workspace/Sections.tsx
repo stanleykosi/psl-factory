@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { Button, Callout, formatDayMonth, formatDayTime, formatSize, Icon, Tag, Unknown as UnknownValue } from '@/components';
+import { Button, Callout, formatDayMonth, formatDayTime, formatSize, Icon, Table as DataTable, Tag, Unknown as UnknownValue, type Column as TableColumn } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
 
 import { columnDayMonth, itemAttachment } from './proposals';
@@ -253,67 +253,47 @@ function CellValue({ cell, column }: { cell: Cell | undefined; column: Column })
 }
 
 function Table({ section, controls }: { section: Section; controls?: ItemControls }) {
-  const columns = section.columns ?? [];
+  const sectionColumns = section.columns ?? [];
   const selectable = controls?.select !== undefined && section.items.some((i) => hasNode(controls.select?.(section, i)));
   const stepCol = controls?.item !== undefined && section.items.some((i) => hasNode(controls.item?.(section, i)));
-  const span = columns.length + (selectable ? 1 : 0) + (stepCol ? 1 : 0);
+  const columns: TableColumn<Item>[] = sectionColumns.map((c) => ({
+    key: c.key,
+    header: c.label,
+    num: c.kind === 'money' || c.kind === 'integer',
+    mono: c.kind === 'reference',
+    cell: (item) => <CellValue cell={item.cells?.find((cell) => cell.column === c.key)} column={c} />,
+  }));
+  if (stepCol) columns.push({ key: 'steps', header: 'Steps', hideHeader: true, className: 'ws-table__steps', cell: (item) => controls?.item?.(section, item) });
+  // A table with a state tag column stacks its cells on phones (labelled); any other scrolls sideways there, so its frame takes focus for keyboard scrolling (WCAG 2.1.1).
   return (
-    // A table with a state tag column stacks its cells on phones (labelled); any other scrolls sideways there, so it takes focus for keyboard scrolling (WCAG 2.1.1).
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-    <div className="psl-tablewrap ws-tablewrap" tabIndex={0} role="region" aria-label={section.title ? `Table: ${section.title}` : 'Table'}>
-      <table className={`psl-table ws-table${columns.some((c) => c.kind === 'tag') ? ' ws-table--stack' : ''}`}>
-        <thead>
-          <tr>
-            {selectable && (
-              <th className={controls?.selectAll?.(section) ? 'psl-check-cell ws-selectall' : 'psl-check-cell'}>
-                <span className="cmp-sr">Select</span>
-                {controls?.selectAll?.(section)}
-              </th>
-            )}
-            {columns.map((c) => (
-              <th key={c.key} scope="col" className={c.kind === 'money' || c.kind === 'integer' ? 'num' : undefined}>
-                {c.label}
-              </th>
-            ))}
-            {stepCol && (
-              <th>
-                <span className="cmp-sr">Steps</span>
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {section.items.map((item) => {
-            if (item.restricted) {
-              return (
-                <tr key={item.id}>
-                  <td colSpan={span}>{WS_TEXT.restricted}</td>
-                </tr>
-              );
+    <DataTable
+      caption={section.title ? `Table: ${section.title}` : 'Table'}
+      columns={columns}
+      rows={section.items}
+      rowKey={(item) => item.id}
+      empty=""
+      wrapClassName="ws-tablewrap"
+      tableClassName={`ws-table${sectionColumns.some((c) => c.kind === 'tag') ? ' ws-table--stack' : ''}`}
+      leading={
+        selectable
+          ? {
+              header: (
+                <>
+                  <span className="cmp-sr">Select</span>
+                  {controls?.selectAll?.(section)}
+                </>
+              ),
+              headerClassName: controls?.selectAll?.(section) ? 'ws-selectall' : undefined,
+              cell: (item) => controls?.select?.(section, item),
             }
-            const after = controls?.after?.(section, item);
-            return (
-              <Fragment key={item.id}>
-                <tr>
-                  {selectable && <td className="psl-check-cell">{controls?.select?.(section, item)}</td>}
-                  {columns.map((c) => (
-                    <td key={c.key} data-label={c.label} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
-                      <CellValue cell={item.cells?.find((cell) => cell.column === c.key)} column={c} />
-                    </td>
-                  ))}
-                  {stepCol && <td className="ws-table__steps">{controls?.item?.(section, item)}</td>}
-                </tr>
-                {hasNode(after) && (
-                  <tr>
-                    <td colSpan={span}>{after}</td>
-                  </tr>
-                )}
-              </Fragment>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+          : undefined
+      }
+      fullRow={(item) => (item.restricted ? WS_TEXT.restricted : undefined)}
+      expanded={(item) => {
+        const after = controls?.after?.(section, item);
+        return hasNode(after) ? after : null;
+      }}
+    />
   );
 }
 
@@ -481,9 +461,9 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
               {WS_TEXT.filter}
             </Button>
             {filters.map((f) => (
-              <button key={f.value} type="button" className="psl-chip ws-chip" disabled>
+              <Button key={f.value} kind="bare" className="psl-chip ws-chip" disabled>
                 {f.label}
-              </button>
+              </Button>
             ))}
           </>
         )}

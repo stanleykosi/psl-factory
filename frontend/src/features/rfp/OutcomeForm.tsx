@@ -6,6 +6,7 @@
 // is not sent, "Amount not known" sends unknown=true with no amount, and nothing is ever shown or sent as 0.
 import { useId, type ReactNode } from 'react';
 
+import { Button, Checkbox, DateField, TextArea, TextField } from '@/components';
 import { NOTE_MAX } from '@/features/response/labels';
 import { ProofField } from '@/features/response/ProofField';
 import { Select, WhenField } from '@/features/response/ResponseForm';
@@ -31,89 +32,39 @@ type Props = {
   notice?: ReactNode;
 };
 
-/** A wrapping label (as F-09's fields): the label's words are the control's name. */
-function Field({ label, hint, children, id }: { label: string; hint?: string; children: ReactNode; id: string }) {
-  return (
-    <div className="resp-field">
-      <label className="resp-field">
-        <span className="resp-label">{label}</span>
-        {children}
-      </label>
-      {hint && (
-        <span id={`${id}-hint`} className="psl-hint">
-          {hint}
-        </span>
-      )}
-    </div>
-  );
-}
-
 function Amount({ entries, setEntry }: Pick<Props, 'entries' | 'setEntry'>) {
   const id = useId();
   const problem = amountProblem(entries);
   return (
     <>
-      <Field id={id} label="Awarded amount">
-        <input
-          id={id}
-          type="text"
-          inputMode="decimal"
-          className="psl-input"
-          value={entries.amountUnknown ? '' : entries.amount}
-          disabled={entries.amountUnknown}
-          aria-invalid={problem ? true : undefined}
-          aria-describedby={problem ? `${id}-hint ${id}-problem` : `${id}-hint`}
-          onChange={(e) => setEntry('amount', e.target.value)}
-        />
-      </Field>
+      <TextField
+        id={id}
+        label="Awarded amount"
+        inputMode="decimal"
+        fieldClassName="resp-field"
+        value={entries.amountUnknown ? '' : entries.amount}
+        disabled={entries.amountUnknown}
+        error={problem ? <span role="alert">{problem}</span> : undefined}
+        aria-describedby={`${id}-hint`}
+        onChange={(e) => setEntry('amount', e.target.value)}
+      />
       {/* The board's hint line; "Amount not known" (not drawn) shares it so the board's rows stay in place. */}
       <div className="rfp-amountrow">
         <span id={`${id}-hint`} className="psl-hint">
           As stated in the award letter.
         </span>
-        <label className="psl-check rfp-unknown">
-          <input type="checkbox" checked={entries.amountUnknown} onChange={(e) => setEntry('amountUnknown', e.target.checked)} />
-          <span>Amount not known</span>
-        </label>
+        <Checkbox className="rfp-unknown" label="Amount not known" checked={entries.amountUnknown} onChange={(e) => setEntry('amountUnknown', e.target.checked)} />
       </div>
-      {problem && (
-        <span id={`${id}-problem`} role="alert" className="resp-alert">
-          {problem}
-        </span>
-      )}
     </>
   );
 }
 
 /** F-09's note field (one line to start, the counter on the label line); no board draws it. */
 function OutcomeNote({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const id = useId();
-  return (
-    <div className="resp-field">
-      <span className="resp-notehead">
-        <label htmlFor={id} className="resp-label">
-          Note <span className="psl-opt">(optional)</span>
-        </label>
-        <span id={`${id}-count`} className="psl-hint">
-          {value.length} / {NOTE_MAX}
-        </span>
-      </span>
-      <textarea
-        id={id}
-        className="psl-input psl-input--area resp-note"
-        rows={1}
-        maxLength={NOTE_MAX}
-        value={value}
-        aria-describedby={`${id}-count`}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
+  return <TextArea label="Note" optional oneLine fieldClassName="resp-field" className="resp-note" maxLength={NOTE_MAX} limit={NOTE_MAX} value={value} onChange={(e) => onChange(e.target.value)} />;
 }
 
 function ResultFields({ outcome, entries, setEntry }: Pick<Props, 'outcome' | 'entries' | 'setEntry'>) {
-  const lessonsId = useId();
-  const expectedId = useId();
   const remind = <WhenField label="Remind me on" value={entries.remind} onChange={(v) => setEntry('remind', v)} />;
   if (entries.result === 'won') return <Amount entries={entries} setEntry={setEntry} />;
   if (entries.result === 'lost') {
@@ -127,31 +78,27 @@ function ResultFields({ outcome, entries, setEntry }: Pick<Props, 'outcome' | 'e
             onChange={(v) => setEntry('reason', v)}
           />
         )}
-        <Field id={lessonsId} label="Lessons (what we’d do differently)">
-          <textarea
-            id={lessonsId}
-            className="psl-input psl-input--area rfp-lessons"
-            maxLength={NOTE_MAX}
-            value={entries.lessons}
-            onChange={(e) => setEntry('lessons', e.target.value)}
-          />
-        </Field>
+        <TextArea
+          label="Lessons (what we’d do differently)"
+          fieldClassName="resp-field"
+          className="rfp-lessons"
+          maxLength={NOTE_MAX}
+          value={entries.lessons}
+          onChange={(e) => setEntry('lessons', e.target.value)}
+        />
       </>
     );
   }
   if (entries.result === 'pending') {
     return (
       <>
-        <Field id={expectedId} label="Expected decision date" hint="What the client told us. Use Unknown if they didn’t say.">
-          <input
-            id={expectedId}
-            type="date"
-            className="psl-input"
-            value={entries.expected}
-            aria-describedby={`${expectedId}-hint`}
-            onChange={(e) => setEntry('expected', e.target.value)}
-          />
-        </Field>
+        <DateField
+          label="Expected decision date"
+          hint="What the client told us. Use Unknown if they didn’t say."
+          fieldClassName="resp-field"
+          value={entries.expected}
+          onChange={(v) => setEntry('expected', v)}
+        />
         {remind}
       </>
     );
@@ -170,9 +117,9 @@ export function OutcomeForm(props: Props) {
   const showRole = roles.length > 1 || !phone;
 
   const button = (
-    <button type="button" className="psl-btn psl-btn--lg resp-record rfp-record" disabled={!ready} onClick={props.onRecord}>
+    <Button size="lg" className="resp-record rfp-record" disabled={!ready} onClick={props.onRecord}>
       {busy ? 'Recording…' : entries.result ? RECORD_LABELS[entries.result] : 'Record the outcome'}
-    </button>
+    </Button>
   );
   const alert =
     line && !busy ? (

@@ -9,7 +9,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import type { ApiError } from '@/api/errors';
 import { WarningIcon } from '@/shell/icons';
 import type { ResponseWorkItem } from '@/features/response';
-import { formatDayTime } from '@/components';
+import { Button, formatDayTime, TextArea } from '@/components';
 import { AGENT_LABELS } from '@/features/response/labels';
 
 import type { Followup } from './contract';
@@ -100,10 +100,7 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
           To <span className="rfp-followup__addr">{followup.to}</span> · draft v{followup.version}
         </p>
         {flow.editing && canEdit ? (
-          <label className="resp-field">
-            <span className="resp-label">Follow-up text</span>
-            <textarea className="psl-input psl-input--area rfp-followup__edit" value={flow.text} onChange={(e) => flow.setText(e.target.value)} />
-          </label>
+          <TextArea label="Follow-up text" fieldClassName="resp-field" className="rfp-followup__edit" value={flow.text} onChange={(e) => flow.setText(e.target.value)} />
         ) : (
           <div className="rfp-followup__body">{followup.body}</div>
         )}
@@ -130,9 +127,9 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
         {unconfirmed && (
           <Warning
             action={
-              <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={flow.notice?.kind === 'unconfirmed' && flow.notice.checking} onClick={() => void flow.check()}>
+              <Button kind="secondary" size="sm" disabled={flow.notice?.kind === 'unconfirmed' && flow.notice.checking} onClick={() => void flow.check()}>
                 Try again
-              </button>
+              </Button>
             }
           >
             We couldn&rsquo;t confirm whether the follow-up was sent, and couldn&rsquo;t reload to check. Sending stays off. Try again reloads the item; it
@@ -148,9 +145,9 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
         {status === 'effect_uncertain' && (
           <Warning
             action={
-              <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => void flow.check()}>
+              <Button kind="secondary" size="sm" onClick={() => void flow.check()}>
                 Check again
-              </button>
+              </Button>
             }
           >
             We couldn&rsquo;t confirm the follow-up was sent. It won&rsquo;t be sent again until it has been checked.
@@ -167,14 +164,14 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
         {(canSend || canEdit) && (
           <div className="rfp-followup__actions">
             {canSend && (
-              <button type="button" className="psl-btn psl-btn--lg" disabled={flow.busy || flow.blank} onClick={() => void flow.send()}>
+              <Button size="lg" disabled={flow.busy || flow.blank} onClick={() => void flow.send()}>
                 {flow.busy ? 'Sending…' : 'Send follow-up'}
-              </button>
+              </Button>
             )}
             {canEdit && (
-              <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg" disabled={flow.busy} onClick={flow.editing ? flow.useDraft : flow.edit}>
+              <Button kind="secondary" size="lg" disabled={flow.busy} onClick={flow.editing ? flow.useDraft : flow.edit}>
                 {flow.editing ? 'Use the draft' : 'Edit'}
-              </button>
+              </Button>
             )}
           </div>
         )}

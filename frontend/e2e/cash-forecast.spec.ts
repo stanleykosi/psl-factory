@@ -203,7 +203,7 @@ for (const [label, viewport] of [
       if (phone) {
         // UI-1-3: the board's order: the station line and banner under the title, then Delivery and Next, then the choices
         const top = async (locator: ReturnType<typeof page.locator>) => (await locator.boundingBox())!.y;
-        const ys = [await top(page.locator('.ws-ministations')), await top(page.locator('.ws-note').first()), await top(page.getByRole('heading', { name: 'Delivery' })), await top(page.getByRole('heading', { name: 'Next' })), await top(reconcile.getByRole('radiogroup'))];
+        const ys = [await top(page.locator('.ws-ministations')), await top(page.locator('.ws-note').first()), await top(page.getByRole('heading', { name: 'Delivery' })), await top(page.getByRole('heading', { name: 'Next' })), await top(reconcile.getByRole('group', { name: 'Record what happened' }))];
         expect([...ys].sort((a, b) => a - b)).toEqual(ys);
       }
       await expect(reconcile).not.toContainText(/client|invoiced/i);

@@ -9,7 +9,7 @@ import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNo
 
 import Link from 'next/link';
 
-import { Button, buttonClass, Callout, Drawer, formatClock, formatDayTime, MiniStationBar, Tag, useIsPhone, type StationStatus } from '@/components';
+import { Button, buttonClass, Callout, Checkbox, Drawer, formatClock, formatDayTime, MiniStationBar, Tag, useIsPhone, type StationStatus } from '@/components';
 import { asResponseItem, ReconcilePanel } from '@/features/response';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
@@ -619,15 +619,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       const checked = ticked(section, it);
       return (
         // the label is the 44px target around the box
-        <label className="ws-checkwrap">
-          <input
-            type="checkbox"
-            className="ws-check"
-            aria-label={`Select ${itemName(section, it)}`}
-            checked={checked}
-            onChange={(event) => setChoices((current) => ({ ...current, [choiceKey(section, it)]: event.target.checked }))}
-          />
-        </label>
+        <Checkbox
+          className="ws-checkwrap"
+          label={null}
+          aria-label={`Select ${itemName(section, it)}`}
+          checked={checked}
+          onChange={(event) => setChoices((current) => ({ ...current, [choiceKey(section, it)]: event.target.checked }))}
+        />
       );
     };
     // F-37: the requirements table has the header box; other lines' item lists keep their own boxes only
@@ -637,18 +635,14 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       if (section.restricted || rows.length === 0) return undefined;
       const on = rows.filter((it) => ticked(section, it)).length;
       return (
-        <label className="ws-checkwrap">
-          <input
-            type="checkbox"
-            className="ws-check"
-            aria-label="Select all shown rows"
-            checked={on === rows.length}
-            ref={(el) => {
-              if (el) el.indeterminate = on > 0 && on < rows.length;
-            }}
-            onChange={(event) => setChoices((current) => ({ ...current, ...Object.fromEntries(rows.map((it) => [choiceKey(section, it), event.target.checked])) }))}
-          />
-        </label>
+        <Checkbox
+          className="ws-checkwrap"
+          label={null}
+          aria-label="Select all shown rows"
+          checked={on === rows.length}
+          mixed={on > 0 && on < rows.length}
+          onChange={(event) => setChoices((current) => ({ ...current, ...Object.fromEntries(rows.map((it) => [choiceKey(section, it), event.target.checked])) }))}
+        />
       );
     };
     sectionControls.foot = (section) => {

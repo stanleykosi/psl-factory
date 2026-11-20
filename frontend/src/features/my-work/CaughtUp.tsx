@@ -202,13 +202,9 @@ function WhileYoureFree({ suggestions }: { suggestions: Suggestion[] }) {
             >
               {s.action}
             </Link>
-            <button
-              type="button"
-              className="psl-link cmp-linkbutton my-work__notnow"
-              onClick={() => setHidden([...hidden, s.id])}
-            >
+            <Button kind="link" className="my-work__notnow" onClick={() => setHidden([...hidden, s.id])}>
               Not now
-            </button>
+            </Button>
           </span>
         </div>
       ))}

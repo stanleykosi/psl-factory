@@ -5,6 +5,8 @@
 // the gaps box is a PROPOSAL (G-48-1, contract mock only): one gap per non-blank line.
 import { useId } from 'react';
 
+import { TextArea, VisuallyHidden } from '@/components';
+
 import { responderText } from './labels';
 import { ProofField } from './ProofField';
 import { Actions, Attest, RecordRow, Select, WhenField, type FormProps } from './ResponseForm';
@@ -41,29 +43,19 @@ export function SupportHandoverForm(props: FormProps & { gapsProblem?: boolean }
           <WhenField label="When they replied" hideLabel value={entries.when} onChange={(v) => setEntry('when', v)} />
         </div>
       </div>
-      <Actions response={response} entries={entries} setEntry={setEntry} segmented label="What Support said" />
+      <Actions response={response} entries={entries} setEntry={setEntry} label="What Support said" />
       {gaps && (
         <div className="resp-field">
-          <label htmlFor={`${gapsId}-gaps`} className="resp-label">
-            Gaps
-          </label>
-          <textarea
+          <TextArea
             id={`${gapsId}-gaps`}
-            className="psl-input psl-input--area resp-gaps"
+            label="Gaps"
+            className="resp-gaps"
             rows={3}
             value={entries.gaps}
-            aria-invalid={gapsProblem || undefined}
-            aria-describedby={`${gapsId}-hint${gapsProblem ? ` ${gapsId}-err` : ''}`}
+            hint={<VisuallyHidden>One gap per line.{gapLines(entries.gaps).length > 0 && ` ${gapLines(entries.gaps).length} so far.`}</VisuallyHidden>}
+            error={gapsProblem ? <span role="alert">{GAPS_PROBLEM}</span> : undefined}
             onChange={(e) => setEntry('gaps', e.target.value)}
           />
-          <span id={`${gapsId}-hint`} className="psl-hint cmp-sr">
-            One gap per line.{gapLines(entries.gaps).length > 0 && ` ${gapLines(entries.gaps).length} so far.`}
-          </span>
-          {gapsProblem && (
-            <span id={`${gapsId}-err`} role="alert" className="psl-error">
-              {GAPS_PROBLEM}
-            </span>
-          )}
         </div>
       )}
       <ProofField proof={proof} layout="card" choose="Choose a file" label="Proof of the reply" hideLabel />

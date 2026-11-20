@@ -3,9 +3,9 @@
 // SCR-16 forms: client_response (pickers, pills, proof chips) and sow_signature (the "Signature" panel). Every
 // option comes from tasks[].response; with exactly one responder, version or channel it is chosen, an action
 // never is. Record stays off until everything the API asks for is there, and while a write is in flight.
-import { useId, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { formatDayTime } from '@/components';
+import { Button, Checkbox, DateField, formatDayTime, RadioGroup, Select as PickList, TextArea } from '@/components';
 
 import type { ResponseTask, TaskResponse } from './contract';
 import { AGENT_LABELS, NOTE_MAX, RESPONSE_LABELS, responderText } from './labels';
@@ -33,28 +33,11 @@ export type FormProps = {
 const CHOOSE = 'Choose…';
 
 export function Select({ label, value, onChange, options, hideLabel }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[]; hideLabel?: boolean }) {
-  return (
-    <label className="resp-field">
-      <span className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>{label}</span>
-      <select className="psl-input resp-select" value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.length !== 1 && <option value="">{CHOOSE}</option>}
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.text}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
+  return <PickList label={label} hideLabel={hideLabel} fieldClassName="resp-field" placeholder={CHOOSE} value={value} onChange={onChange} options={options.map((o) => ({ value: o.value, label: o.text }))} />;
 }
 
 export function WhenField({ label, value, onChange, hideLabel }: { label: string; value: string; onChange: (v: string) => void; hideLabel?: boolean }) {
-  return (
-    <label className="resp-field">
-      <span className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>{label}</span>
-      <input type="datetime-local" className="psl-input" value={value} onChange={(e) => onChange(e.target.value)} />
-    </label>
-  );
+  return <DateField time label={label} hideLabel={hideLabel} fieldClassName="resp-field" value={value} onChange={onChange} />;
 }
 
 function ChannelSelect({ response, entries, setEntry }: Pick<FormProps, 'response' | 'entries' | 'setEntry'>) {
@@ -71,67 +54,52 @@ function ChannelSelect({ response, entries, setEntry }: Pick<FormProps, 'respons
   );
 }
 
-export function Actions({ response, entries, setEntry, segmented, label = 'What they did' }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { segmented: boolean; label?: string }) {
-  const labelId = useId();
+export function Actions({ response, entries, setEntry, label = 'What they did' }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { label?: string }) {
   return (
-    <div className="resp-field">
-      <span id={labelId} className="resp-label">
-        {label}
-      </span>
-      <div role="radiogroup" aria-labelledby={labelId} className={segmented ? 'psl-seg resp-seg' : 'resp-pills'}>
-        {offeredActions(response).map((a) => (
-          <label key={a.value} className={segmented ? 'psl-seg__opt resp-segopt' : 'resp-pill'}>
-            <input type="radio" name={labelId} value={a.value} checked={entries.action === a.value} onChange={() => setEntry('action', a.value)} />
-            {a.label}
-          </label>
-        ))}
-      </div>
-    </div>
+    <RadioGroup
+      legend={label}
+      className="resp-field"
+      options={offeredActions(response).map((a) => ({ value: a.value, label: a.label }))}
+      value={entries.action || undefined}
+      onChange={(value) => setEntry('action', value)}
+    />
   );
 }
 
 export function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntry'>) {
-  const labelId = useId();
-  const countId = useId();
-  // One line high to start (no board draws it); it grows by dragging. The counter sits on the label line.
+  // One line high to start (no board draws it); it grows as people type.
   return (
-    <div className="resp-field">
-      <span className="resp-notehead">
-        <label id={labelId} htmlFor={`${labelId}-note`} className="resp-label">
-          Note <span className="psl-opt">(optional)</span>
-        </label>
-        <span id={countId} className="psl-hint">
-          {entries.note.length} / {NOTE_MAX}
-        </span>
-      </span>
-      <textarea
-        id={`${labelId}-note`}
-        className="psl-input psl-input--area resp-note"
-        rows={1}
-        maxLength={NOTE_MAX}
-        value={entries.note}
-        aria-describedby={countId}
-        onChange={(e) => setEntry('note', e.target.value)}
-      />
-    </div>
+    <TextArea
+      label="Note"
+      optional
+      oneLine
+      fieldClassName="resp-field"
+      className="resp-note"
+      maxLength={NOTE_MAX}
+      limit={NOTE_MAX}
+      value={entries.note}
+      onChange={(e) => setEntry('note', e.target.value)}
+    />
   );
 }
 
 export function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEntry'> & { short: boolean }) {
   return (
-    <label className="psl-check resp-attest">
-      <input type="checkbox" checked={entries.attested} onChange={(e) => setEntry('attested', e.target.checked)} />
-      <span>{short ? 'I confirm this response is genuine.' : 'I confirm this response is genuine and came from the client contact named above.'}</span>
-    </label>
+    <Checkbox
+      className="resp-attest"
+      label={short ? 'I confirm this response is genuine.' : 'I confirm this response is genuine and came from the client contact named above.'}
+      checked={entries.attested}
+      onChange={(e) => setEntry('attested', e.target.checked)}
+    />
   );
 }
 
 export function RecordRow({ props, ready, line, children }: { props: FormProps; ready: boolean; line: string | null; children?: ReactNode }) {
   const text = props.busy ? RESPONSE_LABELS.busy : RESPONSE_LABELS.record[props.response.variant];
   const button = (
-    <button type="button" className="psl-btn psl-btn--lg resp-record" disabled={!ready} onClick={props.onRecord}>
+    <Button size="lg" className="resp-record" disabled={!ready} onClick={props.onRecord}>
       {text}
-    </button>
+    </Button>
   );
   const alert =
     line &&
@@ -233,7 +201,7 @@ export function ClientResponseForm(props: FormProps) {
         )}
         <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
         {when}
-        <Actions response={response} entries={entries} setEntry={setEntry} segmented={false} />
+        <Actions response={response} entries={entries} setEntry={setEntry} />
         <ProofField proof={proof} layout="phone" />
         <Note entries={entries} setEntry={setEntry} />
         <Attest entries={entries} setEntry={setEntry} short />
@@ -250,7 +218,7 @@ export function ClientResponseForm(props: FormProps) {
         {when}
         <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
       </div>
-      <Actions response={response} entries={entries} setEntry={setEntry} segmented={false} />
+      <Actions response={response} entries={entries} setEntry={setEntry} />
       {/* No board draws the note, so it shares the version's row instead of pushing the board's rows down. */}
       <div className={versionSelect ? 'resp-row' : undefined}>
         {versionSelect}
@@ -307,7 +275,7 @@ export function SowSignatureForm(props: FormProps) {
         {!phone && <Note entries={entries} setEntry={setEntry} />}
       </div>
       <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
-      <Actions response={response} entries={entries} setEntry={setEntry} segmented />
+      <Actions response={response} entries={entries} setEntry={setEntry} />
       {/* Nor the attestation: it sits beside the proof it vouches for (on the phone, after the board's rows). */}
       {phone ? (
         <ProofField proof={proof} layout="card" />

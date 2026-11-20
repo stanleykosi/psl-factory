@@ -98,7 +98,7 @@ const ITEM_STATES: [string, (page: Page) => Promise<unknown>][] = [
     async (page) => {
       await openItem(page, 'W-3803');
       await page.getByRole('button', { name: 'Send reminder' }).click();
-      await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+      await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     },
   ],
   ['W-3808 no billing contact', (page) => openItem(page, 'W-3808')],
@@ -253,7 +253,7 @@ test.describe('requests (desktop)', () => {
   test('W-3804: a 500 on send shows the uncertain item; the mock log holds one send and no second send_reminder', async ({ page, request }) => {
     await openItem(page, 'W-3804');
     await page.getByRole('button', { name: 'Send reminder' }).click();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     await page.getByRole('button', { name: 'Send reminder' }).click({ force: true });
     await page.waitForTimeout(500);
     const recorded = await log(request);

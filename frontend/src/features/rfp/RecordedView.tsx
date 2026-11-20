@@ -7,7 +7,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import { InfoIcon } from '@/features/response/icons';
-import { formatDayMonth, formatDayTime, useIsPhone } from '@/components';
+import { Button, formatDayMonth, formatDayTime, useIsPhone } from '@/components';
 
 import type { RecordedOutcome, RfpOutcome } from './contract';
 import { recordedHeading } from './labels';
@@ -55,9 +55,9 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
   // single action of won and pending, keeps unknown's as a secondary button and lost's as a quiet link.
   const pinned = phone && (recorded.result === 'won' || recorded.result === 'pending');
   const action = again ? (
-    <button type="button" className={`psl-btn psl-btn--lg psl-btn--block${phone && recorded.result === 'unknown' ? ' psl-btn--secondary' : ''}`} onClick={onReopen}>
+    <Button kind={phone && recorded.result === 'unknown' ? 'secondary' : 'primary'} size="lg" block onClick={onReopen}>
       Record the outcome
-    </button>
+    </Button>
   ) : recorded.result === 'won' && engagement?.work_id ? (
     <Link className={`psl-btn psl-btn--lg psl-btn--block${phone ? '' : ' psl-btn--secondary'}`} href={work(engagement.work_id)}>
       Open engagement {engagement.reference}

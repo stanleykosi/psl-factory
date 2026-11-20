@@ -241,9 +241,9 @@ export function ProjectsList() {
       <EmptyState
         title="No projects match"
         action={
-          <button type="button" className="psl-link cmp-linkbutton" onClick={clearSearch}>
+          <Button kind="link" onClick={clearSearch}>
             Show all projects
-          </button>
+          </Button>
         }
       >
         No project you can see matches your search.

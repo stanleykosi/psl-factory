@@ -344,9 +344,9 @@ export function MyWork() {
       <EmptyState
         title="No work matches"
         action={
-          <button type="button" className="psl-link cmp-linkbutton" onClick={() => navigate({ q: undefined, ...noFilters })}>
+          <Button kind="link" onClick={() => navigate({ q: undefined, ...noFilters })}>
             Clear filters
-          </button>
+          </Button>
         }
       >
         Nothing in {current.label} matches your search and filters.

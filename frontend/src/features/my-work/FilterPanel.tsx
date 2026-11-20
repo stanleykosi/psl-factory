@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { api, call } from '@/api/client';
-import { FilterPanel, useIsPhone } from '@/components';
+import { Button, Checkbox, FilterPanel, Select, useIsPhone } from '@/components';
 
 import { STATE_KEYS, STATES, WAITING_KEYS, WAITING_ON, type LineOption, type WaitingOn, type WorkState } from './model';
 
@@ -74,72 +74,38 @@ export function MyWorkFilter({ lines, applied, preview, onApply, onClose }: Prop
       <fieldset className="my-work__fieldset">
         <legend className="my-work__label">Line</legend>
         {shownLines.map((line) => (
-          <label key={line.key} className="psl-check my-work__check">
-            <input type="checkbox" checked={draft.line === line.key} onChange={(e) => setDraft({ ...draft, line: e.target.checked ? line.key : undefined })} />
-            <span>{line.title}</span>
-          </label>
+          <Checkbox key={line.key} className="my-work__check" label={line.title} checked={draft.line === line.key} onChange={(e) => setDraft({ ...draft, line: e.target.checked ? line.key : undefined })} />
         ))}
         {shownLines.length < lines.length && (
-          <button type="button" className="psl-link my-work__linkbutton cmp-target" onClick={() => setAllLines(true)}>
+          <Button kind="link" className="my-work__linkbutton cmp-target" onClick={() => setAllLines(true)}>
             {phone ? `All ${lines.length} lines` : `Show all ${lines.length} lines`}
-          </button>
+          </Button>
         )}
       </fieldset>
-      <div className="my-work__field">
-        <span className="my-work__label" id="my-work-project-label">
-          Project
-        </span>
-        <select
-          aria-labelledby="my-work-project-label"
-          className="psl-input my-work__select"
-          value={draft.project ?? ''}
-          onChange={(e) => setDraft({ ...draft, project: e.target.value || undefined })}
-        >
-          <option value="">Any project</option>
-          {[...appliedProject, ...projects].map((p) => (
-            <option key={p.case_id} value={p.case_id}>
-              {p.title}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="my-work__field">
-        <span className="my-work__label" id="my-work-state-label">
-          State
-        </span>
-        <select
-          id="my-work-state"
-          aria-labelledby="my-work-state-label"
-          className="psl-input my-work__select"
-          value={draft.state ?? ''}
-          onChange={(e) => setDraft({ ...draft, state: (e.target.value || undefined) as WorkState | undefined })}
-        >
-          <option value="">Any state</option>
-          {STATE_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {STATES[key].words}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="my-work__field">
-        <span className="my-work__label" id="my-work-waiting-label">
-          Waiting on
-        </span>
-        <select
-          aria-labelledby="my-work-waiting-label"
-          className="psl-input my-work__select"
-          value={draft.waiting ?? ''}
-          onChange={(e) => setDraft({ ...draft, waiting: (e.target.value || undefined) as WaitingOn | undefined })}
-        >
-          <option value="">Anyone</option>
-          {WAITING_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {WAITING_ON[key]}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Select
+        label="Project"
+        fieldClassName="my-work__field"
+        placeholder="Any project"
+        value={draft.project ?? ''}
+        onChange={(value) => setDraft({ ...draft, project: value || undefined })}
+        options={[{ value: '', label: 'Any project' }, ...[...appliedProject, ...projects].map((p) => ({ value: p.case_id, label: p.title }))]}
+      />
+      <Select
+        label="State"
+        fieldClassName="my-work__field"
+        placeholder="Any state"
+        value={draft.state ?? ''}
+        onChange={(value) => setDraft({ ...draft, state: (value || undefined) as WorkState | undefined })}
+        options={[{ value: '', label: 'Any state' }, ...STATE_KEYS.map((key) => ({ value: key, label: STATES[key].words }))]}
+      />
+      <Select
+        label="Waiting on"
+        fieldClassName="my-work__field"
+        placeholder="Anyone"
+        value={draft.waiting ?? ''}
+        onChange={(value) => setDraft({ ...draft, waiting: (value || undefined) as WaitingOn | undefined })}
+        options={[{ value: '', label: 'Anyone' }, ...WAITING_KEYS.map((key) => ({ value: key, label: WAITING_ON[key] }))]}
+      />
     </>
   );
 

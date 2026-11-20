@@ -312,9 +312,9 @@ export function PaymentsView() {
       <EmptyState
         title="No invoices match"
         action={
-          <button type="button" className="psl-link cmp-linkbutton" onClick={() => navigate({ q: undefined, status: undefined })}>
+          <Button kind="link" onClick={() => navigate({ q: undefined, status: undefined })}>
             Clear filters
-          </button>
+          </Button>
         }
       >
         Nothing matches your search and filters.
