@@ -4,7 +4,10 @@ from datetime import date
 from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 from apps.finance import forecast
+from apps.identity.models import Grant
+from .helpers import setup_case
 from .forecast_helpers import fixture,payload,run,scenario
 from .billing_helpers import evidence
 
@@ -30,6 +33,22 @@ class ForecastOpeningBoundaryTests(TestCase):
         self.assertEqual(r.scenario.payload['openings'],v['openings'])
         self.assertEqual(r.result['opening_provenance'][0]['observed_on'],'2026-09-30')
         self.assertEqual(r.result['opening_provenance'][0]['source_version'],'statement-2026-09-v1')
+
+    def test_new_opening_reference_is_visible_only_to_readers_in_its_finance_workspace(self):
+        opening = evidence(self.a, self.c, 'forecast_opening', 'synthetic-private-opening-body')
+        other_actor, other = setup_case(username='forecast-other-workspace')
+        foreign = evidence(other_actor, other, 'forecast_opening', 'other-opening-body')
+        self.client.force_login(self.a)
+        url = reverse('finance_forecast', args=[self.c.pk])
+        page = self.client.get(url)
+        self.assertContains(page, f'Opening source #{opening.pk} · Version {opening.version}')
+        self.assertNotContains(page, f'Opening source #{foreign.pk} ·')
+        self.assertNotContains(page, 'synthetic-private-opening-body')
+        self.assertEqual(page['Cache-Control'], 'no-store')
+        self.assertNotContains(self.client.get(reverse('case', args=[self.c.pk])), f'Document {opening.pk} · Forecast opening')
+
+        Grant.objects.filter(user=self.a, case=self.c, action='finance.read').update(active=False)
+        self.assertEqual(self.client.get(url).status_code, 403)
 
     def test_unreconciled_boundary_remains_unknown_not_zero(self):
         r=run(self.a,self.c,self.boundary(status='unreconciled'))

@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. The Finance forecast page lists the most recent opening source references after checking Finance read access in the workspace. It reads only source metadata. The shared evidence page continues to exclude the protected records, and native forecast capture still validates account, basis, date and source contents.
+
+20 November 2026. Standard Change closure eligibility on the read view uses the current validated observation of both exact publications. The same read checks the required signer role. The closure command still rechecks current receipts, source lineage, proof and authority when it records a decision. Shared closure validation remains part of final verification.
+
 20 November 2026. Accounting's existing Continue action uses the background request and wakes an existing wait. The worker retains its permission checks, leases, budgets and human wait points. The unit test stops the forecast fixture's local business date from shifting during the same return-and-rework journey. Production date validation remains active.
 
 20 November 2026. Show each escalation reviewer only the native actions that their current role and action rules allow. Retain the reason when a server recheck holds submission. After a native return or refusal, preserve its decision and show its exact disposition. Original unsettled effects retain recovery priority. Expose live investigation on the detail view only for the matching active claim.

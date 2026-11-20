@@ -1,6 +1,7 @@
 """Independent native controlled-change connection, external delivery mock only."""
 import json
 from pathlib import Path
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import DatabaseError,transaction,connection
@@ -49,7 +50,11 @@ class FactoryChangeTests(TestCase):
         client=add_evidence(self.actor,self.case.pk,'signature','Synthetic Client signature of exact report','synthetic:Client')
         receipt=PublicationReceipt.objects.get(publication__version=change.document(self.work,'go_live'))
         self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
-        before=self.work.revision;self.assertContains(self.client.get(url),'Record actual signed closure');self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
+        before=self.work.revision
+        with patch.object(change, 'published', wraps=change.published) as published:
+            self.assertContains(self.client.get(url), 'Record actual signed closure')
+        self.assertEqual([call.args[1] for call in published.call_args_list], ['notice', 'go_live'])
+        self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
         from .change_signature_helpers import declaration_for
         import json
         response=self.client.post(url,{'attestation':json.dumps(declaration_for(self.actor,auth,receipt,pm,client)),'action':'close','revision':self.work.revision,'case_revision':rev(self.case),'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':client.pk,'note':'Actual PM attests supplied signatures on this exact delivered version'})

@@ -111,9 +111,9 @@ def report(work,actor=None):
         if v.category=='Emergency':raise ValidationError('Emergency P61/P62 use native preauthorization, incident, implementation and retrospective controls; ordinary change authorization is not applicable')
         changes.impact(v);result['stage']='authorization';auth=authorization(work,data)
         result['stage']='notice';published(work,'notice',actor)
-        result['stage']='execution';native.execution_manifest(auth)
-        result['stage']='go_live';published(work,'go_live',actor)
-        result['stage']='signatures';verify(work,actor);result['stage']='complete'
+        result['stage']='execution';execution_ids=native.execution_manifest(auth)
+        result['stage']='go_live';_,_,receipts=published(work,'go_live',actor)
+        result['stage']='signatures';verified_closure(auth,receipts,execution_ids);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
 
@@ -204,13 +204,17 @@ def publication_scope(actor,case,version,work_id):
     if native.change_binding_findings(b):raise ValidationError(native.change_binding_findings(b))
     return {'factory_work_id':w.pk,'factory_policy_id':config.pk,'factory_source_id':w.source_head_id}
 
+def verified_closure(auth, receipts, execution_ids):
+    closure=ChangeClosure.objects.filter(authorization=auth,receipt_id__in=[r.pk for r in receipts]).first()
+    if not closure or closure.execution_ids!=execution_ids:raise ValidationError('Await exact native PM acceptance plus actual Client acceptance or explicit current owner applicability')
+    from apps.pmo.change_signatures import current_closure
+    return closure, current_closure(closure)
+
+
 def verify(work,actor=None):
     _,data=source(work,actor);auth=authorization(work,data)
-    notice,np,nr=published(work,'notice',actor);v,p,receipts=published(work,'go_live',actor)
-    closure=ChangeClosure.objects.filter(authorization=auth,receipt_id__in=[r.pk for r in receipts]).first()
-    if not closure or closure.execution_ids!=native.execution_manifest(auth):raise ValidationError('Await exact native PM acceptance plus actual Client acceptance or explicit current owner applicability')
-    from apps.pmo.change_signatures import current_closure
-    assurance=current_closure(closure)
+    notice,_,nr=published(work,'notice',actor);v,_,receipts=published(work,'go_live',actor)
+    closure,assurance=verified_closure(auth,receipts,native.execution_manifest(auth))
     return {'verified':True,'verification_scope':'native_controlled_change_delivery_and_human_acceptance_assurance','assurance_id':assurance.pk,'client_signature_requirement':getattr(assurance,'requirement','required'),'client_signed':assurance.client_signature_id is not None,'original_closure_client_signed':closure.client_signature_id is not None,'current_client_signature_id':assurance.client_signature_id,'head':work.source_head_id,'authorization':auth.pk,'closure':closure.pk,'document_version':v.pk,'notice_version':notice.pk,'receipt_ids':[r.pk for r in nr+receipts],'deployment_authorized':False,'external_authenticity_verified':False}
 
 @transaction.atomic
@@ -311,8 +315,8 @@ def close(actor,work_id,expected,case_expected,receipt_id,pm_signature_id,client
 def projection(actor,work):
     from .factory import access,profile
     access(actor,work.case,'factory.read',DEFINITION);v,data=source(work,actor,False)
-    issue='';options=[];next_action='Review native change prerequisites';current=True
-    try:source(work,actor);status=report(work,actor)
+    issue='';options=[];next_action='Review native change prerequisites';current=True;status=None
+    try:source(work,actor)
     except (ValidationError,PermissionDenied) as exc:status={'stage':'source','finding':finding(exc)};issue=finding(exc);current=False
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'));docs=[]
     live=not work.cancel_requested and not (work.lease_until and work.lease_until>timezone.now())
@@ -330,8 +334,12 @@ def projection(actor,work):
             except (ValidationError,PermissionDenied):pass
         docs.append({'version':d,'purpose':purpose,'verdicts':verdicts,'receipts':list(PublicationReceipt.objects.filter(publication__version=d).order_by('pk'))})
     try:
-        _,value=profile(work);state,*args=snapshot(work,value,reader=actor);options,next_action=eligible(work,value,state,*args)
+        _,value=profile(work);state,*args=snapshot(work,value,reader=actor)
+        status=state['native'];options,next_action=eligible(work,value,state,*args)
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
+    if status is None:
+        try:status=report(work,actor)
+        except (ValidationError,PermissionDenied) as exc:status={'stage':'source','finding':finding(exc)};issue=finding(exc)
     changed=False
     if work.status=='verified':
         try:
@@ -343,10 +351,11 @@ def projection(actor,work):
             require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
             can_correct=not ChangeClosure.objects.filter(authorization__version_id=v.change.current_id).exists() and work.status not in ['cancelled','followup_needed'] and not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
         except PermissionDenied:pass
-        try:
-            require(actor,work.case,'change.manage');decision_authority(actor,work.case,'PM');published(work,'notice',actor);published(work,'go_live',actor)
-            can_close=not ChangeClosure.objects.filter(authorization_id=data['inputs']['authorization_id']).exists()
-        except (ValidationError,PermissionDenied):pass
+        if status['stage']=='signatures':
+            try:
+                require(actor,work.case,'change.manage');decision_authority(actor,work.case,'PM')
+                can_close=not ChangeClosure.objects.filter(authorization_id=data['inputs']['authorization_id']).exists()
+            except (ValidationError,PermissionDenied):pass
     for j in jobs:
         j.can_operate=False;j.can_retry=False
         try:

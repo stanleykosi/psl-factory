@@ -144,7 +144,7 @@ class FactoryEscalationTests(TestCase):
         self.assertTrue(domain.projection(self.a,self.w)['readiness_changed']);self.assertEqual(PublicationReceipt.objects.get().pk,receipt.pk);self.w.refresh_from_db();self.assertEqual(self.w.budget_used,spent)
     def test_primary_http_intake_decisions_review_and_get_preserves_rows(self):
         self.start();self.client.force_login(self.a);url=reverse('factory_detail',args=[self.w.pk]);self.advance()
-        count=FactoryAttempt.objects.count();revision=self.w.revision;self.assertContains(self.client.get(url),'Client escalation or de-escalation decision');self.assertEqual(FactoryAttempt.objects.count(),count);self.w.refresh_from_db();self.assertEqual(self.w.revision,revision)
+        count=FactoryAttempt.objects.count();revision=self.w.revision;self.assertContains(self.client.get(url),'Client communication decision');self.assertEqual(FactoryAttempt.objects.count(),count);self.w.refresh_from_db();self.assertEqual(self.w.revision,revision)
         self.assertEqual(self.client.post(url,{'action':'decision','revision':self.w.revision,'case_revision':rev(self.c),'request':self.r.pk,'role':'Head of PMO','verdict':'approve','note':'Human approves client communication'}).status_code,302)
         self.advance();v=domain.document(self.w)
         response=self.client.get(url);self.assertContains(response,'Awaiting exact document review');self.assertIn('no-store',response['Cache-Control'])

@@ -1,5 +1,11 @@
 # Build progress log
 
+20 November 2026. The 205 gate passed and matching web and worker started. The in-app browser verified the signed Standard Change, no-send escalation and fresh current forecast. The full 520-test regression is active. Updated the 262-state ledger with exact test scopes.
+
+20 November 2026. The focused Finance reruns passed, along with the Change closure and escalation permission regressions. The single remaining 204 test expected the previous heading. Candidate 205 updates the assertion and adds private opening source metadata so a Finance operator can select new evidence. Staged both preview services pending the focused gate.
+
+20 November 2026. Completed the 518-test regression on Railway with one forecast error. Verified Standard Change's separate go-live receipt, four execution records and native closure. The Factory detail timed out during exact publication readback, so the next candidate removes repeat validation in the same read. Emergency retrospective evidence remained held for missing earlier authority. The focused 204 tests started after checks and migration drift passed.
+
 20 November 2026. Verified the exact accounting receipt through the existing background request. The synthetic commercial rework reached delivery 75 after a stopped and recovered planning draft, human edits, four new commercial decisions and separate controlled document review. Shared regression passed 108 tests. Project delivery remained active.
 
 20 November 2026. Confirmed monthly report receipt and Standard Change impact, authorization, review and notice delivery. Found the accounting continuation timeout after exact output approval. Added durable continuation and its native-review test. Finance regression had one date-sensitive forecast error and Commercial passed 106 tests. Project and shared groups continue.

@@ -70,6 +70,7 @@ def workbench(request,case_id):
         except (ValidationError,PermissionDenied) as exc:row['finding']=str(exc)
         groups.append(row)
     response=render(request,'finance/forecast.html',{'case':case,'groups':groups,'commands':forms,'runs':runs,'actuals':actuals,
+        'opening_sources': case.evidence.filter(kind='forecast_opening').order_by('-pk').values('pk', 'version', 'source', 'created_at')[:30],
         'scenarios':ForecastScenario.objects.filter(case=case).order_by('-pk')[:30],'reviews':ForecastReview.objects.filter(run__case=case).order_by('-pk')[:30],
         'matches':ForecastMatch.objects.filter(case=case).order_by('-pk')[:50],'bindings':ForecastBinding.objects.filter(run__case=case).select_related('version__document').order_by('-pk')[:20],
         'priorities':ForecastPriority.objects.filter(review__run__case=case).select_related('action__current').order_by('-pk')[:30],
