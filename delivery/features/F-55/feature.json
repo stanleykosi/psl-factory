@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-55",
   "outcome": "F-55 HR stand-in sample data: work, detail, assistant and a line to start",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-HR-MOCK-DATA"
   ],
@@ -63,7 +63,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -79,7 +79,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-55/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -121,11 +121,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-HR-MOCK-DATA",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "1ecc4797e256274435105547f89ff36f5c8e18a6",
+    "task_branch": "fe-hr-mock-data-sample-hr",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-55",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -168,14 +168,22 @@
     }
   },
   "created_at": "2026-11-20T18:17:24Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-20T18:17:25Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T18:18:02Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -193,7 +201,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

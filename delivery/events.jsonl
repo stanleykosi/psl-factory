@@ -3883,3 +3883,4 @@
 {"at":"2026-11-20T18:17:24Z","feature":"F-55","round":0,"kind":"created","tasks":["FE-HR-MOCK-DATA"]}
 {"at":"2026-11-20T18:17:24Z","feature":"F-55","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-20T18:17:25Z","feature":"F-55","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-20T18:18:02Z","feature":"F-55","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
