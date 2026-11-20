@@ -6,6 +6,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Audit
+from apps.core.evidence_access import restricted
 from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -173,6 +174,55 @@ def correct(actor,work_id,expected,case_expected,kind,parent_id,evidence_id,payl
         else:raise ValidationError('Current target awaits human review or has already been reviewed; do not rebuild that wait')
     before=w.source_head_id;w.source_head=capture(actor,c,new,'factory.schedules_source');w.status='ready';w.finding='';w.revision+=1;w.save()
     event(actor,c,'factory.schedules_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
+
+
+def duplicate_rows(schedule):
+    if not schedule or schedule.kind != 'income' or schedule.result['status'] != 'held':
+        return []
+    unresolved = {finding.split(':', 1)[1] for finding in schedule.result['findings']
+                  if finding.startswith('duplicate_unresolved:')}
+    return [row for row in schedule.payload['rows'] if row['relationship'] == 'additive' and row['key'] in unresolved]
+
+
+@transaction.atomic
+def resolve_duplicates(actor, work_id, expected, case_expected, target, choices, proof_id, reason):
+    from .factory import access
+    from .factory_progress import set_progress
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case', 'actor', 'source_head').get(
+        pk=work_id, definition=DEFINITION)
+    access(actor, work.case, 'factory.manage', DEFINITION)
+    case = lock_case(actor, work.case_id, 'schedules.prepare', case_expected)
+    require(actor, case, 'schedules.report')
+    work.case = case
+    data, evidence, parent, body = source(work, actor)
+    schedule_version = schedule(work)
+    if not schedule_version or schedule_version.pk != target or work.revision != expected:
+        raise ValidationError('Review the current held schedule before recording the duplicate checks.')
+    match(work, schedule_version, data, evidence, parent, body)
+    rows = duplicate_rows(schedule_version)
+    allowed = {'already_represented', 'separately_justified'}
+    if (not isinstance(choices, dict) or not rows or set(choices) != {row['key'] for row in rows}
+            or any(not isinstance(choice, str) or choice not in allowed for choice in choices.values())):
+        raise ValidationError('Choose a treatment for every shown addition.')
+    proof = subject(case, proof_id, 'finance_review')
+    if restricted(proof):
+        raise ValidationError('Choose accessible Finance evidence for these duplicate checks.')
+    updated_rows = []
+    for row in body['rows']:
+        treatment = choices.get(row['key'])
+        if treatment == 'already_represented':
+            continue
+        if treatment == 'separately_justified':
+            row = dict(row, duplicate_state=treatment, duplicate_resolution_evidence_id=proof.pk)
+        updated_rows.append(row)
+    revised = correct(actor, work.pk, expected, case_expected, 'income', parent.pk, evidence.pk,
+                      dict(body, rows=updated_rows), reason)
+    event(actor, case, 'finance.schedule_duplicates_resolved', work=work.pk, previous_schedule=target,
+          current_source=revised.source_head_id, evidence=proof.pk, choices=choices)
+    set_progress(actor, revised.pk, revised.revision, True)
+    return revised
+
 
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,target,verdict,evidence,note):

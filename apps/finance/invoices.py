@@ -24,9 +24,12 @@ def obligation(prep):
     identity['usage']=prep.usage_id if prep.kind=='usage' else None
     return digest(identity)
 
+def successor_drafts(invoice):
+    return Invoice.objects.filter(case_id=invoice.case_id, obligation_key=invoice.obligation_key, pk__gt=invoice.pk)
+
 def current(invoice):
     require(invoice.actor,invoice.case,'finance.invoice.draft');ensure_current(invoice.preparation)
-    if Invoice.objects.filter(case=invoice.case,obligation_key=invoice.obligation_key,pk__gt=invoice.pk).exists():raise ValidationError('A newer invoice draft exists for this obligation')
+    if successor_drafts(invoice).exists():raise ValidationError('A newer invoice draft exists for this obligation')
     if invoice.sha256!=digest(invoice.payload):raise ValidationError('Invoice artifact hash mismatch')
 
 def adapter_config(case):

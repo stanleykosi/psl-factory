@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. An income detail duplicate decision applies to every displayed held addition on the exact schedule version. Finance evidence supports the correction. An amount already in the accounts is excluded from the successor calculation and remains in the original held version's history. A separately justified addition retains its exact evidence and existing overlap checks. The successor still requires independent Finance approval before a separate reporting adjustment can be exported.
+
+20 November 2026. Show the native invoice examiner and the preparer's relationship to the exact version in the decision view. A current Finance reader can attach a bounded private comment to the exact open packet assigned to another reviewer. The comment has no business verdict or release effect and is visible only through the existing scoped Finance read. A newer draft for the exact same obligation disables the older claim and identifies the current version when its preparation is readable. Preserve the original review and receipt rules.
+
 20 November 2026. A reviewed Emergency retrospective stays approved while its exact audience lacks a current delivery configuration. The work shows the document policy finding before any publication reservation. The synthetic preview repair can extend only the named sample's current recipient list to its already-authorised internal inbox. The existing client reference and review history are retained. Actual audiences and recipients remain owner choices.
 
 20 November 2026. A sample replay locates the original start key where current work can include multiple related records under the same case and workflow. No recent-work fallback is used. The original decision, publication and source histories remain untouched.

@@ -938,6 +938,12 @@ def _detail(request,work_id,focus=None):
                 queue_invoice_release(request.user,work.pk,revision)
                 messages.success(request,'Invoice issuance and delivery queued. Check for the original receipts.')
                 return redirect(request.get_full_path())
+            elif operation=='invoice_comment':
+                from .factory_invoice_review import comment
+                comment(request.user,work.pk,int(request.POST.get('task','0')),
+                        int(request.POST.get('task_revision','0')),request.POST.get('comment',''))
+                messages.success(request,'Comment recorded for this invoice review.')
+                return redirect(request.get_full_path())
             elif operation=='reassess':
                 if work.definition=='delivery-hypercare/v1':
                     from .factory_hypercare import reassess
@@ -1006,6 +1012,14 @@ def _detail(request,work_id,focus=None):
             messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
+    if work.definition == 'pmo-finance/v1' and focus in (None, 'decision'):
+        from .factory_invoice_review import annotate_comments, context
+        row['invoice_context'] = context(request.user, row)
+        if focus == 'decision' and row['invoice_context']:
+            annotate_comments(row)
+            if request.method == 'POST' and request.POST.get('action') == 'invoice_comment':
+                row['comment_task'] = request.POST.get('task')
+                row['comment_draft'] = request.POST.get('comment', '')[:2000]
     if work.definition == 'pmo-finance/v1' and focus is None and row['can_advance'] and not row['jobs']:
         from .factory_progress import ACTIVE, invoice_release_ready
         from .models import FactoryProgress

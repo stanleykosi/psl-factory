@@ -85,6 +85,8 @@ def route(actor,work):
 
 
 def assert_review_task_current(work,task):
+    if not work.invoice_id or invoices.successor_drafts(work.invoice).exists():
+        raise ValidationError('The earlier Finance decision requires a current invoice draft.')
     if task.context['packet']!=invoices.review_packet(work.invoice):raise ValidationError('STALE_EVIDENCE: publication packet changed')
     from .factory_routing import task_authority_current
     if not task_authority_current(work,task):raise ValidationError('STALE_AUTHORITY: Finance review routing changed; prepare a current decision task')

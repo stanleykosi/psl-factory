@@ -44,9 +44,15 @@ PREPARATION = {
     'accounts_continuation': ('finance-accounts/v1', 'SAMPLE accounts continuation walkthrough'),
     'assets': ('finance-ppe/v1', 'SAMPLE fixed asset walkthrough'),
     'schedules': ('finance-schedules/v1', 'SAMPLE schedules walkthrough'),
+    'schedule_duplicates': ('finance-schedules/v1', 'SAMPLE duplicate income detail walkthrough'),
     'forecast': ('finance-forecast/v1', 'SAMPLE cash forecast walkthrough'),
 }
 INTERNAL_EMERGENCY_REF = 'sample:emergency-internal'
+INVOICE_DECISION_PREPARATION = {
+    'invoice_maker': 'SAMPLE invoice waiting for an independent reviewer',
+    'invoice_other_reviewer': 'SAMPLE invoice assigned to another reviewer',
+    'invoice_replaced': 'SAMPLE invoice replaced while awaiting review',
+}
 ORIGINAL_WORK_KEYS = {
     'standard': 'SAMPLE-BATCH-STANDARD',
     'escalation': 'P44-1',
@@ -196,6 +202,51 @@ def prepare_invoice_release(actor, case):
     return factory_identified(entry)
 
 
+def prepare_independent_invoice_reviewer(actor, case, work):
+    from tests.billing_helpers import policy
+    from tests.helpers import activate
+
+    reviewer = get_user_model().objects.create_user('batch-invoice-independent-reviewer')
+    Grant.objects.bulk_create([Grant(case=case, user=reviewer, action=action) for action in
+                               ('case.read', 'factory.read', 'finance.read', 'finance.invoice.review')])
+    proof = case.evidence.filter(kind='policy_decision', source='synthetic:billing-tests').order_by('pk').first()
+    reference = register_reference(actor, case.pk, 'sample:invoice-independent-reviewer',
+                                   'schema:psl/role-assignment/v1', {'role': 'Finance', 'user_id': reviewer.pk}, proof.pk)
+    activate(actor, case, 'D05.role_principal_assignments', [reference.ref], proof)
+    matrix = reference_values(active_component('D05.decision_action_matrix', case))[0]
+    for rule in matrix['finance']:
+        if rule['purpose'] == 'invoice' and rule['role'] == 'Finance':
+            rule['allow_preparer_review'] = False
+    policy(actor, case, 'D05.decision_action_matrix', matrix)
+    factory.run_until_wait(work.pk)
+
+
+@transaction.atomic
+def prepare_invoice_decision_variant(actor, key):
+    from apps.finance import invoices
+
+    case, created = Case.objects.get_or_create(tenant=TENANT, title=INVOICE_DECISION_PREPARATION[key],
+                                               kind='project', synthetic=True)
+    if created:
+        maker = (get_user_model().objects.create_user('batch-invoice-other-maker')
+                 if key == 'invoice_other_reviewer' else actor)
+        Grant.objects.bulk_create([Grant(user=maker, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        if maker != actor:
+            Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in
+                                       ('case.read', 'factory.read', 'finance.read')])
+        work = prepare_invoice_release(maker, case)
+        pause_existing_background(maker, work)
+        if key == 'invoice_maker':
+            prepare_independent_invoice_reviewer(actor, case, work)
+        if key == 'invoice_replaced':
+            old = work.invoice
+            invoices.draft(actor, case.pk, old.preparation_id, old.reference, old.due_date, rev(case))
+    else:
+        work = FactoryWork.objects.get(case=case, definition='pmo-finance/v1', key='FACTORY-EXAMPLE')
+    return {'case': str(case.pk), 'work': work.pk, 'path': reverse('factory_invoice_decision', args=[work.pk]),
+            'existing_work_preserved': not created}
+
+
 def prepare_leadership(actor, case, *, tuesday=False):
     from tests import document_helpers, test_factory_leadership
 
@@ -224,12 +275,16 @@ def prepare_assets(actor, case):
     return entry.start()
 
 
-def prepare_schedules(actor, case):
-    from tests import finance_analysis_helpers, test_factory_schedules
+def prepare_schedules(actor, case, *, check_duplicates=False):
+    from tests import finance_analysis_helpers, schedule_helpers, test_factory_schedules
 
     with patch.object(finance_analysis_helpers, 'setup_case', return_value=(actor, case)):
         entry = test_factory_schedules.FactorySchedulesTests()
         entry.setUp()
+    if check_duplicates:
+        for label, amount in [('SAMPLE training fee', '20.00'), ('SAMPLE support fee', '15.00')]:
+            item = schedule_helpers.row(entry.f, label.replace(' ', '-'), amount, 'additive')
+            entry.payload['rows'].append(dict(item, duplicate_state='not_assessed'))
     return entry.start()
 
 
@@ -258,7 +313,9 @@ def prepare_project(actor, key):
                    'invoice_release': prepare_invoice_release,
                    'leadership': prepare_leadership, 'tuesday': prepare_leadership,
                    'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts, 'assets': prepare_assets,
-                   'schedules': prepare_schedules, 'forecast': prepare_forecast}[key]
+                   'schedules': prepare_schedules,
+                   'schedule_duplicates': partial(prepare_schedules, check_duplicates=True),
+                   'forecast': prepare_forecast}[key]
         users = get_user_model().objects
         create_user = users.create_user
         with patch.object(users, 'create_user', side_effect=lambda username, **values:
@@ -359,6 +416,8 @@ def run():
     from tests.railway_commercial_client_seed import prepare_rework
 
     sessions = {key: lambda key=key: prepare_project(actor, key) for key in PREPARATION}
+    sessions.update({key: lambda key=key: prepare_invoice_decision_variant(actor, key)
+                     for key in INVOICE_DECISION_PREPARATION})
     sessions['rework'] = prepare_rework
     sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)

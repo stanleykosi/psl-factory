@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 SCREENS = {
     'pmo-finance/v1': {
-        'decision': ('claim', 'release_claim', 'decide', 'information', 'responsibility_recheck'),
+        'decision': ('claim', 'release_claim', 'decide', 'invoice_comment', 'information', 'responsibility_recheck'),
         'recovery': ('reconcile', 'replace_preparation', 'resume', 'cancel', 'adopt_profile'),
     },
     'rfp-response/v1': {
@@ -18,7 +18,7 @@ SCREENS = {
     },
     'finance-schedules/v1': {
         'decision': ('review',),
-        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'export', 'adopt_profile'),
+        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'resolve_duplicates', 'export', 'adopt_profile'),
     },
     'finance-ppe/v1': {
         'decision': ('review',),

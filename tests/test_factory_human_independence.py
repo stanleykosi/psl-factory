@@ -1,5 +1,6 @@
 """Native human work needs its own current authority, not a functioning planner."""
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied,ValidationError
 from apps.identity.models import Grant
@@ -51,8 +52,6 @@ class IndependentInvoiceReviewTests(TestCase):
         self.assertFalse(InvoiceReview.objects.exists());self.assertFalse(InvoiceJob.objects.exists())
 
     def test_waiting_on_others_uses_current_native_work_and_viewer_authority(self):
-        from django.contrib.auth import get_user_model
-
         f = self.data
         reader = get_user_model().objects.create_user(username='synthetic-waiting-reader')
         Grant.objects.bulk_create([
@@ -72,6 +71,52 @@ class IndependentInvoiceReviewTests(TestCase):
         Grant.objects.filter(case=f['case'], user=reader, action='factory.read').update(active=False)
         page = self.client.get(reverse('home'), {'queue': 'waiting'})
         self.assertEqual(page.context['rows'], [])
+
+    def test_reading_finance_user_can_comment_on_exact_other_review_without_any_decision(self):
+        f = self.data
+        reader = get_user_model().objects.create_user(username='synthetic-commenter')
+        Grant.objects.bulk_create([Grant(case=f['case'], user=reader, action=action)
+                                   for action in ['case.read', 'factory.read', 'finance.read']])
+        url = reverse('factory_invoice_decision', args=[f['work'].pk])
+        self.client.force_login(reader)
+        page = self.client.get(url)
+        self.assertContains(page, 'Assigned to another Finance reviewer')
+        self.assertNotContains(page, 'Claim task')
+        self.assertNotContains(page, 'Approve exact packet')
+        self.assertContains(page, 'Comment for the Finance reviewer')
+        body = 'The fictional source was checked separately. Please confirm the signed milestone evidence.'
+        payload = {'action': 'invoice_comment', 'task': self.task.pk, 'task_revision': self.task.revision,
+                   'comment': body}
+        for _ in range(2):
+            self.assertEqual(self.client.post(url, payload).status_code, 302)
+        self.assertEqual(TaskEvent.objects.filter(task=self.task, action='factory.invoice_comment').count(), 1)
+        self.assertFalse(InvoiceReview.objects.exists())
+        self.assertFalse(InvoiceJob.objects.exists())
+        self.client.force_login(f['actor'])
+        self.assertContains(self.client.get(url), body)
+        self.assertContains(self.client.get(url), 'Claim task')
+        outside = get_user_model().objects.create_user(username='synthetic-unrelated-commenter')
+        self.client.force_login(outside)
+        self.assertEqual(self.client.post(url, payload).status_code, 404)
+
+    def test_newer_draft_locks_previous_decision_and_shows_same_obligation_successor(self):
+        from apps.finance import invoices
+
+        f = self.data
+        work = f['work']
+        old = work.invoice
+        current = invoices.draft(f['actor'], f['case'].pk, old.preparation_id, old.reference,
+                                 old.due_date, rev(f['case']))
+        self.client.force_login(f['actor'])
+        url = reverse('factory_invoice_decision', args=[work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'A newer invoice draft is available')
+        self.assertContains(page, f'Review version {current.version}')
+        self.assertNotContains(page, 'Claim task')
+        claim = self.client.post(url, {'action': 'claim', 'task': self.task.pk, 'task_revision': self.task.revision})
+        self.assertContains(claim, 'The earlier Finance decision requires a current invoice draft.')
+        self.assertFalse(InvoiceReview.objects.exists())
+        self.assertFalse(InvoiceJob.objects.exists())
 
 
 class IndependentInformationTests(TestCase):

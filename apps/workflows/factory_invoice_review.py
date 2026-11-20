@@ -1,0 +1,79 @@
+"""Finance decision context and comments for an exact invoice review packet."""
+from collections import defaultdict
+
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
+
+from apps.core.services import lock_case
+from apps.finance import invoices
+from apps.finance.fixed_charge import preparation_access
+from . import factory, factory_routing
+from .models import FactoryWork, HumanTask, TaskEvent
+
+
+COMMENT = 'factory.invoice_comment'
+
+
+def context(actor, row):
+    work = row['work']
+    invoice = work.invoice
+    if invoice is None:
+        return None
+    preparation_access(actor, invoice.preparation)
+    successor = invoices.successor_drafts(invoice).select_related('preparation').order_by('-pk').first()
+    if successor:
+        try:
+            preparation_access(actor, successor.preparation)
+        except (PermissionDenied, ValidationError):
+            successor = None
+    routing = row.get('routing', {})
+    eligible = routing.get('eligible_principals', [])
+    open_review = any(t.kind == 'factory_review' and t.status == 'open' for t in row['tasks'])
+    waiting_for_other = (open_review and bool(eligible) and not row['review_needs_update']
+                         and actor.pk not in eligible and work.status in {'ready', 'waiting'})
+    reviewers = []
+    if waiting_for_other:
+        routed = (get_user_model().objects.filter(pk__in=eligible).order_by('pk')
+                  .only('username', 'first_name', 'last_name')[:10])
+        reviewers = [user.get_full_name() or user.username for user in routed]
+    return {'successor': successor, 'prepared_here': invoice.actor_id == actor.pk,
+            'waiting_for_other': waiting_for_other, 'reviewers': reviewers}
+
+
+@transaction.atomic
+def comment(actor, work_id, task_id, revision, body):
+    work = FactoryWork.objects.select_for_update(of=('self',)).select_related('invoice__preparation').get(pk=work_id)
+    if work.definition != 'pmo-finance/v1' or work.invoice_id is None:
+        raise ValidationError('Choose an exact invoice review to comment on.')
+    task = HumanTask.objects.select_for_update().filter(case_id=work.case_id, pk=task_id, kind='factory_review',
+                                                       factory_key__startswith=f'factory:{work.pk}:').first()
+    case = lock_case(actor, work.case_id, 'finance.read')
+    factory.access(actor, case)
+    preparation_access(actor, work.invoice.preparation)
+    if (task is None or task.revision != revision or task.status != 'open' or work.cancel_requested
+            or work.status not in {'ready', 'waiting'}):
+        raise ValidationError('Review the current decision before adding a comment.')
+    factory.assert_review_task_current(work, task)
+    if actor.pk in factory_routing.require_ready(work)['eligible_principals']:
+        raise ValidationError('Use the assigned Finance decision to record your rationale.')
+    body = body.strip() if isinstance(body, str) else ''
+    if not 1 <= len(body) <= 2000:
+        raise ValidationError('Enter a comment of at most 2,000 characters.')
+    return TaskEvent.objects.get_or_create(task=task, actor=actor, action=COMMENT,
+                                           data={'body': body, 'invoice': work.invoice_id})[0]
+
+
+def annotate_comments(row):
+    work = row['work']
+    tasks = {task.pk: task for task in row['tasks']
+             if task.kind == 'factory_review' and task.context['packet'].get('invoice') == work.invoice_id}
+    comments = defaultdict(list)
+    recorded = TaskEvent.objects.filter(task_id__in=tasks, action=COMMENT, data__invoice=work.invoice_id)
+    for item in recorded.select_related('actor').order_by('-pk')[:20]:
+        comments[item.task_id].append(item)
+    for task in tasks.values():
+        task.comments = comments[task.pk]
+        task.can_comment = (row['invoice_context']['waiting_for_other'] and task.status == 'open'
+                            and not row['invoice_context']['successor'] and not work.cancel_requested
+                            and work.status in {'ready', 'waiting'})

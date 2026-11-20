@@ -7,12 +7,36 @@ from django.shortcuts import render,redirect
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from apps.core.models import Case,Evidence
+from apps.core.evidence_access import public_evidence
 from apps.core.workbench import granted
 from apps.finance import schedules
 from apps.finance.models import ScheduleWork,FinanceRun
 from . import factory,factory_schedules as domain
 from .factory_progress import set_progress
 from .factory_progress_views import StartWithBackground, start_work
+
+
+class DuplicateResolutionForm(forms.Form):
+    target = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    evidence = forms.ModelChoiceField(queryset=Evidence.objects.none(), label='Finance proof for these checks')
+    reason = forms.CharField(max_length=2000, widget=forms.Textarea, label='Explain these choices')
+
+    def __init__(self, case, schedule, rows, data=None):
+        super().__init__(data, initial={'target': schedule.pk}, auto_id='id_duplicate_%s')
+        self.fields['evidence'].queryset = public_evidence(
+            Evidence.objects.filter(case=case, kind='finance_review')).order_by('-pk')
+        self.rows = []
+        for index, row in enumerate(rows):
+            field = f'treatment_{index}'
+            self.fields[field] = forms.ChoiceField(label=f'Duplicate check for {row["key"]}', choices=[
+                ('', 'Choose a treatment'), ('already_represented', 'Already in the accounts'),
+                ('separately_justified', 'Separately justified'),
+            ])
+            self.rows.append((row, self[field]))
+
+    def choices(self):
+        return {row['key']: self.cleaned_data[field.name] for row, field in self.rows}
+
 
 class InputsForm(forms.Form):
     kind=forms.ChoiceField(choices=[('income','Income detail'),('inventory','Selected schedule inventory')])
@@ -56,6 +80,7 @@ def create(request):
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work,focus=None):
+    from .factory_execution import can_control
     from .factory_views import QUEUES, presentation,permitted
     from .screen_focus import require_action
     queue = request.GET.get('queue', 'needs_me')
@@ -66,10 +91,23 @@ def detail(request,work,focus=None):
     initial=dict(data)
     if not permitted(request.user,work,'schedules.report'):initial['payload']=None
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=initial)
+    duplicate_form = None
+    can_resolve = (focus != 'decision' and not work.cancel_requested and work.status not in ['cancelled','followup_needed']
+                   and work.request['kind'] == 'income' and can_control(request.user, work)
+                   and all(permitted(request.user, work, action) for action in
+                           ('factory.manage', 'schedules.prepare', 'schedules.report', 'evidence.add')))
+    if can_resolve:
+        held = domain.schedule(work)
+        rows = domain.duplicate_rows(held)
+        if rows:
+            posted = request.POST if request.method == 'POST' and request.POST.get('action') == 'resolve_duplicates' else None
+            duplicate_form = DuplicateResolutionForm(work.case, held, rows, posted)
     if request.method=='POST':
         try:
             p=request.POST;a=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
             allowed={'advance':set(),'resume':set(),'cancel':set(),'restart':{'reason'},'correct':{'kind','parent_id','evidence_id','payload','reason'},'review':{'target','verdict','evidence','note'},'export':{'target','kind','evidence'},'adopt_profile':{'configuration','reason'}}
+            if duplicate_form is not None:
+                allowed['resolve_duplicates'] = set(duplicate_form.fields)
             if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed schedule command')
             require_action(work, focus, a)
             if a=='advance':set_progress(request.user,work.pk,revision,True)
@@ -77,6 +115,12 @@ def detail(request,work,focus=None):
             elif a=='correct':
                 if not form.is_valid():raise ValidationError('Choose exact native sources')
                 domain.correct(request.user,work.pk,revision,case_revision,*form.ids(),p.get('reason',''))
+            elif a == 'resolve_duplicates':
+                if not duplicate_form.is_valid():
+                    raise ValidationError('Supply evidence and choose a treatment for every shown addition.')
+                values = duplicate_form.cleaned_data
+                domain.resolve_duplicates(request.user, work.pk, revision, case_revision, values['target'],
+                                          duplicate_form.choices(), values['evidence'].pk, values['reason'])
             elif a=='restart':domain.restart(request.user,work.pk,revision,case_revision,p.get('reason',''))
             elif a=='review':domain.review(request.user,work.pk,revision,case_revision,int(p.get('target','0')),p.get('verdict',''),int(p.get('evidence','0')),p.get('note',''))
             elif a=='export':domain.export(request.user,work.pk,revision,case_revision,int(p.get('target','0')),p.get('kind',''),int(p.get('evidence','0')))
@@ -97,7 +141,7 @@ def detail(request,work,focus=None):
                 verdicts=('approve',)
             if verdicts:reviews.append({'target':s.pk,'verdicts':verdicts})
     return render(request,'factory/schedules_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
-        'inputs_form':form,'reviews':reviews,'latest_review':latest,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),
+        'inputs_form':form,'duplicate_form':duplicate_form,'reviews':reviews,'latest_review':latest,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),
         'adjustment_evidence':Evidence.objects.filter(case=work.case,kind='finance_adjustment').order_by('-pk'),
         'can_export':focus!='decision' and s is not None and s.kind=='income' and panel['native'].get('stage')=='complete' and permitted(request.user,work,'schedules.adjust') and permitted(request.user,work,'finance.adjust'),
         'activities':work.activities.order_by('pk') if not focus else (),

@@ -127,6 +127,9 @@ class FactoryLedgerTests(TestCase):
         page = self.client.get(reverse('factory_work_response', args=[self.work.pk]))
         self.assertContains(page, 'Latest supplied observation')
         self.assertContains(page, 'Needs further evidence before Finance can verify the reference.')
+        detail = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertContains(detail, 'Earlier source to correct')
+        self.assertNotContains(detail, 'LedgerLineage object')
         self.assertFalse(checked.decisions.exists())
     def test_recheck_current_observation_reuses_lineage_and_budget(self):
         w,x=self.accepted();f=self.f;spent=self.work.budget_used;verify(f,w,{'state':'unknown'});flow.recheck(f['actor'],self.work.pk,self.work.revision,rev(f['case']),'Inspect changed incumbent evidence');self.advance();self.assertNotEqual(self.work.status,'verified');self.assertGreaterEqual(self.work.budget_used,spent);self.assertEqual(LedgerLineage.objects.count(),1)

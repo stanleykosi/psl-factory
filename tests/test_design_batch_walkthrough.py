@@ -9,11 +9,29 @@ from apps.finance.models import InvoiceIssue, InvoiceJob, InvoiceReview
 from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, ChangeDecision, EmergencyAuthorization, EmergencyDecision, EmergencyOutcome, EscalationDecision
 from apps.workflows.models import FactoryProgress, FactoryWork, HumanTask
 from tests.railway_batch_walkthrough_seed import (
-    PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_project, prepare_unreadable_invoice,
+    PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_invoice_decision_variant,
+    prepare_project, prepare_unreadable_invoice,
 )
 
 
 class DesignBatchWalkthroughTests(TestCase):
+    def test_invoice_decision_samples_keep_their_actual_scope_and_prior_version(self):
+        actor = get_user_model().objects.create_user('synthetic-batch-finance-reader')
+        self.client.force_login(actor)
+        states = {'invoice_maker': 'Waiting for another Finance reviewer',
+                  'invoice_other_reviewer': 'Assigned to another Finance reviewer',
+                  'invoice_replaced': 'A newer invoice draft is available'}
+        for key, label in states.items():
+            with self.subTest(journey=key):
+                sample = prepare_invoice_decision_variant(actor, key)
+                self.assertEqual(prepare_invoice_decision_variant(actor, key)['work'], sample['work'])
+                page = self.client.get(sample['path'])
+                self.assertContains(page, label)
+                self.assertNotContains(page, 'Claim task')
+                self.assertNotContains(page, 'Approve exact packet')
+        self.assertFalse(InvoiceReview.objects.exists())
+        self.assertFalse(InvoiceJob.objects.exists())
+
     def test_preparation_reopens_original_even_after_another_report_for_the_same_project(self):
         from apps.workflows import factory_leadership
         from tests.helpers import rev

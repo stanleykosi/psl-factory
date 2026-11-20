@@ -110,7 +110,9 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         self.inputs['audience'] = 'internal'
         self.select(auth, actual)
         self.advance()
-        version = self.review_report()
+        version = emergency.document(self.work)
+        self.assertIsNotNone(version)
+        self.review_report()
         self.advance()
         self.client.force_login(self.actor)
         url = reverse('factory_detail', args=[self.work.pk])

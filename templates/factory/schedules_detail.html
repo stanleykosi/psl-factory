@@ -11,6 +11,19 @@
 <p>Exact mapping note {{ row.schedules.schedule.parent_id|default:'Not applicable' }}. Private report values require separate report permission.</p>
 <p><a href="{% url 'schedule_report' case.pk row.schedules.schedule.pk %}">Open exact reviewed report</a></p>
 {% for link in row.schedules.links %}<p>Reporting adjustment {{ link.adjustment_id }}. Separate native Finance adjustment approval remains required before downstream mapping. No ledger posting.</p>{% endfor %}</section>{% endif %}
+{% if duplicate_form %}
+<section class="card"><h2>Resolve possible duplicate additions</h2><p>Choose whether each amount is already in the accounts or has separate evidence. The earlier schedule stays in the history.</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="resolve_duplicates"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+    {{ duplicate_form.target }}
+    {% for item, choice in duplicate_form.rows %}
+    <fieldset><legend>{{ item.key }} · {{ item.amount|default_if_none:'Unknown' }} {{ item.unit|readable }}</legend>{{ choice.as_field_group }}</fieldset>
+    {% endfor %}
+    {{ duplicate_form.evidence.as_field_group }}{{ duplicate_form.reason.as_field_group }}
+    <button>Save and prepare again</button>
+  </form>
+</section>
+{% endif %}
 {% if latest_review %}<section class="card"><h2>Recorded Finance decision</h2><p>{{ latest_review.verdict|readable }} · {{ latest_review.created_at|date:'d M Y, H:i T' }}</p><p>{{ latest_review.note }}</p>{% if focus == 'decision' and row.schedules.native.stage == 'returned' %}<a href="{% url 'factory_invoice_recovery' row.work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}">Open source correction</a>{% endif %}</section>{% endif %}
 {% for review in reviews %}<section class="card"><h2>Finance schedule decision</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="review"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="target" value="{{ review.target }}"><label>Exact decision evidence<select name="evidence" required>{% for e in review_evidence %}<option value="{{ e.pk }}">{{ e.kind|readable }} · {{ e.pk }}</option>{% endfor %}</select></label><label>Rationale<textarea name="note" required maxlength="2000"></textarea></label>{% if 'approve' in review.verdicts %}<button name="verdict" value="approve">{% if row.schedules.native.stage == 'withdrawn' %}Restore exact approval{% else %}Approve exact schedule{% endif %}</button>{% endif %}{% if 'return' in review.verdicts %}<button class="button secondary" name="verdict" value="return">Return for correction</button>{% endif %}{% if 'reject' in review.verdicts %}<button class="button secondary" name="verdict" value="reject">Reject</button>{% endif %}{% if 'revoke' in review.verdicts %}<button class="button secondary" name="verdict" value="revoke">Withdraw approval</button>{% endif %}</form></section>{% endfor %}
 {% if focus != 'decision' %}

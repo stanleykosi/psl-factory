@@ -61,6 +61,51 @@ class FactorySchedulesTests(TestCase):
         from apps.policy.schedule_validators import INCOME
         policy(f,INCOME,f['values']['income_rule']);self.assertFalse(flow.projection(f['reviewer'],self.work)['pending_reviews'])
         flow.correct(f['actor'],self.work.pk,self.work.revision,rev(f['case']),*self.args,'Rebuild with the newly configured rule');self.advance();self.assertNotEqual(flow.schedule(self.work).pk,s.pk)
+
+    def test_duplicate_additions_use_exact_held_rows_and_prepare_an_independent_review(self):
+        from django.urls import reverse
+        from apps.core.models import Audit
+        from apps.workflows import factory_progress
+
+        f = self.f
+        first = dict(row(f, 'already-captured', '20', 'additive'), duplicate_state='not_assessed')
+        second = dict(row(f, 'separate-charge', '15', 'additive'), duplicate_state='not_assessed')
+        self.payload['rows'].extend([first, second])
+        self.start()
+        self.advance()
+        held = flow.schedule(self.work)
+        self.assertEqual(held.result['status'], 'held')
+        target = reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.client.force_login(f['actor'])
+        page = self.client.get(target)
+        self.assertContains(page, 'Resolve possible duplicate additions')
+        self.assertContains(page, 'Duplicate check for already-captured')
+        self.assertContains(page, 'Duplicate check for separate-charge')
+        values = {'action': 'resolve_duplicates', 'revision': self.work.revision, 'case_revision': rev(f['case']),
+                  'target': held.pk, 'evidence': f['e']['finance_review'].pk, 'treatment_0': 'already_represented',
+                  'reason': 'Synthetic proof distinguishes an existing amount from an evidenced addition.'}
+        self.assertContains(self.client.post(target, values), 'choose a treatment for every shown addition')
+        self.assertFalse(Audit.objects.filter(case=f['case'], action='finance.schedule_duplicates_resolved').exists())
+        values['treatment_1'] = 'separately_justified'
+        self.assertRedirects(self.client.post(target, values), target, fetch_redirect_response=False)
+        self.assertFalse(held.reviews.exists())
+        self.assertEqual([r['duplicate_state'] for r in held.payload['rows'][2:]], ['not_assessed', 'not_assessed'])
+        self.assertEqual(Audit.objects.get(case=f['case'], action='finance.schedule_duplicates_resolved').data['previous_schedule'], held.pk)
+        request = self.work.background_progress
+        self.assertEqual(request.status, 'queued')
+        for _ in range(15):
+            factory_progress.run_once()
+            self.work.refresh_from_db()
+            prepared = flow.schedule(self.work)
+            if prepared and prepared.result['status'] == 'ready':
+                break
+        self.assertEqual(prepared.result['adjusted_total'], '-985')
+        self.assertEqual([r['key'] for r in prepared.payload['rows']], ['a', 'b', 'separate-charge'])
+        self.assertFalse(prepared.reviews.exists())
+        self.assertNotEqual(self.work.status, 'verified')
+        review(f, prepared)
+        self.advance()
+        self.assertEqual(self.work.status, 'verified')
     def test_exact_export_reconciles_and_requires_separate_native_adjustment_review(self):
         f=self.f;self.payload['rows']=[row(f,'supplement','20','additive',lines=[{'account':'sales','amount':'20'}])];self.start();self.advance();s=flow.schedule(self.work);review(f,s);self.advance()
         args=[f['actor'],self.work.pk,self.work.revision,rev(f['case']),s.pk,'additive',f['e']['finance_adjustment'].pk];a=flow.export(*args);args[3]=rev(f['case']);self.assertEqual(flow.export(*args).pk,a.pk)

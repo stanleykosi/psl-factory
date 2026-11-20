@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from apps.core.models import Audit,Case,Evidence
@@ -15,11 +16,18 @@ from .factory_progress_views import StartWithBackground, start_work
 from .quickbooks_mcp import factory_read_status
 from .screen_focus import require_action
 
+
+class PredecessorChoice(forms.ModelChoiceField):
+    def label_from_instance(self, row):
+        observed = timezone.localtime(row.created_at).strftime('%d %b %Y, %H:%M %Z')
+        return f'Source {row.evidence_id} · Recorded {observed}'
+
+
 class InputsForm(forms.Form):
     def __init__(self,case,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['evidence_id']=forms.ModelChoiceField(queryset=Evidence.objects.filter(case=case,kind='ledger_source').order_by('-pk'),label='Exact supplied incumbent source')
-        self.fields['predecessor_id']=forms.ModelChoiceField(queryset=LedgerLineage.objects.filter(case=case).order_by('-pk'),required=False,label='Exact predecessor for a correction')
+        self.fields['predecessor_id']=PredecessorChoice(queryset=LedgerLineage.objects.filter(case=case).only('pk','evidence_id','created_at').order_by('-pk'),required=False,label='Earlier source to correct')
     def ids(self):
         d=self.cleaned_data;return [d['evidence_id'].pk,d['predecessor_id'].pk if d['predecessor_id'] else None]
 
