@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. A closed delivery checklist follows the finalized record to the exact prescribed decision, report and supporting references. It omits preparation controls. If original evidence authority becomes unavailable, the checklist hides those references and retains the recorded closure.
+
 20 November 2026. An invoice request may require private PDF proof bound to the exact recorded milestone and Finance handoff. The current configured supplier links the existing verified file and may record an explicit successor while the task is open. The operator observes the file and native approval separately. The proof neither replaces the original milestone nor confirms a client signature by itself.
 
 20 November 2026. Saving an incomplete weekly report keeps a current preparer's private draft and leaves the native work and review untouched until explicit valid submission. The invoice review alert points the authorised independent reviewer to the exact current native task using a generic label. Payroll Assistant recipients can ask the existing closed report questions with metadata from their own current receipt. The local report remains the source for figures and HR follow-up.

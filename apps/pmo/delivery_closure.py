@@ -1,6 +1,10 @@
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
+from apps.core.evidence_access import public_evidence
+from apps.core.models import Evidence
+from apps.core.read_observation import observed_fact, read_observation
 from apps.core.services import lock_case,bump,event
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority
@@ -10,7 +14,6 @@ from .models import DeliveryRecord,DeliveryDocumentBinding,MeetingVersion,Milest
 from .services import subject
 from .commercial import note_required
 from .clocks import aware
-from apps.core.read_observation import observed_fact
 
 
 FINANCE_CONFIRMATION_MISSING = 'finance_confirmation_missing'
@@ -358,6 +361,90 @@ def closure_requirements(d,data=None):
     return {'as_of':timezone.now().isoformat(),'checks':checks,'ready_to_prepare':all(c['status']=='current' for c in checks),
         'selected':data,'recorded_closure_id':closed.pk if closed else None,
         'closure_approved':False,'debt_waived':False,'deployment_authorized':False}
+
+
+def _recorded_closure_binding(dossier, closed):
+    """Resolve the report consumed by this recorded closure, including pre-factory dossiers."""
+    decision_id = closed.data.get('decision_id')
+    version_id = closed.data.get('version_id')
+    if any(type(pk) is not int or not 1 <= pk < 2**63 for pk in (decision_id, version_id)):
+        raise ValidationError('The recorded closure report is unavailable.')
+    decision_snapshot = dossier.records.filter(pk=decision_id, kind='closure_decision', evidence_id=closed.evidence_id,
+        data__verdict='approve', data__version_id=version_id, created_at__lte=closed.created_at).values_list('snapshot', flat=True).first()
+    binding = DeliveryDocumentBinding.objects.filter(
+        dossier=dossier, purpose='closure', version_id=version_id, version__document__case_id=dossier.case_id,
+        version__audience='internal',
+    ).only('data', 'snapshot').first()
+    if not isinstance(closed.snapshot, dict) or not binding or closed.snapshot != decision_snapshot or closed.snapshot != binding.snapshot:
+        raise ValidationError('The recorded closure report is unavailable.')
+    if closure_selection(binding.data) != {key: closed.snapshot.get(key) for key in binding.data}:
+        raise ValidationError('The recorded closure report sources are unavailable.')
+    return binding
+
+
+@read_observation
+def recorded_closure_requirements(actor, dossier, closed):
+    """Read the recorded closure's public source references without preparing new work."""
+    from django.core.exceptions import PermissionDenied
+
+    case = dossier.case
+    require(actor, case, 'case.read')
+    require(actor, case, 'delivery.read')
+    if closed.dossier_id != dossier.pk or closed.kind != 'closure':
+        raise ValidationError('The closure record is outside this delivery.')
+    checks = [{'key': 'context', 'title': 'Project closure', 'status': 'closed',
+               'summary': 'The final closure record is retained.', 'references': [closed.pk]}]
+
+    def add(key, title, refs=()):
+        checks.append({'key': key, 'title': title, 'status': 'recorded' if refs else 'unavailable',
+                       'summary': ('Evidence used for the recorded closure.' if refs else
+                                   'The original evidence reference is unavailable with current access.'),
+                       'references': list(refs)})
+
+    stations = (
+        ('go_live', 'Go-live acceptance', 'acceptance_id', ('go_live', 'go_live_reaffirmation')),
+        ('hypercare', 'Release stability', 'hypercare_id', ('hypercare',)),
+        ('archive', 'Project archive', 'archive_id', ('archive',)),
+        ('handover', 'Support handover', 'handover_ids', ('handover',)),
+        ('finance', 'Finance notification coverage', 'finance_confirmation_id', ('finance_confirmation',)),
+    )
+    references = {}
+    retrospective_refs = report_refs = ()
+    try:
+        binding = _recorded_closure_binding(dossier, closed)
+    except ValidationError:
+        pass
+    else:
+        snapshot = binding.snapshot
+        selected = public_evidence(Evidence.objects.filter(case=case))
+        retrospective = MeetingVersion.objects.select_related('created_by').filter(
+            pk=binding.data['retrospective_id'], meeting__case=case, kind='retrospective', evidence__in=selected,
+        ).only('pk', 'created_by', 'created_by__is_active').first()
+        if retrospective:
+            try:
+                require(retrospective.created_by, case, 'meeting.record')
+            except PermissionDenied:
+                pass
+            else:
+                retrospective_refs = (retrospective.pk,)
+        if selected.filter(pk=binding.data['report_evidence_id'], kind='closure_report').exists():
+            report_refs = (binding.data['report_evidence_id'],)
+        for key, _, pin, _ in stations:
+            value = snapshot.get(pin)
+            ids = value if key == 'handover' and isinstance(value, list) else [value]
+            if 0 < len(ids) <= 100 and all(type(pk) is int and 1 <= pk < 2**63 for pk in ids):
+                references[key] = ids
+        recorded = dict(dossier.records.filter(pk__in={pk for ids in references.values() for pk in ids},
+                                              created_at__lte=closed.created_at).values_list('pk', 'kind'))
+        for key, _, _, kinds in stations:
+            if any(recorded.get(pk) not in kinds for pk in references.get(key, ())):
+                references.pop(key)
+    for key, title, _, _ in stations:
+        add(key, title, references.get(key, ()))
+    add('retrospective', 'Retrospective', retrospective_refs)
+    add('report', 'PM closure report', report_refs)
+    return {'as_of': timezone.now().isoformat(), 'recorded_closure_id': closed.pk, 'checks': checks,
+            'ready_to_prepare': False}
 
 
 @observed_fact

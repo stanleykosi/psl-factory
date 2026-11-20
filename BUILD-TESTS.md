@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+20 November 2026. Hosted 264 web `01d16978-799f-442d-bcd4-37f2cb23ca87` started after its schema check. No guarded sample replay. At 390/375, Codex opened finalized dossier 49, read retrospective 91 and PM report evidence 3809 from the closed record and saw no preparation controls. Work 219 had already reached Verified. `SCR-49` completed, bringing scoped acceptance to 145. Exact 265 isolated checks `747ca2ea-0cff-4448-a502-5c23d2e74a60` were submitted.
+
+20 November 2026. Railway 264 `3a9367bc-a754-440e-b43f-3dace958d0d5` passed seven Project PostgreSQL tests in 670.619s, including current native closure, pre-factory finalized records, current source revocation, open readiness checks and historic exact readback without a new selection. Django, drift, both preservation probes and final exit 0 passed. No preview schema or samples ran in the checks service. The prepared combined runtime matches 3,561 checked runtime files and retains two independently verified leadership fixtures.
+
 20 November 2026. Guarded aggregate payroll setup `0cdc4ea3-5627-4fc2-8746-0802b15f8c57` exited 0 with both preservation probes, no schema apply or PostgreSQL test suite. Exact report 6 and receipt 3 belong to the configured trial recipient. The admitted browser direct route returned Page unavailable and showed no amount. The positive Assistant browser check waits for the trial session.
 
 20 November 2026. Read back exact work 227 from the admitted browser after private upload 32 was supplied. The existing worker prepared invoice version 1 for NGN 42.00. Proof link 1 remained, the separate supplier had no invoice approval or issue action, no invoice operation was requested, and the original milestone stayed fixed. This completed `SCR-02-evidence-supplied` within its tested scope and brought acceptance to 144.
