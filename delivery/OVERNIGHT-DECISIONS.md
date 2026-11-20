@@ -346,3 +346,6 @@ The design engineer asked who sees the floor, then "lets fix the test data that 
 
 ## D-154 (20 Nov): "Response recorded" and "Outcome recorded" are toasts too
 The toast builder kept ResponseView's "Response recorded" and OutcomeView's "Outcome recorded" as success callouts because each was the whole page after the form. The design engineer: "Make them toasts". After the submit the toast shows and the page shows the recorded result read-only (what was recorded, by whom, when, what happens next) without a success callout; DecideStates stays on the allowlist only if it is not an action result. Queued after the conveyor floor (D-145).
+
+## D-155 (20 Nov): a live demo mode in the mock
+The design engineer: "is it possible for us to make the platform interactable at least so i can see all the loading time, thing of ai and how the answers look doesnt need to make sense just want to see the flows also for each line". F-54 criterion 12: mock-only demo mode with realistic latency, assistant replies that show agent steps then the answer, every startable line running through its stations over time with human hand-offs, decisions and rework, and a dev-only demo bar (switch role, speed, reset). Never in production. Queued after the conveyor floor and D-154.
