@@ -256,3 +256,36 @@ test('CV-2404: the cant pose at 1440 (side panel) and 390 (inline card, 44px con
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('the conversation list loads the next page as it is scrolled to the end, without reloading the rows shown (D-138)', async ({ page }) => {
+  const all = Array.from({ length: 25 }, (_, i) => ({
+    conversation_id: `CV-S${i}`,
+    title: `Scroll chat ${i}`,
+    agent: 'tola',
+    status: 'idle',
+    updated_at: '2026-11-13T09:00:00Z',
+  }));
+  const listCalls: string[] = [];
+  await page.route('**/api/v1/assistant/conversations?*', async (route) => {
+    const url = new URL(route.request().url());
+    listCalls.push(url.search);
+    const limit = Number(url.searchParams.get('limit') ?? 10);
+    const offset = Number(/^o:(\d+)$/.exec(url.searchParams.get('cursor') ?? '')?.[1] ?? 0);
+    const body = { items: all.slice(offset, offset + limit), as_of: '2026-11-14T10:00:00Z', ...(offset + limit < all.length ? { next_cursor: `o:${offset + limit}` } : {}) };
+    await route.fulfill({ json: body });
+  });
+  await page.setViewportSize({ width: 1440, height: 500 });
+  await ready(page, '/assistant');
+  const links = page.locator('.as-row');
+  await expect(links).toHaveCount(10);
+  await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toHaveCount(0);
+  const first = await links.first().elementHandle();
+  await links.last().scrollIntoViewIfNeeded();
+  await expect(links).toHaveCount(20);
+  await links.last().scrollIntoViewIfNeeded();
+  await expect(links).toHaveCount(25);
+  expect(listCalls.filter((c) => c.includes('cursor='))).toHaveLength(2);
+  // the first row is the very same element: nothing already shown was reloaded
+  expect(await first!.evaluate((el) => el.isConnected)).toBe(true);
+  expect(await links.first().evaluate((el, h) => el === h, first)).toBe(true);
+});

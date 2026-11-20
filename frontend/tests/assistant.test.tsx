@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setCsrfToken } from '@/api/client';
 import { AssistantFrame } from '@/features/assistant/AssistantFrame';
 import { AssistantHome } from '@/features/assistant/AssistantHome';
+import { ConversationList } from '@/features/assistant/ConversationList';
 import { poseFor } from '@/features/assistant/SidePanel';
 import { ThreadPage } from '@/features/assistant/ThreadPage';
 import { AppShell } from '@/shell/AppShell';
@@ -934,5 +935,69 @@ describe('phone: the bar and the footer', () => {
     expect(footer.getAttribute('href')).toBe('/work/W-1401');
     expect(footer.className).toContain('psl-btn--block');
     expect(screen.queryByRole('textbox')).toBeNull();
+  });
+});
+
+describe('conversation list: infinite scroll (D-138)', () => {
+  type IO = { cb: (e: { isIntersecting: boolean }[]) => void; node: Element; disconnected: boolean };
+  const observers: IO[] = [];
+  const row = (n: number) => ({ conversation_id: `CV-${n}`, title: `Chat ${n}`, agent: 'tola', status: 'idle', updated_at: '2026-11-14T09:00:00Z' }) as never;
+  beforeEach(() => {
+    observers.length = 0;
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        io: IO;
+        constructor(cb: IO['cb']) {
+          this.io = { cb, node: document.body, disconnected: false };
+          observers.push(this.io);
+        }
+        observe(node: Element) {
+          this.io.node = node;
+        }
+        disconnect() {
+          this.io.disconnected = true;
+        }
+      },
+    );
+  });
+  const live = () => observers.filter((o) => !o.disconnected);
+  const state = (n: number, extra = {}) => ({ status: 'ready' as const, items: Array.from({ length: n }, (_, i) => row(i)), next: 'o10', asOf: '2026-11-14T10:00:00Z', more: 'idle' as const, ...extra });
+
+  it('loads the next page when the end comes into view; shows no paging footer or rows per page', () => {
+    const onMore = vi.fn();
+    render(<ConversationList state={state(10)} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    expect(screen.queryByRole('radiogroup')).toBeNull();
+    expect(screen.queryByRole('button', { name: /Show/ })).toBeNull();
+    expect(onMore).not.toHaveBeenCalled();
+    act(() => live()[0].cb([{ isIntersecting: false }]));
+    expect(onMore).not.toHaveBeenCalled();
+    act(() => live()[0].cb([{ isIntersecting: true }]));
+    expect(onMore).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows Loading… while the next page loads, and a retry line when it fails; the rows stay', () => {
+    const onMore = vi.fn();
+    const { rerender } = render(<ConversationList state={state(10, { more: 'loading' })} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    expect(screen.getByText('Loading…')).toBeTruthy();
+    expect(screen.getAllByRole('link')).toHaveLength(10);
+    rerender(<ConversationList state={state(10, { more: 'error' })} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    expect(screen.getByRole('alert').textContent).toContain('Couldn’t load more.');
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(onMore).toHaveBeenCalledTimes(1);
+    expect(screen.getAllByRole('link')).toHaveLength(10);
+  });
+
+  it('keyboard: focus reaching the last conversation loads the next page; nothing more at the end', () => {
+    const onMore = vi.fn();
+    const { rerender } = render(<ConversationList state={state(3)} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    fireEvent.focus(screen.getAllByRole('link')[0]);
+    expect(onMore).not.toHaveBeenCalled();
+    fireEvent.focus(screen.getAllByRole('link')[2]);
+    expect(onMore).toHaveBeenCalledTimes(1);
+    rerender(<ConversationList state={state(3, { next: undefined })} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    fireEvent.focus(screen.getAllByRole('link')[2]);
+    expect(onMore).toHaveBeenCalledTimes(1);
+    expect(live()).toHaveLength(0);
   });
 });
