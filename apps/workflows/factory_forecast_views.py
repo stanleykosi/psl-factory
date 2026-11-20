@@ -21,6 +21,19 @@ from apps.finance.forecast_workbook import source_ids as workbook_source_ids
 from .factory_forecast_sources import PROTOCOL
 
 
+def monthly_forecast(row):
+    """Project the exact current internal calculation without exposing source rows."""
+    if (row['selection']['audience'] not in ('internal', 'management') or not row['intake_current']
+            or row['status']['stage'] not in ('review', 'publication', 'complete') or row['run'] is None):
+        return None
+    result = row['run'].result
+    coverage = result['coverage']
+    return {'as_of': result['as_of'], 'currency': result['currency'], 'basis': result['basis'],
+            'account_count': len(coverage['accounts']), 'inflows': coverage['inflows'], 'outflows': coverage['outflows'],
+            'periods': [{field: period[field] for field in ('month', 'opening', 'inflow', 'outflow', 'closing')}
+                        for period in result['periods']]}
+
+
 class InputsForm(forms.Form):
     as_of = forms.DateField(label='Exact selected scenario as-of date')
     months = forms.JSONField(label='Exact ordered month horizon', help_text='For example ["2026-11", "2026-12"]. Must equal the selected native scenario.')
@@ -191,6 +204,7 @@ def detail(request,work,focus=None):
                          'metadata':projected['metadata']}
     response = render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
         'group_table':group_table,'group_decisions':group_decisions,
+        'monthly_forecast':monthly_forecast(row['forecast']) if focus in (None,'decision') else None,
         'group_rules_form':group_rules_form,
         'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),
         'last_observation':last_observation,'can_attach_proof':can_attach_proof,'delivery_outcomes':recovery.OUTCOMES,

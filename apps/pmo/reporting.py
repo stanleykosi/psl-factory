@@ -171,6 +171,19 @@ def client_safe_values(snapshot,start_at,end_at,as_of):
         'next_steps':'Confirm outstanding source updates and follow up the recorded commitments and unresolved issues with their accountable owners. No new delivery date, scope commitment, approval or resolution is implied.'}
 
 
+def client_section_findings(text, evidence_ids, permitted=None):
+    findings = {}
+    if not text.strip() or text.strip().casefold() in {'tbd', 'todo', 'unknown', 'n/a', 'pending'}:
+        findings['text'] = 'Write this part or explain what information is missing.'
+    if not evidence_ids:
+        findings['evidence_ids'] = 'Choose at least one record for this part.'
+    elif len(evidence_ids) > 18:
+        findings['evidence_ids'] = 'Choose up to 18 records for this part.'
+    elif permitted is not None and any(type(pk) is not int or pk not in permitted for pk in evidence_ids):
+        findings['evidence_ids'] = 'Choose records from the selected reporting period and project inventory.'
+    return findings
+
+
 def client_content(case,snapshot,content_id):
     """Human-supplied client prose is evidence, never review or distribution authority."""
     import json
@@ -185,10 +198,10 @@ def client_content(case,snapshot,content_id):
     keys=['status','risks','timeline','next_steps']
     validate({'type':'object','properties':{'protocol':{'const':'pmo-weekly-client-content/v1'},'sections':{'type':'object','properties':{k:section for k in keys},'required':keys,'additionalProperties':False}},'required':['protocol','sections'],'additionalProperties':False},data)
     permitted=client_citation_ids(case,snapshot)
-    for key,value in data['sections'].items():
-        if not value['text'].strip() or value['text'].strip().casefold() in ['tbd','todo','unknown','n/a','pending']:
-            raise ValidationError('Resolve the '+key+' placeholder or explicitly explain the missing source facts')
-        if any(type(pk) is not int or pk not in permitted for pk in value['evidence_ids']):raise ValidationError('Every narrative citation must identify permitted evidence in the selected native meeting/action/milestone/issue/change inventory')
+    for key, value in data['sections'].items():
+        findings = client_section_findings(value['text'], value['evidence_ids'], permitted)
+        if findings:
+            raise ValidationError(f'{key.replace("_", " ").capitalize()}. {next(iter(findings.values()))}')
     return content,data['sections']
 
 
@@ -215,9 +228,11 @@ def client_manifest(snapshot,content):
 
 def client_citation_ids(case,snapshot):
     """Exact native facts only. P56 ownership does not waive overlapping private domains."""
+    from django.db.models import Q
     from apps.core.models import Evidence
-    from apps.core.evidence_access import restricted,forecast_private
+    from apps.core.evidence_access import CONFIRMED_CHANGE_SOURCE, forecast_private_query, other_private_query
     changes={c.current.evidence_id for c in snapshot['changes']}
     ids={m.current.evidence_id for m in snapshot['meetings']}|{a.current.evidence_id for a in snapshot['actions']}|{m.evidence_id for m in snapshot['milestones']}|{i.current.evidence_id for i in snapshot['issues']}|changes
-    return {e.pk for e in Evidence.objects.filter(case=case,pk__in=ids)
-        if not restricted(e) or e.pk in changes and e.source=='psl:p56-confirmed-request/v1' and not forecast_private(e)}
+    selected = Evidence.objects.filter(case=case, pk__in=ids).exclude(forecast_private_query(same_case=True))
+    admitted = selected.filter(~other_private_query() | Q(pk__in=changes, source=CONFIRMED_CHANGE_SOURCE))
+    return set(admitted.values_list('pk', flat=True))

@@ -1,5 +1,13 @@
 # Build progress log
 
+20 November 2026. Candidate 258 passed all 18 PostgreSQL tests and the original preservation probes. Weekly report sections now have separate exact citations. The Finance Forecast review displays the current month totals while keeping unknown amounts distinct from zero and omitting private calculations from Group Forecast. The distinct-reviewer bid and private payroll sample gates passed.
+
+20 November 2026. Promoted verified 255 and its matching worker. The preview applied bid upload and leadership scope migrations and accepted the guarded two-project leadership sample. The browser confirmed the private Group Forecast Return, the original asset Return in native history and restricted Payroll intake. Candidate 258 runs the corrected bid and separate payroll fixtures alongside both report improvements.
+
+20 November 2026. Pushed separately reviewed payroll and sample controls, leadership reporting, bid attachment recovery and Group Forecast history to `build/design-consolidation` at `0a7ce80a`. Isolated candidate 256 passed leadership sample preparation and stopped on the separate bid test's missing native recipient grant. The fixture is being corrected and rerun before preview use.
+
+20 November 2026. Verified the project Journey at phone width with the admitted reader. The same project showed its authorized closure work, while separate Finance access was required for Money. Scoped browser completion reached 134 of 262.
+
 20 November 2026. Completed the typed income correction journey on the admitted preparer account, bringing scoped browser completion to 133. The same account submitted asset opening proof 3845, saved narrower Group Forecast draft 2346 and approved closure report 135 as the separate Quality reviewer. Isolated 255 passed the private forecast decision-history regression and both preservation probes. Independent review and successor checkpoints remain open for the latter three cases.
 
 20 November 2026. Completed the trial reviewer batch at 132 scoped browser states. Agreements retained their original Finance handoff under same-signer rechecks. The bid retained its earlier Engineering return while the corrected version entered fresh review. Hosted exact 253. Isolated 254 passed all 16 PostgreSQL checks for multi-project reporting and durable private bid attachment recovery.

@@ -19,9 +19,9 @@ from apps.core.services import add_evidence
 from apps.documents.controlled import register_template, publication_requirements
 from apps.documents.models import Publication, PublicationJob, PublicationReceipt, ControlledReview
 from apps.identity.models import Grant
-from apps.pmo.meetings import create_action, change_action
+from apps.pmo.meetings import create_action, change_action, record_meeting
 from apps.pmo.models import MinutesReportBinding
-from apps.pmo.reporting import draft_period_report
+from apps.pmo.reporting import client_citation_ids, draft_period_report
 from apps.workflows.factory_reporting_views import InputsForm
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import active_component, register_reference, transition
@@ -346,7 +346,7 @@ class FactoryReportingTests(TestCase):
         page = self.client.get(reverse('factory_detail', args=[self.work.pk]), {'edit': '1'})
         self.assertContains(page, 'Returned for changes')
         self.assertTrue(page.context['inputs_form'].initial['status'])
-        self.assertTrue(page.context['inputs_form'].initial['citation_ids'])
+        self.assertEqual(page.context['inputs_form'].initial['status_citations'], [self.notes.pk])
         spent = self.work.budget_used
         self.correct()
         self.assertEqual(self.work.budget_used, spent)
@@ -515,11 +515,75 @@ class FactoryReportingTests(TestCase):
 
     def test_citation_choices_exclude_ungranted_native_sources(self):
         form = InputsForm(self.case, actor=self.actor)
-        self.assertIn(self.notes.pk, form.fields['citation_ids'].queryset.values_list('pk', flat=True))
+        self.assertIn(self.notes.pk, form.fields['status_citations'].queryset.values_list('pk', flat=True))
         Grant.objects.filter(case=self.case, user=self.actor, action='meeting.read').update(active=False)
         form = InputsForm(self.case, actor=self.actor)
-        self.assertNotIn(self.notes.pk, form.fields['citation_ids'].queryset.values_list('pk', flat=True))
-        self.assertNotIn(self.owner.pk, form.fields['citation_ids'].queryset.values_list('pk', flat=True))
+        self.assertNotIn(self.notes.pk, form.fields['risks_citations'].queryset.values_list('pk', flat=True))
+        self.assertNotIn(self.owner.pk, form.fields['next_steps_citations'].queryset.values_list('pk', flat=True))
+
+    def test_weekly_intake_checks_each_theme_and_preserves_its_exact_private_citations(self):
+        def support(reference, days_ago):
+            proof = add_evidence(self.actor, self.case.pk, 'meeting_notes',
+                                 'Synthetic report support ' + reference, 'synthetic:' + reference)
+            record_meeting(self.actor, self.case.pk, reference, 'status',
+                           timezone.now() - timedelta(days=days_ago), 'Review sample delivery',
+                           'Recorded sample milestone evidence', [], [], proof.pk, rev(self.case))
+            return proof.pk
+
+        recent = support('CURRENT-WEEK', 2)
+        old = support('EARLIER-WEEK', 9)
+        snapshot = reporting.inventory(self.actor, self.case, self.inputs)
+        with self.assertNumQueries(1):
+            self.assertEqual(client_citation_ids(self.case, snapshot), {self.notes.pk, recent})
+        self.client.force_login(self.actor)
+        url = reverse('factory_create')
+        response = self.client.get(url, {'definition': reporting.DEFINITION, 'case': self.case.pk})
+        self.assertContains(response, 'Records for risks and issue impact')
+        self.assertNotContains(response, 'name="citation_ids"')
+        data = dict(
+            {**self.inputs, **self.narrative}, content_id='', definition=reporting.DEFINITION,
+            case=self.case.pk, revision=rev(self.case), key='WEEKLY-THEME-SOURCES',
+            reference='Weekly client report with distinct sources',
+            status_citations=[self.notes.pk], risks='TBD', risks_citations=[old],
+            timeline_citations=[recent],
+        )
+        evidence_count = Evidence.objects.count()
+        invalid = self.client.post(url, data)
+        self.assertEqual(invalid.status_code, 200)
+        errors = invalid.context['inputs_form'].errors
+        self.assertIn('Write this part or explain what information is missing.', errors['risks'])
+        self.assertIn('Choose at least one record for this part.', errors['next_steps_citations'])
+        data.update(risks=self.narrative['risks'], next_steps_citations=[self.notes.pk, recent])
+        invalid = self.client.post(url, data)
+        self.assertEqual(invalid.status_code, 200)
+        self.assertIn('Choose records from the selected reporting period and project inventory.',
+                      invalid.context['inputs_form'].errors['risks_citations'])
+        self.assertEqual(Evidence.objects.count(), evidence_count)
+        self.assertFalse(FactoryWork.objects.filter(case=self.case, key=data['key']).exists())
+
+        data['risks_citations'] = [recent]
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        self.work = FactoryWork.objects.get(case=self.case, key=data['key'])
+        work_inputs = reporting.source(self.work, self.actor)['inputs']
+        narrative = Evidence.objects.get(pk=work_inputs['content_id'])
+        sections = json.loads(narrative.body)['sections']
+        self.assertEqual({key: section['evidence_ids'] for key, section in sections.items()}, {
+            'status': [self.notes.pk], 'risks': [recent], 'timeline': [recent],
+            'next_steps': [self.notes.pk, recent],
+        })
+        self.advance()
+        result = reporting.document(self.work)
+        self.assertIsNotNone(result, self.work.finding)
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        self.assertNotIn(recent, [entry['id'] for entry in result.source_manifest])
+
+        legacy = dict(self.inputs, **self.narrative, content_id='', citation_ids=[self.notes.pk, recent])
+        form = InputsForm(self.case, legacy, actor=self.actor, initial=work_inputs, saved_sections=sections)
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.inputs(self.actor, self.case)['content_id'], narrative.pk)
+        modern = dict(legacy, status_citations=[self.notes.pk])
+        self.assertFalse(InputsForm(self.case, modern, actor=self.actor).is_valid())
 
     def test_native_safe_draft_requires_native_source_read_grants(self):
         Grant.objects.filter(case=self.case, user=self.preparer, action='meeting.read').update(active=False)
@@ -786,6 +850,8 @@ class FactoryReportingTests(TestCase):
                                    'PM confirmed the exact request fields', rev(self.case))
         evidence = confirmed.version.evidence
         self.assertFalse(public_evidence(Evidence.objects.filter(pk=evidence.pk)).exists())
+        cited_options = dict(InputsForm(self.case, actor=self.actor).fields['status_citations'].choices)
+        self.assertEqual(cited_options[evidence.pk], f'Confirmed change record #{evidence.pk}')
         for section in self.content_body['sections'].values():
             section['evidence_ids'] = [evidence.pk]
         content = add_evidence(self.actor, self.case.pk, 'agent_private_report_content',
@@ -804,6 +870,8 @@ class FactoryReportingTests(TestCase):
         create_action(self.actor, self.case.pk, 'RESTRICTED-SOURCE-ACTION',
                       'Source body is not granted by meeting access', self.actor.pk,
                       timezone.now() + timedelta(days=1), private.pk, 'Recorded source reference', rev(self.case))
+        form = InputsForm(self.case, actor=self.actor)
+        self.assertNotIn(private.pk, dict(form.fields['status_citations'].choices))
         for section in self.content_body['sections'].values():
             section['evidence_ids'] = [private.pk]
         content = add_evidence(self.actor, self.case.pk, 'agent_private_report_content',

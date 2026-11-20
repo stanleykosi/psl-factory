@@ -13,9 +13,10 @@ from django.utils.dateparse import parse_datetime
 from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
 from apps.core.presentation import workspace_name
-from apps.core.evidence_access import public_evidence,forecast_private_query
+from apps.core.evidence_access import CONFIRMED_CHANGE_SOURCE, public_evidence, forecast_private_query
 from apps.core.services import add_evidence
 from apps.documents.models import Template
+from apps.pmo.reporting import client_citation_ids, client_section_findings
 from . import factory,factory_reporting as reporting
 from .factory_progress_views import StartWithBackground, started
 from .factory_views import ProfileForm
@@ -57,8 +58,12 @@ class ReportLocalDateTimeField(forms.DateTimeField):
         return super().prepare_value(value)
 
 
-NARRATIVE_FIELDS = [('status','Client-safe delivery progress'),('risks','Client-safe risks and issue impact'),
-                    ('timeline','Client-safe milestone status'),('next_steps','Client-safe next steps')]
+NARRATIVE_FIELDS = (
+    ('status', 'Delivery progress', 'Records for delivery progress'),
+    ('risks', 'Risks and issue impact', 'Records for risks and issue impact'),
+    ('timeline', 'Milestone status', 'Records for milestones'),
+    ('next_steps', 'Next steps', 'Records for next steps'),
+)
 
 
 class InputsForm(forms.Form):
@@ -71,8 +76,6 @@ class InputsForm(forms.Form):
             self.fields[name].help_text='Shown in '+timezone.get_current_timezone_name()+'. Unchanged stored boundaries retain their exact original precision.'
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type='status_report'),required=False,label='Controlled weekly client template')
         self.fields['content_id']=forms.ModelChoiceField(queryset=Evidence.objects.filter(case=case,kind='agent_private_report_content').exclude(forecast_private_query()).order_by('-pk'),required=False,label='Existing cited client narrative',empty_label='Not supplied, or enter all four themes below')
-        for key,label in NARRATIVE_FIELDS:
-            self.fields[key]=forms.CharField(required=False,max_length=10000,label=label,widget=forms.Textarea(attrs={'rows':3}),help_text='Use supported facts or explicitly explain missing information. PMO Lead review remains required.')
         from apps.pmo.models import Meeting,ActionItem,Milestone,Issue,ChangeRequest
         ids=set();confirmed_changes=set()
         def can(action):return actor.is_active and actor.grant_set.filter(case=case,action=action,active=True).exists()
@@ -83,16 +86,35 @@ class InputsForm(forms.Form):
                 ids.update(Milestone.objects.filter(case=case).values_list('evidence_id',flat=True))
             if can('issue.read'):ids.update(Issue.objects.filter(case=case).values_list('current__evidence_id',flat=True))
             if can('change.read'):
-                confirmed_changes=set(ChangeRequest.objects.filter(case=case,current__evidence__source='psl:p56-confirmed-request/v1').values_list('current__evidence_id',flat=True))
+                confirmed_changes=set(ChangeRequest.objects.filter(case=case,current__evidence__source=CONFIRMED_CHANGE_SOURCE).values_list('current__evidence_id',flat=True))
                 ids.update(ChangeRequest.objects.filter(case=case).values_list('current__evidence_id',flat=True))
         citations=public_evidence(Evidence.objects.filter(case=case,pk__in=ids))|Evidence.objects.filter(case=case,pk__in=confirmed_changes).exclude(forecast_private_query())
-        self.fields['citation_ids']=forms.ModelMultipleChoiceField(queryset=citations.order_by('-pk'),required=False,label='Native source evidence supporting the four themes',help_text='Must belong to the selected meeting, action, milestone, issue or change inventory. References remain private.')
+        citations = citations.only('pk').order_by('-pk')
+        available_choices = [
+            (pk, f'Confirmed change record #{pk}' if source == CONFIRMED_CHANGE_SOURCE
+             else f'{kind.replace("_", " ").capitalize()} #{pk} · v{version} · {source}')
+            for pk, kind, version, source in citations.values_list('pk', 'kind', 'version', 'source')
+        ]
+        for key, label, citations_label in NARRATIVE_FIELDS:
+            self.fields[key] = forms.CharField(
+                required=False, max_length=10000, label=label, widget=forms.Textarea(attrs={'rows': 3}),
+                help_text='Use facts that are safe to share with the client or explain what information is missing.',
+            )
+            self.fields[f'{key}_citations'] = forms.ModelMultipleChoiceField(
+                queryset=citations, required=False, label=citations_label,
+            )
+            self.fields[f'{key}_citations'].choices = available_choices
+        self.fields['citation_ids'] = forms.ModelMultipleChoiceField(
+            queryset=citations, required=False, widget=forms.MultipleHiddenInput,
+        )
         if self.saved_sections:
             self.saved_content_id = self.initial.get('content_id')
             self.initial['content_id'] = None
             saved_ids = {pk for section in self.saved_sections.values() for pk in section['evidence_ids']}
-            self.initial['citation_ids'] = list(citations.filter(pk__in=saved_ids).values_list('pk', flat=True))
-            self.initial.update({key: section['text'] for key, section in self.saved_sections.items()})
+            available = saved_ids.intersection(pk for pk, _ in available_choices)
+            for key, section in self.saved_sections.items():
+                self.initial[key] = section['text']
+                self.initial[f'{key}_citations'] = [pk for pk in section['evidence_ids'] if pk in available]
     def clean(self):
         cleaned=super().clean()
         for name in ['start_at','end_at']:
@@ -102,21 +124,66 @@ class InputsForm(forms.Form):
             # Only the trusted selected source supplies precision that the browser
             # cannot represent. A genuinely changed visible instant stays changed.
             if cleaned[name]==displayed:cleaned[name]=original
+        keys = [key for key, _, _ in NARRATIVE_FIELDS]
+        separate_citations = any(self.add_prefix(f'{key}_citations') in self.data for key in keys)
+        legacy_ids = [record.pk for record in cleaned.get('citation_ids', ())]
+        if self.has_error('citation_ids'):
+            raise ValidationError('Choose available project records beside each part of the report.')
+        if separate_citations and legacy_ids:
+            raise ValidationError('Use the record choices beside each part of the report.')
+        sections = {}
+        for key in keys:
+            ids = sorted(record.pk for record in cleaned.get(f'{key}_citations', ())) if separate_citations else legacy_ids
+            sections[key] = {'text': cleaned.get(key, ''), 'evidence_ids': ids}
+        if not any(section['text'] or section['evidence_ids'] for section in sections.values()):
+            return cleaned
+        if cleaned.get('content_id'):
+            self.add_error('content_id', 'Choose an existing narrative or enter the four parts below.')
+        if not separate_citations and self.saved_sections and set(legacy_ids) == {
+            pk for section in self.saved_sections.values() for pk in section['evidence_ids']
+        }:
+            for key in keys:
+                sections[key]['evidence_ids'] = self.saved_sections[key]['evidence_ids']
+        for key, section in sections.items():
+            self.add_section_findings(key, client_section_findings(section['text'], section['evidence_ids']))
+        cleaned['sections'] = sections
         return cleaned
 
-    def inputs(self,actor,case):
-        d=self.cleaned_data;pk=d['content_id'].pk if d['content_id'] else None
-        fields={k:d[k].strip() for k,_ in NARRATIVE_FIELDS}
-        if any(fields.values()):
-            if pk or not all(fields.values()) or not d['citation_ids']:raise ValidationError('Select existing content or provide all four cited client-safe themes, not both')
-            ids = [e.pk for e in d['citation_ids']]
-            keep = self.saved_sections and set(ids) == {pk for section in self.saved_sections.values() for pk in section['evidence_ids']}
-            if keep and all(text == self.saved_sections[k]['text'].strip() for k, text in fields.items()):
-                pk = self.saved_content_id
-            else:
-                payload={'protocol':'pmo-weekly-client-content/v1','sections':{k:{'text':v,'evidence_ids':self.saved_sections[k]['evidence_ids'] if keep else ids} for k,v in fields.items()}}
-                pk=add_evidence(actor,case.pk,'agent_private_report_content',json.dumps(payload,sort_keys=True),'Human-supplied weekly client narrative').pk
-        return {'start_at':d['start_at'].isoformat(),'end_at':d['end_at'].isoformat(),'template_id':d['template_id'].pk if d['template_id'] else None,'content_id':pk}
+    def add_section_findings(self, key, findings):
+        for part, message in findings.items():
+            field = key if part == 'text' else f'{key}_citations'
+            if not self.has_error(field):
+                self.add_error(field, message)
+
+    def inputs(self, actor, case):
+        data = self.cleaned_data
+        values = {
+            'start_at': data['start_at'].isoformat(), 'end_at': data['end_at'].isoformat(),
+            'template_id': data['template_id'].pk if data['template_id'] else None,
+            'content_id': data['content_id'].pk if data['content_id'] else None,
+        }
+        sections = data.get('sections')
+        if not sections:
+            return values
+        snapshot = reporting.inventory(actor, case, values)
+        permitted = client_citation_ids(case, snapshot)
+        for key, section in sections.items():
+            self.add_section_findings(key, client_section_findings(section['text'], section['evidence_ids'], permitted))
+        if self.errors:
+            raise ValidationError('Check the records selected for each part before preparing the report.')
+        if self.saved_sections and all(
+            section['text'] == self.saved_sections[key]['text'].strip()
+            and set(section['evidence_ids']) == set(self.saved_sections[key]['evidence_ids'])
+            for key, section in sections.items()
+        ):
+            values['content_id'] = self.saved_content_id
+        else:
+            payload = {'protocol': 'pmo-weekly-client-content/v1', 'sections': sections}
+            values['content_id'] = add_evidence(
+                actor, case.pk, 'agent_private_report_content', json.dumps(payload, sort_keys=True),
+                'Human-supplied weekly client narrative',
+            ).pk
+        return values
 
 class StartForm(StartWithBackground):
     definition=forms.CharField(initial=reporting.DEFINITION,widget=forms.HiddenInput)
