@@ -297,7 +297,7 @@ test.describe('desktop 1440 details', () => {
       route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }),
     );
     await page.getByRole('button', { name: 'Show more' }).click();
-    await expect(page.getByText('We couldn’t load more. Nothing was changed.')).toBeVisible();
+    await expect(page.getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
     await expect(projectLinks(page)).toHaveCount(10);
   });
 

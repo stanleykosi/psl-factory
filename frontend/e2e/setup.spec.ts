@@ -253,7 +253,7 @@ test.describe('desktop rules', () => {
     await openAs(page, context, '/setup/rules', { psl_mock_setup: 'many' });
     await page.locator('.setup-desktop').getByRole('radio', { name: '50' }).click();
     await page.locator('.setup-desktop').getByRole('button', { name: 'Show more' }).click();
-    await expect(page.locator('.setup-desktop').getByText('We couldn’t load more rules. Choose Show more to try again.')).toBeVisible();
+    await expect(page.locator('.setup-desktop').getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
     await expect(table(page).locator('tbody tr')).toHaveCount(50);
   });
 

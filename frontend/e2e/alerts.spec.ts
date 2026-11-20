@@ -283,7 +283,7 @@ test.describe('list states', () => {
     const fail = (route: import('@playwright/test').Route) => route.abort();
     await page.route('**/api/v1/notifications?*cursor=*', fail);
     await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    await expect(page.getByText('We couldn’t load more. Nothing was changed.')).toBeVisible();
+    await expect(page.getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
     await expect(rows(page)).toHaveCount(10);
     await page.unroute('**/api/v1/notifications?*cursor=*', fail);
     await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
