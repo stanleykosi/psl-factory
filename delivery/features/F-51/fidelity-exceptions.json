@@ -6,7 +6,7 @@
    "category": "frame",
    "conflicts": 2,
    "reason": "Conflicts 2: the board draws the PM's name; the lines are served to the Finance persona only, so the top bar shows that person's own name.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "tab",
@@ -14,7 +14,7 @@
    "category": "frame",
    "conflicts": 5,
    "reason": "Conflicts 5: frame item; the My work page under the scrim is the board's own list, not My work as built (real tabs and counts).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -22,7 +22,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "Conflicts 5: text inside a control (the chosen scenario, a record from E-LINE-OPTIONS); matched by the control, not by text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -30,7 +30,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "Conflicts 5: the label is visible above its input (UI review round 1 confirmed) and the two sit side by side as drawn; the tool lists it as text and did not match it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -38,7 +38,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "Conflicts 5: the typed date sits in the As of input's value, which the tool does not read as text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -46,7 +46,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "Conflicts 5: the label is visible above its input (UI review round 1 confirmed) and the two sit side by side as drawn; the tool lists it as text and did not match it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -54,7 +54,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "Conflicts 5: the typed Months sits in the input's value, which the tool does not read as text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -62,7 +62,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "Conflicts 5: text inside a control (the chosen prior schedule, from E-LINE-OPTIONS); matched by the control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "text",
@@ -70,7 +70,7 @@
    "category": "component",
    "conflicts": 3,
    "reason": "Conflicts 3 and 5: the board shows the empty choice as 'None ▾'; the page shows the line's placeholder 'None' in the select (text inside a control).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "link",
@@ -94,7 +94,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "UI-1-5: the proof card's remove '×' is needed behaviour (removing a file sends nothing); the board draws the card without it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "role": "icon",
@@ -102,7 +102,7 @@
    "category": "component",
    "conflicts": 5,
    "reason": "UI-1-5: the shared date field draws a calendar button for picking a date; the board draws a plain box.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   }
  ],
  "visual_waivers": [
@@ -110,25 +110,25 @@
    "board": "SCR-04-desktop-ppe 1440",
    "visual": 42.3,
    "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "board": "SCR-04-mobile-ppe 390",
    "visual": 49.9,
    "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "board": "SCR-04-desktop-forecast 1440",
    "visual": 43.3,
    "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   },
   {
    "board": "SCR-04-mobile-forecast 390",
    "visual": 48.1,
    "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-135"
   }
  ]
 }

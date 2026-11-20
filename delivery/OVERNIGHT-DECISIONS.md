@@ -286,3 +286,6 @@ Accepted:
 - the History link at 44px on phones.
 
 Merge into dlv-00 approved.
+
+## D-135 · F-51 signed (20 Nov 2026, design engineer: "Sign F-51")
+F-51 Start work proof field for fixed assets, plus the forecast start: the 4 floor exceptions (42–50, tall-page scoring limit), the 13 exceptions, the shared Start work change (an empty required submit shows messages on the page and sends nothing, on every line; closes F-49 QA-2-1), and product acceptance on the contract mock. Backend follow-up: a wrong-case upload answers 422, not 404. Merge into dlv-00 approved.

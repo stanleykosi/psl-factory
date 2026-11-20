@@ -3791,3 +3791,4 @@
 {"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-8","by":"pmo-acceptance","severity":"low","owner":"product","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
 {"at":"2026-11-20T10:30:27Z","feature":"F-51","round":2,"kind":"transition","head":"b50b0b7ca04b","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-20T10:31:19Z","feature":"F-51","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"b50b0b7ca04b","written_at":"2026-11-20T10:31:18Z"}
