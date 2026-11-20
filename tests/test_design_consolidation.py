@@ -152,6 +152,70 @@ class DesignConsolidationTests(TestCase):
         foreign = reverse('design_project_action', args=[self.other.pk, item.pk])
         self.assertEqual(self.client.get(foreign).status_code, 404)
 
+    def test_project_action_reassignment_preserves_progress_and_rejects_another_stale_owner(self):
+        from datetime import timedelta
+        from django.db import connection
+        from django.utils import timezone
+        from apps.pmo.meetings import change_action, create_action
+
+        self.assertEqual(connection.vendor, 'postgresql')
+        users = get_user_model().objects
+        successor = users.create_user('next-project-action-owner')
+        alternative = users.create_user('other-project-action-owner')
+        Grant.objects.bulk_create([
+            Grant(case=self.case, user=user, action=action)
+            for user in (successor, alternative)
+            for action in ('case.read', 'meeting.read', 'action.own', 'action.work')
+        ])
+        due = timezone.now() + timedelta(days=1, seconds=23)
+        item = create_action(self.actor, self.case.pk, 'SCREEN-OWNER-CHANGE', 'Check the sample handover',
+                             self.actor.pk, due, self.template_owner.pk, 'Fictional commitment', rev(self.case))
+        started = change_action(self.actor, self.case.pk, item.pk, 'start', self.template_owner.pk,
+                                'Started the fictional commitment', rev(self.case), 1)
+        url = reverse('design_project_action', args=[self.case.pk, item.pk])
+        self.client.force_login(self.actor)
+        page = self.client.get(url)
+        form = page.context['reassign_form']
+        self.assertContains(page, 'The deadline and progress stay the same.')
+        self.assertNotIn('due_at', form.fields)
+        options = form.fields['owner'].queryset
+        self.assertFalse(options.filter(pk=self.actor.pk).exists())
+        self.assertEqual(options.filter(pk__in=(successor.pk, alternative.pk)).count(), 2)
+
+        command = {'operation': 'reassign', 'owner': successor.pk, 'evidence': self.template_owner.pk,
+                   'reason': 'Current sample owner takes over the action', 'revision': rev(self.case),
+                   'action_revision': started.number}
+        self.assertRedirects(self.client.post(url, {**command, 'due_at': (due + timedelta(days=1)).isoformat()}),
+                             url, fetch_redirect_response=False)
+        item.refresh_from_db()
+        assigned = item.current
+        self.assertEqual((assigned.owner_id, assigned.status, assigned.due_at, assigned.due_basis),
+                         (successor.pk, 'in_progress', due, started.due_basis))
+        self.assertEqual(list(item.states.order_by('number').values_list('number', 'owner_id', 'status', 'due_at')), [
+            (1, self.actor.pk, 'open', due), (2, self.actor.pk, 'in_progress', due),
+            (3, successor.pk, 'in_progress', due),
+        ])
+        page = self.client.get(url)
+        self.assertNotContains(page, 'Complete action')
+        self.assertContains(page, 'Current sample owner takes over the action')
+
+        stale = {**command, 'owner': alternative.pk, 'revision': rev(self.case),
+                 'reason': 'A stale second assignment must not replace the current owner'}
+        page = self.client.post(url, stale)
+        self.assertContains(page, 'stale action revision')
+        self.assertContains(page, stale['reason'])
+        item.refresh_from_db()
+        self.assertEqual(item.current_id, assigned.pk)
+        self.assertEqual(item.states.count(), 3)
+
+        self.client.force_login(successor)
+        page = self.client.get(url)
+        self.assertIsNone(page.context['reassign_form'])
+        self.assertContains(page, 'Complete action')
+        self.assertEqual(self.client.post(url, {**stale, 'action_revision': assigned.number}).status_code, 403)
+        item.refresh_from_db()
+        self.assertEqual(item.current_id, assigned.pk)
+
     def test_agent_entry_lists_eight_roles_and_checks_current_grants(self):
         self.client.force_login(self.actor)
         assistant = reverse('design_agents')

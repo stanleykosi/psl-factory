@@ -3,6 +3,7 @@
 import hashlib
 import logging
 import secrets
+from contextlib import contextmanager
 from io import BytesIO
 from pathlib import PurePath
 from xml.etree.ElementTree import ParseError
@@ -73,43 +74,19 @@ def matches_receipt(intake, actor, facts, context):
              intake.deadline_evidence_id, intake.note) == facts and from_intake(intake) == context)
 
 
-def record(actor, case_id, reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note, expected, file,
-           *,source_context=None, context_attested=False):
+@contextmanager
+def durable_upload():
+    """Own the database commit and reconcile a staged object if it fails."""
     staged_key = None
+
+    def store(key, data):
+        nonlocal staged_key
+        staged_key = key
+        case_uploads.put(key, data)
+
     try:
-        # Own the commit so an uncommitted database receipt never outlives this storage attempt.
         with transaction.atomic(durable=True):
-            case = lock_case(actor, case_id, 'rfp.intake')
-            authorize_write(actor, case)
-            if type(expected) is not int or not isinstance(reference, str) or not reference.strip() or len(reference.strip()) > 160:
-                raise ValidationError('Choose the current workspace and enter the bid reference.')
-            context = validate_context(source_context, context_attested)
-            data = read_file(file)
-            fingerprint = hashlib.sha256(data).hexdigest()
-            bid = RFPCase.objects.filter(case=case).select_related('current_intake').first()
-            current = bid.current_intake if bid else None
-            facts = (reference.strip(), received_at, deadline_status, deadline_at, deadline_evidence_id, note)
-            if matches_receipt(current, actor, facts, context):
-                original = attachment_for(actor, case, current)
-                if original and (original.sha256, original.size) == (fingerprint, len(data)):
-                    return current
-            if case.revision != expected:
-                raise ValidationError('Stale revision; refresh before retrying.')
-            validate_file(file.name, data)
-            evidence = add_evidence(actor, case.pk, 'rfp_intake',
-                'A private copy of the received bid document was retained with this intake.', SOURCE, expected)
-            case.refresh_from_db(fields=['revision'])
-            intake = rfp.intake(actor, case.pk, reference, evidence.pk, received_at, deadline_status,
-                                deadline_at, deadline_evidence_id, note, case.revision,
-                                source_context=context, context_attested=context_attested)
-            key = secrets.token_hex(32)
-            upload = CaseUpload.objects.create(case=case, actor=actor, name=file.name[:160], key=key,
-                                               sha256=fingerprint, size=len(data))
-            event(actor, case, ADMISSION, intake=intake.pk, evidence=evidence.pk, evidence_sha256=evidence.sha256,
-                  upload=upload.pk, file_sha256=upload.sha256)
-            staged_key = key
-            case_uploads.put(key, data)
-        return intake
+            yield store
     except Exception as exc:
         if staged_key:
             try:
@@ -121,3 +98,44 @@ def record(actor, case_id, reference, received_at, deadline_status, deadline_at,
         if isinstance(exc, OSError):
             raise ValidationError('Private storage is unavailable. Try again later.') from exc
         raise
+
+
+def persist(actor, case, facts, filename, data, fingerprint, store, *, context, context_attested):
+    reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note = facts
+    evidence = add_evidence(actor, case.pk, 'rfp_intake',
+        'A private copy of the received bid document was retained with this intake.', SOURCE, case.revision)
+    case.refresh_from_db(fields=['revision'])
+    intake = rfp.intake(actor, case.pk, reference, evidence.pk, received_at, deadline_status,
+                        deadline_at, deadline_evidence_id, note, case.revision,
+                        source_context=context, context_attested=context_attested)
+    key = secrets.token_hex(32)
+    upload = CaseUpload.objects.create(case=case, actor=actor, name=filename[:160], key=key,
+                                       sha256=fingerprint, size=len(data))
+    event(actor, case, ADMISSION, intake=intake.pk, evidence=evidence.pk, evidence_sha256=evidence.sha256,
+          upload=upload.pk, file_sha256=upload.sha256)
+    store(key, data)
+    return intake
+
+
+def record(actor, case_id, reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note, expected, file,
+           *,source_context=None, context_attested=False):
+    with durable_upload() as store:
+        case = lock_case(actor, case_id, 'rfp.intake')
+        authorize_write(actor, case)
+        if type(expected) is not int or not isinstance(reference, str) or not reference.strip() or len(reference.strip()) > 160:
+            raise ValidationError('Choose the current workspace and enter the bid reference.')
+        context = validate_context(source_context, context_attested)
+        data = read_file(file)
+        fingerprint = hashlib.sha256(data).hexdigest()
+        bid = RFPCase.objects.filter(case=case).select_related('current_intake').first()
+        current = bid.current_intake if bid else None
+        facts = (reference.strip(), received_at, deadline_status, deadline_at, deadline_evidence_id, note)
+        if matches_receipt(current, actor, facts, context):
+            original = attachment_for(actor, case, current)
+            if original and (original.sha256, original.size) == (fingerprint, len(data)):
+                return current
+        if case.revision != expected:
+            raise ValidationError('Stale revision; refresh before retrying.')
+        validate_file(file.name, data)
+        return persist(actor, case, facts, file.name, data, fingerprint, store,
+                       context=context, context_attested=context_attested)

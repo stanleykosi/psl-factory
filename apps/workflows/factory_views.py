@@ -1,4 +1,5 @@
 from apps.pmo.go_live_attestations import parse_attestation
+from apps.pmo import rfp_fresh_intake
 from uuid import uuid4
 from urllib.parse import urlencode
 from django import forms
@@ -67,7 +68,11 @@ def intake_options(actor):
     available={}
     for _,_,_,actions in INTAKES:
         if actions not in available:available[actions]=granted(actor,list(actions)).filter(kind='project').exists()
-    return [{'definition':name,'title':title,'description':description} for name,title,description,actions in INTAKES if available[actions]]
+    options = [{'definition':name,'title':title,'description':description} for name,title,description,actions in INTAKES if available[actions]]
+    if rfp_fresh_intake.available(actor).exists():
+        options.insert(0, {'definition': rfp_fresh_intake.LINE, 'title': 'Log a received bid',
+            'description': 'Start a workspace and keep the original document.'})
+    return options
 
 
 def intake_available(actor):
@@ -79,7 +84,8 @@ def intake_available(actor):
         for action in sorted(actions):
             match &= Q(pk__in=Grant.objects.filter(user=actor, active=True, action=action).values('case_id'))
         eligible |= match
-    return granted(actor, ['factory.start']).filter(kind='project').filter(eligible).exists()
+    return (granted(actor, ['factory.start']).filter(kind='project').filter(eligible).exists()
+            or rfp_fresh_intake.available(actor).exists())
 
 
 @login_required
@@ -788,6 +794,9 @@ class StartForm(StartWithBackground):
 @login_required
 def create(request):
     envelope=request.POST.get('definition',request.GET.get('definition','pmo-finance/v1'))
+    if envelope == rfp_fresh_intake.LINE:
+        from .factory_fresh_bid_views import create as log_bid
+        return log_bid(request)
     if envelope not in DEFINITIONS:raise Http404
     if envelope=='rfp-response/v1':
         from .factory_rfp_views import create as create_rfp

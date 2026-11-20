@@ -78,6 +78,7 @@ def workbench(request,case_id):
     current_inputs = []
     current_attachment = None
     intake_context = None
+    earlier_received = None
     if r and r.current_intake_id:
         rows = r.current_intake.contributions.filter(team__in=rfp.TEAMS).order_by('team', '-pk').distinct('team')
         current_inputs = [row for row in rows.select_related('evidence').defer('evidence__body') if not restricted(row.evidence)]
@@ -87,8 +88,19 @@ def workbench(request,case_id):
                 intake_context = rfp_intake_context.visible(request.user, case, r.current_intake)
             except PermissionDenied:
                 pass
+    selected = request.GET.get('received', '')
+    if r and (case.pk, 'document.read') in available and 0 < len(selected) <= 18 and selected.isascii() and selected.isdecimal():
+        selected_id = int(selected)
+        if selected_id != r.current_intake_id:
+            original = RFPIntake.objects.filter(rfp=r, pk=selected_id, number=1, actor=request.user).first()
+            if original:
+                try:
+                    if rfp_intake_upload.attachment_for(request.user, case, original):
+                        earlier_received = original
+                except PermissionDenied:
+                    pass
     return render(request,'pmo/rfp.html',{'case':case,'rfp':r,'commands':forms,'current_inputs':current_inputs,
-        'current_attachment':current_attachment,'intake_context':intake_context,
+        'current_attachment':current_attachment,'intake_context':intake_context,'earlier_received':earlier_received,
         'responses':RFPResponse.objects.filter(rfp=r).order_by('-pk'),
         'submissions':RFPSubmission.objects.filter(response__rfp=r).select_related('portal_receipt'),'outcomes':RFPOutcome.objects.filter(submission__response__rfp=r),
         'disposition':RFPDisposition.objects.filter(rfp=r).first(),'runs':AgentRun.objects.filter(case=case,provider='deterministic-rfp-investigation-v1').order_by('-pk')[:5]})

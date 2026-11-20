@@ -1,4 +1,4 @@
-{% extends 'base.html' %}{% load studio_ui tz %}{% block content %}
+{% extends 'base.html' %}{% load studio_ui tz rfp_returns %}{% block content %}
 <a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to the same work view</a>
 <div class="page-heading"><div><p class="eyebrow">RFP RESPONSE AND CUSTOMER OUTCOME</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'rfp' case.pk %}">Received RFP and team inputs</a></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small>{{ row.evidence_as_of|date:'d M Y H:i:s T' }}</div></div>
@@ -15,6 +15,7 @@
 {% endif %}
 {% if can_review_requirement_answers %}<section class="card"><h2>Requirement answers</h2><a href="{% url 'factory_rfp_answers' row.work.pk %}">Review Tola’s suggestions and your answers</a></section>{% endif %}
 {% if not focus or focus == 'decision' %}
+{% rfp_return_handoff row.work row.can_correct %}
 <section class="card"><h2>{% if row.work.status == 'verified' %}Reviewed response{% else %}Response in progress{% endif %}</h2>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}
 {% if row.rfp.response %}<p>{{ row.rfp.response.evidence.body }}</p><table><thead><tr><th>Requirement</th><th>Coverage</th><th>Response</th></tr></thead><tbody>{% for mapping in row.rfp.response.matrix %}<tr><td>{{ mapping.key }}</td><td>{{ mapping.disposition|readable }}</td><td>{{ mapping.response }}</td></tr>{% endfor %}</tbody></table><h3>Recorded response reviews</h3>{% for review in row.rfp.response.reviews.all %}<p>{{ review.role }} · {{ review.verdict|readable }} · {{ review.note }}</p>{% empty %}<p>No response review recorded yet.</p>{% endfor %}<h3>Recorded commercial decisions</h3>{% for decision in row.rfp.response.commercial.decisions.all %}<p>{{ decision.role }} · {{ decision.verdict|readable }} · {{ decision.created_at|date:'d M Y H:i T' }}</p>{% empty %}<p>No commercial decision recorded yet.</p>{% endfor %}{% else %}<p>The agent has not yet prepared a source-bound response.</p>{% endif %}</section>
 {% endif %}
@@ -59,7 +60,7 @@
 <label>Portal receipt evidence<select name="evidence" required><option value="">Choose evidence</option>{% for proof in portal_evidence %}<option value="{{ proof.pk }}">{{ proof.source }} · version {{ proof.version }}</option>{% endfor %}</select></label><label>What did you check?<textarea name="note" required maxlength="4000"></textarea></label><button>Record portal receipt</button></form></section>{% endif %}
 {% endif %}
 {% if not focus %}
-{% if row.can_correct %}<details class="card"><summary>Correct response inputs</summary><p>Resolve original uncertain effects first. Earlier sources, decisions and spent allowance remain in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct"><input type="hidden" name="case_revision" value="{{ case.revision }}">{% include 'factory/rfp_sources.html' %}<label>Why these sources are being corrected<textarea name="reason" required maxlength="2000"></textarea></label><button>Record corrected inputs</button></form></details>{% endif %}
+{% if row.can_correct %}<details class="card" id="correct-response"><summary>Correct response inputs</summary><p>Resolve original uncertain effects first. Earlier sources, decisions and spent allowance remain in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct"><input type="hidden" name="case_revision" value="{{ case.revision }}">{% include 'factory/rfp_sources.html' %}<label>Why these sources are being corrected<textarea name="reason" required maxlength="2000"></textarea></label><button>Record corrected inputs</button></form></details>{% endif %}
 {% endif %}
 {% if not focus %}
 {% if row.can_configure %}<section class="card"><h2>Operating settings</h2><p>{% if row.work.policy_id %}Spent allowance: {{ row.work.budget_used }} of {{ row.work.budget_limit }}. Corrections retain it.{% else %}An execution allowance has not been reserved.{% endif %}</p><a href="{% url 'factory_configuration' case.pk %}?definition=rfp-response/v1">Review response preparation settings</a><p><a href="{% url 'factory_coordinator_configuration' case.pk %}">Review work coordination</a></p></section>{% endif %}

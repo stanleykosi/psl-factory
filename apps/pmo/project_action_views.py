@@ -27,21 +27,28 @@ class ActionForm(forms.Form):
     evidence = forms.ModelChoiceField(queryset=Evidence.objects.none(), label='Supporting record')
     reason = forms.CharField(max_length=4000, widget=forms.Textarea(attrs={'rows': 4}))
 
-    def __init__(self, case, state, choices, data=None):
-        super().__init__(data, initial={'revision': case.revision, 'action_revision': state.number,
-                                       'owner': state.owner_id, 'due_at': state.due_at})
+    def __init__(self, case, state, choices, data=None, *, owner_only=False):
+        super().__init__(data, auto_id='reassign_%s' if owner_only else 'id_%s',
+                         initial={'revision': case.revision, 'action_revision': state.number,
+                                  'owner': state.owner_id, 'due_at': state.due_at})
         self.fields['operation'].choices = choices
         self.fields['evidence'].queryset = public_evidence(case.evidence.all()).order_by('-pk').defer('body')
-        if any(value == 'assign' for value, _ in choices):
-            self.fields['owner'].queryset = get_user_model().objects.filter(is_active=True, grant__case=case,
-                grant__action='action.own', grant__active=True).distinct().order_by('username')
+        if owner_only or any(value == 'assign' for value, _ in choices):
+            owners = get_user_model().objects.filter(is_active=True, grant__case=case, grant__action='action.own',
+                                                     grant__active=True).distinct().order_by('username')
+            self.fields['owner'].queryset = owners.exclude(pk=state.owner_id) if owner_only else owners
         else:
             self.fields.pop('owner')
             self.fields.pop('due_at')
+        if owner_only:
+            self.fields['operation'].widget = forms.HiddenInput()
+            self.initial.update(operation='reassign', owner=None)
+            self.fields.pop('due_at')
+            self.fields['owner'].label = 'New owner'
 
     def clean(self):
         values = super().clean()
-        if values.get('operation') == 'assign' and not values.get('owner'):
+        if values.get('operation') in {'assign', 'reassign'} and not values.get('owner') and not self.has_error('owner'):
             self.add_error('owner', 'Choose the person who will own this action.')
         return values
 
@@ -65,18 +72,32 @@ def show(request, case_id, item_id):
             choices.append(('start', 'Start action'))
         if state.status in {'open', 'in_progress'}:
             choices.append(('complete', 'Complete action'))
-    form = ActionForm(case, state, choices, request.POST if request.method == 'POST' else None) if choices else None
-    if request.method == 'POST' and form and form.is_valid():
-        values = form.cleaned_data
+    posted = request.POST if request.method == 'POST' else None
+    changing_owner = posted is not None and posted.get('operation') == 'reassign'
+    if changing_owner and 'action.manage' not in grants:
+        require(actor, case, 'action.manage')
+    form = ActionForm(case, state, choices, posted if not changing_owner else None) if choices else None
+    reassign_form = None
+    if 'action.manage' in grants and not closed and state.owner_id:
+        reassign_form = ActionForm(case, state, [('reassign', 'Change owner')],
+                                   posted if changing_owner else None, owner_only=True)
+        if not changing_owner and not reassign_form.fields['owner'].queryset.exists():
+            reassign_form = None
+    submitted = reassign_form if changing_owner else form
+    if changing_owner and submitted is None:
+        messages.error(request, 'The action changed. Review its current owner and status.')
+    if submitted is not None and submitted.is_bound and submitted.is_valid():
+        values = submitted.cleaned_data
         owner = values.get('owner')
         try:
             change_action(actor, case.pk, item.pk, values['operation'], values['evidence'].pk, values['reason'],
                           values['revision'], values['action_revision'], owner.pk if owner else None, values.get('due_at'))
         except ValidationError as exc:
-            form.add_error(None, exc)
+            submitted.add_error(None, exc)
         else:
             messages.success(request, 'Project action updated.')
             return redirect('design_project_action', case.pk, item.pk)
     history = Paginator(item.states.select_related('owner','actor').order_by('-number'),20).get_page(request.GET.get('page'))
     return render(request, 'design/project_action.html', {'case': case, 'item': item, 'state': state, 'form': form,
-                                                         'timing': action_timing(state), 'history': history})
+                                                         'reassign_form': reassign_form, 'timing': action_timing(state),
+                                                         'history': history})

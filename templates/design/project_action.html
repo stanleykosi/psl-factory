@@ -15,5 +15,12 @@
   {% if history.has_previous %}<a class="button secondary" href="?page={{ history.previous_page_number }}">Previous changes</a>{% endif %}
   {% if history.has_next %}<a class="button secondary" href="?page={{ history.next_page_number }}">Earlier changes</a>{% endif %}
 </nav></section>
-<aside class="card"><h2>Update action</h2>{% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record change</button></form>{% else %}<p>No change is available for your current role and this action’s state.</p>{% endif %}<p><a href="{% url 'meetings' case.pk %}">Open meetings and deadline controls</a></p></aside></div>
+<aside class="card">
+  {% if reassign_form %}<section><h2>Change owner</h2><p>The deadline and progress stay the same.</p>
+    <form method="post">{% csrf_token %}{{ reassign_form.as_p }}<button>Save owner</button></form>
+  </section>{% endif %}
+  <h2>Update action</h2>
+  {% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record change</button></form>{% else %}<p>No change is available for your current role and this action’s state.</p>{% endif %}
+  <p><a href="{% url 'meetings' case.pk %}">Open meetings and deadline controls</a></p>
+</aside></div>
 {% endblock %}
