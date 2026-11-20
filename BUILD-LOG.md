@@ -1,5 +1,11 @@
 # Build progress log
 
+20 November 2026. Confirmed separate sample admission 7/user 243 and started exact Finance work 211 in Codex. The worker prepared Schedule 32 and kept review with Finance. Batch 246 passed all Project, Commercial and Shared tests and eight Finance tests. Three Forecast fixture cases require a focused rerun after preserving an unobservable original receipt through setup. New scoped bid pre-attempt hold and asset calculation status are staged for later verification.
+
+20 November 2026. Verified the revised bid reminder against submission 18 and separate sample-mailbox receipt against submission 19 in Codex. Scoped acceptance moved to 120 of 262. Submitted the grouped 246 PostgreSQL gate. The sample preparer completed account setup and signed in. Prepare the fresh authorized scope before walking the exact Finance correction.
+
+20 November 2026. Pushed verified 243 source as `85f3f0b0` and hosted the matching web and worker. Restored the native trial session, staged a separate sample preparer invitation and exercised two exact opened bid samples. Batch 244 passed all Project, Commercial and Shared cases and four Finance cases. Candidate 246 groups corrections for the three remaining Finance fixtures with the next Forecast, closure and accessibility checks. Preview continues on 243.
+
 20 November 2026. The focused 243 gate passed seven PostgreSQL tests, both original receipt preservation probes and final exit 0. The verified source is staged for preview promotion. Candidate 244 holds the next protected Finance and bid controls and durable Project behaviors. The staged 245 follow-up adds Forecast recovery and shared accessibility work.
 
 20 November 2026. Batch 242 finished with 39 of 40 passing tests and one Commercial reminder assertion failure. All 25 Project tests passed. The focused 243 rerun was submitted after the final marker, with the Word package validation and Business Unit checks. Preview stays on the verified 240 runtime and its synthetic browser evidence stays preserved.
