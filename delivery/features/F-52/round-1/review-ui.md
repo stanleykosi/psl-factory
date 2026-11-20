@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ui
-COMMIT: 7fa112fbc1c004292685163cfe2e8a25ad525c54
+COMMIT: 523029ab661c7bc84edc76060a7e30aa9e46ef0e
 AUTHORITY: delivery UI review
 
 ## Summary

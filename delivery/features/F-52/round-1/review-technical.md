@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 7fa112fbc1c004292685163cfe2e8a25ad525c54
+COMMIT: 523029ab661c7bc84edc76060a7e30aa9e46ef0e
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -21,3 +21,6 @@ None.
 - AC6 | verified | CSS only inside max-width 719.98px; desktop rule untouched. The e2e measures two lines at 390 and 1440 (builder reports it passing).
 - AC7 | verified | The beforeEach retries a failed reset up to 3 times and rethrows; no assertion changed. Builder reports 8 clean runs.
 - AC8 | verified | checks.md GATE: PASS on this head; no protected paths changed. Builder reports e2e for the five lines plus history-link passing.
+
+## Re-pin to 523029ab (coordinator, 20 Nov)
+Merged dlv-00, which brought only delivery-record commits (no frontend change: `git diff --stat HEAD^1 HEAD -- frontend` is empty). The gate PASS on 7fa112fb (checks.sh 3300; e2e 146) holds for the code. Verdicts carry forward.
