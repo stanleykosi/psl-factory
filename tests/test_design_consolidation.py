@@ -53,6 +53,44 @@ class DesignConsolidationTests(TestCase):
         self.assertNotContains(response, reverse('issues', args=[self.case.pk]))
         self.assertNotContains(response, reverse('factory_detail', args=[self.work.pk]))
 
+    def test_project_journey_orders_work_and_limits_finance_and_assistant_to_current_scope(self):
+        from apps.agents.assistant_models import AssistantConversation
+        from apps.core.services import add_evidence
+        from apps.workflows import factory_minutes
+        from tests.meeting_helpers import MINUTES_DEFINITION
+
+        self.client.force_login(self.actor)
+        notes = add_evidence(self.actor, self.case.pk, 'meeting_notes', 'Sample chronology source', 'synthetic:journey')
+        template = register_template(self.actor, self.case.pk, 'Journey minutes', MINUTES_DEFINITION,
+                                     self.template_owner.pk, rev(self.case))
+        selection = {'protocol': factory_minutes.PROTOCOL, 'evidence_id': notes.pk, 'template_id': template.pk,
+                     'meeting_version_id': None, 'audience': 'internal', 'publish': False}
+        for index in range(22):
+            factory_minutes.start(self.actor, self.case.pk, f'sample-journey-{index}', f'SAMPLE-JOURNEY-{index:02}',
+                                  selection, rev(self.case))
+        path = reverse('design_project', args=[self.case.pk])
+        page = self.client.get(path)
+        self.assertContains(page, 'Project work, oldest first')
+        self.assertEqual(page.context['journey']['items'][0]['id'], self.work.pk)
+        self.assertEqual(page.context['journey']['total'], 23)
+        self.assertEqual(page.context['journey']['waiting'], int(self.work.status in ('waiting', 'waiting_effect')))
+        self.assertContains(page, 'Reviewed contract stages')
+        self.assertContains(page, 'Invoice deliveries recorded')
+        self.assertNotContains(page, 'SAMPLE-JOURNEY-21')
+        self.assertContains(self.client.get(path, {'page': 2}), 'SAMPLE-JOURNEY-21')
+
+        target = reverse('assistant_start', args=['tola'])
+        selected = self.client.get(target, {'workspace': self.case.pk})
+        self.assertEqual(selected.context['form'].initial['workspace'], self.case.pk)
+        self.assertIsNone(self.client.get(target, {'workspace': self.other.pk}).context['form'].initial['workspace'])
+        self.assertFalse(AssistantConversation.objects.exists())
+
+        Grant.objects.filter(case=self.case, user=self.actor, action__in=['finance.read', 'agent.extract']).update(active=False)
+        page = self.client.get(path)
+        self.assertNotContains(page, 'Invoice deliveries recorded')
+        self.assertNotContains(page, 'Ask Tola about this project')
+        self.assertNotContains(page, reverse('factory_detail', args=[self.work.pk]))
+
     def test_leadership_reader_is_available_to_scoped_access_configuration(self):
         from apps.identity.actions import ACTIONS
 

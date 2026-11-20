@@ -1,10 +1,12 @@
 """Project views over existing records. Native screens own edits and decisions."""
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
-from django.db.models import F, OuterRef, Q, Subquery
+from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.http import Http404
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import ReadLimit, limit_queries
@@ -29,6 +31,79 @@ def tabs(case, grants):
     return [{'key': key, 'title': title, 'url': reverse('design_project' if key == 'journey' else 'design_project_tab',
                                                        args=[case.pk] if key == 'journey' else [case.pk, key])}
             for key, title, permissions in TABS if not permissions or permissions.intersection(grants)]
+
+
+WORK_STATUS = {
+    'ready': 'Ready to continue', 'waiting': 'Waiting', 'waiting_effect': 'Awaiting confirmation',
+    'verified': 'Verified', 'blocked': 'Needs attention', 'configuration_needed': 'Setup needed',
+    'owner_needed': 'Owner needed', 'cancelled': 'Stopped', 'followup_needed': 'Follow-up needed',
+}
+
+
+def work_timeline(works, page_number):
+    from apps.workflows.factory_definitions import DEFINITIONS
+
+    counts = dict(works.order_by().values('status').annotate(total=Count('pk')).values_list('status', 'total'))
+    rows = works.order_by('created_at', 'pk').values('pk', 'definition', 'request__reference', 'status', 'created_at', 'updated_at')
+    page = Paginator(rows, 20).get_page(page_number)
+    items = [{'id': row['pk'], 'line': DEFINITIONS[row['definition']]['title'], 'reference': row['request__reference'],
+              'state': WORK_STATUS.get(row['status'], 'Check work item'), 'started': row['created_at'],
+              'updated': row['updated_at']} for row in page]
+    return {'items': items, 'page': page, 'as_of': timezone.now(), 'total': sum(counts.values()),
+            'waiting': counts.get('waiting', 0) + counts.get('waiting_effect', 0),
+            'stopped': counts.get('cancelled', 0) + counts.get('followup_needed', 0)}
+
+
+def finance_facts(actor, case):
+    from apps.core.read_budget import ReadBudget
+    from apps.finance.models import BillingCoverage
+    from apps.finance.project_money import STAGES, expected_milestone, invoice_rows, terms
+    from apps.identity.services import require
+
+    require(actor, case, 'finance.read')
+    try:
+        with limit_queries(260):
+            stages, _, coverage_id, _ = terms(case)
+            coverage = BillingCoverage.objects.filter(case=case, pk=coverage_id).first() if coverage_id else None
+            delivered = sum(hasattr(item, 'invoicedelivery') for item in invoice_rows(actor, case, ReadBudget()))
+            next_milestone = None
+            if coverage:
+                completions = Milestone.objects.filter(case=case, evidence__in=public_evidence(case.evidence.all()))
+                for stage in STAGES:
+                    if stage == 'signed_sow':
+                        continue
+                    if stage not in stages:
+                        break
+                    name = expected_milestone(case, coverage, stage)
+                    if not name or not completions.filter(name=name).exists():
+                        next_milestone = name
+                        break
+            return {'stages': len(stages) if coverage and stages else None, 'delivered': delivered, 'next': next_milestone}
+    except ReadLimit:
+        return {'limited': True}
+
+
+def engagement_facts(actor, case):
+    from apps.identity.services import require
+    from apps.pmo import engagement
+
+    require(actor, case, 'engagement.read')
+    try:
+        source = engagement.current_capture(case)
+        for action in ('case.read', 'engagement.read', 'engagement.capture'):
+            require(source.actor, case, action)
+        if not public_evidence(case.evidence.filter(pk=source.evidence_id)).exists():
+            return {}
+    except (ValidationError, PermissionDenied):
+        return {}
+    facts = {'route': source.data['route'], 'reference': source.data['reference']}
+    try:
+        assignment = engagement.current_assignment(case)
+        pm = get_user_model().objects.get(pk=assignment.data['pm_id'], is_active=True)
+        facts['manager'] = pm.get_full_name() or pm.get_username()
+    except (ValidationError, PermissionDenied, get_user_model().DoesNotExist):
+        facts['manager'] = None
+    return facts
 
 
 def change_timeline(case, query, page):

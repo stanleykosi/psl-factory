@@ -36,8 +36,8 @@ class ConversationForm(forms.Form):
     workspace = forms.ModelChoiceField(queryset=None)
     key = forms.UUIDField(widget=forms.HiddenInput)
 
-    def __init__(self, cases, data=None):
-        super().__init__(data, initial={'key': uuid4()})
+    def __init__(self, cases, data=None, *, workspace=None):
+        super().__init__(data, initial={'key': uuid4(), 'workspace': workspace})
         self.fields['workspace'].queryset = cases
         self.fields['workspace'].label_from_instance = workspace_name
 
@@ -63,7 +63,17 @@ def start(request, persona):
         raise Http404
     cases = assistant.cases_for(request.user, persona)
     ids = list(cases.order_by('title', 'pk').values_list('pk', flat=True)[:50])
-    form = ConversationForm(cases.filter(pk__in=ids).order_by('title', 'pk'), request.POST if request.method == 'POST' else None)
+    try:
+        workspace = forms.UUIDField(required=False).clean(request.GET.get('workspace'))
+    except ValidationError:
+        workspace = None
+    if workspace and cases.filter(pk=workspace).exists():
+        if workspace not in ids:
+            ids = [workspace, *ids[:49]]
+    else:
+        workspace = None
+    form = ConversationForm(cases.filter(pk__in=ids).order_by('title', 'pk'),
+                            request.POST if request.method == 'POST' else None, workspace=workspace)
     if request.method == 'POST' and form.is_valid():
         values = form.cleaned_data
         conversation, _ = AssistantConversation.objects.get_or_create(pk=values['key'], defaults={

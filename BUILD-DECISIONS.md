@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Project Journey shows current authorized work in creation order, with pagination, current state and scope. It shows stage and delivery facts only when the viewer has the relevant Finance access and data exists. It opens Tola with the exact project already selected through the normal access checks. Opening the project or the Assistant queues no model request.
+
 20 November 2026. Starting business-unit work checks source freshness before presenting choices. Reading a published aggregate uses the original publisher, current disclosure rule and exact authorized recipient while holding the same native case and grant locks. Formal minutes accept one source. A new upload retains its private original and pins the extracted meeting evidence to the exact original uploader and fingerprint. Human confirmation still owns the meeting and commitments.
 
 20 November 2026. The Security drafting form uses the existing Tola conversation and only the exact selected received bid metadata. The web reserves work with the configured model name and scoped access. The worker holds the provider credential and performs the model call. Human review seals any edited wording, due date, selected recipient route and file reference before release.

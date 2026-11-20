@@ -184,3 +184,20 @@
 .issue-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .issue-facts > div:last-child { grid-column: 1 / -1; }
 .table-scroll { max-width: 100%; overflow-x: auto; }
+.workspace-summary.project-progress-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: 1rem;
+}
+.project-progress-summary dt {
+  font-size: .875rem;
+}
+.project-progress-summary dd {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.project-journey-row > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

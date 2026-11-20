@@ -107,7 +107,7 @@ def intake(request):
     response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q})
     response['Cache-Control']='no-store';return response
 
-def visible(actor, *, work_id=None):
+def visible(actor, *, work_id=None, case_id=None):
     active(actor)
     scope=Q(pk__in=[])
     for name,spec in DEFINITIONS.items():
@@ -116,6 +116,8 @@ def visible(actor, *, work_id=None):
     query=FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
     if work_id is not None:
         query=query.filter(pk=work_id)
+    if case_id is not None:
+        query=query.filter(case_id=case_id)
     from apps.finance.fixed_charge import preparation_access
     inaccessible=[]
     for work in query.filter(preparation__kind='fixed_contract').select_related('preparation'):

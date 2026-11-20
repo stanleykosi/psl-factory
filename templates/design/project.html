@@ -3,13 +3,35 @@
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1><p class="lede">Project journey</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Open project record</a></header>
 {% include 'design/project_tabs.html' %}
+{% if engagement %}<p>Project manager <strong>{{ engagement.manager|default_if_none:'Not recorded' }}</strong> · Route {{ engagement.route }} · <a href="{% url 'engagement' case.pk %}">{{ engagement.reference }}</a></p>{% endif %}
 {% if 'engagement.read' in actions or 'finance.read' in actions %}<p><a href="{% url 'design_client_project' case.pk %}">Client contacts</a></p>{% endif %}
-<section class="card" aria-labelledby="recent-heading">
-  <h2 id="recent-heading">Recent work</h2>
-  {% for line in lines %}
-  <a class="floor-line" href="{% url 'factory_detail' line.work_id %}"><strong>{{ line.name }}</strong><time datetime="{{ line.updated|date:'c' }}">{{ line.updated|date:'d M, H:i' }}</time></a>
+<dl class="workspace-summary project-progress-summary" aria-label="Project progress">
+  <div><dt>Work in view</dt><dd>{{ journey.total }}</dd></div>
+  <div><dt>Waiting</dt><dd>{{ journey.waiting }}</dd></div>
+  <div><dt>Stopped or follow-up needed</dt><dd>{{ journey.stopped }}</dd></div>
+  {% if finance and not finance.limited %}
+  <div><dt>Reviewed contract stages</dt><dd>{{ finance.stages|default_if_none:'Not recorded' }}</dd></div>
+  <div><dt>Invoice deliveries recorded</dt><dd>{{ finance.delivered }}</dd></div>
+  <div><dt>Next milestone</dt><dd>{{ finance.next|default_if_none:'Not recorded' }}</dd></div>
+  {% endif %}
+</dl>
+{% if finance.limited %}<p><a href="{% url 'design_project_tab' case.pk 'money' %}">Open Finance for more detail</a></p>{% endif %}
+<section class="card" aria-labelledby="journey-heading">
+  <h2 id="journey-heading">Project work, oldest first</h2>
+  <p>Last recorded states for work you can access. Checked <time datetime="{{ journey.as_of|date:'c' }}">{{ journey.as_of|date:'d M Y, H:i T' }}</time>.</p>
+  {% for item in journey.items %}
+  <a class="floor-line project-journey-row" href="{% url 'factory_detail' item.id %}">
+    <span><strong>{{ item.line }}</strong>{% if item.reference %}<br>{{ item.reference }}{% endif %}</span>
+    <span><strong>{{ item.state }}</strong><br><time datetime="{{ item.updated|date:'c' }}">{{ item.updated|date:'d M, H:i T' }}</time></span>
+  </a>
   {% empty %}<p>There is no factory work you can see for this project.</p>{% endfor %}
+  {% if journey.page.has_other_pages %}<nav class="factory-queues" aria-label="Project work pages">
+    {% if journey.page.has_previous %}<a href="?page={{ journey.page.previous_page_number }}#journey-heading">Earlier work</a>{% endif %}
+    <span>Page {{ journey.page.number }} of {{ journey.page.paginator.num_pages }}</span>
+    {% if journey.page.has_next %}<a href="?page={{ journey.page.next_page_number }}#journey-heading">Later work</a>{% endif %}
+  </nav>{% endif %}
 </section>
+{% if can_ask_tola %}<section class="card"><h2>Tola, Project management</h2><a href="{% url 'assistant_start' 'tola' %}?workspace={{ case.pk }}">Ask Tola about this project</a></section>{% endif %}
 {% workspace_sections case actions as sections %}
 <div class="area-grid">
   {% for group in sections %}

@@ -26,10 +26,10 @@ from . import project_journey
 from .workbench import granted
 
 
-def discoverable_work(actor):
+def discoverable_work(actor, *, case_id=None):
     # Payroll and business-unit work require record-specific source or
     # aggregate-recipient checks. Their native workbenches own that discovery.
-    return visible(actor).exclude(definition__in=['finance-payroll/v1', 'finance-bu/v1'])
+    return visible(actor,case_id=case_id).exclude(definition__in=['finance-payroll/v1', 'finance-bu/v1'])
 
 
 class FactoryLogin(LoginView):
@@ -160,7 +160,11 @@ def project(request, case_id, tab='journey'):
             'change_timeline': project_journey.change_timeline(case, query, request.GET.get('plan-page'))
                 if tab == 'milestones' and 'change.read' in actions else None,
         })
-    recent = discoverable_work(request.user).filter(case=case).order_by('-updated_at', '-pk')[:20]
-    lines = [{'work_id': work.pk, 'name': DEFINITIONS[work.definition]['title'], 'updated': work.updated_at}
-             for work in recent]
-    return render(request, 'design/project.html', {'case': case, 'actions': actions, 'lines': lines, 'tab': tab, 'tabs': navigation})
+    works = discoverable_work(request.user, case_id=case.pk)
+    journey = project_journey.work_timeline(works, request.GET.get('page'))
+    finance = project_journey.finance_facts(request.user, case) if 'finance.read' in actions else None
+    engagement = project_journey.engagement_facts(request.user, case) if 'engagement.read' in actions else None
+    from apps.agents.assistant import cases_for
+    can_ask = {'agent.extract', 'factory.read'}.issubset(actions) and cases_for(request.user, 'tola').filter(pk=case.pk).exists()
+    return render(request, 'design/project.html', {'case': case, 'actions': actions, 'journey': journey, 'finance': finance,
+                                                   'engagement': engagement, 'tab': tab, 'tabs': navigation, 'can_ask_tola': can_ask})

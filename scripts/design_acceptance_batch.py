@@ -17,22 +17,23 @@ SUITES = {
     'commercial': (
         'commercial_client_response', 'commercial_rework', 'commercial_changes',
         'commercial_signatures', 'factory_commercial', 'costing_design',
-        'factory_rfp_console_flow', 'factory_rfp_outcome_console', 'factory_rfp_pricing',
+        'factory_rfp_console_flow', 'factory_rfp_outcome_console', 'factory_rfp_pricing', 'rfp_estimate_requests',
     ),
     'project_delivery': (
         'factory_change', 'factory_change_branches', 'standard_changes', 'factory_emergency',
         'factory_escalation', 'factory_go_live', 'factory_hypercare', 'factory_archive',
-        'factory_closure_recovery', 'client_uat', 'project_archive_files',
+        'factory_closure_recovery', 'client_uat', 'project_archive_files', 'factory_minutes', 'factory_minutes_console',
     ),
     'finance_reporting': (
         'factory_leadership', 'factory_accounting', 'factory_accounting_provenance', 'factory_accounting_intake',
         'factory_ppe', 'factory_schedules', 'factory_forecast', 'factory_group_forecast',
-        'factory_invoice_recovery_priority', 'factory_payroll_restart',
+        'factory_invoice_recovery_priority', 'factory_payroll_restart', 'factory_bu', 'invoice_short_payments',
     ),
     'shared': (
         'factory_console', 'factory_human_independence', 'factory_review_authority',
         'factory_progress', 'design_delegation', 'staff_accounts', 'staff_profiles',
-        'staff_reactivation', 'ui_layout', 'design_batch_walkthrough',
+        'staff_reactivation', 'ui_layout', 'design_batch_walkthrough', 'work_access_requests', 'product_intake',
+        'department_assistant', 'design_consolidation',
     ),
 }
 LEDGER_ROW = re.compile(r'^\| `(SCR-[^\x60]+)` \| [^\n]+ \| (.+) \|$', re.MULTILINE)
