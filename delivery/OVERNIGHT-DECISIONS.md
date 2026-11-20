@@ -316,3 +316,6 @@ The design engineer, on the assistant composer: "i hate the focus on this. it is
 
 ## D-144 (20 Nov): focus everywhere is the border turning blue
 The design engineer: "for the focus anywhere, let the border just change to blue color from black not any extra outline". Widens D-143 from text fields to every focusable control: buttons, segmented options, tabs, chips, checkboxes, radios, icon buttons, rows and cards: the control's own border turns var(--focus) in place, with no outline or offset. Controls without a border get a border of the same width in their resting colour (transparent or the surface) so focus only changes its colour and nothing moves. Links in running text, which have no box, show focus as a blue underline. Buttons keep the keyboard-only rule (:focus-visible); text fields show it on any focus.
+
+## D-145 (20 Nov): one change at a time, in one worktree
+The design engineer: "lets make all this changes one by one so we use the same worktree rather than working in parallel". From now on design changes run one after another on one branch and one worktree (the F-54 worktree, live on port 4952), not as parallel features. F-55's HR sample data (pushed on fe-hr-mock-data-sample-hr) is folded into the F-54 branch after F-54 round 2 lands, and finished and checked there; the F-55 worktree and its 4953/4954 server are removed.
