@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-52",
   "outcome": "F-52 Follow-up batch A: fixes on merged screens",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-FOLLOWUPS-1"
   ],
@@ -207,9 +207,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -223,14 +223,14 @@
     "task_branch": "fe-followups-1-batch-a",
     "head_sha": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-52",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/84",
+    "pr_number": 84,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-134",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "531edba0965cda1df0a5b44a573b7579bcebaa74",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/NIGHT-LOG-2026-11-18.md",
@@ -377,9 +377,14 @@
     "approver_reasons": [
       "delivery/features/F-52/decision.md"
     ],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "119 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -428,6 +433,46 @@
       "at": "2026-11-20T10:26:10Z",
       "round": 1,
       "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T10:29:28Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T10:29:34Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T10:29:35Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T10:29:36Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T10:29:36Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
       "reason": null
     }
   ],

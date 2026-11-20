@@ -104,5 +104,31 @@
    "reason": "UI-1-5: the shared date field draws a calendar button for picking a date; the board draws a plain box.",
    "approved_by": "builder proposal, pending design engineer"
   }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-04-desktop-ppe 1440",
+   "visual": 42.3,
+   "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-mobile-ppe 390",
+   "visual": 49.9,
+   "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-desktop-forecast 1440",
+   "visual": 43.3,
+   "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-mobile-forecast 390",
+   "visual": 48.1,
+   "reason": "D-83 floor exception: measured in round 2 on a production build (round-2/fidelity/scores.txt); coverage 100 with exceptions. Visual is under the 70 floor because the drawer sits over a page 2.5–3 times taller than the board, which union scoring penalises (UI round 1 judged it a capture limit, as for F-49). The real differences found in round 1 are fixed in round 2.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
  ]
 }

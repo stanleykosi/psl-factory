@@ -4,11 +4,16 @@
   "project_id": "psl-factory",
   "feature_id": "F-51",
   "outcome": "Start work: open a fixed asset schedule with its proof file, and start a cash forecast from its scenario, as-of date, months and audience (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2A-PROOF"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-LINES",
+    "E-LINE-OPTIONS",
+    "E-EVIDENCE-UPLOAD",
+    "E-WORK-START"
+  ],
   "acceptance_criteria": [
     "**Fixed-asset drawer from data.** As `finance_lead`, \"Fixed asset schedule\" shows Proof (the file box), \"Prior schedule (optional)\" and \"Accounting note (optional)\", in that order, with the button \"Start schedule\". Every word comes from the E-LINES fixture; no board string is in `src`. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast.test.tsx`; `grep -rn \"ppe_register_oct\\|PPE-0005\\|Base case \u00b7 v4\\|All 3 accepted\" frontend/src` returns nothing; drawer at 1440 and 390.",
     "**Forecast drawer from data, no file.** \"Cash forecast\" shows Scenario, As of, Months, Audience (Internal / Management / Group) and Sources \"All 3 accepted\", with the button \"Start forecast\". It has no Proof box, no file input and no \"Choose a file\". The Sources text is the fixture's `value`; changing the fixture changes the page. \u2014 verify: component test (`input[type=file]` count 0; Sources follows a changed fixture); drawer at 1440 and 390.",
@@ -114,11 +119,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -643,6 +650,190 @@
           "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty. Set it to exactly: E-LINES, E-LINE-OPTIONS, E-EVIDENCE-UPLOAD, E-WORK-START, E-ME.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC 16 (fidelity) is not met until the design engineer signs the floor exceptions for visual 42 to 50, and all 13 exceptions (all \"builder proposal, pending design engineer\"), including the signed F-05/F-47 phone sheet frame (this board's use), the remove \"x\" and the calendar icon.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The shared empty-submit behaviour change touches every Start work line. Start stays enabled; a press names each empty required field, focuses the first and sends nothing. The design engineer should accept it for all lines. Project lines still keep Start off until a project is chosen.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Handoff (BACKEND-HANDOFF.md, F-51 section) is stale: it says the Accounting-note placeholders are \"Sample note A to D\"; the fixture now has two (\"Sample: note A/B\"). It also omits the shared empty-submit check and that the Audience default is read from the field-level `value`. Correct before the PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Contract has no choice-default field (TECH-2-2, UX-2-1); the builder used field-level `value`. The coordinator should define it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Backend follow-up: an upload of kind ppe_register to C-0101 or C-FIN-LEDGER as finance_lead answers 422 \"Check these fields: kind.\" on the mock, not the 404 in spec criterion 8 (QA-2-1). The page shows a refusal either way; the real backend should settle 404 versus 422.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-7",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-2-1: the F-05 422 test lost its \"Start greyed after a 422 until a change\" assertion; add one at frontend/tests/start-work.test.tsx:501.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-8",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is required (readiness) and pending: both drawers are new to the client.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -778,9 +969,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-51/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -846,6 +1039,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-20T10:23:08Z",
+      "round": 2,
+      "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T10:30:27Z",
       "round": 2,
       "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
       "reason": null

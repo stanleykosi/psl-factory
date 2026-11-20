@@ -3771,3 +3771,23 @@
 {"at":"2026-11-20T10:29:12Z","feature":"F-52","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"523029ab661c","written_at":"2026-11-20T10:29:11Z"}
 {"at":"2026-11-20T10:29:12Z","feature":"F-52","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"523029ab661c","findings":{"UX-1-1":"low"},"written_at":"2026-11-20T10:29:11Z"}
 {"at":"2026-11-20T10:29:12Z","feature":"F-52","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"523029ab661c","written_at":"2026-11-20T10:29:11Z"}
+{"at":"2026-11-20T10:29:28Z","feature":"F-52","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/84","git.pr_number":84,"git.ci_status":"passed"}}
+{"at":"2026-11-20T10:29:28Z","feature":"F-52","round":1,"kind":"transition","head":"523029ab661c","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-20T10:29:28Z","feature":"F-52","round":1,"kind":"decision","decision":"HUMAN_APPROVAL","head":"523029ab661c","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","119 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-20T10:29:34Z","feature":"F-52","round":1,"kind":"transition","head":"523029ab661c","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-20T10:29:35Z","feature":"F-52","round":1,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-20T10:29:35Z","feature":"F-52","round":1,"kind":"transition","head":"523029ab661c","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-20T10:29:35Z","feature":"F-52","round":1,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"531edba0965cda1df0a5b44a573b7579bcebaa74"}}
+{"at":"2026-11-20T10:29:36Z","feature":"F-52","round":1,"kind":"transition","head":"523029ab661c","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-20T10:29:36Z","feature":"F-52","round":1,"kind":"transition","head":"523029ab661c","from":"MERGED","to":"DONE"}
+{"at":"2026-11-20T10:29:39Z","feature":"F-51","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"b50b0b7ca04b","findings":{"PMO-2-1":"medium","PMO-2-2":"medium","PMO-2-3":"medium","PMO-2-4":"low","PMO-2-5":"low","PMO-2-6":"low","PMO-2-7":"low","PMO-2-8":"low"},"written_at":"2026-11-20T10:29:14Z"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"medium","owner":"coordinator","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-4","by":"pmo-acceptance","severity":"low","owner":"backend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-5","by":"pmo-acceptance","severity":"low","owner":"backend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-6","by":"pmo-acceptance","severity":"low","owner":"backend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-7","by":"pmo-acceptance","severity":"low","owner":"builder","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"PMO-2-8","by":"pmo-acceptance","severity":"low","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T10:30:26Z","feature":"F-51","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-20T10:30:27Z","feature":"F-51","round":2,"kind":"transition","head":"b50b0b7ca04b","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
