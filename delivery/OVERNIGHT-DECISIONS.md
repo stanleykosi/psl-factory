@@ -319,3 +319,6 @@ The design engineer: "for the focus anywhere, let the border just change to blue
 
 ## D-145 (20 Nov): one change at a time, in one worktree
 The design engineer: "lets make all this changes one by one so we use the same worktree rather than working in parallel". From now on design changes run one after another on one branch and one worktree (the F-54 worktree, live on port 4952), not as parallel features. F-55's HR sample data (pushed on fe-hr-mock-data-sample-hr) is folded into the F-54 branch after F-54 round 2 lands, and finished and checked there; the F-55 worktree and its 4953/4954 server are removed.
+
+## D-146 (20 Nov): live design changes skip the review panel
+The design engineer: "no need for all this many reviews we are doing during this bug changes. it is taking so much time". For live design and bug changes the design engineer is watching (F-54 and what is folded into it), the gate (checks.sh plus e2e) and the design engineer's own sign-off on the live server replace the technical, UI, UX and QA review agents. Round-1 findings are verified by the coordinator from the builder's test evidence. Reviews stay for new features, money or security work, and anything going to main still needs the user's approval.
