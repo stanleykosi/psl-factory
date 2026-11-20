@@ -32,7 +32,7 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
   const current = /^\/assistant\/([^/]+)/.exec(pathname)?.[1];
   const currentId = current ? decodeURIComponent(current) : undefined;
   const rows = (
-    <ConversationList state={list.state} currentId={currentId} onMore={() => void list.more()} size={list.size} onSize={list.setSize} onRetry={list.retry} pathname={pathname} onOpen={() => setSheet(false)} />
+    <ConversationList state={list.state} currentId={currentId} onMore={(limit) => void list.more(limit)} onRetry={list.retry} pathname={pathname} onOpen={() => setSheet(false)} />
   );
 
   return (

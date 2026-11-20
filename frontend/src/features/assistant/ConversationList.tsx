@@ -4,7 +4,7 @@
 // phones, in the "earlier" sheet.
 import NextLink from 'next/link';
 
-import { AgentAvatar, cursorCounts, ErrorState, ShowMore, Skeleton, type PageSize } from '@/components';
+import { AgentAvatar, ErrorState, ShowMore, Skeleton, usePagedRows, type PageSize } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { groupByDay, NO_CONVERSATIONS, statusLine } from './labels';
@@ -23,16 +23,22 @@ function Row({ row, current, onOpen }: { row: ConversationRow; current: boolean;
   );
 }
 
-export function ConversationList({ state, currentId, onMore, size, onSize, onRetry, pathname, onOpen }: {
+export function ConversationList({ state, currentId, onMore, onRetry, pathname, onOpen }: {
   state: ListState;
   currentId?: string;
-  onMore: () => void;
-  size: PageSize;
-  onSize: (size: PageSize) => void;
+  onMore: (limit: PageSize) => void;
   onRetry: () => void;
   pathname: string;
   onOpen?: () => void;
 }) {
+  const ready = state.status === 'ready' ? state : undefined;
+  const { rows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: Boolean(ready?.next),
+    busy: ready?.more === 'loading',
+    failed: ready?.more === 'error',
+    loadMore: onMore,
+  });
   if (state.status === 'loading') return <Skeleton widths={[90, 70, 80]} />;
   if (state.status === 'signed_out') return <SignedOutState pathname={pathname} />;
   if (state.status === 'error') {
@@ -45,7 +51,7 @@ export function ConversationList({ state, currentId, onMore, size, onSize, onRet
   if (state.items.length === 0) return <p className="as-list__empty">{NO_CONVERSATIONS}</p>;
   return (
     <>
-      {groupByDay(state.items, state.asOf).map((group) => (
+      {groupByDay(rows, state.asOf).map((group) => (
         <section key={group.label} className="as-list__group" aria-label={`Conversations, ${group.label.toLowerCase()}`}>
           <p className="as-list__day">{group.label}</p>
           {group.rows.map((row) => (
@@ -53,7 +59,7 @@ export function ConversationList({ state, currentId, onMore, size, onSize, onRet
           ))}
         </section>
       ))}
-      <ShowMore solo {...cursorCounts(state.items.length, Boolean(state.next))} busy={state.more === 'loading'} onMore={onMore} size={size} onSize={onSize} />
+      <ShowMore solo {...paging} />
       {state.more === 'error' && (
         <p className="psl-hint" role="alert">
           Couldn’t load more.

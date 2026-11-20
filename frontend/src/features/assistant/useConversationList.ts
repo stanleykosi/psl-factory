@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
-import { usePageSize } from '@/components';
+import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
 import { fetchConversations } from './api';
 import type { ConversationRow } from './types';
@@ -18,14 +18,12 @@ export type ListState =
 
 export function useConversationList() {
   const [state, setState] = useState<ListState>({ status: 'loading' });
-  const [size, setSize] = usePageSize();
-  const sizeRef = useRef(size);
   const seq = useRef(0);
 
   const refresh = useCallback(async () => {
     const mine = ++seq.current;
     try {
-      const page = await fetchConversations(sizeRef.current);
+      const page = await fetchConversations(DEFAULT_PAGE_SIZE);
       if (mine === seq.current) setState({ status: 'ready', items: page.items, next: page.next_cursor, asOf: page.as_of, more: 'idle' });
     } catch (thrown) {
       if (mine !== seq.current) return;
@@ -35,13 +33,13 @@ export function useConversationList() {
     }
   }, []);
 
-  const more = useCallback(async () => {
+  const more = useCallback(async (limit: PageSize) => {
     const current = state;
     if (current.status !== 'ready' || !current.next) return;
     const mine = ++seq.current;
     setState({ ...current, more: 'loading' });
     try {
-      const page = await fetchConversations(sizeRef.current, current.next);
+      const page = await fetchConversations(limit, current.next);
       if (mine === seq.current) setState({ status: 'ready', items: [...current.items, ...page.items], next: page.next_cursor, asOf: current.asOf, more: 'idle' });
     } catch {
       if (mine === seq.current) setState({ ...current, more: 'error' });
@@ -54,17 +52,10 @@ export function useConversationList() {
     void refresh();
   }, [refresh]);
 
-  // A new rows-per-page choice reads the first page again; the rows stay on screen meanwhile.
-  useEffect(() => {
-    if (sizeRef.current === size) return;
-    sizeRef.current = size;
-    void refresh();
-  }, [size, refresh]);
-
   const retry = useCallback(() => {
     setState({ status: 'loading' });
     void refresh();
   }, [refresh]);
 
-  return { state, size, setSize, refresh, more, retry };
+  return { state, refresh, more, retry };
 }
