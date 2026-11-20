@@ -494,6 +494,18 @@ describe('QA-3-1: another reviewer decided first', () => {
 });
 
 describe('send for review (AC 12, 13)', () => {
+  it('F-52: W-3602 after approve: Send for review completes and the re-read reads WAITING FOR REVIEW', async () => {
+    onStep = () => {
+      served = item('W-3602.next.send_for_review');
+      return json(200, { work_id: 'W-3602', state: 'action_needed', revision: 3, outcome: 'done', message: 'Done: Send for review.' });
+    };
+    await open(item('W-3602.approve'));
+    await click('Send for review');
+    await waitFor(() => expect(status().textContent).toBe('WAITING FOR REVIEW'));
+    expect(posts('/api/v1/work/W-3602/steps')).toHaveLength(1);
+    expect(buttons()).toEqual([]);
+  });
+
   it('one step with CSRF, expected_revision, inputs {} and a UUID key; a retry after a 500 reuses it; WAITING FOR REVIEW only from the re-read', async () => {
     onStep = () => json(500, { code: 'server_error', message: 'Down.' });
     await open(item('W-3604'));
