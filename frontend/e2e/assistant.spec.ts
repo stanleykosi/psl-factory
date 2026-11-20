@@ -258,7 +258,8 @@ test('CV-2404: the cant pose at 1440 (side panel) and 390 (inline card, 44px con
   expect(results.violations).toEqual([]);
 });
 
-test('the conversation list loads the next page as it is scrolled to the end, without reloading the rows shown (D-138)', async ({ page }) => {
+for (const height of [500, 700, 800, 900]) {
+  test(`the conversation list loads the next page as it is scrolled to the end, without reloading the rows shown (D-138, window ${height}px)`, async ({ page }) => {
   const all = Array.from({ length: 25 }, (_, i) => ({
     conversation_id: `CV-S${i}`,
     title: `Scroll chat ${i}`,
@@ -275,7 +276,7 @@ test('the conversation list loads the next page as it is scrolled to the end, wi
     const body = { items: all.slice(offset, offset + limit), as_of: '2026-11-14T10:00:00Z', ...(offset + limit < all.length ? { next_cursor: `o:${offset + limit}` } : {}) };
     await route.fulfill({ json: body });
   });
-  await page.setViewportSize({ width: 1440, height: 500 });
+  await page.setViewportSize({ width: 1440, height });
   await ready(page, '/assistant');
   const links = page.locator('.as-row');
   await expect(links).toHaveCount(10);
@@ -290,6 +291,7 @@ test('the conversation list loads the next page as it is scrolled to the end, wi
   expect(await first!.evaluate((el) => el.isConnected)).toBe(true);
   expect(await links.first().evaluate((el, h) => el === h, first)).toBe(true);
 });
+}
 
 test('desktop: only the thread scrolls; both side footers and the composer keep their place (D-140)', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 520 });

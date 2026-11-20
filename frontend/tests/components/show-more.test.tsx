@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -173,5 +173,70 @@ describe('usePagedRows (rows per page grows the table in place)', () => {
     });
     expect(radio('20').getAttribute('aria-disabled')).toBeNull();
     expect(radio('50').getAttribute('aria-disabled')).toBe('true');
+  });
+});
+
+describe('footer failure notice, empty pages and a failed larger choice (round 2)', () => {
+  it('says "We couldn’t load more. Choose Show more to try again." inside the footer when failed', () => {
+    render(<ShowMore shown={10} hasMore failed onMore={noop} size={10} onSize={noop} />);
+    expect(screen.getByRole('alert').textContent).toBe('We couldn’t load more. Choose Show more to try again.');
+    expect(screen.getByRole('alert').closest('.psl-showmore')).toBeTruthy();
+  });
+
+  it('does not ask again after a page that added no rows (TECH-1-3)', async () => {
+    const fetch = vi.fn();
+    function Empty() {
+      const [busy, setBusy] = useState(false);
+      const { paging } = usePagedRows<Item>({
+        items: makeItems(10),
+        next: true,
+        busy,
+        size: 20,
+        loadMore: (limit: PageSize) => {
+          fetch(limit);
+          setBusy(true);
+          setTimeout(() => setBusy(false), 0);
+        },
+      });
+      return <ShowMore {...paging} />;
+    }
+    render(<Empty />);
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 30));
+    });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    // Show more is the person's to press
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+      await new Promise((r) => setTimeout(r, 30));
+    });
+    expect(fetch.mock.calls.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('a larger choice that fails goes back to the size actually shown (QA-1-2)', async () => {
+    function Failing() {
+      const [failed, setFailed] = useState(false);
+      const { rows, paging } = usePagedRows<Item>({
+        items: makeItems(10),
+        next: true,
+        busy: false,
+        failed,
+        loadMore: () => setFailed(true),
+      });
+      return (
+        <>
+          <ul>{rows.map((r) => <li key={r.id}>row {r.id}</li>)}</ul>
+          <ShowMore {...paging} />
+        </>
+      );
+    }
+    render(<Failing />);
+    await act(async () => {
+      fireEvent.click(radio('20'));
+    });
+    await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
+    expect(radio('10').getAttribute('aria-checked')).toBe('true');
+    expect(radio('20').getAttribute('aria-checked')).toBe('false');
+    expect(screen.getAllByRole('listitem')).toHaveLength(10);
   });
 });
