@@ -61,7 +61,6 @@ export function useConversationList() {
 
   useEffect(() => {
     // One read when the page opens; the effect only starts the request.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh();
   }, [refresh]);
 

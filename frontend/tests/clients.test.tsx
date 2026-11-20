@@ -177,7 +177,7 @@ describe('Clients list (SCR-35)', () => {
     };
     await openList();
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    const alert = await screen.findByRole('alert');
+    await screen.findByRole('alert');
     expect(document.querySelectorAll('tbody tr')).toHaveLength(10);
     fail = false;
     fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
