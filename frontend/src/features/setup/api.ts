@@ -19,9 +19,9 @@ import type {
 
 export type RulesArea = 'finance' | 'delivery';
 
-/** One page of E-SETUP-RULES. `cursor` and `limit` are proposals: v4 returns next_cursor but declares neither parameter. */
-export async function readRules(area: RulesArea | undefined, limit: PageSize, cursor?: string): Promise<RulesPage> {
-  const query: { area?: string; cursor?: string; limit?: number } = { limit };
+/** One page of E-SETUP-RULES. `cursor` is a proposal: v4 returns next_cursor but declares no cursor parameter. No limit is sent: the paging footer reveals the loaded rows 10, 20 or 50 at a time. */
+export async function readRules(area?: RulesArea, cursor?: string): Promise<RulesPage> {
+  const query: { area?: string; cursor?: string } = {};
   if (area) query.area = area;
   if (cursor) query.cursor = cursor;
   return (await call(api.GET('/api/v1/setup/rules', { params: { query: query as { area?: string } } }))) as RulesPage;
@@ -45,9 +45,9 @@ export type FieldProblem = { name: string; message: string };
 /** An ApiError that also carries the 422 body's fields[] (the shared client keeps only code and message). */
 export type UploadError = ApiError & { fields?: FieldProblem[] };
 
-/** One page of E-TEMPLATES. `cursor` and `limit` are proposals: v7 returns next_cursor but declares neither parameter. */
-export async function readTemplates(limit: PageSize, cursor?: string): Promise<TemplatesPage> {
-  const query = cursor ? { limit, cursor } : { limit };
+/** One page of E-TEMPLATES. `cursor` is a proposal: v7 returns next_cursor but declares no cursor parameter. No limit is sent: the paging footer reveals the loaded rows. */
+export async function readTemplates(cursor?: string): Promise<TemplatesPage> {
+  const query = cursor ? { cursor } : {};
   return await call(api.GET('/api/v1/setup/templates', { params: { query: query as never } }));
 }
 

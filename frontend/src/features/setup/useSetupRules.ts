@@ -5,7 +5,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
-import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
 import { readRules, type RulesArea } from './api';
 import type { RulesPage, RuleRow } from './contract-proposal';
@@ -25,7 +24,7 @@ export function useSetupRules(area?: RulesArea) {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      setState(ready(await readRules(area, DEFAULT_PAGE_SIZE)));
+      setState(ready(await readRules(area)));
     } catch (error) {
       setState({ status: 'error', error: asApiError(error) });
     }
@@ -40,7 +39,7 @@ export function useSetupRules(area?: RulesArea) {
   /** Re-reads the first page after a write. A failed read keeps the rows on screen unless access was lost. */
   const refresh = useCallback(async (): Promise<RulesPage | ApiError> => {
     try {
-      const page = await readRules(area, DEFAULT_PAGE_SIZE);
+      const page = await readRules(area);
       setState(ready(page));
       return page;
     } catch (error) {
@@ -51,11 +50,11 @@ export function useSetupRules(area?: RulesArea) {
   }, [area]);
 
   const cursor = state.status === 'ready' && state.more !== 'loading' ? state.nextCursor : undefined;
-  const loadMore = useCallback(async (limit: PageSize) => {
+  const loadMore = useCallback(async () => {
     if (!cursor) return;
     setState((s) => (s.status === 'ready' ? { ...s, more: 'loading' } : s));
     try {
-      const next = await readRules(area, limit, cursor);
+      const next = await readRules(area, cursor);
       setState((s) => (s.status === 'ready' ? { ...s, items: [...s.items, ...next.items], nextCursor: next.next_cursor, more: 'idle' } : s));
     } catch (error) {
       const apiError = asApiError(error);

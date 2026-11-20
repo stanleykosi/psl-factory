@@ -5,7 +5,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
 import { readTemplates, type TemplateRow, type TemplatesPage } from './api';
 import { asApiError } from './useSetupRules';
@@ -24,7 +23,7 @@ export function useTemplates() {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      setState(ready(await readTemplates(DEFAULT_PAGE_SIZE)));
+      setState(ready(await readTemplates()));
     } catch (error) {
       setState({ status: 'error', error: asApiError(error) });
     }
@@ -39,7 +38,7 @@ export function useTemplates() {
   /** Re-reads the first page. A failed read keeps the rows on screen unless access was lost. */
   const refresh = useCallback(async (): Promise<TemplatesPage | ApiError> => {
     try {
-      const page = await readTemplates(DEFAULT_PAGE_SIZE);
+      const page = await readTemplates();
       setState(ready(page));
       return page;
     } catch (error) {
@@ -50,11 +49,11 @@ export function useTemplates() {
   }, []);
 
   const cursor = state.status === 'ready' && state.more !== 'loading' ? state.nextCursor : undefined;
-  const loadMore = useCallback(async (limit: PageSize) => {
+  const loadMore = useCallback(async () => {
     if (!cursor) return;
     setState((s) => (s.status === 'ready' ? { ...s, more: 'loading' } : s));
     try {
-      const next = await readTemplates(limit, cursor);
+      const next = await readTemplates(cursor);
       setState((s) => (s.status === 'ready' ? { ...s, items: [...s.items, ...next.items], nextCursor: next.next_cursor, more: 'idle' } : s));
     } catch (error) {
       const apiError = asApiError(error);
