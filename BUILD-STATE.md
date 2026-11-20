@@ -4,7 +4,7 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 ## Current implementation and verification
 
-The 233 Railway preview wakes an existing background request after human minutes confirmation. All 48 grouped PostgreSQL tests and both preservation probes passed. Web and worker are healthy. Work 177 verified the exact private client test pack and separate human-reviewed delivery receipt. Its revised reminder appeared when due in Codex’s in-app browser. Formal minutes work 176 retains private notes and the confirmed action with owner and deadline unknown. Internal minutes completion and separate-reader browser checks remain open. Build the remaining shared workflow behavior in one candidate before another grouped acceptance run. Identity `0011`, Finance `0082` and Project `0074` remain applied and immutable.
+The 233 Railway preview wakes the existing background request after human minutes confirmation. All 48 grouped PostgreSQL tests and both preservation probes passed. Web and worker are healthy. Work 177 verified the exact private client test pack, independently checked delivery and removed the due reminder after the fictional client replied. Work 176 reached verified internal minutes version 113 with the action's owner and deadline still unknown. Work 178 exercised valid, missing and unsupported notes at phone width. Identity `0011`, Finance `0082` and Project `0074` remain applied and immutable.
 
 Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate 201 finished all 487 PostgreSQL tests across 36 modules in 7,478.882 seconds. The final result was four failures, three errors and exit 1. The seven traces cover the bid form, Standard Change fixture authority, invoice test setup and database scope, and the fixed-asset linked-note authority check.
 
@@ -12,7 +12,7 @@ Candidate 202 groups the corrections, release and archive progress, in-page hand
 
 The grouped 205 PostgreSQL regression passed all 520 tests. Candidate 206 passed all four Finance tests and found three Project test setup errors. Candidate 207 corrected them together and passed all ten Project tests and both original receipt probes. The 208 PostgreSQL regression verified that preparation finds the original sample after a second native report was created in its workspace.
 
-All 262 design states have direct browser evidence. The ledger records 81 completed scoped journeys and 181 with open checks. The latest completion covers the protected client pack and editable due reminder. All 21 queue pages were walked earlier. Separate Finance recipient and correction paths, leadership coverage, delivery decisions and recovery, and alternate roles and layouts remain. [State ledger](docs/design/screen-state-acceptance.md).
+All 262 design states have direct browser evidence. The ledger records 90 completed scoped journeys and 172 with open checks. The Business Unit batch verified current staff and event intake, independent event-source review, a revoked disclosure hold and its validated successor, and publication to an alternate named sample audience. A separate aggregate-only recipient took report 5 from its last outstanding acknowledgement to final Finance verification. Live Business Unit investigation and exact returned-result rebuild are still open. All 21 queue pages were walked earlier. [State ledger](docs/design/screen-state-acceptance.md).
 
 In the signed-agreement browser journey, sample case11f14978 retained the exact receipt and private Word proof. It refused future response time and adoption before both signatures were checked. The model cited the original sample file, a human reviewed the draft, and separate human signature checks preceded adoption and the Finance intake receipt. Desktop and phone checks passed. The revised-agreement branch, historical recovery and browser correction cases stay open.
 
@@ -30,9 +30,9 @@ Agents0012/0013, pmo0070–0072 and Finance0080/0081 are applied in testDB and p
 
 ## Remaining product work
 
-Of 262 states, 29 have a completed scoped journey, 187 have observations with checks still open, and 46 have no direct browser observation. Hosted 200 verified management accounts, the escalation receipt and the monthly leadership receipt on desktop and phone. Earlier asset and cash forecast results now need revalidation. The earlier invitation6 walkthrough establishes single-workspace account setup. Multiple workspace setup and verified alerts remain open. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain the exact states and groups.
+The [acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain every state and its remaining checks. Hosted 200 verified management accounts, the escalation receipt and the monthly leadership receipt on desktop and phone. Earlier asset and cash forecast results need revalidation. Invitation 6 established single-workspace account setup. Multiple workspace setup and verified alerts remain open.
 
-- Resolve the grouped201 result and run grouped browser journeys against a passing candidate.
+- Continue disjoint Railway browser groups for Commercial, Project delivery and Finance. Integrate fixes by native workflow, then verify them in a grouped PostgreSQL candidate and return to the affected browser states.
 - Finish commercial client-requested rework/historical recovery and invitation onboarding variants. Existing native signature/adoption/Finance controls remain authoritative; design examples do not set billing rules.
 - Connect aggregate-only report recipients to actual Zainab/Assistant through reviewed model-egress interfaces; closed human HR questions are implemented.
 - Add explicitly authorised optional HR name/employment inputs; membership dates do not establish employment departure.

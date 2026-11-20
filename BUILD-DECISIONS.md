@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Engineering decision: Keep browser acceptance grouped by native workflow and exact role. Parallel agents may prepare and run disjoint synthetic journeys. Record one outcome per affected state from durable evidence. Keep business mutations, scoped access and version checks in their owning Django services so a future HTTP interface can reuse the same operations. API consolidation and frontend migration follow walkthrough acceptance.
+
 20 November 2026. Minutes confirmation wakes only the existing authorized background request so the worker can prepare the internal document once the recorded human decision permits it. Work without a background request remains available for deliberate continuation. The remaining design gaps will be integrated as one candidate before a combined Railway and Codex browser acceptance run.
 
 20 November 2026. A client testing delivery record keeps two separately pinned private files, the received timestamp, the exact current test request and the witness. The approved client-response policy governs whether a separate reviewer is required. The response deadline and optional follow-up time belong to an immutable succession of edits to an exact reviewed delivery. A current client reply ends the visible wait. The initial reminder is displayed in the testing delivery view. Automated channel delivery and authenticated external receipt verification remain separate engineering.

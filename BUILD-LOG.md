@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. Grouped Business Unit acceptance verified the current staff and event inputs, an exact source approval, disclosure hold and validated successor, alternate internal publication, and final recipient acknowledgement. The ledger now records 90 of 262 completed scoped journeys. Guarded fixture 235 corrected the two duplicate-event seed failures in 234 without changing the hosted application. Separate agents now cover Project, Finance and Commercial, with one coordinator owning the ledger and deploy.
+
+20 November 2026. Verified in the grouped Railway browser pass that a separate client reply clears the due reminder. Confirmed internal minutes version 113 on desktop and phone and started a separate phone-width private notes intake. Started staff-cost and supplied-event Business Unit work from the currently eligible sources for the next grouped decision and receipt checks. Local multi-workspace technical access work remains outside the verified preview.
+
 20 November 2026. The first minutes restart group found an old subprocess fixture pointing the parent test settings at its test database. Used the existing guarded test connection helper. The corrected run passed all 48 cases and both original receipt probes. Promoted matched web and worker. The restored Codex browser verified the reviewed client pack and the revised in-app reminder when due. Began the requested combined build for the remaining workflow gaps.
 
 20 November 2026. Completed the new-file minutes intake and human confirmation in the Codex browser. Retained private upload 19, note 3105, work 176 and action 14 with no invented owner or deadline. Recorded the still-waiting internal document stage for follow-up.

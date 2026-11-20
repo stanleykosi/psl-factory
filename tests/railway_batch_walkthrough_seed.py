@@ -501,6 +501,92 @@ def prepare_bu_drawer_sources(actor):
 
 
 @transaction.atomic
+def prepare_bu_acceptance_station(actor, station):
+    """Reach a station with synthetic roles while leaving the tested decision to the browser."""
+    from apps.finance.bu_models import BUReceipt
+    from apps.policy.bu_validators import DISCLOSE
+    from apps.workflows import factory_bu
+    from tests import bu_helpers, payroll_helpers
+
+    if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'), os.getenv('PSL_COMPOSED_WALKTHROUGH')) != (
+            'design-acceptance', PREVIEW_PROJECT, '1') or actor.username != 'psl-agent-trial' or actor.is_staff or actor.is_superuser:
+        raise RuntimeError('This browser station belongs to the isolated acceptance account and environment')
+    browser_role = {'review': 'reviewer', 'publish': 'preparer', 'receive': 'manager', 'hold': 'preparer'}[station]
+    title = {'review': 'SAMPLE Business Unit supplied source review', 'publish': 'SAMPLE Business Unit reviewed publication',
+             'receive': 'SAMPLE Business Unit last aggregate recipient', 'hold': 'SAMPLE Business Unit disclosure rule needed'}[station]
+    case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
+    if created:
+        users = get_user_model().objects
+        owner = users.create_user(f'batch-bu-station-{station}-owner')
+        Grant.objects.bulk_create([Grant(user=owner, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+
+        def principal(role):
+            return actor if browser_role == role else users.create_user(f'batch-bu-station-{station}-{role}')
+
+        with patch.object(bu_helpers, 'payroll_fixture', side_effect=partial(
+                payroll_helpers.fixture, context=(owner, case), principal=principal)):
+            data = bu_helpers.fixture()
+        preparer = data['preparer']
+        value = json.loads(Path('fixtures/factory-bu.json').read_text())
+        value.pop('classification')
+        cfg = draft_operator_policy(preparer, case.pk, 'OPS.factory_bu_execution', value,
+                                    data['e']['policy_decision'].pk, timezone.now())
+        transition(preparer, cfg.pk, 'validated')
+        transition(preparer, cfg.pk, 'active')
+
+        other_recipient = None
+        if station in ('publish', 'receive'):
+            disclosure = {**data['bu_config']['disclosure'], 'destination': f'sample-bu-{station}-inbox'}
+            if station == 'receive':
+                other_recipient = users.create_user('batch-bu-station-second-recipient')
+                for action in ['case.read', 'factory.read', 'bu.read', 'bu.report.read', 'bu.receive']:
+                    Grant.objects.create(case=case, user=other_recipient, action=action)
+                disclosure['recipient_ids'] = [actor.pk, other_recipient.pk]
+            bu_helpers.policy(data, DISCLOSE, disclosure)
+        if station == 'receive':
+            Grant.objects.get_or_create(case=case, user=actor, action='factory.read')
+
+        if station in ('review', 'receive'):
+            rows = [{**row, 'event_id': f'acceptance-{station}-{row["event_id"]}'}
+                    for row in data['bu_config']['export']['rows']]
+            source = bu_helpers.source(data, rows=rows)
+            if not source.metadata['accepted']:
+                raise RuntimeError(f'Isolated BU export not accepted: {source.metadata["codes"]}')
+            inputs = {'mode': 'event', 'payroll_id': None, 'source_id': source.pk, 'rule_ids': [], 'comparison': None}
+        else:
+            source = bu_helpers.rule(data)
+            inputs = {'mode': 'staff', 'payroll_id': data['match'].pk, 'source_id': None, 'rule_ids': [source.pk], 'comparison': None}
+        if station != 'review':
+            bu_helpers.review(data, source)
+        work = factory_bu.start(preparer, case.pk, 'SAMPLE-BU-STATION', inputs, title, rev(case))
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        if station != 'review':
+            result = factory_bu.result(work)
+            if result is None:
+                raise RuntimeError('Expected exact native BU result before the browser station')
+            bu_helpers.review(data, result)
+            factory.run_until_wait(work.pk)
+            work.refresh_from_db()
+        if station == 'hold':
+            transition(preparer, data['bu_policies'][DISCLOSE].pk, 'revoked')
+        if station == 'receive':
+            publication = factory_bu.human_action(preparer, work.pk, work.revision, rev(case), 'publish', {})
+            work.refresh_from_db()
+            factory_bu.human_action(other_recipient, work.pk, work.revision, rev(case), 'receive', {'publication_id': publication.pk})
+            if BUReceipt.objects.filter(report=publication, actor=actor).exists():
+                raise RuntimeError('The browser recipient must acknowledge its own copy')
+        if station in ('review', 'receive'):
+            work.refresh_from_db()
+            factory_progress.set_progress(preparer, work.pk, work.revision, True)
+    else:
+        work = FactoryWork.objects.get(case=case, definition=factory_bu.DEFINITION, key='SAMPLE-BU-STATION')
+    focus = {'review': 'factory_invoice_decision', 'publish': 'factory_work_response',
+             'receive': 'factory_invoice_recovery', 'hold': 'factory_work_response'}[station]
+    return {'case': str(case.pk), 'work': work.pk, 'path': reverse(focus, args=[work.pk]), 'existing_work_preserved': not created}
+
+
+@transaction.atomic
 def prepare_minutes_drawer_sources(actor):
     from apps.documents.models import Template
     from tests import document_helpers, test_factory_minutes
