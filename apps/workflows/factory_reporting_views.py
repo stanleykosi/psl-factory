@@ -187,5 +187,5 @@ def detail(request,work,focus=None):
             else:raise ValidationError('Choose a current weekly report action')
             messages.success(request,'Weekly report action recorded. Native review and recipient receipts remain separate.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work)
+    row=presentation(request.user,work,include_progress=not focus)
     return render(request,'factory/reporting_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'editing':editing,'time_zone':timezone.get_current_timezone_name(),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})

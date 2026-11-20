@@ -2,6 +2,7 @@
 <a class="back-link" href="{% url 'home' %}?queue={{ queue|urlencode }}&amp;q={{ q|urlencode }}">← Back to work</a>
 <header class="page-heading"><div><p class="eyebrow">LEDGER SOURCES</p><h1>QuickBooks reference {{ source.source_reference }}</h1><p class="lede">{{ row.state|readable }} · {{ row.owner }}</p></div></header>
 {% include 'factory/work_focus.html' with has_response=True response_label='Record observation' %}
+{% include 'factory/current_step.html' with progress=row.ledger.progress only %}
 <section class="card"><h2>Next action</h2><p>{{ row.next_action }}</p>{% if row.blocker and not conflict and not rejected %}<p role="status">{{ row.blocker }}</p>{% endif %}
 <p><a href="{% url 'ledger' case.pk %}">Open Finance evidence and resolution history</a></p></section>
 <section class="card"><h2>Supplied incumbent transaction reference</h2><dl>

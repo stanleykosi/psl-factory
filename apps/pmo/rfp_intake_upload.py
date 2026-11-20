@@ -15,20 +15,15 @@ from adapters import case_uploads, upload_text
 from apps.agents.models import CaseUpload
 from apps.core.models import Audit, Evidence
 from apps.core.services import add_evidence, event, lock_case
-from apps.identity.services import require
 
 from . import rfp
 from .models import RFPCase
+from .rfp_intake_context import authorize_read as require_read, authorize_write, from_intake, validate as validate_context
 
 
 SOURCE = 'psl:rfp-intake-private-attachment'
 ADMISSION = 'rfp.intake_attachment_admitted'
 LOGGER = logging.getLogger(__name__)
-
-
-def require_read(actor, case):
-    for action in ('case.read', 'rfp.read', 'document.read'):
-        require(actor, case, action)
 
 
 def attachment_for(actor, case, intake):
@@ -39,9 +34,7 @@ def attachment_for(actor, case, intake):
                                        created_by_id=intake.actor_id).only('id', 'sha256').first()
     if not evidence:
         return None
-    require_read(intake.actor, case)
-    require(intake.actor, case, 'rfp.intake')
-    require(intake.actor, case, 'evidence.add')
+    authorize_write(intake.actor, case)
     binding = Audit.objects.filter(case=case, actor_id=intake.actor_id, action=ADMISSION,
         data__intake=intake.pk, data__evidence=evidence.pk, data__evidence_sha256=evidence.sha256).first()
     if binding is None or type(binding.data.get('upload')) is not int:
@@ -73,29 +66,30 @@ def validate_file(name, data):
         raise ValidationError('The file could not be read as a Word or PDF document. Choose another copy.') from exc
 
 
-def matches_receipt(intake, actor, facts):
+def matches_receipt(intake, actor, facts, context):
     if intake is None or intake.actor_id != actor.pk:
         return False
-    return (intake.rfp.reference, intake.received_at, intake.deadline_status, intake.deadline_at,
-            intake.deadline_evidence_id, intake.note) == facts
+    return ((intake.rfp.reference, intake.received_at, intake.deadline_status, intake.deadline_at,
+             intake.deadline_evidence_id, intake.note) == facts and from_intake(intake) == context)
 
 
-def record(actor, case_id, reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note, expected, file):
+def record(actor, case_id, reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note, expected, file,
+           *,source_context=None, context_attested=False):
     staged_key = None
     try:
         # Own the commit so an uncommitted database receipt never outlives this storage attempt.
         with transaction.atomic(durable=True):
             case = lock_case(actor, case_id, 'rfp.intake')
-            require_read(actor, case)
-            require(actor, case, 'evidence.add')
+            authorize_write(actor, case)
             if type(expected) is not int or not isinstance(reference, str) or not reference.strip() or len(reference.strip()) > 160:
                 raise ValidationError('Choose the current workspace and enter the bid reference.')
+            context = validate_context(source_context, context_attested)
             data = read_file(file)
             fingerprint = hashlib.sha256(data).hexdigest()
             bid = RFPCase.objects.filter(case=case).select_related('current_intake').first()
             current = bid.current_intake if bid else None
             facts = (reference.strip(), received_at, deadline_status, deadline_at, deadline_evidence_id, note)
-            if matches_receipt(current, actor, facts):
+            if matches_receipt(current, actor, facts, context):
                 original = attachment_for(actor, case, current)
                 if original and (original.sha256, original.size) == (fingerprint, len(data)):
                     return current
@@ -106,7 +100,8 @@ def record(actor, case_id, reference, received_at, deadline_status, deadline_at,
                 'A private copy of the received bid document was retained with this intake.', SOURCE, expected)
             case.refresh_from_db(fields=['revision'])
             intake = rfp.intake(actor, case.pk, reference, evidence.pk, received_at, deadline_status,
-                                deadline_at, deadline_evidence_id, note, case.revision)
+                                deadline_at, deadline_evidence_id, note, case.revision,
+                                source_context=context, context_attested=context_attested)
             key = secrets.token_hex(32)
             upload = CaseUpload.objects.create(case=case, actor=actor, name=file.name[:160], key=key,
                                                sha256=fingerprint, size=len(data))

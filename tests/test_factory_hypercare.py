@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from django.test import TestCase,TransactionTestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 from django.db import connection,transaction,DatabaseError
@@ -29,6 +30,45 @@ def setup(configure=True):
 
 
 class FactoryHypercareTests(TestCase):
+    def test_snapshot_reuses_go_live_proof_and_rechecks_successors_and_authority(self):
+        self.assertEqual(connection.vendor, 'postgresql')
+        sample = setup()
+        sample.accepted()
+        sample.criteria()
+        sample.observations()
+        work = sample.work
+        work.refresh_from_db()
+        _, profile = factory.profile(work)
+
+        with CaptureQueriesContext(connection) as queries:
+            first = factory_hypercare.snapshot(work, profile)[0]['checks']
+        proof_reads = [query for query in queries.captured_queries if 'SELECT psl_gl_attestation(' in query['sql']]
+        self.assertEqual(len(proof_reads), 1)
+        self.assertEqual(first['acceptance']['status'], 'ready')
+        self.assertIs(first['stability']['inputs']['qualified'], True)
+
+        sample.observations(errors=2)
+        work.refresh_from_db()
+        successor = factory_hypercare.snapshot(work, profile)[0]['checks']
+        self.assertEqual(successor['acceptance'], first['acceptance'])
+        self.assertNotEqual(successor['stability']['inputs']['sources']['Engineering'],
+                            first['stability']['inputs']['sources']['Engineering'])
+        self.assertIs(successor['stability']['inputs']['qualified'], False)
+
+        class RevokeAfterObservation:
+            def choose(self, context):
+                Grant.objects.filter(case=sample.case, user=sample.actor, action='delivery.manage').update(active=False)
+                return {'activity': context['eligible'][0], 'citations': context['evidence_ids']}
+
+        self.assertFalse(factory.run_once(work.pk, provider=RevokeAfterObservation()))
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'blocked')
+        self.assertIn('STALE_VERSION', work.finding)
+        revoked = factory_hypercare.snapshot(work, profile)[0]['checks']
+        self.assertEqual(revoked['acceptance']['status'], 'held')
+        self.assertEqual(revoked['stability']['status'], 'held')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=sample.d, kind='hypercare').exists())
+
     def test_release_stability_progress_follows_an_actual_claim_and_stops_at_observed_result(self):
         from apps.workflows import factory_progress
         f = setup()

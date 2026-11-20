@@ -7,8 +7,10 @@ from django.core.exceptions import ValidationError
 from apps.identity.models import Grant
 from apps.agents.models import AgentRun
 from apps.agents.delivery import investigate_delivery
-from apps.pmo.delivery_closure import closure_inputs,closure_requirements,confirm_finance
+from apps.pmo.delivery import open_dossier
+from apps.pmo.delivery_closure import closure_inputs,closure_requirements,confirm_finance,current_finance_confirmation
 from apps.pmo.delivery_documents import draft_delivery_document
+from apps.pmo.gates import register_candidate
 from apps.pmo.models import DeliveryRecord,DeliveryDocumentBinding,MeetingVersion,Milestone
 from apps.pmo.meetings import record_meeting
 from apps.pmo.services import complete_milestone
@@ -44,10 +46,27 @@ class ClosurePreparationTests(DeliveryFixture,TestCase):
         self.assertFalse(DeliveryRecord.objects.filter(dossier=self.d,kind__in=['closure_decision','closure']).exists())
 
     def test_changed_finance_inventory_needs_actual_current_confirmation_without_holding_other_preparation(self):
+        candidate = register_candidate(self.actor, self.case.pk, 'no-finance-confirmation',
+                                       self.e['requirements'].pk, rev(self.case))
+        unconfirmed = open_dossier(self.actor, self.case.pk, candidate.pk, self.e['plan'].pk,
+                                   'Separate synthetic delivery with no Finance confirmation.', rev(self.case))
+        self.client.force_login(self.actor)
+        page = self.client.get(reverse('closure_preparation', args=[self.case.pk, unconfirmed.pk]))
+        self.assertContains(page, '<summary><strong>Finance notification coverage</strong> · Unknown</summary>', html=True)
+        self.assertContains(page, 'Finance confirmation has not been recorded.')
+        self.assertFalse(page.context['report']['ready_to_prepare'])
+        finance = next(check for check in page.context['report']['checks'] if check['key'] == 'finance')
+        self.assertEqual((finance['status'], finance['references']), ('unknown', []))
+        with self.assertRaises(ValidationError):
+            current_finance_confirmation(unconfirmed)
+
         old=self.checks(self.selected)['finance']['references']
         m=complete_milestone(self.actor,self.case.pk,'Additional completed milestone',self.e['completion'].pk,rev(self.case));self.assertTrue(run_once())
         checks=self.checks();self.assertEqual(checks['finance']['status'],'held');self.assertEqual(checks['archive']['status'],'current')
         self.assertEqual(checks['retrospective']['status'],'unknown')
+        page = self.client.get(reverse('closure_preparation', args=[self.case.pk, self.d.pk]), self.selected)
+        self.assertContains(page, '<summary><strong>Finance notification coverage</strong> · Needs attention</summary>', html=True)
+        self.assertFalse(page.context['report']['ready_to_prepare'])
         with self.assertRaises(ValidationError):
             confirm_finance(self.actor,self.case.pk,self.d.pk,[],True,self.e['completion'].pk,'Empty is not current coverage',rev(self.case))
         ids=list(Milestone.objects.filter(case=self.case).order_by('pk').values_list('pk',flat=True))

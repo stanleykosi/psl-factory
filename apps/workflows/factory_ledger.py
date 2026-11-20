@@ -243,12 +243,25 @@ def correct(actor,work_id,expected,case_expected,evidence_id,predecessor_id,reas
     if s and predecessor_id!=s.pk:raise ValidationError('Correction must explicitly extend this captured lineage')
     before=w.source_head_id;w.source_head=capture_intake(actor,c,new,'factory.ledger_source');w.status='ready';w.finding='';w.revision+=1;w.save();event(actor,c,'factory.ledger_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_execution import available_actor
+    from .factory_progress import current_plan_step
+
     readable(actor,work.case);source(work,actor,False);n={'stage':'held'};options=[];message='';changed=False
+    progress = None
     try:
         _,v=profile(work,recovery=True);state,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);n=state['native'];options,message=eligible(work,v,state,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
+        if include_progress and current_plan_step(work, state['hash'], options) == 'ACT04':
+            worker = available_actor(work)
+            if worker is not None:
+                try:
+                    require(worker, work.case, 'agent.ledger')
+                except PermissionDenied:
+                    pass
+                else:
+                    progress = {'label': 'Investigating the supplied ledger reference.', 'watching': True}
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     w=lineage(work);names=[];can_review=False
     if w and n['stage']=='review' and not work.cancel_requested:
@@ -259,7 +272,7 @@ def projection(actor,work):
             try:readable(reviewer,work.case);native.authority(reviewer,x)
             except (ValidationError,PermissionDenied):continue
             names.append(reviewer.get_full_name() or reviewer.username);can_review=can_review or reviewer.pk==actor.pk
-    return {'lineage':w,'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'reviewer_names':names,'can_review':can_review}
+    return {'lineage':w,'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'reviewer_names':names,'can_review':can_review,'progress':progress}
 
 @transaction.atomic
 def recheck(actor,work_id,expected,case_expected,reason):

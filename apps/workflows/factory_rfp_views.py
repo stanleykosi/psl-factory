@@ -519,17 +519,36 @@ def detail(request,work,focus=None):
                      for key, label in OUTCOME_CHOICES.items()]
     selected = chosen or (submission_page.object_list[0] if submission_page.paginator.count == 1 else None)
     from apps.pmo.rfp_pricing import comparison
-    from apps.pmo.rfp_followup import panel as followup_panel
-    from apps.pmo.models import RFPFollowupDispatch
-    from apps.core.models import ClientContactRevision
-    from apps.policy.document_validators import ROLES
-    resolved=resolve('D11.adapter_configuration_refs',work.case)
-    followup_routes=[value for value in reference_values(resolved.configuration) if value.get('kind')=='rfp_followup'] if resolved.status=='ACTIVE' else []
-    messages_sent=list(RFPFollowupDispatch.objects.filter(outcome__submission__response__rfp__case=work.case,
-        actor=request.user).select_related('outcome','receipt','attempt','mailbox','contact').order_by('-pk')[:10])
-    followup=followup_panel(request.user,work.case,row['rfp']['outcome']) if focus in [None,'response'] else None
-    if followup and followup.get('reviewed'):
-        followup['released']=RFPFollowupDispatch.objects.filter(review=followup['reviewed'],actor=request.user).exists()
+    followup_context = {}
+    if focus in (None, 'response'):
+        from apps.core.models import ClientContactRevision
+        from apps.pmo.models import RFPFollowupDispatch
+        from apps.pmo.rfp_followup import panel as followup_panel
+        from apps.pmo.rfp_messages import pre_attempt_hold
+        from apps.policy.document_validators import ROLES
+
+        followup_records = RFPFollowupDispatch.objects.filter(outcome__submission__response__rfp__case=work.case)
+        messages_sent = list(followup_records.filter(actor=request.user).select_related(
+            'outcome', 'receipt', 'attempt', 'mailbox', 'contact').order_by('-pk')[:10])
+        for sent in messages_sent:
+            if sent.route['mode'] == 'synthetic_mailbox' and not hasattr(sent, 'attempt') and not hasattr(sent, 'receipt'):
+                sent.pre_attempt_hold = pre_attempt_hold(request.user, work.case, sent.pk)
+        followup = followup_panel(request.user, work.case, row['rfp']['outcome'])
+        can_operate_followup = allowed(request.user, work.case, 'rfp.submit')
+        if can_operate_followup and followup and followup.get('reviewed'):
+            followup['released'] = followup_records.filter(review=followup['reviewed'], actor=request.user).exists()
+            followup['waiting_on_original'] = not followup['released'] and followup_records.filter(receipt__isnull=True).exists()
+        resolved = resolve('D11.adapter_configuration_refs', work.case)
+        routes = [value for value in reference_values(resolved.configuration)
+                  if value.get('kind') == 'rfp_followup'] if resolved.status == 'ACTIVE' else []
+        followup_context = {
+            'followup': followup, 'can_operate_followup': can_operate_followup,
+            'followup_routes': routes, 'followup_messages': messages_sent,
+            'followup_receipt_evidence': evidence.filter(kind='rfp_followup_receipt'),
+            'followup_contacts': ClientContactRevision.objects.filter(
+                case=work.case, purpose='project', customer='').order_by('-number')[:20],
+            'followup_sender_roles': ROLES,
+        }
     portal_pack=RFPDocumentBinding.objects.filter(version=document,snapshot__route__method='manual_client_portal').first() if document else None
     from apps.pmo.rfp_answers import authorize as authorize_answers
     try:
@@ -563,11 +582,7 @@ def detail(request,work,focus=None):
         'loss_debrief':rfp_loss.debrief_proof(request.user,work.case,row['rfp']['outcome']),
         'can_review_requirement_answers':can_review_requirement_answers, 'final_costing':final_costing,
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
-        'followup':followup,
-        'followup_routes':followup_routes,'followup_messages':messages_sent,
-        'followup_receipt_evidence':evidence.filter(kind='rfp_followup_receipt'),
-        'followup_contacts':ClientContactRevision.objects.filter(case=work.case,purpose='project',customer='').order_by('-number')[:20],
-        'followup_sender_roles':ROLES,
+        **followup_context,
         'portal_receipt':getattr(row['rfp']['submission'],'portal_receipt',None),
         'portal_pack':portal_pack if not row['rfp']['submission'] and allowed(request.user,work.case,'rfp.submit') and allowed(request.user,work.case,'document.read') else None,
         'portal_evidence':evidence.filter(kind='rfp_portal_receipt'),

@@ -23,7 +23,7 @@ SCREENS = {
     },
     'finance-ppe/v1': {
         'decision': ('review',),
-        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'adopt_profile'),
+        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'attach_opening_proof', 'adopt_profile'),
     },
     'finance-forecast/v1': {
         'decision': ('review', 'priority', 'group_review', 'group_rules'),
@@ -75,6 +75,9 @@ SCREENS = {
     'delivery-release/v1': {
         'decision': ('delivery_decision', 'delivery_workaround'),
         'recovery': ('advance', 'reassess', 'resume', 'cancel', 'adopt_profile'),
+    },
+    'delivery-handover/v1': {
+        'recovery': ('reconcile', 'operate_delivery', 'advance', 'correct', 'resume', 'cancel', 'adopt_profile'),
     },
     'delivery-closure/v1': {
         'decision': ('review', 'decide'),

@@ -45,6 +45,55 @@ class FactoryPPETests(TestCase):
         review(f,s,verdict='revoke');self.assertTrue(flow.projection(f['actor'],self.work)['readiness_changed'])
         with self.assertRaises((ValidationError,PermissionDenied)):flow.verify(self.work,f['actor'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_live_calculation_step_requires_current_lease_and_authority(self):
+        from django.contrib.auth import get_user_model
+        from django.urls import reverse
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        f = self.f
+        self.start()
+        check_investigation_progress(self, f['actor'], self.work, 'Investigating the asset register and supporting records.')
+        path = reverse('factory_detail', args=[self.work.pk])
+        decision = reverse('factory_invoice_decision', args=[self.work.pk])
+        label = 'Calculating the asset schedule.'
+        reader = get_user_model().objects.create_user(username='calculation-status-reader')
+        Grant.objects.bulk_create([Grant(case=f['case'], user=reader, action=action)
+                                   for action in ('case.read', 'factory.read', 'finance.read', 'ppe.read')])
+        self.client.force_login(reader)
+        self.assertNotContains(self.client.get(path), label)
+
+        class ObserveCalculation(SyntheticFactoryCoordinator):
+            def choose(provider, context):
+                self.assertEqual(context['eligible'], ['ACT08'])
+                self.assertIsNone(flow.schedule(self.work))
+                page = self.client.get(path)
+                self.assertContains(page, label)
+                self.assertContains(page, 'data-work-watch')
+                self.assertNotContains(self.client.get(decision), label)
+
+                grants = Grant.objects.filter(case=f['case'], user=f['actor'], action='finance.calculate')
+                grants.update(active=False)
+                try:
+                    self.assertNotContains(self.client.get(path), label)
+                finally:
+                    grants.update(active=True)
+
+                read_grant = Grant.objects.filter(case=f['case'], user=reader, action='ppe.read')
+                read_grant.update(active=False)
+                page = self.client.get(path)
+                self.assertNotIn(label, page.content.decode())
+                read_grant.update(active=True)
+                self.assertContains(self.client.get(path), label)
+                return super().choose(context)
+
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveCalculation()))
+        self.assertNotContains(self.client.get(path), label)
+        self.work.refresh_from_db()
+        schedule = flow.schedule(self.work)
+        self.assertIsNotNone(schedule, self.work.finding)
+        self.assertIsNone(ppe.latest(schedule, 'schedule'))
+
     def test_unknown_rows_and_source_review_remain_human_with_safe_correction(self):
         f=self.f;review(f,f['register'],'register','revoke');self.start();self.advance();self.assertIsNone(flow.schedule(self.work))
         review(f,f['register'],'register');self.advance();old=flow.schedule(self.work);self.assertIsNotNone(old,self.work.finding);spent=self.work.budget_used

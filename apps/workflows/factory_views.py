@@ -406,6 +406,9 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         if any(j.status=='unknown' or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now() for j in row['jobs']):
             row.update(state='Handover delivery uncertain',next_action='Reconcile the original internal delivery',can_advance=False,
                 can_reconcile=controlled and not (work.lease_until and work.lease_until>timezone.now()))
+        elif controlled and row['handover']['recorded_receipt'] and not (work.lease_until and work.lease_until > timezone.now()):
+            row.update(state='Original handover receipt recorded', blocker='', can_reconcile=True, can_advance=False,
+                       needs_me=True, next_action='Check the recorded handover receipts before continuing')
         if work.status=='followup_needed':row.update(state='Stopped; delivered handover needs follow-up',next_action='Review the original delivered package and actual recipient records')
         if work.status=='verified':row.update(next_action='Inspect the current handover package and actual recipient acknowledgements')
         if row['handover']['readiness_changed']:
@@ -424,7 +427,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
             row.update(state='Closure returned' if verdict=='return' else 'Closure rejected',
                        next_action='Record corrected source and prepare a new closure report',
                        owner='Unassigned',
-                       needs_me=panel['can_correct'],department_wait=False,can_advance=False)
+                       needs_me=panel['can_correct'],department_wait=False,can_advance=False,correction_required=True)
         elif not panel['closure'] and not panel['report']['ready_to_prepare']:
             missing = next(check for check in panel['report']['checks'] if check['status'] != 'current')
             row.update(state='Closure evidence needed', next_action=missing['summary'],
@@ -458,7 +461,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         if panel['readiness_changed']:row.update(state='Current meeting or action changes need new minutes',needs_me=permitted(actor,work,'factory.manage'),can_reassess=permitted(actor,work,'factory.manage'),can_advance=False)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger import projection
-        row['ledger']=projection(actor,work);panel=row['ledger']
+        row['ledger']=projection(actor,work,include_progress=include_progress);panel=row['ledger']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['readiness_changed']:row['state']='Supplied incumbent verification needs revalidation'
@@ -472,9 +475,10 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         if panel['pending_reviews']:
             row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
         if panel['native'].get('stage')=='returned':
-            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'), can_advance=False)
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'),
+                       can_advance=False,correction_required=True)
         elif panel['native'].get('stage')=='withdrawn':
-            row.update(state='Approval withdrawn', can_advance=False)
+            row.update(state='Approval withdrawn', can_advance=False,correction_required=True)
         elif panel['readiness_changed']:row['state']='Reviewed income detail or schedule inventory needs revalidation'
     if work.definition=='finance-ppe/v1':
         from .factory_ppe import projection
@@ -485,22 +489,36 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
             row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
         stage=panel['native'].get('stage')
         if stage=='returned':
-            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'), can_advance=False)
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'),
+                       can_advance=False,correction_required=True)
         elif panel['readiness_changed']:row['state']='Reviewed asset schedule needs revalidation'
         elif panel['pending_reviews']:
             row['state']={'source_review':'Awaiting asset register review','basis_review':'Awaiting reporting dates review',
                           'output_review':'Awaiting asset schedule review'}.get(stage,row['state'])
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import projection
+        from .factory_forecast_recovery import UNSETTLED, in_flight, needs_lookup, original_job, recorded
         row['forecast']=projection(actor,work,include_progress=include_progress);panel=row['forecast'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options']) and panel['intake_current']
-        uncertain=any(d.uncertain_job(j) for j in panel['jobs'])
-        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and uncertain
+        original = original_job(work, panel['jobs'])
+        uncertain = original is not None and needs_lookup(original)
+        receipt_recorded = original is not None and recorded(work, original, panel['jobs'])
+        row['can_reconcile'] = (recovery_available and controlled and panel['intake_current']
+                                and not in_flight(work) and (uncertain or receipt_recorded))
+        row['forecast_original_job'] = original
+        row['forecast_can_observe'] = row['can_reconcile'] and uncertain and not work.cancel_requested
+        row['forecast_receipt_recorded'] = receipt_recorded
+        row['forecast_can_recheck'] = row['can_manage'] and not any(
+            job.status in UNSETTLED and job.publication.factory_source_id == work.source_head_id
+            for job in panel['jobs'])
         if panel['review_roles']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting native forecast review')
         if panel['readiness_changed']:row['state']='Recorded forecast evidence changed'
         if uncertain:
-            row.update(state='Delivery uncertain',next_action='Look up the original forecast delivery',can_advance=False)
+            row.update(state='Delivery uncertain',next_action='Check the original forecast delivery',can_advance=False)
+        elif receipt_recorded and row['can_reconcile']:
+            row.update(state='Original receipt recorded',next_action='Check the recorded forecast receipt',
+                       can_advance=False,needs_me=True)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation import projection
         row['escalation']=projection(actor,work,include_progress=include_progress);panel=row['escalation'];row['jobs']=panel['jobs']
@@ -512,7 +530,8 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         if panel['native'].get('stage') == 'not_escalated':
             row.update(state='Not escalated', owner='No action required', needs_me=False, department_wait=False, can_advance=False)
         elif panel['native'].get('stage') == 'returned':
-            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'), department_wait=False, can_advance=False)
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'),
+                       department_wait=False,can_advance=False,correction_required=True)
         if panel['readiness_changed']:row['state']='Communication evidence needs revalidation'
     if work.definition=='pmo-leadership-report/v1':
         from .factory_leadership import projection
@@ -527,12 +546,13 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         # can_correct remains the separate authority and settled-effect boundary.
         verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
         correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
+        row['correction_required'] = verdict in ['return', 'reject'] and not work.cancel_requested
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting import projection
-        row['reporting']=projection(actor,work);panel=row['reporting'];row['jobs']=panel['jobs']
+        row['reporting']=projection(actor,work,include_progress=include_progress);panel=row['reporting'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
@@ -543,6 +563,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         # can_correct remains the separate authority and settled-effect boundary.
         verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
         correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
+        row['correction_required'] = verdict in ['return', 'reject'] and not work.cancel_requested
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
@@ -653,8 +674,14 @@ def index(request):
             continue
         evaluated+=1
         if queue=='verified' and row.get('readiness_changed'):continue
-        if queue=='exceptions' and work.status=='verified' and not row.get('readiness_changed'):continue
-        if queue=='exceptions' and work.status in ['ready','waiting'] and not (row.get('review_needs_update') or row.get('adoption') or row.get('coordination_needed') or row.get('execution_owner_needed') or row.get('source_instruction_needed') or row.get('source_followup_needed') or row.get('operation_followup_needed') or row.get('outcome_selection_needed') or row.get('held_publication_needs_operator') or any(d.uncertain_job(j) for j in row['jobs']) or row['state']=='Execution rules need review'):continue
+        if queue=='exceptions' and work.status=='verified' and not (row.get('readiness_changed') or row.get('correction_required')):continue
+        if queue=='exceptions' and work.status in ['ready','waiting']:
+            holds = ('correction_required', 'review_needs_update', 'adoption', 'coordination_needed',
+                     'execution_owner_needed', 'source_instruction_needed', 'source_followup_needed',
+                     'operation_followup_needed', 'outcome_selection_needed', 'held_publication_needs_operator')
+            if not (any(row.get(hold) for hold in holds) or any(d.uncertain_job(job) for job in row['jobs'])
+                    or row['state'] == 'Execution rules need review'):
+                continue
         if queue=='needs_me' and not row['needs_me']:continue
         if queue=='waiting' and row['needs_me']:continue
         if queue=='decisions' and (row.get('review_needs_update') or row.get('review_ready') or not (row.get('department_wait') or any(t.status=='open' and t.kind=='factory_review' for t in row['tasks']))):continue
@@ -930,7 +957,7 @@ def _detail(request,work_id,focus=None):
         return closure_detail(request,work,focus)
     if work.definition=='delivery-handover/v1':
         from .factory_handover_views import detail as handover_detail
-        return handover_detail(request,work)
+        return handover_detail(request,work,focus)
     if work.definition=='delivery-archive/v1':
         from .factory_archive_views import detail as archive_detail
         return archive_detail(request,work)
@@ -947,10 +974,11 @@ def _detail(request,work_id,focus=None):
                 due=date.fromisoformat(request.POST['due_date']) if request.POST.get('due_date') else None
                 replace(request.user,work.pk,int(request.POST.get('preparation','0')),request.POST.get('reference',''),due,revision,request.POST.get('reason',''))
             elif operation=='advance':
-                if work.definition=='delivery-release/v1':
+                if work.definition in {'delivery-release/v1','delivery-hypercare/v1'}:
                     from .factory_progress import set_progress
                     set_progress(request.user,work.pk,revision,True)
-                    messages.success(request,'Release work will continue in the background.')
+                    messages.success(request,'Release follow-up will continue in the background.' if
+                                     work.definition=='delivery-hypercare/v1' else 'Release work will continue in the background.')
                     return redirect(request.get_full_path())
                 d.advance(request.user,work.pk,revision)
             elif operation=='release_invoice':

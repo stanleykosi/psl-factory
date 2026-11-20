@@ -2,7 +2,7 @@
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.shortcuts import render,redirect
 from apps.core.models import Case,Evidence
 from apps.core.evidence_access import public_evidence
@@ -69,8 +69,9 @@ def create(request):
     return render(request,'factory/handover_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
 
-def detail(request,work):
+def detail(request,work,focus=None):
     from .factory_views import presentation,QUEUES,permitted
+    from .screen_focus import require_action
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
     if queue not in QUEUES:queue='needs_me'
     panel=handover.projection(request.user,work)
@@ -78,7 +79,15 @@ def detail(request,work):
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
+            elif action == 'publish':
+                fields = {'action', 'revision', 'case_revision', 'version'}
+                if set(p) - fields - {'csrfmiddlewaretoken'} or any(len(p.getlist(field)) != 1 for field in fields):
+                    raise ValidationError('Submit the exact current handover version and project once.')
+                handover.publish(request.user, work.pk, revision, int(p['case_revision']), int(p['version']))
+                messages.success(request, 'The exact handover has been queued for Support.')
+                return redirect(request.get_full_path())
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Review the selected template and source documents')
                 handover.correct(request.user,work.pk,revision,int(p.get('case_revision','0')),form.inputs(),p.get('reason',''))
@@ -112,7 +121,18 @@ def detail(request,work):
         except ValidationError as exc:messages.error(request,handover.finding_text(exc))
         except ValueError:messages.error(request,'Refresh the work and choose the currently available source or delivery reference.')
         work.refresh_from_db()
-    row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    row=presentation(request.user,work);activities=[] if focus else list(work.activities.prefetch_related('attempts').order_by('pk'))
+    if not focus and row['can_advance'] and row['handover']['document'] and not row['handover']['publication']:
+        from apps.documents.controlled import guard_reserve_publication
+
+        try:
+            version, sender = handover.publication_candidate(work)
+            guard_reserve_publication(sender, work.case, version.pk)
+        except (ValidationError, PermissionDenied):
+            pass
+        else:
+            row.update(can_advance=False, handover_publish_version=version.pk, state='Ready to publish to Support',
+                       next_action='Publish this exact approved handover to Support')
     for item in row['handover']['receipts']:
         item['reply_values'] = request.POST if (request.method == 'POST' and
             request.POST.get('action') == 'record_support_reply' and
@@ -130,10 +150,11 @@ def detail(request,work):
     except ValidationError as exc:
         reply_channels = []
         reply_finding = ' '.join(exc.messages)
-    response=render(request,'factory/handover_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'activities':activities,'inputs_form':form,
+    response=render(request,'factory/handover_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'activities':activities,'inputs_form':form,'focus':focus,
         'reply_roles': reply_roles, 'reply_channels': reply_channels, 'reply_finding': reply_finding,
         'reply_rules_form': ReplyRulesForm(request.POST if request.method=='POST' and request.POST.get('action')=='support_reply_rules' else None)
             if permitted(request.user,work,'policy.configure') else None,
-        'evidence_choices':list(public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')[:100]),'can_configure':permitted(request.user,work,'policy.configure'),
+        'evidence_choices':list(public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')[:100]) if not focus else [],
+        'can_configure':permitted(request.user,work,'policy.configure'),
         'can_prepare_closure':work.status=='verified' and not row.get('readiness_changed')})
     response['Cache-Control']='no-store';return response

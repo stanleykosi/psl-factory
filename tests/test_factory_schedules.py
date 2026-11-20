@@ -324,12 +324,17 @@ class FactorySchedulesTests(TestCase):
         recovery=reverse('factory_invoice_recovery', args=[self.work.pk])
         self.client.force_login(f['reviewer'])
         self.assertContains(self.client.get(decision), 'Approve exact schedule')
+        exceptions = reverse('home') + '?queue=exceptions&q=' + self.work.key
+        self.assertNotIn(self.work.pk, [row['work'].pk for row in self.client.get(exceptions).context['rows']])
         response=self.client.post(decision, {'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),
             'target':original.pk,'verdict':'return','evidence':f['e']['finance_review'].pk,'note':'Correct the source breakdown'})
         self.assertRedirects(response, decision, fetch_redirect_response=False)
         page=self.client.get(decision)
         self.assertContains(page, 'Returned for correction')
         self.assertNotContains(page, 'Approve exact schedule')
+        Grant.objects.filter(case=f['case'], user=f['reviewer'], action='factory.manage').update(active=False)
+        self.assertContains(self.client.get(exceptions), 'Returned for correction')
+        self.assertNotContains(self.client.get(recovery), 'Correct and resubmit')
         with self.assertRaisesMessage(ValidationError, 'Prepare a corrected schedule version'):
             review(f,original)
         self.client.force_login(f['actor'])

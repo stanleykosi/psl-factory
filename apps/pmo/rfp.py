@@ -1,6 +1,7 @@
 """Source-bound RFP services. A win starts Route A; it never signs a SOW."""
 import json
 import re
+from dataclasses import asdict
 from datetime import date, datetime
 from decimal import Decimal
 from django.core.exceptions import ValidationError, PermissionDenied
@@ -12,10 +13,11 @@ from apps.core.read_observation import observed_fact
 from apps.finance.rules import decimal
 from apps.identity.services import require
 from apps.policy.services import active_component, reference_values, decision_authority
-from .models import (RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,
+from .models import (RFPCase,RFPIntake,RFPIntakeSourceContext,RFPAssignment,RFPContribution,RFPResponse,
     RFPReview,RFPOutcome,RFPDisposition,Baseline,CommercialCase)
 from .services import subject
 from .clocks import aware
+from . import rfp_intake_context
 
 TEAMS={'Engineering':'engineering_estimate','QA':'qa_estimate','Security':'security_estimate','Product':'product_input'}
 REVIEW_ROLES=['PMO Lead','Engineering Lead']
@@ -52,8 +54,12 @@ def outcome_authority_matches(recorded,current):
     return authority_matches({k:v for k,v in recorded.items() if k!='_selection_context'},current)
 
 @transaction.atomic
-def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadline_at,deadline_evidence_id,note_text,expected):
+def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadline_at,deadline_evidence_id,note_text,expected,
+           *,source_context=None,context_attested=False):
     case=lock_case(actor,case_id,'rfp.intake',expected);note(note_text);past(received_at)
+    context = rfp_intake_context.validate(source_context, context_attested)
+    if context.recorded:
+        rfp_intake_context.authorize_write(actor, case)
     if case.kind!='project' or not isinstance(reference,str) or not reference.strip() or len(reference)>160:raise ValidationError('Use a project workspace and an RFP reference of at most 160 characters')
     r=RFPCase.objects.filter(case=case).first()
     if not r:
@@ -62,7 +68,9 @@ def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadl
         r=RFPCase.objects.create(case=case,tenant=case.tenant,reference=reference.strip())
     ensure_open(r)
     if r.reference!=reference.strip():raise ValidationError('Keep the immutable RFP reference')
-    e=subject(case,evidence_id,'rfp_intake')
+    e=subject(case,evidence_id,'rfp_intake',metadata_only=True)
+    if context.recorded:
+        rfp_intake_context.require_source(case, e)
     if deadline_status not in ['unknown','stated','not_stated']:raise ValidationError('State whether the deadline is unknown, stated or explicitly not stated')
     de=None
     if deadline_status=='stated':
@@ -72,13 +80,16 @@ def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadl
     i=RFPIntake.objects.create(rfp=r,number=r.intakes.count()+1,received_at=received_at,deadline_status=deadline_status,
         deadline_at=deadline_at,deadline_evidence=de,evidence=e,note=note_text,actor=actor)
     r.current_intake=i;r.current_response=None;r.save(update_fields=['current_intake','current_response'])
+    if context.recorded:
+        RFPIntakeSourceContext.objects.create(intake=i, **asdict(context))
     event(actor,case,'rfp.intake',intake=i.pk,deadline_status=deadline_status);bump(case);return i
 
 @transaction.atomic
 def assign(actor,case_id,pm,role,evidence_id,note_text,expected):
     case=lock_case(actor,case_id,'rfp.assign',expected);r=root(case);ensure_open(r);note(note_text)
     auth=authority(actor,case,'assignment',role);require(pm,case,'rfp.prepare');decision_authority(pm,case,'PM')
-    a=RFPAssignment.objects.create(intake=r.current_intake,pm=pm,role=role,authority=auth,evidence=subject(case,evidence_id),note=note_text,actor=actor)
+    a=RFPAssignment.objects.create(intake=r.current_intake,pm=pm,role=role,authority=auth,
+        evidence=subject(case,evidence_id,metadata_only=True),note=note_text,actor=actor)
     event(actor,case,'rfp.assigned',assignment=a.pk,pm=pm.pk);bump(case);return a
 
 def _team_target(actor, case_id, team, expected):
@@ -128,8 +139,12 @@ def record_team_input(actor, case_id, team, evidence_id, expected, *, received_a
 
 
 @observed_fact
-def current_assignment(r):
-    case=r.case;i=r.current_intake;a=i.assignments.order_by('-pk').first()
+def current_assignment(r, *, metadata_only=False):
+    case=r.case;i=r.current_intake
+    assignments = i.assignments.order_by('-pk')
+    if metadata_only:
+        assignments = assignments.only('actor_id', 'pm_id', 'role', 'authority')
+    a = assignments.first()
     if not a:raise ValidationError('Assign an accountable PM')
     from django.contrib.auth import get_user_model
     if get_user_model().objects.filter(pk__in={a.actor_id,a.pm_id},is_active=True).count()!=len({a.actor_id,a.pm_id}):raise PermissionDenied('Current active assignment principals required')

@@ -14,7 +14,7 @@ from apps.identity.services import active_case_grants, require
 from apps.policy.change_drafts import draft_standard_policy
 from apps.agents.rfp import investigate_rfp
 from apps.agents.models import AgentRun
-from . import rfp, rfp_documents, rfp_portal, rfp_intake_upload
+from . import rfp, rfp_assignment_queue, rfp_documents, rfp_portal, rfp_intake_context, rfp_intake_upload
 from .models import RFPCase, RFPResponse, RFPSubmission, RFPOutcome, RFPDisposition, RFPIntake
 from .rfp_forms import forms_for
 
@@ -23,13 +23,22 @@ from .rfp_forms import forms_for
 def workbench(request,case_id):
     case=accessible_case(request.user,case_id);require(request.user,case,'rfp.read')
     upload_grants = ['rfp.intake', 'evidence.add', 'document.read']
-    available=active_case_grants(request.user,[case.pk],actions=upload_grants+[f'rfp.contribute:{team}' for team in rfp.TEAMS])
+    available=active_case_grants(request.user,[case.pk],actions=upload_grants+['rfp.assign']+[f'rfp.contribute:{team}' for team in rfp.TEAMS])
     teams=[team for team in rfp.TEAMS if (case.pk,f'rfp.contribute:{team}') in available]
     uploads_allowed = all((case.pk, action) in available for action in upload_grants)
+    assignment_roles, assignment_people = [], []
+    if (case.pk, 'rfp.assign') in available:
+        try:
+            assignment_roles, records = rfp_assignment_queue.assignment_scope(request.user, case)
+            assignment_people = [person.pk for person in rfp_assignment_queue.nominees(case, records)]
+        except (PermissionDenied, ValidationError):
+            pass
     forms=forms_for(case,request.POST if request.method=='POST' else None,team_choices=teams,
-                    uploads_allowed=uploads_allowed,files=request.FILES)
+                    assignment_roles=assignment_roles,assignment_people=assignment_people,uploads_allowed=uploads_allowed,files=request.FILES)
     if request.method=='POST':
         try:
+            if request.POST.get('action') == 'assign' and not assignment_roles:
+                rfp_assignment_queue.assignment_scope(request.user, case)
             command=next((x for x in forms if x['action']==request.POST.get('action')),None)
             if not command or not command['form'].is_valid():raise ValidationError(command['form'].errors.as_text() if command else 'Select a supported RFP action')
             d=command['form'].cleaned_data;a=request.user;c=case.pk;v=d['revision'];action=d['action']
@@ -37,12 +46,16 @@ def workbench(request,case_id):
                                   or len(request.FILES.getlist('rfp_file')) != 1):
                 raise ValidationError('Attach only one bid document using the received bid form.')
             if action=='intake':
+                context_fields = ('prospect_name', 'submission_method', 'submission_target', 'context_attested')
+                if not uploads_allowed and any(request.POST.get(field) for field in context_fields):
+                    rfp_intake_context.authorize_write(a, case)
                 deadline = d['deadline_evidence'].pk if d['deadline_evidence'] else None
                 facts = (d['received_at'], d['deadline_status'], d['deadline_at'], deadline, d['note'], v)
+                context = {'source_context': d.get('source_context'), 'context_attested': d.get('context_attested', False)}
                 if d.get('rfp_file'):
-                    rfp_intake_upload.record(a, c, d['reference'], *facts, d['rfp_file'])
+                    rfp_intake_upload.record(a, c, d['reference'], *facts, d['rfp_file'], **context)
                 else:
-                    rfp.intake(a, c, d['reference'], d['evidence'].pk, *facts)
+                    rfp.intake(a, c, d['reference'], d['evidence'].pk, *facts, **context)
             elif action=='assign':rfp.assign(a,c,d['pm'],d['role'],d['evidence'].pk,d['note'],v)
             elif action=='contribute':
                 rfp.record_team_input(a,c,d['team'],d['evidence'].pk,v,received_at=d['received_at'],source_party=d['source_party'],
@@ -64,16 +77,18 @@ def workbench(request,case_id):
     r=RFPCase.objects.filter(case=case).select_related('current_intake').first()
     current_inputs = []
     current_attachment = None
+    intake_context = None
     if r and r.current_intake_id:
         rows = r.current_intake.contributions.filter(team__in=rfp.TEAMS).order_by('team', '-pk').distinct('team')
         current_inputs = [row for row in rows.select_related('evidence').defer('evidence__body') if not restricted(row.evidence)]
         if (case.pk,'document.read') in available:
             try:
                 current_attachment = rfp_intake_upload.attachment_for(request.user, case, r.current_intake)
+                intake_context = rfp_intake_context.visible(request.user, case, r.current_intake)
             except PermissionDenied:
                 pass
     return render(request,'pmo/rfp.html',{'case':case,'rfp':r,'commands':forms,'current_inputs':current_inputs,
-        'current_attachment':current_attachment,
+        'current_attachment':current_attachment,'intake_context':intake_context,
         'responses':RFPResponse.objects.filter(rfp=r).order_by('-pk'),
         'submissions':RFPSubmission.objects.filter(response__rfp=r).select_related('portal_receipt'),'outcomes':RFPOutcome.objects.filter(submission__response__rfp=r),
         'disposition':RFPDisposition.objects.filter(rfp=r).first(),'runs':AgentRun.objects.filter(case=case,provider='deterministic-rfp-investigation-v1').order_by('-pk')[:5]})

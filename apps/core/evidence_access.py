@@ -5,6 +5,8 @@ PLANNING_PRIVATE=['planning_packet','planning_prd_alignment','planning_scope_ali
 PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source','issue_message_receipt','rfp_estimate_receipt']+PLANNING_PRIVATE
 PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_')
 CONFIRMED_CHANGE_SOURCE='psl:p56-confirmed-request/v1'
+PPE_OPENING_SOURCE = 'psl:ppe-private-opening-proof/v1'
+PRIVATE_SOURCES = (CONFIRMED_CHANGE_SOURCE, PPE_OPENING_SOURCE)
 def forecast_private(e):
  if e.kind.startswith('forecast_') or e.kind=='finance_group_snapshot' or e.kind=='finance_report_snapshot' and getattr(e,'source','').startswith('derived:forecast:'):return True
  if not getattr(e,'pk',None) or not getattr(e,'case_id',None):return False
@@ -38,10 +40,10 @@ def ppe_statement_private_query():
  from apps.finance.models import FinanceStatementPPEProjection
  return Q(Exists(FinanceStatementPPEProjection.objects.filter(evidence_id=OuterRef('pk'))))|Q(kind='finance_report_snapshot',source__startswith='derived:ppe-statement:')
 
-def restricted(e):return ppe_statement_private(e) or getattr(e,'source','')==CONFIRMED_CHANGE_SOURCE or forecast_private(e) or e.kind in PRIVATE or e.kind.startswith(PRIVATE_PREFIXES)
+def restricted(e):return ppe_statement_private(e) or getattr(e,'source','') in PRIVATE_SOURCES or forecast_private(e) or e.kind in PRIVATE or e.kind.startswith(PRIVATE_PREFIXES)
 
 def other_private_query():
- flags = ppe_statement_private_query() | Q(source=CONFIRMED_CHANGE_SOURCE) | Q(kind__in=PRIVATE)
+ flags = ppe_statement_private_query() | Q(source__in=PRIVATE_SOURCES) | Q(kind__in=PRIVATE)
  for prefix in PRIVATE_PREFIXES:
     flags |= Q(kind__startswith=prefix)
  return flags
@@ -55,7 +57,7 @@ def public_agent_runs(queryset):
  return queryset.filter(Exists(sources)).exclude(provider='deterministic-finance-lineage-v1',result__has_key='statement_inputs',result__statement_inputs__contains=[{'source_type':'ppe_schedule'}]).exclude(provider='deterministic-finance-lineage-v1',result__has_key='run',result__run__in=RawSQL('SELECT to_jsonb(statement_id) FROM finance_financestatementppeinput',[]))
 
 def public_timeline(case):
- private_ids=list(case.evidence.filter(ppe_statement_private_query()|forecast_private_query()|Q(source='psl:p56-confirmed-request/v1')|Q(kind__startswith='agent_private_')|Q(kind__startswith='coverage_')|Q(kind__startswith='usage_intake_')|Q(kind__in=['qbo_native_intent','qbo_native_observation','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review']+PLANNING_PRIVATE)).values_list('pk',flat=True))
+ private_ids=list(case.evidence.filter(ppe_statement_private_query()|forecast_private_query()|Q(source__in=PRIVATE_SOURCES)|Q(kind__startswith='agent_private_')|Q(kind__startswith='coverage_')|Q(kind__startswith='usage_intake_')|Q(kind__in=['qbo_native_intent','qbo_native_observation','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review']+PLANNING_PRIVATE)).values_list('pk',flat=True))
  from apps.workflows.readiness_models import IntegrationContract,IntegrationObservation,IntegrationReview,IntegrationSelection
  private_contracts=IntegrationContract.objects.filter(case=case).filter(Q(payload__family__in=['supportresponse','supportchannel','ledgerdata'])|Q(finance_publication_readiness__isnull=False)|Q(private_protection_readiness__isnull=False)|Q(private_file_readiness__isnull=False))
  private_ids+=list(private_contracts.values_list('evidence_id',flat=True))

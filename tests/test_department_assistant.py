@@ -33,6 +33,9 @@ class DepartmentAssistantTests(TestCase):
         self.client.force_login(self.actor)
         conversation = self.start('tola')
         url = reverse('assistant_thread', args=[conversation.pk])
+        screen = self.client.get(url)
+        self.assertContains(screen, 'Find a project record')
+        self.assertContains(screen, 'assistant-source-picker.js')
         sources, _ = assistant.tool_context(conversation)
         selected = [item for item in sources if item['label'] in ['Workspace', 'Commercial requirements']]
         self.assertEqual(len(selected), 2)

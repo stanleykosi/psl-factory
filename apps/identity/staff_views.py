@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
 
 from apps.core.evidence_access import public_evidence
@@ -177,6 +178,7 @@ def invites(request, case_id, invitation_id=None):
 
 @require_http_methods(['GET','HEAD','POST'])
 @never_cache
+@sensitive_post_parameters('token', 'password', 'confirm')
 def accept(request):
     preview = None
     problem = None

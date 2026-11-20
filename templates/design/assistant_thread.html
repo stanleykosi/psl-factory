@@ -36,7 +36,12 @@
   {% if waiting %}{{ form.errors }}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
     <script defer src="{% static 'assistant-progress.js' %}"></script>
   {% else %}<form method="post" id="assistant-compose" class="assistant-compose">{% csrf_token %}{{ form.key }}{{ form.non_field_errors }}{{ form.question.as_field_group }}
-  {% if form.focus.field.choices %}<details{% if form.focus.errors or form.is_bound %} open{% endif %}><summary>Select project records</summary>{{ form.focus.as_field_group }}</details>{% endif %}
+  {% if form.focus.field.choices %}<details class="assistant-source-picker" data-source-picker{% if form.focus.errors or form.is_bound %} open{% endif %}>
+    <summary>Select project records</summary>
+    <label data-source-search hidden>Find a project record <input type="search" autocomplete="off"></label>
+    <p data-source-no-matches role="status" hidden>No matching project records.</p>
+    <div data-source-choices>{{ form.focus.as_field_group }}</div>
+  </details><script defer src="{% static 'assistant-source-picker.js' %}"></script>{% endif %}
   <button class="button primary" type="submit">Send</button></form>{% endif %}
 </section>
 {% if earlier %}<aside class="card" aria-label="Earlier conversations"><h2>Earlier conversations</h2><ul>{% for item in earlier %}

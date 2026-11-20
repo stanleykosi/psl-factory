@@ -6,6 +6,7 @@ from django.db import transaction
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from apps.core.evidence_access import PPE_OPENING_SOURCE
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.identity.models import Grant
@@ -25,11 +26,24 @@ DATE={'type':'string','pattern':r'^\d{4}-\d{2}-\d{2}$'}
 ASSET=obj(dict({'asset_id':KEY,'category':KEY,'capitalisation':{'enum':['capitalise','undecided']},'classification_evidence_id':ID},**{k:DEC for k in ['opening_cost','opening_accumulated','residual','life','fraction']}))
 EVENT=obj({'event_id':KEY,'asset_id':KEY,'date':DATE,'kind':{'enum':['addition','disposal','reclassification']},'cost_delta':DEC,'accumulated_delta':DEC,'evidence_id':ID})
 READ_ACTIONS = ('case.read', 'finance.read', 'ppe.read')
+OPENING_OWNER_ACTIONS = ('ppe.capture', 'ppe.report', 'evidence.add', 'factory.manage')
 REGISTER=obj({'entity':KEY,'provider':KEY,'currency':{'type':'string','pattern':'^[A-Z]{3}$'},'unit':{'const':'major_currency'},'period_start':DATE,'period_end':DATE,'label_as_of':DATE,'extracted_at':{'type':'string'},'completeness':{'enum':['complete','partial','unknown']},'opening_evidence_id':ID,'assets':{'type':'array','minItems':1,'maxItems':100,'items':ASSET},'events':{'type':'array','maxItems':100,'items':EVENT},'closing_controls':obj({k:DEC for k in ['cost','accumulated','book_value']})})
 
 def readable(actor,c):
  if not actor.is_authenticated or not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Active human principal required')
  for key in READ_ACTIONS:require(actor,c,key)
+
+def require_opening_owner(actor, case):
+ readable(actor, case)
+ for action in OPENING_OWNER_ACTIONS:
+  require(actor, case, action)
+
+def require_opening_source(case, evidence_id):
+ opening=subject(case,evidence_id,'ppe_opening',metadata_only=True)
+ if opening.source==PPE_OPENING_SOURCE:
+  author=get_user_model().objects.only('id','is_active').get(pk=opening.created_by_id)
+  require_opening_owner(author,case)
+
 def locked(actor,case_id,action,expected=None):
  c=lock_case(actor,case_id,action,expected);list(Grant.objects.select_for_update().filter(case=c).order_by('pk'));readable(actor,c);return c
 def exact(c,pk,kind=None):
@@ -53,6 +67,7 @@ def approved(w,purpose):
 def current(w,depth=0):
  if depth>36:raise ValidationError('Prior-schedule chain budget exceeded')
  readable(w.actor,w.case);require(w.actor,w.case,'ppe.capture' if w.kind=='ppe_register' else 'ppe.prepare')
+ if w.kind=='ppe_register':require_opening_source(w.case,w.payload['opening_evidence_id'])
  if ScheduleWork.objects.filter(case=w.case,kind=w.kind,reference=w.reference,version__gt=w.version).exists():raise ValidationError('PPE source/output superseded; create a reviewed successor')
  if w.kind=='ppe_schedule' and snapshot(w.actor,w.case,w.payload,w.parent,depth)!=w.snapshot:raise ValidationError('PPE register/prior/policy/review/basis/ledger changed; rebuild')
  if w.kind=='ppe_schedule' and calculate(w.case,w.payload,w.snapshot,w.parent)!=w.result:raise ValidationError('PPE current calculation/freshness differs; preserve history and rebuild')
@@ -77,7 +92,7 @@ def capture(a,case_id,reference,evidence_id,expected=None):
  except ValueError:raise ValidationError('Actual calendar dates required')
  if start>end or end>timezone.localdate() or label>timezone.localdate() or timestamp(v['extracted_at'])>timezone.now():raise ValidationError('Ordered actual period/as-of/extraction dates required')
  if len({r['asset_id'] for r in v['assets']})!=len(v['assets']) or len({r['event_id'] for r in v['events']})!=len(v['events']):raise ValidationError('Duplicate asset/event identity')
- subject(c,v['opening_evidence_id'],'ppe_opening')
+ require_opening_source(c,v['opening_evidence_id'])
  for r in v['assets']:
   subject(c,r['classification_evidence_id'],'ppe_classification')
   for k in ['opening_cost','opening_accumulated','residual','life','fraction']:

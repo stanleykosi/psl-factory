@@ -5,6 +5,7 @@ from django.db import transaction
 from adapters.rfp_followup import SyntheticBidMailbox, verify_evidence
 from apps.core.evidence_access import restricted
 from apps.core.models import ClientContactRevision, Evidence
+from apps.core.read_observation import read_observation
 from apps.core.services import bump, event, lock_case
 from apps.documents.contracts import digest
 from apps.identity.services import require
@@ -73,6 +74,27 @@ def check_current(dispatch,case):
             review is None or review.pk!=dispatch.review_id or digest(dispatch.payload)!=dispatch.sha256 or
             dispatch.source.body!=dispatch.payload['body']):
         raise ValidationError('Current message, contact or delivery authority changed. Check the original receipt.')
+
+
+@read_observation
+def pre_attempt_hold(actor, case, dispatch_id):
+    """Read the original sender's current hold without claiming or checking delivery."""
+    require(actor, case, 'case.read')
+    require(actor, case, 'rfp.read')
+    dispatch = RFPFollowupDispatch.objects.filter(
+        pk=dispatch_id, actor=actor, outcome__submission__response__rfp__case=case,
+        outcome__submission__response__rfp__case__synthetic=True,
+        route__mode='synthetic_mailbox', attempt__isnull=True, receipt__isnull=True,
+    ).select_related('actor', 'outcome', 'contact', 'source').first()
+    if dispatch is None:
+        return None
+    try:
+        check_current(dispatch, case)
+    except PermissionDenied:
+        return 'Delivery held before its first attempt. Review the current sender’s bid access.'
+    except ValidationError:
+        return 'Delivery held before its first attempt. Review the customer outcome, current wording and delivery route.'
+    return None
 
 
 def record(dispatch,actor,reference,delivered,evidence=None):

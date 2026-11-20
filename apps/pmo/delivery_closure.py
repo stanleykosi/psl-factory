@@ -13,6 +13,9 @@ from .clocks import aware
 from apps.core.read_observation import observed_fact
 
 
+FINANCE_CONFIRMATION_MISSING = 'finance_confirmation_missing'
+
+
 @observed_fact
 def go_live_inputs(d,data):
     outcome=valid_release(d)
@@ -307,7 +310,10 @@ def current_retrospective(d,version_id):
 
 @observed_fact
 def current_finance_confirmation(d):
-    finance=latest(d,'finance_confirmation');require(finance.actor,d.case,'delivery.finance_confirm')
+    finance=latest(d,'finance_confirmation',False)
+    if finance is None:
+        raise ValidationError('Finance confirmation has not been recorded.', code=FINANCE_CONFIRMATION_MISSING)
+    require(finance.actor,d.case,'delivery.finance_confirm')
     if finance.snapshot!=finance_inputs(d):raise ValidationError('Finance notification inventory changed; obtain current coverage confirmation')
     return finance
 
@@ -333,7 +339,8 @@ def closure_requirements(d,data=None):
             result=fn();refs=result if isinstance(result,list) else [result.pk]
             checks.append({'key':key,'title':title,'status':'current','summary':'Current recorded evidence is available','references':refs})
         except (ValidationError,PermissionDenied) as exc:
-            checks.append({'key':key,'title':title,'status':'held','summary':next_action,'references':[],
+            status = 'unknown' if getattr(exc, 'code', None) == FINANCE_CONFIRMATION_MISSING else 'held'
+            checks.append({'key':key,'title':title,'status':status,'summary':next_action,'references':[],
                 'finding':'; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)})
     closed=latest(d,'closure',False)
     def context():

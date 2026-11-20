@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. Visible investigation, calculation and assembly use the exact current worker claim and existing record permissions. The indicator clears when that claim settles. The resulting draft or schedule still goes through its separate human decision.
+
+20 November 2026. An authorized sender can read a scoped hold for an unattempted bid release. An attempted release keeps the original receipt lookup. Later wording stays held while the earlier reservation is unresolved. Live recipients and delivery authority remain owner configuration.
+
 20 November 2026. Candidate engineering decision for the observed Hypercare timeout. The primary continuation submits the same durable worker request as the tested background control. Source recording wakes only an existing eligible request. The exact case revision, current source authority and deliberate pauses still govern work. Batch 244 verifies the candidate before promotion. F-53 informs shared Django control accessibility without changing domain command contracts.
 
 20 November 2026. Engineering decision for the accepted Railway receipt paths. A missing or uncertain external receipt keeps the original operation available for lookup. When its exact native receipt becomes visible, the work coordinator verifies that receipt and respects any existing pause. A lookup creates no replacement delivery. Production provider authenticity and live authority remain separately reviewed. The Month-end F-10 screen reads authorized close evidence and retains unknown coverage. Any separate group sign-off requires an owner-approved rule.

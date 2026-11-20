@@ -331,12 +331,13 @@ def restart(actor,work_id,expected,case_expected,reason):
     old=w.source_head_id;w.source_head=capture(actor,case,data['inputs'],'factory.reporting_source');w.cancel_requested=False;w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
     event(actor,case,'factory.reporting_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import access,profile
+    from .factory_progress import current_plan_step
     from apps.documents.delivery_readback import recipient_rows
     from apps.policy.services import decision_authority
     access(actor,work.case,'factory.read',DEFINITION);data=source(work,actor,False);v=document(work)
-    issue='';options=[];next_action='Review selected weekly report sources';current=True
+    issue='';options=[];next_action='Review selected weekly report sources';current=True;progress=None
     try:source(work,actor)
     except (ValidationError,PermissionDenied) as exc:issue=finding(exc);current=False
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
@@ -354,6 +355,9 @@ def projection(actor,work):
         except (ValidationError,PermissionDenied):pass
     try:
         _,value=profile(work);state,*args=snapshot(work,value,reader=actor);options,next_action=eligible(work,value,state,*args)
+        if (include_progress and not state['document'] and data['inputs']['template_id'] and data['inputs']['content_id']
+                and current_plan_step(work, state['hash'], options) == 'ACT09'):
+            progress = {'label': 'Assembling the weekly report', 'watching': True}
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
     changed=False
     if work.status=='verified':
@@ -374,4 +378,4 @@ def projection(actor,work):
             j.can_retry=j.can_operate and not work.cancel_requested and j.status=='held'
         except PermissionDenied:pass
     return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,
-            'return_review':review if review and review.verdict in ['return','reject'] else None,'delivery':delivery}
+            'return_review':review if review and review.verdict in ['return','reject'] else None,'delivery':delivery,'progress':progress}

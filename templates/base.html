@@ -7,6 +7,8 @@
   <title>{% block title %}PSL Factory{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'studio.css' %}?v=4">
   <link rel="stylesheet" href="{% static 'factory-design.css' %}">
+  <link rel="stylesheet" href="{% static 'shared-controls.css' %}">
+  {% if user.is_authenticated %}<script defer src="{% static 'shared-search.js' %}"></script>{% endif %}
   {% if choose_work_url %}<script defer src="{% static 'start-work.js' %}"></script>{% endif %}
   {% if user.is_authenticated and not control_plane %}<script defer src="{% static 'rfp-requirements.js' %}"></script>{% endif %}
   {% if user.is_authenticated and not control_plane %}<script defer src="{% static 'alerts-preview.js' %}"></script>{% endif %}

@@ -1,9 +1,12 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
+from unittest.mock import patch
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase
+from django.test.utils import CaptureQueriesContext
 from django.db import close_old_connections, connection
 from django.urls import reverse
 from django.utils import timezone
@@ -12,7 +15,7 @@ from adapters.rfp_followup import SyntheticBidMailbox, expected
 from apps.core.client_contacts import save as save_contact
 from apps.core.services import add_evidence
 from apps.pmo import rfp, rfp_followup, rfp_messages
-from apps.pmo.models import RFPFollowupAttempt, RFPFollowupMailbox, RFPFollowupReceipt
+from apps.pmo.models import RFPFollowupAttempt, RFPFollowupDispatch, RFPFollowupMailbox, RFPFollowupReceipt
 from apps.identity.models import Grant
 from apps.policy.change_drafts import draft_standard_policy
 from apps.policy.services import reference_values, resolve, transition
@@ -113,14 +116,102 @@ class BidMessageTests(TestCase):
     def test_changed_contact_and_revoked_sender_hold_before_first_effect(self):
         dispatch=self.release()
         f=self.data
+        self.client.force_login(f['actor'])
+        url = reverse('factory_work_response', args=[self.work.pk])
+        queued = self.client.get(url)
+        self.assertContains(queued, 'Delivery queued for the reviewed route.')
+        self.assertNotContains(queued, 'Check original message receipt')
+        self.assertTrue(queued.context['followup']['released'])
+        self.assertFalse(queued.context['followup']['waiting_on_original'])
+        self.assertFalse(RFPFollowupAttempt.objects.filter(dispatch=dispatch).exists())
         save_contact(f['actor'],f['case'],'project',{'revision':rev(f['case']),'customer':'',
             'client_name':'Sample procurement','name':'Replacement recipient','email':'replacement@example.invalid',
             'role':'Procurement','evidence':f['evidence']['policy_decision']})
+        held = self.client.get(url)
+        self.assertContains(held, 'Delivery held before its first attempt. Review the customer outcome, current wording and delivery route.')
+        self.assertNotContains(held, 'Review the changed project contact before releasing a message.')
+        self.assertNotContains(held, 'Release reviewed follow-up')
         self.assertFalse(rfp_messages.run_once(dispatch.pk))
         self.assertFalse(RFPFollowupAttempt.objects.exists())
         Grant.objects.filter(case=f['case'],user=f['actor'],action='rfp.submit').update(active=False)
+        held = self.client.get(url)
+        self.assertContains(held, 'Review the current sender’s bid access.')
+        self.assertNotContains(held, 'Check original message receipt')
+        self.assertNotContains(held, 'This record/action has no active grant')
         self.assertFalse(rfp_messages.run_once(dispatch.pk))
         self.assertFalse(RFPFollowupMailbox.objects.exists())
+        self.assertFalse(RFPFollowupReceipt.objects.exists())
+
+    def test_changed_route_is_visible_to_the_original_sender_only(self):
+        dispatch = self.release()
+        f = self.data
+        configured(f, 'manual_evidence')
+        url = reverse('factory_work_response', args=[self.work.pk])
+        self.client.force_login(f['actor'])
+        self.assertContains(self.client.get(url), 'Delivery held before its first attempt.')
+        peer = get_user_model().objects.create_user(username='sample-bid-followup-read-only-peer')
+        Grant.objects.bulk_create([Grant(user=peer, case=f['case'], action=action)
+                                   for action in ('case.read', 'factory.read', 'rfp.read')])
+        with patch('apps.pmo.rfp_messages.check_current') as preflight:
+            self.assertIsNone(rfp_messages.pre_attempt_hold(peer, f['case'], dispatch.pk))
+            self.client.force_login(peer)
+            page = self.client.get(url)
+            self.assertNotContains(page, 'Delivery held before its first attempt.')
+            self.assertNotContains(page, 'Sample reviewed customer message')
+            preflight.assert_not_called()
+        self.assertFalse(RFPFollowupAttempt.objects.filter(dispatch=dispatch).exists())
+
+    def test_decision_and_recovery_readbacks_skip_private_followup_history(self):
+        dispatch = self.release()
+        self.client.force_login(self.data['actor'])
+        table = RFPFollowupDispatch._meta.db_table
+        for route in ('factory_invoice_decision', 'factory_invoice_recovery'):
+            with self.subTest(route=route):
+                with CaptureQueriesContext(connection) as queries:
+                    page = self.client.get(reverse(route, args=[self.work.pk]))
+                self.assertNotContains(page, 'Follow-up delivery')
+                self.assertFalse(any(table in query['sql'] for query in queries.captured_queries))
+        self.assertFalse(RFPFollowupAttempt.objects.filter(dispatch=dispatch).exists())
+
+    def test_newer_wording_cannot_release_while_the_original_reservation_is_held(self):
+        dispatch = self.release()
+        f = self.data
+        newer = rfp_followup.review(f['actor'], f['case'].pk, self.outcome.pk, dispatch.review.data['run'],
+            'Sample replacement wording requires a separate release.', dispatch.review_id, rev(f['case']))
+        self.client.force_login(f['actor'])
+        url = reverse('factory_work_response', args=[self.work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Delivery held before its first attempt.')
+        self.assertContains(page, 'Review the earlier release before releasing new wording.')
+        self.assertNotContains(page, 'Release reviewed follow-up')
+        self.assertContains(self.client.post(url, {'action': 'followup_send', 'target': self.outcome.pk,
+            'reviewed': newer.pk, 'route': 'customer_followup', 'case_revision': rev(f['case'])}),
+            'Check the earlier message receipt before releasing another follow-up.')
+        preserved = RFPFollowupDispatch.objects.get(outcome=self.outcome)
+        self.assertEqual(preserved.review_id, dispatch.review_id)
+        self.assertEqual(preserved.payload['body'], 'Sample reviewed customer message')
+        self.assertFalse(RFPFollowupAttempt.objects.filter(dispatch=dispatch).exists())
+
+    def test_attempted_original_keeps_lookup_even_when_the_route_changes(self):
+        class BeforeAcceptance(SyntheticBidMailbox):
+            def deliver(self, dispatch):
+                raise TimeoutError('Sample interrupted response')
+
+        dispatch = self.release()
+        self.assertTrue(rfp_messages.run_once(dispatch.pk, BeforeAcceptance()))
+        configured(self.data, 'manual_evidence')
+        self.client.force_login(self.data['actor'])
+        url = reverse('factory_work_response', args=[self.work.pk])
+        with patch('apps.pmo.rfp_messages.check_current') as preflight:
+            page = self.client.get(url)
+            self.assertContains(page, 'Awaiting evidence for the original message.')
+            self.assertContains(page, 'Check original message receipt')
+            self.assertNotContains(page, 'Delivery held before its first attempt.')
+            self.assertNotContains(page, 'Release reviewed follow-up')
+            preflight.assert_not_called()
+        self.assertEqual(RFPFollowupAttempt.objects.filter(dispatch=dispatch).count(), 1)
+        self.assertFalse(RFPFollowupMailbox.objects.filter(dispatch=dispatch).exists())
+        self.assertFalse(RFPFollowupReceipt.objects.filter(dispatch=dispatch).exists())
 
 
 class BidMessageConcurrencyTests(TransactionTestCase):

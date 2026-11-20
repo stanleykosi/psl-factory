@@ -152,6 +152,34 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(job.status, 'unknown', self.work.finding)
         return job, PublicationReceipt.objects.get(publication=job.publication)
 
+    def test_live_weekly_assembly_shows_only_the_current_claim_before_review(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        self.assertEqual(connection.vendor, 'postgresql')
+        self.start_work()
+        self.assertTrue(factory.run_once(self.work.pk))
+        self.client.force_login(self.actor)
+        detail = reverse('factory_detail', args=[self.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[self.work.pk])
+        label = 'Assembling the weekly report'
+        test = self
+
+        class ObserveAssembly(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                test.assertEqual(context['eligible'], ['ACT09'])
+                test.assertContains(test.client.get(detail), label)
+                test.assertNotContains(test.client.get(recovery), label)
+                test.assertIsNone(reporting.document(test.work))
+                return super().choose(context)
+
+        self.assertNotContains(self.client.get(detail), label)
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveAssembly()))
+        self.assertNotContains(self.client.get(detail), label)
+        version = reporting.document(self.work)
+        self.assertIsNotNone(version)
+        self.assertTrue(HumanTask.objects.filter(version=version, status='open').exists())
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+
     def test_full_chain_has_useful_investigation_exact_human_review_and_receipt(self):
         self.start_work()
         self.advance()

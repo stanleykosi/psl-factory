@@ -213,7 +213,7 @@ class FactoryHandoverTests(TestCase):
         self.assertEqual(f.work.status,'verified',f.work.finding);self.assertTrue(PublicationReceipt.objects.filter(pk=old.pk).exists())
         self.assertEqual(Publication.objects.filter(factory_work=f.work).count(),2);self.assertEqual(f.work.budget_limit,20000)
 
-    def test_cancelled_expired_delivery_is_reconciled_without_send_then_settled_by_native_operator(self):
+    def test_cancelled_expired_delivery_lookup_miss_retains_stop_and_uncertain_original(self):
         from apps.documents.delivery import claim_publication
         f=setup();ready(f)
         for _ in range(12):
@@ -224,9 +224,10 @@ class FactoryHandoverTests(TestCase):
         PublicationJob.objects.filter(pk=job.pk).update(lease_until=timezone.now()-timedelta(seconds=1))
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);self.assertContains(self.client.get(url),'Reconcile original delivery')
         self.assertRedirects(self.client.post(url,{'action':'reconcile','revision':f.work.revision}),url)
-        f.work.refresh_from_db();job.refresh_from_db();self.assertEqual(job.status,'held');self.assertFalse(PublicationReceipt.objects.filter(publication=job.publication).exists())
-        handover.operate(f.actor,f.work.pk,f.work.revision,rev(f.case),job.pk,'cancel','Settle the stopped original delivery with no internal receipts')
-        f.work.refresh_from_db();self.assertEqual(f.work.status,'cancelled');self.assertEqual(f.work.budget_used,spent)
+        f.work.refresh_from_db();job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertFalse(PublicationReceipt.objects.filter(publication=job.publication).exists())
+        with self.assertRaisesMessage(ValidationError, 'receipt-only reconciliation'):
+            handover.operate(f.actor,f.work.pk,f.work.revision,rev(f.case),job.pk,'cancel','A missing receipt cannot settle the original')
+        f.work.refresh_from_db();self.assertTrue(f.work.cancel_requested);self.assertEqual(f.work.status,'waiting_effect');self.assertEqual(f.work.budget_used,spent)
 
     def test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt(self):
         self.assertEqual(connection.vendor,'postgresql');f=setup();ready(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()

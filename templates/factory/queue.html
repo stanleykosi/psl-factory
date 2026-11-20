@@ -1,7 +1,8 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
 <div class="page-heading"><div><h1>My work</h1>{% if line_title %}<p class="lede">{{ line_title }} · <a href="?queue={{ queue }}">Clear workflow filter</a></p>{% endif %}</div></div>
 <nav class="factory-queues" aria-label="Work views">{% for key,label in queues.items %}<a href="?queue={{ key }}&amp;q={{ q|urlencode }}{% if line %}&amp;line={{ line|urlencode }}{% endif %}" {% if queue == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>
-<section class="workspace-panel factory-queue"><form method="get" class="workspace-search"><input type="hidden" name="queue" value="{{ queue }}">{% if line %}<input type="hidden" name="line" value="{{ line }}">{% endif %}<label class="sr-only" for="work-search">Search work</label><input id="work-search" name="q" maxlength="120" value="{{ q }}" placeholder="Search invoice, project or work reference"><button type="submit">Search</button></form>
+{% if queue == 'unassigned' %}<p><a href="{% url 'rfp_assignment_queue' %}">Review unassigned bids →</a></p>{% endif %}
+<section class="workspace-panel factory-queue shared-mobile-controls"><form method="get" class="workspace-search" role="search"><input type="hidden" name="queue" value="{{ queue }}">{% if line %}<input type="hidden" name="line" value="{{ line }}">{% endif %}{% include 'ui/search_field.html' with field_id='work-search' field_label='Search work' field_value=q hide_label=True placeholder='Search invoice, project or work reference' %}<button type="submit">Search</button></form>
 <details class="work-filter"{% if line %} open{% endif %}><summary>Filter work</summary>
   <form method="get" class="actions"><input type="hidden" name="q" value="{{ q }}">
     <label for="filter-queue">Work view</label><select id="filter-queue" name="queue">{% for key,label in queues.items %}<option value="{{ key }}"{% if key == queue %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>

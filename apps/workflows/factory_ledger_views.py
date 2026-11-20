@@ -85,7 +85,7 @@ def detail(request,work,focus=None):
             elif a=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             messages.success(request,'Native incumbent reference work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,domain.finding(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work);w=row['ledger']['lineage'];x=w.checks.order_by('-pk').first() if w else None;can_review=False;can_approve=False
+    row=presentation(request.user,work,include_progress=not focus);w=row['ledger']['lineage'];x=w.checks.order_by('-pk').first() if w else None;can_review=False;can_approve=False
     conflict=domain.conflicting_source(work,data,w)
     decision=x.decisions.order_by('-pk').first() if x else None
     rejected=decision and decision.verdict=='reject'

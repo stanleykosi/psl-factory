@@ -6,6 +6,7 @@ from apps.documents.models import Template
 from apps.policy.document_validators import ROLES
 from .models import RFPResponse,RFPSubmission,RFPOutcome,RFPDocumentBinding
 from .rfp import TEAMS,REVIEW_ROLES
+from . import rfp_intake_context
 
 class CommandForm(forms.Form):
     action=forms.CharField(widget=forms.HiddenInput)
@@ -18,10 +19,14 @@ class IntakeForm(CommandForm):
         if 'rfp_file' in self.fields and not (self.errors.get('rfp_file') or self.errors.get('evidence')):
             if bool(values.get('rfp_file')) == bool(values.get('evidence')):
                 raise forms.ValidationError('Choose one existing source or attach one bid document.')
+        if 'prospect_name' in self.fields and not self.errors:
+            values['source_context'] = rfp_intake_context.validate(rfp_intake_context.SourceContext(
+                values['prospect_name'], values['submission_method'], values['submission_target']),
+                values['context_attested'])
         return values
 
 
-def forms_for(case,data=None,*,team_choices=(),uploads_allowed=False,files=None):
+def forms_for(case,data=None,*,team_choices=(),assignment_roles=(),assignment_people=(),uploads_allowed=False,files=None):
     def evidence(kinds=None):return forms.ModelChoiceField(case.evidence.filter(kind__in=kinds) if kinds else case.evidence.all())
     def choices(values):return forms.ChoiceField(choices=[(v,v) for v in values])
     def text():return forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))
@@ -29,7 +34,9 @@ def forms_for(case,data=None,*,team_choices=(),uploads_allowed=False,files=None)
     definitions={
         'intake':('Log received RFP',{'reference':forms.CharField(max_length=160),'evidence':evidence(['rfp_intake']),'received_at':forms.DateTimeField(help_text='Actual received date/time with timezone'),
             'deadline_status':choices(['unknown','stated','not_stated']),'deadline_at':forms.DateTimeField(required=False),'deadline_evidence':evidence(['rfp_deadline']),'note':text()}),
-        'assign':('Assign accountable PM',{'pm':forms.ModelChoiceField(get_user_model().objects.filter(grant__case=case,grant__action='rfp.prepare',grant__active=True).distinct()),'role':choices(ROLES),'evidence':evidence(),'note':text()}),
+        'assign':('Assign accountable PM',{'pm':forms.ModelChoiceField(get_user_model().objects.filter(pk__in=assignment_people)),
+            'role':choices(assignment_roles),
+            'evidence':forms.ModelChoiceField(public_evidence(case.evidence.all()).defer('body')),'note':text()}),
         'prepare':('Prepare response revision',{'evidence':evidence(['rfp_response']),'public_terms':evidence(['rfp_commercial_terms']),'matrix':forms.JSONField(widget=forms.Textarea(attrs={'rows':5}),help_text='Array of {key, evidence_id, response, disposition}; disposition addressed / clarification / out_of_scope'),**{k:evidence([k]) for k in ['requirements','plan','costing']}}),
         'review':('Record response review',{'response':response(),'role':choices(REVIEW_ROLES),'verdict':choices(['approve','return','reject']),'evidence':evidence(),'note':text()}),
         'draft':('Prepare controlled submission',{'response':response(),'template':forms.ModelChoiceField(Template.objects.filter(case=case,definition__document_type__in=['rfp_response','project_artifact'])),'route_key':forms.CharField(max_length=40)}),
@@ -55,6 +62,8 @@ def forms_for(case,data=None,*,team_choices=(),uploads_allowed=False,files=None)
         })
     result=[]
     for action,(label,fields) in definitions.items():
+        if action == 'assign' and not assignment_roles:
+            continue
         bound = data and data.get('action') == action
         form_type = IntakeForm if action == 'intake' else CommandForm
         f=form_type(data if bound else None,files if bound else None,initial={'action':action,'revision':case.revision},auto_id=action+'_%s')
@@ -70,6 +79,13 @@ def forms_for(case,data=None,*,team_choices=(),uploads_allowed=False,files=None)
                 f.fields['rfp_file'] = forms.FileField(required=False, label='Attach the bid document',
                     help_text='Readable Word or PDF, up to 5 MiB. The original is private.',
                     widget=forms.ClearableFileInput(attrs={'accept': '.docx,.pdf'}))
+                f.fields['prospect_name'] = forms.CharField(required=False, max_length=160, label='Client or prospect')
+                f.fields['submission_method'] = forms.ChoiceField(required=False, label='Submit by',
+                    choices=[('', 'Unknown'), *rfp_intake_context.METHODS])
+                f.fields['submission_target'] = forms.CharField(required=False, max_length=320, label='Submit to',
+                    help_text='Enter only the destination stated in the received source. This does not set up delivery.')
+                f.fields['context_attested'] = forms.BooleanField(required=False,
+                    label='I confirm the name and submission instructions I entered appear in this source.')
         if action=='dispose':f.fields['lessons'].required=False
         if action=='outcome':
             f.fields['evidence'].required=False

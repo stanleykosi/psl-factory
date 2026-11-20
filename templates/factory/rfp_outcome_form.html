@@ -1,5 +1,5 @@
 {% load tz %}
-<section class="card" id="customer-outcome">
+<section class="card shared-mobile-controls" id="customer-outcome">
   <h2>Record actual customer outcome</h2>
   <nav class="actions" aria-label="Customer outcome">{% for option in outcome_links %}<a class="button secondary" href="{{ option.url }}"{% if option.key == outcome_variant %} aria-current="true"{% endif %}>{{ option.label }}</a>{% endfor %}</nav>
   {% if outcome_variant == 'won' %}<p>Attach the award decision for the submitted response.</p>

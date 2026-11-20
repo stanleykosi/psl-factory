@@ -1,17 +1,21 @@
 """Work-centric forecast UI. All human commands retain native authority checks."""
+from io import BytesIO
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError, PermissionDenied
+from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
+from adapters import case_uploads
 from apps.core.models import Case, Evidence
 from apps.core.workbench import granted
 from apps.documents.models import Template
 from apps.finance.models import ForecastScenario
 from apps.finance import group_forecast
 from apps.finance.forecast_forms import commands
-from . import factory, factory_forecast as service
+from . import factory, factory_forecast as service, factory_forecast_recovery as recovery
+from .factory_execution import can_control
 from .factory_progress_views import StartWithBackground, start_work
 from apps.finance.forecast_workbook import source_ids as workbook_source_ids
 from .factory_forecast_sources import PROTOCOL
@@ -75,6 +79,17 @@ def detail(request,work,focus=None):
     queue=request.GET.get('queue','needs_me')
     if queue not in QUEUES:queue='needs_me'
     query=request.GET.get('q','')[:120]
+    if request.method in ('GET', 'HEAD') and focus == 'recovery' and 'observation_proof' in request.GET:
+        proof_id = forms.IntegerField(min_value=1)
+        try:
+            proof = recovery.attachment(request.user, work, proof_id.clean(request.GET.get('observation_proof')))
+            data = case_uploads.read(proof)
+        except (ValidationError, OSError) as exc:
+            raise Http404('The recorded forecast proof is unavailable.') from exc
+        response = FileResponse(BytesIO(data), as_attachment=True, filename=proof.name,
+                                content_type='application/octet-stream')
+        response['Cache-Control'] = 'no-store'
+        return response
     scenario,selected=service.source(work,request.user,False)
     inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,scenario_reference=scenario.reference,initial=selected)
     human_actions={'support','actual','verify','match','unmatch','review','priority','group_review'}
@@ -112,7 +127,15 @@ def detail(request,work,focus=None):
                 save(request.user,work.case,run,p,case_revision)
             elif action=='cancel':service.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')
-            elif action=='reconcile':service.reconcile(request.user,work.pk,revision)
+            elif action=='reconcile':
+                if p.get('record_observation') == '1':
+                    if len(p.getlist('outcome')) != 1 or len(request.FILES.getlist('proof')) > 1:
+                        raise ValidationError('Choose one delivery outcome and attach at most one proof.')
+                    recovery.observe(request.user, work.pk, revision, case_revision, int(p.get('job', '0')),
+                                     p.get('outcome', ''), request.FILES.get('proof'))
+                    messages.success(request, 'Your observation was recorded. Check the original receipt for confirmation.')
+                    return redirect(request.get_full_path())
+                recovery.reconcile(request.user, work.pk, revision, job_id=int(p['job']) if 'job' in p else None)
             elif action=='operate_delivery':service.operate(request.user,work.pk,revision,case_revision,int(p.get('job','0')),p.get('operation',''),p.get('reason',''))
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             else:raise ValidationError('Choose a current forecast work action')
@@ -121,6 +144,14 @@ def detail(request,work,focus=None):
             messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
             work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work,include_progress=not focus)
+    last_observation = None
+    if focus in (None, 'recovery') and row['forecast']['jobs'] and can_control(request.user, work):
+        observation = recovery.observations(work).filter(data__source=work.source_head_id).order_by('-pk').first()
+        if observation:
+            last_observation = {'label': recovery.OUTCOMES[observation.data['outcome']], 'at': observation.created_at}
+            if observation.actor_id == request.user.pk and observation.data['proof'] and permitted(request.user,work,'evidence.add'):
+                last_observation['proof_id'] = observation.pk
+    can_attach_proof = permitted(request.user,work,'evidence.add')
     if focus:
         forms_list=[entry for entry in forms_list if entry['action'] in SCREENS[work.definition][focus]]
         if focus=='decision':
@@ -151,11 +182,14 @@ def detail(request,work,focus=None):
             headers=binding.snapshot['projection']['fields']
             group_table={'headers':headers,'rows':[[item[name] for name in headers] for item in projected['rows']],
                          'metadata':projected['metadata']}
-    return render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
+    response = render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
         'group_table':group_table,
         'group_rules_form':group_rules_form,
         'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),
+        'last_observation':last_observation,'can_attach_proof':can_attach_proof,'delivery_outcomes':recovery.OUTCOMES,
         'can_configure':permitted(request.user,work,'policy.configure')})
+    response['Cache-Control'] = 'no-store'
+    return response
 
 
 from .factory_views import ProfileForm

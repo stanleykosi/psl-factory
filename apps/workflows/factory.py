@@ -818,6 +818,11 @@ def manage(actor,work_id,expected,operation):
     elif operation=='resume':
         if work.cancel_requested:raise ValidationError('Cancelled intent cannot silently restart')
         if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: the current worker still owns this work')
+        if work.definition == 'finance-forecast/v1':
+            from .factory_forecast_recovery import unsettled_delivery
+
+            if unsettled_delivery(work):
+                raise ValidationError('Check the original forecast delivery before continuing.')
         profile(work);work.status='ready';work.finding=''
     else:raise ValidationError('Unknown operator action')
     work.revision+=1;work.save();event(actor,work.case,'factory.'+operation,work=work.pk)

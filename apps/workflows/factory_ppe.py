@@ -20,6 +20,10 @@ KIND='agent_private_ppe_intake'
 PROTOCOL='factory-ppe-intake/v1'
 ID={'anyOf':[{'type':'integer','minimum':1},{'type':'null'}]}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'register_id':{'type':'integer','minimum':1},'prior_id':ID,'ledger_id':ID},'required':['protocol','register_id','prior_id','ledger_id'],'additionalProperties':False}
+PROGRESS_LABELS = {
+    'ACT04': 'Investigating the asset register and supporting records.',
+    'ACT08': 'Calculating the asset schedule.',
+}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
 
@@ -157,6 +161,7 @@ def settled(w):
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,register_id,prior_id,ledger_id,reason):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.manage',DEFINITION);ppe.readable(actor,w.case);c=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=c
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.status in ['cancelled','followup_needed']:raise ValidationError('Refresh current active PPE work')
@@ -172,17 +177,22 @@ def correct(actor,work_id,expected,case_expected,register_id,prior_id,ledger_id,
         except (ValidationError,PermissionDenied):pass
         else:raise ValidationError('Current reviewed output requires a genuine source change')
     before=w.source_head_id;w.source_head=capture(actor,c,new,'factory.ppe_source');w.status='ready';w.finding='';w.revision+=1;w.save()
-    event(actor,c,'factory.ppe_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
+    event(actor,c,'factory.ppe_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason)
+    wake_waiting(w.pk)
+    return w
 
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,target,purpose,verdict,evidence,note):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);r,_=source(w,actor);s=schedule(w)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested:raise ValidationError('Refresh active PPE work')
     settled(w)
     if target!= (r.pk if purpose in ['register','basis'] else s.pk if s and purpose=='schedule' else None):raise ValidationError('Review exact selected native target')
-    return ppe.review(actor,w.case_id,target,purpose,verdict,evidence,note,case_expected)
+    result = ppe.review(actor,w.case_id,target,purpose,verdict,evidence,note,case_expected)
+    wake_waiting(w.pk)
+    return result
 
 def projection(actor,work,*,include_progress=False):
     from .factory import profile
@@ -213,7 +223,20 @@ def projection(actor,work,*,include_progress=False):
                     except (ValidationError,PermissionDenied):continue
                     reviewer_names.append(user.get_full_name() or user.username)
                     if user.pk==actor.pk:can_review=True
-    progress = {'label': 'Investigating the asset register and supporting records.', 'watching': True} if step == 'ACT04' else None
+    if step == 'ACT08':
+        from .factory_execution import available_actor
+
+        worker = available_actor(work)
+        try:
+            if worker is None:
+                raise PermissionDenied('The asset schedule preparer is unavailable.')
+            require(worker, work.case, 'ppe.prepare')
+            if data['ledger_id'] is not None:
+                require(worker, work.case, 'finance.calculate')
+        except PermissionDenied:
+            step = None
+    label = PROGRESS_LABELS.get(step)
+    progress = {'label': label, 'watching': True} if label else None
     return {'pending_reviews':pending_reviews,'reviewer_names':sorted(set(reviewer_names)),'can_review':can_review,'register':r,'schedule':s,'inputs':data,'next_options':options,'next_action':message,'readiness_changed':changed,'native':n,'finding':message if not options else '', 'progress':progress}
 
 @transaction.atomic

@@ -378,7 +378,7 @@ def projection(actor, work, *, include_progress=False):
             step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:
         current=False;issue=finding(exc);next_action=issue
-    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
+    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
     changed=False
     if work.status=='verified':
         try:verify(work,actor)
@@ -428,22 +428,9 @@ def projection(actor, work, *, include_progress=False):
 
 
 def reconcile(actor,work_id,expected,adapter=None):
-    from .factory import access,cancellation_status
-    from apps.documents.delivery import run_publication_once
-    with transaction.atomic():
-        w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
-        access(actor,w.case,'factory.execute',DEFINITION)
-        if actor.pk!=w.actor_id:require(actor,w.case,'factory.manage')
-        if type(expected) is not int or w.revision!=expected or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh original forecast delivery')
-        job=PublicationJob.objects.filter(publication__factory_work=w).filter(Q(status='unknown')|Q(status='leased',lease_until__lte=timezone.now())).order_by('pk').first()
-        if not job:raise ValidationError('No original uncertain forecast delivery needs reconciliation')
-        event(actor,w.case,'factory.reconciliation_requested',work=w.pk,publication_job=job.pk)
-    run_publication_once(adapter,case_id=w.case_id,job_id=job.pk,lookup_only=True)
-    with transaction.atomic():
-        w=Work.objects.select_for_update().get(pk=work_id);job.refresh_from_db()
-        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked' if job.status=='held' else 'ready'
-        w.finding=job.error if job.status in ['held','unknown'] else '';w.observation_hash='';w.revision+=1;w.save()
-    return w
+    from .factory_forecast_recovery import reconcile as check_original
+
+    return check_original(actor, work_id, expected, adapter)
 
 
 @transaction.atomic

@@ -1,5 +1,11 @@
 # Build progress log
 
+20 November 2026. The exact 248 web and worker started. PMO 0079 and workflows 0091 applied to the isolated preview and seven guarded samples passed. The admitted preparer started an asset schedule and verified its Group Forecast review boundary. Native independent review remains available once the trial reviewer signs in.
+
+20 November 2026. Grouped 247 passed every Forecast receipt rerun, all bid tests, weekly assembly and ledger investigation. The final asset assertion used the wrong review relation. Exact 248 corrected it, passed PostgreSQL and both preservation probes, and submitted matching web for the isolated preview.
+
+20 November 2026. The new preparer's narrow empty queue and Started by me filter passed. The original sample work remained private. Scoped acceptance is 122. Railway 247 began and passed its live weekly assembly test and the first two Forecast recovery reruns.
+
 20 November 2026. Confirmed separate sample admission 7/user 243 and started exact Finance work 211 in Codex. The worker prepared Schedule 32 and kept review with Finance. Batch 246 passed all Project, Commercial and Shared tests and eight Finance tests. Three Forecast fixture cases require a focused rerun after preserving an unobservable original receipt through setup. New scoped bid pre-attempt hold and asset calculation status are staged for later verification.
 
 20 November 2026. Verified the revised bid reminder against submission 18 and separate sample-mailbox receipt against submission 19 in Codex. Scoped acceptance moved to 120 of 262. Submitted the grouped 246 PostgreSQL gate. The sample preparer completed account setup and signed in. Prepare the fresh authorized scope before walking the exact Finance correction.

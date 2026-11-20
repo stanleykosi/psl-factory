@@ -28,6 +28,11 @@ class RFPIntake(AppendOnly):
         constraints=[models.UniqueConstraint(fields=['rfp','number'],name='rfp_intake_revision')]
 
 
+class RFPIntakeSourceContext(AppendOnly):
+    intake = models.OneToOneField('RFPIntake', on_delete=models.PROTECT, related_name='observed_context')
+    prospect_name = models.CharField(max_length=160, null=True, blank=True)
+    submission_method = models.CharField(max_length=20, null=True, blank=True)
+    submission_target = models.CharField(max_length=320, null=True, blank=True)
 class RFPAssignment(AppendOnly):
     intake=models.ForeignKey(RFPIntake,on_delete=models.PROTECT,related_name='assignments')
     pm=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name='+')

@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+from uuid import NAMESPACE_URL, uuid5
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -28,6 +29,8 @@ from tests.test_delivery import CRITERIA, DeliveryFixture
 TENANT = 'design-hypercare-stability-walkthrough'
 TITLE = 'SAMPLE Hypercare stability criteria and corrected observations'
 KEY = 'SAMPLE-HYPERCARE-STABILITY-WALKTHROUGH'
+PRIMARY_CONTINUE = 'primary-continue'
+PRIMARY_CASE_ID = uuid5(NAMESPACE_URL, 'psl-factory:design-acceptance:hypercare:primary-continue')
 COMPONENT = 'D11.hypercare_criteria_ref'
 CRITERIA_PROOF = 'synthetic:hypercare-stability-walkthrough-criteria'
 INFRASTRUCTURE_PROOF = 'synthetic:hypercare-stability-walkthrough-infrastructure'
@@ -44,10 +47,10 @@ def grant_case(actor, case, actions):
     Grant.objects.bulk_create([Grant(case=case, user=actor, action=action) for action in dict.fromkeys(actions)])
 
 
-def create_sample(operator, case):
+def create_sample(operator, case, key, actor_suffix):
     users = get_user_model().objects
-    maker = users.create_user('sample-hypercare-release-maker')
-    infrastructure = users.create_user('sample-hypercare-infrastructure-source')
+    maker = users.create_user(f'sample-hypercare-release-maker{actor_suffix}')
+    infrastructure = users.create_user(f'sample-hypercare-infrastructure-source{actor_suffix}')
     grant_case(maker, case, ACTIONS)
     grant_case(infrastructure, case, ('case.read', 'delivery.read', 'delivery.source', 'delivery.verify', 'evidence.add'))
     grant_case(operator, case, OPERATOR_ACTIONS)
@@ -76,7 +79,7 @@ def create_sample(operator, case):
     transition(maker, configuration.pk, 'validated')
     transition(maker, configuration.pk, 'active')
 
-    work = factory_hypercare.start(operator, case.pk, KEY, sample.d.pk, TITLE, rev(case))
+    work = factory_hypercare.start(operator, case.pk, key, sample.d.pk, case.title, rev(case))
     factory.run_until_wait(work.pk)
     work.refresh_from_db()
     if (work.status != 'configuration_needed' or resolve(COMPONENT, case).status == 'ACTIVE'
@@ -87,12 +90,19 @@ def create_sample(operator, case):
 
 
 @transaction.atomic
-def prepare(operator):
+def prepare(operator, *, scenario='initial'):
     if not operator.is_active or operator.is_staff or operator.is_superuser:
         raise RuntimeError('A current ordinary acceptance operator is required.')
-    case, created = Case.objects.get_or_create(tenant=TENANT, kind='project', synthetic=True, title=TITLE)
-    work = (create_sample(operator, case) if created else FactoryWork.objects.get(
-        case=case, actor=operator, definition=factory_hypercare.DEFINITION, key=KEY))
+    if scenario not in ('initial', PRIMARY_CONTINUE):
+        raise RuntimeError('Choose a registered synthetic Hypercare walkthrough.')
+    suffix = f'-{PRIMARY_CONTINUE}' if scenario == PRIMARY_CONTINUE else ''
+    title = 'SAMPLE Hypercare primary continuation after reviewed observations' if suffix else TITLE
+    key = f'{KEY}{suffix.upper()}'
+    identity = {'pk': PRIMARY_CASE_ID} if scenario == PRIMARY_CONTINUE else {}
+    case, created = Case.objects.get_or_create(tenant=f'{TENANT}{suffix}', kind='project', synthetic=True, title=title,
+                                               **identity)
+    work = (create_sample(operator, case, key, suffix) if created else FactoryWork.objects.get(
+        case=case, actor=operator, definition=factory_hypercare.DEFINITION, key=key))
     dossier = delivery.dossier_for(case, work.request['dossier'], current=False)
     release = dossier.records.get(kind='release_outcome')
     accepted = dossier.records.get(kind='go_live')
@@ -111,11 +121,13 @@ def prepare(operator):
 
 
 def run():
-    if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'),
-            os.getenv('PSL_HYPERCARE_WALKTHROUGH_FIXTURE')) != ('design-acceptance', PREVIEW_PROJECT, '1'):
+    opt_in = os.getenv('PSL_HYPERCARE_WALKTHROUGH_FIXTURE')
+    if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID')) != ('design-acceptance', PREVIEW_PROJECT) or (
+            opt_in not in ('1', PRIMARY_CONTINUE)):
         raise RuntimeError('Use only the guarded Railway design acceptance environment.')
     database = os.getenv('PGDATABASE', '')
     if not database or database.startswith('test_'):
         raise RuntimeError('An explicitly configured Railway preview database is required.')
     operator = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
-    print('PSL_HYPERCARE_WALKTHROUGH_FIXTURE=' + json.dumps(prepare(operator)), flush=True)
+    scenario = PRIMARY_CONTINUE if opt_in == PRIMARY_CONTINUE else 'initial'
+    print('PSL_HYPERCARE_WALKTHROUGH_FIXTURE=' + json.dumps(prepare(operator, scenario=scenario)), flush=True)

@@ -26,6 +26,7 @@ DEFINITION='delivery-handover/v1'
 KIND='agent_private_handover_intake'
 PROTOCOL='factory-handover-intake/v1'
 FIELDS=['template_id','support_document','escalation_document']
+UNSETTLED_DELIVERY = ('pending', 'leased', 'unknown', 'held')
 ID={'anyOf':[{'type':'integer','minimum':1,'maximum':9223372036854775807},{'type':'null'}]}
 INPUT={'type':'object','properties':{k:ID for k in FIELDS},'required':FIELDS,'additionalProperties':False}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'dossier_id':{'type':'integer','minimum':1},'inputs':INPUT},
@@ -192,7 +193,7 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return result
     if kind in ['ACT11','ACT12']:
         job=pending_job(jobs)
-        if job:return {'head':work.source_head_id,'publication_job':job.pk}
+        if job:return {'head':work.source_head_id,'publication_job':job.pk,'publication_lookup_only':kind=='ACT12'}
         if kind=='ACT12':raise ValidationError('No original uncertain handover delivery exists')
         from apps.documents.controlled import reserve_publication
         v=document(work);user=publisher(work,value)
@@ -217,18 +218,74 @@ def publication_scope(actor,case,version,work_id):
     return {'factory_work_id':w.pk,'factory_policy_id':config.pk,'factory_source_id':w.source_head_id}
 
 
-def verify(work,actor=None):
+def publication_candidate(work):
+    from .factory import profile
+
+    if (work.status not in ('ready', 'waiting') or work.cancel_requested
+            or work.lease_until and work.lease_until > timezone.now()):
+        raise ValidationError('Review the current handover before publishing.')
+    version = document(work)
+    if version is None:
+        raise ValidationError('Prepare the exact current handover document before publishing.')
+    _, value = profile(work)
+    current = snapshot(work, value)
+    state, jobs = current[0], current[-1]
+    if state['publication'] is not None or any(job.status in UNSETTLED_DELIVERY for job in jobs):
+        raise ValidationError('Check the original handover delivery before publishing again.')
+    if eligible(work, value, *current)[0] != ['ACT11']:
+        raise ValidationError('Review the exact handover sources and required approval before publishing.')
+    return version, publisher(work, value)
+
+
+@transaction.atomic
+def publish(actor, work_id, expected, case_expected, version_id):
+    from apps.documents.controlled import reserve_publication
+    from .factory_progress import wake_waiting
+
+    if any(type(key) is not int or key < 1 for key in (work_id, expected, case_expected, version_id)):
+        raise ValidationError('Open the exact current handover and project versions before publishing.')
+    work = lock_controlled_work(actor, work_id, case_expected)
+    if work.revision != expected:
+        raise ValidationError('Open the exact current handover before publishing.')
+    version, sender = publication_candidate(work)
+    if version.pk != version_id:
+        raise ValidationError('Publish only the exact currently approved handover document.')
+    publication = reserve_publication(sender, work.case_id, version.pk, case_expected, factory_work_id=work.pk)
+    work.status = 'ready'
+    work.finding = ''
+    work.observation_hash = ''
+    work.revision += 1
+    work.save(update_fields=['status', 'finding', 'observation_hash', 'revision', 'updated_at'])
+    event(actor, work.case, 'factory.handover_publication_requested', work=work.pk, publication=publication.pk, version=version.pk)
+    wake_waiting(work.pk)
+    return publication
+
+
+def exact_receipts(publication, receipts):
+    version = publication.version
+    if not receipts or sorted(receipt.recipient_id for receipt in receipts) != publication.recipient_ids or any(
+            receipt.payload != version.payload or receipt.payload_sha256 != version.payload_sha256 or
+            receipt.operation_key != f'{publication.operation_key}:user:{receipt.recipient_id}' for receipt in receipts):
+        raise ValidationError('Every exact handover recipient delivery receipt is required.')
+    return [receipt.pk for receipt in receipts]
+
+
+def current_delivery(work, actor=None):
     d,data,_=source(work,actor);prerequisites(d,data);v=document(work)
     if not v:raise ValidationError('Exact prepared handover document required')
     current_version(work.case,v.pk);review=validate_review(work.case,v);p,rows=receipt_state(work,v)
     policies,recipients,retention=publication_requirements(work.case,v)
     if not p or p.factory_work_id!=work.pk or p.factory_source_id!=work.source_head_id:raise ValidationError('Exact source-bound native handover publication required')
     if p.policies!=policies or p.recipient_ids!=recipients or p.retention_days!=retention or p.review_id!=(review.pk if review else None):raise ValidationError('Handover audience, review or policy changed; review a current package')
-    if {x['receipt'].recipient_id for x in rows}!=set(recipients) or not rows:raise ValidationError('Every exact recipient delivery receipt is required')
+    receipts = exact_receipts(p, [row['receipt'] for row in rows])
+    return v, p, rows, receipts
+
+
+def verify(work,actor=None):
+    v, p, rows, receipts = current_delivery(work, actor)
     binding=DeliveryDocumentBinding.objects.get(version=v);acks=[]
     for item in rows:
         r=item['receipt'];ack=item['ack']
-        if r.payload!=v.payload or r.payload_sha256!=v.payload_sha256:raise ValidationError('Exact handover receipt payload required')
         if not ack or ack.data['status']!='received' or ack.snapshot!=binding.snapshot:raise ValidationError('Support/Operations must record actual receipt and resolve any handover gaps')
         if 'attestation' in ack.data:
             from apps.pmo.handover_replies import validate_record
@@ -238,7 +295,7 @@ def verify(work,actor=None):
             for action in ['delivery.support_receive','document.receive:internal']:require(ack.actor,work.case,action)
         acks.append(ack.pk)
     return {'verified':True,'verification_scope':'synthetic_native_handover_and_actual_recipient_acknowledgement','head':work.source_head_id,
-        'document_version':v.pk,'publication':p.pk,'receipt_ids':[x['receipt'].pk for x in rows],'handover_ids':acks,
+        'document_version':v.pk,'publication':p.pk,'receipt_ids':receipts,'handover_ids':acks,
         'separate_handover_approval':False,'closure_approved':False,'financial_release_granted':False,'deployment_authorized':False,'external_authenticity_verified':False}
 
 
@@ -325,22 +382,94 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     return decision
 
 
+def original_job(work, jobs, version):
+    from apps.agents.factory_coordinator import pending
+
+    if not version or any(job.status in UNSETTLED_DELIVERY for job in jobs) or pending(work) is not None:
+        return None
+    return next((job for job in jobs if job.status == 'confirmed'
+                 and job.publication.version_id == version.pk
+                 and job.publication.factory_source_id == work.source_head_id
+                 and job.publication.factory_policy_id == work.policy_id), None)
+
+
+def checked_original_receipts(work, actor, job):
+    from .factory import profile
+
+    publication = job.publication
+    if work.cancel_requested:
+        # The original effect remains a fact after stopping work. Acknowledging its
+        # historical proof only settles the stop and grants no current authority.
+        receipts = PublicationReceipt.objects.filter(publication=publication).order_by('pk')
+        return exact_receipts(publication, list(receipts))
+    config, value = profile(work, recovery=True)
+    _, current, _, receipts = current_delivery(work, actor)
+    if current.pk != publication.pk or current.factory_policy_id != config.pk or current.actor_id != publisher(work, value).pk:
+        raise ValidationError('Review the original exact handover delivery and current publisher.')
+    return receipts
+
+
+def acknowledge_original_receipt(work, actor, job):
+    from .factory import cancellation_status
+
+    jobs = list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
+    if original_job(work, jobs, document(work)) != job:
+        raise ValidationError('Review the original exact handover delivery before continuing.')
+    receipts = checked_original_receipts(work, actor, job)
+    work.status = cancellation_status(work) if work.cancel_requested else 'ready'
+    work.finding = ''
+    work.observation_hash = ''
+    work.revision += 1
+    work.save(update_fields=['status', 'finding', 'observation_hash', 'revision', 'updated_at'])
+    event(actor, work.case, 'factory.handover_receipt_checked', work=work.pk, publication_job=job.pk, receipts=receipts)
+    return work
+
+
+def lock_controlled_work(actor, work_id, case_expected=None):
+    from .factory_execution import require_control
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id, definition=DEFINITION)
+    work.case = lock_case(actor, work.case_id, 'factory.execute', case_expected)
+    list(Grant.objects.select_for_update().filter(case=work.case).order_by('pk'))
+    require_control(actor, work)
+    return work
+
+
 def reconcile(actor,work_id,expected):
-    from .factory import access,cancellation_status
+    from .factory import cancellation_status
     from apps.documents.delivery import run_publication_once
     with transaction.atomic():
-        w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
-        access(actor,w.case,'factory.execute',DEFINITION)
-        if actor.pk!=w.actor_id:require(actor,w.case,'factory.manage')
-        if w.revision!=expected or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh after the current worker stops')
-        job=PublicationJob.objects.filter(publication__factory_work=w).filter(Q(status='unknown')|Q(status='leased',lease_until__lte=timezone.now())).order_by('pk').first()
-        if not job:raise ValidationError('No original uncertain handover delivery to reconcile')
+        w = lock_controlled_work(actor, work_id)
+        if type(expected) is not int or w.revision != expected or w.lease_until and w.lease_until > timezone.now():
+            raise ValidationError('Refresh the exact original handover delivery after the worker stops.')
+        if w.status in ('verified', 'cancelled', 'followup_needed'):
+            raise ValidationError('Read back this settled handover in its original history.')
+        jobs = list(PublicationJob.objects.select_for_update(of=('self',)).filter(publication__factory_work=w)
+                    .select_related('publication').order_by('pk'))
+        now = timezone.now()
+        job = next((item for item in jobs if item.status == 'unknown' or
+                    (item.status == 'leased' and item.lease_until and item.lease_until <= now)), None)
+        if not job:
+            original = original_job(w, jobs, document(w)) if w.status == 'waiting_effect' else None
+            if original:
+                return acknowledge_original_receipt(w, actor, original)
+            raise ValidationError('No original uncertain handover delivery to reconcile.')
         event(actor,w.case,'factory.reconciliation_requested',work=w.pk,publication_job=job.pk)
-    run_publication_once(case_id=w.case_id,job_id=job.pk)
+    run_publication_once(case_id=w.case_id, job_id=job.pk, lookup_only=True)
     with transaction.atomic():
-        w=Work.objects.select_for_update().get(pk=work_id);job.refresh_from_db()
-        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked' if job.status=='held' else 'ready'
-        w.finding=job.error if job.status in ['held','unknown'] else '';w.observation_hash='';w.revision+=1;w.save()
+        w = lock_controlled_work(actor, work_id)
+        if w.revision != expected or w.lease_until and w.lease_until > timezone.now():
+            return w
+        job = PublicationJob.objects.select_for_update(of=('self',)).get(pk=job.pk)
+        if job.status == 'leased':
+            return w
+        if job.status == 'confirmed':
+            return acknowledge_original_receipt(w, actor, job)
+        w.status = cancellation_status(w) if w.cancel_requested else 'blocked' if job.status == 'held' else 'waiting_effect'
+        w.finding = job.error if job.status in ('held', 'unknown') else ''
+        w.observation_hash = ''
+        w.revision += 1
+        w.save(update_fields=['status', 'finding', 'observation_hash', 'revision', 'updated_at'])
     return w
 
 
@@ -418,12 +547,18 @@ def projection(actor,work):
             pending_owners.append(user.get_full_name() or user.username)
         except PermissionDenied:pass
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication__version__document').order_by('pk'))
+    recorded_receipt = False
+    if work.status == 'waiting_effect' and (original := original_job(work, jobs, v)):
+        try:
+            recorded_receipt = bool(checked_original_receipts(work, actor, original))
+        except (ValidationError, PermissionDenied) as exc:
+            finding = finding_text(exc)
     for job in jobs:
         job.can_cancel=job.can_retry=False
         try:
             require(actor,work.case,'document.operate')
             if work.lease_until and work.lease_until>timezone.now():continue
-            if job.status in ['confirmed','cancelled'] or job.status=='leased' and job.lease_until and job.lease_until>timezone.now():continue
+            if job.status not in ('pending', 'held'):continue
             if PublicationReceipt.objects.filter(publication=job.publication).exists():continue
             job.can_cancel=True
             if job.status=='held' and not work.cancel_requested:
@@ -435,7 +570,7 @@ def projection(actor,work):
         'document':v,'publication':p,'receipts':receipts,'finding':finding,'readiness_changed':changed,'can_correct':can_correct,
         'can_review':can_review,'review_pending':review_pending,'review_owner_names':review_owners,'pending_owner_names':pending_owners,
         'reply_roles':reply_roles,
-        'publication_current':publication_current,'jobs':jobs}
+        'publication_current':publication_current,'jobs':jobs,'recorded_receipt':recorded_receipt}
 
 
 def attempt_projection(attempt):

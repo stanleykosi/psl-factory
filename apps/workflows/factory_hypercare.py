@@ -7,6 +7,7 @@ from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.services import lock_case,event
 from apps.core.evidence_access import public_evidence
+from apps.core.read_observation import read_observation
 from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.policy.services import resolve,decision_authority
@@ -43,6 +44,7 @@ def assessed(work):
     pk=Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,result__has_key='hypercare').order_by('-pk').values_list('result__hypercare',flat=True).first()
     return DeliveryRecord.objects.filter(pk=pk,dossier_id=work.request['dossier'],kind='hypercare').first() if pk else None
 
+@read_observation
 def snapshot(work,value,reader=None):
     from .factory import access
     actor=reader or work.execution_actor
@@ -54,9 +56,10 @@ def snapshot(work,value,reader=None):
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     p=resolve('D11.hypercare_criteria_ref',work.case)
+    assessment=assessed(work)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'native':native,'checks':checks(d),'criteria':[p.status,p.configuration.pk if p.configuration else None],
-        'assessed':assessed(work).pk if assessed(work) else None}
+        'assessed':assessment.pk if assessment else None}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 

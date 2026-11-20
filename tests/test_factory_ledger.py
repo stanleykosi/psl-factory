@@ -53,6 +53,43 @@ class FactoryLedgerTests(TestCase):
         self.accepted();f=self.f
         self.assertFalse(public_evidence(Evidence.objects.all()).filter(pk=self.work.source_head_id).exists());self.assertFalse(public_agent_runs(AgentRun.objects.all()).filter(process_id='F01').exists())
         Grant.objects.filter(case=f['case'],user=f['reviewer'],action='ledger.private.read').update(active=False);self.client.force_login(f['reviewer']);before=self.rows();r=self.client.get('/work/'+str(self.work.pk)+'/');self.assertIn(r.status_code,[403,404]);self.assertEqual(before,self.rows())
+
+    def test_live_investigation_requires_exact_private_reader_and_worker_claim(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        self.start()
+        f = self.f
+        reader = f['reviewer']
+        self.client.force_login(reader)
+        path = reverse('factory_detail', args=[self.work.pk])
+        decision = reverse('factory_invoice_decision', args=[self.work.pk])
+        label = 'Investigating the supplied ledger reference.'
+        self.assertNotContains(self.client.get(path), label)
+
+        class ObserveInvestigation(SyntheticFactoryCoordinator):
+            def choose(provider, context):
+                self.assertEqual(context['eligible'], ['ACT04'])
+                page = self.client.get(path)
+                self.assertContains(page, label)
+                self.assertContains(page, 'data-work-watch')
+                self.assertNotContains(self.client.get(decision), label)
+                for actor, action in ((reader, 'ledger.private.read'), (f['actor'], 'agent.ledger')):
+                    grant = Grant.objects.filter(case=f['case'], user=actor, action=action)
+                    self.assertTrue(grant.filter(active=True).exists())
+                    grant.update(active=False)
+                    try:
+                        self.assertNotIn(label, self.client.get(path).content.decode())
+                    finally:
+                        grant.update(active=True)
+                self.assertContains(self.client.get(path), label)
+                self.assertFalse(LedgerLineage.objects.filter(case=f['case']).exists())
+                return super().choose(context)
+
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveInvestigation()))
+        self.assertNotContains(self.client.get(path), label)
+        self.assertTrue(self.work.activities.filter(kind='ACT04', status='succeeded').exists())
+        self.assertFalse(LedgerLineage.objects.filter(case=f['case']).exists())
+
     def test_uncertain_observation_never_retries_or_verifies(self):
         self.start();self.advance();w=flow.lineage(self.work);verify(self.f,w,{'state':'unknown','target_reference':None,'incumbent_version':None});self.advance();self.assertNotEqual(self.work.status,'verified');self.assertEqual(LedgerLineage.objects.count(),1)
         with self.assertRaises(ValidationError):flow.verify(self.work,self.f['actor'])

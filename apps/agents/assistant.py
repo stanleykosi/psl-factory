@@ -26,7 +26,14 @@ INSUFFICIENT_EVIDENCE = 'I could not answer from the available records.'
 
 
 def cases_for(actor, persona):
-    return granted(actor, ['agent.extract', PERSONAS[persona][2]]).filter(synthetic=True, kind='project')
+    cases = granted(actor, ['agent.extract', PERSONAS[persona][2]])
+    if persona == 'chidi':
+        from apps.finance.bu_models import BUReceipt
+
+        received = BUReceipt.objects.filter(actor=actor).values('report__work__case_id')
+        aggregate_cases = granted(actor, ['agent.extract', 'bu.read', 'bu.report.read']).filter(pk__in=received)
+        cases = cases | aggregate_cases
+    return cases.filter(synthetic=True, kind='project')
 
 
 def check(actor, conversation):
@@ -144,32 +151,55 @@ def tool_context(conversation):
                 source(f'Milestone · {milestone.name}', f'Completion was recorded on {milestone.completed_at.date().isoformat()}.',
                        'design_project_tab', case.pk, 'milestones', record={'field': 'milestone', 'pk': milestone.pk})
     elif persona == 'chidi':
-        from apps.finance.fixed_charge import preparation_access
-        from apps.finance.models import Handoff, Invoice
+        from apps.finance import bu
+        from apps.finance.bu_models import BUReceipt
 
-        invoices = Invoice.objects.filter(case=case).select_related(
-            'preparation', 'case', 'invoiceissue', 'invoicedelivery',
-        ).order_by('-pk')[:8]
-        for invoice in invoices:
-            try:
-                preparation_access(actor, invoice.preparation)
-            except (PermissionDenied, ValidationError):
-                continue
-            state = 'draft recorded'
-            if getattr(invoice, 'invoiceissue', None):
-                state = 'issued'
-            if getattr(invoice, 'invoicedelivery', None):
-                state += ', delivery receipt recorded'
-            source(f'{invoice.reference} v{invoice.version}',
-                   f'{invoice.currency} {invoice.amount:f}. Invoice state: {state}. Payment is separate.',
-                   'finance_settlement', case.pk)
-        if granted(actor, ['factory.start', 'finance.read']).filter(pk=case.pk).exists():
+        finance_reader = granted(actor, ['finance.read']).filter(pk=case.pk).exists()
+        if finance_reader:
+            from apps.finance.fixed_charge import preparation_access
+            from apps.finance.models import Invoice
+
+            invoices = Invoice.objects.filter(case=case).select_related(
+                'preparation', 'case', 'invoiceissue', 'invoicedelivery',
+            ).order_by('-pk')[:8]
+            for invoice in invoices:
+                try:
+                    preparation_access(actor, invoice.preparation)
+                except (PermissionDenied, ValidationError):
+                    continue
+                state = 'draft recorded'
+                if getattr(invoice, 'invoiceissue', None):
+                    state = 'issued'
+                if getattr(invoice, 'invoicedelivery', None):
+                    state += ', delivery receipt recorded'
+                source(f'{invoice.reference} v{invoice.version}',
+                       f'{invoice.currency} {invoice.amount:f}. Invoice state: {state}. Payment is separate.',
+                       'finance_settlement', case.pk)
+        if finance_reader and granted(actor, ['factory.start']).filter(pk=case.pk).exists():
+            from apps.finance.models import Handoff
+
             handoffs = list(Handoff.objects.filter(case=case).select_related('milestone').order_by('-pk')[:5])
             for handoff in handoffs:
                 source('Milestone handoff', f'Finance received completion evidence for {handoff.milestone.name}.',
                        'case', case.pk, record={'field': 'handoff', 'pk': handoff.pk})
             if handoffs:
                 next_work.append('pmo-finance/v1')
+        if granted(actor, ['bu.read', 'bu.report.read']).filter(pk=case.pk).exists():
+            report_ids = BUReceipt.objects.filter(actor=actor, report__work__case=case).order_by('-report_id').values_list('report_id', flat=True)[:3]
+            for report_id in report_ids:
+                try:
+                    value = bu.read_report(actor, report_id)
+                except (PermissionDenied, ValidationError):
+                    continue
+                amounts = sorted(value['by_bu'].items())
+                first = ', '.join(f'{unit}: {value["currency"]} {amount}' for unit, amount in amounts[:8])
+                coverage = f' Showing eight of {len(amounts)} units.' if len(amounts) > 8 else ''
+                source(f'Reviewed business unit report {report_id}',
+                       f'{value["period"]}. Total allocated: {value["currency"]} {value["allocated_total"]}. '
+                       f'{first}.{coverage} Totals cover the selected source population.',
+                       'bu_inspect', case.pk, 'report', report_id, record={'field': 'bu_report', 'pk': report_id})
+        if not finance_reader and len(sources) == 1:
+            return [], []
     else:
         from apps.core.presentation import HR_FIELD_LABELS
         from apps.finance.hrfinance import check_snapshot_access
@@ -266,6 +296,11 @@ def worker_once():
     try:
         sources, next_work = turn_context(turn)
         context_hash = digest(sources)
+        if not sources:
+            AssistantTurn.objects.filter(pk=turn.pk, status='running').update(
+                status='answered', answer=INSUFFICIENT_EVIDENCE, sources=[], context_hash=context_hash, next_work='',
+            )
+            return True
         handles = {f'S{index}': source for index, source in enumerate(sources, start=1)}
         context = [{'handle': handle, 'label': source['label'], 'fact': source['fact']} for handle, source in handles.items()]
         recent = list(conversation.turns.filter(status='answered', created_at__lt=turn.created_at)

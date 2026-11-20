@@ -51,7 +51,7 @@ from apps.pmo import issue_team_views
 from apps.pmo import issue_message_views
 from apps.pmo import escalation_views
 from apps.pmo import emergency_views, recovery_views, delivery_views
-from apps.pmo import rfp_views
+from apps.pmo import rfp_assignment_views, rfp_views
 from apps.finance import views as finance_views
 from apps.finance import performance_views,billing_views,settlement_views,correction_views,forecast_views
 from apps.baas import support_agent_views,support_release_views,support_channel_views
@@ -134,7 +134,7 @@ urlpatterns += [path('setup/',setup_views.index,name='design_setup')]
 urlpatterns += [path('cases/<uuid:case_id>/settings/',setup_views.overview,name='workspace_settings')]
 urlpatterns += [path('cases/<uuid:case_id>/settings/payroll/<int:configuration_id>/',setup_views.visibility_review,name='visibility_review')]
 urlpatterns += [path('cases/<uuid:case_id>/policy/role-eligibility/',role_views.guidance,name='role_eligibility_guidance')]
-from apps.workflows import factory_views
+from apps.workflows import factory_ppe_views, factory_views
 from apps.workflows import factory_coordinator_views
 from apps.workflows import factory_execution_views
 from apps.pmo import closure_views
@@ -177,6 +177,8 @@ urlpatterns += [path('work/<int:work_id>/pricing/', factory_rfp_pricing.detail, 
 urlpatterns += [path('work/<int:work_id>/security-estimate/', factory_rfp_estimate_views.detail, name='factory_rfp_security_estimate')]
 urlpatterns += [path('cases/<uuid:case_id>/factory/rfp-outcome-settings/',factory_rfp_views.outcome_configuration,name='factory_rfp_outcome_configuration')]
 urlpatterns += [path('cases/<uuid:case_id>/rfp/intake/<int:intake_id>/attachment/', rfp_views.intake_attachment, name='rfp_intake_attachment')]
+urlpatterns += [path('bids/unassigned/', rfp_assignment_views.index, name='rfp_assignment_queue'),
+                path('cases/<uuid:case_id>/rfp/assignment/', rfp_assignment_views.assign, name='rfp_assignment')]
 
 from apps.finance import coverage_views
 urlpatterns += [path('cases/<uuid:case_id>/finance/contract-coverage/', coverage_views.workbench, name='finance_contract_coverage')]
@@ -204,6 +206,8 @@ urlpatterns += [path('work/<int:work_id>/background/', factory_progress_views.ch
 urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'focus': 'decision'}, name='factory_invoice_decision'),
                 path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery'),
                 path('work/<int:work_id>/response/', factory_views.detail, {'focus': 'response'}, name='factory_work_response')]
+urlpatterns += [path('work/<int:work_id>/opening-proof/<int:register_id>/', factory_ppe_views.opening_proof,
+                    name='factory_ppe_opening_proof')]
 urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catalog.upload, name='design_template_upload'),
                 path('projects/<uuid:case_id>/templates/<int:template_id>/file/', template_catalog.download, name='design_template_download')]
 urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
