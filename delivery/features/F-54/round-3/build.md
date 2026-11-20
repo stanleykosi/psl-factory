@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: aebb3517c8a3f9aa6b9af9dae328a2a43f191c79
+COMMIT: 6c71129e2ae29ff81d641b6061542bb2a1db882e
 BUILDER: builder
 LANE: full
 
@@ -97,3 +97,27 @@ Undo: none offered, the app has no undo path for any of these.
 - e2e against 4951/4952: 107 (rfp-assign, alerts, clients, decide, document-review) all pass after the persona fix; 460 across the other touched features: 451 pass, 9 fail, none from the toast: (a) 3 setup-delegation/templates counts expect 2 GETs but dev StrictMode makes the initial load 2 (proved by a load-only run showing 2 GETs); (b) 5 phone tests (ledger-source x3, income-schedule, asset-schedule) time out because the Next dev overlay intercepts clicks (asset-schedule passed on rerun); (c) support-handover ceo (fixed). Not rerun on a production build.
 - NOT run: `delivery/checks.sh` (it runs npm ci and a production build, which you told me not to do), and the fidelity tool. Visual check: toast at 1440 seen in a screenshot; the phone screenshot hung in dev, so the phone position is by measured boxes only.
 - Shared fix note: the hydration-lost click in ceo.spec may exist in other first-click e2e specs.
+
+## D-152 conveyor floor
+Commits c58879fa (scene), 74703496 (e2e).
+- `frontend/src/features/floor/scene.ts` rewritten as concept 1 (CONVEYOR): fixed orthographic camera (yaw .42, pitch .72, drag clamps as in the concept), a belt per line, a machine per station, a stack of white blocks for the waiting count capped at 8 (exact number in the chip label), orange machine plus pulsing lamp when `needs_person`, up to two boxes per busy station riding the belt to the next station, belt slats creeping left to right. Colours are tokens only: `--ink`, `--ink-strong` (belt), `--signal`, `--signal-tint`, `--surface`, `--surface-subtle`, `--neutral-tint`, `--nav-muted`, `--focus`; the concept's `--g-*` materials are not in the app, so they map to these.
+- Count or needs_person changes repaint just that machine in place (chip kept, so keyboard focus survives a poll); a changed set of lines/stations rebuilds. The view is fitted to the tallest stack, so a count change never moves the view.
+- Frame loop runs while the tab is visible; it stops on `visibilitychange` hidden and restarts on visible. Reduced motion: loop stops, boxes hidden (the app already shows Flat in that case).
+- `Floor3D.tsx`: new token set, new hint, stage is a tab stop (`role=group`, tabindex set in an effect to satisfy jsx-a11y) with keydown: arrows turn/tilt, R resets; Reset view button kept. `floor.css` comment only. Unchanged: data passed as returned (counts never coerced), HTML chips and line labels, Flat/3D switch and all fallbacks, lazy import of three.js, hover/focus readout.
+- Gaps against the brief, stated plainly: the previous Floor3D had no arrow/R keyboard handler and no click-through to a line or station (chips are not links, nothing in the overview routes there), so the keyboard is newly added and no click-through was added or removed. The 280 ms count-change animation of concept 3 is gone (conveyor motion is the animation).
+- Tests: new `tests/floor3d-keys.test.tsx` (scene recorded: lines passed as returned, arrows and R/Reset view call turn/reset); `overview-floor*.test.tsx` stub Floor3D and needed no change (they pass). `e2e/overview.spec.ts`: the two 3D tests now expect frames to keep running (belts), the new hint, and keys on the stage.
+- Screenshot at 1440 as ceo: `delivery/features/F-54/round-3/screenshots/overview-3d-conveyor-ceo-1440.png` (project checkout, headless Chromium with software WebGL).
+- Not run: the design-fidelity tool (no board for this floor; concept page is the reference). A stack is capped at 8 blocks, so a station with more than 8 shows 8 and its exact count in the chip.
+
+## D-154 response and outcome toasts
+Commit 6c71129e.
+- `ResponseView.tsx` SuccessView: `useToastWhen` fires "Response recorded." plus the recorded sentence (same wording) only when this page just recorded it (new `fresh: true` on the `done` view in `useResponse.ts`, set on the record and settle paths); a task opened already recorded shows no toast. The success callout is replaced by a read-only "What was recorded" block (sentence: what, how received, who, when, proof count; fallback line when the 200 carried no `recorded`), then the existing "What happens next", footnote and back link. Never blank.
+- `OutcomeView.tsx`: toast "Outcome recorded. <Result>" when this page records the outcome (new `justRecorded` in `useOutcome.ts`, covers both the reloaded RecordedView and the reload-failed page). The reload-failed page drops the success callout for a read-only "What was recorded" block (the result, and that only the result is known). The normal recorded state still shows RecordedView as before.
+- `tests/no-success-callouts.test.ts`: ResponseView and OutcomeView removed from the allowlist. DecideStates stays: its remaining callout (`decide-next`, line 452) is the next-step statement about the record, not the result of the press; the press result is already the "Your decision was recorded." toast.
+- Tests updated: `response.test.tsx`, `rfp.test.tsx` (toast text, read-only block, no `.psl-callout--success`, no toast on an already-recorded task), `e2e/response.spec.ts`, `e2e/rfp.spec.ts` (read `.psl-toast`).
+
+### Validation for D-152 and D-154
+- `npm run lint` clean; `npx tsc --noEmit` clean.
+- Full vitest: 145 files, 3532 tests passed (the run at 23:03 included the D-154 edits); targeted re-run of response, rfp, no-success-callouts, floor, overview: 497 passed.
+- Playwright (temp config, mock 4951 via MOCK_PORT=4951, app 4952): overview.spec all 12 passed; response and rfp success/record tests passed (18 selected, 18 passed). An earlier broad run of overview, response and rfp reported 12 passed with 4 failing before the e2e updates and MOCK_PORT was set; the final targeted run is green but I did not re-run the whole response and rfp files after that.
+- Worktree clean, branch pushed. Dev servers left running.
