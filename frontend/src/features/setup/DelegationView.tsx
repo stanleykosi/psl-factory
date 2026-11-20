@@ -9,7 +9,7 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { Button, Drawer, EmptyState, PageTitle, Panel, Table, Tag, Unknown, VisuallyHidden, ShowMore } from '@/components';
+import { Button, Drawer, EmptyState, PageTitle, Panel, Table, Tag, Unknown, VisuallyHidden, ShowMore, useToast } from '@/components';
 
 import type { DelegationBody, DelegationRow, DelegationsPage } from './contract-proposal';
 import { CHANGED, DelegationForm, type Blocked, type FormFrame, type SendResult, type Summary } from './DelegationForm';
@@ -64,7 +64,7 @@ function DelegationView() {
   const [blocked, setBlocked] = useState<Blocked>(null);
   // The revision an unconfirmed write was sent against, kept until a read settles whether it went through.
   const sent = useRef<number | null>(null);
-  const [announcement, setAnnouncement] = useState('');
+  const toast = useToast();
   const focus = useRef<Focus | null>(null);
   const sheetStart = useRef<HTMLDivElement>(null);
   const [, moveFocus] = useReducer((n: number) => n + 1, 0);
@@ -130,7 +130,7 @@ function DelegationView() {
         const words = row
           ? `${row.from.name} to ${row.delegate.name}, ${row.ends ? dateRange(row.starts, row.ends) : summary.dates}`
           : `${summary.from ?? 'you'} to ${summary.to}, ${summary.dates}`;
-        setAnnouncement(`Delegation added: ${words}.`);
+        toast.show(`Delegation added: ${words}.`);
         setNotice(fresh ? null : { tone: 'warning', text: NOT_REFRESHED });
         setSheet(false);
         focus.current = row ? { kind: 'row', id: row.delegation_id } : { kind: 'head' };
@@ -296,10 +296,6 @@ function DelegationView() {
             ),
           )
         )}
-      </div>
-
-      <div role="status" aria-live="polite">
-        <VisuallyHidden>{announcement}</VisuallyHidden>
       </div>
     </>
   );

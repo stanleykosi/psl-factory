@@ -76,7 +76,7 @@ test.describe('desktop 1440', () => {
     await open(page);
     await expect(page.getByRole('button', { name: 'Approve v2' })).toBeEnabled();
     await page.getByRole('button', { name: 'Approve v2' }).click();
-    const done = page.getByRole('status').filter({ hasText: 'You approved v2' });
+    const done = page.locator('.psl-toast').filter({ hasText: 'You approved v2' });
     await expect(done).toHaveText(/^You approved v2 · Kemi Adebayo · 17 Nov 10:05\. Not sent to the client\.$/);
     await expect(page.getByRole('button', { name: /Approve|Return/ })).toHaveCount(0);
     await expect(page.getByText('Approved', { exact: true })).toBeVisible();

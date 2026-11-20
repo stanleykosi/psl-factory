@@ -122,7 +122,7 @@ const click = async (name: string) => {
 const note = () => ws().getByLabelText(/^Note \(needed to/) as HTMLTextAreaElement;
 /** What the page says about the write: its notices, the status tag and the side column (not the station names). */
 const said = () => [document.querySelector('.ws-notices'), status(), document.querySelector('.ws-side')].map((el) => el?.textContent ?? '').join(' ');
-const notices = () => document.querySelector('.ws-notices')?.textContent ?? '';
+const notices = () => [document.querySelector('.ws-notices'), document.querySelector('.cmp-toasts')].map((el) => el?.textContent ?? '').join(' ');
 const factValue = (label: string) => [...document.querySelectorAll('.ws-fact')].find((f) => f.querySelector('dt')?.textContent === label)?.querySelector('dd')?.textContent;
 const stationNames = () => [...document.querySelectorAll('.ws-stations .psl-station strong')].map((s) => s.textContent);
 const settle = () => new Promise((r) => setTimeout(r, 50));

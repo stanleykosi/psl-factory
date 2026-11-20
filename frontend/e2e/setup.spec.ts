@@ -116,8 +116,9 @@ test.describe('desktop rules', () => {
     await panel(page).getByLabel(/^Proof/).setInputFiles({ name: 'minutes.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(120 * 1024, 1) });
     await expect(panel(page).getByText('Uploaded · 120 KB')).toBeVisible();
     await panel(page).getByRole('button', { name: 'Save as version 1' }).click();
-    await expect(panel(page).getByRole('status')).toHaveText('Saved as version 1.');
-    await expect(panel(page).getByRole('status')).toBeFocused();
+    await expect(page.locator('.psl-toast')).toHaveText('Saved as version 1.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
+    await expect(page.locator('.psl-toast')).not.toBeFocused();
     expect(seen.filter((r) => r.method === 'PUT')).toHaveLength(1);
     expect(seen.filter((r) => r.method === 'POST')).toHaveLength(1);
     expect(csrf).toBe('mock-csrf-admin');

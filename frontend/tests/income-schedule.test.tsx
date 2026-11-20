@@ -105,7 +105,7 @@ const click = async (name: string) => {
 };
 const note = () => ws().getByLabelText(/^Note \(needed to/) as HTMLTextAreaElement;
 /** What the page says about the write: its notices, the status tag and the Decide panel (not the station names or the facts strip). */
-const said = () => [document.querySelector('.ws-notices'), status(), document.querySelector('.ws-idecide'), document.querySelector('.ws-side')].map((el) => el?.textContent ?? '').join(' ');
+const said = () => [document.querySelector('.ws-notices'), document.querySelector('.cmp-toasts'), status(), document.querySelector('.ws-idecide'), document.querySelector('.ws-side')].map((el) => el?.textContent ?? '').join(' ');
 const factValue = (label: string) => [...document.querySelectorAll('.ws-fact')].find((f) => f.querySelector('dt')?.textContent === label)?.querySelector('dd')?.textContent;
 
 describe('four states from data (AC 1, 8)', () => {
@@ -325,7 +325,7 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     expect(decision.body).toEqual({ verdict: 'approve', expected_revision: 1 });
     expect(decideRequest(decision.body)).toBe(true);
     expect(decision.csrf).toBe('mock-csrf-finance_lead');
-    expect(screen.getByText('Schedule v1 is approved')).toBeTruthy();
+    expect(await screen.findByText('Schedule v1 is approved')).toBeTruthy();
     expect(factValue('Posted to the ledger')).toBe('NO');
   });
 
@@ -368,7 +368,7 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     await click('Reject');
     await waitFor(() => expect(status().textContent).toBe('REJECTED'));
     expect(posts('/decision')[0].body).toEqual({ verdict: 'reject', expected_revision: 1, note: 'Not for October.' });
-    expect(screen.getByText('Schedule v1 was rejected')).toBeTruthy();
+    expect(await screen.findByText('Schedule v1 was rejected')).toBeTruthy();
   });
 
   it('the error under the note is announced', async () => {
@@ -607,7 +607,7 @@ describe('round 2: the decision notice goes when the item moves on (TECH-1-3)', 
       fireEvent.click(ws().getAllByRole('button').find((b) => (b as HTMLButtonElement).type === 'submit')!);
     });
     await waitFor(() => expect(status().textContent).toBe('AWAITING FINANCE DECISION'));
-    expect(screen.queryByText('Schedule v1 was returned')).toBeNull();
+    expect(ws().queryByText('Schedule v1 was returned')).toBeNull(); // the toast about the return may still be up; the page says nothing
   });
 });
 
@@ -719,7 +719,7 @@ describe('round 3: banner tone, panel type, notices and the uncertain fixture', 
     expect(await screen.findByText('Figures refreshed.')).toBeTruthy();
     await click('Approve schedule');
     expect(await screen.findByText('Schedule v1 is approved')).toBeTruthy();
-    expect(screen.queryByText('Figures refreshed.')).toBeNull();
+    expect(ws().queryByText('Figures refreshed.')).toBeNull(); // the step's toast may still be up; the page holds no step notice
   });
 
   it('TECH-2-1: a decide after a step notice whose effect is unsettled shows "result not confirmed"', async () => {

@@ -430,7 +430,7 @@ describe('done and queued (AC 18)', () => {
     const body = item('W-2001');
     await open(body, bump(body, 4));
     await press('Approve and send');
-    await waitFor(() => expect(screen.getByRole('status', { name: '' }).textContent).toBe('Done: Approve and send.'));
+    await waitFor(() => expect(document.querySelector('.psl-toast')?.textContent).toBe('Done: Approve and send.'));
     expect(itemReads()).toHaveLength(2);
     expect(posts()).toHaveLength(1);
     await press('Approve and send');
@@ -613,7 +613,7 @@ describe('notices name the step (UX-1-2, UX-1-4, UX-1-5)', () => {
     stepAnswers = [ok({ message: 'Sent.' })];
     await open(item('W-2001'));
     await press('Approve and send');
-    const line = (await ws().findByText('Sent.')).closest('.psl-callout')!;
+    const line = (await screen.findByText('Sent.')).closest('.psl-toast')!;
     expect(line.textContent).toBe('Approve and send Sent.');
   });
 

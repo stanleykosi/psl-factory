@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { DecideResult, TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { Button, buttonClass, Callout, EmptyState, formatClock, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
+import { Button, buttonClass, Callout, EmptyState, formatClock, Panel, Tag, TextArea, Unknown, useIsPhone, useToastWhen } from '@/components';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
 import { FACTS } from '@/features/work-item/labels';
 import { presentationOf } from '@/features/work-item/presentation';
@@ -415,6 +415,7 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
   // as an outcome: no approved banner and no next-step claim, whatever the line.
   const uncertain = (result as { work_state?: string }).work_state === 'effect_uncertain' || reloaded?.state === 'effect_uncertain' || Boolean(reloaded?.reconcile);
   const approved = known && result.verdict === 'approve' && !uncertain;
+  useToastWhen(uncertain ? null : 'Your decision was recorded.');
   const next = nextDecision(view);
   const facts = presentationOf(reloaded ?? item);
   // the done boards draw Chidi's thumbs-up pose (public/agents/chidi-done.png); other agents keep their avatar
@@ -438,11 +439,6 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         title={uncertain ? `${label}: result not confirmed` : words.heading(view?.client ? `${label} for ${view.client}` : label)}
         focusHeading
       />
-      {!uncertain && (
-        <p className="cmp-sr" role="status">
-          Your decision was recorded.
-        </p>
-      )}
       <div className="decide-done">
         {uncertain && <UncertainNotice />}
         {refreshFailed && (

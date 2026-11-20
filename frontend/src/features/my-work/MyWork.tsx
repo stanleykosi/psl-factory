@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
+import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, useToast, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
 import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -66,8 +66,9 @@ export function MyWork() {
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  // F-36: the polite notice after the assign panel's write has been read back
-  const [notice, setNotice] = useState<{ kind: 'done' | 'sent'; text: string }>();
+  // F-36: the assign panel's write went through but the list could not be read back; the confirmation itself is a toast (D-151)
+  const [notice, setNotice] = useState<string>();
+  const toast = useToast();
 
   const seq = useRef(0);
   const inFlight = useRef(0);
@@ -284,7 +285,10 @@ export function MyWork() {
   };
   const assigned = async ({ reference, assignedTo, reread }: Assigned) => {
     const listed = await refresh(true);
-    setNotice(reread && listed ? { kind: 'done', text: `${reference} is now with ${assignedTo}.` } : { kind: 'sent', text: 'The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.' });
+    if (reread && listed) {
+      setNotice(undefined);
+      toast.show(`${reference} is now with ${assignedTo}.`);
+    } else setNotice('The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.');
     router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
     requestAnimationFrame(() => tabs.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus());
   };
@@ -407,8 +411,8 @@ export function MyWork() {
       </div>
 
       {notice && (
-        <Callout kind={notice.kind === 'done' ? 'success' : 'warning'} className="my-work__notice">
-          {notice.text}
+        <Callout kind="warning" className="my-work__notice">
+          {notice}
         </Callout>
       )}
 

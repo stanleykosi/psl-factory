@@ -309,20 +309,21 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(up.body).toEqual({ kind: 'rule_proof', filename: 'minutes.pdf', content_base64: btoa('x'.repeat(2048)), case_revision: 1 });
 
     fireEvent.click(saveButton());
-    await waitFor(() => expect(panel().getByRole('status').textContent).toBe('Saved as version 1.'));
+    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Saved as version 1.'));
     expect(saves()).toHaveLength(1);
     expect(saves()[0]).toMatchObject({ path: '/api/v1/setup/rules/presale.rfp_assigner', csrf: 'mock-csrf-admin' });
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14', reason: 'Agreed at the PSL leadership meeting', evidence_id: 'EV-1' });
     expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', 'v1 · since 14 Nov']);
     expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 7');
     expect(desktop().getByText(/^7 rules aren’t set yet/)).toBeTruthy();
-    // Rebuilt from the reloaded row: next version, its selection, Why and Proof cleared; focus on the callout.
+    // Rebuilt from the reloaded row: next version, its selection, Why and Proof cleared; the result is a toast.
     expect(saveButton().textContent).toBe('Save as version 2');
     expect((panel().getByRole('checkbox', { name: 'PMO Lead' }) as HTMLInputElement).checked).toBe(true);
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('');
     expect(panel().getByText('choose a file')).toBeTruthy();
-    // Focus moves in an effect after the outcome renders.
-    await waitFor(() => expect(document.activeElement).toBe(panel().getByRole('status')));
+    // The toast never takes focus (D-151), and the panel keeps no success callout.
+    expect(document.activeElement).not.toBe(screen.getByRole('status'));
+    expect(panel().queryByRole('status')).toBeNull();
   });
 
   it('a blank Why sends no reason, no upload sends no evidence_id, and a double click sends one PUT', async () => {
@@ -336,7 +337,7 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(saveButton().getAttribute('aria-busy')).toBe('true');
     await waitFor(() => expect(saves()).toHaveLength(1));
     await act(async () => release());
-    await waitFor(() => expect(panel().getByRole('status')).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole('status')).toBeTruthy());
     expect(saves()).toHaveLength(1);
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14' });
   });

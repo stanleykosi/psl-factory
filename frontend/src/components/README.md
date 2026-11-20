@@ -37,7 +37,7 @@ Import from `@/components`. Tests are in `frontend/tests/components/` (render, s
 | `Drawer` | Drawer | CMP-23 (drawer) | overlays.test.tsx |
 | `BottomSheet` | BottomSheet | | overlays.test.tsx |
 | `Dialog` | Dialog | | overlays.test.tsx |
-| `Toast` | Toast | | toast-tooltip.test.tsx |
+| `Toast`, `ToastProvider`, `useToast`, `useToastWhen` | Toast | | toast-tooltip.test.tsx, toast-host.test.tsx |
 | `Tooltip` | Tooltip | | toast-tooltip.test.tsx |
 | `Table` (`leading`, `fullRow`, `wrapClassName` for screens with their own controls) | Table | | table.test.tsx, conformance-options.test.tsx |
 | `ShowMore` | ShowMore | CMP-07 (50 rows) | lists-and-states.test.tsx |
@@ -80,3 +80,12 @@ Rules the components hold for every caller:
 - Busy buttons keep their width, show the three squares and ignore presses; disabled ones carry a reason.
 - Modal surfaces trap focus, close on Esc and return focus; menus and lists return focus to their control.
 - Reduced motion is the bundle's: pulses, spinners and busy squares stop.
+
+## Toasts (D-151)
+
+`ToastProvider` is mounted once in `AppShell`; call `useToast().show('Billing contact saved.')` (optional
+`{ action: { label: 'Undo', onClick } }`, `kind: 'problem'`, `dismissible`) from a handler, or `useToastWhen(text)` for a page that
+keeps the result of an action in state. The host is bottom centre on desktop; on phones full width inside the 16px gutters,
+above any sticky bottom bar. Newest at the bottom, at most 3 visible, never takes focus, survives a client-side route change,
+and each toast holds past 6 seconds while hovered or focused. A just-finished action is a toast, never a success Callout:
+`tests/no-success-callouts.test.ts` fails on `<Callout kind="success">` outside its allowlist.

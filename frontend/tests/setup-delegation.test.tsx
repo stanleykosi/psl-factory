@@ -109,7 +109,7 @@ async function open() {
 const desktop = () => within(document.querySelector('.setup-desktop') as HTMLElement);
 const phone = () => within(document.querySelector('.setup-phone') as HTMLElement);
 const panel = () => within(screen.getByRole('complementary', { name: 'Add a delegation' }));
-const announced = () => document.querySelector('[aria-live="polite"]:not(.psl-showmore__count)')?.textContent;
+const announced = () => document.querySelector('.psl-toast')?.textContent; // D-151: the toast, which is announced as a status
 const rows = () =>
   desktop()
     .getAllByRole('row')

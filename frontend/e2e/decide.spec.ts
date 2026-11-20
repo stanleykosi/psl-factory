@@ -142,6 +142,8 @@ test('the approve done view has the green success banner; return has the neutral
   await page.getByRole('button', { name: 'Approve v2' }).click();
   const banner = page.locator('.decide-banner');
   await expect(banner.getByRole('heading', { level: 1 })).toHaveText('Invoice v2 is approved');
+  await expect(page.locator('.psl-toast')).toHaveText('Your decision was recorded.');
+  await expect(page.locator('.psl-callout--success:not(.decide-next)')).toHaveCount(0); // the Next step card is the record's lasting guidance
   await expect(banner).toHaveCSS('background-color', 'rgb(221, 239, 227)');
   await expect(banner.getByText(/^YOU APPROVED · \d\d:\d\d$/)).toHaveCSS('color', 'rgb(22, 80, 47)');
   await expect(banner.getByRole('heading', { level: 1 })).toHaveCSS('color', 'rgb(22, 80, 47)');

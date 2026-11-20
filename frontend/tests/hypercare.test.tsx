@@ -89,7 +89,7 @@ async function open(first: WorkItem, ...later: (WorkItem | (() => Response | Pro
 const ws = () => within(document.querySelector('.ws') as HTMLElement);
 const pageText = () => document.body.textContent ?? '';
 /** The notices at the top of the page; the agent's own "Done: …" lines are not in them. */
-const notices = () => document.querySelector('.ws-notices')?.textContent ?? '';
+const notices = () => [document.querySelector('.ws-notices'), document.querySelector('.cmp-toasts')].map((el) => el?.textContent ?? '').join(' ');
 const wsText = () => (document.querySelector('.ws') as HTMLElement).textContent ?? '';
 const press = async (name: string) => {
   await act(async () => {

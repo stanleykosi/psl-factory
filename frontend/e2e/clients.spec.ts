@@ -184,7 +184,8 @@ for (const [label, viewport] of [
         expect(ring.style).not.toBe('none');
       }
       await save.click();
-      await expect(page.locator('.psl-callout--success')).toHaveText('Billing contact saved.');
+      await expect(page.locator('.psl-toast')).toHaveText('Billing contact saved.');
+      await expect(page.locator('.psl-callout--success')).toHaveCount(0);
       await expect(page.getByText("No billing contact, so invoices for this client can't start.")).toHaveCount(0);
       await expectNoAxeViolations(page);
     });

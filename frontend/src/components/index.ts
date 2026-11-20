@@ -45,7 +45,7 @@ export { Tabs, type TabItem } from './Tabs';
 export { PriorityTag, STATE_TAGS, StateTag, Tag, type FactoryState, type Priority, type TagTone } from './Tag';
 export { TextArea, type TextAreaProps } from './TextArea';
 export { TextField, type TextFieldProps } from './TextField';
-export { Toast, TOAST_MS, type ToastAction } from './Toast';
+export { Toast, ToastProvider, useToast, useToastWhen, MAX_TOASTS, TOAST_MS, type ToastAction } from './Toast';
 export { Tooltip, TOOLTIP_DELAY_MS } from './Tooltip';
 export { ValidationSummary, type FieldProblem } from './ValidationSummary';
 export { VisuallyHidden } from './VisuallyHidden';

@@ -207,7 +207,7 @@ test.describe('Publish and the uncertain paths', () => {
     await loaded(page);
     await page.getByRole('button', { name: 'Ask Tola to draft v2' }).click();
     await expect(page.getByText('Drafting v2').first()).toBeVisible();
-    await expect(page.locator('.ws-notices').getByText('Waiting: Tola is drafting v2.')).toBeVisible();
+    await expect(page.locator('.psl-toast').getByText('Waiting: Tola is drafting v2.')).toBeVisible();
     await expect(page.getByText('OPEN')).toHaveCount(2);
     await expect(page.locator('.ws .ws-note.psl-callout--success')).toHaveCount(0);
     expect(writes).toHaveLength(1);

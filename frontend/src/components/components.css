@@ -117,7 +117,13 @@
 .cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: var(--text-sheet-title-size); }
 
 /* toast */
-.cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); }
+.cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); pointer-events: none; }
+.cmp-toasts > * { pointer-events: auto; }
+@media (max-width: 719.98px) {
+  .cmp-toasts { left: var(--space-4); right: var(--space-4); transform: none; bottom: calc(var(--toast-lift, 0px) + var(--space-4)); align-items: stretch; }
+  .cmp-toasts > .psl-toast { display: flex; }
+  .cmp-toasts > .psl-toast > span:not(.psl-tick) { flex: 1; }
+}
 .cmp-toast__action { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--on-strong); text-decoration: underline; cursor: pointer; }
 
 /* tooltip above its trigger */

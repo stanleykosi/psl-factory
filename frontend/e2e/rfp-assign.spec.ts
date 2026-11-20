@@ -112,8 +112,9 @@ test.describe('desktop 1440', () => {
     await expect(dialog(page).getByText('PMO Lead', { exact: true })).toBeVisible();
     await choose(page, /Accountable PM/, /Tunde Bello/);
     await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'TL-RFP-2026-014 is now with Tunde Bello.' })).toBeVisible();
+    await expect(page.locator('.psl-toast').filter({ hasText: 'TL-RFP-2026-014 is now with Tunde Bello.' })).toBeVisible();
     await expect(dialog(page)).toHaveCount(0);
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     await expect(page.getByRole('tab', { name: /Unassigned/ })).toBeFocused();
     await expect(page.getByRole('tab', { name: /Unassigned/ })).toContainText('5');
     await expect(page.getByRole('link', { name: /Tamarind Loans · loan origination RFP/ })).toHaveCount(1);
@@ -128,7 +129,7 @@ test.describe('desktop 1440', () => {
     await dialog(page).locator('input[type="file"]').setInputFiles(eml());
     await expect(dialog(page).getByText('Uploaded · 18 KB')).toBeVisible();
     await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'TL-RFP-2026-014 is now with Tunde Bello.' })).toBeVisible();
+    await expect(page.locator('.psl-toast').filter({ hasText: 'TL-RFP-2026-014 is now with Tunde Bello.' })).toBeVisible();
     expect((await mockLog(page)).assignments).toMatchObject([{ work_id: 'W-3302', status: 200, written: true }]);
   });
 
@@ -208,7 +209,7 @@ test.describe('desktop 1440', () => {
       await openPanel(page, 'W-3301');
       await choose(page, /Accountable PM/, /Tunde Bello/);
       await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
-      await expect(page.getByRole('status').filter({ hasText: 'is now with Tunde Bello.' })).toBeVisible();
+      await expect(page.locator('.psl-toast').filter({ hasText: 'is now with Tunde Bello.' })).toBeVisible();
     }],
   ];
   for (const [name, setup] of STATES) {
@@ -263,7 +264,7 @@ test.describe('phone 390', () => {
     await openPanel(page, 'W-3301');
     await choose(page, /Accountable PM/, /Tunde Bello/);
     await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'TL-RFP-2026-014 is now with Tunde Bello.' })).toBeVisible();
+    await expect(page.locator('.psl-toast').filter({ hasText: 'TL-RFP-2026-014 is now with Tunde Bello.' })).toBeVisible();
     await expect(dialog(page)).toHaveCount(0);
   });
 

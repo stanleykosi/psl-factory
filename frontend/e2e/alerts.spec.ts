@@ -370,7 +370,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await page.getByRole('combobox', { name: 'Daily digest at' }).click();
     await page.getByRole('option', { name: '09:00' }).click();
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     await expectNoAxeViolations(page);
     expect(bodies).toEqual([
       {
@@ -396,7 +397,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await expect(stuck).toHaveAttribute('aria-checked', 'false');
     await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveText('09:00');
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     expect((bodies[1] as { body: { expected_revision: number } }).body.expected_revision).toBe(4);
   });
 
@@ -417,7 +419,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     const put = page.waitForRequest((r) => r.method() === 'PUT');
     await page.getByRole('button', { name: 'Save settings' }).click();
     expect((await put).postDataJSON().expected_revision).toBe(4);
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
   });
 
   test('invalid: channel goes back as read and the 422 message shows, focused; the edits stay', async ({ page, context }) => {
@@ -494,7 +497,8 @@ test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
     const body = (await put).postDataJSON();
     expect(body).not.toHaveProperty('digest_at');
     expect(body).not.toHaveProperty('quiet_hours');
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 
