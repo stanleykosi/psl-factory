@@ -138,8 +138,11 @@ from apps.workflows import factory_views
 from apps.workflows import factory_coordinator_views
 from apps.workflows import factory_execution_views
 from apps.pmo import closure_views
+from apps.pmo import client_testing_pack_views
 urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/closure/',closure_views.preparation,name='closure_preparation'),
     path('cases/<uuid:case_id>/delivery/<int:dossier_id>/client-response/',client_uat_views.desk,name='client_uat'),
+    path('cases/<uuid:case_id>/delivery/<int:dossier_id>/test-pack/',client_testing_pack_views.desk,name='client_uat_pack'),
+    path('cases/<uuid:case_id>/delivery/<int:dossier_id>/test-pack/<int:row_id>/<slug:side>/',client_testing_pack_views.proof,name='client_uat_pack_file'),
     path('cases/<uuid:case_id>/client-response/settings/',client_uat_views.configuration,name='client_uat_rules'),
     path('cases/<uuid:case_id>/client-response/<int:response_id>/proof/<int:upload_id>/',client_uat_views.proof,name='client_uat_proof')]
 from apps.core import workbench_views

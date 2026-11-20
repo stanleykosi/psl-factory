@@ -219,7 +219,10 @@ def confirm(actor,work_id,expected,case_expected,fields,extraction_id):
         if pk not in linked:
             w.case.refresh_from_db();meetings.link_action(actor,w.case_id,v.meeting_id,pk,note.pk,w.case.revision)
     a=event(actor,w.case,'factory.minutes_confirmed',work=w.pk,head=w.source_head_id,meeting_version=v.pk,extraction=extraction_id,fields=fields,scope_changed=False,actions_completed=False)
-    w.status='ready';w.finding='';w.revision+=1;w.save();return a
+    w.status='ready';w.finding='';w.revision+=1;w.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return a
 
 def publisher(work,value):
     from django.contrib.auth import get_user_model

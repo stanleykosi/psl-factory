@@ -29,6 +29,7 @@ PREPARATION = {
     'stability': ('delivery-hypercare/v1', 'SAMPLE release stability walkthrough'),
     'stability_active': ('delivery-hypercare/v1', 'SAMPLE active stability evaluation'),
     'client_testing_wait': ('delivery-release/v1', 'SAMPLE client testing request walkthrough'),
+    'client_testing_pack': ('delivery-release/v1', 'SAMPLE reviewed client testing pack'),
     'archive': ('delivery-archive/v1', 'SAMPLE file archive walkthrough'),
     'archive_active': ('delivery-archive/v1', 'SAMPLE active archive copy'),
     'standard': ('pmo-change/v1', 'SAMPLE standard change walkthrough'),
@@ -110,7 +111,7 @@ def prepare_stability(actor, case):
     return entry.work
 
 
-def prepare_client_testing_wait(actor, case):
+def prepare_client_testing_wait(actor, case, *, pack_walkthrough=False):
     from apps.core import client_contacts
     from apps.workflows import factory_delivery
 
@@ -129,8 +130,20 @@ def prepare_client_testing_wait(actor, case):
         'email': 'sample-client-test@example.invalid', 'role': 'SAMPLE test contact',
         'evidence': entry.e['policy_decision'], 'revision': rev(case),
     })
-    return factory_delivery.start(actor, case.pk, 'SAMPLE-BATCH-CLIENT-WAIT', entry.d.pk,
-                                  'SAMPLE client testing and response', rev(case))
+    if pack_walkthrough:
+        from apps.policy.client_uat_validators import COMPONENT, SCHEMA_REF
+        from tests.document_helpers import artifact
+
+        artifact(actor, case, COMPONENT, SCHEMA_REF, {
+            'format': 'psl.client-uat-rules/v1', 'human_only': True,
+            'qualification_mode': 'reviewed_human_attestation_v1', 'reviewer_ids': [actor.pk],
+            'reviewer_role': 'PM', 'independent_review': False, 'agent_review_required': False,
+            'exact_mentions_required': True, 'proof_formats': ['txt', 'pdf', 'docx', 'xlsx'],
+            'workaround_mode': 'explicit_client_approved_scope_v1',
+            'assurance': 'human_witnessed_not_external_authentication', 'financial_controls': 'independent',
+        }, entry.e['policy_decision'])
+    reference = 'SAMPLE client testing pack and receipt' if pack_walkthrough else 'SAMPLE client testing and response'
+    return factory_delivery.start(actor, case.pk, 'SAMPLE-BATCH-CLIENT-WAIT', entry.d.pk, reference, rev(case))
 
 
 def prepare_archive(actor, case):
@@ -590,7 +603,9 @@ def prepare_project(actor, key):
     if created:
         Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
         prepare = {'stability': prepare_stability, 'stability_active': prepare_stability,
-                   'client_testing_wait': prepare_client_testing_wait, 'archive': prepare_archive,
+                   'client_testing_wait': prepare_client_testing_wait,
+                   'client_testing_pack': partial(prepare_client_testing_wait, pack_walkthrough=True),
+                   'archive': prepare_archive,
                    'archive_active': prepare_archive, 'standard': prepare_standard,
                    'normal_change_refusal': prepare_normal_change_refusal,
                    'emergency': prepare_emergency,

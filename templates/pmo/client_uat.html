@@ -4,6 +4,7 @@
 <header class="page-heading"><div><a class="back-link" href="{% url 'delivery' case.pk %}">← Delivery</a><h1>Client testing response</h1><p class="lede">{{ case|workspace_name }} · {{ dossier.candidate.reference }}</p></div>{% if can_rules %}<a class="button secondary" href="{% url 'client_uat_rules' case.pk %}">Proof review settings</a>{% endif %}</header>
 {% if return_work %}<p><a class="button secondary" href="{% url 'factory_detail' return_work %}">Back to the work item</a></p>{% endif %}
 <section class="card"><h2>{{ status }}</h2><p>The client does not need an account. A person records their actual response and keeps its proof. File checks help the reviewer; they cannot speak for the client.</p>
+<p><a href="{% url 'client_uat_pack' case.pk dossier.pk %}">Review test pack delivery and response dates</a></p>
 {% if target_contact %}<dl><dt>Client contact</dt><dd>{{ target_contact }}</dd><dt>Version sent</dt><dd>{{ dossier.candidate.reference }}</dd><dt>Sent for testing</dt><dd>{{ target.payload.sent_at|recorded_time }}</dd></dl>{% endif %}
 {% if response %}<dl><dt>Client decision</dt><dd>{{ response_label }}</dd><dt>Response time</dt><dd>{{ response.payload.responded_at|recorded_time }}</dd><dt>Recorded by</dt><dd>{{ response.actor.get_full_name|default:response.actor.username }}</dd></dl>
 {% if response.payload.workaround %}<h3>Workaround explicitly approved by the client</h3><p>{{ response.payload.workaround }}</p>{% endif %}

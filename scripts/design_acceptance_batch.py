@@ -22,7 +22,7 @@ SUITES = {
     'project_delivery': (
         'factory_change', 'factory_change_branches', 'standard_changes', 'factory_emergency',
         'factory_escalation', 'factory_go_live', 'factory_hypercare', 'factory_archive',
-        'factory_closure_recovery', 'client_uat', 'project_archive_files', 'factory_minutes', 'factory_minutes_console',
+        'factory_closure_recovery', 'client_uat', 'client_testing_pack', 'project_archive_files', 'factory_minutes', 'factory_minutes_console',
     ),
     'finance_reporting': (
         'factory_leadership', 'factory_accounting', 'factory_accounting_provenance', 'factory_accounting_intake',

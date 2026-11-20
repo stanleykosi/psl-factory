@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. Minutes confirmation wakes only the existing authorized background request so the worker can prepare the internal document once the recorded human decision permits it. Work without a background request remains available for deliberate continuation. The remaining design gaps will be integrated as one candidate before a combined Railway and Codex browser acceptance run.
+
+20 November 2026. A client testing delivery record keeps two separately pinned private files, the received timestamp, the exact current test request and the witness. The approved client-response policy governs whether a separate reviewer is required. The response deadline and optional follow-up time belong to an immutable succession of edits to an exact reviewed delivery. A current client reply ends the visible wait. The initial reminder is displayed in the testing delivery view. Automated channel delivery and authenticated external receipt verification remain separate engineering.
+
 20 November 2026. Project Journey shows current authorized work in creation order, with pagination, current state and scope. It shows stage and delivery facts only when the viewer has the relevant Finance access and data exists. It opens Tola with the exact project already selected through the normal access checks. Opening the project or the Assistant queues no model request.
 
 20 November 2026. Starting business-unit work checks source freshness before presenting choices. Reading a published aggregate uses the original publisher, current disclosure rule and exact authorized recipient while holding the same native case and grant locks. Formal minutes accept one source. A new upload retains its private original and pins the extracted meeting evidence to the exact original uploader and fingerprint. Human confirmation still owns the meeting and commitments.

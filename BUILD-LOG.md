@@ -1,5 +1,11 @@
 # Build progress log
 
+20 November 2026. The first minutes restart group found an old subprocess fixture pointing the parent test settings at its test database. Used the existing guarded test connection helper. The corrected run passed all 48 cases and both original receipt probes. Promoted matched web and worker. The restored Codex browser verified the reviewed client pack and the revised in-app reminder when due. Began the requested combined build for the remaining workflow gaps.
+
+20 November 2026. Completed the new-file minutes intake and human confirmation in the Codex browser. Retained private upload 19, note 3105, work 176 and action 14 with no invented owner or deadline. Recorded the still-waiting internal document stage for follow-up.
+
+20 November 2026. Added authorized recording of the exact sent pack and separate receipt evidence, explicit human confirmation and editable response dates. Passed all 21 client testing tests and both read-only probes. Promoted the matching web and worker to the Railway acceptance environment. Reconnected to the user's open, signed-in Codex preview through the full browser connection and verified the chronological Standard Change Journey and Tola project selection.
+
 20 November 2026. Replaced the rejected synthetic planning rows with minutes work created through the native intake. The grouped 229 tests and both receipt probes passed. Deployed the matching chronological Journey and project-scoped Assistant entry to Railway. The in-app browser bridge did not return the user’s open preview tab. Browser acceptance remains open for the new Journey and the protected minutes upload.
 
 20 November 2026. Repaired the aggregate recipient read boundary and the simulated source-age test together. Added formal minutes intake from a bounded original file with a retained source fingerprint and separate human confirmation. All seven 227 tests and both preservation probes passed, then the matching build served the new sample forms. Implemented the project Journey's chronological scoped work and Finance facts for the next grouped gate. HOD choices remain deferred.

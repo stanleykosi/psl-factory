@@ -23,7 +23,7 @@ from apps.workflows.models import FactoryWork,FactoryAttempt,HumanTask
 from apps.workflows import factory,factory_minutes as flow
 from .meeting_helpers import meetings_fixture
 from .document_helpers import artifact
-from .helpers import rev,activate
+from .helpers import rev,activate,worker_test_environment
 
 class FactoryMinutesTests(TestCase):
     def setUp(self):
@@ -64,6 +64,34 @@ class FactoryMinutesTests(TestCase):
     def test_missing_owner_deadline_remain_explicit_and_do_not_invent_approval_chain(self):
         self.start();self.confirm(False);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         body=str(flow.document(self.work).version.payload);self.assertIn('Owner unassigned',body);self.assertIn('Deadline unknown',body);self.assertIsNone(ActionItem.objects.get().current.owner_id)
+
+    def test_confirmed_minutes_wake_the_original_background_job(self):
+        from apps.workflows import factory_progress
+
+        self.start()
+        job = factory_progress.set_progress(self.actor, self.work.pk, self.work.revision, True)
+
+        def drain():
+            for _ in range(15):
+                self.assertEqual(factory_progress.run_once(), job.pk)
+                job.refresh_from_db()
+                if job.status != 'queued':
+                    return job.status
+            self.fail('Minutes did not reach the next station')
+
+        self.assertEqual(drain(), 'waiting')
+        self.assertGreater(job.available_at, timezone.now())
+        self.assertIsNone(flow.document(self.work))
+        self.work.refresh_from_db()
+        self.confirm(False)
+        job.refresh_from_db()
+        self.assertLessEqual(job.available_at, timezone.now())
+        self.assertEqual(job.observation, '')
+        self.assertEqual(drain(), 'finished')
+        self.work.refresh_from_db()
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        self.assertIn('Deadline unknown', str(flow.document(self.work).version.payload))
+        self.assertFalse(Publication.objects.exists())
     def test_duplicate_intake_and_human_capture_without_execution_policy(self):
         self.start();self.assertEqual(flow.start(self.actor,self.case.pk,'MINUTES-1','FORMAL-1',self.data,1).pk,self.work.pk)
         bad=dict(self.data,audience='client',publish=True)
@@ -318,7 +346,7 @@ class FactoryMinutesTests(TestCase):
 from django.test import TransactionTestCase
 from django.db import close_old_connections
 from concurrent.futures import ThreadPoolExecutor
-import os,subprocess,sys
+import subprocess,sys
 
 class FactoryMinutesDurabilityTests(TransactionTestCase):
     setUp=FactoryMinutesTests.setUp
@@ -326,7 +354,7 @@ class FactoryMinutesDurabilityTests(TransactionTestCase):
     fields=FactoryMinutesTests.fields
     confirm=FactoryMinutesTests.confirm
     def worker(self):
-        environment=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        environment=worker_test_environment(connection)
         command='from apps.workflows.factory import run_until_wait; run_until_wait('+str(self.work.pk)+')'
         result=subprocess.run([sys.executable,'manage.py','shell','-c',command],env=environment,capture_output=True,text=True,timeout=120)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
