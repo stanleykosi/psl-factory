@@ -1,5 +1,5 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
-<a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to the same work view</a>
+<a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
 <div class="page-heading"><div><p class="eyebrow">ACCOUNTING PREPARATION AND REVIEWED REPORTS</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'finance_analysis' case.pk %}">Source and accounting records</a></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</div></div>
 {% include 'factory/work_focus.html' %}

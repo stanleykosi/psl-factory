@@ -4,7 +4,7 @@
     <h2 id="rfp-return-heading">{% if returned.current.kind == 'costing' %}Costing returned for changes{% else %}Response returned for changes{% endif %}</h2>
     <p>{% if returned.current.kind == 'costing' %}Costing version {{ returned.current.costing_number }} · {% endif %}Response version {{ returned.current.response_number }} · {{ returned.current.role|role_name }} · {{ returned.current.created_at|date:'d M Y H:i T' }}</p>
     <p>{{ returned.current.note|linebreaksbr }}</p>
-    {% if can_correct %}<a class="button secondary" href="{% url 'factory_detail' work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}#correct-response">Correct response inputs</a>{% endif %}
+    {% if can_correct %}<a class="button secondary" href="{% url 'factory_detail' work.pk %}{% work_queue_query work %}#correct-response">Correct response inputs</a>{% endif %}
   </section>
 {% endif %}
 {% if returned.history %}

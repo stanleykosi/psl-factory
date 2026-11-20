@@ -7,6 +7,70 @@ from apps.identity.models import Grant
 from tests.factory_helpers import fixture
 
 class FactoryConsoleTests(TestCase):
+    def test_mobile_work_links_keep_the_authorized_workflow_queue_and_search(self):
+        from html import escape
+        from urllib.parse import urlencode
+
+        from django.db import connection
+        from tests.test_factory_planning import setup as planning_fixture
+
+        self.assertEqual(connection.vendor, 'postgresql')
+        invoice = fixture(responsibility=False)
+        actor, work = invoice['actor'], invoice['work']
+        other = planning_fixture(configured=False)
+        for action in ('case.read', 'factory.read', 'planning.read'):
+            Grant.objects.create(case=other['c'], user=actor, action=action)
+        factory.run_until_wait(work.pk)
+        factory.run_until_wait(other['work'].pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'owner_needed', work.finding)
+        # Both native records match the search. Only the selected invoice line should remain.
+        query = {'queue': 'exceptions', 'q': 'Test engagement', 'line': work.definition}
+        home = reverse('home')
+        suffix = '?' + urlencode(query)
+        detail = reverse('factory_detail', args=[work.pk])
+        decision = reverse('factory_invoice_decision', args=[work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[work.pk])
+        phone = Client(HTTP_USER_AGENT='Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 Mobile Safari/604.1')
+        phone.force_login(actor)
+
+        page = phone.get(home + suffix)
+        self.assertEqual([row['work'].pk for row in page.context['rows']], [work.pk])
+        self.assertContains(page, 'Invoice preparation and delivery')
+        self.assertContains(page, 'href="' + escape(detail + suffix) + '"')
+        page = phone.get(detail + suffix)
+        self.assertContains(page, 'href="' + escape(home + suffix) + '">← Back to the same work view')
+        self.assertContains(page, 'href="' + escape(decision + suffix) + '"')
+        self.assertContains(page, 'href="' + escape(recovery + suffix) + '"')
+        for tab in (decision, recovery):
+            self.assertContains(phone.get(tab + suffix), 'href="' + escape(detail + suffix) + '">← Back to invoice work')
+        self.assertEqual([row['work'].pk for row in phone.get(home + suffix).context['rows']], [work.pk])
+
+        setup = reverse('factory_responsibility', args=[work.case_id]) + '?' + urlencode({'work': work.pk, **query})
+        self.assertContains(phone.get(decision + suffix), 'href="' + escape(setup) + '"')
+        page = phone.get(setup)
+        self.assertContains(page, 'name="line" value="pmo-finance/v1"')
+        self.assertEqual(page.context['return_url'], detail + suffix)
+        draft = {'action': 'draft', 'work': work.pk, 'evidence': invoice['evidence']['policy_decision'].pk,
+                 'authority_mode': 'direct_only', 'process_owner_id': actor.pk, 'activity_owner_id': actor.pk,
+                 'policy_owner_id': actor.pk, 'governance_resolver_id': actor.pk}
+        self.assertRedirects(phone.post(setup, draft), setup, fetch_redirect_response=False)
+        background = reverse('factory_background', args=[work.pk])
+        self.assertRedirects(phone.post(background + suffix, {'action': 'pause', 'revision': work.revision}),
+                             detail + suffix, fetch_redirect_response=False)
+
+        legacy = '?' + urlencode({'queue': query['queue'], 'q': query['q']})
+        for raw in (legacy, legacy + '&line=unknown%2Fv1', legacy + '&line=planning%2Fv1'):
+            page = phone.get(detail + raw)
+            self.assertContains(page, 'href="' + escape(home + legacy) + '">← Back to the same work view')
+        catch_all = phone.get(home + legacy + '&line=unknown%2Fv1')
+        self.assertEqual({row['work'].pk for row in catch_all.context['rows']}, {work.pk, other['work'].pk})
+        no_search_match = phone.get(home, {**query, 'q': 'no exact reference'})
+        self.assertFalse(no_search_match.context['rows'])
+        Grant.objects.filter(case=work.case, user=actor, action='factory.read').update(active=False)
+        self.assertEqual(phone.get(detail + suffix).status_code, 404)
+        self.assertFalse(phone.get(home + suffix).context['rows'])
+
     def test_unfinished_queue_assessment_links_to_the_original_work(self):
         from unittest.mock import patch
         from apps.core.read_budget import ReadLimit

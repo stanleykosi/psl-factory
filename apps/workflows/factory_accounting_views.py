@@ -19,7 +19,7 @@ from . import factory_accounting_intake as intake
 from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
 from .models import FactoryActivity,HumanTask
-from .factory_views import ProfileForm, QUEUES
+from .factory_views import ProfileForm, work_queue_params
 from .factory_progress_views import StartWithBackground, start_work
 
 REVIEW_LABELS = {'source': 'the trial-balance source', 'mapping': 'the mapping rule', 'allocation': 'the allocation rule',
@@ -284,9 +284,9 @@ def detail(request,work,focus=None):
     from .screen_focus import require_action
 
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
-    queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
-    if queue not in QUEUES:queue='needs_me'
-    url=request.path+'?'+urlencode({'queue':queue,'q':q})
+    navigation=work_queue_params(request.GET,work=work)
+    queue,q=navigation['queue'],navigation['q']
+    url=request.path+'?'+urlencode(navigation)
     if request.method=='POST':
         try:
             action=request.POST.get('action');revision=int(request.POST.get('revision','0'))

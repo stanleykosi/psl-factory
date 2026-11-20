@@ -35,6 +35,15 @@ from .factory_definitions import DEFINITIONS,definition
 
 QUEUES={'needs_me':'Needs my attention','waiting':'Waiting on others','mine':'Started by me','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
 
+
+def work_queue_params(values, *, work=None):
+    queue = values.get('queue', 'needs_me')
+    params = {'queue': queue if queue in QUEUES else 'needs_me', 'q': values.get('q', '').strip()[:120]}
+    line = values.get('line', '')
+    if line in DEFINITIONS and (work is None or line == work.definition):
+        params['line'] = line
+    return params
+
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
     ('pmo-issues/v1','Investigate an issue and follow up','Check permitted references and connect useful findings to the accountable issue owner.',('factory.start','issue.read','evidence.add')),
@@ -654,10 +663,8 @@ def index(request):
     if any(k in request.GET for k in ['kind','area','tenant']):
         from apps.core.workbench_views import home
         return home(request)
-    queue=request.GET.get('queue','needs_me');q=request.GET.get('q','').strip()[:120]
-    line=request.GET.get('line','')
-    if line not in DEFINITIONS:line=''
-    if queue not in QUEUES:queue='needs_me'
+    params=work_queue_params(request.GET)
+    queue,q,line=params['queue'],params['q'],params.get('line','')
     query=visible(request.user)
     known_lines = set(query.order_by().values_list('definition', flat=True).distinct())
     line_choices = sorted((key, value['title']) for key, value in DEFINITIONS.items() if key in known_lines)
@@ -696,7 +703,7 @@ def index(request):
     from apps.finance.payroll_questions import queue_cards as payroll_question_cards
     questions=payroll_question_cards(request.user,queue,q,line)
     response=render(request,'factory/queue.html',{'rows':items,'candidates':candidates,'deferred':deferred,'payroll_questions':questions,
-        'queue':queue,'queues':QUEUES,'q':q,'line':line,'line_choices':line_choices,
+        'queue':queue,'queues':QUEUES,'q':q,'line':line,'line_choices':line_choices,'work_query':'?'+urlencode(params),
         'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
         'evaluated':evaluated,'limited':bool(deferred),'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
     response['Cache-Control']='no-store';return response
@@ -970,8 +977,8 @@ def _detail(request,work_id,focus=None):
     if work.definition=='delivery-archive/v1':
         from .factory_archive_views import detail as archive_detail
         return archive_detail(request,work)
-    return_queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
-    if return_queue not in QUEUES:return_queue='needs_me'
+    params=work_queue_params(request.GET,work=work)
+    return_queue,q=params['queue'],params['q']
     if request.method=='POST':
         try:
             operation=request.POST.get('action');revision=int(request.POST.get('revision','0'))
@@ -1197,12 +1204,11 @@ def responsibility_context(request,case):
     if work_key:
         if not work_key.isascii() or not work_key.isdecimal() or len(work_key)>19 or not 1<=int(work_key)<=2**63-1:raise Http404
         work=get_object_or_404(visible(request.user),pk=int(work_key),case=case,definition='pmo-finance/v1')
-    queue=request.POST.get('queue',request.GET.get('queue','needs_me'))
-    if queue not in QUEUES:queue='needs_me'
-    q=request.POST.get('q',request.GET.get('q','')).strip()[:120]
-    suffix='?'+urlencode({'work':work.pk,'queue':queue,'q':q}) if work else ''
-    return {'selected_work':work,'queue':queue,'q':q,'configuration_url':request.path+suffix,
-        'return_url':reverse('factory_detail',args=[work.pk])+'?'+urlencode({'queue':queue,'q':q}) if work else None}
+    values = {key: request.POST.get(key, request.GET.get(key, '')) for key in ('queue', 'q', 'line')}
+    params = work_queue_params(values, work=work)
+    suffix = '?' + urlencode({'work': work.pk, **params}) if work else ''
+    return {'selected_work': work, **params, 'configuration_url': request.path + suffix,
+            'return_url': reverse('factory_detail', args=[work.pk]) + '?' + urlencode(params) if work else None}
 
 class ResponsibilityForm(forms.Form):
     availability_mode=forms.ChoiceField(required=False,label='Check reviewer availability?',choices=[('', 'Not decided'),

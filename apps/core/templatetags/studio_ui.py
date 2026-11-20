@@ -1,8 +1,20 @@
 """Presentation only: stored records, evidence and authority remain unchanged."""
 from decimal import Decimal
+from urllib.parse import urlencode
 
 from django import template
 register=template.Library()
+
+
+@register.simple_tag(takes_context=True)
+def work_queue_query(context, work, include_work=False):
+    from apps.workflows.factory_views import work_queue_params
+
+    request = context.get('request')
+    params = work_queue_params(request.GET if request else context, work=work)
+    if include_work:
+        params = {'work': work.pk, **params}
+    return '?' + urlencode(params)
 
 
 @register.filter
@@ -51,8 +63,10 @@ def factory_background_status(context, work):
     watching=bool(job and not work.cancel_requested and work.status not in TERMINAL and
         (job.status in ['queued','running'] or job.status=='waiting' and not job.observation))
     request=context.get('request')
+    return_query = (work_queue_query(context, work) if request and {'queue', 'q', 'line'}.intersection(request.GET)
+                    else '')
     return {'work': work, 'job': job, 'active': bool(job and job.status in ACTIVE),
-            'watching':watching,'preserve_form':bool(request and request.method=='POST'),
+            'watching':watching,'preserve_form':bool(request and request.method=='POST'),'work_query':return_query,
             'current_claim': bool(job and job.status == 'running' and job.available_at > timezone.now()),
             'can_control': can_control(context['user'], work), 'csrf_token': context.get('csrf_token'),
             'can_continue': not work.cancel_requested and work.status not in TERMINAL | {'waiting_effect'}}

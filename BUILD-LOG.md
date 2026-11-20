@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. All ten Railway shared console tests and both preservation probes passed in 270. Deployed matching web and worker. Codex verified that each of the two scoped invoice exceptions opened and returned to the same phone queue, with the stale claim still unavailable. Scoped completion reached 148. Actual invoice owner, reviewer and business settings remain deferred.
+
 20 November 2026. The admitted browser verified the overview coverage and exact phone station drilldowns. The scoped count reached 147. The filtered invoice Exceptions queue found both intended native holds but lost its workflow filter on detail return. Railway 269 passed the account lock regression and all three related fixture reruns. The fixture change affects test setup only.
 
 20 November 2026. Live Codex phone observation followed exact invoice work 234 from active preparation to NGN 42 draft 22 and separate open review 155. Both preservation probes and the guarded observe job passed. Scoped completion is 146. The admitted asset retry also succeeded and reached independent register review. A test-only account lock fix is staged for an isolated PostgreSQL concurrency regression.

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
-{% if focus %}<a class="back-link" href="{% url 'factory_detail' row.work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to invoice work</a>{% else %}<a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to the same work view</a>{% endif %}
+{% work_queue_query row.work as work_query %}
+{% if focus %}<a class="back-link" href="{% url 'factory_detail' row.work.pk %}{{ work_query }}">← Back to invoice work</a>{% else %}<a class="back-link" href="{% url 'home' %}{{ work_query }}">← Back to the same work view</a>{% endif %}
 <div class="page-heading"><div><p class="eyebrow">INVOICE PREPARATION AND DELIVERY</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Workspace details</a></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Started by</small><strong>{{ row.work.actor.get_full_name|default:row.work.actor.username }}</strong></div><div><small>Last observed</small><time datetime="{{ row.work.updated_at|date:'c' }}">{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</time></div></div>
 <nav class="factory-queues" aria-label="Invoice work sections">
- <a href="{% url 'factory_detail' row.work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}"{% if not focus %} aria-current="page"{% endif %}>Work item</a>
- <a href="{% url 'factory_invoice_decision' row.work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}"{% if focus == 'decision' %} aria-current="page"{% endif %}>Decisions</a>
- <a href="{% url 'factory_invoice_recovery' row.work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}"{% if focus == 'recovery' %} aria-current="page"{% endif %}>Receipts and recovery</a>
+ <a href="{% url 'factory_detail' row.work.pk %}{{ work_query }}"{% if not focus %} aria-current="page"{% endif %}>Work item</a>
+ <a href="{% url 'factory_invoice_decision' row.work.pk %}{{ work_query }}"{% if focus == 'decision' %} aria-current="page"{% endif %}>Decisions</a>
+ <a href="{% url 'factory_invoice_recovery' row.work.pk %}{{ work_query }}"{% if focus == 'recovery' %} aria-current="page"{% endif %}>Receipts and recovery</a>
 </nav>
 {% if row.invoice_context.successor %}
 <section class="card" aria-label="Newer invoice draft">

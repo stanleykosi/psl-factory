@@ -1,9 +1,12 @@
+from urllib.parse import urlencode
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from apps.core.models import Case
@@ -48,9 +51,9 @@ class ProgressForm(forms.Form):
 @login_required
 @require_POST
 def change(request, work_id):
-    from .factory_views import visible
+    from .factory_views import visible, work_queue_params
 
-    get_object_or_404(visible(request.user, work_id=work_id))
+    work = get_object_or_404(visible(request.user, work_id=work_id))
     form = ProgressForm(request.POST)
     if form.is_valid():
         values = form.cleaned_data
@@ -60,4 +63,7 @@ def change(request, work_id):
             messages.error(request, exc.messages[0])
     else:
         messages.error(request, 'Open the current work item and choose a background action.')
-    return redirect('factory_detail', work_id=work_id)
+    target = reverse('factory_detail', args=[work.pk])
+    if {'queue', 'q', 'line'}.intersection(request.GET):
+        target += '?' + urlencode(work_queue_params(request.GET, work=work))
+    return redirect(target)

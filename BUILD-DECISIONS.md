@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. The workbench retains the selected workflow on authorized work links, focus tabs and related action returns. A work-specific return carries a workflow only when it matches the open authorized record. The queue rechecks record access and inventory when loading the return.
+
 20 November 2026. Synthetic admission setup serializes account changes using PostgreSQL's no-key row lock, which also permits normal workflow references to commit. The regression uses two connections and proves both behaviors concurrently. Check successful setup exit and the current record before retrying an uncertain browser action.
 
 20 November 2026. Preview acceptance keeps specimen setup separate from operator actions. The invoice processing specimen reserves its native draft claim only when the exact authorized reader is ready to observe it. The original invoice and receipt are retained. Typed asset and Go-live specimens use separate guarded, synthetic scope and independent review.

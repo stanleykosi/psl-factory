@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError,PermissionDenied
 from django.db.models import Q
 from apps.documents.models import Template
 from apps.policy.services import active_component,reference_values,resolve
-from .factory_views import ProfileForm, QUEUES
+from .factory_views import ProfileForm, work_queue_params
 from uuid import uuid4,UUID
 from urllib.parse import urlencode
 from django.contrib import messages
@@ -386,9 +386,8 @@ def detail(request,work,focus=None):
     from . import factory_rfp as service
     from .screen_focus import require_action
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
-    queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
-    if queue not in QUEUES:queue='needs_me'
-    navigation={'queue':queue,'q':q}
+    navigation=work_queue_params(request.GET,work=work)
+    queue,q=navigation['queue'],navigation['q']
     actual=RFPSubmission.objects.filter(response__rfp=service.subject(work)).select_related('response','version').order_by('-pk')
     requested=request.POST.get('target') if request.method=='POST' and request.POST.get('action')=='outcome' else request.GET.get('submission')
     try:selected_id=int(requested) if requested else None

@@ -9,7 +9,7 @@
   {% elif job.status == 'finished' %}<p>The background request ended. The work item shows its recorded outcome.</p>{% endif %}
   {% if watching %}<p>This view updates as the work progresses. Unsaved form edits pause those updates.</p>{% endif %}
   {% if can_control %}
-  <form action="{% url 'factory_background' work.pk %}" method="post">{% csrf_token %}
+  <form action="{% url 'factory_background' work.pk %}{{ work_query }}" method="post">{% csrf_token %}
     <input type="hidden" name="revision" value="{{ work.revision }}">
     {% if active %}<button type="submit" name="action" value="pause">Pause after the current step</button>
     {% elif can_continue %}<button type="submit" name="action" value="continue">Continue in background</button>{% endif %}
