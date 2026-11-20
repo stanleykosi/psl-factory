@@ -338,7 +338,7 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     await waitFor(() => expect(sent.filter((r) => r.method === 'GET' && r.path === '/api/v1/work/W-2702').length).toBeGreaterThanOrEqual(3));
     expect(status().textContent).toBe('AWAITING FINANCE DECISION');
     expect(said()).not.toMatch(/verified/i);
-    expect(said()).toContain('Schedule v1 is approved');
+    expect(said()).toContain('Schedule v1: result not confirmed');
   });
 
   it('return and reject need a note: empty, blank and over 2000 characters send nothing; with a note one POST with the trimmed note', async () => {
@@ -754,5 +754,44 @@ describe('round 3: banner tone, panel type, notices and the uncertain fixture', 
       expect(said(), verdict).not.toMatch(/is approved|was returned|was rejected|verified/i);
       cleanup();
     }
+  });
+});
+
+describe('F-52: the decision waits for the re-read (AC 1, 2)', () => {
+  it('a 200 whose re-read still serves the review reads "result not confirmed", never approved or verified', async () => {
+    onDecide = (body) => decided(body.verdict as string);
+    await open(item('W-2702'));
+    await ready();
+    await click('Approve schedule');
+    await waitFor(() => expect(posts('/decision')).toHaveLength(1));
+    expect(await screen.findByText('Schedule v1: result not confirmed')).toBeTruthy();
+    expect(status().textContent).not.toMatch(/verified/i);
+    expect(said()).not.toMatch(/is approved|verified/i);
+    expect(document.querySelector('.ws-live .psl-callout--success, .ws-live [class*="success"]')).toBeNull();
+  });
+
+  it('a 200 whose re-read shows the decided state says the version is approved', async () => {
+    await open(item('W-2702'));
+    await ready();
+    await click('Approve schedule');
+    await waitFor(() => expect(status().textContent).toMatch(/verified/i));
+    expect(await screen.findByText(/is approved/)).toBeTruthy();
+  });
+
+  it('two reviewers: the task closes, the second decide gets a 409, the stale sentence and the unsent note stay with no decide buttons', async () => {
+    onDecide = () => {
+      served = item('W-2702.approve');
+      return json(409, { code: 'stale', message: 'Someone changed this since you opened it.' });
+    };
+    await open(item('W-2702'));
+    await ready();
+    fireEvent.change(note(), { target: { value: '  Stale tab note  ' } });
+    await click('Return with a note');
+    await waitFor(() => expect(status().textContent).toMatch(/verified/i));
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(ws().getByText('Your note wasn’t sent: “Stale tab note”')).toBeTruthy();
+    expect(document.querySelector('.ws-idecide')).toBeNull();
+    expect(buttons().filter((b) => /Approve schedule|Return with a note|Reject/.test(b ?? ''))).toEqual([]);
+    expect(posts('/decision')).toHaveLength(1);
   });
 });
