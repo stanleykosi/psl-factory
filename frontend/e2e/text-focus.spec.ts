@@ -104,6 +104,7 @@ test('keyboard focus on a button, a tab, a checkbox, a table row link and a link
 
   await button.click();
   const checkbox = page.getByRole('dialog').getByRole('checkbox').first();
+  await page.keyboard.press('Shift'); // keyboard modality after the click, so focus() is a keyboard focus
   await checkbox.focus();
   e = await edge(checkbox);
   expect(e.ring).toBe('none');

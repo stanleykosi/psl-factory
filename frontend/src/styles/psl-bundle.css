@@ -20,6 +20,7 @@
 .psl-seg__opt[aria-checked="true"]:focus-visible, .psl-tab[aria-selected="true"]:focus-visible, .psl-tab[aria-current="page"]:focus-visible, .psl-navlink:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-on-strong) !important; }
 /* links in running text and text buttons: a blue underline */
 .psl a:not([class]):focus-visible, .psl a.psl-link:focus-visible, .psl .psl-btn--text:focus-visible { box-shadow: none !important; text-decoration: underline; text-decoration-color: var(--focus); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.psl-on-dark a:not([class]):focus-visible, .psl-on-dark a.psl-link:focus-visible, .psl-on-dark .psl-btn--text:focus-visible { text-decoration-color: var(--focus-on-strong); }
 
 /* ---------- icon ---------- */
 .psl-icon { width: 18px; height: 18px; flex: none; display: inline-block; vertical-align: middle; }
