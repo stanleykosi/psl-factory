@@ -284,9 +284,9 @@ describe('mock server matches openapi.json', () => {
       ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],
       ['Sample Person', [], 'mock-csrf-none'],
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
-      ['Kemi Adebayo', ['my_work', 'projects', 'assistant'], 'mock-csrf-pmo_lead'],
+      ['Kemi Adebayo', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-pmo_lead'],
       ['Amaka Obi', ['my_work', 'assistant'], 'mock-csrf-hr'],
-      ['Ngozi Adeyemi', ['my_work', 'assistant'], 'mock-csrf-hr_lead'],
+      ['Ngozi Adeyemi', ['my_work', 'overview', 'assistant'], 'mock-csrf-hr_lead'],
     ]);
   });
 

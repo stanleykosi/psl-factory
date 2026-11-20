@@ -128,14 +128,14 @@ describe('ceo projects', () => {
     expect((await get('/api/v1/projects?limit=50')).body.items).toHaveLength(22);
   });
 
-  it('opens a project, its tabs and its money tab; the no-access id stays 404; pmo_lead and hr are unchanged', async () => {
+  it('opens a project, its tabs and its money tab; the no-access id stays 404; hr is unchanged and pmo_lead sees projects (D-153)', async () => {
     expect((await get('/api/v1/projects/P-0103')).body.case_id).toBe('P-0103');
     expect((await get('/api/v1/projects/P-0103/milestones')).status).toBe(403); // P-0103 answers 403 on every tab, as before
     expect((await get('/api/v1/projects/P-0101/milestones')).status).toBe(200);
     expect((await get('/api/v1/projects/P-0101/money')).status).toBe(200);
     expect((await get('/api/v1/projects/P-0099')).status).toBe(404);
     expect((await get('/api/v1/projects/P-0101', 'hr')).status).toBe(404);
-    expect((await get('/api/v1/projects/P-0101', 'pmo_lead')).status).toBe(404);
+    expect((await get('/api/v1/projects/P-0101', 'pmo_lead')).status).toBe(200);
   });
 });
 

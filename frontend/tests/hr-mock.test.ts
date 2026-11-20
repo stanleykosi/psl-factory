@@ -209,7 +209,7 @@ describe('hr_lead (the HR Lead stand-in)', () => {
     for (const c of list) expect((await lead(`/api/v1/assistant/conversations/${c.conversation_id}`)).body.messages).toHaveLength(2);
     expect((await lead('/api/v1/assistant/conversations/CV-2433')).body.messages[1].text).toMatch(/has not been set up yet/);
     expect((await get('/api/v1/assistant/conversations/CV-2431')).status).toBe(404);
-    expect((await lead('/api/v1/me')).body).toMatchObject({ roles: ['HR Lead'], startable_lines: ['hr_staff_list'], destinations: ['my_work', 'assistant'], assistant_agents: ['zainab'] });
+    expect((await lead('/api/v1/me')).body).toMatchObject({ roles: ['HR Lead'], startable_lines: ['hr_staff_list'], destinations: ['my_work', 'overview', 'assistant'], assistant_agents: ['zainab'] });
     expect((await lead('/api/v1/lines')).body.items.map((l: any) => l.key)).toEqual(['hr_staff_list']);
   });
 
