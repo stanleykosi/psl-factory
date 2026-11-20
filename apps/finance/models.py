@@ -95,3 +95,4 @@ from .obligation_models import ObligationLegacyAttempt, ObligationLegacyObservat
 from .reminder_models import PaymentReminderDraft, PaymentReminderDispatch, PaymentReminderReceipt, PaymentReminderSetAside
 from .reminder_models import PaymentReminderMailboxMessage
 from .payroll_question_models import PayrollReportQuestion,PayrollReportQuestionEvent
+from .short_payment_models import InvoiceShortPaymentDecision

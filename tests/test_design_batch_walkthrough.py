@@ -9,13 +9,30 @@ from apps.finance.models import InvoiceIssue, InvoiceJob, InvoiceReview
 from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, ChangeDecision, EmergencyAuthorization, EmergencyDecision, EmergencyOutcome, EscalationDecision
 from apps.workflows.models import FactoryProgress, FactoryWork, HumanTask
 from tests.railway_batch_walkthrough_seed import (
-    PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_invoice_decision_variant,
+    PREPARATION, PROGRESS_PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_invoice_decision_variant,
     prepare_independent_finance_review, prepare_project, prepare_unreadable_invoice,
 )
 
 
 class DesignBatchWalkthroughTests(TestCase):
+    def test_progress_samples_preserve_native_start_points_without_active_claims(self):
+        actor = get_user_model().objects.create_user('synthetic-batch-progress-reader')
+        works = []
+        self.client.force_login(actor)
+        for key in PROGRESS_PREPARATION:
+            with self.subTest(journey=key):
+                sample = prepare_project(actor, key)
+                self.assertEqual(sample['work'], prepare_project(actor, key)['work'])
+                self.assertEqual(self.client.get(sample['path']).status_code, 200)
+                works.append(sample['work'])
+        self.assertEqual(len(set(works)), len(PROGRESS_PREPARATION))
+        self.assertFalse(FactoryProgress.objects.filter(work_id__in=works, status__in=['queued', 'running']).exists())
+        self.assertFalse(ArchiveCopyPlan.objects.filter(work_id__in=works).exists())
+
     def test_uncertain_accounts_sample_reconciles_only_the_original_delivery(self):
+        from unittest.mock import patch
+
+        from adapters.publications import InternalPublicationAdapter
         from apps.documents.models import PublicationJob, PublicationReceipt
 
         actor = get_user_model().objects.create_user('synthetic-batch-accounts-recovery-reader')
@@ -27,12 +44,18 @@ class DesignBatchWalkthroughTests(TestCase):
         self.assertEqual(prepare_project(actor, 'accounts_uncertain_receipt')['work'], sample['work'])
         self.client.force_login(actor)
         recovery = reverse('factory_invoice_recovery', args=[sample['work']])
-        self.assertContains(self.client.get(recovery), 'Check original delivery receipts')
+        page = self.client.get(recovery)
+        self.assertContains(page, 'Report delivery uncertain')
+        self.assertContains(page, 'Check original delivery receipts')
+        self.assertNotContains(page, 'Continue eligible accounting work')
         work = FactoryWork.objects.get(pk=sample['work'])
-        response = self.client.post(recovery, {'action': 'reconcile', 'revision': work.revision})
+        # The job counts both the initial send and lookup reservation. The second
+        # reservation must never call the delivery method.
+        with patch.object(InternalPublicationAdapter, 'deliver', side_effect=AssertionError('A lookup must not send')):
+            response = self.client.post(recovery, {'action': 'reconcile', 'revision': work.revision})
         self.assertEqual(response.status_code, 302)
         job.refresh_from_db()
-        self.assertEqual((job.status, job.attempts), ('confirmed', 1))
+        self.assertEqual((job.status, job.attempts), ('confirmed', 2))
         self.assertEqual(receipts.get().pk, receipt.pk)
         self.assertEqual(PublicationJob.objects.filter(publication__factory_work=work).count(), 1)
 
@@ -61,6 +84,7 @@ class DesignBatchWalkthroughTests(TestCase):
                 self.assertContains(response, heading)
                 self.assertContains(response, 'Approve exact schedule')
                 self.assertNotContains(response, 'Open exact reviewed report')
+                self.assertNotContains(response, 'Open exact reviewed schedule and note reference')
 
     def test_invoice_decision_samples_keep_their_actual_scope_and_prior_version(self):
         actor = get_user_model().objects.create_user('synthetic-batch-finance-reader')

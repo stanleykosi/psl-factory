@@ -99,6 +99,7 @@ def detail(request,work,focus=None):
                             'evidence':Evidence.objects.filter(case=work.case,kind=kind).order_by('-pk')})
     return render(request,'factory/ppe_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
         'inputs_form':form,'reviews':reviews,'decisions':decisions,'activities':work.activities.order_by('pk') if not focus else (),
+        'can_open_reviewed_report': row['ppe']['native'].get('stage') == 'complete' and permitted(request.user, work, 'ppe.report'),
         'can_correct':focus!='decision' and permitted(request.user,work,'factory.manage') and not work.cancel_requested,
         'can_restart':focus!='decision' and work.status=='cancelled' and permitted(request.user,work,'factory.manage'),
         'can_configure':permitted(request.user,work,'policy.configure')})

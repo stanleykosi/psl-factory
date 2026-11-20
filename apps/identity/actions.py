@@ -30,6 +30,7 @@ ACTIONS += ['delivery.progress.read','delivery.progress.configure','delivery.pro
 ACTIONS += ['finance.draft_generation.dispatch', 'finance.draft_generation.lookup', 'finance.draft_generation.cancel']
 # Exact human release and confirmation of customer reminders.
 ACTIONS += ['finance.reminder.read','finance.reminder.prepare','finance.reminder.send','finance.reminder.confirm']
+ACTIONS += ['finance.short_payment.read', 'finance.short_payment.decide']
 ACTIONS += ['delivery.archive_files']
 ACTIONS += ['delivery.record_support_reply']
 ACTIONS += ['issue.message.read','issue.message.prepare','issue.message.review','issue.message.release','issue.message.recover']

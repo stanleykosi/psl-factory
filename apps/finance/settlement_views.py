@@ -69,7 +69,8 @@ def workbench(request,case_id):
         manifest,result=receivables.calculate(case,s.as_of)
         s.current=s.as_of==timezone.localdate() and receivables.digest({'manifest':manifest,'result':result})==s.sha256
     reminder_access=Grant.objects.filter(case=case,user=request.user,action='finance.reminder.read',active=True).exists()
-    return render(request,'finance/settlement.html',{'case':case,'commands':forms,'invoices':docs,'reminder_access':reminder_access,
+    short_payment_access=Grant.objects.filter(case=case,user=request.user,action='finance.short_payment.read',active=True).exists()
+    return render(request,'finance/settlement.html',{'case':case,'commands':forms,'invoices':docs,'reminder_access':reminder_access,'short_payment_access':short_payment_access,
         'jobs':InvoiceJob.objects.filter(invoice__case=case).order_by('-pk')[:50],'reviews':InvoiceReview.objects.filter(invoice__case=case).order_by('-pk')[:30],
         'receipts':CashReceipt.objects.filter(case=case).order_by('-pk')[:50],'lots':CashVerification.objects.filter(receipt__case=case).order_by('-pk')[:50],
         'assignments':CashAssignment.objects.filter(receipt__case=case).order_by('-pk')[:50],'allocations':CashAllocation.objects.filter(lot__receipt__case=case).order_by('-pk')[:50],

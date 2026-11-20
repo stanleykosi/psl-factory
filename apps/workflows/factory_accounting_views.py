@@ -239,10 +239,20 @@ def _presentation(actor,work,*,include_progress=False):
     if source_followup:
         next_action = ('Review the returned report and recheck the source records' if can_reassess
                        else 'Wait for a source owner to check the returned report')
+    delivery_due = service.PublicationJob.objects.filter(publication__factory_work=work).filter(
+        service.Q(status='unknown') | service.Q(status='leased', lease_until__lte=timezone.now())).exists()
+    can_reconcile = (delivery_due and permitted('factory.execute') and permitted('document.publish')
+                     and (execution_owner and actor.pk == execution_owner.pk or permitted('factory.manage'))
+                     and not (work.lease_until and work.lease_until > timezone.now()))
+    if delivery_due and work.status not in ('verified', 'cancelled', 'followup_needed'):
+        status = 'Report delivery uncertain'
+        can_advance = False
+        next_action = ('Check the original report receipts' if can_reconcile
+                       else 'Wait for an authorised person to check the original report receipts')
     progress = accounting_progress(work, observed, options, jobs) if include_progress and current else None
-    return {'work':work,'state':status,'next_action':next_action,'owner':owner,'needs_me':bool(actionable) or can_advance or (source_followup and can_reassess),
+    return {'work':work,'state':status,'next_action':next_action,'owner':owner,'needs_me':bool(actionable) or can_advance or can_reconcile or (source_followup and can_reassess),
         'department_wait':bool(actionable),'tasks':tasks,'jobs':[],'can_advance':can_advance,'can_cancel':permitted('factory.manage') and work.status not in ['verified','cancelled','followup_needed'],
-        'can_reconcile':permitted('factory.execute') and permitted('document.publish') and (execution_owner and actor.pk==execution_owner.pk or permitted('factory.manage')) and service.PublicationJob.objects.filter(publication__factory_work=work).filter(service.Q(status='unknown')|service.Q(status='leased',lease_until__lte=timezone.now())).exists() and not (work.lease_until and work.lease_until>timezone.now()),
+        'can_reconcile':can_reconcile,
         'can_reassess':can_reassess,
         'readiness_changed':changed,'blocker':blocker,'profile_available':value is not None,'adoption':adoption,
         'coordination_needed':current and not planning_ready and execution_owner is not None,'execution_owner_needed':current and execution_owner is None,'can_configure_coordination':permitted('policy.configure'),

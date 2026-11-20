@@ -126,8 +126,12 @@ from .factory_validators import ENGAGEMENT_COMPONENT as FACTORY_ENGAGEMENT,ENGAG
 SCHEMAS[FACTORY_ENGAGEMENT]=(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE)
 from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEMA, VALUE as REMINDER_VALUE, validate_delivery
 SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
+from .short_payment_validators import COMPONENT as SHORT_PAYMENT, SCHEMA as SHORT_PAYMENT_SCHEMA, VALUE as SHORT_PAYMENT_VALUE, validate_reference as validate_short_payment
+SCHEMAS[SHORT_PAYMENT] = (SHORT_PAYMENT_SCHEMA, SHORT_PAYMENT_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == SHORT_PAYMENT:
+        return validate_short_payment(target, case, runtime=runtime)
     if component == ISSUE_MESSAGE:
         from .issue_message_validators import validate_reference as validate_issue_message
         return validate_issue_message(target,case)

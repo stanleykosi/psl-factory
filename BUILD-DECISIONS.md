@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. A short-payment decision records how Finance follows up an exact issued balance and a currently allocated receipt. The native invoice, cash, debt and release services retain authority over their own records. The project-scoped rule selects a current Finance principal and allowed decisions. A missing rule keeps the payment facts readable. Real approvers and short-payment treatments await owner decisions. The configured acceptance case is synthetic.
+
 20 November 2026. The final bid costing decision reads the exact response, current approved calculation, pinned team inputs and required earlier decisions. Only amounts supported by the calculation appear. The commercial decision leaves the outward response for a separate review. The tested values and prior approvals belong to an isolated synthetic bid.
 
 20 November 2026. An unassigned native accounting review holds its dependent progression. Other currently eligible people can complete their exact decisions while the work waits. A scoped operator can recheck the review assignments on the same source and budget after a policy change. Original pending or uncertain publications keep priority. Prepared schedule figures can be read under existing report permission, and the reviewed report becomes available once the independent approval is current.

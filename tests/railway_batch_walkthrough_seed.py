@@ -60,6 +60,17 @@ INDEPENDENT_FINANCE_PREPARATION = {
     'asset_review': ('finance-ppe/v1', 'SAMPLE independent asset schedule review'),
     'income_review': ('finance-schedules/v1', 'SAMPLE independent income schedule review'),
 }
+SHORT_PAYMENT_PREPARATION = {
+    'short_payment_unconfigured': 'SAMPLE short payment awaiting a review rule',
+    'short_payment_configured': 'SAMPLE short payment for an exact Finance decision',
+}
+PROGRESS_PREPARATION = {
+    'accounts_live': ('accounts', 'SAMPLE accounts investigation and report progress'),
+    'assets_live': ('assets', 'SAMPLE asset register investigation progress'),
+    'schedules_live': ('schedules', 'SAMPLE income source investigation progress'),
+    'forecast_live': ('forecast', 'SAMPLE cash forecast investigation progress'),
+    'archive_live': ('archive', 'SAMPLE active archive file receipts'),
+}
 ORIGINAL_WORK_KEYS = {
     'standard': 'SAMPLE-BATCH-STANDARD',
     'escalation': 'P44-1',
@@ -352,6 +363,41 @@ def prepare_independent_finance_review(actor, key):
             'existing_work_preserved': not created}
 
 
+@transaction.atomic
+def prepare_short_payment(actor, key):
+    from apps.finance import invoice_delivery, invoices
+    from apps.finance.models import InvoiceIssue
+    from apps.policy.short_payment_validators import COMPONENT
+    from tests import settlement_helpers as settlement
+    from tests.obligation_helpers import approve_identified
+
+    case, created = Case.objects.get_or_create(tenant=TENANT, title=SHORT_PAYMENT_PREPARATION[key],
+                                               kind='project', synthetic=True)
+    if created:
+        Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        with patch.object(settlement, 'setup_case', return_value=(actor, case)):
+            _, _, coverage, prep, evidence = settlement.fixture()
+        invoice = settlement.draft(actor, case, prep, reference='SAMPLE-SHORT-PAYMENT')
+        approve_identified(actor, case, invoice, evidence)
+        job = invoices.reserve(actor, case.pk, invoice.pk, 'issue', 'Finance', rev(case))
+        invoice_delivery.run_once(case_id=case.pk, job_id=job.pk)
+        issue = InvoiceIssue.objects.get(invoice=invoice)
+        receipt, lot = settlement.receipt(actor, case, amount='2.00', ref=f'sample-{key}')
+        settlement.assign(actor, case, receipt, coverage, evidence)
+        settlement.allocate(actor, case, lot, issue, '2.00', evidence, key=f'sample-{key}')
+        if key == 'short_payment_configured':
+            proof = add_evidence(actor, case.pk, 'policy_decision', 'Synthetic short-payment review only.', 'synthetic:test')
+            config = draft_operator_policy(actor, case.pk, COMPONENT, {
+                'reviewer_id': actor.pk, 'treatments': ['request_proof', 'record_exception', 'reject_exception'],
+            }, proof.pk, timezone.now())
+            transition(actor, config.pk, 'validated')
+            transition(actor, config.pk, 'active')
+    else:
+        issue = InvoiceIssue.objects.get(invoice__case=case, invoice__reference='SAMPLE-SHORT-PAYMENT')
+    return {'case': str(case.pk), 'issue': issue.pk,
+            'path': reverse('invoice_short_payment', args=[case.pk, issue.pk]), 'existing_work_preserved': not created}
+
+
 def prepare_forecast(actor, case):
     from tests import forecast_helpers, test_factory_forecast
 
@@ -363,7 +409,12 @@ def prepare_forecast(actor, case):
 
 @transaction.atomic
 def prepare_project(actor, key):
-    definition, title = PREPARATION[key]
+    template_key = key
+    if key in PROGRESS_PREPARATION:
+        template_key, title = PROGRESS_PREPARATION[key]
+        definition = PREPARATION[template_key][0]
+    else:
+        definition, title = PREPARATION[key]
     case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
     if created:
         Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
@@ -382,7 +433,7 @@ def prepare_project(actor, key):
                    'accounts_uncertain_receipt': prepare_accounts_uncertain_receipt, 'assets': prepare_assets,
                    'schedules': prepare_schedules,
                    'schedule_duplicates': partial(prepare_schedules, check_duplicates=True),
-                   'forecast': prepare_forecast}[key]
+                   'forecast': prepare_forecast}[template_key]
         users = get_user_model().objects
         create_user = users.create_user
         with patch.object(users, 'create_user', side_effect=lambda username, **values:
@@ -483,10 +534,12 @@ def run():
     from tests.railway_commercial_client_seed import prepare_rework
 
     sessions = {key: lambda key=key: prepare_project(actor, key) for key in PREPARATION}
+    sessions.update({key: lambda key=key: prepare_project(actor, key) for key in PROGRESS_PREPARATION})
     sessions.update({key: lambda key=key: prepare_invoice_decision_variant(actor, key)
                      for key in INVOICE_DECISION_PREPARATION})
     sessions.update({key: lambda key=key: prepare_independent_finance_review(actor, key)
                      for key in INDEPENDENT_FINANCE_PREPARATION})
+    sessions.update({key: lambda key=key: prepare_short_payment(actor, key) for key in SHORT_PAYMENT_PREPARATION})
     sessions['rework'] = prepare_rework
     sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)

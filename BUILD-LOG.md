@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. Verified 216 short-payment policy hold and human decision in the in-app browser with the same original balance and no reminder. Promoted the PostgreSQL-tested migration to the Railway preview. Grouped the active accounting, archive, asset, income and forecast checks in 217 and submitted the test gate with two browser findings corrected for review.
+
+20 November 2026. The bid worker prepared its separate exact outward review. The 215 receipt check passed with an explicit send guard, one original recipient receipt and no second publication. Submitted the matching preview with independent Finance sample starts. Built and staged the invoice-level short-payment decision, with exact issued invoice, allocated receipt, a scoped typed reviewer rule and immutable history. Local checks passed and Railway test migration applied. HOD rules remain deferred.
+
 20 November 2026. Promoted 213 after all five commercial checks and both original receipt probes. The browser recorded the final decision on the exact calculated sample bid and verified its phone readback. Recorded the earlier Finance reviewer hold and same-source recheck. Submitted 214 to verify uncertain-delivery recovery and distinct native Finance reviews before their browser walkthrough.
 
 20 November 2026. Promoted 212 after all five Finance checks and both provenance probes passed. Prepared income figures are now visible to a current authorized reader before independent review. Browser work 149 confirmed the exact totals. The new accounting role check keeps other current decisions open when an exact review has no eligible reviewer. Added an exact bid costing decision panel and native synthetic pricing fixture for the next batch.

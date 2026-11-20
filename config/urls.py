@@ -36,6 +36,7 @@ from apps.identity import staff_profile_views
 from apps.finance import hrfinance_views
 from apps.finance import recognition_views
 from apps.finance import payment_views
+from apps.finance import short_payment_views
 from apps.core import views
 from apps.core import design_views
 from apps.core import recovery_views as account_recovery_views
@@ -202,6 +203,7 @@ urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
 urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
 urlpatterns += [path('finance/month-end/<uuid:case_id>/receivables/capture/', month_end.capture, name='design_capture_month_end_receivables')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
+urlpatterns += [path('cases/<uuid:case_id>/finance/short-payments/<int:issue_id>/', short_payment_views.detail, name='invoice_short_payment')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
                      reminder_views.download, name='design_reminder_download')]
 urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]
