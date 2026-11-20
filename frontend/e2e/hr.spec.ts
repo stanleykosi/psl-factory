@@ -31,16 +31,16 @@ test('My work has rows in all three queues, and search narrows them', async ({ p
   expect(await rowLinks(page).count()).toBeGreaterThanOrEqual(2);
 });
 
-for (const [id, title, agentStep] of [
-  ['W-4601', 'November staff list · confirm for payroll', 'Found 2 staff with no business unit'],
-  ['W-4605', 'Payroll correction · HR Lead decision', 'Wrote the correction for the HR Lead to decide'],
+for (const [id, title, agentStep, next] of [
+  ['W-4601', 'November staff list · confirm for payroll', 'Found 2 staff with no business unit', 'Next, HR confirms the November staff list. Zainab then sends it to Finance for payroll matching.'],
+  ['W-4605', 'Payroll correction · HR Lead decision', 'Wrote the correction for the HR Lead to decide', 'The HR Lead decides whether to correct the October matching. Amounts are not shown here.'],
 ]) {
   test(`${id} opens with its track, agent and next step, and a History tab`, async ({ page }) => {
     await page.goto(`/work/${id}`);
     await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
     await expect(page.getByText('Zainab').first()).toBeVisible();
     await expect(page.getByText(agentStep)).toBeVisible();
-    await expect(page.getByText(/^(Next, |The HR Lead decides)/).first()).toBeVisible();
+    await expect(page.getByText(next)).toBeVisible();
     await page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { name: /^History/ }).click();
     await expect(page.getByText('Restricted').first()).toBeVisible();
     await expect(page.getByText(/Zainab · HR agent/).first()).toBeVisible();
@@ -95,9 +95,9 @@ test('hr starts the stand-in staff list line and lands on a new work item', asyn
 });
 
 test('hr is refused Projects, Exceptions and Setup', async ({ page }) => {
-  for (const path of ['/projects', '/exceptions', '/setup']) {
+  for (const [path, words] of [['/projects', 'This section isn’t open to your role.'], ['/setup', 'This section isn’t open to your role.'], ['/exceptions', 'This list is for Leads']]) {
     await page.goto(path);
-    await expect(page.getByRole('heading', { level: 1, name: /Projects|Exceptions|Setup/ }), path).toHaveCount(0);
-    await expect(page.getByText(/not available|don.t have access|can.t open|not allowed|Your role/i).first(), path).toBeVisible();
+    await expect(page.getByText(words), path).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Go to My work' }), path).toBeVisible();
   }
 });
