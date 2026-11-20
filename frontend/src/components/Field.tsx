@@ -21,7 +21,8 @@ export function useFieldIds(id: string | undefined, { hint, error }: Pick<FieldT
   return { control, label: `${control}-label`, message, describedBy: error || hint ? message : undefined };
 }
 
-export function FieldLabel({ htmlFor, id, label, optional }: { htmlFor?: string; id: string; label: ReactNode; optional?: boolean }) {
+/** `hidden`: the label stays for assistive technology where the screen's own layout already names the field. */
+export function FieldLabel({ htmlFor, id, label, optional, hidden = false }: { htmlFor?: string; id: string; label: ReactNode; optional?: boolean; hidden?: boolean }) {
   const text = (
     <>
       {label}
@@ -34,11 +35,11 @@ export function FieldLabel({ htmlFor, id, label, optional }: { htmlFor?: string;
     </>
   );
   return htmlFor ? (
-    <label className="psl-label" htmlFor={htmlFor} id={id}>
+    <label className={hidden ? 'psl-label cmp-sr' : 'psl-label'} htmlFor={htmlFor} id={id}>
       {text}
     </label>
   ) : (
-    <span className="psl-label" id={id}>
+    <span className={hidden ? 'psl-label cmp-sr' : 'psl-label'} id={id}>
       {text}
     </span>
   );

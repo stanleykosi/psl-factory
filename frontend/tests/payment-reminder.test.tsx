@@ -226,7 +226,7 @@ describe('an uncertain send is never sent again by the page (AC 16, INV-RESEND)'
     const delivery = within(ws().getByRole('heading', { name: 'Delivery' }).closest('section') as HTMLElement);
     expect(delivery.getAllByText('Uncertain')).toHaveLength(2);
     expect(lockedAll()).toBe(true);
-    expect(await screen.findByRole('radiogroup', { name: 'Confirm what happened' })).toBeTruthy();
+    expect(await screen.findByRole('group', { name: 'Confirm what happened' })).toBeTruthy();
     // pressing an off step sends nothing
     fireEvent.click(button('Send reminder'));
     fireEvent.click(button('Not now'));
@@ -275,7 +275,7 @@ describe('an uncertain send is never sent again by the page (AC 16, INV-RESEND)'
   it('W-3805 opened fresh (the reload case): every step off, reconcile offered, Send sends nothing', async () => {
     await open(item('W-3805'));
     expect(lockedAll()).toBe(true);
-    expect(await screen.findByRole('radiogroup', { name: 'Confirm what happened' })).toBeTruthy();
+    expect(await screen.findByRole('group', { name: 'Confirm what happened' })).toBeTruthy();
     expect(screen.getByText('Confirm what happened first.')).toBeTruthy();
     fireEvent.click(button('Send reminder'));
     expect(posts()).toHaveLength(0);
@@ -284,7 +284,7 @@ describe('an uncertain send is never sent again by the page (AC 16, INV-RESEND)'
   it('W-3806: no reconcile for this person; the page says who must confirm and draws no reconcile control', async () => {
     await open(item('W-3806'));
     expect(screen.getByText('Someone with reconcile access needs to confirm what happened first.')).toBeTruthy();
-    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Confirm what happened' })).toBeNull();
     expect(lockedAll()).toBe(true);
     fireEvent.click(button('Send reminder'));
     expect(sent.filter((r) => r.method === 'POST')).toHaveLength(0);

@@ -12,6 +12,7 @@ import { AppShell } from '@/shell/AppShell';
 // @ts-expect-error plain ESM module without type declarations
 import { workList } from '../mock/work-list.mjs';
 import { bellFeed, isBellFeed } from './bell-feed';
+import { optionsOf, pick } from './controls';
 
 process.env.TZ = 'Africa/Lagos';
 
@@ -314,18 +315,17 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show all 6 lines' }));
     expect(lines()).toHaveLength(6);
     expect(within(dialog).getByRole('combobox', { name: 'Project' })).toBeTruthy();
-    const state = within(dialog).getByRole('combobox', { name: 'State' }) as HTMLSelectElement;
-    expect([...state.options].map((o) => o.textContent)[0]).toBe('Any state');
-    expect(state.options).toHaveLength(12);
-    const waiting = within(dialog).getByRole('combobox', { name: 'Waiting on' }) as HTMLSelectElement;
-    expect([...waiting.options].map((o) => o.value)).toEqual(['', 'me', 'someone_else', 'agent', 'outside_party', 'no_owner']);
+    const states = optionsOf('State', within(dialog));
+    expect(states[0].text).toBe('Any state');
+    expect(states).toHaveLength(12);
+    expect(optionsOf('Waiting on', within(dialog)).map((o) => o.value)).toEqual(['', 'me', 'someone_else', 'agent', 'outside_party', 'no_owner']);
 
     fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Prepare an invoice' }));
     fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Record a receipt' }));
     // One line key at a time: the contract's line parameter takes one value.
     expect(within(dialog).getAllByRole('checkbox', { checked: true }).map((c) => c.parentElement!.textContent)).toEqual(['Record a receipt']);
     fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Prepare an invoice' }));
-    fireEvent.change(state, { target: { value: 'action_needed' } });
+    pick('State', 'action_needed', within(dialog));
     // "Show N items" counts the draft with the same list request.
     const show = await within(dialog).findByRole('button', { name: /^Show \d+ items?$/ });
     const preview = calls.find((c) => c.searchParams.get('line') === 'invoice' && c.searchParams.get('limit') === '50');

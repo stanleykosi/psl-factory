@@ -351,7 +351,7 @@ describe('uncertain send keeps the lock (AC 16, INV-RESEND)', () => {
     await open(item('W-2205'), item('W-2205.next'));
     await press('Approve and send');
     await screen.findByText('Delivery to Lagoon Health couldn’t be confirmed.');
-    await screen.findByRole('radiogroup', { name: 'Confirm what happened' });
+    await screen.findByRole('group', { name: 'Confirm what happened' });
     for (const b of within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button')) expect(b.getAttribute('aria-disabled')).toBe('true');
     await press('Approve and send');
     await press('Return with a note');

@@ -74,7 +74,7 @@
 .setup-counts { margin-left: auto; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-14px); }
 /* the board's link, as a button; the 44px target is carried by negative margins so the row keeps its height */
 .setup-upload { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); border: var(--rule-strong) solid var(--ink); background: var(--surface); }
-.setup-upload-row > td { background: var(--surface-subtle); }
+.setup-table .cmp-expanded > td { background: var(--surface-subtle); }
 .setup-upload__head { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-lead-size); font-stretch: 112%; }
 .setup-upload__actions { display: flex; flex-wrap: wrap; gap: var(--space-10px); }
 .setup-card .psl-btn { align-self: stretch; }

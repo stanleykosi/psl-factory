@@ -101,9 +101,9 @@ export function WorkspaceLinks({ links, page, plain = false }: { links: Workspac
               {link.label}
             </Link>
           ) : plain ? (
-            <button key={link.key} type="button" className="psl-link cmp-linkbutton" aria-expanded={reading?.key === link.key && reading.status === 'ready'} aria-describedby={reading?.key === link.key ? noteId : undefined} onClick={() => void open(link)}>
+            <Button key={link.key} kind="link" aria-expanded={reading?.key === link.key && reading.status === 'ready'} aria-describedby={reading?.key === link.key ? noteId : undefined} onClick={() => void open(link)}>
               {link.label}
-            </button>
+            </Button>
           ) : (
             <Button key={link.key} kind="secondary" aria-expanded={reading?.key === link.key && reading.status === 'ready'} aria-describedby={reading?.key === link.key ? noteId : undefined} onClick={() => void open(link)}>
               {link.label}

@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { fillWhen } from './controls';
+
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
@@ -27,7 +29,7 @@ const pdf = (name: string, size: number) => ({ name, mimeType: 'application/pdf'
 
 async function fill(page: Page, { file = true, attest = true } = {}) {
   await page.getByRole('radio', { name: 'Approved' }).check();
-  await page.getByLabel('When they responded').fill('2026-11-11T16:20');
+  await fillWhen(page, 'When they responded', '2026-11-11T16:20');
   if (file) {
     await page.locator('input[type="file"]').setInputFiles(pdf('Lagoon_UAT_signoff_11Nov.pdf', 184 * 1024));
     await expect(page.getByText('Lagoon_UAT_signoff_11Nov.pdf · 184 KB')).toBeVisible();

@@ -14,6 +14,7 @@ import type { WorkItem } from '@/features/work-item/labels';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
 import { withoutBellFeed } from './bell-feed';
+import { setWhen } from './controls';
 
 configure({ asyncUtilTimeout: 5000 });
 
@@ -125,7 +126,7 @@ const uploadProof = async () => {
 };
 async function fill({ action = 'Gaps found', gaps = GAPS.join('\n'), proof = true, attest = true, when = true } = {}) {
   await ready();
-  if (when) fireEvent.change(panel().getByLabelText('When they replied'), { target: { value: '2026-04-10T11:00' } });
+  if (when) setWhen('When they replied', '2026-04-10T11:00', panel());
   fireEvent.click(panel().getByRole('radio', { name: action }));
   if (action === 'Gaps found' && gaps) fireEvent.change(panel().getByLabelText('Gaps'), { target: { value: gaps } });
   if (proof) await uploadProof();

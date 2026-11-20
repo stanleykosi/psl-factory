@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { fillWhen } from './controls';
 
 // F-40 (contract mock only): the handover to Support (SCR-48) at 1440 and 390: axe, touch targets, one column, Publish and the
 // record-reply writes with their recorded requests. Nothing here publishes to Support; every "published", "received" and
@@ -39,7 +40,7 @@ const replyPanel = (page: Page) => page.getByRole('region', { name: 'Record Supp
 async function fillReply(page: Page, action = 'Gaps found') {
   const panel = replyPanel(page);
   await expect(panel.getByRole('radio', { name: 'Received' })).toBeVisible();
-  await panel.getByLabel('When they replied').fill('2026-04-10T11:00');
+  await fillWhen(panel, 'When they replied', '2026-04-10T11:00');
   await panel.getByRole('radio', { name: action }).check({ force: true });
   if (action === 'Gaps found') await panel.getByLabel('Gaps', { exact: true }).fill(GAPS.join('\n'));
   await panel.locator('input[type="file"]').setInputFiles(REPLY);
@@ -93,7 +94,7 @@ for (const [label, viewport] of [
       const panel = replyPanel(page);
       await expect(panel.getByRole('button', { name: 'Remove support-reply-10apr.pdf' })).toBeVisible();
       if (phone) {
-        await expectTouchTargets(await panel.locator('button, input[type="datetime-local"], .psl-seg__opt, .resp-attest').all());
+        await expectTouchTargets(await panel.locator('button, input[type="time"], .psl-radio, .resp-attest').all());
         const box = (await panel.locator('.resp-chip__remove').boundingBox())!;
         expect([box.width >= 44, box.height >= 44]).toEqual([true, true]);
         const bar = (await panel.locator('.psl-actionbar').boundingBox())!;
