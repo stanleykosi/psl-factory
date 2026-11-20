@@ -96,9 +96,10 @@ export const isNarrowed = (view: View) => Boolean(view.q || view.agent || view.u
 /** Facets set in the Filter panel (agent, unread); search is not counted. */
 export const filterCount = (view: View) => (view.agent ? 1 : 0) + (view.unread ? 1 : 0);
 
-/** Only the v7 parameters; limit is never sent, so the server default applies. */
-export function buildAlertQuery(view: View, cursor?: string): AlertQuery {
+/** The v7 parameters; `limit` only where a list asks for a page size (the Notifications page, via its footer). */
+export function buildAlertQuery(view: View, cursor?: string, limit?: AlertQuery['limit']): AlertQuery {
   const query: AlertQuery = {};
+  if (limit) query.limit = limit;
   if (view.q) query.q = view.q;
   if (view.agent) query.agent = view.agent;
   if (view.unread) query.unread = true;
