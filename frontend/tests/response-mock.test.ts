@@ -147,6 +147,16 @@ describe('E-EVIDENCE-UPLOAD', () => {
 });
 
 describe('E-RESPONSE', () => {
+  it('F-52: T-3401 team_input completes with proof (no 501) and W-3401 serves Security as given', async () => {
+    const { evidence_id, case_revision } = await uploaded('C-2101', 3, 'pm', 'team_input_proof');
+    const r = await respond('T-3401', { expected_revision: 4, case_revision, who: 'P-KA', action: 'input', team: 'security', what: 'Security reviewed the controls.', estimate_person_days: 12, attested: true, responded_at: '2026-11-13T10:00:00Z', evidence_id });
+    expect(r.status).toBe(200);
+    expect(r.body).toMatchObject({ task_id: 'T-3401', work_state: 'waiting', revision: 5, recorded: { summary: 'Security’s input', proof_count: 1 } });
+    const item = await getItem('W-3401');
+    expect(item.revision).toBe(8);
+    expect(JSON.stringify(item)).toContain('"key":"security","name":"Security","given":true');
+  });
+
   it('records the response, after which W-1601 serves the recorded sidecar; a repeat is 409', async () => {
     const { evidence_id } = await uploaded();
     const r = await respond('T-1601', recordBody(evidence_id));
