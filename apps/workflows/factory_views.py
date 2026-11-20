@@ -1197,6 +1197,7 @@ def _detail(request,work_id,focus=None):
         row['owner_panels']=owner_panels(request.user,work)
         from apps.pmo.models import DeliverySource
         row['handoff']=DeliverySource.objects.filter(dossier__case=work.case,kind='scope_baseline',evidence_id=row['planning'].get('readiness_id')).first() if row['planning'].get('readiness_id') else None
+        row['can_read_routing_setup'] = work.status == 'owner_needed' and permitted(request.user, work, 'policy.read')
     if work.definition == 'delivery-hypercare/v1':
         from apps.pmo.delivery import release_observations
         dossier_id = row['hypercare']['dossier'].pk

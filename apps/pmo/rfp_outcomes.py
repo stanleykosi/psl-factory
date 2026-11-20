@@ -55,22 +55,29 @@ def _historical_submission(case,submission):
     submission=actual;response=submission.response;version=submission.version;snapshot=submission.snapshot
     binding=RFPDocumentBinding.objects.filter(response=response,version=version).first()
     keys={'response','sources','reviews','costing_decisions','route_config','route','deadline_status','deadline_at'}
+    if binding and 'submission_pack' in binding.snapshot:
+        from .rfp_submission_pack import bound_pack
+        pack = bound_pack(binding)
+        if pack.source_id != response.intake.evidence_id or pack.actor_id != response.actor_id:
+            raise ValidationError('Exact historical client pack provenance required')
+        keys.add('submission_pack')
     if not binding or not isinstance(snapshot,dict) or set(snapshot)!=keys or binding.snapshot!=snapshot or snapshot['response']!=response.pk or snapshot['sources']!=response.snapshot:
         raise ValidationError('Exact historical response document binding and source manifest required')
     if version.document.case_id!=case.pk or version.template.case_id!=case.pk or response.commercial.dossier.case_id!=case.pk or response.evidence.case_id!=case.pk:
         raise ValidationError('Same-workspace historical RFP sources required')
     if version.audience!='client' or version.template.definition.get('internal_review_required',True) is not True:
         raise ValidationError('Historical client response and final review required')
-    from .rfp_portal import METHOD, proof
+    from .rfp_portal import METHOD, exact_file, proof
     route=snapshot['route']
     publication=Publication.objects.select_related('review').filter(version=version).first()
     portal=None
     if route['method']==METHOD:
         from .models import RFPPortalReceipt
+        artifact = exact_file(binding)
         portal=RFPPortalReceipt.objects.select_related('review','evidence').filter(submission=submission).first()
         if (publication or not portal or portal.evidence.case_id!=case.pk or portal.evidence.kind!='rfp_portal_receipt' or
                 portal.actor_id!=submission.actor_id or submission.receipt_ids!=[] or route['recipient_ids']!=[] or
-                proof(portal.evidence,version,route)!=(portal.reference,submission.submitted_at) or
+                proof(portal.evidence,version,route,artifact=artifact,historical=True)!=(portal.reference,submission.submitted_at) or
                 portal.created_at<submission.submitted_at):
             raise ValidationError('Exact independent client portal receipt evidence required')
         review=portal.review

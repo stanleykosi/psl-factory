@@ -37,7 +37,8 @@
   {% else %}<dt>Internal next check date</dt><dd>{{ row.rfp.outcome.followup_on|date:'d M Y'|default:'No reminder scheduled' }}</dd>{% endif %}
 </dl></section>
 {% endif %}
-{% if portal_receipt %}<section class="card"><h2>Client portal receipt</h2><p>{{ portal_receipt.reference }} · {{ row.rfp.submission.submitted_at|date:'d M Y H:i T' }}</p><p>Recorded from evidence {{ portal_receipt.evidence_id }} for the exact approved pack.</p></section>{% endif %}
+{% if portal_receipt %}<section class="card"><h2>Client portal receipt</h2><p>{{ portal_receipt.reference }} · {{ row.rfp.submission.submitted_at|date:'d M Y H:i T' }}</p><p>Recorded from evidence {{ portal_receipt.evidence_id }} for the exact approved pack.</p>
+{% if receipt_pdf %}<p>The receipt identifies the reviewed PDF ({{ receipt_pdf.file.size }} bytes).</p><a href="{% url 'rfp_submission_pdf' case.pk receipt_pdf.version %}">Open the PDF named in this receipt</a>{% endif %}</section>{% endif %}
 {% if award_comparison %}<section class="card"><h2>Award and submitted quote</h2>
 <dl><dt>Amount stated in the award</dt><dd>{{ row.rfp.outcome.award_currency }} {{ row.rfp.outcome.award_amount|decimal_display }} · Award evidence {{ row.rfp.outcome.evidence_id }}{% if award_comparison.award_basis %} · {{ award_comparison.award_basis|readable }}{% endif %}</dd>
 {% if award_comparison.quote %}<dt>Reviewed submitted quote</dt><dd>{{ award_comparison.quote.currency }} {{ award_comparison.quote.amount|decimal_display }} · Quote evidence {{ award_comparison.quote_evidence }} · {{ award_comparison.quote.basis|readable }}</dd>{% endif %}</dl>
@@ -58,8 +59,11 @@
 {% if row.rfp.outcome_roles %}{% include 'factory/rfp_outcome_form.html' %}{% endif %}
 {% include 'factory/rfp_followup.html' %}
 {% if portal_pack %}<section class="card"><h2>Record original client portal receipt</h2><p>Use the receipt from the client portal for version {{ portal_pack.version.number }} at {{ portal_pack.snapshot.route.destination_ref }}.</p>
+{% if portal_blocker %}<p role="status">{{ portal_blocker }}</p>{% else %}
+{% if portal_pdf %}<p>Choose evidence that records the fingerprint of the PDF received by the portal.</p>
+<details><summary>Inspect the reviewed PDF fingerprint</summary><p>{{ portal_pdf.sha256 }}</p><p>{{ portal_pdf.size }} bytes</p><a href="{% url 'rfp_submission_pdf' case.pk portal_pack.version_id %}">Open the reviewed PDF</a></details>{% endif %}
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="portal_receipt"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="target" value="{{ portal_pack.version_id }}">
-<label>Portal receipt evidence<select name="evidence" required><option value="">Choose evidence</option>{% for proof in portal_evidence %}<option value="{{ proof.pk }}">{{ proof.source }} · version {{ proof.version }}</option>{% endfor %}</select></label><label>What did you check?<textarea name="note" required maxlength="4000"></textarea></label><button>Record portal receipt</button></form></section>{% endif %}
+<label>Portal receipt evidence<select name="evidence" required><option value="">Choose evidence</option>{% for proof in portal_evidence %}<option value="{{ proof.pk }}">{{ proof.source }} · version {{ proof.version }}</option>{% endfor %}</select></label><label>What did you check?<textarea name="note" required maxlength="4000"></textarea></label><button>Record portal receipt</button></form>{% endif %}</section>{% endif %}
 {% endif %}
 {% if not focus %}
 {% if row.can_correct %}<details class="card" id="correct-response"><summary>Correct response inputs</summary><p>Resolve original uncertain effects first. Earlier sources, decisions and spent allowance remain in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct"><input type="hidden" name="case_revision" value="{{ case.revision }}">{% include 'factory/rfp_sources.html' %}<label>Why these sources are being corrected<textarea name="reason" required maxlength="2000"></textarea></label><button>Record corrected inputs</button></form></details>{% endif %}

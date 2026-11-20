@@ -1,4 +1,5 @@
 """Structured RFP operating settings; native RFP records retain business authority."""
+import json
 from hashlib import sha256
 
 from django import forms
@@ -565,7 +566,33 @@ def detail(request,work,focus=None):
                 case=work.case, purpose='project', customer='').order_by('-number')[:20],
             'followup_sender_roles': ROLES,
         }
-    portal_pack=RFPDocumentBinding.objects.filter(version=document,snapshot__route__method='manual_client_portal').first() if document else None
+    portal_receipt = getattr(row['rfp']['submission'], 'portal_receipt', None)
+    portal_pdf = None
+    portal_blocker = ''
+    portal_pack = None
+    if focus in (None, 'response') and document and not row['rfp']['submission'] and (
+            allowed(request.user, work.case, 'rfp.submit') and allowed(request.user, work.case, 'document.read')):
+        from apps.pmo.rfp_portal import exact_file
+
+        portal_pack = RFPDocumentBinding.objects.filter(
+            version=document, snapshot__route__method='manual_client_portal').first()
+        if portal_pack and 'submission_pack' in portal_pack.snapshot:
+            try:
+                controlled.validate_review(work.case, document)
+                portal_pdf = exact_file(portal_pack, new=True)
+            except (ValidationError, PermissionDenied):
+                portal_blocker = 'This pack needs an exact file check and final approval before its receipt can be recorded.'
+    receipt_pdf = None
+    if portal_receipt:
+        from apps.pmo.rfp_portal import PDF_SCHEMA
+
+        recorded_pdf = submission_pdf_panel(request.user, work.case, row['rfp']['submission'].version)
+        if recorded_pdf:
+            try:
+                if json.loads(portal_receipt.evidence.body).get('schema') == PDF_SCHEMA:
+                    receipt_pdf = recorded_pdf
+            except (TypeError, ValueError, AttributeError):
+                pass
     from apps.pmo.rfp_answers import authorize as authorize_answers
     try:
         authorize_answers(request.user,work)
@@ -602,8 +629,8 @@ def detail(request,work,focus=None):
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
         **pack_context,
         **followup_context,
-        'portal_receipt':getattr(row['rfp']['submission'],'portal_receipt',None),
-        'portal_pack':portal_pack if not row['rfp']['submission'] and allowed(request.user,work.case,'rfp.submit') and allowed(request.user,work.case,'document.read') else None,
+        'portal_receipt':portal_receipt,'receipt_pdf':receipt_pdf,
+        'portal_pack':portal_pack,'portal_pdf':portal_pdf,'portal_blocker':portal_blocker,
         'portal_evidence':evidence.filter(kind='rfp_portal_receipt'),
         'review_evidence':evidence,'outcome_evidence':evidence.filter(kind='rfp_outcome'),'receipts':receipts,'activities':activities,
         'submission_selector':field.widget.render('target',selected.pk if selected else None,attrs={'required':True}),

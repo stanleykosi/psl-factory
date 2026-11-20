@@ -17,6 +17,40 @@ from tests.helpers import rev
 @patch.dict('os.environ', {'RAILWAY_PROJECT_ID': seed.scoped.PREVIEW_PROJECT, 'RAILWAY_ENVIRONMENT_NAME': 'design-acceptance',
                            seed.GUARD: '1', 'PGDATABASE': 'synthetic-preview'})
 class LeadershipLiveDraftingSeedTests(TestCase):
+    def test_separate_trial_reviewer_can_return_new_specimen_after_live_drafting(self):
+        self.assertEqual(connection.vendor, 'postgresql')
+        trial = get_user_model().objects.create_user('psl-agent-trial')
+        original = seed.prepare()
+        independent = seed.prepare('trial_review')
+        self.assertNotEqual(original['case'], independent['case'])
+        work = FactoryWork.objects.get(pk=independent['work'])
+        self.assertNotEqual(work.actor_id, trial.pk)
+        self.client.force_login(trial)
+        decision = reverse('factory_invoice_decision', args=[work.pk])
+        self.assertNotContains(self.client.get(decision), 'Return exact report')
+
+        def inspect_claim(seconds):
+            self.assertEqual(seconds, 50)
+            self.assertContains(self.client.get(independent['path']), 'Drafting the leadership report from the selected sources.')
+            self.assertNotContains(self.client.get(decision), 'Return exact report')
+
+        with patch.object(seed, 'sleep', side_effect=inspect_claim) as live:
+            result = seed.observe(work.pk, 'trial_review')
+        live.assert_called_once_with(50)
+        work.refresh_from_db()
+        report = flow.document(work)
+        self.assertEqual(report.pk, result['report'])
+        self.assertNotEqual(report.created_by_id, trial.pk)
+        self.assertContains(self.client.get(decision), 'Return exact report')
+        response = self.client.post(decision, {'action': 'review', 'revision': work.revision,
+            'case_revision': rev(work.case), 'version': report.pk, 'verdict': 'return',
+            'note': 'Confirm the fictional cross-project coverage before publishing.'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(report.reviews.get().verdict, 'return')
+        self.assertEqual(HumanTask.objects.get(pk=result['review']).status, 'returned')
+        self.assertFalse(Publication.objects.filter(factory_work=work).exists())
+        self.assertFalse(flow.document(FactoryWork.objects.get(pk=original['work'])))
+
     def test_reader_sees_exact_live_lease_then_native_draft_waits_for_separate_review(self):
         self.assertEqual(connection.vendor, 'postgresql')
         trial = get_user_model().objects.create_user('psl-agent-trial')

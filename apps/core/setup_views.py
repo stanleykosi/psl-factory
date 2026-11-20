@@ -40,6 +40,8 @@ AREAS = {
         ('D05.role_principal_assignments', 'Assigned roles and eligibility'),
         ('D05.delegation_rules', 'Delegation'),
         ('D05.decision_action_matrix', 'Decision authority'),
+        ('P02.owner_routes', 'Department approval routes'),
+        ('P02.evidence_contracts', 'Department approval evidence'),
     )),
     'finance': ('Finance rules', (
         ('D12.contract_version_ref', 'Signed agreement'),
@@ -65,7 +67,7 @@ DOCUMENT_STORAGE = 'D11.template_storage_retention_rules'
 ARCHIVE_TRANSFER = 'OPS.archive_file_transfer'
 
 
-def _delivery_configuration(actor, case, component, *, show_value=False):
+def _rule_configuration(actor, case, component, *, show_value=False):
     from apps.policy.role_assignments import authorize_header
 
     try:
@@ -114,7 +116,7 @@ def _finance_confirmation_available(case):
 
 
 def delivery_rules(actor, case):
-    status, revision, criteria = _delivery_configuration(actor, case, HYPERCARE, show_value=True)
+    status, revision, criteria = _rule_configuration(actor, case, HYPERCARE, show_value=True)
     metrics, window, confirmations = (), None, None
     if criteria:
         window = f'{criteria["minimum_hours"]} hours after the recorded release'
@@ -126,9 +128,9 @@ def delivery_rules(actor, case):
             for metric in criteria['metrics']
         ]
     finance = _finance_confirmation_available(case)
-    storage_status, storage_revision, storage = _delivery_configuration(actor, case, DOCUMENT_STORAGE, show_value=True)
+    storage_status, storage_revision, storage = _rule_configuration(actor, case, DOCUMENT_STORAGE, show_value=True)
     handover = _handover_review(case, storage) if storage else None
-    transfer_status, transfer_revision, transfer = _delivery_configuration(actor, case, ARCHIVE_TRANSFER, show_value=True)
+    transfer_status, transfer_revision, transfer = _rule_configuration(actor, case, ARCHIVE_TRANSFER, show_value=True)
     archive_modes = {'private_object_store/v1': 'Private file store', 'synthetic_archive/v1': 'Sample archive store'}
     if transfer:
         archive = _delivery_item('Archive storage rule', 'Archive', transfer_status, transfer_revision,
@@ -195,13 +197,26 @@ def overview(request, case_id):
     delivery_uses = {'OPS.go_live_milestone_mapping': 'Go-live', 'D11.adapter_configuration_refs': 'Delivery'}
     for key, label in components:
         if area == 'delivery':
-            status, revision, _ = _delivery_configuration(request.user, case, key)
+            status, revision, _ = _rule_configuration(request.user, case, key)
             items.append(_delivery_item(label, delivery_uses[key], status, revision))
+        elif area == 'roles' and key.startswith('P02.'):
+            status, revision, _ = _rule_configuration(request.user, case, key)
+            items.append({'label': label, 'status': status, 'revision': revision})
         else:
             resolved = resolve(key,case)
             saved = resolved.configuration if resolved.status=='ACTIVE' else None
             items.append({'label':label,'status':resolved.status,'revision':saved.revision if saved else None})
-    can_configure = Grant.objects.filter(case=case,user=request.user,active=True,action='policy.configure').exists()
+    observed_at = timezone.now()
+    finance_groups = []
+    if area == 'finance':
+        from .setup_finance import groups
+
+        permissions = set(Grant.objects.filter(case=case, user=request.user, user__is_active=True,
+                                               active=True).values_list('action', flat=True))
+        can_configure = 'policy.configure' in permissions
+        finance_groups = groups(request.user, case, permissions, observed_at)
+    else:
+        can_configure = Grant.objects.filter(case=case,user=request.user,active=True,action='policy.configure').exists()
     disclosure = None
     form = None
     visibility_draft = None
@@ -277,7 +292,8 @@ def overview(request, case_id):
                   'disclosure':disclosure, 'visibility_form':form, 'visibility_draft':visibility_draft,
                   'disclosure_hold':disclosure_hold,
                   'field_rows':field_rows,
-                  'role_rows':role_rows, 'role_hold':role_hold, 'observed_at':timezone.now()})
+                  'role_rows':role_rows, 'role_hold':role_hold, 'observed_at':observed_at,
+                  'finance_groups':finance_groups})
 
 
 @login_required

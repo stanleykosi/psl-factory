@@ -84,6 +84,114 @@ class SetupOverviewTests(TestCase):
         self.assertContains(page,'View access only.')
         self.assertNotContains(page,'Review rule versions and configuration')
 
+    def test_finance_setup_resolves_the_registered_groups_and_current_profile_fields(self):
+        import json
+        from pathlib import Path
+
+        from django.db import connection
+        from django.utils import timezone
+
+        from apps.core.models import Audit
+        from apps.core.setup_finance import ACCOUNTING_PROFILE, FINANCE_RULE_GROUPS
+        from apps.policy.models import Configuration, PolicyState
+        from apps.policy.operator_drafts import draft_operator_policy
+        from apps.policy.registry import components
+        from apps.policy.services import transition
+        from tests.finance_analysis_helpers import fixture
+
+        self.assertEqual(connection.vendor, 'postgresql')
+        actor, case, evidence, _, _, _, template, _ = fixture(username='finance-setup-owner')
+        proof = evidence['policy_decision']
+        declared = {key for _, _, _, rules in FINANCE_RULE_GROUPS for rule in rules for key in rule.components}
+        self.assertLessEqual(declared, components().keys())
+        values = json.loads(Path('fixtures/factory-accounting.json').read_text())
+        values.pop('classification')
+        values.update(information_resolver_id=None, executor_id=None, template_id=None, audience=None,
+                      bu_metrics=None, allocation_mode='company_and_bu')
+        profile = draft_operator_policy(actor, case.pk, ACCOUNTING_PROFILE, values, proof.pk, timezone.now())
+        transition(actor, profile.pk, 'validated')
+        transition(actor, profile.pk, 'active')
+
+        self.client.force_login(actor)
+        url = reverse('workspace_settings', args=[case.pk]) + '?area=finance'
+        before = (Audit.objects.count(), Configuration.objects.count(), PolicyState.objects.count())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        groups = {group['label']: group for group in response.context['finance_groups']}
+        self.assertEqual([len(group['rules']) for group in groups.values()], [4, 3, 3, 3, 4, 3, 5])
+        accounts = {row['label']: row['status'] for row in groups['Management accounts']['rules']}
+        self.assertEqual(accounts, {'Statement contract': 'MISSING', 'Business-unit metrics': 'MISSING',
+            'Report template and audience': 'MISSING', 'Finance executor who publishes': 'UNASSIGNED'})
+        forecast = {row['label']: row['status'] for row in groups['Cash forecast']['rules']}
+        self.assertEqual(forecast['Group reviewer'], 'UNASSIGNED')
+        self.assertContains(response, 'Stage billing terms')
+        self.assertContains(response, 'Invoice responsibilities')
+        self.assertContains(response, reverse('finance_schedules', args=[case.pk]))
+        self.assertContains(response, reverse('factory_configuration', args=[case.pk]) + '?definition=finance-accounts/v1')
+        self.assertEqual(self.client.post(url, {'action': 'active'}).status_code, 405)
+        self.assertEqual(before, (Audit.objects.count(), Configuration.objects.count(), PolicyState.objects.count()))
+
+        successor = draft_operator_policy(actor, case.pk, ACCOUNTING_PROFILE, dict(values, executor_id=actor.pk,
+            template_id=template.pk, audience='internal', allocation_mode='company_only'), proof.pk, timezone.now())
+        transition(actor, successor.pk, 'validated')
+        pending = {row['label']: row for row in self.client.get(url).context['finance_groups'][0]['rules']}
+        self.assertEqual(pending['Finance executor who publishes']['status'], 'UNASSIGNED')
+        transition(actor, successor.pk, 'active')
+        current = {row['label']: row for row in self.client.get(url).context['finance_groups'][0]['rules']}
+        self.assertEqual(current['Business-unit metrics']['value'], 'Company totals only')
+        self.assertEqual(current['Finance executor who publishes']['revisions'], [successor.revision])
+        self.assertEqual(current['Report template and audience']['revisions'], [successor.revision])
+        self.assertEqual(current['Statement contract']['status'], 'MISSING')
+
+    def test_finance_setup_payroll_summary_requires_current_private_payroll_access(self):
+        import json
+        from pathlib import Path
+        from unittest.mock import patch
+
+        from django.contrib.auth import get_user_model
+        from django.db import connection
+        from django.utils import timezone
+
+        from apps.core import setup_finance
+        from apps.core.services import add_evidence
+        from apps.policy.payroll_drafts import draft_payroll_policy
+        from apps.policy.payroll_validators import MERGE
+        from apps.policy.services import transition
+
+        self.assertEqual(connection.vendor, 'postgresql')
+        actor, case = setup_case()
+        proof = add_evidence(actor, case.pk, 'policy_decision', 'Synthetic restricted merge review', 'synthetic:setup-test')
+        values = json.loads(Path('fixtures/payroll.json').read_text())['merge']
+        version = draft_payroll_policy(actor, case.pk, MERGE, values, proof.pk, timezone.now())
+        transition(actor, version.pk, 'validated')
+        transition(actor, version.pk, 'active')
+        reader = get_user_model().objects.create_user('finance-aggregate-payroll-reader')
+        Grant.objects.bulk_create([Grant(user=reader, case=case, action=action)
+            for action in ('case.read', 'policy.read', 'finance.read', 'payroll.read', 'payroll.report.read')])
+        self.client.force_login(reader)
+        url = reverse('workspace_settings', args=[case.pk]) + '?area=finance'
+        payroll = reverse('payroll', args=[case.pk])
+        with patch.object(setup_finance, 'resolve', wraps=setup_finance.resolve) as resolve:
+            restricted = self.client.get(url)
+        self.assertContains(restricted, 'Management accounts')
+        self.assertContains(restricted, 'Access required to view these settings.')
+        self.assertNotContains(restricted, 'Merge rules')
+        self.assertNotContains(restricted, payroll)
+        self.assertNotIn(MERGE, [call.args[0] for call in resolve.call_args_list])
+        private = Grant.objects.create(user=reader, case=case, action='payroll.private.read')
+        permitted = self.client.get(url)
+        self.assertContains(permitted, payroll)
+        self.assertNotContains(permitted, reverse('payroll_row_controls', args=[case.pk]))
+        rows = {row['label']: row for row in permitted.context['finance_groups'][-1]['rules']}
+        self.assertEqual(rows['Merge rules']['revisions'], [version.revision])
+        self.assertEqual(rows['Who reviews payroll']['status'], 'UNASSIGNED')
+        self.assertNotContains(permitted, values['method'])
+        private.active = False
+        private.save(update_fields=['active'])
+        self.assertNotContains(self.client.get(url), 'Merge rules')
+        self.client.force_login(actor)
+        self.assertContains(self.client.get(url), reverse('payroll_row_controls', args=[case.pk]))
+
     def test_delivery_rows_follow_effective_criteria_templates_store_and_current_confirmation_grant(self):
         from django.contrib.auth import get_user_model
         from django.db import connection

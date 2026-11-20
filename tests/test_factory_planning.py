@@ -43,6 +43,14 @@ class FactoryPlanningTests(TestCase):
         page=self.client.get(reverse('factory_detail',args=[w.pk]))
         self.assertContains(page,'Owner configuration required')
         self.assertNotContains(page,'None:')
+        settings = reverse('workspace_settings', args=[f['c'].pk])
+        self.assertContains(page, settings + '?area=roles')
+        rules = self.client.get(settings, {'area': 'roles'})
+        item = next(row for row in rules.context['items'] if row['label'] == 'Department approval routes')
+        self.assertEqual(item['status'], 'MISSING')
+        Grant.objects.filter(case=f['c'], user=f['a'], action='policy.read').update(active=False)
+        self.assertNotContains(self.client.get(reverse('factory_detail', args=[w.pk])), settings + '?area=roles')
+        self.assertEqual(self.client.get(settings, {'area': 'roles'}).status_code, 403)
 
     def test_exact_department_panel_records_only_native_owner_observation(self):
         f=setup();w=f['work'];factory.run_until_wait(w.pk)

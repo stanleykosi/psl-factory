@@ -30,7 +30,26 @@
 </details>{% endif %}
 </section>
 {% endif %}
-<section class="card"><h2>Effective rules</h2><div class="table-wrap detail-table"><table><thead><tr><th scope="col">Rule</th><th scope="col">{% if area == 'delivery' %}Value{% else %}Status{% endif %}</th>{% if area == 'delivery' %}<th scope="col">Used by</th>{% endif %}</tr></thead><tbody>
+{% if finance_groups %}
+<div class="agent-role-grid">
+{% for group in finance_groups %}
+<section class="card"><h2>{{ group.label }}</h2>
+{% if group.restricted %}<p>Access required to view these settings.</p>
+{% else %}
+<div class="table-wrap detail-table"><table><thead><tr><th scope="col">Rule</th><th scope="col">Status</th></tr></thead><tbody>
+{% for rule in group.rules %}<tr><th scope="row">{{ rule.label }}</th><td data-label="Status">
+{% if rule.value %}{{ rule.value }} · {% endif %}
+{% if rule.revisions %}Active · {% if rule.revisions|length == 1 %}revision{% else %}revisions{% endif %} {{ rule.revisions|join:', ' }}
+{% elif rule.status == 'MISSING' %}Not set{% else %}{{ rule.status|readable }}{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+<p><a href="{{ group.url }}">Open {{ group.label|lower }}</a></p>
+{% if group.configuration %}<p><a href="{{ group.configuration }}">{{ group.configuration_label }}</a></p>{% endif %}
+{% endif %}
+</section>
+{% endfor %}
+</div>
+{% endif %}
+<section class="card"><h2>{% if area == 'finance' %}Billing and payments{% else %}Effective rules{% endif %}</h2><div class="table-wrap detail-table"><table><thead><tr><th scope="col">Rule</th><th scope="col">{% if area == 'delivery' %}Value{% else %}Status{% endif %}</th>{% if area == 'delivery' %}<th scope="col">Used by</th>{% endif %}</tr></thead><tbody>
 {% for rule in items %}<tr><th scope="row">{{ rule.label }}</th><td data-label="{% if area == 'delivery' %}Value{% else %}Status{% endif %}">
 {% if rule.value %}{{ rule.value }}{% if rule.details %}<ul>{% for detail in rule.details %}<li>{{ detail }}</li>{% endfor %}</ul>{% endif %}{% if rule.revision %}<div>Active · revision {{ rule.revision }}</div>{% endif %}
 {% elif rule.revision %}Active · revision {{ rule.revision }}{% elif rule.status == 'MISSING' %}Not set{% else %}{{ rule.status|readable }}{% endif %}</td>{% if area == 'delivery' %}<td data-label="Used by">{{ rule.used_by }}</td>{% endif %}</tr>{% endfor %}</tbody></table></div>

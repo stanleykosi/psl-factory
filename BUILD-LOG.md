@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. The passing 280 app rollout exposed the exact Planning routing hold and scoped Finance rule groups. Trial verified both on the phone, bringing the ledger to 203 completed with 59 open. Candidate 281 runs the combined customer link, Payroll draft, Issue register and Start work refinements in isolated PostgreSQL.
+
+21 November 2026. Reconciled current phone and earlier exact invoice, sign-off, costing, Staff, Setup and protected aggregate results. Verified count is 201. The passing 280 application subset deployed with the exact PDF portal receipt guard. The failed new fixture was held for the next isolated check, where client grouping, restricted Payroll draft matching, issue register metadata and the authorised Tola shortcut are also staged.
+
 21 November 2026. Candidate 278 passed 18 exact PostgreSQL cases. The preview web applied the two additive migrations and the matching worker processed normal work. Trial verified the exact Hypercare lead queue and its retained Engineering correction through Verified. Candidate 279 adds the prospective manual PDF receipt and the authorized Finance rule and Planning route surfaces.
 
 21 November 2026. Hosted 277 verified the repaired mobile weekly drawer, exact weekly Return and Delivery rules. The 188-state count covers the original UI outcome and backend records. Guarded samples 237–239 are ready for their separate actors. Verified 277 source is pushed at `2009a413`.

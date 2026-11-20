@@ -16,18 +16,39 @@ from apps.identity.services import require
 from .models import RFPDocumentBinding, RFPPortalReceipt, RFPSubmission
 from .rfp import ensure_open, note
 from .rfp_documents import inputs, sender
+from .rfp_submission_artifacts import approved_format, metadata
+from .rfp_submission_pack import bound_pack, requirements
 from .services import subject
 
 
 METHOD = 'manual_client_portal'
 SCHEMA = 'psl/rfp-portal-receipt/v1'
+PDF_SCHEMA = 'psl/rfp-portal-receipt/v2'
+FIELDS = {'schema', 'version', 'sha256', 'destination', 'reference', 'received_at'}
 
 
-def proof(evidence, version, route):
+def exact_file(binding, *, new=False):
+    pack = bound_pack(binding)
+    if pack is None:
+        return None
+    artifact = metadata(binding=binding)
+    if artifact:
+        approved_format(binding, artifact)
+    elif new and requirements(pack):
+        raise ValidationError('Prepare a verified client file before recording its portal receipt.')
+    return artifact
+
+
+def proof(evidence, version, route, *, artifact=None, historical=False):
     try:
         value = json.loads(evidence.body)
-        if (not isinstance(value, dict) or set(value) != {'schema','version','sha256','destination','reference','received_at'} or
-                value['schema'] != SCHEMA or type(value['version']) is not int or value['version'] != version.pk or
+        if historical and isinstance(value, dict) and value.get('schema') == SCHEMA:
+            artifact = None
+        expected_fields = FIELDS | {'artifact_sha256'} if artifact else FIELDS
+        if (not isinstance(value, dict) or set(value) != expected_fields or
+                value['schema'] != (PDF_SCHEMA if artifact else SCHEMA) or
+                (artifact and value['artifact_sha256'] != artifact.sha256) or
+                type(value['version']) is not int or value['version'] != version.pk or
                 value['sha256'] != version.payload_sha256 or value['destination'] != route['destination_ref'] or
                 not isinstance(value['reference'], str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,159}', value['reference'])):
             raise ValueError
@@ -35,7 +56,9 @@ def proof(evidence, version, route):
         if timezone.is_naive(observed):
             raise ValueError
     except (TypeError, ValueError) as exc:
-        raise ValidationError('Supply a portal receipt matching the exact approved pack, destination and actual receipt time.') from exc
+        detail = ('Supply a portal receipt matching the exact approved pack, PDF fingerprint, destination and actual receipt time.'
+                  if artifact else 'Supply a portal receipt matching the exact approved pack, destination and actual receipt time.')
+        raise ValidationError(detail) from exc
     return value['reference'], observed
 
 
@@ -54,8 +77,10 @@ def record(actor, case_id, version_id, evidence_id, attestation, expected):
     evidence = subject(case, evidence_id, 'rfp_portal_receipt')
     if restricted(evidence):
         raise ValidationError('Choose available client portal receipt evidence.')
-    reference, received = proof(evidence, version, binding.snapshot['route'])
     original = RFPPortalReceipt.objects.filter(submission__version=version).first()
+    artifact = exact_file(binding, new=original is None)
+    reference, received = proof(evidence, version, binding.snapshot['route'], artifact=artifact,
+                                historical=original is not None)
     if original:
         if original.evidence_id == evidence.pk and original.actor_id == actor.pk and original.note == attestation:
             return original.submission
@@ -76,6 +101,9 @@ def record(actor, case_id, version_id, evidence_id, attestation, expected):
         receipt_ids=[], submitted_at=received, late=bool(deadline and received>deadline), actor=actor)
     receipt = RFPPortalReceipt.objects.create(submission=submission, review=review, evidence=evidence,
                                              reference=reference, note=attestation, actor=actor)
-    event(actor, case, 'rfp.portal_receipt_recorded', submission=submission.pk, receipt=receipt.pk)
+    details = {'submission': submission.pk, 'receipt': receipt.pk}
+    if artifact:
+        details['artifact'] = artifact.pk
+    event(actor, case, 'rfp.portal_receipt_recorded', **details)
     bump(case)
     return submission
