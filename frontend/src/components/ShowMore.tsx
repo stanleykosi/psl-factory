@@ -12,11 +12,72 @@ import { Segmented } from './Segmented';
 
 export const PAGE_SIZES = [10, 20, 50] as const;
 export type PageSize = (typeof PAGE_SIZES)[number];
-export const DEFAULT_PAGE_SIZE: PageSize = 20;
+/** Every list starts at 10 rows (D-137). */
+export const DEFAULT_PAGE_SIZE: PageSize = 10;
 
-/** The rows-per-page choice of a list that keeps it in state; lists that keep it in the URL pass their own. */
-export function usePageSize(initial: PageSize = DEFAULT_PAGE_SIZE) {
-  return useState<PageSize>(initial);
+/** The smallest page the server allows that covers `rows` more rows (the contract's limit is 10, 20 or 50). */
+export function limitFor(rows: number): PageSize {
+  return PAGE_SIZES.find((n) => n >= rows) ?? 50;
+}
+
+/**
+ * The window over a cursor list's loaded rows (D-137). `items` is what the list has loaded so far and `next` whether
+ * the server has more. Choosing a larger size shows more rows: the loaded ones stay in place, and only the missing
+ * rows are fetched (`loadMore`, with the list's existing cursor) and appended. A smaller size trims the shown rows
+ * back without a fetch; rows already loaded wait unseen. `resetKey` changing (a new filter or search, which reloads the
+ * list from the first page) takes the window back to one page. A list that keeps the size in the URL passes
+ * `size` and `onSize`.
+ */
+export function usePagedRows<T>({ items, next, busy, failed = false, loadMore, resetKey, size: controlled, onSize, total: known }: {
+  items: T[];
+  next: boolean;
+  busy: boolean;
+  /** The last fetch failed: no further fetch starts until the person presses Show more or Try again. */
+  failed?: boolean;
+  loadMore: (limit: PageSize) => void;
+  resetKey?: unknown;
+  size?: PageSize;
+  onSize?: (size: PageSize) => void;
+  /** A total the list knows beyond its loaded rows (My work's queue count). */
+  total?: number;
+}) {
+  const [own, setOwn] = usePageSize();
+  const size = controlled ?? own;
+  const [visible, setVisible] = useState<number>(size);
+  const [seenKey, setSeenKey] = useState(resetKey);
+  if (seenKey !== resetKey) {
+    setSeenKey(resetKey);
+    setVisible(size);
+  }
+  const missing = visible - items.length;
+  const latest = useRef(loadMore);
+  useEffect(() => {
+    latest.current = loadMore;
+  });
+  useEffect(() => {
+    if (missing > 0 && next && !busy && !failed) latest.current(limitFor(missing));
+  }, [missing, next, busy, failed]);
+
+  const shown = Math.min(visible, items.length);
+  const total = next ? known : items.length;
+  const hasMore = next || items.length > shown;
+  const paging: ShowMoreProps = {
+    shown,
+    total: total !== undefined && total > shown ? total : hasMore ? undefined : shown,
+    hasMore,
+    busy,
+    onMore: () => {
+      if (failed) latest.current(limitFor(Math.max(missing, 1)));
+      else setVisible(shown + size);
+    },
+    size,
+    onSize: (n) => {
+      setOwn(n);
+      onSize?.(n);
+      setVisible(n);
+    },
+  };
+  return { rows: items.slice(0, visible), paging };
 }
 
 export type ShowMoreProps = {
@@ -61,7 +122,7 @@ export function ShowMore({ shown, total, onMore, busy = false, hasMore, size, on
           label="Rows per page"
           phone={phone}
           value={String(size) as `${PageSize}`}
-          options={PAGE_SIZES.map((n) => ({ value: String(n) as `${PageSize}`, label: String(n) }))}
+          options={PAGE_SIZES.map((n, i) => ({ value: String(n) as `${PageSize}`, label: String(n), disabled: total !== undefined && i > 0 && total <= PAGE_SIZES[i - 1] }))}
           onChange={(value) => {
             const next = Number(value) as PageSize;
             if (next === size) return;

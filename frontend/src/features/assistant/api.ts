@@ -3,13 +3,12 @@
 // write is never resent by this code (Conflicts 17). Bodies carry only the typed fields.
 import { api, call } from '@/api/client';
 import { ApiError, errorFromResponse } from '@/api/errors';
+import type { PageSize } from '@/components';
 
 import type { AgentName, MentionOptions, MessageBody, MessageResult, NewConversation } from './types';
 
-export const LIST_LIMIT = 20;
-
-export const fetchConversations = (cursor?: string) =>
-  call(api.GET('/api/v1/assistant/conversations', { params: { query: { limit: LIST_LIMIT, cursor } } }));
+export const fetchConversations = (limit: PageSize, cursor?: string) =>
+  call(api.GET('/api/v1/assistant/conversations', { params: { query: { limit, cursor } } }));
 
 export const fetchConversation = (id: string) =>
   call(api.GET('/api/v1/assistant/conversations/{conversation_id}', { params: { path: { conversation_id: id } } }));

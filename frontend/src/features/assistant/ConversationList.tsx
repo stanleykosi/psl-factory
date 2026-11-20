@@ -4,7 +4,7 @@
 // phones, in the "earlier" sheet.
 import NextLink from 'next/link';
 
-import { AgentAvatar, ErrorState, ShowMore, Skeleton } from '@/components';
+import { AgentAvatar, cursorCounts, ErrorState, ShowMore, Skeleton, type PageSize } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { groupByDay, NO_CONVERSATIONS, statusLine } from './labels';
@@ -23,10 +23,12 @@ function Row({ row, current, onOpen }: { row: ConversationRow; current: boolean;
   );
 }
 
-export function ConversationList({ state, currentId, onMore, onRetry, pathname, onOpen }: {
+export function ConversationList({ state, currentId, onMore, size, onSize, onRetry, pathname, onOpen }: {
   state: ListState;
   currentId?: string;
   onMore: () => void;
+  size: PageSize;
+  onSize: (size: PageSize) => void;
   onRetry: () => void;
   pathname: string;
   onOpen?: () => void;
@@ -51,7 +53,7 @@ export function ConversationList({ state, currentId, onMore, onRetry, pathname, 
           ))}
         </section>
       ))}
-      {(state.next || state.more !== 'idle') && <ShowMore shown={state.items.length} hasMore={Boolean(state.next)} busy={state.more === 'loading'} onMore={onMore} />}
+      <ShowMore solo {...cursorCounts(state.items.length, Boolean(state.next))} busy={state.more === 'loading'} onMore={onMore} size={size} onSize={onSize} />
       {state.more === 'error' && (
         <p className="psl-hint" role="alert">
           Couldn’t load more.

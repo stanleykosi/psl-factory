@@ -36,7 +36,7 @@ export { SampleLabel, type SampleKind } from './SampleLabel';
 export { SearchField, SEARCH_MIN_CHARS, SEARCH_PAUSE_MS } from './SearchField';
 export { Segmented, type SegmentedOption } from './Segmented';
 export { Select, type SelectOption, type SelectProps } from './Select';
-export { ShowMore, usePageSize, PAGE_SIZES, DEFAULT_PAGE_SIZE, type PageSize, type ShowMoreProps } from './ShowMore';
+export { ShowMore, usePagedRows, limitFor, usePageSize, PAGE_SIZES, DEFAULT_PAGE_SIZE, type PageSize, type ShowMoreProps } from './ShowMore';
 export { SourceTag, type SourceTagProps } from './SourceTag';
 export { SplitButton } from './SplitButton';
 export { StationTrack, type Station, type StationStatus } from './StationTrack';

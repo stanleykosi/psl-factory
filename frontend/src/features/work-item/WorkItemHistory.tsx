@@ -2,7 +2,7 @@
 
 // SCR-02 History: read-only (INV-AUDIT). The only controls are the filter, the paging footer (rows per page, Show
 // more) and Try again. Restricted entries show who and when only (INV-RESTRICTED).
-import { Callout, EmptyState, formatDayTime, Panel, Segmented, ShowMore, Table, Tag, type Column } from '@/components';
+import { Callout, EmptyState, formatDayTime, Panel, Segmented, ShowMore, Table, Tag, usePagedRows, type Column } from '@/components';
 import { LoadingState } from '@/shell/FrameStates';
 
 import { ACTOR_TAGS, HISTORY_FILTERS, type HistoryKind } from './labels';
@@ -117,20 +117,20 @@ function HistoryCard({ entry, board }: { entry: BoardHistoryEntry; board: boolea
 type HistoryProps = { id: string; revision: number; counts?: Counts; phone?: boolean };
 
 export function WorkItemHistory({ id, revision, counts, phone = false }: HistoryProps) {
-  const { state, kind, setKind, limit, setLimit, retry, showMore } = useWorkHistory(id, revision);
+  const { state, kind, setKind, retry, showMore } = useWorkHistory(id, revision);
   const ready = state.status === 'ready' ? state : undefined;
+  const { rows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: Boolean(ready?.nextCursor),
+    busy: ready?.more === 'loading',
+    failed: ready?.more === 'failed',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: kind,
+  });
   const board = phone && counts !== undefined;
 
   // On the desktop board the as-of line sits in the side column, under the callout, where the board draws its own.
   const side = counts !== undefined && !phone;
-  const paging = ready && {
-    shown: ready.items.length,
-    hasMore: Boolean(ready.nextCursor),
-    busy: ready.more === 'loading',
-    onMore: () => void showMore(),
-    size: limit,
-    onSize: setLimit,
-  };
   const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatDayTime(ready.asOf)}</p>;
 
   let body;
@@ -149,11 +149,11 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
     body = (
       <>
         <div className="work-hcards" role="list" aria-label="History, newest first">
-          {state.items.map((entry, i) => (
+          {rows.map((entry, i) => (
             <HistoryCard key={i} entry={entry} board={board} />
           ))}
         </div>
-        {paging && <ShowMore solo {...paging} />}
+        <ShowMore solo {...paging} />
       </>
     );
   } else {
@@ -162,10 +162,10 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
         className="work-history"
         caption="History, newest first"
         columns={historyColumns(counts !== undefined)}
-        rows={state.items}
+        rows={rows}
         rowKey={(entry) => `${state.items.indexOf(entry)}`}
         empty="Nothing recorded for this filter yet."
-        paging={paging || undefined}
+        paging={paging}
       />
     );
   }
