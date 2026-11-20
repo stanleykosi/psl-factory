@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. The full Railway batch finished its 106-test Commercial cohort successfully. In the browser, a fresh escalation request reached its required human decision through the exact drawer workflow. Reused the staged workspace display repair. The ledger audit records 42 scoped completions.
+
+20 November 2026. Followed fresh synthetic change intake through cited extraction, human classification and the native work 134 queue. Kept the previously verified Standard Change and its original receipts. The ledger audit records 41 scoped completions.
+
 20 November 2026. The Finance intake drawer showed raw record identities in its workspace choices. Added shared workspace labels for scoped choices and a focused incumbent Finance intake check. The existing preview still has the original display until promotion.
 
 20 November 2026. Verified the drawer opening unchanged work for a previously followed issue and starting new work for a separate open issue. New work 133 reached its native owner wait and accepted its acknowledgement. Linked the verified monthly report delivery to the separate Start work state. The audit records 40 scoped completions.
