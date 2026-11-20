@@ -32,6 +32,7 @@ test('My work: five decisions, five waiting, four done, and search narrows them'
 
 test('the Kora SOW v3 decision opens with the CEO at the last step, and its History tab lists the chain', async ({ page }) => {
   await page.goto('/my-work');
+  await page.waitForLoadState('networkidle'); // the dev server hydrates after the rows draw; an early click on a row can be lost
   await rowLinks(page).filter({ hasText: 'Kora Logistics · SOW v3' }).first().click();
   await expect(page).toHaveURL(/\/work\/W-5001$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Kora Logistics · SOW v3' })).toBeVisible();
