@@ -1,0 +1,100 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "Tunde Bello · PMO",
+   "category": "frame",
+   "conflicts": 2,
+   "reason": "Conflicts 2: the board draws the PM's name; the lines are served to the Finance persona only, so the top bar shows that person's own name.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Done 28",
+   "category": "frame",
+   "conflicts": 5,
+   "reason": "Conflicts 5: frame item; the My work page under the scrim is the board's own list, not My work as built (real tabs and counts).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Base case · v4 ▾",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: text inside a control (the chosen scenario, a record from E-LINE-OPTIONS); matched by the control, not by text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "As of",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the label is drawn above the input and is the input's name; the tool lists it as text and did not match it. Unverified by the builder; UI review to confirm.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "31 Oct 2026",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the typed date sits in the As of input's value, which the tool does not read as text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Months",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: as for As of, the label is the input's name; UI review to confirm.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "6",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the typed Months sits in the input's value, which the tool does not read as text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PPE-0005 · September ▾",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "Conflicts 5: text inside a control (the chosen prior schedule, from E-LINE-OPTIONS); matched by the control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "None ▾",
+   "category": "component",
+   "conflicts": 3,
+   "reason": "Conflicts 3 and 5: the board shows the empty choice as 'None ▾'; the page shows the line's placeholder 'None' in the select (text inside a control).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Optional",
+   "category": "copy",
+   "conflicts": 3,
+   "reason": "Conflicts 3: the board draws 'Optional' as a line under the field; the page puts '(optional)' in the label, as F-05 does for every optional field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the phone form is F-05's bottom sheet over My work, so the board's '← My work' bar is not drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "START",
+   "category": "frame",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the phone sheet draws 'START WORK' in its own header (desktop eyebrow), not the board's page bar.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
+}

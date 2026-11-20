@@ -1,0 +1,212 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-52",
+  "outcome": "F-52 Follow-up batch A: fixes on merged screens",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-FOLLOWUPS-1"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "On the income schedule line (F-33), after a decide answered 200, the page says the version is approved only when the re-read shows the decided state. While the re-read still serves the review, it shows the neutral \"result not confirmed\" wording F-45 uses, and never \"approved\" or \"verified\". \u2014 verify: component test that fails on the old code.",
+    "On the income schedule line, a real two-reviewer sequence through the mock (the task closes, then the second reviewer's decide gets a 409) leaves a lasting stale notice and the unsent note, with no decide buttons. \u2014 verify: test.",
+    "On the leadership report line (F-35), the stale notice adds one sentence telling the reviewer what to do next (\"Read the current version above; nothing was recorded for you.\"), and focus moves to the notice when it appears. \u2014 verify: test for the text and `document.activeElement`.",
+    "The escalation mock serves W-3602's send-for-review step answer (fixture), so \"Send for review\" completes and the re-read shows the next state. \u2014 verify: mock test plus an e2e or component test.",
+    "The response mock answers `POST /api/v1/tasks/T-3401/response` with `team_input` (no 501), so F-37's \"Record team input\" completes with proof on the mock. \u2014 verify: mock test plus a component test of the completed state.",
+    "The shared header's History link is at least 44 by 44 px at 390. Desktop is unchanged. \u2014 verify: e2e measuring `getBoundingClientRect` on two lines.",
+    "tests/rfp-intake-mock.test.ts no longer fails on ECONNRESET in beforeEach (a retry or `Connection: close`), and the file passes 5 runs in a row. \u2014 verify: the runs.",
+    "No other line's behaviour changes. checks.sh passes, and the e2e for income-schedule, leadership-report, escalation, rfp-requirements and one more line passes. \u2014 verify: checks and e2e."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "contract-change"
+    ],
+    "rated_by": "coordinator (D-123, follow-up batch; the user said \"yeah lets run the followups too\", 20 Nov)",
+    "rationale": "Medium. Items 1\u20133 change what a person reads on merged screens (wording timing, notice text and focus). The rest are mock data, a tap-target size and a test fix. No write, authority, money or send path changes."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-52/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-52/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-FOLLOWUPS-1",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "db8edd91d2e462b02c8087a63207837d3d44477f",
+    "task_branch": "fe-followups-1-batch-a",
+    "head_sha": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-52",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-20T09:10:08Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-20T09:10:33Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T09:11:16Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-52/readiness.md",
+      "delivery/features/F-52/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}
