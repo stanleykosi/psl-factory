@@ -184,3 +184,28 @@ Not work: FE-M2, FE-M3 and FE-M4 are retired umbrella tasks (split into the feat
 | Leadership report setup (part 2) and a reports page | F-35 | Setup rules (reviewer, audience, skip-review); backend G-SCR52-5b |
 | Start work management-accounts fields (F-47C) | F-47 | Backend G-SCR04P-1/3 |
 | Alert WhatsApp/email templates | F-12 | PSL/engineering: D-ALERT-PROVIDERS |
+
+## Tenth session (19–20 Nov 2026): wave complete — read this first
+- **DONE since the ninth-session notes:**
+  - F-43 (#73), F-45 (#74), F-37 (#76), F-40 (#77), F-48 (#79), F-49 (#82), F-38 (#83), F-52 follow-up batch A (#84), F-51 (#85).
+  - Test-reliability PRs #75, #78, #80, #81.
+  - F-46 CLOSED as a duplicate of F-12. That used the new CLOSED state, factory commit 05e2cd9.
+- **Every buildable task is DONE.** BLOCKED: F-44 (D-PAYROLL-VISIBILITY plus backend) and F-50 (PSL "Mark complete" authority plus the backend completion endpoint). The full blocked list and what unblocks each item is in "Remaining work after this wave" above.
+- **Main sync PR #86** (dlv-00 → main, F-34 to F-52): open, mergeable, waiting on the user. NEVER merge it without the user.
+- **Cost policy D-123** is in force and in the software factory (commit 6798f28 on factory-running, local only; ask before pushing):
+  - Sonnet builders and reviews;
+  - Opus only for high-risk security and technical review;
+  - PMO and approver as one pass;
+  - one fidelity run per round;
+  - the builder checklist.
+- **Lessons:**
+  - Builders hand back early. Resume them with explicit "don't hand back until build.md".
+  - After a dlv-00 merge into a branch, move git.base_sha to the merged dlv-00 commit, or the gate flags the protected delivery/config.json.
+  - Union scoring penalises tall drawers or pages; the UI reviewer must judge capture limits versus real differences.
+  - In zsh, never use a `for x in "a b c"` loop with set --; use a function with explicit arguments.
+  - Never kill processes broadly. Kill only by port.
+- **Open follow-ups:**
+  - F-38: reconcile "arrived" with an upload; per-persona access in the mock.
+  - F-51: a wrong-case upload gives 422, not 404 (backend).
+  - Start work: the scroll-capture driver needs the fixed-viewport approach.
+  - F-48 stopgap: G-SCR05-9 (backend).
