@@ -3848,3 +3848,12 @@
 {"at":"2026-11-20T14:57:19Z","feature":"F-53","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"65f879aee737","written_at":"2026-11-20T14:57:19Z"}
 {"at":"2026-11-20T14:57:19Z","feature":"F-53","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"65f879aee737","written_at":"2026-11-20T14:57:19Z"}
 {"at":"2026-11-20T14:57:19Z","feature":"F-53","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"65f879aee737","written_at":"2026-11-20T14:57:19Z"}
+{"at":"2026-11-20T14:57:36Z","feature":"F-53","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/87","git.pr_number":87,"git.ci_status":"passed"}}
+{"at":"2026-11-20T14:57:37Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-20T14:57:37Z","feature":"F-53","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"65f879aee737","reasons":["117 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-20T14:57:43Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-20T14:57:44Z","feature":"F-53","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-20T14:57:44Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-20T14:57:44Z","feature":"F-53","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"c6706b9675059da4bdcc208481841aedb3526123"}}
+{"at":"2026-11-20T14:57:45Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-20T14:57:45Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"MERGED","to":"DONE"}
