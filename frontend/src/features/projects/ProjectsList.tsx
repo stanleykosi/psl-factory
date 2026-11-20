@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
+import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, ShowMore, Table, Tabs, Unknown, useIsPhone, type Column, type ShowMoreProps } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -17,7 +17,6 @@ import {
   buildProjectsQuery,
   countOf,
   isProjectList,
-  LIMITS,
   LIST_TABS,
   nextMilestoneText,
   parseProjectsView,
@@ -72,8 +71,8 @@ const columns = (closed: boolean): Column<ProjectRowView>[] => [
 ];
 
 /** SCR-22 desktop: Project, PM, Where it is, Next milestone, Needs a person, Stopped. */
-function ProjectTable({ items, closed }: { items: ProjectRowView[]; closed: boolean }) {
-  return <Table className="projects__table" caption="Projects" columns={columns(closed)} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." />;
+function ProjectTable({ items, closed, paging }: { items: ProjectRowView[]; closed: boolean; paging: ShowMoreProps }) {
+  return <Table className="projects__table" caption="Projects" columns={columns(closed)} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." paging={paging} />;
 }
 
 /** The phone card's red line: "2 need a person · 1 stopped"; nothing when both are 0 or not carried. */
@@ -126,7 +125,6 @@ export function ProjectsList() {
 
   const seq = useRef(0);
   const focusRow = useRef<number | null>(null);
-  const focusLimit = useRef(false);
   const viewRef = useRef(view);
   const rowsRef = useRef<HTMLDivElement>(null);
 
@@ -191,11 +189,6 @@ export function ProjectsList() {
       rowsRef.current?.querySelectorAll<HTMLElement>('[data-project-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-    // The footer is redrawn after a rows-per-page reload; the keyboard stays on the chosen option.
-    if (focusLimit.current && list.status !== 'loading') {
-      document.querySelector<HTMLElement>('.projects__rows [role="radio"][aria-checked="true"]')?.focus();
-      focusLimit.current = false;
-    }
   }, [list]);
 
   // Search: the box keeps what the person typed; the URL takes the settled search (SearchField's pause).
@@ -214,10 +207,6 @@ export function ProjectsList() {
     navigate({ q: undefined });
   };
 
-  const changeLimit = (value: string) => {
-    focusLimit.current = true;
-    navigate({ limit: Number(value) as (typeof LIMITS)[number] });
-  };
   const closeFilter = useCallback(() => setFilterOpen(false), []);
 
   if (signedOut) return <SignedOutState pathname="/projects" />;
@@ -252,17 +241,28 @@ export function ProjectsList() {
   } else if (list.items.length === 0) {
     body = <EmptyState title="No projects you can see yet.">You see projects your roles cover.</EmptyState>;
   } else {
+    const paging: ShowMoreProps = {
+      shown: list.items.length,
+      total: list.nextCursor ? undefined : list.items.length,
+      hasMore: Boolean(list.nextCursor),
+      busy: more === 'loading',
+      onMore: () => void showMore(),
+      size: view.limit,
+      onSize: (limit) => navigate({ limit }),
+    };
     body = (
       <>
-        <div ref={rowsRef}>{phone ? <ProjectCards items={list.items} /> : <ProjectTable items={list.items} closed={view.tab === 'closed'} />}</div>
+        <div ref={rowsRef}>
+          {phone ? (
+            <>
+              <ProjectCards items={list.items} />
+              <ShowMore solo {...paging} />
+            </>
+          ) : (
+            <ProjectTable items={list.items} closed={view.tab === 'closed'} paging={paging} />
+          )}
+        </div>
         <div className="projects__foot">
-          <ShowMore className="projects__showmore" shown={list.items.length} total={list.nextCursor ? undefined : list.items.length} hasMore={Boolean(list.nextCursor)} busy={more === 'loading'} onMore={() => void showMore()} />
-          <span className="projects__rows">
-            <span className="projects__rowslabel" aria-hidden="true">
-              ROWS PER PAGE
-            </span>
-            <Segmented label="Rows per page" phone={phone} options={LIMITS.map((n) => ({ value: String(n), label: String(n) }))} value={String(view.limit)} onChange={changeLimit} />
-          </span>
           {more === 'error' && (
             <Callout kind="problem" className="projects__morefail">
               We couldn&rsquo;t load more. Nothing was changed.{' '}

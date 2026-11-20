@@ -64,11 +64,9 @@
 .my-work__started .my-work__cardtitle { color: var(--ink); text-decoration: none; }
 .my-work__started .psl-tag { padding: 3px var(--space-2); font-size: var(--text-small-size); }
 
-/* footer: shown text, rows per page, Show more (D-PAGING; product acceptance) */
-.my-work__foot { margin-top: -2px; border: var(--rule-strong) solid var(--ink); border-top: none; display: flex; flex-direction: column; }
+/* a failed Show more, under the shared paging footer */
+.my-work__foot { display: flex; flex-direction: column; }
 .my-work__morefail { align-items: center; flex-wrap: wrap; }
-.my-work__rows { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; margin-right: var(--space-3); }
-.my-work__rowslabel { letter-spacing: .06em; }
 
 /* empty Needs me (SCR-01-*-empty): caught up, then where the person's started work is */
 .my-work__caughtwrap { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
@@ -107,11 +105,6 @@
   /* SCR-01-mobile: no records line or result count on phones; a failed refresh still shows */
   .my-work__updated:not([role="status"]), .my-work__toolbar .psl-resultcount { display: none; }
   .my-work__search { flex: 1 1 0; min-width: 0; max-width: none; }
-  .my-work__showmore { flex-wrap: wrap; gap: var(--space-3); }
-  .my-work__showmore > * { flex: 1 1 100%; }
-  .my-work__rows { margin: 0; justify-content: space-between; }
-  .my-work__more { min-height: var(--control-md); width: 100%; }
-  .my-work__foot { margin-top: var(--space-2); border-top: var(--rule-strong) solid var(--ink); }
   /* SCR-01-mobile-empty: Tola on top, centred text and stacked buttons */
   .my-work__nothing { flex-direction: column; align-items: center; gap: var(--space-10px); padding: var(--space-3) var(--space-14px) var(--space-4); }
   .my-work__mascot { height: 150px; align-self: center; }

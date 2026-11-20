@@ -187,18 +187,12 @@ export function resultCount(view: View, counts: Counts | null | undefined, loade
   return `${loaded}${more ? '+' : ''} OF ${total} ITEMS`;
 }
 
-/** Footer text: how many rows are showing. */
-export function shownText(view: View, counts: Counts | null | undefined, loaded: number, more: boolean): string {
-  if (!more) return `All ${loaded} showing`;
+/** The total the paging footer shows: all loaded when nothing more, the queue's count when it is known and unfiltered, else undefined. */
+export function pagingTotal(view: View, counts: Counts | null | undefined, loaded: number, more: boolean): number | undefined {
+  if (!more) return loaded;
   const total = counts?.[view.queue];
-  if (isNarrowed(view) || total === undefined) return `${loaded} showing`;
-  return `${loaded} of ${total} showing`;
-}
-
-export function showMoreLabel(view: View, counts: Counts | null | undefined, loaded: number): string {
-  const total = counts?.[view.queue];
-  if (isNarrowed(view) || total === undefined || total - loaded <= 0) return 'Show more';
-  return `Show ${Math.min(view.limit, total - loaded)} more`;
+  if (isNarrowed(view) || total === undefined || total - loaded <= 0) return undefined;
+  return total;
 }
 
 /** A refresh replaces page 1 and keeps the rows loaded after it, minus any id now on page 1. */

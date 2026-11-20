@@ -5,7 +5,7 @@
 import { Callout, EmptyState, formatDayTime, Panel, Segmented, ShowMore, Table, Tag, type Column } from '@/components';
 import { LoadingState } from '@/shell/FrameStates';
 
-import { ACTOR_TAGS, HISTORY_FILTERS, type HistoryKind, type HistoryLimit } from './labels';
+import { ACTOR_TAGS, HISTORY_FILTERS, type HistoryKind } from './labels';
 import type { BoardHistoryEntry, WorkItemPresentation } from './presentation';
 import { useWorkHistory } from './useWorkHistory';
 import { WorkErrorCard } from './WorkItemStates';
@@ -129,7 +129,7 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
     busy: ready.more === 'loading',
     onMore: () => void showMore(),
     size: limit,
-    onSize: (n: HistoryLimit) => setLimit(n),
+    onSize: setLimit,
   };
   const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatDayTime(ready.asOf)}</p>;
 

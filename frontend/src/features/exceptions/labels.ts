@@ -3,7 +3,7 @@
 // the README's "Action needed" (a person must act).
 import { formatClock, formatDate, formatDayMonth, STATE_TAGS, type TagTone } from '@/components';
 
-import type { ExceptionKind, ExceptionsLimit } from './types';
+import type { ExceptionKind } from './types';
 
 /** Tag per `what` (and the Filter panel's words); a new contract value fails the typecheck here. */
 export const KIND_TAGS: Record<ExceptionKind, { words: string; tone: TagTone }> = {
@@ -16,7 +16,6 @@ export const KIND_TAGS: Record<ExceptionKind, { words: string; tone: TagTone }> 
 
 export const KINDS = Object.keys(KIND_TAGS) as ExceptionKind[];
 
-export const EXCEPTIONS_LIMITS: readonly ExceptionsLimit[] = [10, 20, 50];
 
 /** "since 11:02" on the same Lagos day as `asOf`, otherwise "since 10 Nov", as the SCR-10 boards write it. */
 export function sinceText(since: string, asOf: string): string {

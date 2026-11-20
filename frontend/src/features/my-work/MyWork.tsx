@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, Segmented, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
+import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
 import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -17,15 +17,13 @@ import {
   buildWorkQuery,
   filterCount as countFilters,
   isNarrowed,
-  LIMITS,
   lineOptions,
   mergeRefresh,
   parseView,
   QUEUES,
   recordsText,
   resultCount,
-  shownText,
-  showMoreLabel,
+  pagingTotal,
   stateTag,
   formatTime,
   viewSearch,
@@ -357,30 +355,27 @@ export function MyWork() {
   } else if (list.items.length === 0) {
     body = <EmptyState title={current.empty}>New work will appear here.</EmptyState>;
   } else {
+    const hasNext = Boolean(list.nextCursor);
+    const paging = {
+      shown: list.items.length,
+      total: pagingTotal(view, counts, list.items.length, hasNext),
+      hasMore: hasNext,
+      busy: more === 'loading',
+      onMore: () => void showMore(),
+      size: view.limit,
+      onSize: (limit: Limit) => navigate({ limit }),
+    };
     body = (
       <>
         {!phone ? (
-          <WorkTable items={list.items} hrefFor={rowHref} />
-        ) : view.queue === 'waiting_on_others' ? (
-          <StartedCards items={list.items} />
+          <WorkTable items={list.items} hrefFor={rowHref} paging={paging} />
         ) : (
-          <WorkCards items={list.items} hrefFor={rowHref} />
+          <>
+            {view.queue === 'waiting_on_others' ? <StartedCards items={list.items} /> : <WorkCards items={list.items} hrefFor={rowHref} />}
+            <ShowMore solo {...paging} />
+          </>
         )}
         <div className="my-work__foot">
-          <div className="psl-showmore my-work__showmore">
-            <span>{shownText(view, counts, list.items.length, Boolean(list.nextCursor))}</span>
-            <span className="my-work__rows">
-              <span className="my-work__rowslabel" aria-hidden="true">
-                ROWS PER PAGE
-              </span>
-              <Segmented label="Rows per page" phone={phone} value={String(view.limit) as `${Limit}`} options={LIMITS.map((n) => ({ value: String(n) as `${Limit}`, label: String(n) }))} onChange={(n) => navigate({ limit: Number(n) as Limit })} />
-            </span>
-            {list.nextCursor && (
-              <Button kind="secondary" size="sm" className="my-work__more" busy={more === 'loading'} busyLabel="Loading…" onClick={() => void showMore()}>
-                {showMoreLabel(view, counts, list.items.length)}
-              </Button>
-            )}
-          </div>
           {more === 'error' && (
             <Callout kind="problem" className="my-work__morefail">
               We couldn&rsquo;t load more. Your work is safe; nothing was changed.{' '}

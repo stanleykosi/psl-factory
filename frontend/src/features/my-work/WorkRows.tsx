@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { AgentAvatar as Avatar, MiniStationBar, Table, Tag, type Column, type StationStatus } from '@/components';
+import { AgentAvatar as Avatar, MiniStationBar, type ShowMoreProps, Table, Tag, type Column, type StationStatus } from '@/components';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
@@ -80,8 +80,8 @@ export type HrefFor = (item: WorkItem) => string;
 const toItem: HrefFor = (item) => `/work/${item.id}`;
 
 /** Desktop (SCR-01-desktop): Work, Where on its line, State, Age. */
-export function WorkTable({ items, hrefFor = toItem }: { items: WorkItem[]; hrefFor?: HrefFor }) {
-  return <Table caption="Your work" columns={COLUMNS(hrefFor)} rows={items} rowKey={(item) => item.id} empty="Nothing to show." className="my-work__tablewrap" />;
+export function WorkTable({ items, hrefFor = toItem, paging }: { items: WorkItem[]; hrefFor?: HrefFor; paging: ShowMoreProps }) {
+  return <Table caption="Your work" columns={COLUMNS(hrefFor)} rows={items} rowKey={(item) => item.id} empty="Nothing to show." className="my-work__tablewrap" paging={paging} />;
 }
 
 /** Phone (SCR-01-mobile): each card is one link to the work item. */
