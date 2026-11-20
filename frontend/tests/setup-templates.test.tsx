@@ -104,7 +104,7 @@ const names = () =>
     .map((tr) => tr.querySelector('td strong')?.textContent);
 const UPLOAD = "Upload PSL's version";
 const panel = () => within(desktop().getByRole('region', { name: /^Upload a version of/ }));
-const announced = () => document.querySelector('[aria-live="polite"]')?.textContent;
+const announced = () => document.querySelector('[aria-live="polite"]:not(.psl-showmore__count)')?.textContent;
 const withRows = (page: TemplatesPage, change: (rows: TemplateRow[]) => TemplateRow[], extra: Partial<TemplatesPage> = {}): TemplatesPage => ({ ...page, ...extra, items: change(structuredClone(page.items)) });
 const pdf = (name = 'invoice-v2.pdf', content: BlobPart = new Uint8Array([0x25, 0x50, 0x44, 0x46])) => new File([content], name, { type: 'application/pdf' });
 
