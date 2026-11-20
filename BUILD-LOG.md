@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. Railway 236 passed all 20 grouped PostgreSQL tests and two original receipt probes. The matching runtime is staged for preview promotion. Staff, explicit minutes review, exact-time bid reminders and schedule history privacy are grouped in 237.
+
 20 November 2026. Reconciled the earlier invoice reminder writes with current 390/375 browser evidence for the same invoice, amount, attachment, synthetic receipt and cancellation. Scoped acceptance reached 92 of 262. Operational messaging remains deferred.
 
 20 November 2026. Parallel browser evidence added the outward minutes exact return and fresh review under synthetic action matrix 1917. The scoped count is 91. The draft still needs the design's separate Send for review. Business Unit work 183 rebuilt its returned event calculation and independently approved version 2. Railway 236 began three grouped PostgreSQL suites for Commercial and Finance, with new migrations applied on the isolated test databases.

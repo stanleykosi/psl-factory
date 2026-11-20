@@ -216,6 +216,7 @@ def human_action(actor,work_id,expected,case_expected,action,values):
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,inputs,reason):
     from .factory import access
+    from .factory_progress import wake_waiting
     from apps.agents.factory_coordinator import pending,has_receipt
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION);access(actor,w.case,'factory.manage',DEFINITION)
     c=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=c
@@ -235,7 +236,9 @@ def correct(actor,work_id,expected,case_expected,inputs,reason):
             except (PermissionDenied,ValidationError):rework=True
         if not rework:raise ValidationError('Select replaced sources or a genuinely held, returned or stale result')
     old=w.source_head_id;w.source_head=capture(actor,c,inputs,'factory.bu_source');w.status='ready';w.finding='';w.revision+=1;w.save()
-    event(actor,c,'factory.bu_corrected',work=w.pk,previous=old,current=w.source_head_id,reason=reason);return w
+    event(actor,c,'factory.bu_corrected',work=w.pk,previous=old,current=w.source_head_id,reason=reason)
+    wake_waiting(w.pk)
+    return w
 
 @transaction.atomic
 def cancel(actor,work_id,expected):

@@ -175,7 +175,10 @@ def correct(actor,work_id,expected,case_expected,kind,parent_id,evidence_id,payl
         except (ValidationError,PermissionDenied):pass
         else:raise ValidationError('Current target awaits human review or has already been reviewed; do not rebuild that wait')
     before=w.source_head_id;w.source_head=capture(actor,c,new,'factory.schedules_source');w.status='ready';w.finding='';w.revision+=1;w.save()
-    event(actor,c,'factory.schedules_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
+    event(actor,c,'factory.schedules_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason)
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return w
 
 
 def duplicate_rows(schedule):
@@ -229,10 +232,14 @@ def resolve_duplicates(actor, work_id, expected, case_expected, target, choices,
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,target,verdict,evidence,note):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);source(w,actor);s=schedule(w)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or not s or s.pk!=target:raise ValidationError('Review exact active native target')
-    settled(w);return native.review(actor,w.case_id,target,verdict,evidence,note,case_expected)
+    settled(w)
+    decision = native.review(actor,w.case_id,target,verdict,evidence,note,case_expected)
+    wake_waiting(w.pk)
+    return decision
 
 @transaction.atomic
 def export(actor,work_id,expected,case_expected,target,kind,evidence):

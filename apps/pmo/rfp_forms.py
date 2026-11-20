@@ -38,7 +38,12 @@ def forms_for(case,data=None):
         if action=='dispose':f.fields['lessons'].required=False
         if action=='outcome':
             f.fields['evidence'].required=False
-            f.fields['followup_on']=forms.DateField(required=False, label='Next check date')
+            f.fields['customer_expected_on'] = forms.DateField(
+                required=False, label='Expected decision date stated by the customer',
+                help_text='For a pending outcome, enter the date stated in the selected customer evidence, if given.',
+                widget=forms.DateInput(attrs={'type': 'date'}),
+            )
+            f.fields['followup_on']=forms.DateField(required=False, label='Internal next check date')
             f.fields['award_amount']=forms.CharField(required=False, max_length=64, label='Awarded amount')
             f.fields['award_currency']=forms.CharField(required=False, max_length=3, label='Award currency')
         result.append({'action':action,'label':label,'form':f})

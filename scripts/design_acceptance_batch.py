@@ -18,6 +18,7 @@ SUITES = {
         'commercial_client_response', 'commercial_rework', 'commercial_changes',
         'commercial_signatures', 'factory_commercial', 'costing_design',
         'factory_rfp_console_flow', 'factory_rfp_outcome_console', 'factory_rfp_pricing', 'rfp_estimate_requests',
+        'rfp_pending_dates',
     ),
     'project_delivery': (
         'factory_change', 'factory_change_branches', 'standard_changes', 'factory_emergency',

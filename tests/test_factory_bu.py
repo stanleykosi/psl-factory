@@ -159,7 +159,28 @@ class FactoryBUTests(TestCase):
         args=(f['preparer'],pk,self.work.revision,rev(f['case']),self.inputs,self.profile.pk,'fresh-bu','Fresh instruction')
         bu.restart(*args);self.work.refresh_from_db();self.assertEqual(self.work.pk,pk);self.assertEqual(self.work.budget_used,spent);self.assertNotEqual(self.work.source_head_id,head);self.assertTrue(self.work.activities.exists());bu.restart(*args)
     def test_returned_result_can_rebuild_reviewed_successor_preserving_old_result(self):
-        self.start();self.advance();old=bu.result(self.work);review(self.f,old,'return');spent=self.work.budget_used;bu.correct(self.f['preparer'],self.work.pk,self.work.revision,rev(self.f['case']),self.inputs,'Source-owned rework');self.work.refresh_from_db();self.assertEqual(self.work.budget_used,spent);self.advance();self.assertNotEqual(bu.result(self.work).pk,old.pk);self.assertTrue(BUWork.objects.filter(pk=old.pk).exists())
+        f = self.f
+        self.start()
+        self.advance()
+        old = bu.result(self.work)
+        returned = review(f, old, 'return')
+        spent = self.work.budget_used
+        original_due = timezone.now() + timedelta(minutes=2)
+        progress = FactoryProgress.objects.create(work=self.work, requested_by=f['preparer'], status='waiting',
+                                                  available_at=original_due, observation='awaiting-result')
+        bu.correct(f['preparer'], self.work.pk, self.work.revision, rev(f['case']), self.inputs, 'Source-owned rework')
+        self.work.refresh_from_db()
+        progress.refresh_from_db()
+        self.assertEqual(self.work.budget_used, spent)
+        self.assertEqual(progress.requested_by_id, f['preparer'].pk)
+        self.assertEqual(progress.status, 'waiting')
+        self.assertLess(progress.available_at, original_due)
+        self.assertEqual(progress.observation, '')
+        self.advance()
+        replacement = bu.result(self.work)
+        self.assertNotEqual(replacement.pk, old.pk)
+        self.assertFalse(replacement.reviews.exists())
+        self.assertTrue(old.reviews.filter(pk=returned.pk, verdict='return').exists())
     def test_primary_intake_form_is_typed_and_rejects_extra_fields(self):
         f=self.f;self.client.force_login(f['preparer']);url=reverse('factory_create')+'?definition='+bu.DEFINITION+'&case='+str(f['case'].pk)
         response=self.client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Exceptions to exclude');self.assertNotContains(response,'JSON')

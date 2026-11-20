@@ -187,7 +187,7 @@ def _reviewed(r,response_id):
 
 @transaction.atomic
 def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None,*,
-            followup_on=None,award_amount=None,award_currency=None):
+            followup_on=None,award_amount=None,award_currency=None,customer_expected_on=None):
     from .models import RFPSubmission
     case=lock_case(actor,case_id,'rfp.outcome',expected);r=root(case);ensure_open(r);note(note_text);past(observed_at)
     require(actor,case,'case.read');require(actor,case,'rfp.read')
@@ -205,6 +205,8 @@ def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note
     if followup_on is not None and (result not in ['pending','unknown'] or type(followup_on) is not date or
                                     followup_on < timezone.localdate(observed_at)):
         raise ValidationError('Choose a follow-up date on or after the observation for a pending or unconfirmed bid')
+    if customer_expected_on is not None and (result != 'pending' or type(customer_expected_on) is not date):
+        raise ValidationError('Record a customer-stated decision date only for an evidenced pending outcome.')
     evidence = None
     if evidence_id:
         evidence = subject(case,evidence_id,'rfp_outcome')
@@ -220,7 +222,7 @@ def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note
     if selection:auth['_selection_context']=selection
     x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,
                                evidence=evidence,note=note_text,actor=actor,followup_on=followup_on,
-                               award_amount=amount,award_currency=currency)
+                               award_amount=amount,award_currency=currency,customer_expected_on=customer_expected_on)
     event(actor,case,'rfp.outcome_recorded',outcome=x.pk,result=result);bump(case);return x
 
 @transaction.atomic

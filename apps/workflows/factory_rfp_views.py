@@ -344,7 +344,8 @@ def presentation(actor,work,submission_id=None):
 
 @transaction.atomic
 def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,evidence,note,observed_at=None,
-                  selection_context=None,*,followup_on=None,award_amount=None,award_currency=None):
+                  selection_context=None,*,followup_on=None,award_amount=None,award_currency=None,
+                  customer_expected_on=None):
     from . import factory_rfp as service
     work=FactoryWork.objects.select_for_update().select_related('case').get(pk=work_id,definition=service.DEFINITION)
     runtime.access(actor,work.case,envelope=service.DEFINITION)
@@ -368,7 +369,7 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
         if not submission:raise ValidationError('Choose an actual submission from this RFP workspace')
         rfp.outcome(actor,case.pk,submission.pk,verdict,observed_at,role,evidence,note,case.revision,
                     selection_context=selection_context,followup_on=followup_on,
-                    award_amount=award_amount,award_currency=award_currency)
+                    award_amount=award_amount,award_currency=award_currency,customer_expected_on=customer_expected_on)
     else:raise ValidationError('Choose a current human decision')
     work.status='ready';work.finding='';work.revision+=1;work.save(update_fields=['status','finding','revision','updated_at'])
     from .factory_progress import wake_waiting
@@ -454,16 +455,18 @@ def detail(request,work,focus=None):
                     [entry for entry in records if entry.get('kind')!='rfp_followup' or entry['key']!=key]+[value],
                     int(request.POST.get('evidence','0')),timezone.now())
             elif action in ['response','commercial','document','outcome']:
-                observed=None;selection_context=None;followup_on=None
+                observed=None;selection_context=None;followup_on=None;customer_expected_on=None
                 if action=='outcome':
                     observed=forms.DateTimeField().clean(request.POST.get('observed_at'))
                     followup_on=forms.DateField(required=False).clean(request.POST.get('followup_on'))
+                    customer_expected_on=forms.DateField(required=False).clean(request.POST.get('customer_expected_on'))
                     if request.POST.get('selection_acknowledged')=='on':
                         selection_context={'packet':request.POST.get('selection_packet',''),'acknowledged':True}
                 human_command(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),action,int(request.POST.get('target','0')),
                     request.POST.get('role',''),request.POST.get('verdict',''),int(request.POST.get('evidence') or '0'),
                     request.POST.get('note',''),observed,selection_context,followup_on=followup_on,
-                    award_amount=request.POST.get('award_amount') or None,award_currency=request.POST.get('award_currency') or None)
+                    award_amount=request.POST.get('award_amount') or None,award_currency=request.POST.get('award_currency') or None,
+                    customer_expected_on=customer_expected_on)
             elif action=='correct':
                 source=SourceForm(work.case,request.POST);mappings=Mappings(request.POST,prefix='requirements',form_kwargs={'case':work.case})
                 if source.is_valid() and mappings.is_valid():

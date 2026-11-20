@@ -75,6 +75,83 @@ class FactorySchedulesTests(TestCase):
     def test_partial_inventory_is_only_selected_dependency_output(self):
         f=self.f;self.start(inventory=True);self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertFalse(s.result['complete_inventory']);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=flow.verify(self.work,f['actor']);self.assertEqual(proof['verification_scope'],'selected_supplied_schedule_dependency_inventory');self.assertFalse(proof['native_workbook_verified']);self.assertFalse(proof['complete_inventory'])
+
+    def test_schedule_decisions_and_corrected_source_wake_the_existing_background_request(self):
+        from apps.workflows import factory_progress
+
+        f = self.f
+        self.start()
+        job = factory_progress.set_progress(f['actor'], self.work.pk, self.work.revision, True)
+
+        def drain_to(status):
+            for _ in range(15):
+                self.assertEqual(factory_progress.run_once(), job.pk)
+                job.refresh_from_db()
+                if job.status != 'queued':
+                    break
+            self.assertEqual(job.status, status, self.work.finding)
+            self.work.refresh_from_db()
+
+        def assert_woken():
+            job.refresh_from_db()
+            self.assertEqual(job.requested_by_id, f['actor'].pk)
+            self.assertLessEqual(job.available_at, timezone.now())
+            self.assertEqual(job.observation, '')
+
+        decision = reverse('factory_invoice_decision', args=[self.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[self.work.pk])
+
+        def submit_review(schedule, verdict):
+            return self.client.post(decision, {
+                'action': 'review', 'revision': self.work.revision, 'case_revision': rev(f['case']),
+                'target': schedule.pk, 'verdict': verdict, 'evidence': f['e']['finance_review'].pk,
+                'note': 'Synthetic exact schedule decision for the current evidence.',
+            })
+
+        drain_to('waiting')
+        original = flow.schedule(self.work)
+        self.assertIsNotNone(original)
+        self.assertGreater(job.available_at, timezone.now())
+        self.assertTrue(job.observation)
+        before = (job.available_at, job.observation, job.updated_at)
+        self.client.force_login(f['actor'])
+        self.assertEqual(submit_review(original, 'approve').status_code, 403)
+        job.refresh_from_db()
+        self.assertEqual((job.available_at, job.observation, job.updated_at), before)
+        self.assertFalse(original.reviews.exists())
+
+        self.client.force_login(f['reviewer'])
+        self.assertRedirects(submit_review(original, 'return'), decision, fetch_redirect_response=False)
+        assert_woken()
+        drain_to('waiting')
+        self.assertEqual(original.reviews.get().verdict, 'return')
+
+        corrected = dict(self.payload, rows=[row(f, 'corrected', '-1000')])
+        replacement = evidence(f, 'income_detail', json.dumps(corrected))
+        self.client.force_login(f['actor'])
+        response = self.client.post(recovery, {
+            'action': 'correct', 'revision': self.work.revision, 'case_revision': rev(f['case']),
+            'kind': 'income', 'parent_id': f['parent'].pk, 'evidence_id': replacement.pk, 'payload': '',
+            'reason': 'The replacement file contains the corrected synthetic breakdown.',
+        })
+        self.assertRedirects(response, recovery, fetch_redirect_response=False)
+        assert_woken()
+        drain_to('waiting')
+        successor = flow.schedule(self.work)
+        self.assertIsNotNone(successor)
+        self.assertNotEqual(successor.pk, original.pk)
+        self.assertEqual(successor.evidence_id, replacement.pk)
+
+        self.client.force_login(f['reviewer'])
+        self.assertRedirects(submit_review(successor, 'approve'), decision, fetch_redirect_response=False)
+        assert_woken()
+        with self.assertRaisesMessage(DatabaseError, 'Observed exact current human-reviewed selected schedule required'):
+            with transaction.atomic():
+                FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+        drain_to('finished')
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        self.assertEqual(flow.verify(self.work, f['actor'])['schedule_review'], successor.reviews.get().pk)
+        self.assertEqual(original.reviews.get().verdict, 'return')
     def test_af13_accepted_inventory_and_source_supersession(self):
         from apps.documents import validation as v
         f=self.f;self.start(inventory=True,accepted=True);self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
