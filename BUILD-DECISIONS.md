@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Bid adjustments modify only named currency inputs in the exact reviewed calculator under a configured cumulative limit. The assigned project manager records the amount and reason. The native calculator produces a new source and the bid needs fresh human decisions. The agreement with the client retains its separate approved terms. The calculator mapping and permitted limits are deferred owner settings.
+
 20 November 2026. A short-payment decision records how Finance follows up an exact issued balance and a currently allocated receipt. The native invoice, cash, debt and release services retain authority over their own records. The project-scoped rule selects a current Finance principal and allowed decisions. A missing rule keeps the payment facts readable. Real approvers and short-payment treatments await owner decisions. The configured acceptance case is synthetic.
 
 20 November 2026. The final bid costing decision reads the exact response, current approved calculation, pinned team inputs and required earlier decisions. Only amounts supported by the calculation appear. The commercial decision leaves the outward response for a separate review. The tested values and prior approvals belong to an isolated synthetic bid.

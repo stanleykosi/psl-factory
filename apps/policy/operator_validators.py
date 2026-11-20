@@ -128,8 +128,12 @@ from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEM
 SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
 from .short_payment_validators import COMPONENT as SHORT_PAYMENT, SCHEMA as SHORT_PAYMENT_SCHEMA, VALUE as SHORT_PAYMENT_VALUE, validate_reference as validate_short_payment
 SCHEMAS[SHORT_PAYMENT] = (SHORT_PAYMENT_SCHEMA, SHORT_PAYMENT_VALUE)
+from .bid_adjustment_validators import COMPONENT as BID_ADJUSTMENT, SCHEMA as BID_ADJUSTMENT_SCHEMA, VALUE as BID_ADJUSTMENT_VALUE, validate_reference as validate_bid_adjustment
+SCHEMAS[BID_ADJUSTMENT] = (BID_ADJUSTMENT_SCHEMA, BID_ADJUSTMENT_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == BID_ADJUSTMENT:
+        return validate_bid_adjustment(target, case)
     if component == SHORT_PAYMENT:
         return validate_short_payment(target, case, runtime=runtime)
     if component == ISSUE_MESSAGE:

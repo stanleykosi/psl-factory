@@ -39,6 +39,7 @@ PREPARATION = {
     'escalation': ('pmo-escalation/v1', 'SAMPLE escalation walkthrough'),
     'invoice_release': ('pmo-finance/v1', 'SAMPLE invoice release walkthrough'),
     'bid_final_costing': ('rfp-response/v1', 'SAMPLE bid final costing review'),
+    'bid_cost_adjustment': ('rfp-response/v1', 'SAMPLE bid costing adjustment'),
     'leadership': ('pmo-leadership-report/v1', 'SAMPLE leadership report walkthrough'),
     'tuesday': ('pmo-leadership-report/v1', 'SAMPLE Tuesday report walkthrough'),
     'accounts': ('finance-accounts/v1', 'SAMPLE accounts close walkthrough'),
@@ -70,6 +71,13 @@ PROGRESS_PREPARATION = {
     'schedules_live': ('schedules', 'SAMPLE income source investigation progress'),
     'forecast_live': ('forecast', 'SAMPLE cash forecast investigation progress'),
     'archive_live': ('archive', 'SAMPLE active archive file receipts'),
+}
+OBSERVABLE_PREPARATION = {
+    'accounts_observable': ('accounts', 'SAMPLE observable accounting progress'),
+    'assets_observable': ('assets', 'SAMPLE observable asset investigation'),
+    'schedules_observable': ('schedules', 'SAMPLE observable income investigation'),
+    'forecast_observable': ('forecast', 'SAMPLE observable cash forecast investigation'),
+    'archive_observable': ('archive', 'SAMPLE observable archive copy'),
 }
 ORIGINAL_WORK_KEYS = {
     'standard': 'SAMPLE-BATCH-STANDARD',
@@ -224,6 +232,14 @@ def prepare_final_costing(actor, case):
     from tests.factory_rfp_helpers import final_costing_wait
 
     work, _, _ = final_costing_wait(context=(actor, case))
+    return work
+
+
+def prepare_bid_cost_adjustment(actor, case):
+    from tests.factory_rfp_helpers import configure_sample_adjustment, final_costing_wait
+
+    work, _, run = final_costing_wait('SAMPLE-BID-ADJUSTMENT', context=(actor, case), adjustable=True)
+    configure_sample_adjustment(actor, case, run)
     return work
 
 
@@ -413,6 +429,9 @@ def prepare_project(actor, key):
     if key in PROGRESS_PREPARATION:
         template_key, title = PROGRESS_PREPARATION[key]
         definition = PREPARATION[template_key][0]
+    elif key in OBSERVABLE_PREPARATION:
+        template_key, title = OBSERVABLE_PREPARATION[key]
+        definition = PREPARATION[template_key][0]
     else:
         definition, title = PREPARATION[key]
     case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
@@ -426,7 +445,7 @@ def prepare_project(actor, key):
                    'emergency_authorized': partial(prepare_emergency, verified_sources=True),
                    'emergency_refused': partial(prepare_emergency, refusal=True), 'escalation': prepare_escalation,
                    'invoice_release': prepare_invoice_release,
-                   'bid_final_costing': prepare_final_costing,
+                   'bid_final_costing': prepare_final_costing, 'bid_cost_adjustment': prepare_bid_cost_adjustment,
                    'leadership': prepare_leadership, 'tuesday': prepare_leadership,
                    'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts,
                    'accounts_reviewer_needed': partial(prepare_accounts, independent_allocation=True),
@@ -535,6 +554,7 @@ def run():
 
     sessions = {key: lambda key=key: prepare_project(actor, key) for key in PREPARATION}
     sessions.update({key: lambda key=key: prepare_project(actor, key) for key in PROGRESS_PREPARATION})
+    sessions.update({key: lambda key=key: prepare_project(actor, key) for key in OBSERVABLE_PREPARATION})
     sessions.update({key: lambda key=key: prepare_invoice_decision_variant(actor, key)
                      for key in INVOICE_DECISION_PREPARATION})
     sessions.update({key: lambda key=key: prepare_independent_finance_review(actor, key)

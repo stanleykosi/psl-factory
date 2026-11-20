@@ -15,7 +15,14 @@
     <p>{{ pricing.costing_note }}</p>
     {% if pricing.can_open_calculator %}<p><a href="{% url 'costing' case.pk %}">Open the costing calculator</a></p>{% endif %}
   </section>
+  {% if adjustments %}<section class="card"><h2>Adjustment history</h2>
+    {% for entry in adjustments %}<article><h3>{{ entry.data.target }} · {{ entry.data.currency }} {{ entry.data.amount }}</h3><p>{{ entry.data.reason|linebreaksbr }}</p><p>{{ entry.actor.get_full_name|default:entry.actor.username }} · {{ entry.created_at|date:'d M Y, H:i T' }}</p></article>{% endfor %}
+  </section>{% endif %}
 </div><aside class="factory-action-panel">
+  {% if adjustment_form %}<details class="card" {% if adjustment_form.is_bound %}open{% endif %}><summary>Add an adjustment</summary>
+    <p>Amounts are in {{ adjustment_currency }}. This creates a new calculation for the bid and starts its decisions again. The client quote has a separate review.</p>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="adjust">{{ adjustment_form.as_p }}<button>Apply adjustment</button></form>
+  </details>{% elif adjustment_note %}<section class="card"><h2>Cost adjustments</h2><p>{{ adjustment_note }}</p>{% if can_configure %}<p><a href="{% url 'operations' case.pk %}">Draft the adjustment rules</a></p>{% endif %}</section>{% endif %}
   <section class="card"><h2>Approval order</h2>
     {% if pricing.revision %}<p>Proposal version {{ pricing.revision }}{% if not pricing.current %} · recorded history{% endif %}</p>{% endif %}
     <ol>{% for label, status, date in pricing.approvals %}<li><strong>{{ label }}</strong><p>{{ status }}{% if date %} · <time>{{ date|date:"j M Y H:i T" }}</time>{% endif %}</p></li>{% endfor %}</ol>

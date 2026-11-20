@@ -78,3 +78,50 @@ class FactoryFinalCostingDecisionTests(TestCase):
         self.assertTrue(CommercialDecision.objects.filter(revision=response.commercial, role='CEO', verdict='approve').exists())
         self.assertNotContains(self.client.get(url), 'Final costing decision')
         self.assertFalse(RFPSubmission.objects.filter(response=response).exists())
+
+
+class FactoryBidAdjustmentTests(TestCase):
+    def test_adjustment_recalculates_native_figures_and_starts_new_decisions(self):
+        from apps.pmo.costing_models import CostingBinding, CostingRun
+        from apps.pmo.models import RFPSubmission
+        from apps.workflows import factory, factory_rfp
+
+        work, original, base_run = factory_rfp_helpers.final_costing_wait(adjustable=True)
+        actor, case = work.actor, work.case
+        self.client.force_login(actor)
+        url = reverse('factory_rfp_pricing', args=[work.pk])
+        self.assertNotContains(self.client.get(url), 'Apply adjustment')
+        authority = factory_rfp_helpers.configure_sample_adjustment(actor, case, base_run)
+        posted = {'action': 'adjust', 'target': 'adjustment', 'amount': '5.25',
+                  'reason': 'Apply the supplied synthetic change.', 'revision': work.revision, 'case_revision': rev(case)}
+        count = CostingRun.objects.count()
+        self.assertContains(self.client.post(url, {**posted, 'amount': '7.01'}), 'exceed the configured limit')
+        self.assertEqual(CostingRun.objects.count(), count)
+        self.assertContains(self.client.get(url), 'Add an adjustment')
+        page = self.client.post(url, posted, follow=True)
+        self.assertContains(page, '25.25')
+        self.assertContains(page, 'The updated bid requires fresh decisions')
+        self.assertContains(page, 'Adjustment history')
+        self.assertEqual(CostingRun.objects.count(), count + 1)
+        self.assertContains(self.client.post(url, posted), 'Stale revision')
+        work.refresh_from_db()
+        selected = factory_rfp.inputs(work)
+        replacement = CostingBinding.objects.get(costing_id=selected['sources']['costing']).run
+        self.assertEqual(replacement.snapshot['sources'], base_run.snapshot['sources'])
+        self.assertEqual(replacement.result['values'], [{'key': 'cost', 'unit': 'NGN', 'value': '25.25'}])
+        audit = case.audit.get(action='factory.rfp_costing_adjusted')
+        self.assertIn(authority.pk, audit.data['authority'].values())
+        self.assertEqual(audit.data['previous_run'], base_run.pk)
+        self.assertEqual(audit.data['current_run'], replacement.pk)
+        next_post = {**posted, 'revision': work.revision, 'case_revision': rev(case), 'amount': '2.00'}
+        self.assertContains(self.client.post(url, next_post), 'exceed the configured limit')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        current = factory_rfp.response_for(work)
+        self.assertIsNotNone(current, work.finding)
+        self.assertNotEqual(current.pk, original.pk)
+        self.assertEqual(current.commercial.previous_id, original.commercial_id)
+        self.assertEqual(original.commercial.decisions.count(), 2)
+        self.assertFalse(current.commercial.decisions.exists())
+        self.assertFalse(current.reviews.exists())
+        self.assertFalse(RFPSubmission.objects.filter(response__rfp=original.rfp).exists())

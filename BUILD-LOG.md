@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. The 218 browser walkthrough rejected the above-limit adjustment, applied the permitted amount and produced a separate proposal requiring fresh reviews. Grouped the transient asset, income, forecast, accounting and archive steps into the next acceptance-only worker checks. No owner policy changed.
+
+20 November 2026. Promoted the live-work samples after the four-case 217 PostgreSQL gate. The browser observed a real accounting investigation and the resulting Finance review. Implemented the native bid adjustment and tested its rework, calculation, limit and fresh approval boundaries. Submitted 218 for browser acceptance.
+
 20 November 2026. Verified 216 short-payment policy hold and human decision in the in-app browser with the same original balance and no reminder. Promoted the PostgreSQL-tested migration to the Railway preview. Grouped the active accounting, archive, asset, income and forecast checks in 217 and submitted the test gate with two browser findings corrected for review.
 
 20 November 2026. The bid worker prepared its separate exact outward review. The 215 receipt check passed with an explicit send guard, one original recipient receipt and no second publication. Submitted the matching preview with independent Finance sample starts. Built and staged the invoice-level short-payment decision, with exact issued invoice, allocated receipt, a scoped typed reviewer rule and immutable history. Local checks passed and Railway test migration applied. HOD rules remain deferred.

@@ -1,10 +1,13 @@
 """Read the bid's exact costing sources and native approval status."""
 
+from django import forms
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.shortcuts import get_object_or_404, render
-from django.views.decorators.http import require_safe
+from django.http import HttpResponseNotAllowed
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
 from apps.core.evidence_access import public_evidence
 from apps.core.models import Evidence
@@ -12,10 +15,18 @@ from apps.core.read_observation import read_observation
 from apps.identity.services import require
 from apps.pmo import commercial, costing, rfp
 from apps.pmo.costing_models import CostingBinding
-from . import factory, factory_rfp
+from . import factory, factory_rfp, factory_rfp_adjustments
 
 
 APPROVERS = [('PM', 'Project manager'), ('Head of PMO', 'Head of project management'), ('CEO', 'Chief executive')]
+
+
+class AdjustmentForm(forms.Form):
+    revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    case_revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    target = forms.ChoiceField(label='Apply to')
+    amount = forms.DecimalField(label='Amount to add or subtract', max_digits=32, decimal_places=8)
+    reason = forms.CharField(max_length=2000, widget=forms.Textarea(attrs={'rows': 3}))
 
 
 @read_observation
@@ -122,11 +133,43 @@ def inspect(actor, work):
 
 
 @login_required
-@require_safe
+@require_http_methods(['GET', 'HEAD', 'POST'])
 def detail(request, work_id):
     from .factory_views import visible
     work = get_object_or_404(visible(request.user, work_id=work_id), pk=work_id, definition=factory_rfp.DEFINITION)
+    if request.method == 'POST' and request.POST.get('action') != 'adjust':
+        return HttpResponseNotAllowed(['GET', 'HEAD'])
     report = inspect(request.user, work)
-    result = render(request, 'factory/rfp_pricing.html', {'case': work.case, 'work': work, 'pricing': report})
+    form, adjustment_note, adjustment_currency = None, '', ''
+    actor = request.user
+    try:
+        run, targets, _, _ = factory_rfp_adjustments.contract(actor, work)
+    except PermissionDenied:
+        if request.method == 'POST':
+            raise
+    except ValidationError:
+        if report['can_open_calculator']:
+            adjustment_note = 'A current reviewed calculation and adjustment limits are required before editing.'
+    else:
+        adjustment_currency = run.rule.payload['currency']
+        form = AdjustmentForm(request.POST if request.method == 'POST' else None, initial={
+            'revision': work.revision, 'case_revision': work.case.revision})
+        form.fields['target'].choices = [(key, value['label']) for key, value in targets.items()]
+        if request.method == 'POST' and form.is_valid():
+            value = form.cleaned_data
+            try:
+                factory_rfp_adjustments.adjust(actor, work.pk, value['revision'], value['case_revision'],
+                                               value['target'], value['amount'], value['reason'])
+            except ValidationError as exc:
+                form.add_error(None, exc)
+            else:
+                messages.success(request, 'Adjustment recorded. The updated bid requires fresh decisions.')
+                return redirect('factory_rfp_pricing', work_id=work.pk)
+    result = render(request, 'factory/rfp_pricing.html', {
+        'case': work.case, 'work': work, 'pricing': report, 'adjustment_form': form,
+        'adjustment_note': adjustment_note, 'adjustment_currency': adjustment_currency,
+        'can_configure': factory_rfp_adjustments.can_configure(actor, work),
+        'adjustments': factory_rfp_adjustments.history(actor, work),
+    })
     result['Cache-Control'] = 'no-store'
     return result

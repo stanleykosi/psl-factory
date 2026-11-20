@@ -55,13 +55,13 @@ def reviewed_document(data,work):
     return response,document
 
 
-def final_costing_wait(reference='SAMPLE-FINAL-COSTING', *, context=None):
+def final_costing_wait(reference='SAMPLE-FINAL-COSTING', *, context=None, adjustable=False):
     from apps.pmo import costing
     from tests import costing_helpers
 
     data = configured(reference, context=context)
     actor, case, evidence = data['actor'], data['case'], data['evidence']
-    calculator = costing_helpers.fixture(context=(actor, case), sources=evidence)
+    calculator = costing_helpers.fixture(context=(actor, case), sources=evidence, adjustable=adjustable)
     rfp.assign(actor, case.pk, actor, 'CEO', evidence['policy_decision'].pk,
                'Renewed sample assignment under the combined review roles.', rev(case))
     run = costing_helpers.run(calculator, key='sample-bid-calculation')
@@ -75,3 +75,15 @@ def final_costing_wait(reference='SAMPLE-FINAL-COSTING', *, context=None):
                                    'Reviewed the exact synthetic proposal and calculation.', rev(case))
     work.refresh_from_db()
     return work, response, run
+
+
+def configure_sample_adjustment(actor, case, run):
+    from apps.policy.bid_adjustment_validators import COMPONENT
+
+    proof = case.evidence.filter(kind='policy_decision').order_by('pk').first()
+    policy = draft_operator_policy(actor, case.pk, COMPONENT, {'rule_id': run.rule_id, 'targets': [
+        {'input_key': 'adjustment', 'label': 'Project adjustment', 'max_absolute_value': '7.00'},
+    ]}, proof.pk, timezone.now())
+    transition(actor, policy.pk, 'validated')
+    transition(actor, policy.pk, 'active')
+    return policy
