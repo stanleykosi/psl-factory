@@ -15,6 +15,11 @@ export type PageSize = (typeof PAGE_SIZES)[number];
 /** Every list starts at 10 rows (D-137). */
 export const DEFAULT_PAGE_SIZE: PageSize = 10;
 
+/** The rows-per-page choice of a list that keeps it in state; lists that keep it in the URL pass their own. */
+export function usePageSize(initial: PageSize = DEFAULT_PAGE_SIZE) {
+  return useState<PageSize>(initial);
+}
+
 /** The smallest page the server allows that covers `rows` more rows (the contract's limit is 10, 20 or 50). */
 export function limitFor(rows: number): PageSize {
   return PAGE_SIZES.find((n) => n >= rows) ?? 50;
