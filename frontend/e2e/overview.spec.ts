@@ -192,7 +192,7 @@ test.describe('desktop 1440', () => {
     expect(later.some((text) => text.includes('__THREE__'))).toBe(true);
   });
 
-  test('3D floor: same figures, renders on demand, moves only when a poll changes a count', async ({ page, context }) => {
+  test('3D floor: same figures, keeps its belts moving, and a poll changes the counts', async ({ page, context }) => {
     await page.clock.install();
     await page.addInitScript(() => {
       const w = window as unknown as { __raf: number };
@@ -209,16 +209,17 @@ test.describe('desktop 1440', () => {
     await page.getByRole('radio', { name: '3D floor' }).click();
     const canvas = page.getByRole('img', { name: /^3D factory floor: 8 lines/ });
     await expect(canvas).toBeVisible();
-    // The stage follows concept 3 (D-01): clamp(460px, 50vw, 640px), so 640px at 1440.
+    // The stage follows concept 1 (D-152): clamp(460px, 50vw, 640px), so 640px at 1440.
     expect(await canvas.boundingBox()).toMatchObject({ height: 640 });
     expect(await canvas.evaluate((el) => Boolean((el as HTMLCanvasElement).getContext('webgl2') ?? (el as HTMLCanvasElement).getContext('webgl')))).toBe(true);
     await expect(rows(page)).toHaveCount(8);
     await expect(tiles(page)).toHaveCount(4);
 
+    // The conveyor (D-152): boxes ride the belts, so frames keep running while the tab is visible.
     await page.waitForTimeout(1000);
     const settled = await rafCount();
-    await page.waitForTimeout(2000);
-    expect(await rafCount()).toBe(settled);
+    await page.waitForTimeout(1000);
+    expect(await rafCount()).toBeGreaterThan(settled);
     expect(await noHorizontalScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
 
@@ -229,27 +230,12 @@ test.describe('desktop 1440', () => {
     expect((await stationTexts(page))[4][0]).toBe('Milestone: 1 item');
     expect((await stationTexts(page))[7][2]).toBe('Approve: 1 item');
     await expect(tiles(page).locator('dd')).toHaveText(['19', '4', '3', '29']);
-    expect(await rafCount()).toBeGreaterThan(settled);
-    await page.waitForTimeout(1000);
-    const after = await rafCount();
-    await page.waitForTimeout(1000);
-    expect(await rafCount()).toBe(after);
     await shot(page, 'overview-3d-1440', false);
     await expect(canvas).toBeVisible();
   });
-  test('3D floor (tilted board): a label per station, hover and focus readout, lift settles, reset', async ({ page }) => {
+  test('3D floor (conveyor): a label per station, hover and focus readout, keys turn and reset', async ({ page }) => {
     // Waits for the lift to settle plus an axe pass over 40 overlay buttons; software WebGL is slow on a busy machine.
     test.setTimeout(60_000);
-    await page.addInitScript(() => {
-      const w = window as unknown as { __raf: number };
-      w.__raf = 0;
-      const raf = window.requestAnimationFrame.bind(window);
-      window.requestAnimationFrame = (cb) => {
-        w.__raf += 1;
-        return raf(cb);
-      };
-    });
-    const rafCount = () => page.evaluate(() => (window as unknown as { __raf: number }).__raf);
     await page.goto('/overview');
     await loaded(page);
     await page.getByRole('radio', { name: '3D floor' }).click();
@@ -258,23 +244,25 @@ test.describe('desktop 1440', () => {
     await expect(chips).toHaveCount(40);
     await expect(page.locator('.floor__line strong')).toHaveText(LINES);
     const readout = page.locator('.floor__readout');
-    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the board.');
+    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the floor; arrow keys turn and tilt, R resets.');
 
     const approve = page.getByRole('button', { name: '1 Approve PERSON. Invoices · Approve · 1 item · needs a person' });
     await expect(approve).toHaveText('1 Approve PERSON');
     await approve.hover();
     await expect(readout).toHaveText('Invoices · Approve · 1 item · needs a person');
-    // The lift and the lean ease in, then frames stop.
-    await page.waitForTimeout(2500);
-    const settled = await rafCount();
-    await page.waitForTimeout(1000);
-    expect(await rafCount()).toBe(settled);
+    // The stage is a tab stop: arrows turn and tilt, R resets.
+    const stage = page.getByRole('group', { name: /^3D floor view/ });
+    await stage.focus();
+    // The view itself is checked in unit tests (belts move, so pixels differ anyway); here the keys must not break the floor.
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('r');
 
     await page.getByRole('button', { name: 'Reset view' }).click();
-    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the board.');
+    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the floor; arrow keys turn and tilt, R resets.');
     await page.getByRole('button', { name: '1 Brief. Pre-sale · Brief · 1 item · no person needed' }).focus();
     await expect(readout).toHaveText('Pre-sale · Brief · 1 item · no person needed');
-    await shot(page, 'overview-3d-board-1440', false);
+    await shot(page, 'overview-3d-conveyor-1440', false);
     await expectNoAxeViolations(page);
 
     await page.getByRole('radio', { name: 'Flat' }).click();
