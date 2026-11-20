@@ -29,7 +29,7 @@
    "name": "As of",
    "category": "component",
    "conflicts": 5,
-   "reason": "Conflicts 5: the label is drawn above the input and is the input's name; the tool lists it as text and did not match it. Unverified by the builder; UI review to confirm.",
+   "reason": "Conflicts 5: the label is visible above its input (UI review round 1 confirmed) and the two sit side by side as drawn; the tool lists it as text and did not match it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -45,7 +45,7 @@
    "name": "Months",
    "category": "component",
    "conflicts": 5,
-   "reason": "Conflicts 5: as for As of, the label is the input's name; UI review to confirm.",
+   "reason": "Conflicts 5: the label is visible above its input (UI review round 1 confirmed) and the two sit side by side as drawn; the tool lists it as text and did not match it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -73,27 +73,35 @@
    "approved_by": "builder proposal, pending design engineer"
   },
   {
-   "role": "text",
-   "name": "Optional",
-   "category": "copy",
-   "conflicts": 3,
-   "reason": "Conflicts 3: the board draws 'Optional' as a line under the field; the page puts '(optional)' in the label, as F-05 does for every optional field.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
    "role": "link",
    "name": "← My work",
    "category": "frame",
    "conflicts": 5,
-   "reason": "Conflicts 5: the phone form is F-05's bottom sheet over My work, so the board's '← My work' bar is not drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "reason": "UI-1-4: the phone keeps F-05's signed bottom-sheet frame (design engineer signed the F-05/F-47 frame items on 14 and 19 Nov), so the board's page-style '← My work' bar is not drawn.",
+   "approved_by": "frame signed by the design engineer 14 and 19 Nov (F-05/F-47); this board's use pending design engineer"
   },
   {
    "role": "text",
    "name": "START",
    "category": "frame",
    "conflicts": 5,
-   "reason": "Conflicts 5: the phone sheet draws 'START WORK' in its own header (desktop eyebrow), not the board's page bar.",
+   "reason": "UI-1-4: same signed F-05/F-47 sheet frame; the sheet head reads 'START WORK' and 'Step 2 of 2 · change line', the board draws a page bar with 'START' and '+ Start'.",
+   "approved_by": "frame signed by the design engineer 14 and 19 Nov (F-05/F-47); this board's use pending design engineer"
+  },
+  {
+   "role": "button",
+   "name": "Remove ppe_register_oct.xlsx",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "UI-1-5: the proof card's remove '×' is needed behaviour (removing a file sends nothing); the board draws the card without it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "icon",
+   "name": "Calendar icon in As of",
+   "category": "component",
+   "conflicts": 5,
+   "reason": "UI-1-5: the shared date field draws a calendar button for picking a date; the board draws a plain box.",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]
