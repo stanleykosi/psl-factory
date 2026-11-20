@@ -12,6 +12,9 @@
 // The two POSTs have no idempotency key in the contract, so the mock keeps a log of them (GET /__mock/assistant-log)
 // to prove one POST per press. A draft's start (simulates G-SCR05-1) is recognised only after the persona read the
 // draft's conversation; it sets `draft.started`, and a second start of the same draft is a 409.
+// Live demo (D-155, demo.mjs): when the demo is on, every sent message makes the conversation working on the mock's clock, not
+// on reads: the agent's steps appear one at a time (each goes now -> done, DEMO_STEP_MS apart, a little under the 5 s poll so each read shows about one more), then the answer, its sources and
+// a result card arrive. The wording is placeholder text per agent. Reading only reads the clock; no timer runs.
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -39,6 +42,30 @@ const HOOK_BODIES = {
   500: { code: 'server_error', message: 'The mock answered with a scripted server error.' },
 };
 const LIMITS = [10, 20, 50];
+export const DEMO_STEP_MS = 4000;
+const NO_PAY = ' I do not show pay amounts: who can see payroll has not been set up yet.';
+const DEMO_NO_PAY = new Set(['hr', 'hr_lead', 'ceo']);
+// D-155: placeholder steps, answer, sources and result card per agent. It need not make sense; it shows the shape of a real run.
+const DEMO_AGENTS = {
+  tola: {
+    steps: ['Read your request', 'Looked up the projects and milestones you can see', 'Wrote the answer'],
+    answer: 'Sample answer from Tola in the live demo. No agent ran. The milestones you can see are on track, and one owner is still to be confirmed.',
+    sources: [{ kind: 'Project plan', reference: 'Sample project plan' }, { kind: 'Milestone', reference: 'Sample milestone register' }],
+    card: { title: 'Sample status note', rows: [{ label: 'Milestones on track', value: '3 of 4' }, { label: 'Owner to confirm', value: 'Sample milestone 4' }], next: 'Review the note, then start the weekly report from Start work.' },
+  },
+  chidi: {
+    steps: ['Read your request', 'Found the invoices and stages in your scope', 'Wrote the answer'],
+    answer: 'Sample answer from Chidi in the live demo. No agent ran. One invoice is waiting for a decision and one stage is not yet billed.',
+    sources: [{ kind: 'Invoice', reference: 'Sample invoice register' }, { kind: 'Contract', reference: 'Sample signed terms' }],
+    card: { title: 'Sample invoice summary', rows: [{ label: 'Waiting for a decision', value: '1 invoice' }, { label: 'Not yet billed', value: '1 stage' }], next: 'Open the invoice that is waiting for a decision.' },
+  },
+  zainab: {
+    steps: ['Read your request', 'Opened the staff list you can see', 'Wrote the answer'],
+    answer: 'Sample answer from Zainab in the live demo. No agent ran. The staff list is complete, and two people have no business unit yet.',
+    sources: [{ kind: 'Staff list', reference: 'Sample staff list' }, { kind: 'Register', reference: 'Sample business units' }],
+    card: { title: 'Sample staff list check', rows: [{ label: 'People on the list', value: '42' }, { label: 'No business unit', value: '2' }], next: 'Fix the two rows, then send the list.' },
+  },
+};
 const NOW = '2026-11-16T14:30:00Z';
 
 const decode = (value) => {
@@ -58,7 +85,7 @@ function canonical(value) {
   return JSON.stringify(value);
 }
 
-export function createAssistantMock({ openapi }) {
+export function createAssistantMock({ openapi, now = Date.now }) {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   addFormats(ajv);
   const ops = {};
@@ -124,10 +151,38 @@ export function createAssistantMock({ openapi }) {
     };
   }
 
+  /** A demo run at the mock's clock: n steps done, the next one in progress; the answer once all are done. */
+  function clockAt(rec) {
+    const { steps, startedAt, agent, persona, atIndex } = rec.clock;
+    const done = Math.min(steps.length, Math.floor((now() - startedAt) / DEMO_STEP_MS));
+    const at = new Date(startedAt).toISOString();
+    const texts = steps.map((x) => x.text);
+    if (done < steps.length) {
+      rec.status = 'working';
+      rec.line = `Working · step ${done + 1} of ${steps.length}`;
+      rec.messages[atIndex] = {
+        role: 'agent', text: 'Working on it.', steps: texts, sources: [], at,
+        step_details: texts.map((text, i) => ({ text, state: i < done ? 'done' : i === done ? 'now' : 'next' })),
+      };
+      return;
+    }
+    const demo = DEMO_AGENTS[agent];
+    rec.status = 'answered';
+    rec.line = 'Answered';
+    rec.messages[atIndex] = {
+      role: 'agent', text: demo.answer + (DEMO_NO_PAY.has(persona) ? NO_PAY : ''), steps: texts,
+      sources: demo.sources.map((x) => ({ ...x, restricted: false })), at,
+      step_details: texts.map((text) => ({ text, state: 'done' })),
+      draft: { ...structuredClone(demo.card), status_label: 'DRAFTED · NOT REVIEWED' },
+    };
+    rec.clock = undefined;
+  }
+
   function readConversation(id, persona) {
     const rec = store.get(id);
     if (!rec || rec.persona !== persona) return null;
     armed.add(`${persona}:${id}`);
+    if (rec.clock) clockAt(rec);
     const body = { conversation_id: id, ...(rec.agent ? { agent: rec.agent } : {}), title: rec.title, status: rec.status, ...(rec.context ? { context: structuredClone(rec.context) } : {}), messages: structuredClone(rec.messages) };
     const mark = started.get(id);
     if (mark) for (const m of body.messages) if (m.draft?.start) m.draft.started = { ...mark };
@@ -144,6 +199,7 @@ export function createAssistantMock({ openapi }) {
   }
 
   function list(url, persona) {
+    for (const rec of store.values()) if (rec.clock) clockAt(rec);
     const mine = [...store.values()].filter((rec) => rec.persona === persona && rec.listed);
     // The conversations made here come first, newest first; the fixtures follow in the list's order.
     const made = mine.filter((rec) => rec.id.startsWith('CV-N')).sort((x, y) => Number(y.id.slice(4)) - Number(x.id.slice(4)));
@@ -194,7 +250,7 @@ export function createAssistantMock({ openapi }) {
     return logPost({ ...entry, conversation_id: id }, [200, { conversation_id: id }]);
   }
 
-  function message(url, raw, persona) {
+  function message(url, raw, persona, demo) {
     const id = decode(url.pathname.split('/')[5] ?? '');
     let body;
     try {
@@ -213,10 +269,19 @@ export function createAssistantMock({ openapi }) {
         return logPost(entry, [status, HOOK_BODIES[status]]);
       }
     }
-    const at = NOW;
+    const at = demo ? new Date(now()).toISOString() : NOW;
     own.messages.push({ role: 'person', text: body.text, steps: [], sources: [], at });
     if (own.title === 'New request') own.title = body.text.replace(/\s+/g, ' ').slice(0, 60);
     own.at = at;
+    if (demo) {
+      // D-155: the run follows the mock's clock; the placeholder is replaced on each read by clockAt.
+      const agent = DEMO_AGENTS[own.agent] ? own.agent : 'tola';
+      own.messages.push({ role: 'agent', text: 'Working on it.', steps: [], sources: [], at });
+      own.clock = { steps: DEMO_AGENTS[agent].steps.map((text) => ({ text })), startedAt: now(), agent, persona, atIndex: own.messages.length - 1 };
+      own.run = undefined;
+      clockAt(own);
+      return logPost(entry, [200, { message_id: `M-${own.messages.length}`, agent_run_id: `R-${counter}-${own.messages.length}`, status: 'working' }]);
+    }
     const wantsWork = body.text.includes('[working]');
     const steps = wantsWork
       ? [{ text: 'Read your request' }, { text: 'Looked up the records you can see' }, { text: 'Wrote the answer' }]
@@ -277,12 +342,12 @@ export function createAssistantMock({ openapi }) {
     log: () => ({ entries: log.map((e) => ({ ...e })) }),
     draftStart,
     /** One reply for an assistant operation, validated against its v7 schema. */
-    handle({ operationId, url, raw, persona, agents }) {
+    handle({ operationId, url, raw, persona, agents, demo = false }) {
       let reply;
       if (operationId === 'E-CONVERSATIONS') reply = list(url, persona);
       else if (operationId === 'E-MENTION-OPTIONS') reply = mentionOptions(url, persona);
       else if (operationId === 'E-CONVERSATION-NEW') reply = newConversation(raw, persona, agents);
-      else if (operationId === 'E-MESSAGE') reply = message(url, raw, persona);
+      else if (operationId === 'E-MESSAGE') reply = message(url, raw, persona, demo);
       else {
         const body = readConversation(decode(url.pathname.split('/')[5] ?? ''), persona);
         reply = body ? [200, body] : [404, NOT_FOUND];
