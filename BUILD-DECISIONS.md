@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. A reviewed Emergency retrospective stays approved while its exact audience lacks a current delivery configuration. The work shows the document policy finding before any publication reservation. The synthetic preview repair can extend only the named sample's current recipient list to its already-authorised internal inbox. The existing client reference and review history are retained. Actual audiences and recipients remain owner choices.
+
+20 November 2026. A sample replay locates the original start key where current work can include multiple related records under the same case and workflow. No recent-work fallback is used. The original decision, publication and source histories remain untouched.
+
 20 November 2026. The Normal Change screen shows the roles required by the existing exact native impact assessment. An earlier decision counts only against the same assessments and with its original authority still current. Only currently permitted role and verdict pairs appear as choices. A refused normal revision shows its current outcome while original outstanding effects retain recovery priority. This supplies no actual roles, rejection permissions or additional requiredness rules.
 
 20 November 2026. Use the same workspace name presentation across intake forms that list scoped workspace records. This changes option labels only. The form still posts an exact identity and each workflow still checks its own current permissions and revision.

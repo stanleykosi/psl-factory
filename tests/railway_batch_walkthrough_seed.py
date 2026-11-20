@@ -15,7 +15,7 @@ from apps.core.services import add_evidence
 from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
-from apps.policy.services import transition
+from apps.policy.services import active_component, reference_values, register_reference, transition
 from apps.workflows import factory, factory_accounting_intake, factory_change, factory_progress
 from apps.workflows.models import FactoryProgress, FactoryWork
 from tests import test_commercial_changes, test_delivery, test_factory_hypercare, test_project_archive_files, test_standard_changes
@@ -27,8 +27,10 @@ PREVIEW_PROJECT = 'f957481b-c6f7-43af-bc66-449a330a9d53'
 TENANT = 'design-composed-delivery-walkthrough'
 PREPARATION = {
     'stability': ('delivery-hypercare/v1', 'SAMPLE release stability walkthrough'),
+    'stability_active': ('delivery-hypercare/v1', 'SAMPLE active stability evaluation'),
     'client_testing_wait': ('delivery-release/v1', 'SAMPLE client testing request walkthrough'),
     'archive': ('delivery-archive/v1', 'SAMPLE file archive walkthrough'),
+    'archive_active': ('delivery-archive/v1', 'SAMPLE active archive copy'),
     'standard': ('pmo-change/v1', 'SAMPLE standard change walkthrough'),
     'normal_change_refusal': ('pmo-change/v1', 'SAMPLE Normal Change refusal walkthrough'),
     'emergency': ('pmo-emergency/v1', 'SAMPLE emergency walkthrough'),
@@ -43,6 +45,13 @@ PREPARATION = {
     'assets': ('finance-ppe/v1', 'SAMPLE fixed asset walkthrough'),
     'schedules': ('finance-schedules/v1', 'SAMPLE schedules walkthrough'),
     'forecast': ('finance-forecast/v1', 'SAMPLE cash forecast walkthrough'),
+}
+INTERNAL_EMERGENCY_REF = 'sample:emergency-internal'
+ORIGINAL_WORK_KEYS = {
+    'standard': 'SAMPLE-BATCH-STANDARD',
+    'escalation': 'P44-1',
+    'leadership': 'LEADERSHIP-1',
+    'tuesday': 'LEADERSHIP-1',
 }
 
 
@@ -146,6 +155,28 @@ def prepare_emergency(actor, case, *, verified_sources=False, refusal=False):
     return entry.start_work()
 
 
+def prepare_internal_emergency_recipient(actor, case):
+    """Extend only the named synthetic fixture while retaining earlier review records."""
+    from tests.helpers import activate
+
+    if (case.tenant != TENANT or not case.synthetic or case.title != PREPARATION['emergency_authorized'][1]
+            or not Grant.objects.filter(case=case, user=actor, action='document.receive:internal', active=True).exists()):
+        raise RuntimeError('The exact sample workspace and existing internal access are required')
+    component = 'D11.recipient_grant_refs'
+    config = active_component(component, case)
+    recipients = reference_values(config)
+    if any(row['audience'] == 'internal' for row in recipients):
+        if any(row['audience'] == 'internal' and row['user_id'] != actor.pk for row in recipients):
+            raise RuntimeError('A different internal recipient is configured on this sample')
+        return
+    if recipients != [{'audience': 'client', 'user_id': actor.pk}]:
+        raise RuntimeError('Expected the original synthetic delivery configuration')
+    evidence = case.evidence.get(kind='policy_decision', source='synthetic:test')
+    reference = register_reference(actor, case.pk, INTERNAL_EMERGENCY_REF, 'schema:psl/document-recipient/v1',
+                                   {'audience': 'internal', 'user_id': actor.pk}, evidence.pk)
+    activate(actor, case, component, [*config.envelope['value'], reference.ref], evidence)
+
+
 def prepare_escalation(actor, case):
     from tests import document_helpers, test_factory_escalation
 
@@ -217,8 +248,9 @@ def prepare_project(actor, key):
     case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
     if created:
         Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
-        prepare = {'stability': prepare_stability, 'client_testing_wait': prepare_client_testing_wait,
-                   'archive': prepare_archive, 'standard': prepare_standard,
+        prepare = {'stability': prepare_stability, 'stability_active': prepare_stability,
+                   'client_testing_wait': prepare_client_testing_wait, 'archive': prepare_archive,
+                   'archive_active': prepare_archive, 'standard': prepare_standard,
                    'normal_change_refusal': prepare_normal_change_refusal,
                    'emergency': prepare_emergency,
                    'emergency_authorized': partial(prepare_emergency, verified_sources=True),
@@ -234,7 +266,12 @@ def prepare_project(actor, key):
             work = prepare(actor, case, tuesday=True) if key == 'tuesday' else prepare(actor, case)
         pause_existing_background(actor, work)
     else:
-        work = FactoryWork.objects.get(case=case, actor=actor, definition=definition)
+        candidates = FactoryWork.objects.filter(case=case, actor=actor, definition=definition)
+        if key in ORIGINAL_WORK_KEYS:
+            candidates = candidates.filter(key=ORIGINAL_WORK_KEYS[key])
+        work = candidates.get()
+    if key == 'emergency_authorized':
+        prepare_internal_emergency_recipient(actor, case)
     return {'case': str(case.pk), 'work': work.pk, 'path': reverse('factory_detail', args=[work.pk]),
             'existing_work_preserved': not created}
 

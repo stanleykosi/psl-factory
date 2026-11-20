@@ -102,6 +102,34 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         self.assertFalse(EmergencyAuthorization.objects.exists())
         self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=self.work).exists())
 
+    def test_reviewed_report_waits_for_its_audience_and_reuses_the_approval(self):
+        from apps.policy.services import register_reference
+        from tests.helpers import activate
+
+        auth, actual, _ = self.ready_work()
+        self.inputs['audience'] = 'internal'
+        self.select(auth, actual)
+        self.advance()
+        version = self.review_report()
+        self.advance()
+        self.client.force_login(self.actor)
+        url = reverse('factory_detail', args=[self.work.pk])
+        self.assertContains(self.client.get(url), 'Report delivery needs setup. No configured recipients for the intended audience')
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        approved = version.reviews.get(verdict='approve')
+        receiver, _ = Grant.objects.get_or_create(case=self.case, user=self.actor, action='document.receive:internal')
+        self.assertTrue(receiver.active)
+        reference = register_reference(self.actor, self.case.pk, 'sample:emergency-internal',
+                                       'schema:psl/document-recipient/v1',
+                                       {'audience': 'internal', 'user_id': self.actor.pk}, self.e['policy_decision'].pk)
+        activate(self.actor, self.case, 'D11.recipient_grant_refs', ['commercial:recipient', reference.ref],
+                 self.e['policy_decision'])
+        self.advance()
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        publication = Publication.objects.get(factory_work=self.work)
+        self.assertEqual((publication.version_id, publication.review_id), (version.pk, approved.pk))
+        self.assertEqual(PublicationReceipt.objects.get(publication=publication).recipient_id, self.actor.pk)
+
     def test_replace_policy_is_explicit_and_report_never_grants_deployment_or_ordinary_closure(self):
         auth,actual,record=self.ready_work('replace');self.assertEqual(auth.snapshot['glpi'],[]);proof=self.finish_report();self.assertEqual(proof['retrospective_status'],record.snapshot['status'])
 

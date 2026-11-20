@@ -1,4 +1,6 @@
 """Check that grouped browser staging leaves operator decisions for the walkthrough."""
+from datetime import datetime, timedelta
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -12,6 +14,21 @@ from tests.railway_batch_walkthrough_seed import (
 
 
 class DesignBatchWalkthroughTests(TestCase):
+    def test_preparation_reopens_original_even_after_another_report_for_the_same_project(self):
+        from apps.workflows import factory_leadership
+        from tests.helpers import rev
+
+        actor = get_user_model().objects.create_user('synthetic-batch-report-reviewer')
+        original = prepare_project(actor, 'leadership')
+        work = FactoryWork.objects.get(pk=original['work'])
+        inputs = dict(factory_leadership.source(work, actor)['inputs'])
+        inputs['start_at'] = (datetime.fromisoformat(inputs['start_at']) - timedelta(days=1)).isoformat()
+        other = factory_leadership.start(actor, work.case_id, 'SAMPLE-LONGER-REPORT', inputs,
+                                         'Synthetic report with wider coverage', rev(work.case))
+        self.assertNotEqual(work.pk, other.pk)
+        self.assertEqual(prepare_project(actor, 'leadership')['work'], work.pk)
+        self.assertEqual(FactoryWork.objects.filter(case=work.case, definition=work.definition).count(), 2)
+
     def test_native_preparations_open_and_preserve_existing_journeys(self):
         from adapters.client_uat import TARGET
         from apps.pmo.models import DeliveryDossier, DeliverySource

@@ -163,7 +163,14 @@ def snapshot(work,value,reader=None):
     if v:
         try:current_version(work.case,v.pk);r=validate_review(work.case,v);review={'status':'ready','id':r.pk}
         except (ValidationError,PermissionDenied) as exc:review={'status':'held','finding':finding(exc)}
-    state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':native_state,'checks':{'stage':native_state['stage']},'document':v.pk if v else None,'review':review,'publication':Publication.objects.filter(version=v).values_list('pk',flat=True).first() if v else None,'jobs':[(j.pk,j.status) for j in jobs]}
+    publication = Publication.objects.filter(version=v).values_list('pk', flat=True).first() if v else None
+    delivery_hold = ''
+    if native_state['stage'] == 'report' and review['status'] == 'ready' and not publication:
+        try:
+            publication_requirements(work.case, v)
+        except (ValidationError, PermissionDenied) as exc:
+            delivery_hold = 'Report delivery needs setup. ' + finding(exc)
+    state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':native_state,'checks':{'stage':native_state['stage']},'document':v.pk if v else None,'review':review,'publication':publication,'delivery_hold':delivery_hold,'jobs':[(j.pk,j.status) for j in jobs]}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],jobs
 
@@ -178,6 +185,7 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if not state['document']:return ['ACT09'],'Prepare the controlled completed-retrospective report'
     if not HumanTask.objects.filter(version_id=state['document']).exists():return ['ACT09'],'Request native review of the retained report'
     if state['review']['status']!='ready':return [],'Await exact outward review or source-owned report rework'
+    if state.get('delivery_hold'):return [],state['delivery_hold']
     if not state['publication']:return ['ACT11'],'Reserve the reviewed retrospective report'
     return [],state['native']['finding']
 
