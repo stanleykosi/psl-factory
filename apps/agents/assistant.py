@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from adapters import openrouter
+from adapters.payroll_questions import TOPICS as PAYROLL_REPORT_TOPICS
 from apps.core.workbench import granted
 from apps.documents.contracts import digest
 
@@ -23,6 +24,7 @@ PERSONAS = {
     'zainab': ('Zainab', 'HR', 'hrfinance.read'),
 }
 INSUFFICIENT_EVIDENCE = 'I could not answer from the available records.'
+PAYROLL_REPORT_QUESTIONS = tuple(PAYROLL_REPORT_TOPICS.values())
 
 
 def cases_for(actor, persona):
@@ -33,12 +35,38 @@ def cases_for(actor, persona):
         received = BUReceipt.objects.filter(actor=actor).values('report__work__case_id')
         aggregate_cases = granted(actor, ['agent.extract', 'bu.read', 'bu.report.read']).filter(pk__in=received)
         cases = cases | aggregate_cases
+    elif persona == 'zainab':
+        from apps.finance.payroll_models import PayrollReportReceipt
+
+        received = PayrollReportReceipt.objects.filter(actor=actor).values('publication__request__case_id')
+        report_cases = granted(actor, ['agent.extract', 'payroll.read', 'payroll.report.read']).filter(pk__in=received)
+        cases = cases | report_cases
     return cases.filter(synthetic=True, kind='project')
 
 
 def check(actor, conversation):
     if conversation.actor_id != actor.pk or not cases_for(actor, conversation.persona).filter(pk=conversation.case_id).exists():
         raise PermissionDenied('This conversation is unavailable for your current access.')
+
+
+def payroll_report_only(conversation):
+    return conversation.persona == 'zainab' and not granted(conversation.actor, ['hrfinance.read']).filter(
+        pk=conversation.case_id).exists()
+
+
+def payroll_report_sources(conversation):
+    from .payroll import received_report_context
+
+    packet = received_report_context(conversation.actor, conversation.case)
+    if packet is None:
+        return []
+    publication = packet['publication_id']
+    return [{'label': f'Reviewed staff-cost report {publication}',
+             'fact': f'Report version {packet["report_version"]} for {packet["period"]} was received. '
+                     'It covers reviewed staff-cost totals by business unit. Open the report for its '
+                     'exact figures and the HR question options.',
+             'url': reverse('payroll_inspect', args=[conversation.case_id, 'report', publication]),
+             'record': {'field': 'payroll_report', 'pk': publication}}]
 
 
 def work_intent(actor, turn_id, definition, case_id=None, *, lock=False):
@@ -84,6 +112,8 @@ def transfer(actor, turn_id, target):
 def tool_context(conversation):
     actor, case, persona = conversation.actor, conversation.case, conversation.persona
     check(actor, conversation)
+    if payroll_report_only(conversation):
+        return payroll_report_sources(conversation), []
     sources = []
 
     def source(label, fact, route, *args, record=None):
@@ -258,6 +288,8 @@ def reserve(actor, conversation_id, operation_key, question, focus=''):
     keys = sorted(set(keys))
     conversation = AssistantConversation.objects.select_for_update(of=('self',)).select_related('case').get(pk=conversation_id)
     check(actor, conversation)
+    if payroll_report_only(conversation) and (question not in PAYROLL_REPORT_QUESTIONS or len(keys) > 1):
+        raise ValidationError('Choose a question about your received staff-cost report.')
     previous = AssistantTurn.objects.filter(pk=operation_key).first()
     if previous is not None:
         if (previous.conversation_id != conversation.pk or previous.question != question
@@ -295,6 +327,10 @@ def worker_once():
     conversation = turn.conversation
     try:
         sources, next_work = turn_context(turn)
+        report_only = payroll_report_only(conversation) or any(
+            source.get('record', {}).get('field') == 'payroll_report' for source in sources)
+        if report_only and turn.question not in PAYROLL_REPORT_QUESTIONS:
+            raise ValidationError('A received-report conversation uses the listed payroll questions.')
         context_hash = digest(sources)
         if not sources:
             AssistantTurn.objects.filter(pk=turn.pk, status='running').update(
@@ -303,10 +339,12 @@ def worker_once():
             return True
         handles = {f'S{index}': source for index, source in enumerate(sources, start=1)}
         context = [{'handle': handle, 'label': source['label'], 'fact': source['fact']} for handle, source in handles.items()]
-        recent = list(conversation.turns.filter(status='answered', created_at__lt=turn.created_at)
-                      .order_by('-created_at', '-pk')[:3])
-        history = [{'question': entry.question[:1000], 'answer': entry.answer[:1000]} for entry in reversed(recent)
-                   if entry.sources and entry.context_hash == context_hash]
+        history = []
+        if not report_only:
+            recent = list(conversation.turns.filter(status='answered', created_at__lt=turn.created_at)
+                          .order_by('-created_at', '-pk')[:3])
+            history = [{'question': entry.question[:1000], 'answer': entry.answer[:1000]} for entry in reversed(recent)
+                       if entry.sources and entry.context_hash == context_hash]
         raw = openrouter.answer(model, PERSONAS[conversation.persona][1], turn.question, context, next_work, history)
         if (not isinstance(raw, dict) or set(raw) != {'answer', 'citations', 'next_work'}
                 or not isinstance(raw['answer'], str) or not 0 < len(raw['answer'].strip()) <= 4000

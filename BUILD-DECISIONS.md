@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Saving an incomplete weekly report keeps a current preparer's private draft and leaves the native work and review untouched until explicit valid submission. The invoice review alert points the authorised independent reviewer to the exact current native task using a generic label. Payroll Assistant recipients can ask the existing closed report questions with metadata from their own current receipt. The local report remains the source for figures and HR follow-up.
+
 20 November 2026. Weekly report sections can cite separate exact sources from the selected period. Legacy pooled form submissions remain compatible. The monthly Forecast table shows only the exact current calculation to authorized Finance readers. Show unavailable values as Unknown and preserve known zero. Group disclosure follows its separately reviewed fields and recipient scope.
 
 20 November 2026. Group Forecast decision notes are available through the exact current authorized preparer and reviewer paths. Bound earlier decisions to the same work and approved source authority. Keep the returned report and a corrected version separately reviewable. Multi-project leadership reporting uses explicitly reviewed project coverage and per-source access at read and release. Bid attachment recovery checks the exact reserved object after interruption and retains its private ownership context.

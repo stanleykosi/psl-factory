@@ -4,8 +4,14 @@ from collections import defaultdict
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models import Q
+from django.urls import reverse
 
+from apps.core.presentation import workspace_name
+from apps.core.read_observation import read_observation
 from apps.core.services import lock_case
+from apps.core.workbench import granted
+from apps.documents.contracts import digest
 from apps.finance import invoices
 from apps.finance.fixed_charge import preparation_access
 from . import factory, factory_routing
@@ -13,6 +19,45 @@ from .models import FactoryWork, HumanTask, TaskEvent
 
 
 COMMENT = 'factory.invoice_comment'
+ASSIGNMENT_ALERT_LIMIT = 8
+ASSIGNMENT_CANDIDATE_LIMIT = 24
+
+
+@read_observation
+def assigned_alerts(actor):
+    """Point eligible reviewers to a current decision without including its contents."""
+    if not actor.is_authenticated or not actor.is_active:
+        return []
+    cases = granted(actor, ['factory.read', 'finance.read', 'finance.invoice.review'])
+    candidates = list(HumanTask.objects.filter(
+        case_id__in=cases.values('pk'), kind='factory_review', status='open',
+        context__routing_at_creation__eligible_principals__contains=[actor.pk],
+    ).filter(Q(claimed_by=None) | Q(claimed_by=actor)).order_by('-pk')[:ASSIGNMENT_CANDIDATE_LIMIT])
+    work_ids = {task.context.get('work') for task in candidates if type(task.context.get('work')) is int}
+    works = FactoryWork.objects.filter(
+        definition='pmo-finance/v1', invoice__isnull=False, cancel_requested=False, status__in=['ready', 'waiting'],
+    ).select_related('case', 'invoice__preparation', 'invoice__actor').in_bulk(work_ids)
+    rows = []
+    for task in candidates:
+        work_id = task.context.get('work')
+        work = works.get(work_id) if type(work_id) is int else None
+        if (work is None or work.case_id != task.case_id or not isinstance(task.context.get('packet'), dict)
+                or not (task.factory_key or '').startswith(f'factory:{work.pk}:')):
+            continue
+        try:
+            factory.access(actor, work.case)
+            preparation_access(actor, work.invoice.preparation)
+            factory.profile(work, recovery=True)
+            invoices.current(work.invoice)
+            factory.assert_review_task_current(work, task)
+        except (PermissionDenied, ValidationError):
+            continue
+        rows.append({'key': digest(['invoice-review-task', task.pk]), 'label': 'Invoice needs your review',
+                     'subject': workspace_name(work.case), 'detail': '',
+                     'url': reverse('factory_invoice_decision', args=[work.pk]), 'group': 'action'})
+        if len(rows) == ASSIGNMENT_ALERT_LIMIT:
+            break
+    return rows
 
 
 def context(actor, row):

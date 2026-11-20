@@ -13,10 +13,15 @@
 {% for job in row.reporting.jobs %}{% if job.can_operate %}<section class="card"><h2>Original delivery {{ job.pk }}</h2><p>{{ job.status }} · {{ job.error }}</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="operate_delivery"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="job" value="{{ job.pk }}"><label>Reason<textarea name="reason" required maxlength="2000"></textarea></label>{% if job.can_retry %}<button name="operation" value="retry">Retry exact eligible report delivery</button>{% endif %}<button name="operation" value="cancel">Cancel original report delivery</button></form></section>{% endif %}{% endfor %}
 {% endif %}
 {% include 'factory/recipient_delivery.html' with delivery=row.reporting.delivery %}
-{% if not focus and row.reporting.can_correct %}<section id="report-correction" class="card"><h2>{% if editing %}Edit your update{% else %}Review changed report sources{% endif %}</h2><p>Keep the reporting period and check the sources for the updated wording. Earlier reports and decisions stay in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+{% if not focus and row.reporting.can_correct %}<section id="report-correction" class="card"><h2>{% if editing %}Edit your update{% else %}Review changed report sources{% endif %}</h2><p>Keep the reporting period and check the sources for the updated wording. Earlier reports and decisions stay in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+{% if draft %}<input type="hidden" name="draft_version" value="{{ draft.pk }}"><p>Private draft saved {{ draft.created_at|date:'d M Y, H:i T' }}.</p>{% endif %}
 {{ inputs_form.non_field_errors }}
 {% for field in inputs_form.visible_fields %}<div>{{ field.as_field_group }}</div>{% endfor %}
-<label>Reason<textarea name="reason" required maxlength="2000"></textarea></label><button>Save updated report for review</button></form></section>{% endif %}
+<label>Reason<textarea name="reason" required maxlength="2000">{{ correction_reason }}</textarea></label>
+<div class="actions">
+  <button name="action" value="correct">Send updated report for review</button>
+  {% if returning %}<button name="action" value="save_draft" class="secondary" formnovalidate>Save draft</button>{% endif %}
+</div></form></section>{% endif %}
 {% if not focus and row.reporting.can_restart %}<section class="card"><h2>Fresh report preparation instruction</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="restart"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><label>Reason<textarea name="reason" required maxlength="2000"></textarea></label><button>Restart settled report preparation</button></form></section>{% endif %}
 
 {% if not focus %}

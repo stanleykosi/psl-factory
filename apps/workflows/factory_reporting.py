@@ -233,16 +233,27 @@ def verify(work,actor=None):
     return {'verified':True,'verification_scope':'selected_local_weekly_client_report_and_exact_native_recipient_receipts','head':work.source_head_id,'document_version':v.pk,'report':b.report_id,'publication':p.pk,'receipt_ids':[r.pk for r in receipts],
         'source_manifest':data['manifest'],'complete_project_coverage':False,'external_delivery_verified':False,'business_approval_granted':False}
 
+def require_correctable(work, expected):
+    from apps.agents.factory_coordinator import has_receipt, pending
+
+    if (type(expected) is not int or work.revision != expected or work.cancel_requested
+            or work.status in ('cancelled', 'followup_needed')):
+        raise ValidationError('STALE_VERSION: refresh current report work')
+    if ((work.lease_until and work.lease_until > timezone.now()) or PublicationJob.objects.filter(
+            publication__factory_work=work, status__in=('pending', 'unknown', 'leased', 'held')).exists()):
+        raise ValidationError('Resolve original effects before report source correction')
+    planning = pending(work)
+    if planning and not has_receipt(planning):
+        raise ValidationError('Resolve original planning response before correction')
+
+
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,inputs,reason):
     from .factory import access
-    from apps.agents.factory_coordinator import pending,has_receipt
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.manage',DEFINITION);case=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=case
-    if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.status in ['cancelled','followup_needed']:raise ValidationError('STALE_VERSION: refresh current report work')
-    if w.lease_until and w.lease_until>timezone.now() or PublicationJob.objects.filter(publication__factory_work=w,status__in=['pending','unknown','leased','held']).exists():raise ValidationError('Resolve original effects before report source correction')
-    planning=pending(w)
-    if planning and not has_receipt(planning):raise ValidationError('Resolve original planning response before correction')
+    require_correctable(w,expected)
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the source-owned report correction')
     data=source(w,actor,False);start,end=input_rows(case,inputs);inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
     if any(inputs[k]!=data['inputs'][k] for k in ['start_at','end_at']):raise ValidationError('A different reporting period requires separate work; preserve this period history')
@@ -255,7 +266,9 @@ def correct(actor,work_id,expected,case_expected,inputs,reason):
             except (ValidationError,PermissionDenied):pass
             else:raise ValidationError('Current report and publication remain valid; provide a genuine correction')
     old=w.source_head_id;w.source_head=capture(actor,case,inputs,'factory.reporting_source');w.status='ready';w.finding='';w.observation_hash='';w.revision+=1;w.save()
-    event(actor,case,'factory.reporting_corrected',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
+    event(actor,case,'factory.reporting_corrected',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used)
+    wake_waiting(w.pk)
+    return w
 
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,version_id,verdict,note):

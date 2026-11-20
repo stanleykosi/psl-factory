@@ -22,6 +22,23 @@ def prepare_report_question(actor,publication,topic):
  validate(PACKET,packet)
  return packet
 
+
+def received_report_context(actor, case):
+    """Admit one current, acknowledged report through the existing closed metadata tool."""
+    from django.core.exceptions import PermissionDenied, ValidationError
+    from apps.finance.payroll_models import PayrollReportReceipt
+
+    receipts = PayrollReportReceipt.objects.filter(actor=actor, publication__request__case=case).select_related(
+        'publication__request').only('publication__run_id', 'publication__version',
+                                    'publication__request__metadata').order_by('-publication_id')[:3]
+    for receipt in receipts:
+        try:
+            return prepare_report_question(actor, receipt.publication, 'report_coverage')
+        except (PermissionDenied, ValidationError):
+            continue
+    return None
+
+
 @transaction.atomic
 def investigate(actor,case_id,expected):
  c=locked(actor,case_id,'agent.payroll',expected);findings=[]
