@@ -120,7 +120,7 @@ for (const [label, viewport] of [
       await page.route('**/api/v1/projects*', (route) =>
         fail ? route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : route.continue(),
       );
-      await page.getByRole('tab', { name: /All I can see/ }).click();
+      await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
       const card = page.getByRole('main').getByRole('alert');
       await expect(card).toContainText('We couldn’t load your projects. Your work is safe; nothing was changed.');
       await expect(card).toContainText('Reference server_error for support.');
@@ -128,7 +128,7 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
       fail = false;
       await card.getByRole('button', { name: 'Try again' }).click();
-      await expect(projectLinks(page)).toHaveCount(10);
+      await expect(projectLinks(page)).toHaveCount(1);
     });
 
     test('list loading: status and no rows while held; reduced motion', async ({ page }) => {

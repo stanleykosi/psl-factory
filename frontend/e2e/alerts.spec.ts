@@ -282,15 +282,15 @@ test.describe('list states', () => {
     await expect(rows(page)).toHaveCount(10);
     const fail = (route: import('@playwright/test').Route) => route.abort();
     await page.route('**/api/v1/notifications?*cursor=*', fail);
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(page.getByText('We couldn’t load more. Nothing was changed.')).toBeVisible();
     await expect(rows(page)).toHaveCount(10);
     await page.unroute('**/api/v1/notifications?*cursor=*', fail);
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(rows(page)).toHaveCount(20);
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(rows(page)).toHaveCount(25);
-    await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toHaveCount(0);
   });
 
   test('401 on the list shows signed out with next=/notifications', async ({ page }) => {

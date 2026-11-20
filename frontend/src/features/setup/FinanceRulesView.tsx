@@ -168,6 +168,7 @@ function FinanceRulesView() {
                 + {moreGroups} MORE {moreGroups === 1 ? 'LINE' : 'LINES'} · OPEN ON DESKTOP
               </p>
             )}
+            <ShowMore solo {...paging} />
           </>
         )}
       </div>

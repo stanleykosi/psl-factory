@@ -82,7 +82,7 @@ for (const [label, viewport] of [
       }
       await shot(page, `my-work-${viewport.width}`);
       await expectNoAxeViolations(page);
-      await page.getByRole('button', { name: 'Show 4 more' }).scrollIntoViewIfNeeded();
+      await page.getByRole('button', { name: 'Show 10 more' }).scrollIntoViewIfNeeded();
       await shot(page, `my-work-${viewport.width}-footer`);
     });
 
