@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-53",
   "outcome": "F-53 Design-system conformance, part 2: shared components everywhere",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-DS-CONFORMANCE-2"
   ],
@@ -52,21 +52,38 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T14:03:03Z",
+      "seconds": 394.8,
+      "evidence_ref": "delivery/features/F-53/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -85,21 +102,118 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-ui.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "DateField with `time` keeps draftDate/draftTime in state; if a parent resets value to '' after submit, the stale draft date is still shown as the value. Not triggered by current screens; frontend/src/components/DateField.tsx:104.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:04:34Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Table now adds `data-label` to every cell of all tables, including existing uses; harmless attribute, but beyond \"existing uses unchanged\" in the strict sense. frontend/src/components/Table.tsx:152.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:04:34Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 three replaced controls measure under 44px: the proof-chip Remove button 24x24 (response form, src/features/response/response.css `.resp-chip__remove`, min 24px), the RFP outcome and team-input \"Choose a file\" 40px (`.resp-filebtn`, min-height var(--control-sm)), and \"Clear search\" 36px on Projects and Payments. `git log` shows response.css was not changed in F-53, so the size is inherited and not a regression, but criterion 4 reads literally \"every replaced control\". The response-form file button itself is 52px, and the conformance e2e does not measure these three. Worth a follow-up to bring them to 44.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T14:18:23Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The assistant mention picker does not move through items with ArrowDown and Enter from the search box (selection works by Tab to the item then Enter or click; the project then shows in the right panel). The component has only an Escape handler, so this is unchanged by F-53. Noted for accessibility follow-up.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T14:18:23Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -123,7 +237,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "41f03c37f898414477f200ffdc61113989ee6484",
     "task_branch": "fe-ds-conformance-2-shared-components",
-    "head_sha": null,
+    "head_sha": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-53",
     "pr_url": null,
     "pr_number": null,
@@ -134,7 +248,78 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/cash-forecast.spec.ts",
+      "frontend/e2e/conformance.spec.ts",
+      "frontend/e2e/controls.ts",
+      "frontend/e2e/engagement-planning.spec.ts",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/e2e/minutes.spec.ts",
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/e2e/payments.spec.ts",
+      "frontend/e2e/response.spec.ts",
+      "frontend/e2e/rfp-submission.spec.ts",
+      "frontend/e2e/rfp.spec.ts",
+      "frontend/e2e/setup-templates.spec.ts",
+      "frontend/e2e/support-handover.spec.ts",
+      "frontend/e2e/weekly-returned-received.spec.ts",
+      "frontend/e2e/weekly.spec.ts",
+      "frontend/e2e/workspace.spec.ts",
+      "frontend/eslint.config.mjs",
+      "frontend/src/components/Button.tsx",
+      "frontend/src/components/DateField.tsx",
+      "frontend/src/components/Field.tsx",
+      "frontend/src/components/FileUpload.tsx",
+      "frontend/src/components/README.md",
+      "frontend/src/components/Radio.tsx",
+      "frontend/src/components/Select.tsx",
+      "frontend/src/components/Table.tsx",
+      "frontend/src/components/components.css",
+      "frontend/src/components/index.ts",
+      "frontend/src/features/alerts/AlertSwitch.tsx",
+      "frontend/src/features/alerts/AlertsBell.tsx",
+      "frontend/src/features/assistant/Chrome.tsx",
+      "frontend/src/features/assistant/MentionPicker.tsx",
+      "frontend/src/features/finance/payments/PaymentsView.tsx",
+      "frontend/src/features/my-work/CaughtUp.tsx",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/response/ProofField.tsx",
+      "frontend/src/features/response/ReconcilePanel.tsx",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/ResponseView.tsx",
+      "frontend/src/features/response/Segmented.tsx",
+      "frontend/src/features/response/SupportHandoverForm.tsx",
+      "frontend/src/features/response/TeamInputForm.tsx",
+      "frontend/src/features/rfp/FollowupCard.tsx",
+      "frontend/src/features/rfp/OutcomeForm.tsx",
+      "frontend/src/features/rfp/OutcomeView.tsx",
+      "frontend/src/features/rfp/RecordedView.tsx",
+      "frontend/src/features/setup/TemplatesView.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/StartWorkButton.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/components/conformance-options.test.tsx",
+      "frontend/tests/controls.ts",
+      "frontend/tests/engagement-planning.test.tsx",
+      "frontend/tests/minutes-end.test.tsx",
+      "frontend/tests/minutes.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/payment-reminder.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/rfp-submission.test.tsx",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/support-handover.test.tsx",
+      "frontend/tests/weekly-returned-received.test.tsx",
+      "frontend/tests/weekly.test.tsx",
+      "frontend/tests/workspace-step.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -185,6 +370,22 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T14:03:07Z",
+      "round": 1,
+      "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T14:04:34Z",
+      "round": 1,
+      "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "reason": null
     }
   ],
   "routing": {
@@ -201,9 +402,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
   },
   "blocked": null
 }

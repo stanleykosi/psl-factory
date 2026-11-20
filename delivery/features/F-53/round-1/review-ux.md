@@ -1,0 +1,15 @@
+VERDICT: PASS
+REVIEWER: reviewer-ux
+COMMIT: 37adc13c1e9e17bf4334f07c566b96c002db56fa
+AUTHORITY: delivery UX review
+
+## Findings
+No blocking findings. Notes:
+- UX-N1: Radios in the response form are now a vertical list; selection is still one click with a visible label and 44px row on phones. Reading order and wording are unchanged.
+- UX-N2: Separate date and time fields add one extra step on the date-time entry, but each is labelled and sized for touch; wording and required-state messages are unchanged.
+- UX-N3: Setup templates table is now one Tab stop (scroll frame) before its links; builder recorded this and kept the assertion.
+- Not exercised by hand: Enter and Space on every swapped button beyond the builder's conformance e2e (RFP Edit, Use the draft); I relied on that e2e plus component tests.
+
+## Verified
+- Before and after screens show the same wording, order, hints, disabled "Record" states and explanatory messages on the response form, RFP outcome and follow-up, My work filters.
+- Live on 4925 at 1440 and 390: pages load with the persona cookie, no overflow, controls at least 44px high on the phone, "Clear" and filter controls present in My work, assistant chips and "Mention a project or record" button present.

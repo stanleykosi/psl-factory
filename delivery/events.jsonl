@@ -3811,3 +3811,14 @@
 {"at":"2026-11-20T11:28:07Z","feature":"F-53","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-20T11:28:08Z","feature":"F-53","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-20T11:28:35Z","feature":"F-53","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-20T14:03:03Z","feature":"F-53","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":394.8,"commit":"37adc13c1e9e"}
+{"at":"2026-11-20T14:03:07Z","feature":"F-53","round":1,"kind":"transition","head":"37adc13c1e9e","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-20T14:04:34Z","feature":"F-53","round":1,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"37adc13c1e9e","findings":{"TECH-1-1":"low","TECH-1-2":"low"},"written_at":"2026-11-20T14:03:55Z"}
+{"at":"2026-11-20T14:04:34Z","feature":"F-53","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"37adc13c1e9e","written_at":"2026-11-20T14:04:22Z"}
+{"at":"2026-11-20T14:04:34Z","feature":"F-53","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"37adc13c1e9e","written_at":"2026-11-20T14:04:22Z"}
+{"at":"2026-11-20T14:04:34Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"TECH-1-1","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T14:04:34Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"TECH-1-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T14:04:34Z","feature":"F-53","round":1,"kind":"transition","head":"37adc13c1e9e","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-20T14:18:23Z","feature":"F-53","round":1,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"37adc13c1e9e","findings":{"QA-1-1":"low","QA-1-2":"low"},"written_at":"2026-11-20T14:18:01Z"}
+{"at":"2026-11-20T14:18:23Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"QA-1-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T14:18:23Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"QA-1-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
