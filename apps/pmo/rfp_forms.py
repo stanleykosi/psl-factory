@@ -43,7 +43,12 @@ def forms_for(case,data=None):
                 help_text='For a pending outcome, enter the date stated in the selected customer evidence, if given.',
                 widget=forms.DateInput(attrs={'type': 'date'}),
             )
-            f.fields['followup_on']=forms.DateField(required=False, label='Internal next check date')
+            f.fields['remind_at'] = forms.DateTimeField(
+                required=False, label='Internal reminder time',
+                help_text='Remind the currently assigned project manager in Alerts.',
+                widget=forms.DateTimeInput(format='%Y-%m-%dT%H:%M:%S', attrs={'type': 'datetime-local', 'step': 1}),
+            )
+            f.fields['followup_on'] = forms.DateField(required=False, widget=forms.HiddenInput)
             f.fields['award_amount']=forms.CharField(required=False, max_length=64, label='Awarded amount')
             f.fields['award_currency']=forms.CharField(required=False, max_length=3, label='Award currency')
         result.append({'action':action,'label':label,'form':f})

@@ -30,7 +30,7 @@ def workbench(request,case_id):
             elif action=='outcome':rfp.outcome(a,c,d['submission'].pk,d['result'],d['observed_at'],d['role'],
                 d['evidence'].pk if d['evidence'] else None,d['note'],v,followup_on=d['followup_on'],
                 award_amount=d['award_amount'] or None,award_currency=d['award_currency'] or None,
-                customer_expected_on=d['customer_expected_on'])
+                customer_expected_on=d['customer_expected_on'],remind_at=d['remind_at'])
             elif action=='dispose':rfp.dispose(a,c,d['outcome'].pk,d['lessons'].pk if d['lessons'] else None,v)
             elif action=='policy':draft_standard_policy(a,c,d['component'],d['content'],d['evidence'].pk,d['effective_from'])
             elif action=='investigate':investigate_rfp(a,c,v)

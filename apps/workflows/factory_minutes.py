@@ -240,6 +240,40 @@ def current_document(work,actor=None):
     if b.manifest!=reporting.meeting_manifest(m):raise ValidationError('Meeting or action state changed; rebuild current minutes')
     return b
 
+def exact_outward_draft(work, actor, version_id):
+    """Resolve the current draft whose client audience requires publication intent."""
+    if type(version_id) is not int or version_id < 1 or work.status == 'verified':
+        raise ValidationError('Select the exact current client minutes draft.')
+    draft = current_document(work, actor)
+    if draft.version.audience != 'client' or draft.version_id != version_id:
+        raise ValidationError('Select the exact current client minutes draft.')
+    return draft
+
+
+@transaction.atomic
+def request_outward_review(actor, work_id, expected, case_expected, version_id):
+    from apps.documents.controlled import request_review
+    from .factory_progress import wake_waiting
+
+    work = human_work(actor, work_id, expected, case_expected)
+    draft = exact_outward_draft(work, actor, version_id)
+    task = request_review(actor, work.case_id, draft.version_id, case_expected)
+    wake_waiting(work.pk)
+    return task
+
+
+@transaction.atomic
+def review_outward_draft(actor, work_id, expected, case_expected, version_id, verdict, note):
+    from apps.documents.controlled import review_version
+    from .factory_progress import wake_waiting
+
+    work = human_work(actor, work_id, expected, case_expected)
+    draft = exact_outward_draft(work, actor, version_id)
+    review = review_version(actor, work.case_id, draft.version_id, verdict, note, case_expected)
+    wake_waiting(work.pk)
+    return review
+
+
 def verify(work,actor=None):
     from .factory import profile
     from apps.documents.controlled import validate_review,publication_requirements
@@ -254,11 +288,16 @@ def verify(work,actor=None):
     result.update(publication=p.pk,receipt_ids=[r.pk for r in receipts]);return result
 
 def report(work,actor):
-    result={'stage':'confirmation','finding':''}
+    result={'stage':'confirmation','finding':'','review_request_needed':False}
     try:
         confirmed_meeting(work,actor);result['stage']='draft'
         if not document(work):return result
-        result['stage']='rework';current_document(work,actor);result['stage']='publication';verify(work,actor);result['stage']='complete'
+        result['stage']='rework';draft=current_document(work,actor);result['stage']='publication'
+        if draft.version.audience == 'client' and not HumanTask.objects.filter(case=work.case, version=draft.version).exists():
+            result['review_request_needed'] = True
+            result['finding'] = 'Send the exact client minutes draft for review.'
+            return result
+        verify(work,actor);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
 
@@ -281,6 +320,8 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if stage=='draft':return ['ACT09'],'Prepare current native minutes without completing actions'
     if stage=='complete':return ['ACT13'],'Verify current repository minutes and selected outward receipts'
     if stage=='publication':
+        if state['native']['review_request_needed']:
+            return [],state['native']['finding']
         try:
             from apps.documents.controlled import validate_review
             validate_review(work.case,document(work).version);publisher(work,value)
@@ -305,9 +346,6 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return {'head':work.source_head_id,'extraction':r.pk if r else None,'human_confirmation_required':True,'scope_changed':False,'commitments_assigned':False}
     if kind=='ACT09':
         m=confirmed_meeting(work,work.execution_actor);b=reporting.draft_minutes(work.execution_actor,c.pk,m.pk,data['template_id'],data['audience'],c.revision)
-        if data['publish']:
-            from apps.documents.controlled import request_review
-            c.refresh_from_db();request_review(work.execution_actor,c.pk,b.version_id,c.revision)
         return {'head':work.source_head_id,'document_version':b.version_id,'meeting_version':m.current_id}
     if kind in ['ACT11','ACT12']:
         j=pending_job(jobs)
@@ -357,17 +395,36 @@ def projection(actor,work):
         _,v=profile(work,recovery=True);s,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);options,message=eligible(work,v,s,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified';options=[]
-    can_review=False;reviewers=[];binding=document(work)
-    if (n['stage']=='publication' and not work.cancel_requested and binding
+    review_verdicts = []
+    reviewers=[];binding=document(work)
+    can_request_review = False
+    if n['review_request_needed'] and not work.cancel_requested:
+        try:
+            require(actor, work.case, 'document.request_review')
+        except PermissionDenied:
+            pass
+        else:
+            can_request_review = True
+    if (n['stage']=='publication' and not n['review_request_needed'] and not work.cancel_requested and binding
             and HumanTask.objects.filter(case=work.case,version=binding.version,status='open').exists()):
         from django.contrib.auth import get_user_model
         from apps.policy.services import decision_authority
         for u in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__active=True,grant__action='document.review_controlled').distinct():
-            try:decision_authority(u,work.case,'PMO Lead','approve')
-            except (ValidationError,PermissionDenied):continue
-            reviewers.append(u.get_full_name() or u.username);can_review=can_review or actor.pk==u.pk
+            available = []
+            for verdict in ('approve', 'return'):
+                try:
+                    decision_authority(u, work.case, 'PMO Lead', verdict)
+                except (ValidationError, PermissionDenied):
+                    continue
+                available.append(verdict)
+                if actor.pk != u.pk:
+                    break
+            if available:
+                reviewers.append(u.get_full_name() or u.username)
+            if actor.pk == u.pk:
+                review_verdicts = available
     m=Meeting.objects.filter(case=work.case,reference=work.request['reference']).first()
-    return {'can_review':can_review,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
+    return {'can_review':bool(review_verdicts),'can_request_review':can_request_review,'review_verdicts':review_verdicts,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
 
 
 def delivery_readback(work, actor):

@@ -2,6 +2,12 @@
 {% block title %}Accept staff invitation · PSL Factory{% endblock %}
 {% block content %}
 <header class="page-heading"><div><h1>Accept staff invitation</h1></div></header>
-<section class="card onboarding-card"><form method="post" autocomplete="off">{% csrf_token %}{{ form.as_p }}<button class="button primary">Set up account</button></form></section>
+{% if problem %}<p role="alert">{{ problem }}</p>{% endif %}
+{% if preview %}<section class="card onboarding-card"><h2>Workspace access for {{ preview.name }}</h2><p>{{ preview.email }} · Invitation expires {{ preview.expires_at }}</p>
+  <dl>{% for workspace,profile in preview.workspaces %}<dt>{{ workspace }}</dt><dd>{{ profile }}</dd>{% endfor %}</dl>
+</section>{% endif %}
+<section class="card onboarding-card"><form method="post" autocomplete="off">{% csrf_token %}{{ form.as_p }}
+  {% if not preview %}<button class="button secondary" name="action" value="preview" formnovalidate>Review workspace access</button>{% endif %}
+  <button class="button primary" name="action" value="accept">Set up account</button></form></section>
 <script defer src="{% static 'staff-invite.js' %}"></script>
 {% endblock %}

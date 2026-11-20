@@ -13,6 +13,7 @@ class StaffInvitation(AppendOnly):
     profile_key = models.CharField(max_length=50,blank=True,default='')
     profile_label = models.CharField(max_length=80,blank=True,default='')
     profile_sha256 = models.CharField(max_length=64,blank=True,default='')
+    workspace_profiles = models.JSONField(default=list, blank=True)
     number = models.PositiveIntegerField()
     token_hash = models.CharField(max_length=64, unique=True)
     expires_at = models.DateTimeField()
@@ -57,7 +58,7 @@ class StaffProfileChange(AppendOnly):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name='+')
     actor = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name='+')
     authority = models.ForeignKey('identity.TenantAuthority',on_delete=models.PROTECT)
-    invitation = models.OneToOneField(StaffInvitation,null=True,on_delete=models.PROTECT)
+    invitation = models.ForeignKey(StaffInvitation,null=True,on_delete=models.PROTECT)
     operation = models.UUIDField(unique=True)
     profile_key = models.CharField(max_length=50)
     profile_label = models.CharField(max_length=80)
@@ -69,3 +70,6 @@ class StaffProfileChange(AppendOnly):
     after_actions = models.JSONField()
     reason = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['invitation', 'case'], name='staff_invite_workspace_profile')]

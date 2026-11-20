@@ -1,0 +1,11 @@
+{% if handover.rows or handover.other_work %}
+<h3>Hand over open work</h3>
+<ul>
+  {% for item in handover.rows %}<li>
+    <a href="{% url 'factory_detail' item.pk %}">{{ item.name }}</a>
+    {% if item.replacement %}{% if item.can_review %} · <a href="{% url 'factory_execution_review' item.pk %}">Review replacement worker</a>{% else %} · Current workflow reviewer needed{% endif %}{% endif %}
+    {% if item.claim %} · {% if item.can_release_claim %}Release the open decision from its work record{% else %}Current workflow owner needs to review the open decision claim{% endif %}{% endif %}
+  </li>{% endfor %}
+</ul>
+{% if handover.other_work %}<p>Ask an authorised workflow owner to review the remaining open work.</p>{% endif %}
+{% endif %}

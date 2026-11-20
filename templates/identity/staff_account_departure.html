@@ -6,6 +6,7 @@
 {% if form %}<form method="post">{% csrf_token %}{{ form.fingerprint }}{{ form.operation }}{{ form.non_field_errors }}
   {% for group in form.groups %}<section class="card"><h2>{{ group.case.title }}</h2>
     <p><a href="{% url 'case_access' group.case.pk %}">Review workspace access</a></p>
+    {% include 'identity/staff_work_handover.html' with handover=group.handover only %}
     {% for row in group.rows %}<div class="form-row">{{ row.field.errors }}{{ row.field.label_tag }}{{ row.field }}<p>Current deadline: {{ row.item.current.due_at|date:'d M Y H:i T'|default:'Not established' }}. Existing deadlines and history are retained.</p></div>{% empty %}<p>No open project actions to hand over.</p>{% endfor %}
     {% if group.evidence %}<p>{{ group.evidence.errors }}{{ group.evidence.label_tag }}{{ group.evidence }}</p>{% endif %}
   </section>{% endfor %}

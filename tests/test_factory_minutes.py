@@ -15,7 +15,7 @@ from apps.core.services import add_evidence
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition,register_reference
-from apps.documents.controlled import review_version
+from apps.documents.controlled import request_review, review_version
 from apps.documents.models import Publication,PublicationJob,PublicationReceipt
 from apps.pmo.meetings import change_action,record_meeting
 from apps.pmo.models import Meeting,ActionItem,MeetingVersion
@@ -42,6 +42,9 @@ class FactoryMinutesTests(TestCase):
         return {'kind':'status','occurred_at':(timezone.now()-timedelta(hours=1)).isoformat(),'purpose':'Review delivery plan and dependencies','summary':'People confirmed the plan and agreed to investigate the dependency.','participant_ids':[self.actor.pk],'decisions':[{'text':'Confirm the current delivery plan.','evidence_id':self.notes.pk,'change_evidence_id':None}],'actions':[{'reference':'ACTION-1','description':'Investigate the dependency before the next review.','owner_id':self.actor.pk if known else None,'due_at':(timezone.now()+timedelta(days=1)).isoformat() if known else None,'evidence_id':self.notes.pk,'change_evidence_id':None,'reason':'Authenticated human records actual commitment'}],'existing_action_ids':[],'note':'Checked actual attribution and agreement, not an inferred model assignment.'}
     def confirm(self,known=True,fields=None):
         r=flow.extraction(self.work);a=flow.confirm(self.actor,self.work.pk,self.work.revision,rev(self.case),fields or self.fields(known),r.pk if r else None);self.work.refresh_from_db();return a
+    def request_outward_review(self):
+        binding = flow.document(self.work)
+        return flow.request_outward_review(self.actor, self.work.pk, self.work.revision, rev(self.case), binding.version_id)
     def rows(self):
         with connection.cursor() as c:
             c.execute("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename");names=[r[0] for r in c.fetchall()];result={}
@@ -92,6 +95,83 @@ class FactoryMinutesTests(TestCase):
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         self.assertIn('Deadline unknown', str(flow.document(self.work).version.payload))
         self.assertFalse(Publication.objects.exists())
+
+    def test_outward_draft_requires_explicit_exact_review_request_and_wakes_existing_worker(self):
+        from apps.workflows import factory_progress
+
+        self.start(True);self.confirm();self.advance()
+        draft = flow.document(self.work)
+        self.assertIsNotNone(draft, self.work.finding)
+        self.assertFalse(HumanTask.objects.filter(version=draft.version).exists())
+        self.assertFalse(Publication.objects.exists())
+        progress = factory_progress.set_progress(self.actor, self.work.pk, self.work.revision, True)
+
+        def drain_to(expected):
+            for _ in range(15):
+                self.assertEqual(factory_progress.run_once(), progress.pk)
+                progress.refresh_from_db()
+                if progress.status != 'queued':
+                    self.assertEqual(progress.status, expected)
+                    return
+            self.fail('Minutes did not reach the next station')
+
+        drain_to('waiting')
+        self.work.refresh_from_db()
+        self.assertGreater(progress.available_at, timezone.now())
+        self.assertFalse(HumanTask.objects.filter(version=draft.version).exists())
+        decision_url = f'/work/{self.work.pk}/decision/'
+        command = {'action': 'request_review', 'revision': self.work.revision, 'case_revision': rev(self.case),
+                   'version': draft.version_id}
+        self.client.force_login(self.actor)
+        response = self.client.get(decision_url)
+        self.assertContains(response, 'Draft ready for review')
+        self.assertContains(response, 'Send for review')
+        self.assertNotContains(response, 'Approve exact outward minutes')
+        for invalid in ({'version': ''}, {'version': draft.version_id + 1}, {'revision': self.work.revision - 1},
+                        {'case_revision': command['case_revision'] - 1}, {'version': [draft.version_id] * 2}):
+            self.assertEqual(self.client.post(decision_url, command | invalid).status_code, 200)
+            self.assertFalse(HumanTask.objects.filter(version=draft.version).exists())
+
+        reader = get_user_model().objects.create_user('minutes-draft-read-only')
+        for action in ('case.read', 'factory.read', 'meeting.read'):
+            Grant.objects.create(case=self.case, user=reader, action=action)
+        self.client.force_login(reader)
+        self.assertNotContains(self.client.get(decision_url), 'Send for review')
+        self.assertEqual(self.client.post(decision_url, command).status_code, 403)
+        self.assertFalse(HumanTask.objects.filter(version=draft.version).exists())
+
+        self.client.force_login(self.actor)
+        self.assertRedirects(self.client.post(decision_url, command), decision_url, fetch_redirect_response=False)
+        task = HumanTask.objects.get(version=draft.version)
+        self.assertEqual((task.status, task.created_by), ('open', self.actor))
+        self.assertFalse(Publication.objects.exists())
+        progress.refresh_from_db()
+        self.assertLessEqual(progress.available_at, timezone.now())
+        self.assertNotContains(self.client.get(decision_url), 'Send for review')
+        self.assertContains(self.client.post(decision_url, command | {'case_revision': rev(self.case)}),
+                            'Review was already requested')
+        self.assertEqual(HumanTask.objects.filter(version=draft.version).count(), 1)
+        drain_to('waiting')
+        self.work.refresh_from_db()
+        approve = {'action': 'review', 'revision': self.work.revision, 'case_revision': rev(self.case),
+                   'version': draft.version_id, 'verdict': 'approve', 'note': 'Reviewed this exact client draft.'}
+        Grant.objects.create(case=self.case, user=reader, action='document.review_controlled')
+        self.client.force_login(reader)
+        response = self.client.get(decision_url)
+        self.assertNotContains(response, 'Approve exact outward minutes')
+        self.assertNotContains(response, 'Return for correction')
+        self.assertEqual(self.client.post(decision_url, approve).status_code, 403)
+        self.assertFalse(draft.version.reviews.exists())
+
+        self.client.force_login(self.actor)
+        self.assertRedirects(self.client.post(decision_url, approve), decision_url, fetch_redirect_response=False)
+        progress.refresh_from_db()
+        self.assertLessEqual(progress.available_at, timezone.now())
+        drain_to('finished')
+        self.work.refresh_from_db()
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        self.assertEqual(Publication.objects.get().version_id, draft.version_id)
+        self.assertEqual(PublicationReceipt.objects.count(), 1)
     def test_duplicate_intake_and_human_capture_without_execution_policy(self):
         self.start();self.assertEqual(flow.start(self.actor,self.case.pk,'MINUTES-1','FORMAL-1',self.data,1).pk,self.work.pk)
         bad=dict(self.data,audience='client',publish=True)
@@ -152,7 +232,9 @@ class FactoryMinutesTests(TestCase):
         for u in [self.recipient,second]:refs.append(register_reference(self.actor,self.case.pk,'client:'+str(u.pk),'schema:psl/document-recipient/v1',{'audience':'client','user_id':u.pk},self.owner.pk).ref)
         activate(self.actor,self.case,'D11.recipient_grant_refs',refs,self.owner)
         self.start(True);self.advance();self.confirm();self.advance();b=flow.document(self.work)
-        self.assertIsNotNone(b,self.work.finding);self.assertNotEqual(self.work.status,'verified');self.assertFalse(Publication.objects.exists());self.assertTrue(HumanTask.objects.filter(version=b.version,status='open').exists())
+        self.assertIsNotNone(b,self.work.finding);self.assertNotEqual(self.work.status,'verified');self.assertFalse(Publication.objects.exists());self.assertFalse(HumanTask.objects.filter(version=b.version).exists())
+        self.request_outward_review()
+        self.assertTrue(HumanTask.objects.filter(version=b.version,status='open').exists())
         self.client.force_login(self.actor)
         decision_url=f'/work/{self.work.pk}/decision/'
         self.assertContains(self.client.get(decision_url),'Approve exact outward minutes')
@@ -191,7 +273,7 @@ class FactoryMinutesTests(TestCase):
             sends=0;lookups=0
             def lookup(self,p):self.lookups+=1;return None
             def deliver(self,j,f):self.sends+=1;raise TimeoutError('Synthetic lost outcome')
-        self.start(True);self.confirm();self.advance();b=flow.document(self.work)
+        self.start(True);self.confirm();self.advance();b=flow.document(self.work);self.request_outward_review()
         review_version(self.actor,self.case.pk,b.version_id,'approve','Exact outward quality review',rev(self.case))
         adapter=LostBeforeAccept();factory.run_until_wait(self.work.pk,adapter=adapter);self.work.refresh_from_db()
         self.assertEqual(self.work.status,'waiting_effect',self.work.finding);self.assertEqual(adapter.sends,1)
@@ -200,23 +282,46 @@ class FactoryMinutesTests(TestCase):
         flow.reconcile(self.actor,self.work.pk,self.work.revision,adapter);self.work.refresh_from_db();self.assertEqual(adapter.sends,1);self.assertEqual(self.work.budget_used,before);self.assertEqual(FactoryAttempt.objects.filter(activity__work=self.work).count(),count);self.assertEqual(self.work.status,'waiting_effect')
     def test_lost_response_after_accept_recovers_exact_receipt_without_duplicate(self):
         from adapters.publications import PublicationTimeoutAfterAccept
-        self.start(True);self.confirm();self.advance();b=flow.document(self.work)
+        self.start(True);self.confirm();self.advance();b=flow.document(self.work);self.request_outward_review()
         review_version(self.actor,self.case.pk,b.version_id,'approve','Checked exact output',rev(self.case))
         factory.run_until_wait(self.work.pk,adapter=PublicationTimeoutAfterAccept());self.work.refresh_from_db()
         self.assertEqual(self.work.status,'verified',self.work.finding);self.assertEqual(PublicationReceipt.objects.count(),1);self.assertEqual(Publication.objects.count(),1)
     def test_returned_minutes_get_new_version_new_confirmation_and_review(self):
-        artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['return']}]},self.owner)
         self.start(True);self.confirm();self.advance();old=flow.document(self.work);item=ActionItem.objects.get()
-        review_version(self.actor,self.case.pk,old.version_id,'return','Correct attribution before outward distribution',rev(self.case))
+        legacy_task = request_review(self.actor, self.case.pk, old.version_id, rev(self.case))
+        self.client.force_login(self.actor)
+        decision_url = f'/work/{self.work.pk}/decision/'
+        command = {'action': 'review', 'revision': self.work.revision, 'case_revision': rev(self.case),
+                   'version': old.version_id, 'verdict': 'return', 'note': 'Correct attribution before outward distribution'}
+        decision = self.client.get(decision_url)
+        self.assertContains(decision, 'Approve exact outward minutes')
+        self.assertNotContains(decision, 'Send for review')
+        self.assertNotContains(decision, 'Return for correction')
+        self.assertContains(decision, 'Returning this draft requires separate review authority.')
+        self.assertContains(self.client.post(decision_url, command), 'D05.decision_action_matrix')
+        self.assertFalse(old.version.reviews.exists())
+        self.assertFalse(Publication.objects.exists())
+
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'PMO Lead', 'actions': ['return']}]}, self.owner)
+        command['case_revision'] = rev(self.case)
+        self.assertContains(self.client.get(decision_url), 'Return for correction')
+        self.assertRedirects(self.client.post(decision_url, command), decision_url, fetch_redirect_response=False)
+        self.assertEqual(old.version.reviews.get().verdict, 'return')
+        legacy_task.refresh_from_db()
+        self.assertEqual(legacy_task.status, 'returned')
+        self.assertNotContains(self.client.get(decision_url), 'Return for correction')
         self.data['meeting_version_id']=old.meeting.current_id
         flow.correct(self.actor,self.work.pk,self.work.revision,rev(self.case),self.data,'Correct the actual meeting interpretation');self.work.refresh_from_db()
-        self.client.force_login(self.actor);response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Retain or link existing commitments')
+        response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Retain or link existing commitments')
         before=MeetingVersion.objects.filter(meeting__reference='FORMAL-1').count()
         with self.assertRaisesRegex(ValidationError,'Retain existing action ID'):self.confirm()
         self.assertEqual(MeetingVersion.objects.filter(meeting__reference='FORMAL-1').count(),before);self.assertEqual(ActionItem.objects.count(),1)
         fields=self.fields();fields['summary']='Corrected attribution after participant review.';fields['actions']=[];fields['existing_action_ids']=[item.pk]
         self.confirm(fields=fields);self.advance();new=flow.document(self.work)
         self.assertNotEqual(new.version_id,old.version_id);self.assertFalse(new.version.reviews.exists());self.assertFalse(Publication.objects.exists());self.assertEqual(ActionItem.objects.count(),1)
+        self.assertFalse(HumanTask.objects.filter(version=new.version).exists())
+        self.assertContains(self.client.get(decision_url), 'Send for review')
     def test_http_intake_confirmation_and_closed_commands(self):
         self.client.force_login(self.actor)
         response=self.client.get('/factory/new/',{'definition':flow.DEFINITION,'case':str(self.case.pk)});self.assertContains(response,'Record formal minutes')
@@ -239,7 +344,7 @@ class FactoryMinutesTests(TestCase):
         state=change_action(other,self.case.pk,item.pk,'start',self.notes.pk,'Current owner begins',rev(self.case),2);self.assertEqual(state.status,'in_progress')
 
     def test_published_receipts_do_not_hide_revoked_reviewer_or_recipient_grants(self):
-        self.start(True);self.confirm();self.advance();b=flow.document(self.work)
+        self.start(True);self.confirm();self.advance();b=flow.document(self.work);self.request_outward_review()
         review_version(self.actor,self.case.pk,b.version_id,'approve','Exact current authority',rev(self.case));self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         Grant.objects.filter(case=self.case,user=self.recipient,action='document.receive:client').update(active=False)
         with self.assertRaises(PermissionDenied):flow.verify(self.work,self.actor)
@@ -299,7 +404,7 @@ class FactoryMinutesTests(TestCase):
 
     def native_ready_publication(self):
         from apps.documents.controlled import reserve_publication
-        self.start(True);self.confirm();self.advance();binding=flow.document(self.work)
+        self.start(True);self.confirm();self.advance();binding=flow.document(self.work);self.request_outward_review()
         review_version(self.actor,self.case.pk,binding.version_id,'approve','Exact outward minutes review',rev(self.case))
         return reserve_publication(self.actor,self.case.pk,binding.version_id,rev(self.case),factory_work_id=self.work.pk)
     def test_native_worker_unknown_and_expired_lease_remain_receipt_only(self):

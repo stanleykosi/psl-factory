@@ -7,12 +7,17 @@
   <label for="staff-invitation-link">Invitation link</label><input id="staff-invitation-link" readonly value="{{ invitation_link }}">
 </section>{% endif %}
 <section class="card onboarding-card"><h2>{% if renewing %}Renew invitation{% else %}Invite a person{% endif %}</h2>
-  <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}{{ form.profile.as_field_group }}
+  <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.project_review }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}{{ form.profile.as_field_group }}
     <details><summary>Review individual workspace functions</summary><p>Use this only when a named access profile has not been configured. The invitation must include workspace read access.</p>{{ form.actions.as_field_group }}</details>
+    {% if has_extra_projects %}<details{% if renewing.workspace_profiles or form.errors %} open{% endif %}><summary>Include more projects</summary>
+      <p>Choose a profile for each project you want to include. The link admits the person to the projects reviewed here.</p>
+      {% if show_all_projects %}{{ form.all_projects.as_field_group }}{% endif %}
+      {% for field in form.project_fields %}{{ field.as_field_group }}{% endfor %}
+    </details>{% endif %}
     <p>Project responsibilities and approval authority are assigned separately.</p><button class="button primary">Create invitation link</button></form>
 </section>
 <section class="card"><h2>Invitation history</h2><ul>{% for row in rows %}<li>
-  {{ row.name }} · {{ row.email }} · Version {{ row.number }} · {% if row.admission %}Accepted
+  {{ row.name }} · {{ row.email }} · Version {{ row.number }} · {% if row.workspace_profiles %}{{ row.workspace_profiles|length }} additional project{{ row.workspace_profiles|length|pluralize }} · {% endif %}{% if row.admission %}Accepted
   {% elif row.superseded %}Replaced{% elif row.expires_at <= as_of %}Expired{% else %}Expires {{ row.expires_at }}{% endif %}
   {% if not row.admission and not row.superseded %}<a href="{% url 'staff_renew_invite' case.pk row.pk %}">Renew link</a>{% endif %}
 </li>{% empty %}<li>No staff invitation recorded.</li>{% endfor %}</ul></section>

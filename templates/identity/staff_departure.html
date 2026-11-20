@@ -5,7 +5,8 @@
 <a class="button secondary" href="{% url 'case_access' case.pk %}">People and access</a></header>
 <section class="card onboarding-card">
   <h2>Reassign open project actions</h2><p>Previous assignments and decisions remain in the record. Existing access in other workspaces stays in place.</p>
-  {% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Remove access</button></form>
+  {% include 'identity/staff_work_handover.html' %}
+  {% if form and not handover.rows and not handover.other_work %}<form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Remove access</button></form>
   {% else %}<p>{{ blocked }}</p>{% endif %}
 </section>
 {% endblock %}

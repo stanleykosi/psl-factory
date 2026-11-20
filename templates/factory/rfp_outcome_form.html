@@ -30,7 +30,11 @@
       <label>Expected decision date stated by the customer (optional)<input name="customer_expected_on" type="date" value="{{ outcome_values.customer_expected_on }}" aria-describedby="customer-expected-date-hint"></label>
       <p id="customer-expected-date-hint">Use the date in the selected customer evidence. Leave it blank if the customer gave no date.</p>
     {% endif %}
-    {% if outcome_variant == 'pending' or outcome_variant == 'unknown' %}<label>Internal next check date (optional)<input name="followup_on" type="date" value="{{ outcome_values.followup_on }}"></label>{% endif %}
+    {% if outcome_variant == 'pending' or outcome_variant == 'unknown' %}
+      {% if outcome_values.followup_on %}<label>Internal next check date (optional)<input name="followup_on" type="date" value="{{ outcome_values.followup_on }}"></label>{% endif %}
+      <label>Internal reminder time ({{ current_timezone }})<input name="remind_at" type="datetime-local" step="1" value="{{ outcome_values.remind_at }}" aria-describedby="bid-reminder-hint"></label>
+      <p id="bid-reminder-hint">Remind the currently assigned project manager in Alerts.</p>
+    {% endif %}
     <label>{% if outcome_variant == 'lost' %}Customer reason and notes{% else %}Explanation{% endif %}<textarea name="note" required maxlength="4000">{{ outcome_values.note }}</textarea></label>
     {% if row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'won' or row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'lost' %}
       <input type="hidden" name="selection_packet" value="{{ row.rfp.selection.packet }}"><label><input type="checkbox" name="selection_acknowledged"> I reviewed the submitted responses and this evidence identifies the result</label>

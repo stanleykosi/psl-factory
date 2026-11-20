@@ -1,5 +1,7 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta
+from unittest.mock import patch
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
@@ -7,8 +9,9 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.core.services import add_evidence
+from apps.identity.models import Grant
 from apps.pmo import rfp, rfp_followup
-from apps.pmo.models import RFPOutcome
+from apps.pmo.models import RFPFollowupDispatch, RFPOutcome
 from tests import factory_rfp_helpers, test_rfp
 from tests.helpers import rev
 
@@ -94,3 +97,56 @@ class RFPPendingDateTests(TestCase):
         self.assertEqual(recorded.customer_expected_on, self.customer_date)
         self.assertEqual(recorded.followup_on, self.today)
         self.assertContains(self.client.get(reverse('rfp', args=[self.case.pk])), 'Customer expected decision')
+
+    def test_exact_internal_reminder_is_due_only_for_current_pm_and_retires(self):
+        peer = get_user_model().objects.create_user(username='sample-rfp-unassigned-reader')
+        Grant.objects.bulk_create([Grant(case=self.case, user=peer, action=action)
+                                   for action in ['case.read', 'rfp.read', 'rfp.prepare']])
+        self.client.force_login(self.actor)
+        outcome_url = reverse('factory_work_response', args=[self.work.pk])
+        alerts_url = reverse('design_alerts')
+        with timezone.override('Africa/Lagos'):
+            tomorrow = timezone.localdate(self.observed_at) + timedelta(days=1)
+            due = timezone.make_aware(datetime.combine(tomorrow, time(13, 4, 5)))
+            command = {'action': 'outcome', 'target': self.submission.pk, 'revision': self.work.revision,
+                'case_revision': rev(self.case), 'verdict': 'pending', 'role': 'Client', 'evidence': self.proof.pk,
+                'observed_at': self.observed_at.isoformat(), 'note': 'Sample pending response, remind the assigned PM.',
+                'customer_expected_on': self.customer_date.isoformat(), 'remind_at': due.strftime('%Y-%m-%dT%H:%M:%S')}
+            self.assertContains(self.client.get(outcome_url, {'outcome': 'pending'}), 'Internal reminder time (Africa/Lagos)')
+            self.assertNotContains(self.client.get(outcome_url, {'outcome': 'lost'}), 'name="remind_at"')
+            saved = self.client.post(outcome_url, command, follow=True)
+            self.assertContains(saved, '13:04:05 WAT')
+            self.assertContains(saved, self.customer_date.strftime('%d %b %Y'))
+            recorded = self.submission.outcomes.get()
+            self.assertEqual(recorded.remind_at, due)
+            self.assertIsNone(recorded.followup_on)
+            with patch('apps.pmo.rfp_followup.timezone.now', return_value=due - timedelta(seconds=1)):
+                self.assertNotContains(self.client.get(alerts_url), 'Bid follow-up due')
+            with patch('apps.pmo.rfp_followup.timezone.now', return_value=due):
+                self.assertContains(self.client.get(alerts_url), 'Bid follow-up due')
+                self.assertContains(self.client.get(alerts_url), '13:04:05 WAT')
+                self.client.force_login(peer)
+                self.assertNotContains(self.client.get(alerts_url), 'Bid follow-up due')
+                self.client.force_login(self.actor)
+                self.record(result='won')
+                self.assertNotContains(self.client.get(alerts_url), 'Bid follow-up due')
+            recorded.refresh_from_db()
+            self.assertEqual(recorded.remind_at, due)
+            self.assertFalse(RFPFollowupDispatch.objects.filter(outcome__submission=self.submission).exists())
+
+    def test_exact_reminder_rejects_invalid_or_combined_instants_in_native_and_db(self):
+        due = self.observed_at + timedelta(seconds=5)
+        for result, dates in [
+            ('won', {'remind_at': due}),
+            ('pending', {'remind_at': due, 'followup_on': self.today}),
+            ('pending', {'remind_at': self.observed_at - timedelta(seconds=1)}),
+            ('pending', {'remind_at': due.replace(tzinfo=None)}),
+        ]:
+            with self.subTest(result=result, dates=dates):
+                with self.assertRaisesMessage(ValidationError, 'Choose one internal reminder time'):
+                    self.record(result=result, **dates)
+                if dates['remind_at'].tzinfo is not None:
+                    with self.assertRaises(IntegrityError), transaction.atomic():
+                        RFPOutcome.objects.create(submission=self.submission, observed_at=self.observed_at,
+                            result=result, role='Client', actor=self.actor, authority={}, evidence=self.proof, **dates)
+        self.assertFalse(self.submission.outcomes.exists())

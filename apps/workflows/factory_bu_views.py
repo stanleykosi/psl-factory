@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from apps.core.models import Case,Evidence
@@ -12,6 +13,7 @@ from apps.finance.bu_models import BUWork, BUReceipt
 from apps.finance.payroll_models import PayrollRun
 from apps.finance.analysis_models import FinanceRun
 from . import factory,factory_bu as bu
+from .factory_progress import current_plan_step
 from .factory_progress_views import StartWithBackground, start_work
 from .aggregate_presentation import publication_receipts
 from .screen_focus import require_action
@@ -131,6 +133,21 @@ def presentation(actor,work):
         except (ValidationError,PermissionDenied):row['bu']['can_publish']=False
     row['needs_me']=row['can_advance'] or row['bu']['can_review'];return row
 
+
+def investigation_progress(actor, work):
+    if work.cancel_requested or work.status in factory.TERMINAL or not work.lease_until or work.lease_until <= timezone.now():
+        return None
+    try:
+        _, profile = factory.profile(work)
+        observation = bu.snapshot(work, profile, reader=actor)
+        choices, _ = bu.eligible(work, profile, *observation)
+        if current_plan_step(work, observation[0]['hash'], choices) == 'ACT04':
+            return {'label': 'Investigating the selected business-unit sources and exception rules.', 'watching': True}
+    except (PermissionDenied, ValidationError):
+        pass
+    return None
+
+
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work,focus=None):
@@ -188,7 +205,7 @@ def detail(request,work,focus=None):
                 latest=w.reviews.filter(purpose=purpose).order_by('-pk').first()
                 reviews.append({'work_id':w.pk,'purpose':purpose,'version':w.version,'current':latest,
                                 'can_approve':w.metadata['status']=='complete'})
-    publication=None;receipt_rows=None;totals={};scope={};investigation=None
+    publication=None;receipt_rows=None;totals={};scope={};investigation=None;progress=None
     if not recipient:
         if focus in (None,'recovery') and (publication:=bu.publication(work)):
             receipt_rows=publication_receipts(publication,bu.DISCLOSE,BUReceipt.objects.filter(report=publication))
@@ -196,7 +213,10 @@ def detail(request,work,focus=None):
             result=bu.result(work)
             totals=result.payload['by_bu'];scope=result.metadata['scope']
         if not focus:
-            investigation=work.activities.filter(kind='ACT04').order_by('-pk').first()
+            if request.method in ('GET', 'HEAD'):
+                progress = investigation_progress(request.user, work)
+            if progress is None:
+                investigation=work.activities.filter(kind='ACT04').order_by('-pk').first()
     from apps.policy.models import Configuration
     return render(request,'factory/bu_detail.html',{'row':row,'case':work.case,'focus':focus,
         'queue':request.GET.get('queue','needs_me'),'q':request.GET.get('q','')[:120],
@@ -204,7 +224,7 @@ def detail(request,work,focus=None):
         'restart_key':'restart-'+uuid4().hex,'profiles':Configuration.objects.filter(case=work.case,component='OPS.factory_bu_execution') if form and work.status=='cancelled' else [],
         'review_evidence':Evidence.objects.filter(case=work.case,kind='bu_review') if reviews else [],
         'publication':publication,'receipt_rows':receipt_rows,'totals':totals,'currency':scope.get('currency'),
-        'period':scope.get('period'),'investigation':investigation})
+        'period':scope.get('period'),'investigation':investigation,'progress':progress})
 
 class RuleForm(forms.Form):
     """Exact private subject choices and explicit weights; no raw decision JSON."""

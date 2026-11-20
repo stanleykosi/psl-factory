@@ -2,6 +2,7 @@
 <a class="back-link" href="{% url 'home' %}?queue={{ queue|urlencode }}&amp;q={{ q|urlencode }}">← Back to work</a>
 <header class="page-heading"><div><p class="eyebrow">BUSINESS-UNIT TOTALS</p><h1>{{ row.title }}</h1><p class="lede">{{ row.state|readable }}</p></div></header>
 {% if not row.bu.recipient_only %}{% include 'factory/work_focus.html' with has_response=True response_label='Publication' %}{% endif %}
+{% include 'factory/current_step.html' with progress=progress only %}
 <section class="card"><h2>Next action</h2><p role="status">{{ row.next_action }}</p>
 {% if row.can_advance %}{% if not focus or focus == 'recovery' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue permitted agent work</button></form>{% endif %}{% endif %}</section>
 {% if row.bu.recipient_only %}

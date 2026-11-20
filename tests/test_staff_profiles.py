@@ -11,11 +11,14 @@ from django.test import TestCase,TransactionTestCase
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+from apps.core.models import Case
+from apps.documents.contracts import digest
 from apps.identity import intake,staff,staff_profiles
 from apps.identity.intake_models import AccessChange,TenantAuthority
 from apps.identity.models import Grant
 from apps.identity.staff_models import StaffAdmission,StaffInvitation,StaffProfileChange
 from apps.policy.models import Configuration
+from tests.helpers import rev
 from tests.test_staff_accounts import fixture
 
 
@@ -43,6 +46,200 @@ def apply(data,**kwargs):
 class StaffProfileTests(TestCase):
     @classmethod
     def setUpTestData(cls):cls.data=configured()
+
+    def test_one_use_invitation_previews_and_applies_different_profiles_in_two_workspaces(self):
+        data = self.data
+        starting, additional = [scope['case'] for scope in data['scopes']]
+        actor = data['actor']
+        self.client.force_login(actor)
+        path = reverse('staff_invites', args=[starting.pk])
+        form = self.client.get(path).context['form']
+        response = self.client.post(path, {
+            'name': 'Sample invited staff', 'username': 'sample-cross-workspace-invite', 'email': 'cross-sample@example.invalid',
+            'profile': 'sample-reader', 'revision': rev(starting), 'project_review': form.initial['project_review'],
+            f'profile_{additional.pk.hex}': 'sample-contributor',
+        })
+        self.assertContains(response, 'Invitation is ready')
+        token = response.context['invitation_link'].split('#')[1]
+        invitation = StaffInvitation.objects.get(username='sample-cross-workspace-invite')
+        self.assertEqual(invitation.workspace_profiles, [staff.workspace_pin(additional, PROFILES[0])])
+        self.client.logout()
+        accept_path = reverse('staff_accept_invite')
+        preview = self.client.post(accept_path, {'action': 'preview', 'token': token})
+        for text in (starting.title, additional.title, PROFILES[0]['label'], PROFILES[1]['label']):
+            self.assertContains(preview, text)
+        self.assertFalse(StaffAdmission.objects.filter(invitation=invitation).exists())
+        person = staff.accept(token, 'Synthetic!access.acceptance.204')
+        grants = set(Grant.objects.filter(user=person, active=True).values_list('case_id', 'action'))
+        self.assertEqual(grants, {(starting.pk, 'case.read'), *((additional.pk, action) for action in PROFILES[0]['actions'])})
+        self.assertEqual(staff_profiles.labels([starting.pk, additional.pk], person.pk),
+                         {starting.pk: PROFILES[1]['label'], additional.pk: PROFILES[0]['label']})
+        self.assertEqual(StaffProfileChange.objects.filter(invitation=invitation).count(), 2)
+        with self.assertRaises(ValidationError):
+            staff.accept(token, 'Synthetic!access.repeated.204')
+
+    def test_all_current_project_invitation_never_grants_a_later_project_or_a_stale_scope(self):
+        data = self.data
+        starting, additional = [scope['case'] for scope in data['scopes']]
+        actor = data['actor']
+        invite_args = (actor, starting.pk, 'sample-all-projects', 'Sample staff member', 'sample-all@example.invalid',
+                       ['case.read'], rev(starting))
+        with self.assertRaisesMessage(ValidationError, 'managed project list changed'):
+            staff.invite(*invite_args, profile_key='sample-reader', all_current_projects=True,
+                         expected_authority=data['authority'].pk)
+        with self.assertRaisesMessage(ValidationError, 'same named profile'):
+            staff.invite(*invite_args, profile_key='sample-reader', all_current_projects=True,
+                         expected_authority=data['authority'].pk,
+                         workspace_choices={additional.pk: (rev(additional), PROFILES[0]['key'])})
+        invitation, token = staff.invite(*invite_args, profile_key='sample-reader', all_current_projects=True,
+                                         expected_authority=data['authority'].pk,
+                                         workspace_choices={additional.pk: (rev(additional), 'sample-reader')})
+        newer = intake.create_case(actor, starting.tenant, 'later-workspace', 'Later managed project', 'project')
+        person = staff.accept(token, 'Synthetic!access.snapshot.704')
+        self.assertFalse(Grant.objects.filter(user=person, case=newer).exists())
+        self.assertEqual(set(StaffProfileChange.objects.filter(invitation=invitation).values_list('case_id', flat=True)),
+                         {starting.pk, additional.pk})
+        _, withdrawn = staff.invite(actor, starting.pk, 'sample-withdrawn-scope', 'Sample withdrawn invitation',
+                                    'withdrawn@example.invalid', ['case.read'], rev(starting), profile_key='sample-reader',
+                                    expected_authority=data['authority'].pk,
+                                    workspace_choices={additional.pk: (rev(additional), 'sample-reader')})
+        intake.change_access(actor, additional.pk, actor.pk, 'case.read', False, 'Synthetic loss of management access')
+        with self.assertRaises(PermissionDenied):
+            staff.accept(withdrawn, 'Synthetic!access.withdrawn.31')
+        self.assertFalse(get_user_model().objects.filter(username='sample-withdrawn-scope').exists())
+
+    def test_invite_revalidates_reviewed_authority_before_resolving_extra_profiles(self):
+        data = self.data
+        starting, additional = [scope['case'] for scope in data['scopes']]
+        authority = data['authority']
+        reviewed_choices = {additional.pk: (rev(additional), PROFILES[0]['key'])}
+        widened = deepcopy(data['value'])
+        widened['staff_lifecycle']['profiles'][0]['actions'].append('policy.read')
+        intake.provision(data['root'], data['actor'], starting.tenant, widened, authority.expires_at,
+                         True, 'Synthetic profile definitions changed after review')
+        with self.assertRaisesMessage(ValidationError, 'Invitation authority changed'):
+            staff.invite(data['actor'], starting.pk, 'sample-outdated-profile', 'Sample new colleague',
+                         'sample-outdated@example.invalid', ['case.read'], rev(starting), profile_key='sample-reader',
+                         expected_authority=authority.pk, workspace_choices=reviewed_choices)
+        self.assertFalse(StaffInvitation.objects.filter(username='sample-outdated-profile').exists())
+
+    def test_workspace_departure_disables_invited_account_after_its_last_pinned_workspace(self):
+        data = self.data
+        actor = data['actor']
+        first, second = [scope['case'] for scope in data['scopes']]
+        for index, order in enumerate([(first, second), (second, first)]):
+            with self.subTest(order=[case.pk for case in order]):
+                _, token = staff.invite(actor, first.pk, f'last-workspace-{index}', 'Sample departing colleague',
+                    'departure@example.invalid', ['case.read'], rev(first), profile_key='sample-reader',
+                    expected_authority=data['authority'].pk, workspace_choices={second.pk: (rev(second), 'sample-reader')})
+                person = staff.accept(token, 'Synthetic!sample.last-scope.744')
+                removed = staff.deactivate(actor, order[0].pk, person.pk, {}, None, 'Sample departing first workspace', rev(order[0]))
+                self.assertFalse(removed.account_disabled)
+                person.refresh_from_db()
+                self.assertTrue(person.is_active)
+                removed = staff.deactivate(actor, order[1].pk, person.pk, {}, None, 'Sample departing last workspace', rev(order[1]))
+                self.assertTrue(removed.account_disabled)
+                person.refresh_from_db()
+                self.assertFalse(person.is_active)
+                self.assertFalse(Grant.objects.filter(user=person, active=True).exists())
+
+    def test_batched_preview_reads_full_invitation_with_bounded_queries(self):
+        data = self.data
+        actor = data['actor']
+        first, second = [scope['case'] for scope in data['scopes']]
+        more = Case.objects.bulk_create([
+            Case(tenant=first.tenant, title=f'Sample preview workspace {number}', kind='project', synthetic=True)
+            for number in range(staff.MAX_INVITED_WORKSPACES - 2)
+        ])
+        Grant.objects.bulk_create([Grant(case=case, user=actor, action='case.read') for case in more])
+        profiles = {case.pk: (case.revision, PROFILES[0]['key']) for case in more}
+        profiles[second.pk] = (rev(second), PROFILES[0]['key'])
+        row, token = staff.invite(actor, first.pk, 'sample-bulk-preview', 'Sample colleague',
+            'preview@example.invalid', PROFILES[0]['actions'], rev(first), profile_key=PROFILES[0]['key'],
+            expected_authority=data['authority'].pk, workspace_choices=profiles, all_current_projects=True)
+        self.assertEqual(len(row.workspace_profiles), staff.MAX_INVITED_WORKSPACES - 1)
+        self.assertEqual(len(row.actions) + sum(len(pin['actions']) for pin in row.workspace_profiles),
+                         staff.MAX_COMBINED_INVITATION_ACTIONS)
+        with CaptureQueriesContext(connection) as captured:
+            self.assertEqual(staff.pending(token).pk, row.pk)
+        self.assertLessEqual(len(captured), 12)
+        self.assertFalse(StaffAdmission.objects.filter(invitation=row).exists())
+
+    def test_combined_invite_bounds_native_and_direct_postgresql_effects(self):
+        data = self.data
+        first, second = [scope['case'] for scope in data['scopes']]
+        widened = deepcopy(data['value'])
+        actions = ['case.read', *[action for action in widened['allowed_actions'] if action != 'case.read'][:149]]
+        wide = {'key': 'sample-wide-profile', 'label': 'Sample many access functions', 'actions': actions}
+        widened['staff_lifecycle']['profiles'].append(wide)
+        authority = intake.provision(data['root'], data['actor'], first.tenant, widened, data['authority'].expires_at,
+                                    True, 'Synthetic boundary for combined invitation limits')
+        with self.assertRaisesMessage(ValidationError, 'up to 150 workspace access functions'):
+            staff.invite(data['actor'], first.pk, 'sample-too-wide', 'Sample colleague', 'limit@example.invalid',
+                         ['case.read'], rev(first), profile_key='sample-reader', expected_authority=authority.pk,
+                         workspace_choices={second.pk: (rev(second), wide['key'])})
+        self.assertFalse(StaffInvitation.objects.filter(username='sample-too-wide').exists())
+        with self.assertRaisesMessage(DatabaseError, 'Combined invitations may grant up to 150'), transaction.atomic():
+            StaffInvitation.objects.create(case=first, username='sample-direct-too-wide', name='Sample colleague',
+                email='limit@example.invalid', actions=['case.read'], number=1, token_hash='e' * 64,
+                expires_at=authority.expires_at, authority=authority, actor=data['actor'], profile_key='sample-reader',
+                profile_label=PROFILES[1]['label'], profile_sha256=digest(PROFILES[1]),
+                workspace_profiles=[staff.workspace_pin(second, wide)])
+
+    def test_handover_never_loads_or_names_restricted_bu_work(self):
+        import json
+        from pathlib import Path
+
+        from django.utils import timezone
+        from apps.policy.operator_drafts import draft_operator_policy
+        from apps.policy.services import transition
+        from apps.workflows import factory_bu
+        from tests.bu_helpers import fixture as bu_fixture, source
+
+        data = bu_fixture()
+        case, preparer, manager = data['case'], data['preparer'], data['manager']
+        profile = json.loads(Path('fixtures/factory-bu.json').read_text())
+        profile.pop('classification')
+        configuration = draft_operator_policy(preparer, case.pk, 'OPS.factory_bu_execution', profile,
+                                               data['e']['policy_decision'].pk, timezone.now())
+        transition(preparer, configuration.pk, 'validated')
+        transition(preparer, configuration.pk, 'active')
+        Grant.objects.get_or_create(case=case, user=manager, action='factory.read')
+        sample = source(data)
+        work = factory_bu.start(preparer, case.pk, 'sample-private-work-handover', {
+            'mode': 'event', 'payroll_id': None, 'source_id': sample.pk, 'rule_ids': [], 'comparison': None,
+        }, 'Sample restricted title never shown on Staff', rev(case))
+        self.client.force_login(manager)
+        self.assertEqual(self.client.get(reverse('factory_detail', args=[work.pk])).status_code, 403)
+        with CaptureQueriesContext(connection) as captured:
+            handover = staff.handover_links(manager, case, preparer)
+        self.assertEqual(handover, {'rows': [], 'other_work': True})
+        self.assertFalse(any('"workflows_factorywork"."request"' in item['sql'] for item in captured))
+
+    def test_native_generic_invoice_claim_handover_uses_the_work_route(self):
+        from apps.workflows import factory
+        from apps.workflows.models import HumanTask
+        from tests.factory_helpers import fixture as invoice_fixture
+
+        data = invoice_fixture(username='staff-sample-invoice-worker')
+        case, worker, work = data['case'], data['actor'], data['work']
+        operator = get_user_model().objects.create_user(username='staff-sample-claim-operator')
+        Grant.objects.bulk_create([Grant(case=case, user=operator, action=action)
+                                   for action in ['case.read', 'factory.read', 'factory.manage', 'finance.read']])
+        factory.run_until_wait(work.pk)
+        task = HumanTask.objects.get(case=case, kind='factory_review', status='open')
+        claimed = factory.claim_task(worker, task.pk, task.revision)
+        handover = staff.handover_links(operator, case, worker)
+        row = next(row for row in handover['rows'] if row['pk'] == work.pk)
+        self.assertTrue(row['can_release_claim'])
+        self.client.force_login(operator)
+        route = reverse('factory_detail', args=[work.pk])
+        self.assertContains(self.client.get(route), 'Release task claim')
+        response = self.client.post(route, {'action': 'release_claim', 'task': task.pk,
+            'task_revision': claimed.revision, 'reason': 'Sample staff departure review'})
+        self.assertEqual(response.status_code, 302)
+        task.refresh_from_db()
+        self.assertIsNone(task.claimed_by_id)
 
     def test_exact_profile_adds_native_access_and_retains_roles_and_action_ownership(self):
         d=self.data;policies=Configuration.objects.count();row=apply(d)

@@ -1,5 +1,11 @@
 # Build progress log
 
+20 November 2026. The browser verified a precise internal bid alert and followed it to the original pending submission. Its separate customer-stated date stayed intact. Two more scoped journeys closed for a total of 95.
+
+20 November 2026. The matching 237 web and worker are running in the isolated preview. Two native schedule samples and two Business Unit samples passed guarded setup. Identity 0012 and PMO 0076 are applied. Fixture-only records have separate IDs from the earlier approval and receipt evidence.
+
+20 November 2026. Railway 237 passed all 131 grouped tests and both preservation probes. Hosted 236 recorded separate customer and internal bid dates and verified the private template creation and successor at phone width. Scoped acceptance reached 93 of 262. Next test candidates include distinct actor samples, exact client workaround proof, loss reason provenance and late invoice receipt recovery. Those additions have separate gates.
+
 20 November 2026. Railway 236 passed all 20 grouped PostgreSQL tests and two original receipt probes. The matching runtime is staged for preview promotion. Staff, explicit minutes review, exact-time bid reminders and schedule history privacy are grouped in 237.
 
 20 November 2026. Reconciled the earlier invoice reminder writes with current 390/375 browser evidence for the same invoice, amount, attachment, synthetic receipt and cancellation. Scoped acceptance reached 92 of 262. Operational messaging remains deferred.

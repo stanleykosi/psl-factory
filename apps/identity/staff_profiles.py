@@ -128,11 +128,18 @@ def apply(actor,case_id,person_id,key,fingerprint,reason,operation):
     return row
 
 
-def record_invitation(invitation,user):
-    if not invitation.profile_key:return None
-    profile=selected(invitation.authority,invitation.profile_key)
-    if digest(profile)!=invitation.profile_sha256 or set(profile['actions'])!=set(invitation.actions):
+def record_invitation(invitation,user,*,case=None,profile=None):
+    if case is None:
+        if not invitation.profile_key:return None
+        case = invitation.case
+        profile = selected(invitation.authority, invitation.profile_key)
+        saved = {'case': str(case.pk), 'profile_key': invitation.profile_key, 'profile_label': invitation.profile_label,
+                 'profile_sha256': invitation.profile_sha256, 'actions': invitation.actions}
+    else:
+        saved = next((pin for pin in invitation.workspace_profiles if pin['case'] == str(case.pk)), None)
+    if saved != staff.workspace_pin(case, profile):
         raise ValidationError('The invitation and its exact profile source differ.')
-    return record(invitation.actor,invitation.case,user,invitation.authority,profile,[],invitation.actions,
-        uuid5(NAMESPACE_URL,f'psl.staff-invitation:{invitation.pk}'),digest({'invitation':invitation.pk}),
+    suffix = '' if case.pk == invitation.case_id else f':{case.pk}'
+    return record(invitation.actor,case,user,invitation.authority,profile,[],saved['actions'],
+        uuid5(NAMESPACE_URL,f'psl.staff-invitation:{invitation.pk}{suffix}'),digest({'invitation':invitation.pk}),
         'Accepted exact named access invitation',invitation)

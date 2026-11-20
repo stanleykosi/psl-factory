@@ -1,7 +1,8 @@
 """Source-bound bid follow-up drafts and the assigned PM's internal review."""
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, F, OuterRef, Q, Subquery
+from django.db.models.functions import Coalesce, TruncDate
 from django.urls import reverse
 from django.utils import timezone
 
@@ -12,7 +13,7 @@ from apps.core.workbench import granted
 from apps.documents.contracts import digest
 from apps.identity.services import require
 
-from .models import RFPOutcome
+from .models import RFPAssignment, RFPOutcome
 from .rfp import current_assignment
 from .rfp_outcomes import historical_submission
 
@@ -103,18 +104,32 @@ def panel(actor, case, outcome):
     return view
 
 
+def reminder_time_label(outcome):
+    if outcome.remind_at is not None:
+        return timezone.localtime(outcome.remind_at).strftime('%d %b %Y %H:%M:%S %Z')
+    if outcome.followup_on is not None:
+        return outcome.followup_on.strftime('%d %b %Y')
+    return ''
+
+
 def reminders(actor):
+    now = timezone.now()
     cases = granted(actor, ['rfp.read','rfp.prepare'])
     later = RFPOutcome.objects.filter(submission__response__rfp=OuterRef('submission__response__rfp'),pk__gt=OuterRef('pk'))
+    assignee = RFPAssignment.objects.filter(intake_id=OuterRef('submission__response__rfp__current_intake_id'))
+    assignee = assignee.order_by('-pk').values('pm_id')[:1]
+    due = Q(remind_at__lte=now) | Q(remind_at__isnull=True, followup_on__lte=timezone.localdate(now))
     rows = RFPOutcome.objects.filter(submission__response__rfp__case__in=cases,
-        submission__response__rfp__current_intake__assignments__pm=actor,
-        result__in=['pending','unknown'],followup_on__lte=timezone.localdate()).filter(~Exists(later)).select_related(
-        'submission__response__rfp__case').distinct().order_by('followup_on','pk')[:8]
+        result__in=['pending','unknown']).alias(current_pm=Subquery(assignee)).filter(current_pm=actor.pk).filter(
+        due, ~Exists(later)).select_related('submission__response__rfp__case').annotate(reminder_day=Coalesce(
+        TruncDate('remind_at', tzinfo=timezone.get_current_timezone()), 'followup_on')).order_by(
+        'reminder_day', F('remind_at').asc(nulls_first=True), 'pk')[:8]
     for outcome in rows:
         rfp = outcome.submission.response.rfp
         try:
             authorize(actor,rfp.case,outcome)
         except (ValidationError,PermissionDenied):
             continue
+        detail = reminder_time_label(outcome) if outcome.remind_at else outcome.followup_on.isoformat()
         yield {'key':digest(['rfp-check',outcome.pk]),'label':'Bid follow-up due','subject':rfp.reference,
-               'detail':outcome.followup_on.isoformat(),'url':reverse('rfp',args=[rfp.case_id]),'group':'action'}
+               'detail':detail,'url':reverse('rfp',args=[rfp.case_id]),'group':'action'}

@@ -54,7 +54,7 @@ SCREENS = {
         'recovery': ('reconcile', 'operate_delivery'),
     },
     'pmo-minutes/v1': {
-        'decision': ('review',),
+        'decision': ('request_review', 'review'),
         'response': ('confirm', 'add_decision', 'add_commitment', 'use_selected'),
         'recovery': ('reconcile', 'operate', 'advance', 'resume', 'cancel', 'restart', 'correct'),
     },

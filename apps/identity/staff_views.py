@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import signing
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Exists, OuterRef
 from django.http import Http404
@@ -27,13 +28,25 @@ class InviteForm(forms.Form):
     actions = forms.MultipleChoiceField(label='Individual workspace functions',required=False, widget=forms.CheckboxSelectMultiple)
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
 
-    def __init__(self,configuration,*args,**kwargs):
+    all_projects = forms.BooleanField(required=False, label='Apply this profile to all currently managed projects')
+    project_review = forms.CharField(required=False, widget=forms.HiddenInput, max_length=10000)
+
+    def __init__(self,configuration,*args,projects=(),allow_all=False,**kwargs):
         super().__init__(*args,**kwargs)
         from .staff_profiles import choices
         self.profiles={p['key']:p for p in choices(configuration)}
         self.fields['profile'].choices=[('', 'Choose a configured profile')]+[(k,p['label']) for k,p in self.profiles.items()]
         self.fields['actions'].choices=[(a,a.replace('.', ' · ').replace('_',' ').capitalize())
             for a in sorted(set(configuration.value['allowed_actions'])&set(ACTIONS))]
+        self.projects = projects
+        self.allow_all = allow_all
+        for project in projects:
+            field = f'profile_{project.pk.hex}'
+            self.fields[field] = forms.ChoiceField(label=project.title, required=False,
+                choices=[('', 'No access in this invitation'), *[(key, profile['label']) for key, profile in self.profiles.items()]])
+
+    def project_fields(self):
+        return [self[f'profile_{project.pk.hex}'] for project in self.projects]
 
     def clean(self):
         values=super().clean();key=values.get('profile');actions=values.get('actions',[])
@@ -42,6 +55,21 @@ class InviteForm(forms.Form):
             if actions and set(actions)!=set(supplied):self.add_error('actions','Use the selected profile or choose individual functions, not both.')
             values['actions']=list(supplied)
         elif not actions:self.add_error('profile','Choose a configured profile, or review explicit individual workspace functions.')
+        current_fields = {f'profile_{project.pk.hex}' for project in self.projects}
+        if any(key.startswith('profile_') and key not in current_fields and self.data.get(key) for key in self.data):
+            self.add_error(None, 'Project access changed. Reload and review the current workspaces.')
+        chosen = {project.pk: (project.revision, values[f'profile_{project.pk.hex}']) for project in self.projects
+                  if values.get(f'profile_{project.pk.hex}')}
+        if values.get('all_projects'):
+            if not self.allow_all:
+                self.add_error('all_projects', 'Review a bounded list of managed projects before applying a profile to all.')
+            elif chosen:
+                self.add_error('all_projects', 'Choose each project’s profile or apply the starting profile to all projects.')
+            elif key:
+                chosen = {project.pk: (project.revision, key) for project in self.projects}
+        if (chosen or values.get('all_projects')) and not key:
+            self.add_error('profile', 'Choose a named profile for the starting workspace first.')
+        values['workspace_choices'] = chosen
         return values
 
 
@@ -55,6 +83,10 @@ class PasswordForm(forms.Form):
         if values.get('password') != values.get('confirm'):
             self.add_error('confirm', 'The passwords differ.')
         return values
+
+
+class InvitationPreviewForm(forms.Form):
+    token = forms.CharField(min_length=43, max_length=43, widget=forms.PasswordInput)
 
 
 class DepartureForm(forms.Form):
@@ -93,13 +125,25 @@ def invites(request, case_id, invitation_id=None):
     cfg, _ = staff.authority(request.user, case, 'allow_invite')
     old = get_object_or_404(StaffInvitation, case=case, pk=invitation_id) if invitation_id is not None else None
     initial = {'revision': case.revision}
+    from .staff_profiles import choices
+
+    projects = list(staff.invitation_projects(request.user, case).order_by('title', 'pk')[:staff.MAX_INVITED_WORKSPACES]) if (
+        choices(cfg) and 'project' in cfg.value['kinds']) else []
+    allow_all = 0 < len(projects) < staff.MAX_INVITED_WORKSPACES
+    projects = projects[:staff.MAX_INVITED_WORKSPACES - 1]
+    reviewed_projects = {'actor': request.user.pk, 'case': str(case.pk), 'authority': cfg.pk,
+                         'projects': {str(project.pk): project.revision for project in projects}}
+    initial['project_review'] = signing.dumps(reviewed_projects, salt='staff.invitation.project-review')
     if old:
         initial.update({key: getattr(old, key) for key in ('name','username','email','actions')})
-        from .staff_profiles import choices
         current={p['key']:p for p in choices(cfg)}
         if old.profile_key in current:
             initial.update(profile=old.profile_key,actions=[])
-    form = InviteForm(cfg,request.POST if request.method == 'POST' else None, initial=initial)
+        earlier = {pin['case']: pin['profile_key'] for pin in old.workspace_profiles}
+        initial.update({f'profile_{project.pk.hex}': earlier[str(project.pk)] for project in projects
+                        if earlier.get(str(project.pk)) in current})
+    form = InviteForm(cfg,request.POST if request.method == 'POST' else None, initial=initial,
+                      projects=projects, allow_all=allow_all)
     invitation_link = None
     if request.method == 'POST' and form.is_valid():
         values = form.cleaned_data
@@ -107,17 +151,26 @@ def invites(request, case_id, invitation_id=None):
             form.add_error('username', 'Use the original sign-in name when renewing this invitation.')
         else:
             try:
+                if values['workspace_choices'] or values['all_projects'] or (old and old.workspace_profiles):
+                    try:
+                        review = signing.loads(values['project_review'], salt='staff.invitation.project-review', max_age=900)
+                    except signing.BadSignature:
+                        raise ValidationError('Reload and review the current project access before inviting anyone.') from None
+                    if review != reviewed_projects:
+                        raise ValidationError('Project access changed. Reload and review the current workspaces.')
                 _, token = staff.invite(request.user, case.pk, values['username'], values['name'], values['email'],
                                         values['actions'], values['revision'], preceding=invitation_id,
-                                        profile_key=values.get('profile',''))
-            except ValidationError as exc:
+                                        profile_key=values.get('profile',''), workspace_choices=values['workspace_choices'],
+                                        all_current_projects=values['all_projects'], expected_authority=cfg.pk)
+            except (PermissionDenied, ValidationError) as exc:
                 form.add_error(None, exc)
             else:
                 invitation_link = request.build_absolute_uri(reverse('staff_accept_invite'))+'#'+token
     later = StaffInvitation.objects.filter(case=case, username=OuterRef('username'), number__gt=OuterRef('number'))
     rows = StaffInvitation.objects.filter(case=case).annotate(superseded=Exists(later)).select_related('admission').order_by('-pk')[:40]
     response = render(request, 'identity/staff_invites.html', {'case':case,'form':form,'rows':rows,
-                      'renewing':old,'invitation_link':invitation_link,'as_of':timezone.now()})
+                      'renewing':old,'invitation_link':invitation_link,'as_of':timezone.now(),
+                      'show_all_projects':allow_all,'has_extra_projects':bool(projects)})
     response['Referrer-Policy'] = 'same-origin'
     return response
 
@@ -125,8 +178,25 @@ def invites(request, case_id, invitation_id=None):
 @require_http_methods(['GET','HEAD','POST'])
 @never_cache
 def accept(request):
-    form = PasswordForm(request.POST if request.method == 'POST' else None)
-    if request.method == 'POST' and form.is_valid():
+    preview = None
+    problem = None
+    preview_request = request.method == 'POST' and request.POST.get('action') == 'preview'
+    form = PasswordForm(request.POST if request.method == 'POST' and not preview_request else None)
+    if preview_request:
+        code_form = InvitationPreviewForm(request.POST)
+        try:
+            if not code_form.is_valid():
+                raise ValidationError('This invitation is unavailable.')
+            token = code_form.cleaned_data['token']
+            row = staff.pending(token)
+            preview = {'name': row.name, 'email': row.email, 'expires_at': row.expires_at,
+                       'workspaces': [(row.case.title, row.profile_label or 'Individual workspace access'),
+                                      *((case.title, profile['label']) for case, profile in staff.additional_access(row, row.authority))]}
+            form = PasswordForm(initial={'token': token})
+            form.fields['token'].widget = forms.HiddenInput()
+        except (PermissionDenied, ValidationError):
+            problem = 'This invitation is unavailable. Ask the inviter to review your current link.'
+    elif request.method == 'POST' and form.is_valid():
         try:
             staff.accept(form.cleaned_data['token'], form.cleaned_data['password'])
         except PermissionDenied:
@@ -136,7 +206,7 @@ def accept(request):
         else:
             messages.success(request, 'Your workspace account is ready. Sign in to continue.')
             return redirect('login')
-    response = render(request, 'identity/staff_accept.html', {'form':form})
+    response = render(request, 'identity/staff_accept.html', {'form':form,'preview':preview,'problem':problem})
     response['Referrer-Policy'] = 'same-origin'
     return response
 
@@ -152,6 +222,7 @@ def departure(request, case_id, person_id):
     if record is None:
         raise Http404
     items = list(staff.open_actions(case, person_id)[:101])
+    handover = staff.handover_links(request.user, case, record.user)
     blocked = None
     try:
         form = DepartureForm(case, items, request.POST if request.method == 'POST' else None, actor=request.user)
@@ -169,4 +240,5 @@ def departure(request, case_id, person_id):
         else:
             messages.success(request, 'Workspace access removed and reassignment history recorded.')
             return redirect('case_access', case.pk)
-    return render(request, 'identity/staff_departure.html', {'case':case,'person':record.user,'form':form,'blocked':blocked})
+    return render(request, 'identity/staff_departure.html', {'case':case,'person':record.user,'form':form,'blocked':blocked,
+                  'handover':handover})

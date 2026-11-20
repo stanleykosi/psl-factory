@@ -102,7 +102,9 @@ class RFPOutcome(AppendOnly):
     followup_on=models.DateField(null=True,blank=True)
 
     customer_expected_on = models.DateField(null=True, blank=True)
-    role=models.CharField(max_length=50)
+
+    remind_at = models.DateTimeField(null=True, blank=True)
+    role=models.CharField(max_length=50)
     authority=models.JSONField()
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT,null=True,blank=True)
     note=models.TextField()
@@ -119,6 +121,10 @@ class RFPOutcome(AppendOnly):
             models.CheckConstraint(condition=models.Q(customer_expected_on__isnull=True) |
                                    models.Q(result='pending', evidence__isnull=False),
                                    name='rfp_customer_date_for_evidenced_pending'),
+            models.CheckConstraint(condition=models.Q(remind_at__isnull=True) |
+                                   models.Q(result__in=['pending', 'unknown'], followup_on__isnull=True,
+                                            remind_at__gte=models.F('observed_at')),
+                                   name='rfp_exact_reminder_open_outcome'),
             models.CheckConstraint(condition=(models.Q(award_amount__isnull=True, award_currency__isnull=True) |
                 models.Q(result='won', award_amount__isnull=False, award_amount__gte=0, award_amount__lt=10**24,
                          award_currency__isnull=False, award_currency__regex=r'^[A-Z]{3}$')),

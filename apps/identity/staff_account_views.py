@@ -16,6 +16,7 @@ from django.views.decorators.http import require_http_methods,require_safe
 
 from apps.core.evidence_access import public_evidence
 from apps.identity.models import Grant
+from . import staff
 from . import staff_accounts as domain
 from .intake_models import TenantAuthority
 from .staff_models import StaffInvitation
@@ -83,7 +84,8 @@ class DepartureForm(forms.Form):
                 self.fields[name]=forms.ChoiceField(label=item.current.description,required=not unassigned,
                     choices=[('', 'Owner needed — no successor' if unassigned else 'Choose a current successor')]+choices)
                 rows.append({'item':item,'field':self[name]})
-            self.groups.append({'case':case,'rows':rows,'evidence':self[proof_name] if items else None})
+            handover = staff.handover_links(prepared['actor'], case, prepared['person']) if scope['handover_pending'] else None
+            self.groups.append({'case':case,'rows':rows,'evidence':self[proof_name] if items else None,'handover':handover})
 
     def command(self):
         replacements={}

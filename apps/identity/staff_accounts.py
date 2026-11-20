@@ -78,7 +78,9 @@ def prepare(actor,person_id):
     blocked=[]
     for scope in scopes:
         case=scope['case']
-        blocked.extend(staff.work_handover_findings(case,person))
+        handover_findings = staff.work_handover_findings(case,person)
+        blocked.extend(handover_findings)
+        scope['handover_pending'] = bool(handover_findings)
         items=list(staff.open_actions(case,person.pk)[:101])
         if len(items)>100:raise ValidationError('The complete action inventory needs administrator review.')
         if items:require(actor,case,'action.manage')

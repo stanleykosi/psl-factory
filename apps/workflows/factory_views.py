@@ -438,7 +438,9 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if not panel['confirmation']:
             row.update(state='Confirm actual meeting record',needs_me=permitted(actor,work,'meeting.record'),department_wait=permitted(actor,work,'meeting.record'))
-        if panel['native']['stage']=='publication':
+        if panel['native']['review_request_needed']:
+            row.update(state='Draft ready for review', needs_me=panel['can_request_review'], department_wait=panel['can_request_review'])
+        elif panel['native']['stage']=='publication':
             row.update(state='Awaiting exact outward review or delivery',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
         if any(d.uncertain_job(job) for job in panel['jobs']):
             row.update(state='Delivery uncertain',next_action='Check the original recipient delivery',can_advance=False)

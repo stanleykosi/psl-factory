@@ -204,11 +204,11 @@ class FactoryRFPTests(TestCase):
         submission = RFPSubmission.objects.get(response=response)
         self.client.force_login(f['actor'])
         url = reverse('factory_work_response', args=[work.pk])
-        date_field = 'Next check date (optional)'
+        reminder_field = 'Internal reminder time'
         self.assertContains(self.client.get(url, {'outcome': 'unknown'}), 'Use original verified submission')
-        self.assertContains(self.client.get(url, {'outcome': 'pending'}), date_field)
+        self.assertContains(self.client.get(url, {'outcome': 'pending'}), reminder_field)
         self.assertContains(self.client.get(url, {'outcome': 'lost'}), 'Customer reason and notes')
-        self.assertNotContains(self.client.get(url, {'outcome': 'won'}), date_field)
+        self.assertNotContains(self.client.get(url, {'outcome': 'won'}), reminder_field)
         now = timezone.localtime()
         check_on = now.date() + timedelta(days=3)
         data = {'action': 'outcome', 'revision': work.revision, 'case_revision': rev(f['case']), 'target': submission.pk,
