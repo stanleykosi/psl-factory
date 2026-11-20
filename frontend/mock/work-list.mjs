@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { loggedRfps } from './start-work.mjs';
 import { assignedWorkIds } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -49,6 +50,26 @@ function dataset(persona, lead, name) {
   return { as_of: fixture.as_of, rows, counts, lines: linesOf(rows), drawnOrder: false };
 }
 
+/** The Unassigned row of an RFP just logged (F-49): the newest, so it sorts first. */
+const loggedRow = ({ work_id: id, reference, client }) => ({
+  personas: ['pmo_lead'],
+  queue: 'unassigned',
+  waiting: 'no_owner',
+  item: {
+    id,
+    title: `${client} · RFP ${reference}`,
+    line: 'RFP received',
+    line_key: 'rfp_intake',
+    reference,
+    kind: 'do',
+    state: 'owner_needed',
+    station: { index: 2, count: 5, name: 'Assign PM' },
+    waiting_on: 'PMO Lead',
+    age_seconds: 0,
+    sample: true,
+  },
+});
+
 export function workList({ url, persona, dataset: name }) {
   const params = url.searchParams;
   const queue = params.get('queue');
@@ -67,7 +88,10 @@ export function workList({ url, persona, dataset: name }) {
   // F-36: an Unassigned row whose assignment was written is gone, and the count goes down with it (the assignment log is workspace.mjs's).
   const assigned = assignedWorkIds();
   const gone = drawn.rows.filter((row) => row.queue === 'unassigned' && assigned.has(row.item.id)).length;
-  const data = gone === 0 ? drawn : { ...drawn, rows: drawn.rows.filter((row) => !(row.queue === 'unassigned' && assigned.has(row.item.id))), counts: { ...drawn.counts, unassigned: drawn.counts.unassigned - gone } };
+  const kept = gone === 0 ? drawn : { ...drawn, rows: drawn.rows.filter((row) => !(row.queue === 'unassigned' && assigned.has(row.item.id))), counts: { ...drawn.counts, unassigned: drawn.counts.unassigned - gone } };
+  // F-49: an RFP logged from Start work is one more Unassigned row for the PMO Lead, until the mock is reset.
+  const added = persona === 'pmo_lead' ? loggedRfps().filter((rfp) => !assigned.has(rfp.work_id)).map(loggedRow) : [];
+  const data = added.length === 0 ? kept : { ...kept, rows: [...added, ...kept.rows], counts: { ...kept.counts, unassigned: kept.counts.unassigned + added.length }, lines: kept.lines.some((l) => l.key === 'rfp_intake') ? kept.lines : [...kept.lines, { key: 'rfp_intake', title: 'RFP received' }] };
 
   const state = params.get('state');
   const line = params.get('line');

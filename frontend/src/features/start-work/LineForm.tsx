@@ -16,7 +16,7 @@ import { DrawerFrame, useWide } from './DrawerFrame';
 import { caseOptionUnusable, parentValue, startableHere } from './intake';
 import { IntakeField } from './IntakeField';
 import { StartProof } from './StartProof';
-import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, startLabel } from './labels';
+import { AGENT_NAMES, drawerEyebrow, drawerTitle, helpMovesBelowProof, footerGoesBack, journeyLabel, startLabel } from './labels';
 import type { Field, FieldProblem, Line } from './types';
 import { useStartForm, type Notice } from './useStartWork';
 
@@ -210,7 +210,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
 
   if (form.signedOut) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={back} focusKey="signed-out">
+      <DrawerFrame eyebrow={drawerEyebrow(line)} title={title} subline={subline} onClose={onClose} footer={back} focusKey="signed-out">
         <SignedOutState pathname={pathname} />
       </DrawerFrame>
     );
@@ -218,7 +218,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
 
   if (!here) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={back} focusKey={`cant-${line.key}`}>
+      <DrawerFrame eyebrow={drawerEyebrow(line)} title={title} subline={subline} onClose={onClose} footer={back} focusKey={`cant-${line.key}`}>
         <Callout kind="info">
           You can&rsquo;t start this line from here yet. <Link href="/assistant" onClick={onClose}>Describe it to Tola</Link> and
           she&rsquo;ll help you start it.
@@ -250,7 +250,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
   );
 
   return (
-    <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`line-${line.key}`}>
+    <DrawerFrame eyebrow={drawerEyebrow(line)} title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`line-${line.key}`}>
       {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} seq={noticeSeq} />}
       {form.fields.map((field, at) =>
         field.type === 'evidence' ? (
@@ -260,7 +260,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
             sendCase={form.sendCase}
             readOnly={readOnly}
             error={form.fieldErrors[field.name]}
-            movedHelp={movedHelp(form.fields, at)}
+            movedHelp={helpMovesBelowProof(line.key) ? movedHelp(form.fields, at) : undefined}
             moved={form.proofMoved}
             reread={form.rereadCase}
             onState={form.reportProof}
@@ -280,7 +280,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
             readOnly={readOnly || (field.name === line.case_field && form.proofBusy)}
             error={form.fieldErrors[field.name]}
             note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
-            movedHelp={movedHelp(form.fields, at)}
+            movedHelp={helpMovesBelowProof(line.key) ? movedHelp(form.fields, at) : undefined}
           />
         ),
       )}
