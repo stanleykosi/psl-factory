@@ -52,7 +52,7 @@ const search = (text: string) => {
 };
 
 describe('exceptions list', () => {
-  it('full page: header, search bar with the open total, columns, 20 rows in order, references, paging bar and footer', async () => {
+  it('full page: header, search bar with the open total, columns, 10 rows in order, references, paging bar and footer', async () => {
     serve((url) => json(200, page(url)));
     render(<ExceptionsScreen />);
     await settled();
@@ -68,12 +68,12 @@ describe('exceptions list', () => {
       'WHAT’S BEING DONE',
       'WHO ACTS',
     ]);
-    expect(rowTitles()).toEqual(fixture.items.slice(0, 20).map((r) => r.title));
+    expect(rowTitles()).toEqual(fixture.items.slice(0, 10).map((r) => r.title));
     const first = within(table).getAllByRole('row')[1];
     expect(within(first).getByText('Effect uncertain')).toBeTruthy();
     expect(within(first).getByRole('link').getAttribute('href')).toBe('/work/W-1005');
     expect(within(first).getByText('INV-0405').className).toBe('exc-ref');
-    expect(screen.getByText('20 showing')).toBeTruthy();
+    expect(screen.getByText('10 showing')).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'Rows per page' })).toBeTruthy();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getByText(/^The factory never resends after an unknown outcome/)).toBeTruthy();
@@ -126,33 +126,43 @@ describe('exceptions list', () => {
     ]);
   });
 
-  it('paging: limit=20 first, 50 replaces the rows, Show more appends with the cursor, then disappears', async () => {
+  it('paging: limit=10 first, Show more appends with the cursor, a larger size reveals loaded rows without a request, a smaller one trims', async () => {
     serve((url) => json(200, page(url)));
     render(<ExceptionsList />);
     await settled();
-    expect(urls().map((u) => u.search)).toEqual(['?limit=20']);
+    expect(urls().map((u) => u.search)).toEqual(['?limit=10']);
     expect(urls()[0].pathname).toBe('/api/v1/exceptions');
+    expect(rowTitles()).toHaveLength(10);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(rowTitles()).toHaveLength(25));
-    expect(urls()[1].search).toBe('?limit=20&cursor=o%3A20');
-    expect(rowTitles()).toEqual(fixture.items.map((r) => r.title));
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(screen.getByText('25 showing')).toBeTruthy();
-
-    fireEvent.click(screen.getByRole('radio', { name: '10' }));
-    await waitFor(() => expect(rowTitles()).toHaveLength(10));
-    expect(urls()[2].search).toBe('?limit=10');
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(rowTitles()).toHaveLength(20));
-    expect(urls()[3].search).toBe('?limit=10&cursor=o%3A10');
-
-    expect(screen.getByRole('radio', { name: '10' }).getAttribute('aria-checked')).toBe('true');
-    fireEvent.click(screen.getByRole('radio', { name: '50' }));
-    await waitFor(() => expect(urls()).toHaveLength(5));
-    expect(urls()[4].search).toBe('?limit=50');
-    await waitFor(() => expect(rowTitles()).toEqual(fixture.items.map((r) => r.title)));
+    expect(urls()[1].search).toBe('?limit=10&cursor=o%3A10');
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    await waitFor(() => expect(rowTitles()).toHaveLength(25));
+    expect(urls()[2].search).toBe('?limit=10&cursor=o%3A20');
+    expect(rowTitles()).toEqual(fixture.items.map((r) => r.title));
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    expect(screen.getByText('All 25 showing')).toBeTruthy();
+
+    // everything is loaded: a smaller choice trims, a larger one shows loaded rows again; no request either way
+    fireEvent.click(screen.getByRole('radio', { name: '10' }));
+    expect(rowTitles()).toHaveLength(10);
+    fireEvent.click(screen.getByRole('radio', { name: '50' }));
+    expect(rowTitles()).toHaveLength(25);
+    expect(urls()).toHaveLength(3);
+    expect(screen.getByRole('radio', { name: '50' }).getAttribute('aria-checked')).toBe('true');
+  });
+
+  it('choosing 20 fetches only the missing rows and keeps the shown rows in place', async () => {
+    serve((url) => json(200, page(url)));
+    render(<ExceptionsList />);
+    await settled();
+    const first = [...screen.getByRole('table').querySelectorAll('tbody tr')];
+    fireEvent.click(screen.getByRole('radio', { name: '20' }));
+    await waitFor(() => expect(rowTitles()).toHaveLength(20));
+    expect(urls().map((u) => u.search)).toEqual(['?limit=10', '?limit=10&cursor=o%3A10']);
+    const after = [...screen.getByRole('table').querySelectorAll('tbody tr')];
+    first.forEach((row, i) => expect(after[i]).toBe(row));
   });
 
   it('drops an answer to a superseded request', async () => {
@@ -176,7 +186,7 @@ describe('exceptions list', () => {
     await settled();
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await screen.findByText('We couldn’t load more exceptions. Choose Show more to try again.');
-    expect(rowTitles()).toHaveLength(20);
+    expect(rowTitles()).toHaveLength(10);
     expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy();
   });
 
@@ -213,20 +223,20 @@ describe('exceptions list', () => {
     await settled();
     search('Kora');
     await waitFor(() => expect(rowTitles()).toEqual(fixture.items.filter((r) => r.title.includes('Kora')).map((r) => r.title)));
-    expect(urls()[1].search).toBe('?limit=20&q=Kora');
+    expect(urls()[1].search).toBe('?limit=10&q=Kora');
 
     fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
     const dialog = screen.getByRole('dialog', { name: 'Filter' });
     fireEvent.click(within(dialog).getByRole('radio', { name: 'Action needed' }));
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show results' }));
     await screen.findByText('No exceptions match your search and filter.');
-    expect(urls()[2].search).toBe('?limit=20&q=Kora&what=blocked');
+    expect(urls()[2].search).toBe('?limit=10&q=Kora&what=blocked');
     expect(screen.getByText('0 OPEN')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Remove What happened filter' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear search and filter' }));
-    await waitFor(() => expect(rowTitles()).toHaveLength(20));
-    expect(urls()[3].search).toBe('?limit=20');
+    await waitFor(() => expect(rowTitles()).toHaveLength(10));
+    expect(urls()[3].search).toBe('?limit=10');
     expect((screen.getByRole('searchbox', { name: 'Search' }) as HTMLInputElement).value).toBe('');
   });
 
@@ -277,8 +287,8 @@ describe('exceptions list', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
       await settled();
       expect(urls()).toHaveLength(2);
-      expect(urls()[1].search).toBe('?limit=20');
-      expect(rowTitles()).toHaveLength(20);
+      expect(urls()[1].search).toBe('?limit=10');
+      expect(rowTitles()).toHaveLength(10);
     });
   }
 
@@ -289,7 +299,7 @@ describe('exceptions list', () => {
     expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['Filter', 'Show more']);
     expect(screen.getAllByRole('radio').map((b) => b.textContent)).toEqual(['10', '20', '50']);
     const links = screen.getAllByRole('link');
-    const titles = fixture.items.slice(0, 20).map((r) => r.title);
+    const titles = fixture.items.slice(0, 10).map((r) => r.title);
     expect(links.map((a) => a.textContent)).toEqual(titles);
     expect(links.every((a) => a.getAttribute('href')!.startsWith('/work/'))).toBe(true);
     expect(document.body.textContent).not.toMatch(/Reconcile|Resume|Cancel|Resend|Record (a )?response|Ask/);

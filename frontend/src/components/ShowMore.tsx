@@ -132,7 +132,7 @@ export function ShowMore({ shown, total, onMore, busy = false, hasMore, size, on
           options={PAGE_SIZES.map((n, i) => ({ value: String(n) as `${PageSize}`, label: String(n), disabled: total !== undefined && i > 0 && total <= PAGE_SIZES[i - 1] }))}
           onChange={(value) => {
             const next = PAGE_SIZES.find((n) => String(n) === value);
-            if (next === undefined || next === size) return;
+            if (next === undefined) return;
             focusSize = next;
             onSize(next);
           }}

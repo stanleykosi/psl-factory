@@ -95,7 +95,7 @@ export type ExceptionsListProps = {
   seeAllHref?: string;
 };
 
-export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxRows, seeAllHref = '/exceptions' }: ExceptionsListProps) {
+export function ExceptionsList({ limit: initialLimit = 10, compact = false, maxRows, seeAllHref = '/exceptions' }: ExceptionsListProps) {
   const { state, filters, setFilters, retry, showMore } = useExceptions({ limit: initialLimit });
   const ready = state.status === 'ready' ? state : null;
   const { rows: pagedRows, paging } = usePagedRows({
