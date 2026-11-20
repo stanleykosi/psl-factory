@@ -9,13 +9,13 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { Button, Drawer, EmptyState, PageTitle, Panel, Table, Tag, Unknown, VisuallyHidden } from '@/components';
+import { Button, Drawer, EmptyState, PageTitle, Panel, Table, Tag, Unknown, VisuallyHidden, ShowMore } from '@/components';
 
 import type { DelegationBody, DelegationRow, DelegationsPage } from './contract-proposal';
 import { CHANGED, DelegationForm, type Blocked, type FormFrame, type SendResult, type Summary } from './DelegationForm';
 import { boardDate, dateRange } from './format';
 import { OutcomeNotice, type Notice } from './SetRulePanel';
-import { RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
+import { RulesReadState, SetupFrame, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
 import { useDelegationAdd } from './useDelegationAdd';
 import { useDelegations } from './useDelegations';
 
@@ -56,6 +56,7 @@ export function DelegationPageView() {
 
 function DelegationView() {
   const { state, retry, refresh, loadMore, signOut } = useDelegations();
+  const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'delegations');
   const { busy, add } = useDelegationAdd(refresh);
   useSetupPhoneBack();
   const [sheet, setSheet] = useState(false);
@@ -99,7 +100,8 @@ function DelegationView() {
     );
   }
 
-  const { page, items } = state;
+  const { page } = state;
+  const items = pagedItems;
   const empty = items.length === 0;
 
   /** After an unconfirmed write: the same revision means nothing was written; a moved one may hold the new row. */
@@ -228,8 +230,9 @@ function DelegationView() {
                   rows={items}
                   rowKey={(row) => row.delegation_id}
                   empty="No delegations to show."
+                  paging={paging}
                 />
-                <ShowMore state={state} onMore={() => void loadMore()} noun="delegations" />
+                <PagingNotes notes={notes} />
               </>
             )}
           </section>
@@ -267,7 +270,8 @@ function DelegationView() {
                 </div>
               ))}
             </div>
-            <ShowMore state={state} onMore={() => void loadMore()} noun="delegations" />
+            <ShowMore solo {...paging} />
+            <PagingNotes notes={notes} />
           </>
         )}
         {canAdd(page) && (

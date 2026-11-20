@@ -114,8 +114,10 @@ export function ShowMore({ shown, total, onMore, busy = false, hasMore, size, on
   useEffect(() => {
     if (focusSize === undefined) return;
     const option = rows.current?.querySelector<HTMLButtonElement>(`[role="radio"][aria-label="${focusSize}"]`);
+    // A copy that is not drawn (the other of a desktop and phone pair) leaves the focus for the one that is.
+    if (!option || option.getClientRects().length === 0) return;
     focusSize = undefined;
-    option?.focus();
+    option.focus();
   });
 
   return (

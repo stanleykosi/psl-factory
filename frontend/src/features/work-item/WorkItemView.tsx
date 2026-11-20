@@ -28,7 +28,7 @@ import './work-item.css';
 
 export type WorkItemTab = 'overview' | 'history';
 
-type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: ReactNode };
+type HeaderProps = { item: WorkItem; phone: boolean; tabs: ReactNode };
 
 /**
  * Desktop: the breadcrumb or, on the state boards, the reference and client line; then the title line with the
@@ -36,7 +36,7 @@ type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: Rea
  * Phones: the title, then the tag with the tabs at the end of its line; the reference sits at the end of the frame's bar, as the boards draw it.
  * History draws this same header on every width, so switching tabs does not move it.
  */
-function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
+function WorkItemHeader({ item, phone, tabs }: HeaderProps) {
   const tag = STATE_TAGS[item.state];
   const base = presentationOf(item);
   const view = viewFor(base, phone);
@@ -298,7 +298,7 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
       ) : line ? (
         <LineHeader item={shown} phone={phone} historyHref={`${base}/history`} />
       ) : (
-        <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
+        <WorkItemHeader item={shown} phone={phone} tabs={tabs} />
       )}
       {refreshFailed && (
         <Callout kind="warning">We couldn&rsquo;t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>
