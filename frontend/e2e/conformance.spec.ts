@@ -68,3 +68,16 @@ test('My work filters at 390: the line checkboxes, the Show-all link and the thr
     dialog.getByRole('combobox', { name: 'Waiting on' }),
   ]);
 });
+
+test('proof chip "×", "Choose a file" and Clear search are 44px targets at 390', async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.goto('/work/W-2101/respond?task=T-2101');
+  await loaded(page);
+  await expectTargets([page.getByRole('button', { name: 'Choose a file' })]);
+  await page.getByRole('radio', { name: 'Security, missing' }).click();
+  await page.locator('input[type="file"]').setInputFiles({ name: 'proof.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(2048) });
+  await expectTargets([page.getByRole('button', { name: 'Remove proof.pdf' })]);
+  await page.goto('/projects?q=zzz');
+  await loaded(page);
+  await expectTargets([page.getByRole('button', { name: 'Clear search' })]);
+});

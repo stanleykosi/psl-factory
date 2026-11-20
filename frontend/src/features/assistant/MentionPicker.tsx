@@ -2,7 +2,7 @@
 
 // "@ Mention a project or record": a search popover over E-MENTION-OPTIONS. No request until the person has typed at
 // least one character and paused; only returned items can be chosen. A mention is a pointer the backend re-checks.
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 import { Button, Loading, SampleLabel, SearchField, SEARCH_PAUSE_MS, useIsPhone } from '@/components';
 
@@ -61,6 +61,21 @@ export function MentionPicker({ onPick }: { onPick: (option: MentionOption) => v
     setFound({ status: 'idle' });
     button.current?.focus();
   };
+  // Up and Down move between the search box and the options, Enter on the box picks the first (the Menu pattern).
+  function keys(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (!['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
+    const box = pop.current?.querySelector('input');
+    const items = Array.from(pop.current?.querySelectorAll<HTMLElement>('.as-mention__item') ?? []);
+    if (!box || items.length === 0) return;
+    const at = items.indexOf(document.activeElement as HTMLElement);
+    if (event.key === 'Enter') {
+      if (at >= 0 || document.activeElement !== box) return;
+      items[0].click();
+    } else if (event.key === 'ArrowDown') (items[at + 1] ?? items[0]).focus();
+    else if (at <= 0) box.focus();
+    else items[at - 1].focus();
+    event.preventDefault();
+  }
   const shown = query === '' ? { status: 'idle' as const } : found;
 
   return (
@@ -69,7 +84,9 @@ export function MentionPicker({ onPick }: { onPick: (option: MentionOption) => v
         {phone ? '@ Mention' : '@ Mention a project or record'}
       </Button>
       {open && (
-        <div ref={pop} id={popId} className="psl-pop cmp-pop cmp-pop--up as-mention__pop">
+        // Keys are handled once for the popover; each option is focusable.
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div ref={pop} id={popId} className="psl-pop cmp-pop cmp-pop--up as-mention__pop" onKeyDown={keys}>
           <SearchField label="Search projects and records" placeholder="Search projects and records" value={q} onChange={setQ} />
           <div aria-live="polite">
             {shown.status === 'loading' && <Loading>Loading…</Loading>}

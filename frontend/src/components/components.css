@@ -218,6 +218,8 @@
   .cmp-page-title.cmp-page-title--p20 { font-size: var(--text-drawer-title-size); }
   .psl-btn.cmp-btn-sm { min-height: var(--control-md); }
   .psl-check.cmp-check, .psl-radio.cmp-check { min-height: var(--control-md); }
+  /* the clear button inside a search box is a 44px target (the box is 44px tall) */
+  .psl-search > .psl-search__clear { width: var(--control-md); height: var(--control-md); right: 0; }
   .psl-link.cmp-linkbutton { display: inline-flex; align-items: center; min-height: var(--control-md); }
   /* a link tag is a 44px target: the link is the full height and the drawn box sits in the middle of it */
   .cmp-source--link { min-height: var(--control-md); }
