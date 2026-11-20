@@ -3798,3 +3798,12 @@
 {"at":"2026-11-20T10:41:06Z","feature":"F-51","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"ef0362f8cfe0","written_at":"2026-11-20T10:41:05Z"}
 {"at":"2026-11-20T10:41:06Z","feature":"F-51","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"ef0362f8cfe0","findings":{"UX-2-1":"low"},"written_at":"2026-11-20T10:41:05Z"}
 {"at":"2026-11-20T10:41:06Z","feature":"F-51","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"ef0362f8cfe0","findings":{"UI-2-1":"low"},"written_at":"2026-11-20T10:41:05Z"}
+{"at":"2026-11-20T10:41:27Z","feature":"F-51","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/85","git.pr_number":85,"git.ci_status":"passed"}}
+{"at":"2026-11-20T10:41:27Z","feature":"F-51","round":2,"kind":"transition","head":"ef0362f8cfe0","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-20T10:41:27Z","feature":"F-51","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"ef0362f8cfe0","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","190 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-20T10:41:32Z","feature":"F-51","round":2,"kind":"transition","head":"ef0362f8cfe0","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-20T10:41:33Z","feature":"F-51","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-20T10:41:33Z","feature":"F-51","round":2,"kind":"transition","head":"ef0362f8cfe0","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-20T10:41:33Z","feature":"F-51","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"d122c697c7ad23467d6327f38e670b722341f8a3"}}
+{"at":"2026-11-20T10:41:34Z","feature":"F-51","round":2,"kind":"transition","head":"ef0362f8cfe0","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-20T10:41:34Z","feature":"F-51","round":2,"kind":"transition","head":"ef0362f8cfe0","from":"MERGED","to":"DONE"}
