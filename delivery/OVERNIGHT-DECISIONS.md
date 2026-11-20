@@ -334,3 +334,6 @@ The design engineer, on /work/W-1713/history at phone width: "no idea why the ov
 
 ## D-150 (20 Nov): CEO sample data
 The design engineer, viewing as CEO: "add data for ceo so i can see how it looks". The ceo persona had no work rows, projects or conversations. Added to the F-54 branch (D-145) as sample data: CEO decisions where the source puts the CEO in the chain (SOW and plan approval after PMO and PMO Lead, change requests, emergency changes, escalations, leadership reports), the projects list, the business overview, alerts and Assistant conversations. Sample only; no new authority or money rule.
+
+## D-151 (20 Nov): action results are toasts, app-wide
+The design engineer, on the My work "TL-RFP-2026-014 is now with Ife Okoro." notice: "things like this should be a toast notification instead ... build our system in app toast notif for actions like this all around the platform end to end". The design system already has Toast (success, success with Undo, problem, dismissible) and a Toast component exists in code, but nothing uses it and there is no app-wide host. F-54 criterion 10: one toast host and hook; every action-result notice becomes a toast; Callouts stay for errors needing action and persistent record state. Queued after the CEO data (D-145, one change at a time).
