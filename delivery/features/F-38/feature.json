@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-38",
   "outcome": "RFP submission: the PM sends Tola's submission pack for review, the document reviewer decides on that exact pack, and the Submission tab shows \"Submitted\" and the receipt only as the backend returns them (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-RFP-SUBMIT"
   ],
@@ -1436,9 +1436,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1452,14 +1452,14 @@
     "task_branch": "fe-rfp-submit-send-response",
     "head_sha": "7f943725014bec795853dc55672d700148c062a6",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-38",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/83",
+    "pr_number": 83,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-133",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "e030c53e69ce8d1278839aa34940a9191135683c",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
@@ -1571,9 +1571,19 @@
     "approver_reasons": [
       "delivery/features/F-38/decision.md"
     ],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "surface 'security' always needs a human",
+      "84 changed files exceed the auto-merge limit of 15",
+      "finding UI-1-4 was accepted as a risk",
+      "finding UI-2-1 was accepted as a risk",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "7f943725014bec795853dc55672d700148c062a6",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1670,6 +1680,46 @@
       "at": "2026-11-20T08:29:17Z",
       "round": 3,
       "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T08:55:08Z",
+      "round": 3,
+      "head": "7f943725014bec795853dc55672d700148c062a6",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T08:55:16Z",
+      "round": 3,
+      "head": "7f943725014bec795853dc55672d700148c062a6",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T08:55:17Z",
+      "round": 3,
+      "head": "7f943725014bec795853dc55672d700148c062a6",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T08:55:18Z",
+      "round": 3,
+      "head": "7f943725014bec795853dc55672d700148c062a6",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T08:55:19Z",
+      "round": 3,
+      "head": "7f943725014bec795853dc55672d700148c062a6",
       "reason": null
     }
   ],
