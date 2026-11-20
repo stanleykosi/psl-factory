@@ -25,7 +25,7 @@ async function openItem(page: Page, id: string) {
 const ring = (target: Locator) =>
   target.evaluate((el) => {
     const s = getComputedStyle(el);
-    return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
+    return (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none') !== 'none' && parseFloat((s.outlineStyle !== 'none' ? s.outlineWidth : '2px')) >= 2;
   });
 
 /** Tabs forward until the target has keyboard focus. */

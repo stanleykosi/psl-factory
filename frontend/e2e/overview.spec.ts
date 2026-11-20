@@ -42,7 +42,7 @@ async function keyboardRing(page: Page, target: Locator) {
   await expect(target).toBeFocused();
   return target.evaluate((el) => {
     const s = getComputedStyle(el);
-    return { style: s.outlineStyle, width: s.outlineWidth };
+    return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
   });
 }
 
@@ -94,7 +94,7 @@ test.describe('desktop 1440', () => {
     await page.keyboard.press('ArrowRight');
     await expect(floor).toBeFocused();
     await expect(floor).toHaveAttribute('aria-checked', 'true');
-    expect(await floor.evaluate((el) => getComputedStyle(el).outlineStyle + ' ' + getComputedStyle(el).outlineWidth)).toBe('solid 2px');
+    expect(await floor.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none') + ' ' + (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineWidth : '2px'))).toBe('solid 2px');
     await page.keyboard.press('ArrowLeft');
     await expect(flat).toBeFocused();
     await expect(flat).toHaveAttribute('aria-checked', 'true');

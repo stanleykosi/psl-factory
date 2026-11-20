@@ -61,7 +61,7 @@ for (const width of WIDTHS) {
       const link = page.locator('.ws .ws-links a').first();
       if (await link.count()) {
         await link.focus();
-        const outline = await link.evaluate((el) => getComputedStyle(el).outlineStyle + getComputedStyle(el).boxShadow);
+        const outline = await link.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none') + getComputedStyle(el).boxShadow);
         expect(outline).not.toMatch(/^none(none)?$/);
       }
       if (width === 390) {

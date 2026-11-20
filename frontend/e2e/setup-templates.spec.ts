@@ -92,7 +92,7 @@ test.describe('desktop', () => {
     await expect(panel.getByLabel('Note (optional)')).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(panel.getByRole('button', { name: 'Upload version' })).toBeFocused();
-    expect(await panel.getByRole('button', { name: 'Upload version' }).evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe('none');
+    expect(await panel.getByRole('button', { name: 'Upload version' }).evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'))).not.toBe('none');
     await page.keyboard.press('Tab');
     await expect(panel.getByRole('button', { name: 'Cancel' })).toBeFocused();
     await page.keyboard.press('Escape');

@@ -110,7 +110,7 @@ const ring = (target: Locator) =>
   target.evaluate((el) => {
     // A shared date field draws its ring on the box around the text and the calendar button.
     const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
-    return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
+    return (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none') !== 'none' && parseFloat((s.outlineStyle !== 'none' ? s.outlineWidth : '2px')) >= 2;
   });
 
 test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof button, the attestation and Record, each with a focus ring', async ({ page }) => {

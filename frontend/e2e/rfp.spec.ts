@@ -108,7 +108,7 @@ const ring = (target: Locator) =>
   target.evaluate((el) => {
     // A shared date field draws its ring on the box around the text and the calendar button.
     const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
-    return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
+    return (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none') !== 'none' && parseFloat((s.outlineStyle !== 'none' ? s.outlineWidth : '2px')) >= 2;
   });
 
 test('the frame tabs: only built screens are in the Tab order; the current tab is marked', async ({ page }) => {

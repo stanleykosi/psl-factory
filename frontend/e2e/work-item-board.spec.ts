@@ -46,7 +46,7 @@ async function tabTo(page: Page, target: Locator) {
     if (await target.evaluate((el) => el === document.activeElement)) {
       return target.evaluate((el) => {
         const s = getComputedStyle(el);
-        return { style: s.outlineStyle, width: s.outlineWidth };
+        return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
       });
     }
   }

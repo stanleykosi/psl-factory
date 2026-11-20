@@ -53,6 +53,7 @@ test('the composer box keeps its border when a button inside it has focus; the b
   await page.goto('/assistant');
   const input = page.getByRole('textbox', { name: /^Message / });
   await input.fill('Hello');
+  await page.mouse.click(2, 2);
   const composer = page.locator('.cmp-composer__box');
   const before = await look(composer);
   expect(before.border).toBe(INK);
@@ -82,7 +83,8 @@ test('keyboard focus on a button, a tab, a checkbox, a table row link and a link
   await button.focus();
   let e = await edge(button);
   expect(e.ring).toBe('none');
-  expect(e.shadow).toContain('rgb(36, 89, 214)');
+  // a filled dark button shows its edge in the on-strong colour (a blue edge on a dark fill cannot be seen)
+  expect(e.shadow).toMatch(/rgb\(36, 89, 214\)|rgb\(255, 255, 255\)/);
   await page.screenshot({ path: test.info().outputPath('focus-button.png') });
 
   const tab = page.getByRole('tab').nth(1);

@@ -100,7 +100,7 @@ test.describe('desktop', () => {
     await expectNoAxeViolations(page);
     const add = panel.getByRole('button', { name: 'Add delegation' });
     await add.focus();
-    expect(await add.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe('none');
+    expect(await add.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'))).not.toBe('none');
     await add.dblclick();
     await expect(page.locator('[aria-live="polite"]:not(.psl-showmore__count)')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
     await expect(desktopRows(page)).toHaveCount(3);

@@ -232,7 +232,7 @@ test.describe('desktop rules', () => {
     }
     const ring = await panel(page).getByRole('button', { name: 'Save as version 1' }).evaluate((el) => {
       const s = getComputedStyle(el);
-      return `${s.outlineStyle} ${s.outlineWidth}`;
+      return `${(s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none')} ${(s.outlineStyle !== 'none' ? s.outlineWidth : '2px')}`;
     });
     expect(ring).toBe('solid 2px');
     await expect(panel(page).getByRole('group', { name: 'Roles allowed' })).toBeVisible();

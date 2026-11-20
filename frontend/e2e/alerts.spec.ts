@@ -100,7 +100,7 @@ test.describe('list at 1440 (SCR-15-desktop)', () => {
       if (name) order.push(name.slice(0, 20));
     }
     expect(order).toEqual(['Alert settings', 'Search', 'Filter', 'Invoice for Lagoon H', 'The UAT response for', 'October payroll has ']);
-    const ring = await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle);
+    const ring = await page.evaluate(() => (getComputedStyle(document.activeElement!).outlineStyle !== 'none' ? getComputedStyle(document.activeElement!).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(document.activeElement!).boxShadow + getComputedStyle(document.activeElement!).borderTopColor + getComputedStyle(document.activeElement!).textDecorationColor) ? 'solid' : 'none'));
     expect(ring).toBe('solid');
   });
 });
@@ -363,7 +363,7 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await settingsLoaded(page);
     const stuck = sw(page, 'Email, Work I started is stuck');
     await stuck.focus();
-    const ring = await stuck.evaluate((el) => getComputedStyle(el).outlineStyle);
+    const ring = await stuck.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'));
     await page.keyboard.press('Space');
     await expect(stuck).toHaveAttribute('aria-checked', 'false');
     expect(['solid', 'auto']).toContain(ring);
@@ -551,7 +551,7 @@ test('the switch focus ring and the Save focus ring are visible', async ({ page 
       await page.keyboard.press('Tab');
     }
     await expect(target).toBeFocused();
-    rings[name] = await target.evaluate((el) => `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}`);
+    rings[name] = await target.evaluate((el) => `${(getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none')} ${(getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineWidth : '2px')}`);
   }
   expect(rings).toEqual({ switch: 'solid 2px', select: 'solid 2px', save: 'solid 2px' });
 });

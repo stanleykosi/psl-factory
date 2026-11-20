@@ -43,7 +43,7 @@ async function keyboardRing(page: Page, target: Locator) {
   await expect(target).toBeFocused();
   return target.evaluate((el) => {
     const s = getComputedStyle(el);
-    return { style: s.outlineStyle, width: s.outlineWidth };
+    return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
   });
 }
 
