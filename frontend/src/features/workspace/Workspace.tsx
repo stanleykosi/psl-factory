@@ -9,14 +9,14 @@ import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNo
 
 import Link from 'next/link';
 
-import { Button, buttonClass, Callout, Drawer, formatClock, formatDayTime, MiniStationBar, useIsPhone, type StationStatus } from '@/components';
+import { Button, buttonClass, Callout, Drawer, formatClock, formatDayTime, MiniStationBar, Tag, useIsPhone, type StationStatus } from '@/components';
 import { asResponseItem, ReconcilePanel } from '@/features/response';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
 import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
-import { AGENT_BESIDE_LINES, agentName, forecastLine, scheduleLine, STATION_LINES, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { AGENT_BESIDE_LINES, agentName, forecastLine, scheduleLine, STATION_LINES, tagTone, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { DECIDE_TEXT, InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
@@ -75,16 +75,27 @@ const issueLine = (workspace: WorkspaceData) => workspace.line_key === 'issue_fo
 /** F-40: the handover boards title the phone screen with the workspace title ("Support's reply"); the page frame draws it as the h1 there and nowhere else. */
 export const screenHeading = (workspace: WorkspaceData) => (workspace.line_key === 'delivery_handover' ? workspace.title : undefined);
 
-function WorkspaceHeader({ workspace, itemTitle, beside }: { workspace: WorkspaceData; itemTitle: string; beside: boolean }) {
-  const { title, byline, version } = workspace;
+/** F-38: the RFP submission line. Its draft board draws Tola's card beside the sections once she has assembled the pack, and on desktop the RFP
+ *  frame holds the h1, so the item's title is the workspace's h2 (Conflicts 16). */
+const SUBMISSION_LINE = 'rfp_submission';
+const SUBMISSION_TEXT = { outcome: 'Record the outcome', drafted: 'Drafted' };
+const framedSubmission = (item: WorkItem, workspace: WorkspaceData, phone: boolean) => !phone && item.rfp !== undefined && workspace.line_key === SUBMISSION_LINE;
+const titleShown = (item: WorkItem, workspace: WorkspaceData, phone: boolean) =>
+  workspace.title !== undefined && (workspace.title !== item.title || framedSubmission(item, workspace, phone)) && screenHeading(workspace) === undefined;
+
+function WorkspaceHeader({ workspace, showTitle, beside, status }: { workspace: WorkspaceData; showTitle: boolean; beside: boolean; status?: WorkspaceData['status'] }) {
+  // F-38: the submission line's version goes to the phone bar, not under the title
+  const { title, byline } = workspace;
+  const version = workspace.line_key === SUBMISSION_LINE ? undefined : workspace.version;
   const note = beside ? undefined : workspace.agent_note;
-  const showTitle = title !== undefined && title !== itemTitle && screenHeading(workspace) === undefined;
   if (!showTitle && !byline && !version && !note) return null;
   return (
     <header className="ws-header">
       {showTitle && (
         <div className="ws-titleline">
-          <h2 className="ws-title">{title}</h2>
+          <h2 className={workspace.line_key === SUBMISSION_LINE ? 'ws-title ws-title--submission' : 'ws-title'}>{title}</h2>
+          {/* F-38: the frame draws the RFP's own status; the workspace's status (in review, effect uncertain) ends the title line */}
+          {status && status.tone !== 'verified' && <Tag tone={tagTone(status.tone)}>{status.label}</Tag>}
         </div>
       )}
       {(byline || version) && (
@@ -128,7 +139,7 @@ const ESCALATION_LINE = 'escalation';
 
 /** Whether the workspace draws the agent's card itself (WorkItemOverview then keeps its copy for screen readers only). */
 export const drawsAgentCard = (lineKey: string, status: string) =>
-  (AGENT_BESIDE_LINES.has(lineKey) && status === 'working') || (lineKey === ESCALATION_LINE && (status === 'working' || status === 'done'));
+  (AGENT_BESIDE_LINES.has(lineKey) && status === 'working') || (lineKey === ESCALATION_LINE && (status === 'working' || status === 'done')) || (lineKey === SUBMISSION_LINE && status === 'done');
 
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -150,11 +161,11 @@ function LineStations({ item, phone }: { item: WorkItem; phone: boolean }) {
 
 /** The working agent's card beside the sections (WorkItemOverview then draws no copy of its own), with the card's own footer
  *  row: when it started and the workspace's assistant link ("Ask Chidi"), as CMP-09 draws them. */
-function LineAgent({ agent, ask, day = false }: { agent: WorkItem['agent']; ask?: WorkspaceLink; day?: boolean }) {
+function LineAgent({ agent, ask, day = false, drafted = false }: { agent: WorkItem['agent']; ask?: WorkspaceLink; day?: boolean; drafted?: boolean }) {
   const foot =
     agent.started_at || ask ? (
       <>
-        <span>{agent.started_at && <>Started <time dateTime={agent.started_at}>{day ? formatDayTime(agent.started_at) : formatClock(agent.started_at)}</time></>}</span>
+        <span>{agent.started_at && <>{drafted ? SUBMISSION_TEXT.drafted : 'Started'} <time dateTime={agent.started_at}>{day || drafted ? formatDayTime(agent.started_at) : formatClock(agent.started_at)}</time></>}</span>
         {ask && (
           <Link className="psl-link ws-asklink" href="/assistant">
             {ask.label}
@@ -180,7 +191,13 @@ const splitAsk = (links: WorkspaceLink[], inCard: boolean) => {
  *  agent or neutral status as information (F-35); the escalation line reads a neutral status (not escalated) as info (F-39).
  *  Every other line is unchanged. */
 const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' | 'info' =>
-  workspace.line_key === REPORT_LINE
+  workspace.line_key === SUBMISSION_LINE
+    ? workspace.status?.tone === 'verified'
+      ? 'success'
+      : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain'
+        ? 'problem'
+        : 'info'
+    : workspace.line_key === REPORT_LINE
     ? workspace.status?.tone === 'verified'
       ? 'success'
       : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain'
@@ -225,8 +242,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
-  // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE || workspace.line_key === RFP_LINE);
+  // F-30 (D-103, D-107), F-31, F-33, F-41, F-42, F-37, F-38: on a phone these lines' forms open in the full-height Drawer.
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE || workspace.line_key === RFP_LINE || workspace.line_key === SUBMISSION_LINE);
   // F-43: the cash forecast's record-what-happened panel sits above Next on desktop and after it on a phone, as its boards draw it
   const forecast = forecastLine(workspace.line_key);
   const beside = forecast && !phone;
@@ -244,7 +261,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const last = useRef<Attempt | null>(null);
   // F-37: the open form's own close, so the Drawer's close button asks the discard question too
   const formClose = useRef<(() => void) | null>(null);
-  const titled = workspace.title !== undefined && workspace.title !== item.title && screenHeading(workspace) === undefined;
+  const titled = titleShown(item, workspace, phone);
   const decideId = useId();
   // an uncertain item with no reconcile: nothing to confirm here, the notice says it is being checked
   const noReconcile = item.state === 'effect_uncertain' && !item.reconcile;
@@ -661,6 +678,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const sideNote = (issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
   const notice = flow.notice;
+  // F-38: the submitted items carry rfp_outcome (the backend's grant): Record the outcome is the primary button of the Next card, as the board draws it
+  const outcomeLink = workspace.line_key === SUBMISSION_LINE && item.rfp_outcome !== undefined;
+  const outcomeButton = (
+    <Link className={buttonClass('primary', 'lg')} href={`/work/${encodeURIComponent(id)}/outcome`}>
+      {SUBMISSION_TEXT.outcome}
+    </Link>
+  );
   return (
     <>
       <div ref={notices} className="ws-notices">
@@ -801,12 +825,12 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
           {workspace.sections.length === 0 && workspaceSteps.length === 0 && replySteps.length === 0 && assign === undefined && <p className="ws-empty">{WS_TEXT.empty}</p>}
           {main.map((section) => (
-            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={bannerTone(workspace, item)} strip={forecast && section.kind === 'figures' && !section.title} caption={forecast} />
+            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={workspace.line_key === SUBMISSION_LINE && section.key === 'hint' ? 'info' : bannerTone(workspace, item)} lead={workspace.line_key === SUBMISSION_LINE && section.key === 'banner'} strip={forecast && section.kind === 'figures' && !section.title} caption={forecast} />
           ))}
           {replySteps.map((s) => (
             <ResponsePanel key={s.key} workId={id} taskId={s.task_id!} title={s.label} onRecorded={afterReplyRecorded} onReplyMoved={afterReplyMoved} onAccessLost={page.onAccessLost} />
           ))}
-          <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} />
+          <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} plain={workspace.line_key === SUBMISSION_LINE} />
         </div>
         {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide || beside) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
@@ -817,7 +841,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                 {rfpSideNote && section.key === noteAfter(workspace) && <AgentNote note={workspace.agent_note!} />}
               </Fragment>
             ))}
-            {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} day={workspace.line_key === REPORT_LINE} />}
+            {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} day={workspace.line_key === REPORT_LINE} drafted={workspace.line_key === SUBMISSION_LINE} />}
             {[...decideTasks].map(([taskId, taskSteps]) => (
               <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={workspace.line_key === LEDGER_LINE ? (notice) => setDecided({ ...notice, taskId }) : onDecided} onDeciding={onDeciding} onStale={(note) => setStaleDecide({ taskId, note })} />
             ))}
@@ -832,6 +856,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                       {line}
                     </p>
                   ))}
+                  {outcomeLink && !phone && outcomeButton}
                   <StepRow steps={workspaceSteps} hint={flow.allLocked && !noReconcile ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
                     {(s, describedBy) => {
                       if (!cross.has(s.key)) return control(s, `ws:${s.key}`, undefined, { describedBy });
@@ -860,6 +885,12 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                     </Link>
                   )}
                 </div>
+              </section>
+            )}
+            {/* F-38: on a phone the way on is the board's bar pinned to the bottom, not a card */}
+            {outcomeLink && phone && (
+              <section className="ws-decide ws-decide--next" aria-label={SUBMISSION_TEXT.outcome}>
+                <div className="psl-panel__body ws-decide__body">{outcomeButton}</div>
               </section>
             )}
             {workspaceSteps.map((s) => form(`ws:${s.key}`))}
@@ -904,14 +935,14 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   // the stations and the working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
   const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
-  const titled = workspace.title !== undefined && workspace.title !== item.title && screenHeading(workspace) === undefined;
+  const titled = titleShown(item, workspace, phone);
   const forecast = forecastLine(workspace.line_key);
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
   const rfpNote = workspace.line_key === RFP_LINE && !phone && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   return (
     <div className="ws" data-line={workspace.line_key}>
-      <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item) || issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)} />
+      <WorkspaceHeader workspace={workspace} showTitle={titled} beside={noteBeside(item) || issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)} status={framedSubmission(item, workspace, phone) ? workspace.status : undefined} />
       {writable ? (
         <WorkspaceSteps id={id} item={item} workspace={workspace} page={page} />
       ) : (
@@ -924,12 +955,12 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               .map((section) => (
                 <SectionView key={section.key} section={section} level={titled ? 3 : 2} strip={forecast && section.kind === 'figures' && !section.title} caption={forecast} />
               ))}
-            <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} />
+            <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} plain={workspace.line_key === SUBMISSION_LINE} />
           </div>
           {(workspace.sections.some(inSide(item)) || agentSide || (forecast && !phone) || (workspace.line_key === RFP_LINE && !phone && (workspace.agent_note?.lines.length ?? 0) > 0)) && (
             <aside className="ws-side" aria-label="Review and decide">
               {forecast && !phone && <ReconcilePanel id={id} item={asResponseItem(item)} nested />}
-              {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} day={workspace.line_key === REPORT_LINE} />}
+              {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} day={workspace.line_key === REPORT_LINE} drafted={workspace.line_key === SUBMISSION_LINE} />}
               {workspace.sections
                 .filter(inSide(item))
                 .map((section) => (

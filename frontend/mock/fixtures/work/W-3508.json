@@ -1,0 +1,267 @@
+{
+  "id": "W-3508",
+  "title": "Submission pack · v1",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Tola assembles the pack",
+      "status": "done"
+    },
+    {
+      "name": "Document review",
+      "status": "current_person"
+    },
+    {
+      "name": "Submission",
+      "status": "not_started"
+    },
+    {
+      "name": "Outcome",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3508",
+      "kind": "decide",
+      "title": "Review the submission pack",
+      "required_role": "document reviewer",
+      "you_can_act": true,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "Submission pack v1",
+          "number": 1,
+          "document_id": "D-3501"
+        },
+        "recipient": "procurement@tamarindloans.example",
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "document reviewer",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "step_count": 1,
+          "your_step": 1
+        }
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "none"
+  },
+  "next_step": "A document reviewer approves, returns or rejects this exact pack.",
+  "sample": true,
+  "case_id": "C-2102",
+  "case_revision": 3,
+  "workspace": {
+    "line_key": "rfp_submission",
+    "screen": "SCR-40",
+    "view": "default",
+    "title": "Submission pack · v1",
+    "status": {
+      "label": "IN REVIEW",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "pack",
+        "kind": "checklist",
+        "title": "What goes to the client",
+        "items": [
+          {
+            "id": "p1",
+            "text": "Response document",
+            "detail": "64 requirements, v3 approved 18 Nov",
+            "tag": {
+              "label": "IN",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "p2",
+            "text": "Commercial proposal",
+            "detail": "costing v2, all 3 approvals",
+            "tag": {
+              "label": "IN",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "p3",
+            "text": "Cover letter",
+            "detail": "drafted by Tola",
+            "tag": {
+              "label": "DRAFT",
+              "tone": "person"
+            }
+          },
+          {
+            "id": "p4",
+            "text": "Company forms",
+            "tag": {
+              "label": "TEST TEMPLATE",
+              "tone": "uncertain"
+            },
+            "detail": "from the template"
+          }
+        ]
+      },
+      {
+        "key": "checks",
+        "kind": "checklist",
+        "title": "Checks",
+        "items": [
+          {
+            "id": "c1",
+            "text": "Every requirement answered or marked",
+            "status": "done"
+          },
+          {
+            "id": "c2",
+            "text": "Costing approved in order, same version as the proposal",
+            "status": "done"
+          },
+          {
+            "id": "c3",
+            "text": "Client's format: one PDF, under 20 MB",
+            "status": "done"
+          },
+          {
+            "id": "c4",
+            "text": "Send to: email · procurement@tamarindloans.example",
+            "status": "done",
+            "cite_label": "FROM THE RFP, P.2"
+          },
+          {
+            "id": "c5",
+            "text": "Deadline 28 Nov · submit by 26 Nov leaves 2 days",
+            "status": "done"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_submission",
+        "label": "Approve and submit",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-3508",
+        "verdict": "approve",
+        "sends": true,
+        "consequence": "Approving lets the factory submit this exact pack. If anything in it changes, it comes back to you.",
+        "disabled_reason": "A part still uses a test template."
+      },
+      {
+        "key": "return_submission",
+        "label": "Return",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "task_id": "T-3508",
+        "verdict": "return"
+      },
+      {
+        "key": "reject_submission",
+        "label": "Reject",
+        "emphasis": "danger",
+        "applies_to": "workspace",
+        "task_id": "T-3508",
+        "verdict": "reject"
+      }
+    ],
+    "links": [
+      {
+        "key": "pack",
+        "label": "Open the full pack (PDF, 6.1 MB)",
+        "target": {
+          "kind": "document",
+          "document_id": "D-3501",
+          "version": 1
+        }
+      }
+    ],
+    "revision": 1,
+    "next": [
+      "A document reviewer is checking this pack. The result shows here."
+    ]
+  },
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "deadline",
+      "label": "DEADLINE 28 NOV · 6 DAYS",
+      "at": "2026-11-28T16:00:00Z",
+      "days_left": 6
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 4,
+        "of": 4,
+        "work_id": "W-2101"
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission",
+        "work_id": "W-3508",
+        "current": true
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome"
+      }
+    ]
+  }
+}

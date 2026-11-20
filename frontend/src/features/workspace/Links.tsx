@@ -69,7 +69,8 @@ function DocumentPanel({ document }: { document: Document }) {
   );
 }
 
-export function WorkspaceLinks({ links, page }: { links: WorkspaceLink[]; page?: WorkspacePage }) {
+/** `plain` (F-38): a document link is drawn as a link, as the submission boards draw it, not as a button. */
+export function WorkspaceLinks({ links, page, plain = false }: { links: WorkspaceLink[]; page?: WorkspacePage; plain?: boolean }) {
   const [reading, setReading] = useState<Reading | null>(null);
   const noteId = useId();
   if (links.length === 0) return null;
@@ -99,6 +100,10 @@ export function WorkspaceLinks({ links, page }: { links: WorkspaceLink[]; page?:
             <Link key={link.key} className="psl-btn psl-btn--secondary" href={link.href}>
               {link.label}
             </Link>
+          ) : plain ? (
+            <button key={link.key} type="button" className="psl-link cmp-linkbutton" aria-expanded={reading?.key === link.key && reading.status === 'ready'} aria-describedby={reading?.key === link.key ? noteId : undefined} onClick={() => void open(link)}>
+              {link.label}
+            </button>
           ) : (
             <Button key={link.key} kind="secondary" aria-expanded={reading?.key === link.key && reading.status === 'ready'} aria-describedby={reading?.key === link.key ? noteId : undefined} onClick={() => void open(link)}>
               {link.label}
