@@ -83,7 +83,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
       "evidence_refs": [
         "delivery/features/F-53/round-2/review-technical.md"
       ]
@@ -92,7 +92,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "delivery integrated QA",
-      "snapshot_ref": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
       "evidence_refs": [
         "delivery/features/F-53/round-2/review-qa.md"
       ]
@@ -101,7 +101,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "delivery PMO acceptance",
-      "snapshot_ref": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
       "evidence_refs": [
         "delivery/features/F-53/round-2/acceptance-pmo.md"
       ]
@@ -112,7 +112,7 @@
       "status": "passed",
       "reviewer": "design engineer (recorded by the coordinator)",
       "authority": "product acceptance, design engineer, 20 Nov 2026 \u2014 D-136",
-      "snapshot_ref": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
       "evidence_refs": [
         "delivery/features/F-53/round-2/acceptance-product.md"
       ]
@@ -121,7 +121,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
       "evidence_refs": [
         "delivery/features/F-53/round-2/review-ux.md"
       ]
@@ -130,7 +130,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
-      "snapshot_ref": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
       "evidence_refs": [
         "delivery/features/F-53/round-2/review-ui.md"
       ]
@@ -416,7 +416,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "41f03c37f898414477f200ffdc61113989ee6484",
     "task_branch": "fe-ds-conformance-2-shared-components",
-    "head_sha": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+    "head_sha": "65f879aee737c2b546f3122b13888fe1d8a90dca",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-53",
     "pr_url": null,
     "pr_number": null,
@@ -428,6 +428,51 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-53/decision.md",
+      "delivery/features/F-53/feature.json",
+      "delivery/features/F-53/readiness.md",
+      "delivery/features/F-53/round-1/build.md",
+      "delivery/features/F-53/round-1/checks.md",
+      "delivery/features/F-53/round-1/review-qa.md",
+      "delivery/features/F-53/round-1/review-technical.md",
+      "delivery/features/F-53/round-1/review-ui.md",
+      "delivery/features/F-53/round-1/review-ux.md",
+      "delivery/features/F-53/round-1/screens/my-work-filters-1440-after.png",
+      "delivery/features/F-53/round-1/screens/my-work-filters-1440-before.png",
+      "delivery/features/F-53/round-1/screens/my-work-filters-390-after.png",
+      "delivery/features/F-53/round-1/screens/my-work-filters-390-before.png",
+      "delivery/features/F-53/round-1/screens/response-form-1440-after.png",
+      "delivery/features/F-53/round-1/screens/response-form-1440-before.png",
+      "delivery/features/F-53/round-1/screens/response-form-390-after.png",
+      "delivery/features/F-53/round-1/screens/response-form-390-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-1440-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-1440-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-390-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-390-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-1440-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-1440-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-390-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-390-before.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-1440-after.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-1440-before.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-390-after.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-390-before.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-1440-after.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-1440-before.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-390-after.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-390-before.png",
+      "delivery/features/F-53/round-2/acceptance-pmo.md",
+      "delivery/features/F-53/round-2/acceptance-product.md",
+      "delivery/features/F-53/round-2/build.md",
+      "delivery/features/F-53/round-2/checks.md",
+      "delivery/features/F-53/round-2/review-qa.md",
+      "delivery/features/F-53/round-2/review-technical.md",
+      "delivery/features/F-53/round-2/review-ui.md",
+      "delivery/features/F-53/round-2/review-ux.md",
+      "delivery/features/F-53/spec.md",
       "frontend/e2e/cash-forecast.spec.ts",
       "frontend/e2e/conformance.spec.ts",
       "frontend/e2e/controls.ts",
