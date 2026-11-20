@@ -176,14 +176,14 @@ for (const [label, viewport] of [
       await reviewerReady(page);
       await page.getByRole('button', { name: 'Approve and submit' }).click();
       await expect(page.getByText('Submission pack v1 · delivery not confirmed')).toBeVisible();
-      await expect(page.getByRole('radiogroup')).toBeVisible();
+      await expect(page.getByRole('group', { name: /what happened/ })).toBeVisible();
       await expect(page.getByRole('region', { name: 'Sent to' })).toContainText('Uncertain');
       await expect(page.getByText(/Submitted|Record the outcome/)).toHaveCount(0);
       await expect(page.getByRole('button', { name: /send again|resend|submit again/i })).toHaveCount(0);
       await expectNoAxeViolations(page);
       await page.reload();
       await loaded(page);
-      await expect(page.getByRole('radiogroup')).toBeVisible();
+      await expect(page.getByRole('group', { name: /what happened/ })).toBeVisible();
       expect(decisions(seen)).toHaveLength(1);
     });
 

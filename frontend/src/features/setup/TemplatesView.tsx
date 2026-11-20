@@ -8,7 +8,7 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { Button, Callout, EmptyState, PageTitle, SampleLabel, SearchField, VisuallyHidden } from '@/components';
+import { Button, Callout, EmptyState, PageTitle, SampleLabel, SearchField, Table, VisuallyHidden } from '@/components';
 
 import type { TemplateRow } from './api';
 import { boardDay, boardStamp } from './format';
@@ -243,55 +243,30 @@ function TemplatesView() {
                 {asOf && <span className="setup-more">AS OF {asOf.toUpperCase()}</span>}
               </span>
             </div>
-            <div className="psl-tablewrap">
-              <table className="psl-table setup-table setup-table--templates">
-                <thead>
-                  <tr>
-                    <th scope="col">DOCUMENT</th>
-                    <th scope="col">USED BY LINE</th>
-                    <th scope="col">STATUS</th>
-                    <th scope="col">
-                      <VisuallyHidden>Action</VisuallyHidden>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {matching.length === 0 && (
-                    <tr>
-                      <td colSpan={4}>No templates match your search.</td>
-                    </tr>
-                  )}
-                  {matching.map((row, i) => {
-                    const panel = panelFor(row);
-                    return [
-                      <tr key={row.template_id ?? `${row.name}-${i}`}>
-                        <td>
-                          <div className="setup-docname">
-                            {name(row)}
-                            <span className="setup-meta">{metaParts(row).first}</span>
-                            {metaParts(row).second && <span className="setup-meta setup-docname__history">{metaParts(row).second}</span>}
-                          </div>
-                        </td>
-                        <td>
-                          <span className="setup-line">{row.line}</span>
-                        </td>
-                        <td>{badge(row)}</td>
-                        <td>
-                          <div className="setup-actioncell">
-                            {uploadButton(row, true)}
-                          </div>
-                        </td>
-                      </tr>,
-                      panel && (
-                        <tr key={`${row.template_id}-panel`} className="setup-upload-row">
-                          <td colSpan={4}>{panel}</td>
-                        </tr>
-                      ),
-                    ];
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <Table
+              caption="Document templates"
+              className="setup-table setup-table--templates"
+              columns={[
+                {
+                  key: 'document',
+                  header: 'DOCUMENT',
+                  cell: (row) => (
+                    <div className="setup-docname">
+                      {name(row)}
+                      <span className="setup-meta">{metaParts(row).first}</span>
+                      {metaParts(row).second && <span className="setup-meta setup-docname__history">{metaParts(row).second}</span>}
+                    </div>
+                  ),
+                },
+                { key: 'line', header: 'USED BY LINE', cell: (row) => <span className="setup-line">{row.line}</span> },
+                { key: 'status', header: 'STATUS', cell: (row) => badge(row) },
+                { key: 'action', header: 'Action', hideHeader: true, cell: (row) => <div className="setup-actioncell">{uploadButton(row, true)}</div> },
+              ]}
+              rows={matching}
+              rowKey={(row) => row.template_id ?? `${row.name}-${matching.indexOf(row)}`}
+              empty="No templates match your search."
+              expanded={(row) => panelFor(row)}
+            />
             <ShowMore state={state} onMore={() => void loadMore()} noun="templates" />
           </>
         )}

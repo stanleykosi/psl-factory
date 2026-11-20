@@ -22,11 +22,15 @@ export type Column<R> = {
   /** Mono (references). */
   mono?: boolean;
   sortable?: boolean;
+  /** The header is read but not drawn (a column of row actions). */
+  hideHeader?: boolean;
+  /** A class on this column's cells. */
+  className?: string;
 };
 
 export type Sort = { key: string; dir: 'ascending' | 'descending' };
 
-export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, selected, onSelect, rowLabel, rowState, expanded, bulkActions, footer, className, tableClassName }: {
+export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, selected, onSelect, rowLabel, rowState, expanded, bulkActions, footer, leading, fullRow, className, tableClassName, wrapClassName }: {
   /** Names the table for screen readers (visually hidden). */
   caption: string;
   columns: Column<R>[];
@@ -48,12 +52,18 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
   bulkActions?: ReactNode;
   /** Totals row cells, one per column. */
   footer?: ReactNode[];
+  /** A first column the screen fills itself (its own checkboxes), where `selected` and `onSelect` do not fit. */
+  leading?: { header: ReactNode; headerClassName?: string; cell: (row: R) => ReactNode };
+  /** A row shown as one full-width cell instead of its columns (a record the person may not open), or undefined. */
+  fullRow?: (row: R) => ReactNode;
   className?: string;
   tableClassName?: string;
+  /** A class on the scrolling frame. */
+  wrapClassName?: string;
 }) {
   const selectable = selected !== undefined && onSelect !== undefined;
   const chosen = selectable ? rows.filter((r) => selected.has(rowKey(r))).length : 0;
-  const span = columns.length + (selectable ? 1 : 0);
+  const span = columns.length + (selectable || leading ? 1 : 0);
 
   function toggleAll() {
     if (!onSelect) return;
@@ -81,7 +91,7 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
       )}
       {/* The frame scrolls sideways on narrow screens; it takes focus so a keyboard can scroll it. */}
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-      <div className="psl-tablewrap" role="region" aria-label={caption} tabIndex={0}>
+      <div className={cx('psl-tablewrap', wrapClassName)} role="region" aria-label={caption} tabIndex={0}>
         <table className={cx('psl-table', tableClassName)}>
           <caption className="cmp-sr">{caption}</caption>
           <thead>
@@ -90,6 +100,9 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
                 <th className="psl-check-cell" scope="col">
                   <Checkbox label={<span className="cmp-sr">Select all</span>} checked={rows.length > 0 && chosen === rows.length} mixed={chosen > 0 && chosen < rows.length} disabled={rows.length === 0} onChange={toggleAll} />
                 </th>
+              )}
+              {leading && (
+                <th className={cx('psl-check-cell', leading.headerClassName)}>{leading.header}</th>
               )}
               {columns.map((col) => {
                 const sorted = sort?.key === col.key ? sort.dir : undefined;
@@ -100,6 +113,8 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
                         {col.header}
                         {sorted && <Icon name={sorted === 'ascending' ? 'sort' : 'down'} />}
                       </button>
+                    ) : col.hideHeader ? (
+                      <span className="cmp-sr">{col.header}</span>
                     ) : (
                       col.header
                     )}
@@ -118,6 +133,14 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
                 const key = rowKey(row);
                 const isSelected = selectable && selected.has(key);
                 const more = expanded?.(row);
+                const whole = fullRow?.(row);
+                if (whole !== undefined) {
+                  return (
+                    <tr key={key}>
+                      <td colSpan={span}>{whole}</td>
+                    </tr>
+                  );
+                }
                 return (
                   <Fragment key={key}>
                     <tr className={cx(isSelected && 'is-selected', rowState?.(row) === 'current' && 'is-current') || undefined}>
@@ -126,8 +149,9 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
                           <Checkbox label={<span className="cmp-sr">{rowLabel ? rowLabel(row) : `Select ${key}`}</span>} checked={isSelected} onChange={() => toggle(key)} />
                         </td>
                       )}
+                      {leading && <td className="psl-check-cell">{leading.cell(row)}</td>}
                       {columns.map((col) => (
-                        <td key={col.key} className={cx(col.num && 'num', col.mono && 'psl-mono') || undefined}>
+                        <td key={col.key} data-label={col.header} className={cx(col.num && 'num', col.mono && 'psl-mono', col.className) || undefined}>
                           {col.cell(row)}
                         </td>
                       ))}

@@ -3,7 +3,7 @@
 // SCR-16 RFP outcome (/work/[id]/outcome). What is offered comes only from rfp_outcome on E-WORK-ITEM (results,
 // reasons, record_as, recorded); nothing from /me decides it (INV-ACCESS). Desktop pages sit inside the RFP
 // frame drawn from `rfp`; phones show "← RFP" and the bar note instead. Times are WAT.
-import { useIsPhone } from '@/components';
+import { Button, useIsPhone } from '@/components';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -49,9 +49,9 @@ function PageNotice({ notice, onRecheck }: { notice: OutcomeNotice | null; onRec
     return (
       <Warning
         action={
-          <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={notice.checking} onClick={onRecheck}>
+          <Button kind="secondary" size="sm" disabled={notice.checking} onClick={onRecheck}>
             {notice.checking ? 'Checking…' : 'Try again'}
-          </button>
+          </Button>
         }
       >
         We couldn&rsquo;t confirm whether the outcome was recorded, and couldn&rsquo;t reload to check. Record stays off. Try again reloads the item;

@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { formatClock, formatDayMonth, useIsPhone } from '@/components';
+import { Button, formatClock, formatDayMonth, useIsPhone } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -76,9 +76,9 @@ function PageNotice({ notice, onRecheck }: { notice: Notice | null; onRecheck: (
     return (
       <Warning
         action={
-          <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={notice.checking} onClick={onRecheck}>
+          <Button kind="secondary" size="sm" disabled={notice.checking} onClick={onRecheck}>
             {notice.checking ? 'Checking…' : 'Try again'}
-          </button>
+          </Button>
         }
       >
         We couldn&rsquo;t confirm whether your response was recorded, and couldn&rsquo;t reload to check. Record stays off. Try again reloads the item;

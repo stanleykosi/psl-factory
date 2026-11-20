@@ -1,0 +1,721 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-53",
+  "outcome": "F-53 Design-system conformance, part 2: shared components everywhere",
+  "state": "DONE",
+  "task_ids": [
+    "FE-DS-CONFORMANCE-2"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "No raw `<button>`, `<input>`, `<select>`, `<textarea>` or `<table>` remains in `src/features` or `src/app`. All 34 are replaced with shared components, or with a shared component extended for the need. \u2014 verify: the grep above returns nothing.",
+    "An ESLint rule fails on any raw `<button>`, `<input>`, `<select>`, `<textarea>` or `<table>` JSX in `src/features` and `src/app` (allowed in `src/components`). A deliberate violation fails lint. \u2014 verify: lint run on a scratch violation, then removed.",
+    "Each extended shared component keeps its existing uses unchanged: its existing tests pass, and new options have tests.",
+    "Every replaced control keeps its accessible name, its keyboard behaviour (Enter or Space, focus order) and its disabled or busy state. On phones, every replaced control target is at least 44 by 44 px. \u2014 verify: component tests, plus e2e measurements on the response form, the RFP follow-up and My work at 390.",
+    "The visible result on the affected screens matches the merged look. The WorkItemOverview table now uses the shared Table styling. The ResponseForm radio, checkbox, select and datetime now use the shared RadioGroup, Checkbox, Select and DateField. \u2014 verify: before and after screenshots at 1440 and 390 of the response form, RFP outcome and follow-up, My work filters, Setup templates and the work item overview, attached to build.md.",
+    "All existing unit tests and e2e pass. Update tests only where they queried raw elements; never weaken an assertion. \u2014 verify: checks.sh plus the e2e for response, rfp, my-work, setup, projects, payments, work-item and assistant."
+  ],
+  "risk": {
+    "level": "low",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "coordinator (the design engineer asked for it: \"yeah do that\", 20 Nov)",
+    "rationale": "Low. Mostly mechanical swaps. The risk is an unintended visual or behaviour change on merged screens, which is why the existing tests and e2e must stay green and the visible result must match."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-53/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T14:03:03Z",
+      "seconds": 394.8,
+      "evidence_ref": "delivery/features/F-53/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T14:41:38Z",
+      "seconds": 455.7,
+      "evidence_ref": "delivery/features/F-53/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "evidence_refs": [
+        "delivery/features/F-53/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "evidence_refs": [
+        "delivery/features/F-53/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "evidence_refs": [
+        "delivery/features/F-53/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-53/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 20 Nov 2026 \u2014 D-136",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "evidence_refs": [
+        "delivery/features/F-53/round-2/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "evidence_refs": [
+        "delivery/features/F-53/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "evidence_refs": [
+        "delivery/features/F-53/round-2/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "DateField with `time` keeps draftDate/draftTime in state; if a parent resets value to '' after submit, the stale draft date is still shown as the value. Not triggered by current screens; frontend/src/components/DateField.tsx:104.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:04:34Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Table now adds `data-label` to every cell of all tables, including existing uses; harmless attribute, but beyond \"existing uses unchanged\" in the strict sense. frontend/src/components/Table.tsx:152.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:04:34Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 three replaced controls measure under 44px: the proof-chip Remove button 24x24 (response form, src/features/response/response.css `.resp-chip__remove`, min 24px), the RFP outcome and team-input \"Choose a file\" 40px (`.resp-filebtn`, min-height var(--control-sm)), and \"Clear search\" 36px on Projects and Payments. `git log` shows response.css was not changed in F-53, so the size is inherited and not a regression, but criterion 4 reads literally \"every replaced control\". The response-form file button itself is 52px, and the conformance e2e does not measure these three. Worth a follow-up to bring them to 44.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T14:18:23Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T14:41:38Z",
+          "refs": [
+            "chip \"\u00d7\", \"Choose a file\" and \"Clear search\" are 44px at 390, e2e added"
+          ],
+          "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:47:09Z",
+          "refs": [
+            "The new e2e measures all three targets at 390. It fails before the CSS change (24, 40 and 36px)."
+          ],
+          "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "chip \"\u00d7\", \"Choose a file\" and \"Clear search\" are 44px at 390, e2e added"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The new e2e measures all three targets at 390. It fails before the CSS change (24, 40 and 36px)."
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The assistant mention picker does not move through items with ArrowDown and Enter from the search box (selection works by Tab to the item then Enter or click; the project then shows in the right panel). The component has only an Escape handler, so this is unchanged by F-53. Noted for accessibility follow-up.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-53/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T14:18:23Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T14:41:38Z",
+          "refs": [
+            "mention picker Up/Down/Enter/Escape, unit test added"
+          ],
+          "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:47:09Z",
+          "refs": [
+            "MentionPicker `keys`: ArrowDown/Up move between the box and the options, Enter on the box picks the first, preventDefault is called. It does nothing when there are no results. The unit test fails without the handler. The Escape step in that test already passed before and is a regression guard only."
+          ],
+          "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "mention picker Up/Down/Enter/Escape, unit test added"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "MentionPicker `keys`: ArrowDown/Up move between the box and the options, Enter on the box picks the first, preventDefault is called. It does nothing when there are no results. The unit test fails without the handler. The Escape step in that test already passed before and is a regression guard only."
+      ]
+    },
+    {
+      "id": "COORD-1-1",
+      "round": 1,
+      "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Spec criterion 4 requires every replaced control at least 44x44 px at 390; QA round 1 measured the file-chip remove x, Choose a file and Clear search smaller (review-qa.md). The mention picker also lacks arrow keys.",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "coordinator",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-20T14:18:42Z",
+          "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T14:41:38Z",
+          "refs": [
+            "same fix: the 44px targets in the shared components at 390 and the picker keys"
+          ],
+          "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-20T14:47:09Z",
+          "refs": [
+            "`.resp-chip__remove` and `.resp-filebtn` get 44px in the phone block of response.css. Negative margins keep the chip size. Existing larger feature overrides (workspace, rfp, start-work) are untouched. The SearchField clear rule is in the max-width 719.98px block of components.css and gives 44px. Desktop stays at 36px. The input's right padding is 40px, so the 44px button overlaps text by 4px. This is cosmetic."
+          ],
+          "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "same fix: the 44px targets in the shared components at 390 and the picker keys"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`.resp-chip__remove` and `.resp-filebtn` get 44px in the phone block of response.css. Negative margins keep the chip size. Existing larger feature overrides (workspace, rfp, start-work) are untouched. The SearchField clear rule is in the max-width 719.98px block of components.css and gives 44px. Desktop stays at 36px. The input's right padding is 40px, so the 44px button overlaps text by 4px. This is cosmetic."
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+          "evidence_refs": [
+            "delivery/features/F-53/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+          "evidence_refs": [
+            "delivery/features/F-53/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-53/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+          "evidence_refs": [
+            "delivery/features/F-53/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+          "evidence_refs": [
+            "delivery/features/F-53/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-DS-CONFORMANCE-2",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "41f03c37f898414477f200ffdc61113989ee6484",
+    "task_branch": "fe-ds-conformance-2-shared-components",
+    "head_sha": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-53",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/87",
+    "pr_number": 87,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-136",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "c6706b9675059da4bdcc208481841aedb3526123",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-53/decision.md",
+      "delivery/features/F-53/feature.json",
+      "delivery/features/F-53/readiness.md",
+      "delivery/features/F-53/round-1/build.md",
+      "delivery/features/F-53/round-1/checks.md",
+      "delivery/features/F-53/round-1/review-qa.md",
+      "delivery/features/F-53/round-1/review-technical.md",
+      "delivery/features/F-53/round-1/review-ui.md",
+      "delivery/features/F-53/round-1/review-ux.md",
+      "delivery/features/F-53/round-1/screens/my-work-filters-1440-after.png",
+      "delivery/features/F-53/round-1/screens/my-work-filters-1440-before.png",
+      "delivery/features/F-53/round-1/screens/my-work-filters-390-after.png",
+      "delivery/features/F-53/round-1/screens/my-work-filters-390-before.png",
+      "delivery/features/F-53/round-1/screens/response-form-1440-after.png",
+      "delivery/features/F-53/round-1/screens/response-form-1440-before.png",
+      "delivery/features/F-53/round-1/screens/response-form-390-after.png",
+      "delivery/features/F-53/round-1/screens/response-form-390-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-1440-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-1440-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-390-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-followup-390-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-1440-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-1440-before.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-390-after.png",
+      "delivery/features/F-53/round-1/screens/rfp-outcome-390-before.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-1440-after.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-1440-before.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-390-after.png",
+      "delivery/features/F-53/round-1/screens/setup-templates-390-before.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-1440-after.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-1440-before.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-390-after.png",
+      "delivery/features/F-53/round-1/screens/work-item-overview-390-before.png",
+      "delivery/features/F-53/round-2/acceptance-pmo.md",
+      "delivery/features/F-53/round-2/acceptance-product.md",
+      "delivery/features/F-53/round-2/build.md",
+      "delivery/features/F-53/round-2/checks.md",
+      "delivery/features/F-53/round-2/review-qa.md",
+      "delivery/features/F-53/round-2/review-technical.md",
+      "delivery/features/F-53/round-2/review-ui.md",
+      "delivery/features/F-53/round-2/review-ux.md",
+      "delivery/features/F-53/spec.md",
+      "frontend/e2e/cash-forecast.spec.ts",
+      "frontend/e2e/conformance.spec.ts",
+      "frontend/e2e/controls.ts",
+      "frontend/e2e/engagement-planning.spec.ts",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/e2e/minutes.spec.ts",
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/e2e/payments.spec.ts",
+      "frontend/e2e/response.spec.ts",
+      "frontend/e2e/rfp-submission.spec.ts",
+      "frontend/e2e/rfp.spec.ts",
+      "frontend/e2e/setup-templates.spec.ts",
+      "frontend/e2e/support-handover.spec.ts",
+      "frontend/e2e/weekly-returned-received.spec.ts",
+      "frontend/e2e/weekly.spec.ts",
+      "frontend/e2e/workspace.spec.ts",
+      "frontend/eslint.config.mjs",
+      "frontend/src/components/Button.tsx",
+      "frontend/src/components/DateField.tsx",
+      "frontend/src/components/Field.tsx",
+      "frontend/src/components/FileUpload.tsx",
+      "frontend/src/components/README.md",
+      "frontend/src/components/Radio.tsx",
+      "frontend/src/components/Select.tsx",
+      "frontend/src/components/Table.tsx",
+      "frontend/src/components/components.css",
+      "frontend/src/components/index.ts",
+      "frontend/src/features/alerts/AlertSwitch.tsx",
+      "frontend/src/features/alerts/AlertsBell.tsx",
+      "frontend/src/features/assistant/Chrome.tsx",
+      "frontend/src/features/assistant/MentionPicker.tsx",
+      "frontend/src/features/finance/payments/PaymentsView.tsx",
+      "frontend/src/features/my-work/CaughtUp.tsx",
+      "frontend/src/features/my-work/FilterPanel.tsx",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/response/ProofField.tsx",
+      "frontend/src/features/response/ReconcilePanel.tsx",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/ResponseView.tsx",
+      "frontend/src/features/response/Segmented.tsx",
+      "frontend/src/features/response/SupportHandoverForm.tsx",
+      "frontend/src/features/response/TeamInputForm.tsx",
+      "frontend/src/features/response/response.css",
+      "frontend/src/features/rfp/FollowupCard.tsx",
+      "frontend/src/features/rfp/OutcomeForm.tsx",
+      "frontend/src/features/rfp/OutcomeView.tsx",
+      "frontend/src/features/rfp/RecordedView.tsx",
+      "frontend/src/features/setup/TemplatesView.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/StartWorkButton.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/assistant.test.tsx",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/components/conformance-options.test.tsx",
+      "frontend/tests/controls.ts",
+      "frontend/tests/engagement-planning.test.tsx",
+      "frontend/tests/minutes-end.test.tsx",
+      "frontend/tests/minutes.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/payment-reminder.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/rfp-submission.test.tsx",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/support-handover.test.tsx",
+      "frontend/tests/weekly-returned-received.test.tsx",
+      "frontend/tests/weekly.test.tsx",
+      "frontend/tests/workspace-step.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-53/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "117 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-20T11:28:07Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-20T11:28:08Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T11:28:35Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T14:03:07Z",
+      "round": 1,
+      "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T14:04:34Z",
+      "round": 1,
+      "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-20T14:18:42Z",
+      "round": 1,
+      "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T14:18:42Z",
+      "round": 2,
+      "head": "37adc13c1e9e17bf4334f07c566b96c002db56fa",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T14:41:44Z",
+      "round": 2,
+      "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T14:47:09Z",
+      "round": 2,
+      "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T14:47:52Z",
+      "round": 2,
+      "head": "2dd0f23ff3e91b66d5396c50580da203afee81e2",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T14:57:37Z",
+      "round": 2,
+      "head": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T14:57:43Z",
+      "round": 2,
+      "head": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T14:57:44Z",
+      "round": 2,
+      "head": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T14:57:45Z",
+      "round": 2,
+      "head": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T14:57:45Z",
+      "round": 2,
+      "head": "65f879aee737c2b546f3122b13888fe1d8a90dca",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "haiku",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-53/readiness.md",
+      "delivery/features/F-53/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "2dd0f23ff3e91b66d5396c50580da203afee81e2"
+  },
+  "blocked": null
+}

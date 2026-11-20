@@ -137,7 +137,7 @@ const PART_B: [string, (page: Page) => Promise<unknown>][] = [
   ['W-2008 uncertain', async (page) => {
     await openItem(page, 'W-2008');
     await page.getByRole('button', { name: 'Approve and send' }).click();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   }],
   ['W-2009 decision step', (page) => openItem(page, 'W-2009')],
 ];
@@ -210,7 +210,7 @@ test('W-2008 on a phone: after an uncertain send, Record and continue is tappabl
   await page.setViewportSize(PHONE);
   await openItem(page, 'W-2008');
   await page.getByRole('button', { name: 'Approve and send' }).click();
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   await page.getByRole('radio', { name: /It didn’t arrive/ }).check();
   const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/v1/work/W-2008/actions');
   await page.getByRole('button', { name: 'Record and continue' }).click();
@@ -219,7 +219,7 @@ test('W-2008 on a phone: after an uncertain send, Record and continue is tappabl
 
 async function pressApprove(page: Page) {
   await page.getByRole('button', { name: 'Approve and send' }).click();
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   await page.getByRole('radio', { name: /It didn’t arrive/ }).check();
 }
 
@@ -244,9 +244,9 @@ for (const size of [PHONE, { width: 320, height: 640 }]) {
     await page.setViewportSize(size);
     await openItem(page, 'W-2008');
     await page.getByRole('button', { name: 'Approve and send' }).click();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     await page.reload();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     for (const b of await page.locator('.ws-steps button').all()) await expect(b).toHaveAttribute('aria-disabled', 'true');
     const before = stepPosts().length;
     await page.getByRole('button', { name: 'Approve and send' }).click({ force: true });
@@ -263,7 +263,7 @@ test('W-2008: effect uncertain turns every step off; the reconcile answer goes o
   await openItem(page, 'W-2008');
   await page.getByRole('button', { name: 'Approve and send' }).click();
   await expect(page.locator('.ws-notice').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' })).toBeVisible();
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   for (const b of await page.locator('.ws-steps button').all()) await expect(b).toHaveAttribute('aria-disabled', 'true');
   await page.getByRole('button', { name: 'Approve and send' }).click({ force: true });
   await page.getByRole('radio', { name: /It didn’t arrive/ }).check();

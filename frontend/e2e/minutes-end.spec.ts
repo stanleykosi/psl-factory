@@ -94,9 +94,9 @@ test('W-2312 at 1440 and 390: reconcile is the only action; one press is one POS
     await page.setViewportSize({ width, height: 900 });
     await openItem(page, 'W-2312');
     await expect(page.locator('.ws').getByText('Uncertain', { exact: true })).toBeVisible();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     await page.reload();
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     await page.getByRole('radio', { name: /I can’t tell yet/ }).click();
     await page.getByRole('button', { name: 'Record and continue' }).click();
     await expect.poll(() => posts('/actions').length).toBe(1);

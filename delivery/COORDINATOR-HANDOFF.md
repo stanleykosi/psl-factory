@@ -191,7 +191,7 @@ Not work: FE-M2, FE-M3 and FE-M4 are retired umbrella tasks (split into the feat
   - Test-reliability PRs #75, #78, #80, #81.
   - F-46 CLOSED as a duplicate of F-12. That used the new CLOSED state, factory commit 05e2cd9.
 - **Every buildable task is DONE.** BLOCKED: F-44 (D-PAYROLL-VISIBILITY plus backend) and F-50 (PSL "Mark complete" authority plus the backend completion endpoint). The full blocked list and what unblocks each item is in "Remaining work after this wave" above.
-- **Main sync PR #86** (dlv-00 → main, F-34 to F-52): open, mergeable, waiting on the user. NEVER merge it without the user.
+- **Main sync PR #86** (dlv-00 → main, F-34 to F-52): MERGED 20 Nov with the user's approval (1ada84b2). Future syncs still need the user.
 - **Cost policy D-123** is in force and in the software factory (commit 6798f28 on factory-running, local only; ask before pushing):
   - Sonnet builders and reviews;
   - Opus only for high-risk security and technical review;

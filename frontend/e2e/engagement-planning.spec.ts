@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
+import { choose, fillWhen } from './controls';
 
 // F-31 engagement and planning (W-2601 to W-2604) against the contract mock: the pages, confirm PM, register, record
 // department input, the uncertain registration, and axe WCAG 2.2 AA at 1440 and 390. Nothing is sent to anyone.
@@ -115,7 +116,7 @@ for (const [label, viewport] of [
       const dialog = page.getByRole('dialog', { name: 'Record department input' });
       await expect(dialog.getByLabel(/What they gave/)).toBeVisible();
       await expectNoAxeViolations(page);
-      await dialog.getByLabel('Who gave it').selectOption({ label: 'QA · QA lead, PSL' });
+      await choose(dialog, 'Who gave it', 'QA · QA lead, PSL');
       await dialog.getByLabel(/Estimate/).fill('45');
       await dialog.getByLabel(/What they gave/).fill('Test plan and QA effort');
       await dialog.locator('input[type="file"]').setInputFiles(pdf('qa-plan.pdf'));
@@ -123,7 +124,7 @@ for (const [label, viewport] of [
       // QA-2-1: the chip's remove button is a 44px target in a Drawer
       const removeBox = await dialog.getByRole('button', { name: /^Remove / }).boundingBox();
       if (phone) expect(removeBox!.width >= 44 && removeBox!.height >= 44).toBe(true);
-      await dialog.getByLabel(/Received/).fill('2026-12-11T16:05');
+      await fillWhen(dialog, 'Received', '2026-12-11T16:05');
       await dialog.getByRole('checkbox').check();
       await dialog.getByRole('button', { name: /^Record/ }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);

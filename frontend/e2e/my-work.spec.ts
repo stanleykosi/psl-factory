@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type BrowserContext, type Locator, type Page } from '@playwright/test';
+import { choose } from './controls';
 
 // My work (SCR-01) against the contract mock: every state at 390 and 1440, axe WCAG 2.2 AA.
 const DESKTOP = { width: 1440, height: 900 };
@@ -94,7 +95,7 @@ for (const [label, viewport] of [
       await expect(dialog).toHaveClass(phone ? /psl-sheet/ : /psl-pop/);
       for (const name of ['Project', 'State', 'Waiting on']) await expect(dialog.getByRole('combobox', { name })).toBeVisible();
       await dialog.getByRole('checkbox', { name: 'Prepare an invoice' }).check();
-      await dialog.getByRole('combobox', { name: 'State' }).selectOption('action_needed');
+      await choose(dialog, 'State', 'Action needed');
       const show = dialog.getByRole('button', { name: 'Show 2 items' });
       await expect(show).toBeVisible();
       await shot(page, `my-work-${viewport.width}-filter`);

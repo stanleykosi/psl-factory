@@ -4,7 +4,7 @@
 // the backend lists "reconcile" in allowed_actions; otherwise nothing renders and nothing is sent. The answer
 // goes through E-WORK-ACTION once per press; the page then reloads. Nothing here resends anything: a resend,
 // if the answer allows one, is the backend's step.
-import { useIsPhone } from '@/components';
+import { Button, RadioGroup, useIsPhone } from '@/components';
 import { useCallback, useId, useRef, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
@@ -150,26 +150,20 @@ function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: Resp
               )}
             </p>
           )}
-          <div ref={options} role="radiogroup" aria-label={title} className="resp-options">
-            {reconcile.outcomes.map((value) => {
-              const words = outcomeWords(value, reconcile, internal);
-              return (
-                <label key={value} className="resp-option">
-                  <input
-                    type="radio"
-                    name={`${headId}-outcome`}
-                    value={value}
-                    checked={outcome === value}
-                    disabled={locked}
-                    onChange={() => setOutcome(value)}
-                  />
-                  <span>
-                    <strong>{words.lead}</strong>
-                    {words.rest ? ` ${words.rest}` : ''}
-                  </span>
-                </label>
-              );
-            })}
+          <div ref={options} className="resp-options">
+            <RadioGroup
+              legend={title}
+              hideLegend
+              cards
+              name={`${headId}-outcome`}
+              value={outcome ?? undefined}
+              disabled={locked}
+              onChange={(value) => setOutcome(value as ReconcileOutcome)}
+              options={reconcile.outcomes.map((value) => {
+                const words = outcomeWords(value, reconcile, internal);
+                return { value, label: `${words.lead}${words.rest ? ` ${words.rest}` : ''}` };
+              })}
+            />
           </div>
           {needsProof && <ProofField proof={proof} />}
           {proofFirst && (
@@ -196,9 +190,9 @@ function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: Resp
                   ? 'This item changed. Reload it to see the latest.'
                   : 'We couldn’t confirm your answer. Reload the work item to see whether it was recorded.'}
               </span>
-              <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => reloadPage()}>
+              <Button kind="secondary" size="sm" onClick={() => reloadPage()}>
                 Reload the work item
-              </button>
+              </Button>
             </div>
           )}
           {status.kind === 'done' && (
@@ -207,15 +201,15 @@ function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: Resp
             </p>
           )}
           <div className="psl-actionbar resp-actionbar">
-            <button
-              type="button"
-              className="psl-btn psl-btn--lg psl-btn--block"
+            <Button
+              size="lg"
+              block
               disabled={!ready && !askFirst}
               aria-describedby={proofFirst ? whyId : undefined}
               onClick={askFirst ? ask : () => void submit()}
             >
               {status.kind === 'busy' ? RESPONSE_LABELS.busy : 'Record and continue'}
-            </button>
+            </Button>
           </div>
           <p className="resp-footnote">Your choice is recorded with your name.{resendNote}</p>
         </div>

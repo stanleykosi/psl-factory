@@ -8,7 +8,7 @@
 // the record button explains when it is missing; `error` marks the zone.
 import { useId, useRef, useState, type ChangeEvent, type DragEvent, type ReactNode } from 'react';
 
-import { Button } from './Button';
+import { Button, type ButtonProps } from './Button';
 import { FieldLabel } from './Field';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
@@ -41,6 +41,35 @@ function progressText(loaded: number, total: number): string {
 function typeLabel(types: string[]): string {
   const names = [...new Set(types.map((t) => (t === '.jpeg' ? 'JPG' : t.replace('.', '').toUpperCase())))];
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} or ${names[names.length - 1]}` : names[0];
+}
+
+/** A button that opens the file picker, with the hidden chooser beside it (a screen that draws its own file list). The
+ *  file is handed over as chosen: the caller checks type and size. `inputDisabled` closes the chooser itself. */
+export function FilePickButton({ onFile, disabled, inputDisabled, labelledBy, className, children, ...rest }: Omit<ButtonProps, 'kind' | 'size' | 'onClick' | 'type'> & {
+  onFile: (file: File) => void;
+  inputDisabled?: boolean;
+  labelledBy?: string;
+}) {
+  const input = useRef<HTMLInputElement>(null);
+  return (
+    <>
+      <input
+        ref={input}
+        type="file"
+        hidden
+        aria-labelledby={labelledBy}
+        disabled={inputDisabled}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          const file = event.target.files?.[0];
+          event.target.value = '';
+          if (file) onFile(file);
+        }}
+      />
+      <Button {...rest} kind="bare" className={className} disabled={disabled} onClick={() => input.current?.click()}>
+        {children}
+      </Button>
+    </>
+  );
 }
 
 export function FileUpload({ label, state, onFile, onRemove, onCancel, accept = PROOF_TYPES, maxBytes = PROOF_MAX_BYTES, prompt = 'Drop the proof here or', error, disabledReason, className }: {

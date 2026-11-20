@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { choose, fillWhen } from './controls';
 
 // F-18: team input, the RFP outcome form and its recorded states, on the contract mock (D-RFP-OUTCOME r2, proposed).
 const DESKTOP = { width: 1440, height: 900 };
@@ -105,7 +106,8 @@ async function tabTo(page: Page, target: Locator) {
 }
 const ring = (target: Locator) =>
   target.evaluate((el) => {
-    const s = getComputedStyle(el);
+    // A shared date field draws its ring on the box around the text and the calendar button.
+    const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
     return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
   });
 
@@ -137,7 +139,7 @@ test('team input Tab order is Team, the fields, Proof and its confirmation, Rece
     page.getByLabel('What they gave'),
     page.getByRole('button', { name: 'Choose a file' }),
     page.getByRole('checkbox'),
-    page.getByLabel('Received'),
+    page.getByLabel('Received', { exact: true }),
     page.getByLabel(/^Note/),
   ];
   for (const target of order) {
@@ -153,7 +155,7 @@ test('team input records through the mock: claim, proof, record, success', async
   await page.getByLabel('What they gave').fill('Security estimate and data-protection notes');
   await page.locator('input[type="file"]').setInputFiles(file('security-estimate-tamarind.xlsx', 64 * 1024));
   await expect(page.getByText('Uploaded · 64 KB')).toBeVisible();
-  await page.getByLabel('Received').fill('2026-11-12T15:10');
+  await fillWhen(page, 'Received', '2026-11-12T15:10');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Record input' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
@@ -191,10 +193,10 @@ test('the outcome records through the mock and shows the recorded state; the wor
   await expect(page).toHaveURL(/\/work\/W-2103\/outcome$/);
   await expect(page.getByRole('radiogroup', { name: 'Result' })).toBeVisible();
   await chooseResult(page, 'Pending');
-  await page.getByLabel('When you learned it').fill('2026-12-01T15:20');
+  await fillWhen(page, 'When you learned it', '2026-12-01T15:20');
   await page.locator('input[type="file"]').setInputFiles(file('tamarind-email-decision-delayed.pdf', 42 * 1024));
   await expect(page.getByText('Uploaded · 42 KB')).toBeVisible();
-  await page.getByLabel('You are recording as').selectOption('relationship_owner');
+  await choose(page, 'You are recording as', 'Relationship owner');
   await page.getByRole('button', { name: 'Record pending' }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Decision pending' })).toBeVisible();
 });

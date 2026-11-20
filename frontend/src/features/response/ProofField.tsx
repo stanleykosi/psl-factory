@@ -3,7 +3,9 @@
 // CMP proof field (SCR-16, SCR-02 reconcile): the uploaded files and one button that opens the file picker.
 // Layouts follow the boards: "drop" is the dashed area with chips, "phone" the large dashed button, "card" the
 // SOW board's uploaded-file card. The hidden file input has no `capture`, so the phone offers camera or files.
-import { useId, useRef } from 'react';
+import { useId } from 'react';
+
+import { Button, FilePickButton } from '@/components';
 
 import { fileSize } from './labels';
 import type { EvidenceUpload, ProofFile } from './useEvidenceUpload';
@@ -30,9 +32,9 @@ function FileProblem({ file, proof }: { file: ProofFile; proof: EvidenceUpload }
     <span className="resp-chip__problem">
       {file.problem}
       {file.retryable && (
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={proof.uploading} onClick={() => proof.retry(file.key)}>
+        <Button kind="secondary" size="sm" disabled={proof.uploading} onClick={() => proof.retry(file.key)}>
           Try again
-        </button>
+        </Button>
       )}
     </span>
   );
@@ -46,9 +48,9 @@ function Chip({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
         {file.status === 'uploading' && <span className="resp-chip__state"> · Uploading…</span>}
       </span>
       {file.status !== 'uploading' && (
-        <button type="button" className="resp-chip__remove" aria-label={`Remove ${file.name}`} onClick={() => proof.remove(file.key)}>
+        <Button kind="bare" className="resp-chip__remove" aria-label={`Remove ${file.name}`} onClick={() => proof.remove(file.key)}>
           <span aria-hidden="true">×</span>
-        </button>
+        </Button>
       )}
       <FileProblem file={file} proof={proof} />
     </span>
@@ -68,9 +70,9 @@ function Card({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
         <FileProblem file={file} proof={proof} />
       </span>
       {file.status !== 'uploading' && (
-        <button type="button" className="resp-chip__remove" aria-label={`Remove ${file.name}`} onClick={() => proof.remove(file.key)}>
+        <Button kind="bare" className="resp-chip__remove" aria-label={`Remove ${file.name}`} onClick={() => proof.remove(file.key)}>
           <span aria-hidden="true">×</span>
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -78,7 +80,6 @@ function Card({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
 
 /** `choose`: the picker's words where the layout's default does not fit (team input: "Choose a file"). */
 export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choose, hideLabel }: { proof: EvidenceUpload; hint?: string; layout?: Layout; label?: string; choose?: string; hideLabel?: boolean }) {
-  const input = useRef<HTMLInputElement>(null);
   const labelId = useId();
   const hintId = useId();
   const disabled = !proof.available || proof.uploading;
@@ -88,29 +89,16 @@ export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choo
   const hintShown = shownHint !== undefined && (layout === 'drop' || !proof.available);
 
   const picker = (
-    <>
-      <input
-        ref={input}
-        type="file"
-        hidden
-        aria-labelledby={labelId}
-        disabled={!proof.available}
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          e.target.value = '';
-          if (file) proof.add(file);
-        }}
-      />
-      <button
-        type="button"
-        className={layout === 'phone' && empty ? 'resp-filebtn resp-filebtn--phone' : 'resp-filebtn'}
-        aria-describedby={hintShown ? hintId : undefined}
-        disabled={disabled}
-        onClick={() => input.current?.click()}
-      >
-        {choose ?? BUTTON_TEXT[layout]}
-      </button>
-    </>
+    <FilePickButton
+      onFile={(file) => proof.add(file)}
+      labelledBy={labelId}
+      inputDisabled={!proof.available}
+      className={layout === 'phone' && empty ? 'resp-filebtn resp-filebtn--phone' : 'resp-filebtn'}
+      aria-describedby={hintShown ? hintId : undefined}
+      disabled={disabled}
+    >
+      {choose ?? BUTTON_TEXT[layout]}
+    </FilePickButton>
   );
 
   return (

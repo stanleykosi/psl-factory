@@ -133,6 +133,9 @@
   .resp-pill { display: flex; gap: var(--space-10px); min-height: 52px; padding: 0 var(--space-3); }
   .resp-pill input { margin: 0 3px 0 5px; }
   .resp-chip { padding: var(--space-2) var(--space-10px); }
+  /* 44px targets for the chip's "×" and "Choose a file"; the "×" reaches past the chip's padding so the chip keeps its size */
+  .resp-chip__remove { min-width: var(--control-md); min-height: var(--control-md); margin: calc((var(--control-md) - 1lh) / -2) calc(var(--space-10px) * -1) calc((var(--control-md) - 1lh) / -2) 0; }
+  .resp-filebtn { min-height: var(--control-md); }
   .resp-attest { font-size: var(--text-body-size); }
   .resp-alert { font-size: var(--text-body-size); }
   .resp-signature { background: none; border: none; }

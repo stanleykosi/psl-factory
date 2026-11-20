@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { fillWhen } from './controls';
+
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
@@ -27,7 +29,7 @@ const pdf = (name: string, size: number) => ({ name, mimeType: 'application/pdf'
 
 async function fill(page: Page, { file = true, attest = true } = {}) {
   await page.getByRole('radio', { name: 'Approved' }).check();
-  await page.getByLabel('When they responded').fill('2026-11-11T16:20');
+  await fillWhen(page, 'When they responded', '2026-11-11T16:20');
   if (file) {
     await page.locator('input[type="file"]').setInputFiles(pdf('Lagoon_UAT_signoff_11Nov.pdf', 184 * 1024));
     await expect(page.getByText('Lagoon_UAT_signoff_11Nov.pdf · 184 KB')).toBeVisible();
@@ -61,7 +63,7 @@ const STATES: [string, 'pm' | 'finance_lead', (page: Page) => Promise<unknown>][
   ['W-1603 reconcile', 'finance_lead', async (page) => {
     await page.goto('/work/W-1603');
     await loaded(page);
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   }],
 ];
 
@@ -106,7 +108,8 @@ async function tabTo(page: Page, target: Locator) {
 }
 const ring = (target: Locator) =>
   target.evaluate((el) => {
-    const s = getComputedStyle(el);
+    // A shared date field draws its ring on the box around the text and the calendar button.
+    const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
     return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
   });
 
@@ -117,7 +120,7 @@ test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof butto
   await page.getByRole('heading', { level: 1 }).click();
   const order = [
     page.getByLabel('Who responded'),
-    page.getByLabel('When they responded'),
+    page.getByLabel('When they responded', { exact: true }),
     page.getByRole('radio', { name: 'Approved' }),
     page.getByLabel('For which version'),
     page.getByLabel(/^Note/),
@@ -135,13 +138,13 @@ test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof butto
 test('every radio group is named and nothing animates with reduced motion', async ({ page, context, baseURL }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openForm(page);
-  await expect(page.getByRole('radiogroup', { name: 'What they did' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'What they did' })).toBeVisible();
   await page.getByRole('radio', { name: 'Approved' }).check();
   expect(await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
   await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
   await page.goto('/work/W-1603');
   await loaded(page);
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   await page.getByRole('radio', { name: /It arrived/ }).check();
   expect(await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
 });

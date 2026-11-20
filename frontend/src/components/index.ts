@@ -16,7 +16,7 @@ export { Disclosure, DisclosureLink } from './Disclosure';
 export { DraftCard, type DraftRow } from './DraftCard';
 export { Drawer } from './Drawer';
 export { FactsStrip, FACT_LABELS, type FactName, type FactStatus, type FactValue } from './FactsStrip';
-export { FileUpload, formatSize, PROOF_MAX_BYTES, PROOF_TYPES, type FileState } from './FileUpload';
+export { FilePickButton, FileUpload, formatSize, PROOF_MAX_BYTES, PROOF_TYPES, type FileState } from './FileUpload';
 export { formatAmount, formatClock, formatDate, formatDateTime, formatDayMonth, formatDayTime, formatTime, formatWeekdayDayTime, groupDigits, UNKNOWN } from './format';
 export { Money, Unknown, When } from './Values';
 export { Icon, ICON_NAMES, type IconName } from './Icon';
