@@ -274,3 +274,6 @@ Recorded as accepted risk. Final product sign-off still follows.
 
 ## D-132 · F-49 signed; empty-submit gap accepted as a follow-up (20 Nov 2026, design engineer: "Sign, accept as follow-up")
 F-49 log a received RFP (Sign-off list 3): the D-131 desktop waiver and phone floor exception are confirmed, along with the remaining exceptions and product acceptance on the contract mock. QA-2-1 (an empty "Log RFP" sends a start and relies on the server's 422 for the required messages, where the spec says nothing is sent) is accepted as a follow-up. Merge into dlv-00 approved.
+
+## D-133 · F-38 signed (20 Nov 2026, design engineer: "Sign F-38")
+F-38 RFP submit (Sign-off list 3): the 8 visual waivers (D-131, confirmed), the 25 exceptions, and product acceptance on the contract mock. Follow-ups: reconcile "arrived" with an upload; per-persona access once the backend models roles. Merge into dlv-00 approved after the dlv-00 merge and re-check.

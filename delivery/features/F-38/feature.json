@@ -165,11 +165,13 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-38/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 20 Nov 2026 \u2014 D-133",
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
