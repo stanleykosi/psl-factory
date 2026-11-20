@@ -91,17 +91,24 @@ def detail(request,work,focus=None):
         except ValueError:messages.error(request,'Refresh the work and choose the current recorded references.')
         work.refresh_from_db()
     row=presentation(request.user,work,focus=focus);activities=[] if focus else list(work.activities.prefetch_related('attempts').order_by('pk'))
+    show_decision_actors = (permitted(request.user, work, 'delivery.closure_decide')
+                            or permitted(request.user, work, 'factory.manage'))
     earlier_decisions = []
     if focus != 'decision':
         panel = row['closure']
         earlier = panel['dossier'].records.filter(kind='closure_decision')
         if panel['decision']:
             earlier = earlier.exclude(pk=panel['decision'].pk)
-        earlier_decisions = list(earlier.only('data', 'created_at').order_by('-pk')[:12])
+        fields = ['data', 'created_at']
+        if show_decision_actors:
+            earlier = earlier.select_related('actor')
+            fields.extend(['actor__username', 'actor__first_name', 'actor__last_name'])
+        earlier_decisions = list(earlier.only(*fields).order_by('-pk')[:12])
     for activity in activities:
         activity.title={'ACT03':'Plan permitted work','ACT04':'Investigate closure evidence','ACT09':'Prepare the PM report','ACT10':'Resolve current authority','ACT11':'Record prescribed closure','ACT13':'Verify native closure'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=closure.attempt_projection(attempt)
     response=render(request,'factory/closure_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'focus':focus,'inputs_form':form,'activities':activities,
         'evidence_choices':public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')[:100],
-        'earlier_decisions': earlier_decisions, 'can_configure':permitted(request.user,work,'policy.configure')})
+        'earlier_decisions': earlier_decisions, 'show_decision_actors': show_decision_actors,
+        'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

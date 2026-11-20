@@ -80,6 +80,7 @@ class FactoryClosureDistinctAuthorityTests(TestCase):
             'version':version.pk,'verdict':'approve','evidence':f.e['requirements'].pk,'note':'Distinct synthetic Head reviews exact native report'})
         self.assertRedirects(response,url)
         decision=DeliveryRecord.objects.get(dossier=f.d,kind='closure_decision');self.assertEqual(decision.actor_id,head.pk)
+        self.assertContains(self.client.get(url), 'Recorded by synthetic-closure-head')
         self.assertFalse(Grant.objects.filter(case=f.case,user=head,action__in=['factory.execute','factory.manage','policy.configure']).exists())
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         closed=DeliveryRecord.objects.get(dossier=f.d,kind='closure');self.assertEqual(closed.actor_id,f.actor.pk)
@@ -302,6 +303,15 @@ class FactoryClosureTests(TestCase):
         self.assertContains(history, 'Earlier closure decisions')
         self.assertContains(history, 'Actual Head of PMO return under configured action authority')
         self.assertContains(history, 'Actual Head of PMO rejection retained independently')
+        self.assertContains(history, f'Recorded by {f.actor.username}', count=3)
+        from django.contrib.auth import get_user_model
+        reader = get_user_model().objects.create_user('closure-history-reader')
+        Grant.objects.bulk_create([Grant(case=f.case, user=reader, action=action)
+                                   for action in ('case.read', 'factory.read', 'delivery.read')])
+        self.client.force_login(reader)
+        read_only = self.client.get(reverse('factory_invoice_recovery', args=[f.work.pk]))
+        self.assertContains(read_only, 'Earlier closure decisions')
+        self.assertNotContains(read_only, 'Recorded by')
 
     def test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers(self):
         f=setup(base=self.base);factory.run_until_wait(f.work.pk);approve(f)

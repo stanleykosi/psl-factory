@@ -176,6 +176,7 @@ urlpatterns += [path('work/<int:work_id>/requirements/', rfp_answer_views.workbe
 urlpatterns += [path('work/<int:work_id>/pricing/', factory_rfp_pricing.detail, name='factory_rfp_pricing')]
 urlpatterns += [path('work/<int:work_id>/security-estimate/', factory_rfp_estimate_views.detail, name='factory_rfp_security_estimate')]
 urlpatterns += [path('cases/<uuid:case_id>/factory/rfp-outcome-settings/',factory_rfp_views.outcome_configuration,name='factory_rfp_outcome_configuration')]
+urlpatterns += [path('cases/<uuid:case_id>/rfp/intake/<int:intake_id>/attachment/', rfp_views.intake_attachment, name='rfp_intake_attachment')]
 
 from apps.finance import coverage_views
 urlpatterns += [path('cases/<uuid:case_id>/finance/contract-coverage/', coverage_views.workbench, name='finance_contract_coverage')]

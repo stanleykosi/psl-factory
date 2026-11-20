@@ -32,10 +32,12 @@ TENANT = 'design-business-unit-correction-walkthrough'
 TITLES = {
     'return': 'SAMPLE staff totals require independent correction and approval',
     'live': 'SAMPLE live investigation of staff business-unit inputs',
+    'live-retry': 'SAMPLE separate live business-unit investigation for the phone walkthrough',
 }
 WORK_KEY = 'SAMPLE-BU-STAFF-WALKTHROUGH'
 RULE_KEY = 'sample-bu-corrected-exception'
 OBSERVATION_SECONDS = 20
+PHONE_OBSERVATION_SECONDS = 60
 
 
 def require_sample_account():
@@ -93,7 +95,7 @@ def prepare(station):
     else:
         work = FactoryWork.objects.get(case=case, key=WORK_KEY, definition=bu.DEFINITION)
     return {'station': station, 'case': str(case.pk), 'work': work.pk, 'preserved': not created,
-            'path': reverse('factory_detail' if station == 'live' else 'factory_invoice_decision', args=[work.pk]),
+            'path': reverse('factory_invoice_decision' if station == 'return' else 'factory_detail', args=[work.pk]),
             'recovery_path': reverse('factory_invoice_recovery', args=[work.pk])}
 
 
@@ -126,31 +128,36 @@ def prepare_replacement(work_id):
 
 
 class ObservableInvestigation(SyntheticFactoryCoordinator):
-    def __init__(self, work_id):
+    def __init__(self, work_id, seconds):
         self.work_id = work_id
+        self.seconds = seconds
 
     def choose(self, context):
         if context['eligible'] == ['ACT04']:
             print(f'PSL_BU_LIVE_INVESTIGATION={self.work_id}', flush=True)
-            sleep(OBSERVATION_SECONDS)
+            sleep(self.seconds)
         return super().choose(context)
 
 
-def observe(work_id):
+def observe(work_id, station='live'):
     require_sample_account()
-    work = exact_work(work_id, 'live')
+    if station not in {'live', 'live-retry'}:
+        raise ValueError('Choose a dedicated live investigation sample')
+    work = exact_work(work_id, station)
     if FactoryProgress.objects.filter(work=work).exists() or work.plan_revision or work.lease_until:
         raise RuntimeError('The one-shot observation needs the fresh sample without an ordinary background request')
     _, profile = factory.profile(work)
     choices, _ = bu.eligible(work, profile, *bu.snapshot(work, profile))
-    if choices != ['ACT04'] or profile['provider'] != 'synthetic_factory_v1':
+    seconds = PHONE_OBSERVATION_SECONDS if station == 'live-retry' else OBSERVATION_SECONDS
+    if (choices != ['ACT04'] or profile['provider'] != 'synthetic_factory_v1'
+            or profile['lease_seconds'] < seconds * 2):
         raise RuntimeError('Only the exact synthetic investigation can open an observation window')
-    if not factory.run_once(work.pk, provider=ObservableInvestigation(work.pk)):
+    if not factory.run_once(work.pk, provider=ObservableInvestigation(work.pk, seconds)):
         raise RuntimeError('No native investigation settled')
     attempt = FactoryAttempt.objects.get(activity__work=work, activity__kind='ACT04', phase='observed')
     return {'work': work.pk, 'investigation_attempt': attempt.pk, 'private_payloads': attempt.result['private_payloads_in_result']}
 
 
 def run():
-    for station in TITLES:
+    for station in ('return', 'live'):
         print('PSL_BU_BROWSER_FIXTURE=' + json.dumps(prepare(station)), flush=True)

@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.pmo import delivery
-from apps.pmo.gates import record_gate, verify_gate
+from apps.pmo.models import GateRecord
 from apps.workflows import factory, factory_delivery
 from apps.workflows.models import FactoryWork
 from tests.helpers import rev
@@ -74,11 +74,34 @@ class ProjectDeliveryWalkthroughTests(TestCase):
         self.client.force_login(self.reviewer)
         url = reverse('factory_detail', args=[work.pk])
         self.assertContains(self.client.get(url), 'Link the actual GLPI request and its current deployment approvals')
-        gate = record_gate(self.reviewer, work.case_id, sample['candidate'], 'glpi_ceo', sample['release_reference'],
-                           sample['gate_evidence'], rev(work.case))
+        documents = reverse('documents', args=[work.case_id])
+        page = self.client.get(documents)
+        self.assertContains(page, 'Capture owning-team gate evidence')
+        self.assertContains(page, 'Record source reference')
+        gate_form = page.context['gate_form']
+        for name in ('candidate', 'kind', 'external_ref', 'evidence'):
+            self.assertContains(page, f'id="{gate_form[name].id_for_label}"', count=1)
+        self.assertEqual(list(gate_form.fields['candidate'].queryset.values_list('pk', flat=True)), [sample['candidate']])
+        self.assertIn('glpi_ceo', dict(gate_form.fields['kind'].choices))
+        self.assertTrue(gate_form.fields['evidence'].queryset.filter(pk=sample['gate_evidence']).exists())
+        capture = {'action': 'gate', 'candidate': sample['candidate'], 'kind': 'glpi_ceo',
+                   'external_ref': sample['release_reference'], 'evidence': sample['gate_evidence'],
+                   'revision': rev(work.case)}
+        self.assertRedirects(self.client.post(documents, capture), documents, fetch_redirect_response=False)
+        gate = GateRecord.objects.get(candidate=dossier.candidate, kind='glpi_ceo')
+        self.assertEqual((gate.external_ref, gate.evidence_id, gate.source_owner),
+                         (sample['release_reference'], sample['gate_evidence'], 'CEO'))
+        self.assertFalse(gate.verifications.exists())
+        reported = self.client.get(documents)
+        self.assertContains(reported, f'glpi_ceo · {sample["release_reference"]} · CEO')
+        self.assertContains(reported, 'Verify owning-source record (synthetic adapter)')
         factory.run_until_wait(work.pk)
         self.assertIsNone(delivery.latest(dossier, 'release_ready', False))
-        verify_gate(self.reviewer, work.case_id, gate.pk, rev(work.case))
+        self.assertContains(self.client.get(url), 'Link the actual GLPI request and its current deployment approvals')
+
+        verify = {'action': 'gate_verify', 'record': gate.pk, 'revision': rev(work.case)}
+        self.assertRedirects(self.client.post(documents, verify), documents, fetch_redirect_response=False)
+        self.assertEqual(gate.verifications.get().result['decision'], 'accepted')
         factory.run_until_wait(work.pk)
         work.refresh_from_db()
         self.assertEqual(work.status, 'verified', work.finding)

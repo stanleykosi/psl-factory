@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. The focused 243 gate passed seven PostgreSQL tests, both original receipt preservation probes and final exit 0. The verified source is staged for preview promotion. Candidate 244 holds the next protected Finance and bid controls and durable Project behaviors. The staged 245 follow-up adds Forecast recovery and shared accessibility work.
+
+20 November 2026. Batch 242 finished with 39 of 40 passing tests and one Commercial reminder assertion failure. All 25 Project tests passed. The focused 243 rerun was submitted after the final marker, with the Word package validation and Business Unit checks. Preview stays on the verified 240 runtime and its synthetic browser evidence stays preserved.
+
 20 November 2026. Hypercare's existing background path verified the zero-error successor after the two-error hold. Scoped acceptance reached 118. Refetched GitHub main `16e7bad8` and reviewed F-53 for shared phone targets and keyboard behavior. The source review left the build branch and preview runtime intact.
 
 20 November 2026. Identical 240 web runtime prepared independent Finance and Hypercare samples. Finance verified the receiving adjustment hold and preview, and withdrew then restored exact income schedule 31. Scoped acceptance reached 117. Hypercare continued to exact observation capture and exposed a synchronous web timeout. The candidate now sends that continuation to the established durable worker.

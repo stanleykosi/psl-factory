@@ -51,6 +51,25 @@ class BUWalkthroughStationTests(TestCase):
         self.assertEqual(bu.report(work)['stage'], 'result_review')
 
     @patch.dict('os.environ', ENVIRONMENT)
+    def test_phone_observation_uses_an_independent_work_and_existing_claim(self):
+        earlier = seed.prepare('live')
+        sample = seed.prepare('live-retry')
+        self.assertNotEqual(sample['case'], earlier['case'])
+        self.assertNotEqual(sample['work'], earlier['work'])
+        label = 'Investigating the selected business-unit sources and exception rules.'
+
+        def inspect_during_claim(seconds):
+            self.assertEqual(seconds, seed.PHONE_OBSERVATION_SECONDS)
+            self.assertContains(self.client.get(sample['path']), label)
+            self.assertNotContains(self.client.get(earlier['path']), label)
+
+        with patch.object(seed, 'sleep', side_effect=inspect_during_claim):
+            result = seed.observe(sample['work'], 'live-retry')
+        self.assertFalse(result['private_payloads'])
+        self.assertNotContains(self.client.get(sample['path']), label)
+        self.assertFalse(FactoryAttempt.objects.filter(activity__work_id=earlier['work']).exists())
+
+    @patch.dict('os.environ', ENVIRONMENT)
     def test_return_keeps_original_result_and_requires_independent_review_of_different_exception(self):
         sample = seed.prepare('return')
         work = FactoryWork.objects.get(pk=sample['work'])

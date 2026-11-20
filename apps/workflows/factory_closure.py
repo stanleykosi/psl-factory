@@ -235,7 +235,7 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT11':
         v=document(work)
         if not v:raise ValidationError('Exact prepared closure report required')
-        prerequisites(d,data);current_version(case,v.pk);validate_review(case,v);closure.current_closure_approval(d,v.pk)
+        prerequisites(d,data);closure.current_closure_approval(d,v.pk)
         row=closure.finalize_closure(operator(work,value),case.pk,d.pk,case.revision)
         return {'head':work.source_head_id,'dossier':d.pk,'closure':row.pk,'document_version':v.pk,'operator':row.actor_id}
     if kind=='ACT13':result=verify(work,actor=work.execution_actor);work.status='verified';return result
@@ -248,7 +248,7 @@ def verify(work,actor=None):
     decision,binding=closure.current_closure_approval(d,v.pk)
     if binding.data!=selected(data) or row.data['version_id']!=v.pk or row.data['decision_id']!=decision.pk or row.snapshot!=binding.snapshot:
         raise ValidationError('Native closure must bind the exact current report, source and prescribed decision')
-    require(row.actor,work.case,'delivery.manage');decision_authority(row.actor,work.case,'PM');validate_review(work.case,v)
+    require(row.actor,work.case,'delivery.manage');decision_authority(row.actor,work.case,'PM')
     if row.snapshot['debt_waived'] is not False or row.snapshot['deployment_authorized'] is not False:raise ValidationError('Closure cannot grant independent financial or release authority')
     return {'verified':True,'head':work.source_head_id,'dossier':d.pk,'closure':row.pk,'document_version':v.pk,'decision':decision.pk,
         'verification_scope':'synthetic_native_project_closure','debt_waived':False,'deployment_authorized':False,
@@ -284,7 +284,7 @@ def decide(actor,work_id,expected,case_expected,version_id,verdict,evidence_id,n
     if w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh the current closure work')
     d,data,_=source(w,actor);v=document(w)
     if not v or v.pk!=version_id:raise ValidationError('Exact current-source closure version required')
-    prerequisites(d,data);validate_review(w.case,v)
+    prerequisites(d,data)
     return closure.decide_closure(actor,w.case_id,v.pk,verdict,evidence_id,note,case_expected)
 
 

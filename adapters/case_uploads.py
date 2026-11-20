@@ -40,6 +40,11 @@ def put(key, data):
         client.put_object(Bucket=name, Key=key, Body=data, ContentType='application/octet-stream')
 
 
+def discard_unbound(key):
+    with storage_client() as (client, name):
+        client.delete_object(Bucket=name, Key=key)
+
+
 def read(upload):
     with storage_client() as (client, name):
         stream = client.get_object(Bucket=name, Key=upload.key)['Body']

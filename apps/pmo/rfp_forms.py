@@ -11,7 +11,17 @@ class CommandForm(forms.Form):
     action=forms.CharField(widget=forms.HiddenInput)
     revision=forms.IntegerField(widget=forms.HiddenInput)
 
-def forms_for(case,data=None,*,team_choices=()):
+
+class IntakeForm(CommandForm):
+    def clean(self):
+        values = super().clean()
+        if 'rfp_file' in self.fields and not (self.errors.get('rfp_file') or self.errors.get('evidence')):
+            if bool(values.get('rfp_file')) == bool(values.get('evidence')):
+                raise forms.ValidationError('Choose one existing source or attach one bid document.')
+        return values
+
+
+def forms_for(case,data=None,*,team_choices=(),uploads_allowed=False,files=None):
     def evidence(kinds=None):return forms.ModelChoiceField(case.evidence.filter(kind__in=kinds) if kinds else case.evidence.all())
     def choices(values):return forms.ChoiceField(choices=[(v,v) for v in values])
     def text():return forms.CharField(max_length=4000,widget=forms.Textarea(attrs={'rows':2}))
@@ -45,9 +55,21 @@ def forms_for(case,data=None,*,team_choices=()):
         })
     result=[]
     for action,(label,fields) in definitions.items():
-        f=CommandForm(data if data and data.get('action')==action else None,initial={'action':action,'revision':case.revision},auto_id=action+'_%s')
+        bound = data and data.get('action') == action
+        form_type = IntakeForm if action == 'intake' else CommandForm
+        f=form_type(data if bound else None,files if bound else None,initial={'action':action,'revision':case.revision},auto_id=action+'_%s')
         f.fields.update(fields)
-        if action=='intake':f.fields['deadline_evidence'].required=False
+        if action=='intake':
+            from .rfp_intake_upload import SOURCE
+            f.fields['evidence'].queryset = public_evidence(f.fields['evidence'].queryset).exclude(source=SOURCE).defer('body')
+            f.fields['evidence'].label = 'Existing bid source'
+            f.fields['deadline_evidence'].queryset = public_evidence(f.fields['deadline_evidence'].queryset).defer('body')
+            f.fields['deadline_evidence'].required=False
+            if uploads_allowed:
+                f.fields['evidence'].required = False
+                f.fields['rfp_file'] = forms.FileField(required=False, label='Attach the bid document',
+                    help_text='Readable Word or PDF, up to 5 MiB. The original is private.',
+                    widget=forms.ClearableFileInput(attrs={'accept': '.docx,.pdf'}))
         if action=='dispose':f.fields['lessons'].required=False
         if action=='outcome':
             f.fields['evidence'].required=False

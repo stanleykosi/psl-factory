@@ -372,8 +372,8 @@ def decide_closure(actor,case_id,version_id,verdict,evidence_id,note,expected):
     d=dossier_for(case,binding.dossier_id);ensure_open(d)
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose explicit closure verdict')
     authority=decision_authority(actor,case,'Head of PMO',verdict)
-    from apps.documents.controlled import current_version
-    current_version(case,version_id)
+    from apps.documents.controlled import current_version, validate_review
+    validate_review(case, current_version(case, version_id))
     prior = latest(d, 'closure_decision', False)
     if (verdict == 'approve' and prior and prior.data['version_id'] == version_id
             and prior.data['verdict'] in ('return', 'reject')):
@@ -388,8 +388,8 @@ def current_closure_approval(d,version_id=None):
         raise ValidationError('Exact current closure report and prescribed decision required')
     if decision.data['verdict']!='approve' or decision.data['authority']!=decision_authority(decision.actor,d.case,'Head of PMO') or decision.snapshot!=closure_inputs(d,binding.data):
         raise ValidationError('Current Head of PMO approval of exact closure sources required')
-    from apps.documents.controlled import current_version
-    current_version(d.case,binding.version_id)
+    from apps.documents.controlled import current_version, validate_review
+    validate_review(d.case, current_version(d.case, binding.version_id))
     return decision,binding
 
 
