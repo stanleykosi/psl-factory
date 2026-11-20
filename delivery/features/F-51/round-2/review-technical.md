@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: b50b0b7ca04b9583c63fbe723de49d90aebbd987
+COMMIT: ef0362f8cfe0fd7dab7e1ce57eb419db93395954
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -18,3 +18,8 @@ AUTHORITY: delivery technical review
 - Item 2 (nothing sent) | verified | tests assert starts/posts length 0 after an empty press, and the next press after a change sends exactly one.
 - Item 5 (tests fail without the fix) | verified | by reading: the new assertions (posts 0, focus on first field, error text) cannot pass if submit sends, since the old code sent and the mock returned the 422; the "no default names none" and sample-note tests depend on the new code paths. I did not re-run with the fix reverted.
 - Checks | verified | round-2/checks.md passed on this head.
+
+## Impact assessment (re-pin to ef0362f8, coordinator, 20 Nov, D-123)
+- b50b0b7c → ef0362f8: merged dlv-00 (F-38 RFP submit, F-49 log RFP, F-52 follow-ups). The only conflict was BACKEND-HANDOFF.md, with both sections kept. None of them touch the start-work feature except F-49, which F-51 already contained.
+- Evidence (merge-checks.log): checks.sh exit 0, 3352/3352; e2e start-work, start-work-proof and rfp-intake 34 passed.
+- Verdicts carry forward.
