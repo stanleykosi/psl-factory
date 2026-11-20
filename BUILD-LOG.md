@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. The authorized supplier read the native NGN 42 invoice created after exact private milestone proof 1, with the original file and supplier note still linked. Approval and release remained separate. Scoped browser completion reached 144. Pushed source through the verified 263 console fixes.
+
 20 November 2026. The matching 262 worker resumed. The admitted browser supplied exact private PDF proof 1 on work 227. PostgreSQL 263 passed all eight console and regression cases and both preservation probes. Prepared the verified isolated payroll Assistant specimen and the next tested grouping for the closed checklist fix.
 
 20 November 2026. Scoped browser acceptance reached 143. Verified the admitted account navigation, final closure outcome and narrower Group Forecast rows. The current Group report retains the earlier Return and awaits separate approval. Work 219 and dossier 49 both confirm closure, with a separate readback gap in the closed checklist's retrospective selection.

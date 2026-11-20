@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+20 November 2026. Guarded aggregate payroll setup `0cdc4ea3-5627-4fc2-8746-0802b15f8c57` exited 0 with both preservation probes, no schema apply or PostgreSQL test suite. Exact report 6 and receipt 3 belong to the configured trial recipient. The admitted browser direct route returned Page unavailable and showed no amount. The positive Assistant browser check waits for the trial session.
+
+20 November 2026. Read back exact work 227 from the admitted browser after private upload 32 was supplied. The existing worker prepared invoice version 1 for NGN 42.00. Proof link 1 remained, the separate supplier had no invoice approval or issue action, no invoice operation was requested, and the original milestone stayed fixed. This completed `SCR-02-evidence-supplied` within its tested scope and brought acceptance to 144.
+
 20 November 2026. Railway 263 `6068f66e-5ab6-4a41-b208-0ca424fbe334` passed all eight PostgreSQL cases. Project 5/27.070s verified investigated sources, exact template hold, original review and private partial drafts. Finance 3/81.113s verified current Management Forecast Return readback, private decision reason isolation, exact Group Forecast lineage and private invoice proof preservation. Django, drift, both original preservation probes and final exit 0 passed. Neither preview migration nor specimen was run by the test runner.
 
 20 November 2026. Hosted 262 Codex admitted user 243 claimed the original information task 147 in work 227, uploaded one fictional PDF privately as upload 32 and supplied it to the exact milestone 19 request. On 390/375 the supplied named file and note appeared with proof link 1. No invoice effect was requested. The separate worker and Finance decision were pending at capture.
