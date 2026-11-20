@@ -10,16 +10,45 @@
             <option value="monthly_executive" {% if kind == 'monthly_executive' %}selected{% endif %}>Monthly executive</option>
         </select>
     </label>
+    <label>Projects to include
+        <select name="scope">
+            <option value="selected_project"{% if not scoped %} selected{% endif %}>One project</option>
+            <option value="all_authorised_projects"{% if scoped %} selected{% endif %}>All projects I can report on</option>
+        </select>
+    </label>
     {{ form.case.as_field_group }}
-    <button>Select project and purpose</button>
+    <button>Choose report setup</button>
 </form>
 {% if case %}
+{% if scoped %}
+<section class="card">
+    <h2>Project coverage</h2>
+    <p>Collect records from projects in this organisation that you can report on. The period and your access determine which records appear. The report shows missing coverage.</p>
+    {% if not scope_ready %}<p role="status">Multi-project coverage needs an approved rule. You can still start a report for one project.</p>{% endif %}
+</section>
+{% endif %}
+{% if not scoped or scope_ready %}
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <p>Enter the start and end with a time zone offset, such as +01:00. Use a saved narrative or cite at least one selected record for each topic, including when coverage is unknown.</p>
+    <p>Enter the start and end with a time zone offset, such as +01:00.{% if not scoped %} Use a saved narrative or cite at least one selected record for each topic, including when coverage is unknown.{% endif %}</p>
     {{ inputs_form.as_p }}
     <button>Start leadership report work</button>
 </form>
+{% endif %}
+{% if scope_rule_form %}
+<details class="card"{% if scope_rule_form.errors %} open{% endif %}>
+    <summary>Set up multi-project coverage</summary>
+    <p>Record the owner’s decision, then validate and activate it in Business rules.</p>
+    <form method="post">{% csrf_token %}
+        <input type="hidden" name="action" value="draft_project_scope">
+        <input type="hidden" name="case" value="{{ case.pk }}">
+        <input type="hidden" name="scope" value="all_authorised_projects">
+        <input type="hidden" name="kind" value="{{ kind }}">
+        {{ scope_rule_form.as_p }}
+        <button>Save coverage rule draft</button>
+    </form>
+</details>
+{% endif %}
 {% endif %}
 {% endblock %}

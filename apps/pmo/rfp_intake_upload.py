@@ -1,30 +1,30 @@
 """Capture a received bid document without publishing its content."""
 
 import hashlib
-import logging
-import secrets
-from contextlib import contextmanager
+from dataclasses import asdict
+from datetime import timezone as datetime_timezone
 from io import BytesIO
 from pathlib import PurePath
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
 
 from django.core.exceptions import ValidationError
-from django.db import DatabaseError, transaction
+from django.db import transaction
 
 from adapters import case_uploads, upload_text
 from apps.agents.models import CaseUpload
-from apps.core.models import Audit, Evidence
+from apps.core.models import Audit, Case, Evidence
 from apps.core.services import add_evidence, event, lock_case
+from apps.documents.contracts import digest
 
-from . import rfp
+from . import rfp, rfp_staged_uploads as staged
+from .clocks import aware
 from .models import RFPCase
 from .rfp_intake_context import authorize_read as require_read, authorize_write, from_intake, validate as validate_context
 
 
 SOURCE = 'psl:rfp-intake-private-attachment'
 ADMISSION = 'rfp.intake_attachment_admitted'
-LOGGER = logging.getLogger(__name__)
 
 
 def attachment_for(actor, case, intake):
@@ -74,33 +74,7 @@ def matches_receipt(intake, actor, facts, context):
              intake.deadline_evidence_id, intake.note) == facts and from_intake(intake) == context)
 
 
-@contextmanager
-def durable_upload():
-    """Own the database commit and reconcile a staged object if it fails."""
-    staged_key = None
-
-    def store(key, data):
-        nonlocal staged_key
-        staged_key = key
-        case_uploads.put(key, data)
-
-    try:
-        with transaction.atomic(durable=True):
-            yield store
-    except Exception as exc:
-        if staged_key:
-            try:
-                # A database acknowledgement can fail after the receipt committed.
-                if not CaseUpload.objects.filter(key=staged_key).exists():
-                    case_uploads.discard_unbound(staged_key)
-            except (DatabaseError, OSError, ValidationError):
-                LOGGER.warning('RFP attachment %s needs storage reconciliation', staged_key)
-        if isinstance(exc, OSError):
-            raise ValidationError('Private storage is unavailable. Try again later.') from exc
-        raise
-
-
-def persist(actor, case, facts, filename, data, fingerprint, store, *, context, context_attested):
+def persist(actor, case, facts, filename, data, intent, *, first, context, context_attested):
     reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note = facts
     evidence = add_evidence(actor, case.pk, 'rfp_intake',
         'A private copy of the received bid document was retained with this intake.', SOURCE, case.revision)
@@ -108,34 +82,60 @@ def persist(actor, case, facts, filename, data, fingerprint, store, *, context, 
     intake = rfp.intake(actor, case.pk, reference, evidence.pk, received_at, deadline_status,
                         deadline_at, deadline_evidence_id, note, case.revision,
                         source_context=context, context_attested=context_attested)
-    key = secrets.token_hex(32)
-    upload = CaseUpload.objects.create(case=case, actor=actor, name=filename[:160], key=key,
-                                       sha256=fingerprint, size=len(data))
+    upload = CaseUpload.objects.create(case=case, actor=actor, name=filename[:160], key=intent.key,
+                                       sha256=intent.sha256, size=intent.size)
     event(actor, case, ADMISSION, intake=intake.pk, evidence=evidence.pk, evidence_sha256=evidence.sha256,
-          upload=upload.pk, file_sha256=upload.sha256)
-    store(key, data)
+          upload=upload.pk, file_sha256=upload.sha256, intent=str(intent.pk))
+    staged.put_or_verify(intent, data, first=first)
+    intent.intake, intent.upload = intake, upload
+    intent.save(update_fields=['intake', 'upload'])
     return intake
+
+
+def current_receipt(actor, case, facts, context, fingerprint, size, expected):
+    authorize_write(actor, case)
+    bid = RFPCase.objects.filter(case=case).select_related('current_intake').first()
+    current = bid.current_intake if bid else None
+    if matches_receipt(current, actor, facts, context):
+        original = attachment_for(actor, case, current)
+        if original and (original.sha256, original.size) == (fingerprint, size):
+            return current
+    if case.revision != expected:
+        raise ValidationError('Stale revision; refresh before retrying.')
+    return None
 
 
 def record(actor, case_id, reference, received_at, deadline_status, deadline_at, deadline_evidence_id, note, expected, file,
            *,source_context=None, context_attested=False):
-    with durable_upload() as store:
-        case = lock_case(actor, case_id, 'rfp.intake')
-        authorize_write(actor, case)
-        if type(expected) is not int or not isinstance(reference, str) or not reference.strip() or len(reference.strip()) > 160:
-            raise ValidationError('Choose the current workspace and enter the bid reference.')
-        context = validate_context(source_context, context_attested)
-        data = read_file(file)
-        fingerprint = hashlib.sha256(data).hexdigest()
-        bid = RFPCase.objects.filter(case=case).select_related('current_intake').first()
-        current = bid.current_intake if bid else None
-        facts = (reference.strip(), received_at, deadline_status, deadline_at, deadline_evidence_id, note)
-        if matches_receipt(current, actor, facts, context):
-            original = attachment_for(actor, case, current)
-            if original and (original.sha256, original.size) == (fingerprint, len(data)):
-                return current
-        if case.revision != expected:
-            raise ValidationError('Stale revision; refresh before retrying.')
-        validate_file(file.name, data)
-        return persist(actor, case, facts, file.name, data, fingerprint, store,
-                       context=context, context_attested=context_attested)
+    case = Case.objects.get(pk=case_id)
+    authorize_write(actor, case)
+    if type(expected) is not int or expected < 1 or not isinstance(reference, str) or not reference.strip() or len(reference.strip()) > 160:
+        raise ValidationError('Choose the current workspace and enter the bid reference.')
+    context = validate_context(source_context, context_attested)
+    data = read_file(file)
+    fingerprint = hashlib.sha256(data).hexdigest()
+    received_at = aware(received_at, 'Received time').astimezone(datetime_timezone.utc)
+    rfp.past(received_at)
+    rfp.note(note)
+    if deadline_at is not None:
+        deadline_at = aware(deadline_at, 'Deadline').astimezone(datetime_timezone.utc)
+    facts = (reference.strip(), received_at, deadline_status, deadline_at, deadline_evidence_id, note)
+    payload = digest([[value.isoformat() if hasattr(value, 'isoformat') else value for value in facts],
+                      asdict(context), fingerprint, len(data)])
+    operation = digest(['existing-bid-intake', str(case.pk), actor.pk, expected, payload])
+    with staged.serialized(operation):
+        with transaction.atomic(durable=True):
+            case = lock_case(actor, case_id, 'rfp.intake')
+            old = current_receipt(actor, case, facts, context, fingerprint, len(data), expected)
+            if old:
+                return old
+            validate_file(file.name, data)
+            intent, first = staged.reserve(operation=operation, actor=actor, payload=payload,
+                fingerprint=fingerprint, size=len(data), case=case, revision=expected)
+        with transaction.atomic(durable=True):
+            case = lock_case(actor, case_id, 'rfp.intake')
+            old = current_receipt(actor, case, facts, context, fingerprint, len(data), expected)
+            if old:
+                return old
+            return persist(actor, case, facts, file.name, data, intent, first=first,
+                           context=context, context_attested=context_attested)

@@ -181,6 +181,8 @@ def current_version(case,version_id):
 @transaction.atomic
 def request_review(actor,case_id,version_id,expected):
     case=lock_case(actor,case_id,'document.request_review',expected)
+    from apps.pmo.leadership_reporting import lock_report_scope
+    lock_report_scope(actor, case, version_id)
     version=current_version(case,version_id)
     from apps.pmo.leadership_reporting import binding_access
     binding_access(actor,version)
@@ -202,6 +204,8 @@ def review_version(actor,case_id,version_id,verdict,note,expected,delegated=Fals
     case=lock_case(actor,case_id,'document.review_controlled',expected)
     if verdict not in ['approve','return','reject'] or not note.strip() or len(note)>4000:
         raise ValidationError('Choose a review decision and provide a concise rationale')
+    from apps.pmo.leadership_reporting import lock_report_scope
+    lock_report_scope(actor, case, version_id)
     version=current_version(case,version_id)
     from apps.pmo.leadership_reporting import binding_access
     binding_access(actor,version)
@@ -313,6 +317,9 @@ def guard_reserve_publication(actor,case,version_id):
 @transaction.atomic
 def reserve_publication(actor,case_id,version_id,expected,factory_work_id=None):
     case=lock_case(actor,case_id,'document.publish',expected)
+    from apps.pmo.leadership_reporting import lock_report_scope
+    if lock_report_scope(actor, case, version_id) and factory_work_id is None:
+        raise ValidationError('Publish this exact leadership report through its reviewed work item.')
     version,context,_=guard_reserve_publication(actor,case,version_id)
     scope={}
     if factory_work_id is not None:

@@ -1992,6 +1992,25 @@
       }
     },
     {
+      "id": "OPS.leadership_project_scope",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.leadership_project_scope/v1",
+      "subject_scope": "Owner enablement of P40/P42 coverage across separately authorised projects in the same organisation. Does not grant access, recipient membership, calculated performance or completeness.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.leadership_audience",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.leadership_audience/v1",

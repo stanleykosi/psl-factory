@@ -101,6 +101,7 @@ def workbench(request,case_id):
                     pass
     return render(request,'pmo/rfp.html',{'case':case,'rfp':r,'commands':forms,'current_inputs':current_inputs,
         'current_attachment':current_attachment,'intake_context':intake_context,'earlier_received':earlier_received,
+        'uploads_allowed':uploads_allowed,
         'responses':RFPResponse.objects.filter(rfp=r).order_by('-pk'),
         'submissions':RFPSubmission.objects.filter(response__rfp=r).select_related('portal_receipt'),'outcomes':RFPOutcome.objects.filter(submission__response__rfp=r),
         'disposition':RFPDisposition.objects.filter(rfp=r).first(),'runs':AgentRun.objects.filter(case=case,provider='deterministic-rfp-investigation-v1').order_by('-pk')[:5]})

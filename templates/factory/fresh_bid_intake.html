@@ -5,6 +5,7 @@
 <div class="page-heading">
   <div><h1>Log a received bid</h1><p class="lede">Start a workspace for a bid you received and keep its original document.</p></div>
 </div>
+<p><a href="{% url 'rfp_staged_uploads' %}" target="_blank" rel="noopener" data-native-navigation>Check recent private bid uploads</a></p>
 <section class="card shared-mobile-controls">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}

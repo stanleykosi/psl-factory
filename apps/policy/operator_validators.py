@@ -96,6 +96,10 @@ SCHEMAS[FACTORY_REPORTING]=(FACTORY_REPORTING_SCHEMA,FACTORY_REPORTING_VALUE)
 from .factory_leadership_validators import COMPONENT as FACTORY_LEADERSHIP,SCHEMA as FACTORY_LEADERSHIP_SCHEMA,VALUE as FACTORY_LEADERSHIP_VALUE,validate_reference as validate_leadership_factory
 SCHEMAS[FACTORY_LEADERSHIP]=(FACTORY_LEADERSHIP_SCHEMA,FACTORY_LEADERSHIP_VALUE)
 SCHEMAS['OPS.leadership_review_authority']=('schema:psl/leadership-review-authority/v1',{'type':'object','properties':{'role':{'anyOf':[{'enum':['PMO Lead','Head of PMO']},{'type':'null'}]}},'required':['role'],'additionalProperties':False})
+SCHEMAS['OPS.leadership_project_scope'] = (
+    'schema:psl/leadership-project-scope/v1',
+    obj({'enabled': {'type': 'boolean'}}),
+)
 SCHEMAS['OPS.leadership_audience']=('schema:psl/leadership-audience/v1',{'type':'object','properties':{key:{'anyOf':[{'type':'array','items':{'type':'integer','minimum':1},'minItems':1,'uniqueItems':True},{'type':'null'}]} for key in ['internal_tuesday:internal','monthly_executive:internal','monthly_executive:management']},'required':['internal_tuesday:internal','monthly_executive:internal','monthly_executive:management'],'additionalProperties':False})
 SCHEMAS[FACTORY_EMERGENCY]=(FACTORY_EMERGENCY_SCHEMA,FACTORY_EMERGENCY_VALUE)
 SCHEMAS[FACTORY_COMMERCIAL]=(FACTORY_COMMERCIAL_SCHEMA,FACTORY_COMMERCIAL_VALUE)

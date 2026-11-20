@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
-from apps.core.models import Audit,Evidence
+from apps.core.models import Audit,Case,Evidence
 from apps.core.services import lock_case,add_evidence,event
 from apps.core.read_observation import read_observation
 from apps.identity.services import require
@@ -17,6 +17,7 @@ from apps.documents.controlled import current_version,validate_review,publicatio
 from apps.pmo.clocks import aware
 from apps.pmo.reporting import report_source_access
 from apps.pmo import leadership_reporting as native
+from apps.pmo import leadership_project_scope as project_scope
 from apps.pmo.models import MinutesReportBinding
 from adapters.pmo_reporting import LocalPMOReportingAdapter
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt,HumanTask
@@ -32,6 +33,13 @@ SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'inputs':INP
 DOMAINS={key:{'type':'array','maxItems':200,'uniqueItems':True,'items':{'type':'integer','minimum':1}} for key in native.DOMAINS}
 INPUT['properties'].update(kind={'enum':list(native.THEMES)},audience={'enum':['internal','management']},selections={'type':'object','properties':DOMAINS,'required':list(DOMAINS),'additionalProperties':False})
 INPUT['required']+=['kind','audience','selections']
+INPUT['properties']['scope'] = {
+    'type': 'object', 'additionalProperties': False,
+    'properties': {'mode': {'const': project_scope.MODE}, 'actor': {'type': 'integer', 'minimum': 1},
+                   'configuration': {'type': 'integer', 'minimum': 1},
+                   'domains': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'enum': list(DOMAINS)}}},
+    'required': ['mode', 'actor', 'configuration', 'domains'],
+}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
 
@@ -49,6 +57,8 @@ def input_rows(case,inputs):
 
 def inventory(actor,case,inputs):
     start,end=input_rows(case,inputs)
+    if 'scope' in inputs:
+        return native.scoped_package(actor, case, inputs)
     manifest,sources,gaps=native.inventory(actor,case,start,end,inputs['selections'])
     content=Evidence.objects.filter(case=case,pk=inputs['content_id'],kind=native.CONTENT).first()
     manifest.update(source_mode=native.MODE,selections={k:sorted(ids) for k,ids in inputs['selections'].items()},content={'id':content.pk,'sha256':content.sha256} if content else None)
@@ -64,12 +74,18 @@ def source(work,actor=None,current=True):
     try:data=json.loads(e.body)
     except (TypeError,ValueError):raise ValidationError('Typed leadership report intake required') from None
     validate(SCHEMA,data);input_rows(work.case,data['inputs'])
-    report_source_access(reader,work.case,data['manifest'])
-    if data['manifest'].get('content') and 'incident_claims' not in data['manifest']:
-        from apps.pmo.incident_reporting import legacy_access
-        legacy_access(reader, work.case, data['manifest'], e.created_at)
-    for action in data['manifest'].get('source_actions',[]):require(reader,work.case,action)
-    native.authorize_sources(reader,work.case,{r['id'] for r in data['manifest']['sources']},{row[2] for row in data['manifest'].get('changes',[])})
+    manifest = data['manifest']
+    if 'scope' in data['inputs']:
+        if data['inputs']['scope']['actor'] != e.created_by_id or 'project_scope' not in manifest:
+            raise ValidationError('The exact leadership coverage instruction is unavailable.')
+        project_scope.access(reader, work.case, manifest)
+    else:
+        report_source_access(reader,work.case,manifest)
+        if manifest.get('content') and 'incident_claims' not in manifest:
+            from apps.pmo.incident_reporting import legacy_access
+            legacy_access(reader, work.case, manifest, e.created_at)
+        for action in manifest.get('source_actions',[]):require(reader,work.case,action)
+        native.authorize_sources(reader,work.case,{r['id'] for r in manifest['sources']},{row[2] for row in manifest.get('changes',[])})
     audit=Audit.objects.filter(case=work.case,actor_id=e.created_by_id,action__in=['factory.leadership_intake','factory.leadership_source'],data={'evidence_id':e.pk,'sha256':e.sha256}).first()
     if not audit or any(data['inputs'][k]!=work.request[k] for k in ['start_at','end_at','kind','audience']):raise ValidationError('Exact selected report period and source-owned provenance required')
     if current:
@@ -88,6 +104,8 @@ def start(actor,case_id,key,inputs,reference,expected=None):
     from .factory import access
     case=lock_case(actor,case_id,'factory.start',expected);access(actor,case,'factory.start',DEFINITION);require(actor,case,'evidence.add')
     if case.kind!='project' or not isinstance(key,str) or not key.isascii() or not 1<=len(key)<=100 or not isinstance(reference,str) or not reference.strip() or len(reference)>160:raise ValidationError('Project and bounded report work identity required')
+    if 'scope' in inputs:
+        inputs = project_scope.prepare_inputs(actor, case, inputs)
     start,end=input_rows(case,inputs)
     inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
     payload={k:inputs[k] for k in ['start_at','end_at','kind','audience']};payload['reference']=reference
@@ -120,7 +138,7 @@ def bound_document(work,actor=None):
     b=MinutesReportBinding.objects.get(version=v);inputs=data['inputs'];start,end=input_rows(work.case,inputs)
     native.binding_access(reader,v)
     if b.report.start_at!=start or b.report.end_at!=end or b.manifest!=data['manifest'] or v.template_id!=inputs['template_id'] or v.audience!=inputs['audience']:raise ValidationError('Exact leadership period, audience, template and selected sources required')
-    manifest,sources,gaps,sections=native.package(reader,work.case,inputs['kind'],start,end,inputs['audience'],inputs['selections'],inputs['content_id'])
+    manifest,sources,gaps,sections=native.package(reader,work.case,inputs['kind'],start,end,inputs['audience'],inputs['selections'],inputs['content_id'],scope=inputs.get('scope'))
     expected={'executive_summary',*native.THEMES[inputs['kind']]}
     projection=Evidence.objects.filter(case=work.case,pk__in=[x['id'] for x in v.source_manifest],kind='ops_leadership_report_projection',source='psl:leadership-report:'+str(b.report_id),created_by_id=v.created_by_id).first()
     if manifest!=b.manifest or {x['heading'] for x in v.payload['sections']}!=expected or set(v.fields)!=expected or not projection or len(v.source_manifest)!=1 or any(x['evidence_ids']!=[projection.pk] for x in v.fields.values()) or any(v.fields.get(k,{}).get('text')!='['+x['coverage']+'] '+x['text'] for k,x in sections.items()):raise ValidationError('Exact human-cited themes and generated-only internal projection required')
@@ -146,9 +164,11 @@ def investigate(work,actor):
         'coverage':'Only explicitly selected native PMO sources. Raw bodies, unselected histories, Finance performance and external systems are not inferred.',
         'next_action':'Resolve missing cited themes, review selected source freshness and obtain configured exact leadership review before internal delivery.'}
     try:
-        detail=native.investigate(actor,work.case,inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'],inputs['selections'],inputs['content_id'])
+        detail=native.investigate(actor,work.case,inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'],inputs['selections'],inputs['content_id'],scope=inputs.get('scope'))
         result.update(detail);result['narrative']={'status':'cited','themes':detail['themes']}
     except ValidationError as exc:result['narrative']={'status':'missing','finding':finding(exc)}
+    if 'scope' in inputs:
+        result['coverage'] = project_scope.project_summary(snapshot['manifest']['project_scope']).strip()
     return result
 
 @read_observation
@@ -178,7 +198,10 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate selected report sources, unknowns and source-cited claims'
     if not state['inventory_current']:return [],state['source_finding']
     if missing or stale:return [],'Required report evidence missing or stale: '+', '.join(missing+stale)
-    if not state['document']:return ['ACT09'],'Prepare the native source-cited leadership report'
+    if not state['document']:
+        if 'project_scope' in state['native']['manifest'] and not state['native']['manifest']['content']:
+            return [], 'No eligible evidence was recorded in this project scope and period. Review coverage before drafting.'
+        return ['ACT09'],'Prepare the native source-cited leadership report'
     if work.request['kind']=='monthly_executive' and not HumanTask.objects.filter(version_id=state['document']).exists():
         try:native.review_context(document(work))
         except (ValidationError,PermissionDenied) as exc:return [],finding(exc)
@@ -201,13 +224,16 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         if kind=='ACT12':raise ValidationError('No original uncertain report delivery exists')
     if kind=='ACT04':return {'head':work.source_head_id,'investigation':investigate(work,work.execution_actor),'source_refs':[work.source_head_id],'approval_granted':False}
     data=source(work,work.execution_actor)
+    project_scope.lock_projects(case, data['manifest'], {work.execution_actor.pk})
+    if 'scope' in data['inputs']:
+        data = source(work, work.execution_actor)
     if kind=='ACT09':
         from apps.documents.controlled import request_review
         u=principal(work,value,'preparer_id');inventory(u,case,data['inputs']);v=document(work)
         if not data['inputs']['template_id']:raise ValidationError('Select the controlled leadership template')
         if not v:
             start,end=input_rows(case,data['inputs']);inputs=data['inputs']
-            b=native.prepare(u,case.pk,inputs['kind'],start,end,inputs['template_id'],inputs['audience'],inputs['selections'],inputs['content_id'],case.revision,force_revision=True);v=b.version
+            b=native.prepare(u,case.pk,inputs['kind'],start,end,inputs['template_id'],inputs['audience'],inputs['selections'],inputs['content_id'],case.revision,force_revision=True,scope=inputs.get('scope'));v=b.version
             if b.manifest!=data['manifest']:raise ValidationError('Selected native inventory changed before draft; review the source successor')
         task=None;waiting=None
         if not HumanTask.objects.filter(version=v).exists():
@@ -232,10 +258,16 @@ def publication_scope(actor,case,version,work_id):
     w=Work.objects.select_related('case','actor','source_head').get(pk=work_id,case=case,definition=DEFINITION)
     access(actor,case,'factory.execute',DEFINITION);config,value=profile(w)
     if w.policy_id!=config.pk or principal(w,value,'executor_id').pk!=actor.pk:raise PermissionDenied('Exact current report publisher and policy required')
-    principal(w,value,'preparer_id')
+    preparer = principal(w,value,'preparer_id')
     if w.cancel_requested or w.status in ['verified','cancelled','followup_needed']:raise ValidationError('Leadership report publication is stopped')
-    _,v,_=bound_document(w,actor)
+    data, v, binding = bound_document(w, actor)
     if v.pk!=version.pk:raise ValidationError('Exact observed source-bound leadership report required')
+    if 'scope' in data['inputs']:
+        recipients = publication_requirements(case, v)[1]
+        reviewers = v.reviews.values_list('actor_id', flat=True)
+        project_scope.lock_projects(case, binding.manifest, {actor.pk, preparer.pk, *recipients, *reviewers})
+        bound_document(w, actor)
+        project_scope.access(preparer, case, binding.manifest)
     return {'factory_work_id':w.pk,'factory_policy_id':config.pk,'factory_source_id':w.source_head_id}
 
 def verify(work,actor=None):
@@ -254,7 +286,13 @@ def correct(actor,work_id,expected,case_expected,inputs,reason):
     planning=pending(w)
     if planning and not has_receipt(planning):raise ValidationError('Resolve original planning response before correction')
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the source-owned report correction')
-    data=source(w,actor,False);start,end=input_rows(case,inputs);inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
+    data = source(w, actor, False)
+    if ('scope' in inputs) != ('scope' in data['inputs']):
+        raise ValidationError('Keep the existing report coverage type when reviewing changed sources.')
+    if 'scope' in inputs:
+        inputs = project_scope.prepare_inputs(actor, case, inputs)
+        case.refresh_from_db()
+    start,end=input_rows(case,inputs);inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
     if any(inputs[k]!=data['inputs'][k] for k in ['start_at','end_at','kind','audience']):raise ValidationError('A different reporting period requires separate work; preserve this period history')
     if data['inputs']==inputs and inventory(actor,case,inputs)['manifest']==data['manifest']:
         v=document(w)
@@ -338,6 +376,9 @@ def restart(actor,work_id,expected,case_expected,reason):
     if PublicationReceipt.objects.filter(publication__factory_work=w).exists():raise ValidationError('Delivered reports require native follow-up, not restart')
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the fresh report preparation instruction')
     data=source(w,actor)
+    if 'scope' in data['inputs'] and data['inputs']['scope']['actor'] != actor.pk:
+        raise PermissionDenied('The original project coverage requester must restart this checked scope.')
+    project_scope.lock_projects(case, data['manifest'], {actor.pk})
     old=w.source_head_id;w.source_head=capture(actor,case,data['inputs'],'factory.leadership_source');w.cancel_requested=False;w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
     event(actor,case,'factory.leadership_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
@@ -383,4 +424,9 @@ def projection(actor,work,*,include_progress=False):
             j.can_operate=idle and (j.status in ['pending','unknown','held'] or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now()) and not PublicationReceipt.objects.filter(publication=j.publication).exists()
             j.can_retry=j.can_operate and not work.cancel_requested and j.status=='held'
         except PermissionDenied:pass
-    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,'progress':progress}
+    covered_projects = []
+    if include_progress and 'project_scope' in data['manifest']:
+        projects = data['manifest']['project_scope']['projects']
+        names = {str(pk): title for pk, title in Case.objects.filter(pk__in=[p['case'] for p in projects]).values_list('pk', 'title')}
+        covered_projects = [dict(p, name=names.get(p['case'], 'Project')) for p in projects]
+    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,'progress':progress,'covered_projects':covered_projects}

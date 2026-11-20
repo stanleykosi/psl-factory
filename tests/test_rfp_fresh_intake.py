@@ -26,7 +26,7 @@ from apps.identity import intake as identity
 from apps.identity.intake_models import CaseIntake
 from apps.identity.models import Grant
 from apps.pmo import rfp, rfp_fresh_intake, rfp_intake_context, rfp_intake_upload
-from apps.pmo.models import RFPAssignment, RFPIntake, RFPSubmission
+from apps.pmo.models import RFPAssignment, RFPIntake, RFPStagedUpload, RFPSubmission
 from tests.helpers import rev
 from tests.test_rfp_intake_upload import PRIVATE_TEXT, pdf_file, word_file
 
@@ -170,7 +170,7 @@ class FreshBidIntakeTests(TestCase):
             store.assert_not_called()
         self.assert_no_intake()
 
-    def test_storage_failure_rolls_back_workspace_and_discards_unbound_object(self):
+    def test_storage_failure_rolls_back_workspace_and_retains_unbound_intent(self):
         with (
             patch('adapters.case_uploads.put', side_effect=OSError('Synthetic failed upload')) as store,
             patch('adapters.case_uploads.discard_unbound') as discard,
@@ -178,7 +178,10 @@ class FreshBidIntakeTests(TestCase):
             failure = self.client.post(self.url, {**self.command, 'document': word_file()})
             self.assertContains(failure, 'Private storage is unavailable')
             store.assert_called_once()
-            discard.assert_called_once_with(store.call_args.args[0])
+            discard.assert_not_called()
+        staged = RFPStagedUpload.objects.get(authority=self.authority, actor=self.recorder)
+        self.assertEqual(staged.key, store.call_args.args[0])
+        self.assertIsNone(staged.upload_id)
         self.assert_no_intake()
         self.assertFalse(Audit.objects.filter(action=rfp_fresh_intake.ACTION).exists())
 

@@ -172,11 +172,13 @@ from apps.workflows import factory_rfp_views
 from apps.workflows import factory_rfp_pricing
 from apps.workflows import factory_rfp_estimate_views
 from apps.pmo import rfp_answer_views
+from apps.pmo import rfp_staged_upload_views
 urlpatterns += [path('work/<int:work_id>/requirements/', rfp_answer_views.workbench, name='factory_rfp_answers')]
 urlpatterns += [path('work/<int:work_id>/pricing/', factory_rfp_pricing.detail, name='factory_rfp_pricing')]
 urlpatterns += [path('work/<int:work_id>/security-estimate/', factory_rfp_estimate_views.detail, name='factory_rfp_security_estimate')]
 urlpatterns += [path('cases/<uuid:case_id>/factory/rfp-outcome-settings/',factory_rfp_views.outcome_configuration,name='factory_rfp_outcome_configuration')]
 urlpatterns += [path('cases/<uuid:case_id>/rfp/intake/<int:intake_id>/attachment/', rfp_views.intake_attachment, name='rfp_intake_attachment')]
+urlpatterns += [path('bids/private-uploads/', rfp_staged_upload_views.workbench, name='rfp_staged_uploads')]
 urlpatterns += [path('bids/unassigned/', rfp_assignment_views.index, name='rfp_assignment_queue'),
                 path('cases/<uuid:case_id>/rfp/assignment/', rfp_assignment_views.assign, name='rfp_assignment')]
 

@@ -7,7 +7,7 @@ from datetime import timezone as datetime_timezone
 from uuid import UUID
 
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import OuterRef, Subquery
 from django.utils import timezone
 
@@ -17,7 +17,7 @@ from apps.documents.contracts import digest
 from apps.identity import intake as identity
 from apps.identity.intake_models import CaseIntake, TenantAuthority
 
-from . import rfp, rfp_intake_context, rfp_intake_upload as upload
+from . import rfp, rfp_intake_context, rfp_intake_upload as upload, rfp_staged_uploads as staged
 from .clocks import aware
 from .models import RFPIntake
 
@@ -56,6 +56,16 @@ def replay(actor, provisioned, payload_hash, fingerprint, size, classification):
     return original
 
 
+def current_authority(actor, authority_id):
+    selected = TenantAuthority.objects.filter(user=actor, pk=authority_id).only('tenant').first()
+    if selected is None:
+        raise PermissionDenied('Current organization authority is required.')
+    current = identity.current(actor, selected.tenant, 'create_cases')
+    if current.pk != authority_id or 'project' not in current.value['kinds'] or not GRANTS <= set(current.value['initial_actions']):
+        raise PermissionDenied('Current authority to record a bid in a new workspace is required.')
+    return current
+
+
 def record(actor, authority_id, start_key, reference, received_at, deadline_status, deadline_at, file,
            *, source_context=None, context_attested=False):
     if type(authority_id) is not int or not isinstance(start_key, UUID) or not isinstance(reference, str):
@@ -63,49 +73,53 @@ def record(actor, authority_id, start_key, reference, received_at, deadline_stat
     reference = reference.strip()
     if not reference or len(reference) > 160 or not reference.isprintable():
         raise ValidationError('Enter a bid reference of at most 160 characters.')
+    current = current_authority(actor, authority_id)
+    received = aware(received_at, 'Received time').astimezone(datetime_timezone.utc)
+    rfp.past(received)
+    if deadline_status not in ('unknown', 'stated', 'not_stated') or (deadline_status == 'stated') != (deadline_at is not None):
+        raise ValidationError('Enter the deadline only when it is stated in the document.')
+    deadline = aware(deadline_at, 'Deadline').astimezone(datetime_timezone.utc) if deadline_at is not None else None
+    context = rfp_intake_context.validate(source_context, context_attested)
+    data = upload.read_file(file)
+    fingerprint = hashlib.sha256(data).hexdigest()
+    payload_hash = digest({'reference': reference, 'received': received.isoformat(),
+        'deadline_status': deadline_status, 'deadline': deadline.isoformat() if deadline else None,
+        'context': asdict(context), 'file_sha256': fingerprint, 'file_size': len(data)})
+    start_reference = 'received-bid:' + digest([actor.pk, start_key.hex])
+    operation = digest([LINE, current.tenant, start_reference])
     try:
-        with upload.durable_upload() as store:
-            identity.lock_users([actor.pk])
-            selected = TenantAuthority.objects.filter(user=actor, pk=authority_id).only('tenant').first()
-            if selected is None:
-                raise PermissionDenied('Current organization authority is required.')
-            current = identity.current(actor, selected.tenant, 'create_cases')
-            if current.pk != authority_id or 'project' not in current.value['kinds'] or not GRANTS <= set(current.value['initial_actions']):
-                raise PermissionDenied('Current authority to record a bid in a new workspace is required.')
-
-            received = aware(received_at, 'Received time').astimezone(datetime_timezone.utc)
-            rfp.past(received)
-            if deadline_status not in ('unknown', 'stated', 'not_stated') or (deadline_status == 'stated') != (deadline_at is not None):
-                raise ValidationError('Enter the deadline only when it is stated in the document.')
-            deadline = aware(deadline_at, 'Deadline').astimezone(datetime_timezone.utc) if deadline_at is not None else None
-            context = rfp_intake_context.validate(source_context, context_attested)
-            data = upload.read_file(file)
-            fingerprint = hashlib.sha256(data).hexdigest()
-            payload_hash = digest({'reference': reference, 'received': received.isoformat(),
-                'deadline_status': deadline_status, 'deadline': deadline.isoformat() if deadline else None,
-                'context': asdict(context), 'file_sha256': fingerprint, 'file_size': len(data)})
-            start_reference = 'received-bid:' + digest([actor.pk, start_key.hex])
-            old = CaseIntake.objects.filter(tenant=current.tenant, reference=start_reference).first()
-            if old is not None:
-                return replay(actor, old, payload_hash, fingerprint, len(data), current.value['classification'])
-
-            upload.validate_file(file.name, data)
-            case = identity.create_case(actor, current.tenant, start_reference, 'Bid ' + reference, 'project')
-            upload.authorize_write(actor, case)
-            deadline_proof = None
-            if deadline:
-                # The recorder supplies the observed time while admitting this exact document.
-                deadline_proof = add_evidence(actor, case.pk, 'rfp_deadline', json.dumps({
-                    'schema': 'psl.rfp-upload-deadline-observation/v1', 'deadline': deadline.isoformat(),
-                    'attachment_sha256': fingerprint,
-                }, sort_keys=True), DEADLINE_SOURCE, case.revision)
-                case.refresh_from_db(fields=['revision'])
-            facts = (reference, received, deadline_status, deadline,
-                     deadline_proof.pk if deadline_proof else None, RECEIPT_NOTE)
-            intake = upload.persist(actor, case, facts, file.name, data, fingerprint, store,
-                                    context=context, context_attested=context_attested)
-            event(actor, case, ACTION, case_intake=case.caseintake.pk, intake=intake.pk, sha256=payload_hash)
-            return intake
+        with staged.serialized(operation):
+            with transaction.atomic(durable=True):
+                identity.lock_users([actor.pk])
+                current = current_authority(actor, authority_id)
+                old = CaseIntake.objects.filter(tenant=current.tenant, reference=start_reference).first()
+                if old:
+                    return replay(actor, old, payload_hash, fingerprint, len(data), current.value['classification'])
+                upload.validate_file(file.name, data)
+                intent, first = staged.reserve(operation=operation, actor=actor, payload=payload_hash,
+                    fingerprint=fingerprint, size=len(data), authority=current)
+            with transaction.atomic(durable=True):
+                identity.lock_users([actor.pk])
+                current = current_authority(actor, authority_id)
+                old = CaseIntake.objects.filter(tenant=current.tenant, reference=start_reference).first()
+                if old:
+                    return replay(actor, old, payload_hash, fingerprint, len(data), current.value['classification'])
+                case = identity.create_case(actor, current.tenant, start_reference, 'Bid ' + reference, 'project')
+                upload.authorize_write(actor, case)
+                deadline_proof = None
+                if deadline:
+                    # The recorder supplies the observed time while admitting this exact document.
+                    deadline_proof = add_evidence(actor, case.pk, 'rfp_deadline', json.dumps({
+                        'schema': 'psl.rfp-upload-deadline-observation/v1', 'deadline': deadline.isoformat(),
+                        'attachment_sha256': fingerprint,
+                    }, sort_keys=True), DEADLINE_SOURCE, case.revision)
+                    case.refresh_from_db(fields=['revision'])
+                facts = (reference, received, deadline_status, deadline,
+                         deadline_proof.pk if deadline_proof else None, RECEIPT_NOTE)
+                intake = upload.persist(actor, case, facts, file.name, data, intent, first=first,
+                                        context=context, context_attested=context_attested)
+                event(actor, case, ACTION, case_intake=case.caseintake.pk, intake=intake.pk, sha256=payload_hash)
+                return intake
     except IntegrityError as exc:
         constraint = getattr(getattr(exc.__cause__, 'diag', None), 'constraint_name', '')
         if constraint in {'tenant_intake_reference', 'rfp_tenant_reference'}:

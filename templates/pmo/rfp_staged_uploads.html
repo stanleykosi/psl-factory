@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Private bid uploads · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'factory_intake' %}">← Start work</a>
+<div class="page-heading"><div><h1>Private bid uploads</h1><p class="lede">Check a recent file if recording the bid was interrupted.</p></div></div>
+{% if selected_upload %}<p class="card" role="status">{{ selected_upload.status }}</p>{% endif %}
+{% for item in recent_uploads %}
+<section class="card shared-mobile-controls">
+  <h2>Upload requested {{ item.recorded_at|date:'d M Y H:i:s T' }}</h2>
+  <p>{{ item.size|filesizeformat }} · {{ item.status }}</p>
+  {% if item.receipt %}<a href="{{ item.receipt }}">Open the original bid document</a>{% endif %}
+  {% if item.can_check %}<a class="button secondary" href="?check={{ item.id }}">Check this upload</a>{% endif %}
+</section>
+{% empty %}<p>No recent private bid uploads are available to check.</p>{% endfor %}
+{% endblock %}

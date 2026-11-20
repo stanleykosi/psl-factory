@@ -3,7 +3,7 @@ import json
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import render,redirect
 from django.views.decorators.http import require_http_methods
@@ -11,8 +11,10 @@ from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.evidence_access import public_evidence,forecast_private_query
 from apps.core.services import add_evidence,lock_case
+from apps.documents.models import Template
 from apps.pmo.forms import OffsetTimestamp
 from apps.pmo import leadership_reporting as native
+from apps.pmo import leadership_project_scope as project_scope
 from apps.pmo.leadership_report_views import LeadershipReportForm
 from . import factory,factory_leadership as reporting
 from .factory_progress_views import started
@@ -49,6 +51,47 @@ class AudienceForm(ReviewRoleForm):
         self.fields['participants'].queryset=get_user_model().objects.filter(is_active=True,grant__case=case,grant__active=True,grant__action__in=['document.receive:internal','document.receive:management']).distinct()
 
 
+class ScopeRuleForm(ReviewRoleForm):
+    role = None
+    enabled = forms.TypedChoiceField(choices=[('yes', 'Allow all accessible projects'), ('no', 'Use a selected project only')],
+                                     coerce=lambda value: value == 'yes', label='Owner decision on project coverage')
+    revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+
+    def __init__(self, case, *args, **kwargs):
+        super().__init__(case, *args, **kwargs)
+        self.fields['revision'].initial = case.revision
+
+
+class ProjectScopeInputsForm(forms.Form):
+    scope = forms.ChoiceField(choices=[(project_scope.MODE, project_scope.MODE)], initial=project_scope.MODE,
+                              widget=forms.HiddenInput)
+    start_at = OffsetTimestamp(label='Period start (with UTC offset)')
+    end_at = OffsetTimestamp(label='Elapsed period end (exclusive, with UTC offset)')
+    domains = forms.MultipleChoiceField(label='Include', widget=forms.CheckboxSelectMultiple,
+                                        choices=[(key, key.capitalize()) for key in native.DOMAINS],
+                                        initial=list(native.DOMAINS))
+
+    def __init__(self, case, kind, *args, **kwargs):
+        initial = dict(kwargs.pop('initial', {}) or {})
+        if 'scope' in initial:
+            initial['domains'] = initial.pop('scope')['domains']
+        super().__init__(*args, initial=initial, **kwargs)
+        self.kind = kind
+        self.fields['kind'] = forms.ChoiceField(choices=[(kind, kind)], initial=kind, widget=forms.HiddenInput)
+        self.fields['audience'] = forms.ChoiceField(label='Audience', choices=[(key, key.capitalize()) for key in
+            (['internal'] if kind == 'internal_tuesday' else ['internal', 'management'])])
+        self.fields['template_id'] = forms.ModelChoiceField(label='Controlled leadership report template', required=False,
+            queryset=Template.objects.filter(case=case, definition__document_type='status_report',
+                                             definition__internal_review_required=kind == 'monthly_executive'))
+
+    def inputs(self, actor, case):
+        values = self.cleaned_data
+        return {'kind': self.kind, 'audience': values['audience'], 'start_at': values['start_at'].isoformat(),
+                'end_at': values['end_at'].isoformat(), 'template_id': values['template_id'].pk if values['template_id'] else None,
+                'content_id': None, 'selections': {key: [] for key in native.DOMAINS},
+                'scope': {'domains': values['domains']}}
+
+
 class InputsForm(LeadershipReportForm):
     def __init__(self,case,*args,actor,kind='internal_tuesday',**kwargs):
         initial=dict(kwargs.pop('initial',{}) or {});kind=initial.get('kind',kind)
@@ -81,10 +124,46 @@ class StartForm(WeeklyStart):
 def create(request):
     data=request.POST if request.method=='POST' else request.GET;kind=data.get('kind','internal_tuesday')
     if kind not in native.THEMES:raise ValidationError('Choose Tuesday internal or monthly executive reporting')
-    try:form=StartForm(request.user,request.POST if request.method=='POST' else None,case_id=data.get('case'))
+    scope_choice = data.get('scope', 'selected_project')
+    if scope_choice not in {'selected_project', project_scope.MODE}:
+        raise ValidationError('Choose a supported leadership report coverage option.')
+    scoped = scope_choice == project_scope.MODE
+    saving_rule = request.method == 'POST' and data.get('action') == 'draft_project_scope'
+    submitted = request.POST if request.method == 'POST' and not saving_rule else None
+    try:form=StartForm(request.user,submitted,case_id=data.get('case'))
     except (ValidationError,ValueError):form=StartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available project')
-    inputs=InputsForm(form.selected,request.POST if request.method=='POST' else None,actor=request.user,kind=kind) if form.selected else None
-    if request.method=='POST' and form.is_valid() and inputs and inputs.is_valid():
+    if scoped:
+        form.fields['case'].label = 'Workspace for this report'
+    inputs = rule = None
+    ready = False
+    if form.selected:
+        inputs = (ProjectScopeInputsForm(form.selected, kind, submitted) if scoped else
+                  InputsForm(form.selected, submitted, actor=request.user, kind=kind))
+        if scoped:
+            try:
+                project_scope.current_rule(form.selected)
+                ready = True
+            except ValidationError:
+                pass
+            if request.user.grant_set.filter(case=form.selected, action='policy.configure', active=True).exists():
+                rule = ScopeRuleForm(form.selected, request.POST if saving_rule else None)
+    if saving_rule:
+        if rule is None:
+            raise PermissionDenied('Current authority to draft the project coverage rule is required.')
+        if rule.is_valid():
+            from apps.policy.operator_drafts import draft_operator_policy
+
+            values = rule.cleaned_data
+            try:
+                with transaction.atomic():
+                    case = lock_case(request.user, form.selected.pk, 'policy.configure', values['revision'])
+                    draft_operator_policy(request.user, case.pk, project_scope.COMPONENT,
+                                          {'enabled': values['enabled']}, values['evidence'].pk, values['effective_from'])
+                messages.success(request, 'Project coverage rule saved for validation and activation.')
+                return redirect('policy', form.selected.pk)
+            except ValidationError as exc:
+                rule.add_error(None, exc)
+    if submitted is not None and form.is_valid() and inputs and inputs.is_valid():
         try:
             with transaction.atomic():
                 d=form.cleaned_data
@@ -93,7 +172,8 @@ def create(request):
                 work=reporting.start(request.user,case.pk,d['key'],values,d['reference'],case.revision)
                 return started(request, work, d['background'])
         except ValidationError as exc:form.add_error(None,reporting.finding(exc))
-    return render(request,'factory/leadership_start.html',{'form':form,'inputs_form':inputs,'case':form.selected,'kind':kind})
+    return render(request,'factory/leadership_start.html',{'form':form,'inputs_form':inputs,'case':form.selected,'kind':kind,
+                  'scoped':scoped, 'scope_ready':ready, 'scope_rule_form':rule})
 
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work,focus=None):
@@ -102,7 +182,9 @@ def detail(request,work,focus=None):
     data=reporting.source(work,request.user,False)
     audience_form=AudienceForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='draft_audience' else None)
     role_form=ReviewRoleForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='draft_review_role' else None)
-    form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=data['inputs'],actor=request.user)
+    correction = request.POST if request.method == 'POST' and request.POST.get('action') == 'correct' else None
+    form = (ProjectScopeInputsForm(work.case, data['inputs']['kind'], correction, initial=data['inputs']) if 'scope' in data['inputs']
+            else InputsForm(work.case,correction,initial=data['inputs'],actor=request.user))
     if request.method=='POST':
         try:
             d=request.POST;action=d.get('action');revision=int(d.get('revision','0'));case_revision=int(d.get('case_revision','0'))
@@ -123,7 +205,12 @@ def detail(request,work,focus=None):
                 with transaction.atomic():
                     case=lock_case(request.user,work.case_id,'policy.configure',case_revision);values=role_form.cleaned_data
                     draft_operator_policy(request.user,case.pk,native.REVIEW_COMPONENT,{'role':values['role'] or None},values['evidence'].pk,values['effective_from'])
-            elif action=='advance':factory.advance(request.user,work.pk,revision)
+            elif action=='advance':
+                if 'scope' in data['inputs']:
+                    from .factory_progress import set_progress
+                    set_progress(request.user, work.pk, revision, True)
+                else:
+                    factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError(form.errors.as_text())
                 with transaction.atomic():

@@ -16,7 +16,7 @@ from apps.core.services import add_evidence
 from apps.documents.models import Publication
 from apps.identity.models import Grant
 from apps.pmo import rfp_intake_upload
-from apps.pmo.models import RFPAssignment, RFPCase, RFPIntake, RFPSubmission
+from apps.pmo.models import RFPAssignment, RFPCase, RFPIntake, RFPStagedUpload, RFPSubmission
 from tests.helpers import rev, setup_case
 
 
@@ -150,12 +150,15 @@ class RFPIntakeAttachmentTests(TestCase):
             put.assert_not_called()
         self.assertFalse(RFPCase.objects.filter(case=self.case).exists())
 
-    def test_failed_storage_discards_unbound_key_and_legacy_source_can_still_be_recorded(self):
+    def test_failed_storage_retains_unbound_intent_and_legacy_source_can_still_be_recorded(self):
         with (patch('adapters.case_uploads.put', side_effect=OSError) as put,
               patch('adapters.case_uploads.discard_unbound') as discard):
             failed = self.client.post(self.url, {**self.command, 'rfp_file': word_file()})
             self.assertContains(failed, 'Private storage is unavailable')
-            discard.assert_called_once_with(put.call_args.args[0])
+            discard.assert_not_called()
+        staged = RFPStagedUpload.objects.get(case=self.case, actor=self.actor)
+        self.assertEqual(staged.key, put.call_args.args[0])
+        self.assertIsNone(staged.upload_id)
         self.assertFalse(RFPCase.objects.filter(case=self.case).exists())
         self.assertFalse(CaseUpload.objects.filter(case=self.case).exists())
         self.assertFalse(self.case.evidence.filter(source=rfp_intake_upload.SOURCE).exists())
