@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. The broader Railway run completed the 137-test Finance group successfully. Added a separate restricted synthetic work item for the remaining access-denied board. Its owner has no usable password. The trial account has no grant on that workspace.
+
 20 November 2026. Completed the phone work-filter exercise across all eight views and retained invoice history with the two original receipts. The original report and invoice records were preserved. The state audit reports 38 completed scoped journeys.
 
 20 November 2026. Connected the design's explicit Issue and send action to the existing fenced worker. It checks the current invoice and exact Finance approval before queuing, and keeps original receipt lookup and automatic progression in their existing paths. Browser and PostgreSQL acceptance remain pending for this source.

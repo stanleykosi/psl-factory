@@ -1,11 +1,13 @@
 """Check that grouped browser staging leaves operator decisions for the walkthrough."""
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from apps.finance.models import InvoiceIssue, InvoiceJob, InvoiceReview
 from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, EmergencyAuthorization, EmergencyDecision, EmergencyOutcome, EscalationDecision
 from apps.workflows.models import FactoryProgress, FactoryWork, HumanTask
-from tests.railway_batch_walkthrough_seed import PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_project
+from tests.railway_batch_walkthrough_seed import (
+    PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_project, prepare_unreadable_invoice,
+)
 
 
 class DesignBatchWalkthroughTests(TestCase):
@@ -69,3 +71,21 @@ class DesignBatchWalkthroughTests(TestCase):
         self.assertNotContains(response, 'E001')
         link = PayrollHRFollowup.objects.get(pk=prepared['correction'])
         self.assertFalse(hrfinance.correction_disposition(link.record).exists())
+
+    @override_settings(DEBUG=False)
+    def test_separate_sample_work_returns_the_same_opaque_page_as_missing_work(self):
+        sample = prepare_unreadable_invoice()
+        self.assertEqual(prepare_unreadable_invoice()['work'], sample['work'])
+        work = FactoryWork.objects.get(pk=sample['work'])
+        self.assertFalse(work.actor.has_usable_password())
+        self.client.force_login(work.actor)
+        self.assertContains(self.client.get(sample['path']), work.invoice.reference)
+        other = get_user_model().objects.create_user('synthetic-outside-invoice-reader')
+        self.client.force_login(other)
+        denied = self.client.get(sample['path'])
+        nonexistent = self.client.get(reverse('factory_detail', args=[work.pk + 1000000]))
+        self.assertContains(denied, 'Page unavailable', status_code=404)
+        self.assertContains(nonexistent, 'Page unavailable', status_code=404)
+        self.assertNotContains(denied, work.case.title, status_code=404)
+        self.assertNotContains(denied, work.invoice.reference, status_code=404)
+        self.assertNotContains(denied, work.invoice.payload['amount'], status_code=404)

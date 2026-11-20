@@ -254,6 +254,22 @@ def prepare_hr_payroll_correction(actor):
             'existing_work_preserved': not created}
 
 
+@transaction.atomic
+def prepare_unreadable_invoice():
+    users = get_user_model().objects
+    username = 'batch-isolated-invoice-owner'
+    case, created = Case.objects.get_or_create(tenant=TENANT, title='SAMPLE separate Finance workspace',
+                                               kind='project', synthetic=True)
+    if created:
+        owner = users.create_user(username)
+        Grant.objects.bulk_create([Grant(user=owner, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        work = prepare_invoice_release(owner, case)
+    else:
+        work = FactoryWork.objects.get(case=case, actor__username=username, definition='pmo-finance/v1')
+    return {'case': str(case.pk), 'work': work.pk, 'path': reverse('factory_detail', args=[work.pk]),
+            'existing_work_preserved': not created}
+
+
 def run():
     if (os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv('RAILWAY_PROJECT_ID'),
             os.getenv('PSL_COMPOSED_WALKTHROUGH')) != ('design-acceptance', PREVIEW_PROJECT, '1'):
@@ -266,6 +282,7 @@ def run():
     sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)
     sessions['hr_payroll_correction'] = lambda: prepare_hr_payroll_correction(actor)
+    sessions['unreadable_invoice'] = prepare_unreadable_invoice
     failed = False
     for key, prepare in sessions.items():
         try:

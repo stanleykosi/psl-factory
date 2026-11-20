@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+20 November 2026. The 205 Finance group passed all 137 PostgreSQL tests in 4,236.464s with exit 0. The returned group forecast passed after the fixed-date fixture. The native invoice crash test recorded child exit 53 and real lease expiry before recovering the original receipt, with 38.156 seconds of observed wait. Commercial began and project delivery continued. The overall 520-test result remains pending. Candidate 206 includes a truly separate unloginable synthetic invoice owner so an exact denied-work check can be exercised without changing the trial account's authority.
+
 20 November 2026. Hosted 205 Codex browser on work 62 confirmed original issuance receipt 3 and delivery receipt 1. Its Decisions page retained the returned task and separate completed approval, with the matching invoice version and no reissue. Phone viewport 390 pixels, content and body 375 pixels. Desktop viewport restored.
 
 20 November 2026. In the Codex browser at 390 pixels, submitted the invoice workflow filter with all eight work views. Each server response retained both selections, showed checked coverage, and fit within the 375-pixel content width. A few browser operations timed out during navigation and were confirmed by reading the loaded response. The desktop viewport was restored to 1,280 pixels. This tests filters and layout. Individual protected rows and complete queue coverage have separate acceptance checks.
