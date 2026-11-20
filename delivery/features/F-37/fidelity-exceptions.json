@@ -1,0 +1,446 @@
+{
+ "exceptions": [
+  {
+   "role": "tablist",
+   "name": "RFP",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "tab",
+   "name": "Requirements 64",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "tab",
+   "name": "Pricing",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "tab",
+   "name": "Submission",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "tab",
+   "name": "Outcome",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "search",
+   "name": "",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: no read can search (G-26-2); the toolbar is drawn inert as F-17 draws it, with no search box.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "searchbox",
+   "name": "Search",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: no read can search (G-26-2); the toolbar is drawn inert as F-17 draws it, with no search box.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "button",
+   "name": "Filter",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the inert Filter button is drawn only when the response returns filters.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "38 of 64 requirements answered · 4 need clarification · 2 out of scope",
+   "category": "layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Progress comes back as three returned figures with a note, and the checklist count as a returned tag; the board's one-sentence version is not built.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "2 OF 4",
+   "category": "layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Progress comes back as three returned figures with a note, and the checklist count as a returned tag; the board's one-sentence version is not built.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "estimate-eng.xlsx",
+   "category": "sample data",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the file names are returned detail text on the checklist row, not links.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "qa-plan.pdf",
+   "category": "sample data",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the file names are returned detail text on the checklist row, not links.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "41 OF 64 ROWS",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Suggested by Tola",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "Remove filter",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "Clear filters",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "checkbox",
+   "name": "Select all 41 suggestions",
+   "category": "component",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the header box is labelled \"Select all shown rows\" and ticks only the rows on screen; \"Select all 41 suggestions\" needs the all-matching scope (G-26-2).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "R-07 · RFP p.6",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the suggestion's reference line is returned item text in the panel and the row; the board's separate eyebrow is not drawn.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Your answer",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Editing in place. Your words replace Tola's once you save; Tola's version stays in the history.",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the consequence line is the returned step consequence, shown in the shared form or panel in the returned words.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Status",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Cancel keeps Tola's suggestion as it was. If you've typed changes, we ask before throwing them away.",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17/6: Cancel keeps Tola's suggestion because nothing is sent; the discard question appears only after a change, and the board's help sentence is not drawn.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "button",
+   "name": "Tola's suggestion (not used)",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the display field, the reason label, its optional marker and placeholder are drawn by the shared step form (labels and the \"(optional)\" marker as returned).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Why not Tola's answer? (optional)",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the display field, the reason label, its optional marker and placeholder are drawn by the shared step form (labels and the \"(optional)\" marker as returned).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "(optional)",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: optional fields carry the shared \"(optional)\" marker.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "e.g. the client asked for two approvers",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the display field, the reason label, its optional marker and placeholder are drawn by the shared step form (labels and the \"(optional)\" marker as returned).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Your reason helps Tola suggest better next time. It is not shown to the client.",
+   "category": "missing",
+   "conflicts": 3,
+   "reason": "Conflicts 3: the reason help is returned as \"Kept internal. It is not shown to the client.\"; the learning sentence is held for PSL (gaps line 77).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Save stays off until you write an answer. Tola's suggestion is kept in the history, marked \"not used\".",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: the shared form never greys Save out; an empty answer names the field instead.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Tola's suggested answer",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Accepting records your name. Tola's original suggestion stays in the history, so reviewers can see what was changed.",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the consequence line is the returned step consequence, shown in the shared form or panel in the returned words.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "← Pre-sale",
+   "category": "frame item",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the phone top bar is the frame's \"← Queue\" with the item reference.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "38 of 64 answered · 4 need clarification",
+   "category": "layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Progress comes back as three returned figures with a note, and the checklist count as a returned tag; the board's one-sentence version is not built.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "38 of 64",
+   "category": "layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Progress comes back as three returned figures with a note, and the checklist count as a returned tag; the board's one-sentence version is not built.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Review opens once all four teams have given input.",
+   "category": "layout",
+   "conflicts": 9,
+   "reason": "Conflicts 9: Progress comes back as three returned figures with a note, and the checklist count as a returned tag; the board's one-sentence version is not built.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "R-01 · RFP p.4",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the desktop table stacked with its labels (reference, requirement with its RFP page, answer, status) instead of the board's card list.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "ADDRESSED",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the desktop table stacked with its labels (reference, requirement with its RFP page, answer, status) instead of the board's card list.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "R-02 · RFP p.4",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the desktop table stacked with its labels (reference, requirement with its RFP page, answer, status) instead of the board's card list.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "R-03 · RFP p.5",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the desktop table stacked with its labels (reference, requirement with its RFP page, answer, status) instead of the board's card list.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "NEEDS CLARIFICATION",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the desktop table stacked with its labels (reference, requirement with its RFP page, answer, status) instead of the board's card list.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "R-04 · RFP p.5",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the desktop table stacked with its labels (reference, requirement with its RFP page, answer, status) instead of the board's card list.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "Record team input",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13: \"Record\" sits on each team's row; there is no separate single button.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "← RFP",
+   "category": "frame item",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the phone top bar is the frame's \"← Queue\" with the item reference.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Tola's version stays in the history.",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the consequence line is the returned step consequence, shown in the shared form or panel in the returned words.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Cancel keeps Tola's suggestion. If you've typed changes, we ask first.",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17/6: Cancel keeps Tola's suggestion because nothing is sent; the discard question appears only after a change, and the board's help sentence is not drawn.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "Save stays off until you write an answer.",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: the shared form never greys Save out; an empty answer names the field instead.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "Edit",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13/15: the phone shows the desktop's sections with the returned labels (Edit answer, Write my own); no swipe and no \"1 of 41\".",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "link",
+   "name": "Reject",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13/15: the phone shows the desktop's sections with the returned labels (Edit answer, Write my own); no swipe and no \"1 of 41\".",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "role": "text",
+   "name": "1 of 41 · swipe for the next",
+   "category": "extra element",
+   "conflicts": 13,
+   "reason": "Conflicts 13/15: the phone shows the desktop's sections with the returned labels (Edit answer, Write my own); no swipe and no \"1 of 41\".",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-26-desktop",
+   "width": 1440,
+   "visual": 74.7,
+   "reason": "D-83: measured 74.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-mobile",
+   "width": 390,
+   "visual": 70.7,
+   "reason": "D-83: measured 70.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-desktop-review",
+   "width": 1440,
+   "visual": 70.5,
+   "reason": "D-83: measured 70.5 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-desktop-edit",
+   "width": 1440,
+   "visual": 70.7,
+   "reason": "D-83: measured 70.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-desktop-reject",
+   "width": 1440,
+   "visual": 71.2,
+   "reason": "D-83: measured 71.2 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-mobile-review",
+   "width": 390,
+   "visual": 73.4,
+   "reason": "D-83: measured 73.4 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-mobile-edit",
+   "width": 390,
+   "visual": 73.4,
+   "reason": "D-83: measured 73.4 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  },
+  {
+   "board": "SCR-26-mobile-reject",
+   "width": 390,
+   "visual": 72.0,
+   "reason": "D-83: measured 72 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-126"
+  }
+ ]
+}

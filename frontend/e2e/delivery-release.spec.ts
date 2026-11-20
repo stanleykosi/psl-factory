@@ -55,7 +55,7 @@ for (const [label, viewport] of [
       await expect(page.getByRole('link', { name: 'Go-live acceptance' })).toHaveAttribute('href', '/work/W-2510');
       const nav = page.getByRole('navigation', { name: 'Delivery lines' });
       if (phone) await expect(nav).toBeHidden();
-      else await expect(nav.getByRole('link')).toHaveText(['Release', 'Go-live']);
+      else await expect(nav.getByRole('link')).toHaveText(['Release', 'Go-live', 'Hypercare', 'Handover']);
       expect(await noHorizontalScroll(page)).toBe(true);
       if (phone) await expectTouchTargets([page.getByRole('link', { name: 'Release gates' }), page.getByRole('link', { name: 'Go-live acceptance' }), page.getByRole('link', { name: 'Ask Tola' })]);
       await expectNoAxeViolations(page);

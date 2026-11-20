@@ -206,3 +206,86 @@ Answered the morning sign-off list in delivery/NIGHT-LOG-2026-11-18.md. F-31 eng
 
 ## D-118 · Spec conflicts approved as recommended for F-34, F-35, F-36, F-37, F-38, F-39, F-40, F-42, F-43, F-45 (19 Nov 2026, design engineer: "Accept all")
 Every "Need an answer", "Layout" and "Exceptions to sign" recommendation in these ten specs (delivery/features/F-xx/spec.md) is approved as written: F-34 hypercare part 1; F-35 leadership report part 1; F-36 RFP intake, assign PM; F-37 RFP response part 1; F-38 RFP submission; F-39 escalation part 1; F-40 handover to Support; F-42 fixed assets part 1 (G-55-1, the date-explanation step with no board, built as the spec recommends); F-43 cash forecast part 1 (six rows with Feb–Apr Unknown; forecast-only reconcile wording); F-45 ledger source part 1. PSL questions listed in the specs stay open for PSL. Visual waivers are signed per board after each build. D-114, D-115 and D-116 (F-47, F-41, F-48) remain provisional until signed at their sign-off.
+
+## D-119 · F-34, F-41, F-42, F-47 waivers, exceptions and product acceptance signed; D-114 and D-115 confirmed (19 Nov 2026, design engineer: "Sign and accept all")
+Answered "Sign-off list 2" in delivery/NIGHT-LOG-2026-11-18.md. F-34 hypercare part 1: the 7 visual waivers, the 31 exceptions (including the tone exceptions for the backend's missing `waiting` tone, D-46), product acceptance; the coordinator-run fidelity results accepted. F-41 payments list and reminder: D-115 confirmed (the 17 provisional conflicts become approved), the 4 waivers (SCR-20 phone 71.1 included), 35 exceptions, product acceptance including relying on the backend to refuse a second send; phone cards keep the board's fields (UX-2-2) and the failed-send wording stays as built (QA-2-1). F-42 fixed assets part 1: the 8 waivers, 24 exceptions including the cost and proof tool-limitation exceptions, product acceptance; G-55-1 (the date-explanation step) accepted as built; claim on page load accepted as the specs say, with the backend asked whether it locks others out. F-47 Start work proof upload: D-114 confirmed (the 14 provisional conflicts become approved), the 6 waivers, 30 exceptions, product acceptance including proof required on schedules and ledger and optional on minutes and change. Merge order F-47, F-41, F-42, F-34 into dlv-00, then dlv-00 → main.
+
+## D-120 · F-36 waiver, exceptions and product acceptance signed (18 Nov 2026, design engineer: "i have signed off f36. go ahead")
+F-36 RFP intake, assign the accountable PM (Sign-off list 3): the SCR-24 phone waiver (75.6), the 18 exceptions, product acceptance (the panel over My work's Unassigned list; the PM only from the backend's candidates; the mock-only `pmo_lead` persona). QA-2-2 (shared ValidationSummary) left as a follow-up. Merge into dlv-00 approved.
+
+## D-121 · F-35 waivers, exceptions and product acceptance signed (19 Nov 2026, design engineer: "go on with f35 sign off")
+F-35 leadership report (Sign-off list 3): the 8 visual waivers (71.9–86.6) and 23 exceptions, and product acceptance on the contract mock. Read as signing everything as presented. UX-2-3: the partial-delivery banner stays green as the board draws it. The stale-decision notice is accepted as built; its polish (UX-3-1..3: no next-step hint, gone on reload, focus not moved; TECH-3-1: not tied to the revision) is left as a follow-up. If the design engineer meant either differently, it's a small revertible change. Merge into dlv-00 approved.
+
+## D-122 · F-39 waivers, exceptions, shared fix and product acceptance signed (19 Nov 2026, design engineer: "Sign F-39")
+F-39 emergency escalation (Sign-off list 3): the 8 visual waivers (75.5–87.1) and 34 exceptions; the shared stale-decision fix in InlineDecide/Workspace, which also changes F-33's income line and goes beyond spec AC 22 (PMO-4-2); the round-1 coordinator decisions (the backend's question drawn, no empty inputs, the time-only footer exception, the F-16 eyebrow wording); and product acceptance on the contract mock (part 2 and the CTO pre-authorisation held). Follow-ups: F-33 two-reviewer test; W-3602 send-for-review fixture (QA-4-1). Merge into dlv-00 approved.
+
+## D-123 · Cost plan adopted (19 Nov 2026, design engineer: "Adopt all five")
+After the weekly usage limit ran out (reset Sun 22 Nov 03:00), five changes. They replace D-64's model choices and keep every gate and the user's sign-off.
+1. Builders run on Sonnet. Use Opus only after a fix has failed twice.
+2. Reviewers: UI and QA on Sonnet. Opus only for security and technical review on high-risk (money/security) features. PMO acceptance and the approver run as one Sonnet pass; the coordinator writes decision.md from it.
+3. One fidelity run per round, strictly. At 70 or above, write a waiver; don't iterate on the score.
+4. Builders work through delivery/builder-checklist.md before handing in. A bug that recurs across features is fixed once in shared code.
+5. 2–3 builds at a time, not 4. Features that change the same shared files (Workspace.tsx, InlineDecide.tsx, WorkItemOverview.tsx, labels.ts, Sections.tsx, mock-contract tests) go one after another.
+
+## D-124 · F-43 waivers, floor exceptions, wording and product acceptance signed (19 Nov 2026, design engineer: "Sign F-43 as is")
+F-43 Finance cash forecast review, part 1 (Sign-off list 3): the 8 visual waivers, including the two floor exceptions on the verified boards (55.6, 51.9; frame offset), and the 28 exceptions. The approved option wording "It arrived… received" is kept as the board draws it, and spec AC 12's ban on "received" is relaxed for that option label. The shared facts-tag change on the income and fixed-asset "NOT SET" facts (TECH-2-1) is accepted. Product acceptance is given on the contract mock. Before merging: take in dlv-00 (the shared stale fix) and add a two-reviewer test.
+
+## D-125 · F-45 signed; Option B chosen for the re-check sentence (19 Nov 2026, design engineer: "Sign, choose Option B")
+F-45 ledger source, part 1 (Sign-off list 3): the 7 visual waivers and the exceptions, except the Conflicts 13 side-note exception. For that one the design engineer chose Option B: the backend sends the re-check sentence as `workspace.next`, and the frame draws it in the side column as the board does. That changes the mock fixture plus the backend handoff, and the exception is removed once the builder makes the change. The ledger-only "approved only after the re-read confirms it" behaviour is accepted (F-33's income line stays a follow-up). Product acceptance is given on the contract mock. Merge into dlv-00 approved after the Option B change and the dlv-00 merge.
+
+## D-126 · F-37 waivers, exceptions, rework decision and product acceptance signed (19 Nov 2026, design engineer: "once f37 is ready, i have signed off")
+F-37 RFP response, requirements and answers, part 1. Signed as presented once ready:
+- the 8 visual waivers (70.5–74.7) and 48 exceptions;
+- the coordinator's call to rework the layout before review;
+- product acceptance on the contract mock.
+
+QA-3-1 (Record team input can't complete on the mock; the shared response mock has no T-3401 handler) is in scope as accepted, because AC5 needs only the link and drawer. It's recorded as a follow-up. Merge into dlv-00 approved once merge prep passes.
+
+## D-127 · F-40 allowed one extra gate attempt (19 Nov 2026, design engineer: "Yes, one more try")
+F-40 used its 3 gate attempts in round 3. Attempts 1–2 failed on load-flaky tests; attempt 3 passed every test but flagged delivery/config.json because of a stale base_sha (a coordinator error, now corrected). max_gate_attempts is raised to 4 for this one attempt, then set back to 3.
+
+## D-128 · F-40 waivers, exceptions and product acceptance signed (19 Nov 2026, design engineer: "Sign F-40")
+F-40 delivery closure and handover, part 1 (Sign-off list 3): the 8 visual waivers (73.8–88.2) and 26 exceptions, including the separate "Support replied" date-time picker and the Proof card's remove control. Product acceptance is given on the contract mock. Merge into dlv-00 approved after the backend-handoff section is added.
+
+## D-129 · F-48 waiver and exceptions signed (19 Nov 2026, design engineer: "Sign F-48")
+F-48 assistant "can't" state (Sign-off list 3): the phone visual waiver (88.2) and the exceptions. Product acceptance is not required (readiness). The restricted-reference stopgap is noted; the backend fix is handoff gap G-SCR05-9. Merge into dlv-00 approved.
+
+## D-130 · F-49 and F-51 spec conflicts accepted as recommended (19 Nov 2026, design engineer: "Accept all")
+- **F-49** (log a received RFP, SCR-23): all 13 conflicts as each spec recommends, including:
+  - the New client row as information only (no write, G-23-1);
+  - the intro, deadline-help and Submit-to help drawn as returned;
+  - one set of field words from data;
+  - the browser date-time control for "Received";
+  - phone shows the same fields as desktop;
+  - the "START WORK · PRE-SALE" eyebrow.
+- **F-51** (F-47B proof fields): all conflicts as recommended:
+  - no Proof box on the forecast;
+  - the two Finance lines served to the Finance persona only;
+  - "Accounting note" as an optional choice starting at "None";
+  - the Audience options from data ("Group" tied to the unset group-forecast rules).
+
+Differences the pages can't match become exceptions for signature after the build.
+
+## D-131 · F-38 and F-49 design items accepted so they can go to QA (20 Nov 2026, design engineer: "Accept all eight")
+- **F-38:** UI-1-4 (tab bar roles and names, the Submission chip fill, from the shared frame), UI-1-5 (h2 title under the frame's h1), UI-1-6 and UI-1-7 (shared-code colour and style differences), UI-1-9 (top bar from the shared shell; no PMO Lead persona), and UI-2-1 (the 8 visual waivers, 76.7–89).
+- **F-49:** UI-1-1 (phone floor exception: 59 is the tool's union scoring of a sheet taller than the board, with every extra row accepted under D-130) and UI-1-4 (desktop waiver, 74.2).
+
+Recorded as accepted risk. Final product sign-off still follows.
+
+## D-132 · F-49 signed; empty-submit gap accepted as a follow-up (20 Nov 2026, design engineer: "Sign, accept as follow-up")
+F-49 log a received RFP (Sign-off list 3): the D-131 desktop waiver and phone floor exception are confirmed, along with the remaining exceptions and product acceptance on the contract mock. QA-2-1 (an empty "Log RFP" sends a start and relies on the server's 422 for the required messages, where the spec says nothing is sent) is accepted as a follow-up. Merge into dlv-00 approved.
+
+## D-133 · F-38 signed (20 Nov 2026, design engineer: "Sign F-38")
+F-38 RFP submit (Sign-off list 3): the 8 visual waivers (D-131, confirmed), the 25 exceptions, and product acceptance on the contract mock. Follow-ups: reconcile "arrived" with an upload; per-persona access once the backend models roles. Merge into dlv-00 approved after the dlv-00 merge and re-check.
+
+## D-134 · F-52 follow-up batch A signed (20 Nov 2026, design engineer: "Sign F-52")
+Accepted:
+- the income line shows "approved" only after the re-read confirms it;
+- the F-35 stale notice gains its new sentence and takes focus;
+- the W-3602 and T-3401 mock completions;
+- the History link at 44px on phones.
+
+Merge into dlv-00 approved.
+
+## D-135 · F-51 signed (20 Nov 2026, design engineer: "Sign F-51")
+F-51 Start work proof field for fixed assets, plus the forecast start: the 4 floor exceptions (42–50, tall-page scoring limit), the 13 exceptions, the shared Start work change (an empty required submit shows messages on the page and sends nothing, on every line; closes F-49 QA-2-1), and product acceptance on the contract mock. Backend follow-up: a wrong-case upload answers 422, not 404. Merge into dlv-00 approved.

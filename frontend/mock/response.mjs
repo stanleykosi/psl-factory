@@ -17,6 +17,8 @@
 // returns the stored reply with no second effect. Nothing is emailed: the mock only changes what it serves. A sidecar whose `recorded` has a `summary` is
 // board (r2) data and its 200 carries revision, recorded and next; otherwise the 200 is the bare
 // {task_id, work_state} and the reloaded item carries only recorded.by and .at.
+// F-40: a support-handover task takes `gaps` (PROPOSAL G-48-1, mock only: required and non-empty with changes_requested, refused with any
+// other action, else 422 `gaps`), and a 200 swaps in <work_id>.recorded.<action> when present, else <work_id>.recorded.
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -102,6 +104,8 @@ function decodeSegment(value) {
 }
 
 const issued = (caseId, id) => typeof id === 'string' && (evidence.get(caseId)?.has(id) ?? false);
+/** F-36: whether this evidence id was uploaded on that case (the assignment's proof). */
+export const evidenceIssued = issued;
 const responseTasks = (item) => item.tasks.filter((t) => t.response);
 
 /** A case can hold several work items; its revision is theirs, and an upload moves all of them on. */
@@ -113,7 +117,7 @@ function upload(body, ctx) {
   // F-31: a workspace step's evidence field (plan evidence on the engagement) takes uploads of its kind on the item's case
   const stepEvidence = (item) => (item.workspace?.steps ?? []).flatMap((s) => (s.fields ?? []).filter((f) => f.type === 'evidence' && f.evidence_kind));
   const kinds = all
-    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind, ...stepEvidence(item).map((f) => f.evidence_kind)])
+    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind, ...stepEvidence(item).map((f) => f.evidence_kind), item.assign?.evidence_kind])
     .filter(Boolean);
   const fields = [];
   if (!kinds.includes(body.kind)) fields.push('kind');
@@ -127,7 +131,8 @@ function upload(body, ctx) {
       responseTasks(item).some((t) => t.you_can_act) ||
       (Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile')) ||
       Boolean(item.rfp_outcome) ||
-      stepEvidence(item).length > 0,
+      stepEvidence(item).length > 0 ||
+      Boolean(item.assign?.evidence_kind),
   );
   if (!granted) return [403, SCENARIO_BODIES[403]];
 
@@ -167,11 +172,14 @@ function respond(body, ctx) {
   if (body.case_revision !== undefined && body.case_revision !== item.case_revision) return [409, SCENARIO_BODIES[409]];
   if (!task.you_can_act) return [403, SCENARIO_BODIES[403]];
 
-  const sidecar = readSidecars()[`${workId}.recorded`];
+  // F-40 (G-F40-1): a state per action (<work_id>.recorded.<action>) when present, else <work_id>.recorded
+  const sidecars = readSidecars();
+  const sidecar = sidecars[`${workId}.recorded.${body.action}`] ?? sidecars[`${workId}.recorded`];
   if (!sidecar) return [501, NOT_MOCKED];
   const next = structuredClone(sidecar);
   if (item.case_revision !== undefined) next.case_revision = item.case_revision;
-  const done = next.tasks.find((t) => t.id === task.id);
+  // F-40: a recorded state that no longer lists the task (the handover's gaps and acknowledged states) has nothing to mark recorded: the 200 is the bare form
+  const done = next.tasks.find((t) => t.id === task.id) ?? { response: {}, revision: task.revision };
   // F-31: one team's input on a task that stays open for the other teams (the sidecar carries no `recorded`): the 200 says who recorded it and the task is not marked recorded
   const staysOpen = done.response.variant === 'team_input' && !done.response.recorded;
   const board = staysOpen ? `${response.teams.find((t) => t.key === body.team).name}\u2019s input` : done.response.recorded?.summary;
@@ -302,7 +310,19 @@ function handle(operationId, { req, url, raw, cookies, me, work, overrides }) {
   } catch {
     return invalid(['body']);
   }
-  if (!request(body)) return invalid(errorFields(request.errors));
+  // F-40 (PROPOSAL G-48-1): `gaps` is checked on its own for a support-handover task, then taken out before the v7 body check
+  let gapFields = [];
+  if (operationId === 'E-RESPONSE' && body !== null && typeof body === 'object') {
+    const handover = [...items.values()].flatMap((item) => item.tasks).find((t) => t.id === segment)?.response?.variant === 'support_handover';
+    if (handover && Object.hasOwn(body, 'gaps')) {
+      const { gaps, ...rest } = body;
+      const listed = Array.isArray(gaps) && gaps.length > 0 && gaps.every((g) => typeof g === 'string' && g.trim() !== '');
+      if (body.action !== 'changes_requested' || !listed) gapFields = ['gaps'];
+      body = rest;
+    } else if (handover && body.action === 'changes_requested') gapFields = ['gaps'];
+  }
+  if (!request(body)) return invalid([...errorFields(request.errors), ...gapFields]);
+  if (gapFields.length) return invalid(gapFields);
 
   const ctx = { items, overrides, work, me: me[persona], caseId: segment, taskId: segment, workId: segment };
   const writes = { 'E-EVIDENCE-UPLOAD': upload, 'E-RESPONSE': respond, 'E-WORK-ACTION': act, 'E-RFP-OUTCOME': recordOutcome, 'E-RFP-FOLLOWUP': sendFollowup };

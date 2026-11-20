@@ -1,0 +1,583 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T10:14:21.069Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-48-mobile-record.dc.html",
+  "boardName": "SCR-48-mobile-record.dc.html",
+  "pageUrl": "http://localhost:4974/frozen/SCR-48-mobile-record-390.html",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-40/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 82.5 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 75,
+    "coverageWithExceptions": 100,
+    "visual": 82.5
+  },
+  "visual": {
+    "score": 82.5,
+    "allCellsScore": 82.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 862,
+    "cell": 12,
+    "contentCells": 2280,
+    "mismatchedCells": 400
+  },
+  "coverage": {
+    "total": 12,
+    "found": 9,
+    "coverage": 75,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HND-0048",
+        "pageName": "HND-0048",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Support's reply",
+        "pageName": "Support's reply",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 184,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Support replied",
+        "pageName": "Support replied",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 171,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Femi Ojo · Support lead · 10 Apr 2027, 11:00",
+        "pageName": "Femi Ojo · Support lead",
+        "pageRole": "text",
+        "similarity": 81,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 198,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What Support said",
+        "pageName": "What Support said",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 322,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "support-reply-10apr.pdf",
+        "pageName": "support-reply-10apr.pdf",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 437,
+          "w": 158,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 566,
+          "w": 244,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 40 KB",
+        "pageName": "Uploaded · 40 KB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 457,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 587,
+          "w": 244,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record reply",
+        "pageName": "Record reply",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: the visible text and the target now match the board (Delivery tab); the shared phone bar names the link 'Back to Delivery' (F-22 PhoneBar aria-label), so the tool reads a different accessible name.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Gaps",
+        "key": "text: Gaps",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 276,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 4: The page draws Gaps as a field label; the board draws it as text (Conflicts 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1. No contact for the credit bureau outage. 2. Runbook misses the nightly export restart.",
+        "key": "text: 1. No contact for the credit bureau outage. 2. Runbook misses the nightly export restart.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 301,
+          "w": 358,
+          "h": 112
+        },
+        "exception": {
+          "reason": "Conflicts 4: The board draws one numbered sentence; the page draws the typed gaps one per line (Conflicts 4). The values are the PM's input.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"HND-0048\"",
+        "kind": "Text",
+        "name": "HND-0048",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"Support replied\"",
+        "kind": "Text",
+        "name": "Support replied",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 171,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Femi Ojo · Support lead · 10 Apr 2027, 11:00\"",
+        "kind": "Text",
+        "name": "Femi Ojo · Support lead · 10 Apr 2027, 11:00",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 198,
+          "w": 358,
+          "h": 48
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"What Support said\"",
+        "kind": "Text",
+        "name": "What Support said",
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 322,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"support-reply-10apr.pdf\"",
+        "kind": "Text",
+        "name": "support-reply-10apr.pdf",
+        "boardBox": {
+          "x": 58,
+          "y": 437,
+          "w": 158,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 566,
+          "w": 244,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 40 KB\"",
+        "kind": "Text",
+        "name": "Uploaded · 40 KB",
+        "boardBox": {
+          "x": 58,
+          "y": 457,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 587,
+          "w": 244,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Record reply\"",
+        "kind": "Link",
+        "name": "Record reply",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Delivery",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 106,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HANDOVER · PUBLISHED 08 APR",
+        "container": "main",
+        "pageBox": {
+          "x": 112,
+          "y": 103,
+          "w": 207,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Gaps",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 444,
+          "w": 358,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this response is genuine.",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 654,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: gaps go back to Tola for v2 of the handover. If they received it with no gaps, the handover is acknowledged.",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 706,
+          "w": 358,
+          "h": 83
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next:",
+        "container": "form",
+        "pageBox": {
+          "x": 28,
+          "y": 717,
+          "w": 130,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Support doesn’t log in. You record their reply with proof, and the record keeps your name.",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 807,
+          "w": 358,
+          "h": 39
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

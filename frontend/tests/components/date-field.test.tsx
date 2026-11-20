@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
@@ -56,27 +56,27 @@ describe('DateField', () => {
     expect(dialog.className).toContain('psl-pop psl-cal');
     const today = screen.getByRole('gridcell', { name: '13 November 2026, today' });
     expect(today.className).toBe('psl-day is-today');
-    expect(document.activeElement).toBe(today);
+    await waitFor(() => expect(document.activeElement).toBe(today));
     expect(screen.getByRole('gridcell', { name: '14 November 2026, No meetings at weekends' }).getAttribute('aria-disabled')).toBe('true');
     expect(await violations()).toEqual([]);
     fireEvent.keyDown(today, { key: 'ArrowRight' });
     fireEvent.keyDown(document.activeElement as Element, { key: 'Enter' });
     expect(screen.getByText('empty')).toBeTruthy();
     fireEvent.keyDown(document.activeElement as Element, { key: 'ArrowDown' });
-    expect((document.activeElement as HTMLElement).getAttribute('aria-label')).toBe('21 November 2026, No meetings at weekends');
+    await waitFor(() => expect((document.activeElement as HTMLElement).getAttribute('aria-label')).toBe('21 November 2026, No meetings at weekends'));
     fireEvent.keyDown(document.activeElement as Element, { key: 'Home' });
-    expect((document.activeElement as HTMLElement).getAttribute('aria-label')).toBe('16 November 2026');
+    await waitFor(() => expect((document.activeElement as HTMLElement).getAttribute('aria-label')).toBe('16 November 2026'));
     fireEvent.keyDown(document.activeElement as Element, { key: 'Enter' });
     expect(screen.getByText('2026-11-16')).toBeTruthy();
     expect((input() as HTMLInputElement).value).toBe('16 Nov 2026');
-    expect(document.activeElement).toBe(opener);
+    await waitFor(() => expect(document.activeElement).toBe(opener));
     fireEvent.click(opener);
     expect(screen.getByRole('gridcell', { name: '16 November 2026' }).getAttribute('aria-selected')).toBe('true');
     fireEvent.keyDown(document.activeElement as Element, { key: 'PageDown' });
     expect(screen.getByRole('grid', { name: 'December 2026' })).toBeTruthy();
     fireEvent.keyDown(document.activeElement as Element, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(opener);
+    await waitFor(() => expect(document.activeElement).toBe(opener));
   });
 
   it('a typed day that is not allowed shows the reason', () => {

@@ -49,6 +49,8 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__side { grid-area: side; background: var(--surface); border-left: var(--rule-strong) solid var(--ink); padding: var(--space-18px); display: flex; flex-direction: column; gap: var(--space-14px); min-width: 0; }
 .as__pose { display: flex; flex-direction: column; align-items: center; padding: var(--space-3) var(--space-2) 0; }
 .as__pose img { height: 220px; width: auto; display: block; }
+.as__pose--inline { padding-bottom: 0; }
+.as__pose--inline img { height: 164px; }
 .as__pose--tola { background: var(--mascot-tola-tint); }
 .as__pose--chidi { background: var(--mascot-chidi-tint); }
 .as__pose--zainab { background: var(--mascot-zainab-tint); }

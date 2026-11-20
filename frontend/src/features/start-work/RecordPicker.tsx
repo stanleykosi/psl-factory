@@ -7,17 +7,21 @@ import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } f
 
 import { Button, Loading, SearchField, ShowMore } from '@/components';
 
+import { isNew, type NewValue } from './intake';
+import { allowsNew } from './showWhen';
 import { fetchOptions } from './useStartWork';
 import type { Field, LineOption } from './types';
 
 export const SEARCH_DEBOUNCE_MS = 250;
+/** The last row of a list whose line carries the mock overlay `allow_new` (F-49, G-23-1). */
+export const NEW_CLIENT = 'New client';
 
 type Props = {
   lineKey: string;
   field: Field;
   parent: string | undefined;
-  value: LineOption | LineOption[] | undefined;
-  onChange: (value: LineOption | LineOption[] | undefined) => void;
+  value: LineOption | LineOption[] | NewValue | undefined;
+  onChange: (value: LineOption | LineOption[] | NewValue | undefined) => void;
   disabled: boolean;
   labelId: string;
   describedBy: string | undefined;
@@ -31,7 +35,8 @@ type ListState =
 
 export function RecordPicker({ lineKey, field, parent, value, onChange, disabled, labelId, describedBy, invalid }: Props) {
   const multiple = field.type === 'records';
-  const chosen = multiple ? ((value as LineOption[] | undefined) ?? []) : value ? [value as LineOption] : [];
+  const adding = isNew(value);
+  const chosen = multiple ? ((value as LineOption[] | undefined) ?? []) : value && !adding ? [value as LineOption] : [];
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [query, setQuery] = useState('');
@@ -99,7 +104,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
     onChange(next.length > 0 ? next : undefined);
   }
 
-  function optionKeys(event: KeyboardEvent<HTMLLIElement>, option: LineOption) {
+  function optionKeys(event: KeyboardEvent<HTMLLIElement>, option: LineOption | undefined) {
     const items = [...(listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])];
     const at = items.indexOf(event.currentTarget);
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -109,7 +114,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
       else items[to].focus();
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      choose(option);
+      if (option) choose(option);
     }
   }
 
@@ -120,7 +125,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
     close();
   }
 
-  const shown = chosen.map((c) => c.label).join(', ');
+  const shown = adding ? NEW_CLIENT : chosen.map((c) => c.label).join(', ');
   const placeholder = field.placeholder ?? 'Choose…';
 
   return (
@@ -167,8 +172,8 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
               </Button>
             </p>
           )}
-          {list.status === 'ready' && list.items.length === 0 && <p className="psl-hint sw-picker__empty">Nothing to choose from.</p>}
-          {list.items.length > 0 && (
+          {list.status === 'ready' && list.items.length === 0 && !allowsNew(field) && <p className="psl-hint sw-picker__empty">Nothing to choose from.</p>}
+          {(list.items.length > 0 || (list.status === 'ready' && allowsNew(field))) && (
             <ul ref={listRef} className="psl-listbox" role="listbox" aria-labelledby={labelId} aria-multiselectable={multiple || undefined}>
               {list.items.map((option) => {
                 const selected = chosen.some((c) => c.value === option.value);
@@ -188,6 +193,26 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
                   </li>
                 );
               })}
+              {allowsNew(field) && !multiple && list.status === 'ready' && !list.next && (
+                <li
+                  role="option"
+                  className="psl-option"
+                  tabIndex={-1}
+                  aria-selected={adding}
+                  onClick={() => {
+                    onChange({ new: { name: '' } });
+                    close();
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== 'Enter' && event.key !== ' ') return optionKeys(event, undefined);
+                    event.preventDefault();
+                    onChange({ new: { name: '' } });
+                    close();
+                  }}
+                >
+                  {NEW_CLIENT}
+                </li>
+              )}
             </ul>
           )}
           {list.status === 'error' && list.items.length > 0 && (

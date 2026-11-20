@@ -1,0 +1,139 @@
+{
+  "id": "W-3203",
+  "title": "Internal Tuesday report · 10 Nov",
+  "line": "Leadership report",
+  "reference": "RPT-T-2026-11-10",
+  "state": "waiting",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Publish",
+      "status": "done"
+    },
+    {
+      "name": "Received",
+      "status": "waiting"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T07:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-10T08:00:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Gathered last week's records",
+        "status": "done"
+      },
+      {
+        "text": "Drafted the Tuesday report",
+        "status": "done"
+      },
+      {
+        "text": "Published to the PMO staff",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-10T07:00:00Z"
+  },
+  "next_step": "The factory is checking the last delivery of the Tuesday report.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "tuesday",
+    "status": {
+      "label": "PUBLISHED · NO REVIEW",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "published",
+        "kind": "text",
+        "items": [],
+        "note": "Internal Tuesday reports go out without review. Sent to 6 PMO staff on 10 Nov 09:00; 5 deliveries confirmed, 1 still checking."
+      },
+      {
+        "key": "recipients",
+        "kind": "recipients",
+        "title": "Recipients",
+        "items": [
+          {
+            "id": "R-1",
+            "text": "5 PMO staff",
+            "receipt": "received",
+            "tag": {
+              "label": "DELIVERED",
+              "tone": "verified"
+            },
+            "at": "2026-11-10T08:00:00Z"
+          },
+          {
+            "id": "R-2",
+            "text": "Sola Martins",
+            "receipt": "uncertain",
+            "tag": {
+              "label": "CHECKING",
+              "tone": "uncertain"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "The factory checks the last delivery before marking it received. It won't resend until it knows."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-T-2026-11-10",
+          "label": "RPT-T-2026-11-10"
+        }
+      ]
+    },
+    "revision": 3
+  }
+}

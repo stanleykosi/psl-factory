@@ -17,6 +17,7 @@ import { api, call } from '@/api/client';
 import { Button, Callout, MoneyField as MoneyInput, ValidationSummary, type ButtonKind, type FieldProblem } from '@/components';
 
 import type { Step } from './labels';
+import { stepSubmitLabel } from './proposals';
 import type { StepBody, SubmitResult } from './useWorkspaceStep';
 
 import '@/features/response/response.css';
@@ -34,6 +35,9 @@ const FORM_TEXT = {
   money: 'Enter an amount such as 4250000.00, or leave it blank if it isn’t known.',
   note: `Keep the note to ${NOTE_MAX} characters.`,
   cancel: 'Cancel',
+  discardAsk: 'Discard your changes?',
+  discard: 'Discard',
+  keepEditing: 'Keep editing',
   restricted: 'Restricted',
 } as const;
 
@@ -165,9 +169,13 @@ type FormProps = {
   consequence?: React.ReactNode;
   /** A top summary of the problems, linked to their fields (F-30 criterion 12); other lines draw none. */
   summary?: boolean;
+  /** F-37: Cancel and Escape after a change ask "Discard your changes?" first; without a change they close at once. */
+  askBeforeDiscard?: boolean;
+  /** F-37: set to the form's own close, so a Drawer's close button and scrim ask the same question. */
+  closeRef?: { current: (() => void) | null };
 };
 
-export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, initial, onSubmit, onClose, onAccessError, consequence, summary }: FormProps) {
+export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, initial, onSubmit, onClose, onAccessError, consequence, summary, askBeforeDiscard, closeRef }: FormProps) {
   const fields = step.fields ?? [];
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
@@ -190,10 +198,13 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
       const v = initial?.[f.name];
       if (f.restricted || v === undefined) continue;
       if ((f.type === 'text' || f.type === 'long_text' || f.type === 'date') && typeof v === 'string') opened[f.name] = v;
+      else if (f.type === 'choice' && typeof v === 'string' && f.options?.some((o) => o.value === v)) opened[f.name] = v;
       else if (f.type === 'record' && typeof v === 'object' && v !== null && typeof (v as LineOption).value === 'string' && typeof (v as LineOption).label === 'string') opened[f.name] = v;
     }
     return opened;
   });
+  const [opening] = useState(values);
+  const [discarding, setDiscarding] = useState(false);
   const [evidence, setEvidence] = useState<Record<string, string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [messages, setMessages] = useState<string[]>([]);
@@ -205,6 +216,28 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     heading.current?.focus();
   }, []);
 
+  // Cancel, Escape and a Drawer's close: at once, or after the discard question when asked for and something was typed
+  const changed = askBeforeDiscard === true && JSON.stringify(values) !== JSON.stringify(opening);
+  const requestClose = () => {
+    if (changed) setDiscarding(true);
+    else onClose();
+  };
+  const closer = useRef(requestClose);
+  useEffect(() => {
+    closer.current = requestClose;
+    if (closeRef) closeRef.current = requestClose;
+  });
+  useEffect(
+    () => () => {
+      if (closeRef) closeRef.current = null;
+    },
+    [closeRef],
+  );
+  const discardHead = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (discarding) discardHead.current?.focus();
+  }, [discarding]);
+
   // Escape closes the form with no request, from anywhere inside it.
   useEffect(() => {
     const el = formRef.current;
@@ -213,11 +246,13 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
       // Escape inside an open record picker closes the picker's list only (RecordPicker handles it); the form stays.
       if (event.target instanceof Element && event.target.closest('.sw-picker__pop')) return;
       event.preventDefault();
-      onClose();
+      // a Drawer around the form must not close itself over the question
+      if (askBeforeDiscard) event.stopPropagation();
+      closer.current();
     };
     el?.addEventListener('keydown', onKey);
     return () => el?.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [askBeforeDiscard]);
 
   const setValue = (name: string, value: unknown) => {
     const cleared = dependentsOf(fields as Field[], name);
@@ -322,7 +357,11 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
                 caseRevision={caseRevision}
                 field={field}
                 error={errors[field.name]}
-                onIds={(ids) => setEvidence((current) => ({ ...current, [field.name]: ids }))}
+                onIds={(ids) => {
+                  setEvidence((current) => ({ ...current, [field.name]: ids }));
+                  // a file now uploaded answers the "add proof" message
+                  if (ids.length > 0) setErrors((current) => (current[field.name] === undefined ? current : Object.fromEntries(Object.entries(current).filter(([name]) => name !== field.name))));
+                }}
                 onAccessError={onAccessError}
               />
             );
@@ -345,12 +384,35 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         {step.confirm && <p className="ws-confirm">{step.confirm}</p>}
         <div className="ws-form__actions">
           <Button type="submit" kind={step.emphasis === 'danger' ? 'reject' : 'primary'} busy={pending} busyLabel={`${step.label}…`} aria-disabled={pending || off || undefined}>
-            {submitLabel ?? step.label}
+            {submitLabel ?? stepSubmitLabel(step) ?? step.label}
           </Button>
-          <Button kind="secondary" onClick={onClose}>
+          <Button kind="secondary" onClick={requestClose}>
             {FORM_TEXT.cancel}
           </Button>
         </div>
+        {discarding && (
+          <Callout kind="warning" announce={false} className="ws-discard">
+            <span className="ws-stack">
+              <strong ref={discardHead} tabIndex={-1} role="alert">
+                {FORM_TEXT.discardAsk}
+              </strong>
+              <span className="ws-form__actions">
+                <Button kind="reject" onClick={onClose}>
+                  {FORM_TEXT.discard}
+                </Button>
+                <Button
+                  kind="secondary"
+                  onClick={() => {
+                    setDiscarding(false);
+                    requestAnimationFrame(() => controlOf(fields.find((f) => sent(f))?.name ?? '')?.focus());
+                  }}
+                >
+                  {FORM_TEXT.keepEditing}
+                </Button>
+              </span>
+            </span>
+          </Callout>
+        )}
       </div>
     </form>
   );

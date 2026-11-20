@@ -1,0 +1,62 @@
+{
+  "id": "W-4402",
+  "title": "Ledger source · QB-JE-7741",
+  "line": "Record a ledger source",
+  "reference": "LED-0053",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Read the file",
+      "status": "current_agent"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Record",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading qb_export_je7741.pdf",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Chidi is reading the file. A Finance Lead reviews it next.",
+  "sample": true,
+  "case_id": "C-FIN-LEDGER"
+}

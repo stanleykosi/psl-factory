@@ -1,0 +1,294 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T18:33:30.458Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-35/design/canvas/project/SCR-52-mobile-tuesday.dc.html",
+  "boardName": "SCR-52-mobile-tuesday.dc.html",
+  "pageUrl": "http://localhost:4987/work/W-3203",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-35/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.7 is below 90."
+  ],
+  "scores": {
+    "coverage": 40,
+    "coverageWithExceptions": 100,
+    "visual": 80.7
+  },
+  "visual": {
+    "score": 80.7,
+    "allCellsScore": 90.8,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1120,
+    "mismatchedCells": 216
+  },
+  "coverage": {
+    "total": 5,
+    "found": 2,
+    "coverage": 40,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tuesday report",
+        "pageName": "Internal Tuesday report · 10 Nov",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Tuesday report\" on the board, \"Internal Tuesday report · 10 Nov\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Overview",
+        "key": "link: ← Overview",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 79,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: the phone bar's way back is the frame's (\"← Queue\" to My work, F-17/F-22 as built); the board's wording is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PUBLISHED",
+        "key": "text: PUBLISHED",
+        "container": "page",
+        "boardBox": {
+          "x": 217,
+          "y": 21,
+          "w": 65,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: the phone status is workspace.status as returned at both widths (\"PUBLISHED · NO REVIEW\", D-111).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sent without review. 5 of 6 delivered, 1 checking.",
+        "key": "text: Sent without review. 5 of 6 delivered, 1 checking.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 306,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 10: the phone shows the same sections and words as desktop in one column (D-111): the backend's note sentence, the recipients and Next. The page counts no deliveries.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RPT-T-2026-11-10",
+        "container": "main",
+        "pageBox": {
+          "x": 117,
+          "y": 0,
+          "w": 115,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PUBLISHED · NO REVIEW",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 164,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Internal Tuesday reports go out without review. Sent to 6 PMO staff on 10 Nov 09:00; 5 deliveries confirmed, 1 still checking.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 173,
+          "w": 306,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "RECIPIENTS",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 262,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 446,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The factory checks the last delivery before marking it received. It won't resend until it knows.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 483,
+          "w": 326,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-35/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

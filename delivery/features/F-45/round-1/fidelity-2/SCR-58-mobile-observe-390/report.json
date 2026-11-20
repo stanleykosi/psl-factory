@@ -1,0 +1,368 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T03:20:47.621Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-45/design/canvas/finance/project/SCR-58-mobile-observe.dc.html",
+  "boardName": "SCR-58-mobile-observe.dc.html",
+  "pageUrl": "http://localhost:4956/frozen/SCR-58-mobile-observe-390.html",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-45/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 77.8 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 83.3,
+    "coverageWithExceptions": 100,
+    "visual": 77.8
+  },
+  "visual": {
+    "score": 77.8,
+    "allCellsScore": 78.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2294,
+    "mismatchedCells": 509
+  },
+  "coverage": {
+    "total": 6,
+    "found": 5,
+    "coverage": 83.3,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LED-0052",
+        "pageName": "LED-0052",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Record what you found",
+        "pageName": "QuickBooks journal JE-7741 · October",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Record what you found\" on the board, \"QuickBooks journal JE-7741 · October\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STATION 3 OF 5 · RECORD WHAT WAS FOUND",
+        "pageName": "STATION 3 OF 5 · RECORD WHAT WAS FOUND",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 118,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 181,
+          "w": 274,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record observation",
+        "pageName": "Record observation",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #1F2427 on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 768,
+          "w": 220,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 12: the phone bar's way back is the frame's (F-17/F-22/F-33/F-42 as built); the board's wording is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"LED-0052\"",
+        "kind": "Text",
+        "name": "LED-0052",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Link \"Record observation\"",
+        "kind": "Link",
+        "name": "Record observation",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 768,
+          "w": 220,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECORD WHAT YOU FOUND",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 175,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Record observation",
+        "container": "page",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 390,
+          "h": 844
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 330,
+          "y": 22,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "Record observation",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 94,
+          "w": 358,
+          "h": 736
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: an independent reviewer (not Bisi, who captured it, and not you) decides.",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 94,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Cancel",
+        "container": "form",
+        "pageBox": {
+          "x": 246,
+          "y": 768,
+          "w": 128,
+          "h": 50
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-45/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

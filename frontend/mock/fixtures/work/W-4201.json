@@ -1,0 +1,146 @@
+{
+  "id": "W-4201",
+  "title": "QuickBooks journal JE-7741 · October",
+  "line": "Ledger sources",
+  "reference": "LED-0052",
+  "state": "processing",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "current_agent"
+    },
+    {
+      "name": "Capture lineage",
+      "status": "not_started"
+    },
+    {
+      "name": "Record what was found",
+      "status": "not_started"
+    },
+    {
+      "name": "Independent review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read the ledger source file",
+        "status": "done",
+        "source": "QB_EXPORT_JE7741.PDF"
+      },
+      {
+        "text": "Checked date and period",
+        "status": "done",
+        "source": "28 OCT · 2026-10"
+      },
+      {
+        "text": "Checked where it came from",
+        "status": "done",
+        "source": "QUICKBOOKS · REALM PSL-NG"
+      },
+      {
+        "text": "Capture the lineage",
+        "status": "not_started"
+      }
+    ],
+    "started_at": "2026-11-14T14:12:00Z"
+  },
+  "next_step": "Chidi is reading the ledger source file. A second Finance person looks the entry up in QuickBooks when Chidi hands it over.",
+  "sample": true,
+  "case_id": "C-LED-0052",
+  "case_revision": 4,
+  "workspace": {
+    "line_key": "ledger_sources",
+    "screen": "SCR-58",
+    "view": "investigating",
+    "status": {
+      "label": "CHIDI INVESTIGATING",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "source",
+        "kind": "facts",
+        "title": "Source",
+        "items": [
+          {
+            "id": "S-1",
+            "label": "Provider",
+            "value": "QUICKBOOKS"
+          },
+          {
+            "id": "S-2",
+            "label": "Reference",
+            "value": "JE-7741"
+          },
+          {
+            "id": "S-3",
+            "label": "Treatment",
+            "value": "ACCRUAL REVERSAL"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_chidi",
+        "label": "Ask Chidi",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "ledger_sources",
+          "label": "LEDGER SOURCES"
+        },
+        {
+          "value": "LED-0052",
+          "label": "LED-0052"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

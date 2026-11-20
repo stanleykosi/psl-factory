@@ -170,11 +170,11 @@ describe('the main button and the chooser', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('only lines E-LINES returned are offered (finance_lead: exactly 1; a /me key missing from E-LINES is absent)', async () => {
+  it('only lines E-LINES returned are offered (finance_lead: exactly 5; a /me key missing from E-LINES is absent)', async () => {
     persona = 'finance_lead';
     await openChooser();
-    expect(within(dialog()).getByText('LINES YOU CAN START · 1')).toBeTruthy();
-    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice']);
+    expect(within(dialog()).getByText('LINES YOU CAN START · 5')).toBeTruthy();
+    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice', 'income_schedules', 'ledger_sources', 'fixed_assets', 'cash_forecast']);
   });
 
   it('E-LINES is read on every press, never before', async () => {
@@ -202,12 +202,14 @@ describe('the main button and the chooser', () => {
     expect(chevron.getAttribute('aria-expanded')).toBe('true');
     const close = within(dialog()).getByRole('button', { name: 'Close' });
     const back = within(dialog()).getByRole('button', { name: 'Back' });
+    // the drawer moves focus to its first field once the chooser has loaded; wait for that before moving focus ourselves
+    await waitFor(() => expect(document.activeElement?.tagName).toBe('INPUT'));
     back.focus();
     // Next is disabled, so Back is the last focusable: Tab wraps to Close.
     fireEvent.keyDown(back, { key: 'Tab' });
-    expect(document.activeElement).toBe(close);
+    await waitFor(() => expect(document.activeElement).toBe(close));
     fireEvent.keyDown(close, { key: 'Tab', shiftKey: true });
-    expect(document.activeElement).toBe(back);
+    await waitFor(() => expect(document.activeElement).toBe(back));
     fireEvent.keyDown(dialog(), { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(document.activeElement).toBe(chevron));
@@ -328,7 +330,7 @@ describe('fields by kind', () => {
     expect(request.getAttribute('aria-describedby')!.split(' ')).toContain(hint.id);
   });
 
-  it('an optional money field is not rendered; an optional evidence field is drawn disabled; neither is sent', async () => {
+  it('an optional money field is not rendered; an optional evidence field is the live Proof box, and nothing is sent for it until a file is uploaded', async () => {
     const intake: Field[] = [
       { name: 'note', label: 'Note', type: 'text', required: false },
       { name: 'fee', label: 'Fee', type: 'money', required: false },
@@ -338,9 +340,8 @@ describe('fields by kind', () => {
     await openMain();
     expect(within(dialog()).queryByText(/Fee/)).toBeNull();
     expect(within(dialog()).getByText('Proof')).toBeTruthy();
-    const proof = within(dialog()).getByText('Proof upload comes next');
-    expect(proof.getAttribute('aria-disabled')).toBe('true');
-    expect(proof.closest('[data-field]')!.querySelector('input, button')).toBeNull();
+    const proof = within(dialog()).getByRole('group', { name: 'Proof' });
+    expect(within(proof).getByRole('button', { name: 'Choose a file' })).toHaveProperty('disabled', false);
     fireEvent.change(within(dialog()).getByRole('textbox', { name: 'Note (optional)' }), { target: { value: 'hi' } });
     press('Start work');
     await waitFor(() => expect(posts).toHaveLength(1));
@@ -480,28 +481,21 @@ describe('the case and the start request', () => {
 });
 
 describe('server answers', () => {
-  it('422: the missing milestone is named inline, the callout counts it, focus moves there, and the next press uses a new key', async () => {
+  it('a required field left empty is named inline, focus moves to the first, and nothing is sent', async () => {
     await invoiceWith();
     press('Start the invoice');
     const message = await within(dialog()).findByText('Completed milestone is required.');
     const milestone = within(dialog()).getByRole('combobox', { name: 'Completed milestone' });
     expect(milestone.getAttribute('aria-invalid')).toBe('true');
     expect(milestone.getAttribute('aria-describedby')!.split(' ')).toContain(message.closest('.psl-error')!.id);
-    const callout = within(dialog()).getByRole('alert');
-    expect(callout.textContent).toBe('1 thing to fix before Chidi can start.');
-    expect(document.activeElement).toBe(callout);
-    // The count replaces the head's subline; the eyebrow stays (SCR-04-desktop-validation).
-    expect(within(dialog()).getByText('1 thing to fix')).toBeTruthy();
-    expect(within(dialog()).getByText('START WORK')).toBeTruthy();
-    // The start button is greyed until something changes (UX-1-3).
-    const start = within(dialog()).getByRole('button', { name: 'Start the invoice' }) as HTMLButtonElement;
-    expect(start.disabled).toBe(true);
+    await waitFor(() => expect(document.activeElement).toBe(milestone));
+    expect(posts).toHaveLength(0);
+    // the message goes when the field is changed, and the next press sends one start
     await pick('Completed milestone', 'Milestone 3');
-    expect(start.disabled).toBe(false);
+    expect(within(dialog()).queryByText('Completed milestone is required.')).toBeNull();
     press('Start the invoice');
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-1401'));
-    expect(posts).toHaveLength(2);
-    expect(posts[1].body.idempotency_key).not.toBe(posts[0].body.idempotency_key);
+    expect(posts).toHaveLength(1);
   });
 
   it('422: a message for a field the drawer does not render is drawn as its own box, as the validation board shows', async () => {
@@ -519,7 +513,7 @@ describe('server answers', () => {
     );
   });
 
-  it('422: a problem for the disabled proof box, or one name twice, is drawn as its own boxes', async () => {
+  it('422: a problem for Proof sits under the Proof box; one for a field not rendered, or one name twice, is drawn as its own boxes', async () => {
     override = (request, url) => {
       if (request.method === 'POST')
         return json(422, {
@@ -544,7 +538,8 @@ describe('server answers', () => {
       ['billing_contact', 'First.'],
       ['billing_contact', 'Second.'],
     ]);
-    expect(dialog().querySelector('.sw-proof')!.parentElement!.querySelector('.psl-error')).toBeNull();
+    expect(boxes[0].tagName).toBe('FIELDSET');
+    expect(within(boxes[0] as HTMLElement).getByRole('group', { name: 'Proof' })).toBeTruthy();
   });
 
   it('a double press sends one start', async () => {
@@ -652,6 +647,9 @@ describe('server answers', () => {
     await openChooser();
     fireEvent.click(within(dialog()).getByRole('radio', { name: /Leadership report/ }));
     press('Next');
+    fireEvent.click(within(dialog()).getByRole('radio', { name: 'Internal Tuesday' }));
+    fireEvent.change(within(dialog()).getByLabelText('Period'), { target: { value: '17 Nov 2026' } });
+    fireEvent.blur(within(dialog()).getByLabelText('Period'));
     press('Start report');
     expect(await within(dialog()).findByText('You can no longer start this line.')).toBeTruthy();
     expect(within(dialog()).queryByRole('button', { name: 'Start report' })).toBeNull();

@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-52-desktop-drafting-1440	1440	76.2	100	85.9	False
+SCR-52-desktop-review-1440	1440	76.2	100	81.6	False
+SCR-52-desktop-tuesday-1440	1440	84.2	100	86.6	False
+SCR-52-desktop-received-1440	1440	78.9	100	86.3	False
+SCR-52-mobile-drafting-390	390	62.5	100	84.9	False
+SCR-52-mobile-review-390	390	80	100	77.5	False
+SCR-52-mobile-tuesday-390	390	40	100	80.7	False
+SCR-52-mobile-received-390	390	40	100	71.9	False

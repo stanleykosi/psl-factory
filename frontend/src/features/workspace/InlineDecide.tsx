@@ -33,9 +33,12 @@ export const DECIDE_TEXT = {
   loadFailed: 'We couldn’t load this review. Nothing was changed.',
   notOpen: 'This review isn’t open to you here.',
   stale: 'This review changed while you were reading it, so nothing was recorded.',
+  goesTo: (recipient: string) => `Goes to ${recipient}`,
+  noteNotSent: (note: string) => `Your note wasn’t sent: “${note}”`,
   latest: 'Review the latest',
   unconfirmed: 'We couldn’t confirm whether your decision was recorded, and we couldn’t reload this item to check, so the decision buttons stay off. Try again reloads the item; it doesn’t send your decision again.',
   recorded: (label: string) => `Decision recorded on ${label}`,
+  staleNext: 'Read the current version above; nothing was recorded for you.',
   notConfirmed: (label: string) => `${label}: result not confirmed`,
   cancel: 'Cancel',
   tryAgain: 'Try again',
@@ -67,9 +70,12 @@ type Props = {
   onDecided: (notice: DecidedNotice) => void;
   /** A decide is about to be sent: the page clears its earlier notices so this one's outcome is the one shown. */
   onDeciding: () => void;
+  /** QA-2-1: the decide answered 409 and nothing was recorded, with the note it carried ('' for approve). The page keeps
+   *  this when the re-read closes the task (someone else decided) and this panel goes with it. */
+  onStale: (note: string) => void;
 };
 
-export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDeciding }: Props) {
+export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDeciding, onStale }: Props) {
   const review = useDecision(id, taskId);
   const { view, claim, submit } = review;
   const phone = useIsPhone();
@@ -96,11 +102,14 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
   const reconciled = view.kind === 'item' && review.uncertain && submit.status === 'idle';
   const settled = doneRead ? view.result : view.kind === 'stale' || view.kind === 'forbidden' || reconciled ? view : null;
   const handled = useRef<unknown>(null);
+  // the note the last decide carried, so a 409 can say it was not sent
+  const sentNote = useRef('');
   const { reload } = page;
   useEffect(() => {
     if (!settled || handled.current === settled) return;
     handled.current = settled;
     if (view.kind !== 'done') {
+      if (view.kind === 'stale') onStale(sentNote.current);
       void reload();
       return;
     }
@@ -118,7 +127,7 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
         revision: now?.workspace?.revision,
       });
     });
-  }, [settled, view, onDecided, reload]);
+  }, [settled, view, onDecided, onStale, reload]);
 
   const task = view.kind === 'item' ? findDecisionTask(view.item, taskId) : undefined;
   const offered = steps.map((step) => ({ step, verdict: stepVerdict(step)! }));
@@ -153,7 +162,8 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
   const send = async (verdict: Verdict) => {
     if (!ready || busy || off) return;
     onDeciding();
-    await review.decide(verdict, verdict === 'approve' ? '' : note.trim());
+    sentNote.current = verdict === 'approve' ? '' : note.trim();
+    await review.decide(verdict, sentNote.current);
   };
 
   const press = (step: Step, verdict: Verdict, inSheet = false) => {
@@ -219,6 +229,12 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
     </>
   );
 
+  // F-38: a step the backend holds says why, in words beside the buttons (never a disabled button with no reason)
+  const holds = offered.filter(({ step }) => step.disabled_reason).map(({ step }) => (
+    <p key={step.key} id={`${headId}-hold-${step.key}`} className="ws-consequence">
+      {step.disabled_reason}
+    </p>
+  ));
   const buttons = offered.map(({ step, verdict }) => (
     <Button
       key={step.key}
@@ -229,8 +245,8 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
       size="lg"
       busy={busy && submit.verdict === verdict && !sheet}
       busyLabel={VERDICT_WORDS[verdict].busy}
-      disabled={!ready || off || (busy && submit.verdict !== verdict)}
-      aria-describedby={claim?.status === 'pending' ? waiting : undefined}
+      disabled={!ready || off || (busy && submit.verdict !== verdict) || Boolean(step.disabled_reason)}
+      aria-describedby={[claim?.status === 'pending' ? waiting : undefined, step.disabled_reason ? `${headId}-hold-${step.key}` : undefined].filter(Boolean).join(' ') || undefined}
       aria-haspopup={phone && verdict !== 'approve' ? 'dialog' : undefined}
       onClick={() => press(step, verdict)}
     >
@@ -296,15 +312,32 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
   if (!task) return <p className="ws-consequence">{DECIDE_TEXT.notOpen}</p>;
   if (!canAct) {
     const copy = cannotActCopy(task.cannot_act_reason, task);
+    // F-39: who was asked, only when the response sends it (nothing is drawn without `asked`)
+    const asked = task.asked ?? [];
     return panel(
-      <p className="ws-consequence">
-        <strong>{copy.heading}</strong>
-        {copy.text && <> {copy.text}</>}
-      </p>,
+      <>
+        <p className="ws-consequence">
+          <strong>{copy.heading}</strong>
+          {copy.text && <> {copy.text}</>}
+        </p>
+        {asked.length > 0 && (
+          <p className="ws-consequence">
+            {asked.map((person) => `${person.name} · ${person.role}`).join(', ')}
+          </p>
+        )}
+      </>,
     );
   }
 
   const basis = task.decision.basis;
+  // F-38: where the approved output goes, only when the response says (a sent version names its recipient)
+  // and the exact version being decided on (decision.version.label) is named with it (TECH-1-1)
+  const recipient = task.decision.recipient?.trim() ? (
+    <>
+      {task.decision.version?.label && <p className="ws-consequence">{task.decision.version.label}</p>}
+      <p className="ws-consequence">{DECIDE_TEXT.goesTo(task.decision.recipient)}</p>
+    </>
+  ) : null;
   // the steps' consequences close the panel as its small print (muted, hint size), as the board draws them
   const consequences = (
     <div className="ws-idecide__after">
@@ -318,6 +351,7 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
       <>
         <div className="ws-idecide__words">
           {basis && <p className="ws-consequence">{basis}</p>}
+          {recipient}
           {consequences}
           {review.uncertain && <UncertainNotice />}
         </div>
@@ -325,6 +359,7 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
           <>
             {notices}
             <div className="ws-idecide__buttons">{buttons}</div>
+            {holds}
           </>,
           false,
         )}
@@ -355,9 +390,11 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
       {panel(
         <>
           {basis && <p className="ws-consequence">{basis}</p>}
+          {recipient}
           {needsNote && noteField(noteRef)}
           {notices}
           <div className="ws-idecide__buttons">{buttons}</div>
+          {holds}
           {consequences}
         </>,
         false,

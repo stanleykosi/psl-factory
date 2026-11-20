@@ -1,0 +1,6 @@
+{
+  "send_reminder": {
+    "status": 500,
+    "next": true
+  }
+}

@@ -1,0 +1,1002 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T03:20:09.564Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-45/design/canvas/finance/project/SCR-58-desktop-review.dc.html",
+  "boardName": "SCR-58-desktop-review.dc.html",
+  "pageUrl": "http://localhost:4955/work/W-4203",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-45/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.2 is below 90.",
+    "5 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 88.2,
+    "coverageWithExceptions": 100,
+    "visual": 81.2
+  },
+  "visual": {
+    "score": 81.2,
+    "allCellsScore": 93,
+    "width": 1440,
+    "height": 1000,
+    "boardHeight": 1000,
+    "pageHeight": 1000,
+    "cell": 12,
+    "contentCells": 3745,
+    "mismatchedCells": 704
+  },
+  "coverage": {
+    "total": 34,
+    "found": 30,
+    "coverage": 88.2,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 599
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 634
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "QuickBooks journal JE-7741 · October",
+        "pageName": "QuickBooks journal JE-7741 · October",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 746,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 737,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AWAITING FINANCE DECISION",
+        "pageName": "AWAITING FINANCE DECISION",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1159,
+          "y": 133,
+          "w": 193,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1153,
+          "y": 120,
+          "w": 199,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "01",
+        "pageName": "01",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 100,
+          "y": 184,
+          "w": 153,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 189,
+          "w": 158,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi investigates",
+        "pageName": "Chidi investigates",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 100,
+          "y": 200,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 203,
+          "w": 158,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "02",
+        "pageName": "02",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 281,
+          "y": 184,
+          "w": 153,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 280,
+          "y": 189,
+          "w": 158,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Capture lineage",
+        "pageName": "Capture lineage",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 281,
+          "y": 200,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 280,
+          "y": 203,
+          "w": 158,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "03",
+        "pageName": "03",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 462,
+          "y": 184,
+          "w": 153,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 459,
+          "y": 189,
+          "w": 158,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Record what was found",
+        "pageName": "Record what was found",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 462,
+          "y": 200,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 459,
+          "y": 203,
+          "w": 158,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "04",
+        "pageName": "04",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 643,
+          "y": 184,
+          "w": 153,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 639,
+          "y": 189,
+          "w": 158,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Independent review",
+        "pageName": "Independent review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 643,
+          "y": 200,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 639,
+          "y": 203,
+          "w": 158,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "05",
+        "pageName": "05",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 825,
+          "y": 184,
+          "w": 153,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 818,
+          "y": 189,
+          "w": 160,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified",
+        "pageName": "Verified",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 825,
+          "y": 200,
+          "w": 153,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 818,
+          "y": 203,
+          "w": 160,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "EVIDENCE",
+        "pageName": "EVIDENCE",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 242,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 246,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 174,
+          "w": 340,
+          "h": 425
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 179,
+          "w": 340,
+          "h": 456
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECIDE · LEDGER REVIEWER",
+        "pageName": "DECIDE · LEDGER REVIEWER",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#C8401C), none on the board"
+        ],
+        "boardBox": {
+          "x": 1014,
+          "y": 176,
+          "w": 336,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 181,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approve JE-7741 as a supplied reference. You captured nothing and observed nothing here, so you can review.",
+        "pageName": "Approve JE-7741 as a supplied reference. You captured nothing and observed nothing here, so you can review.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 225,
+          "w": 308,
+          "h": 63
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 238,
+          "w": 308,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Approve reference",
+        "pageName": "Approve reference",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 412,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 440,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Reject",
+        "pageName": "Reject",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 470,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 498,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ledger review is approve or reject only. Approving records a reference; nothing is posted and authenticity isn't certified.",
+        "pageName": "Ledger review is approve or reject only. Approving records a reference; nothing is posted and authenticity isn’t certified.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 532,
+          "w": 308,
+          "h": 51
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 560,
+          "w": 308,
+          "h": 59
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE / LEDGER SOURCES / LED-0052",
+        "key": "text: FINANCE / LEDGER SOURCES / LED-0052",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 12: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22/F-33/F-42 frame as built), not one text line; the words come from the crumbs.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SAMPLE DATA",
+        "key": "text: SAMPLE DATA",
+        "container": "main",
+        "boardBox": {
+          "x": 1064,
+          "y": 133,
+          "w": 87,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all 13 fixtures). Not a spec Conflicts item.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Note (needed to return, reject or withdraw)",
+        "key": "text: Note (needed to return, reject or withdraw)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 300,
+          "w": 308,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 7: the note label lists only the verdicts offered that need a note, \"Note (needed to reject)\"; Return and Withdraw are not offered on a ledger review.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(needed to return, reject or withdraw)",
+        "key": "text: (needed to return, reject or withdraw)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1062,
+          "y": 300,
+          "w": 236,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 7: as above, \"(needed to reject)\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Text \"Ada Okafor · Finance Lead\"",
+        "kind": "Text",
+        "name": "Ada Okafor · Finance Lead",
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Setup\"",
+          "across the page: right on the board (89% across), right on the page (77% across)"
+        ]
+      },
+      {
+        "label": "Heading \"QuickBooks journal JE-7741 · October\"",
+        "kind": "Heading",
+        "name": "QuickBooks journal JE-7741 · October",
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 746,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 737,
+          "h": 35
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Ada Okafor · Finance Lead\"; on the page it comes after Text \"AWAITING FINANCE DECISION\""
+        ]
+      },
+      {
+        "label": "Text \"DECIDE · LEDGER REVIEWER\"",
+        "kind": "Text",
+        "name": "DECIDE · LEDGER REVIEWER",
+        "boardBox": {
+          "x": 1014,
+          "y": 176,
+          "w": 336,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 181,
+          "w": 336,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"05\"; on the page it comes after Text \"Verified\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 979,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 262,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LEDGER SOURCES",
+        "container": "navigation",
+        "pageBox": {
+          "x": 142,
+          "y": 85,
+          "w": 127,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LED-0052",
+        "container": "navigation",
+        "pageBox": {
+          "x": 269,
+          "y": 85,
+          "w": 81,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Stations in order",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 181,
+          "w": 898,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(needed to reject)",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1062,
+          "y": 314,
+          "w": 112,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (needed to reject)",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 340,
+          "w": 308,
+          "h": 88
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-45/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

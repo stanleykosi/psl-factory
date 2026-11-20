@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-security
-COMMIT: 8d7da0c400b19e41356a0230e1328978452bc763
+COMMIT: cfd8a916060e08c73e7217af956fe4d3b98f41a1
 AUTHORITY: delivery security review
 
 ## Summary
@@ -15,3 +15,11 @@ None.
 
 ## Verified
 - Round-1 note (ownsUpload routes on kind only) | verified | start-work.mjs ownsUpload now also requires caseBase(...) !== undefined. The routing test shows a kind on a case the line doesn't start on, or for another persona, returns false.
+
+## Update for head cfd8a916 (diff 8d7da0c4..cfd8a916)
+
+- None of F-47's files (start-work intake, ProofField, useEvidenceUpload, server.mjs, me.finance_lead.json) changed in 8d7da0c4..cfd8a916; the only F-47 file touched is tests/mock-contract.test.ts, which gained F-31, F-32 and F-33 proposal checks.
+- Re-run on the worktree: start-work, response and mock-contract tests, 9 files, 571 passed. checks.sh passed (2552) and e2e passed (99) per build.md.
+- F-31 response Drawer and F-33 lines are untouched by F-47 and their tests pass.
+
+Verdict unchanged.

@@ -57,6 +57,9 @@
 .ws-crumbs li + li::before { content: '/'; padding: 0 var(--space-6px); color: var(--ink-muted); }
 .ws-titleline { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
 .ws-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-page-title-phone-22-size); line-height: 1.15; overflow-wrap: anywhere; }
+/* F-38: the submission boards draw the title at 24px (20px on a phone), wide-set like the frame's */
+.ws-title--submission { font-size: var(--text-title-size); font-stretch: 112%; }
+@media (max-width: 767px) { .ws-title--submission { font-size: var(--text-drawer-title-size); } }
 .ws-status { align-self: flex-start; padding: 3px var(--space-2); font-size: var(--text-small-size); font-weight: 600; text-transform: uppercase; white-space: nowrap; }
 .ws-subtitle, .ws-byline { margin: 0; color: var(--ink-muted); }
 .ws-byline { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: baseline; }
@@ -71,6 +74,10 @@
 .ws-empty, .ws-restricted { margin: 0; line-height: 1.5; }
 .ws-empty, .ws-restricted { color: var(--ink-muted); }
 .ws-detail { font-size: var(--text-hint-size); color: var(--ink-muted); }
+/* PROPOSAL (F-41 G-SCR32-3): the file that goes with a message, as the SCR-32 board draws it (dashed box, paperclip); text only, never a link.
+   Drawn only for an item that carries `attachment`; today that is the payment reminder alone. */
+.ws-attachment { display: flex; align-items: center; gap: var(--space-10px); margin-top: var(--space-2); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--surface); color: var(--ink); }
+.ws-attachment__meta { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* rows */
 .ws-rows { list-style: none; margin: 0; padding: 0; }
@@ -163,7 +170,14 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-table--stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .ws-table--stack:not(:has(.ws-table__steps)) tr { display: block; padding: var(--space-6px) 0; border-top: var(--rule-thin) solid var(--rule-soft); }
   .ws-table--stack td[data-label] { display: grid; grid-template-columns: 5rem minmax(0, 1fr); column-gap: var(--space-10px); white-space: normal; border: none; align-items: center; }
+  .ws[data-line="rfp_response"] .ws-table--stack td[data-label] { justify-items: start; }
+  .ws[data-line="rfp_response"] .ws-cite a.ws-ref { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+  .ws-table--stack td.psl-check-cell, .ws-table--stack th.psl-check-cell { border: none; }
   .ws-table--stack td[data-label]::before { content: attr(data-label); font-size: var(--text-small-size); color: var(--ink-muted); text-transform: uppercase; }
+  /* F-37: a stacked table with a select-all box keeps that one header cell on screen, so the box can be pressed */
+  .ws-table:has(thead th.ws-selectall) thead { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
+  .ws-table:has(thead th.ws-selectall) thead tr { display: block; padding: 0; border: none; }
+  .ws-table:has(thead th.ws-selectall) thead th:not(.ws-selectall) { display: none; }
   /* the columns collapse into one flow; each section stays a white box with the ink border (D-63) */
   .ws-cols, .ws-main, .ws-side { display: contents; }
   .ws-section, .ws-section--suggestions, .ws-form { border: var(--rule-strong) solid var(--ink); background: var(--surface); }
@@ -250,6 +264,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 }
 /* QA-2-1: the uploaded file chip's remove button is a 44px target inside a Drawer (F-18's own page is unchanged) */
 .cmp-panel .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
+/* QA-2-1 (F-34): and in the step form on a phone (F-18's own page is unchanged) */
+@media (max-width: 719.98px) { .ws-form .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); } }
 
 /* F-33: the income schedule boards: the stations in the main column, the working agent's card beside the sections,
    and the decision steps decided in place (InlineDecide) in the side column */
@@ -268,3 +284,64 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-idecide__buttons > :first-child { grid-column: 1 / -1; }
   .ws-lineagent .psl-agent__foot .psl-link { display: inline-flex; align-items: center; min-height: var(--control-md); }
 }
+
+/* F-42: the fixed asset tables stack on a phone, each cell with its column label, so no column is cut off or scrolled to */
+@media (max-width: 719.98px) {
+  .ws[data-line="fixed_assets"] .ws-table { min-width: 0; }
+  .ws[data-line="fixed_assets"] .ws-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .ws[data-line="fixed_assets"] .ws-table tr { display: block; padding: var(--space-6px) 0; border-top: var(--rule-thin) solid var(--rule-soft); }
+  .ws[data-line="fixed_assets"] .ws-table td[data-label] { display: grid; grid-template-columns: 7rem minmax(0, 1fr); column-gap: var(--space-10px); white-space: normal; border: none; align-items: center; }
+  .ws[data-line="fixed_assets"] .ws-table td[data-label]::before { content: attr(data-label); font-size: var(--text-small-size); color: var(--ink-muted); text-transform: uppercase; }
+}
+/* F-42 (UI-1-1): the proof row draws the file name as returned, in body text, with its detail ("Uploaded · 64 KB") under it, as the board does */
+.ws[data-line="fixed_assets"] .ws-rows--text .ws-row { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0; }
+.ws[data-line="fixed_assets"] .ws-rows--text .ws-row__end { order: -1; }
+.ws[data-line="fixed_assets"] .ws-rows--text .ws-cite, .ws[data-line="fixed_assets"] .ws-rows--text .ws-ref { font-family: var(--font-sans); font-size: var(--text-body-size); color: var(--ink); text-transform: none; font-weight: 600; overflow-wrap: anywhere; }
+
+/* F-40: the support-handover reply is drawn in place in the main column (SCR-48 record), on F-18's flow */
+.ws-respinline .resp-form--handover .resp-gaps { min-height: calc(var(--control-md) * 2); }
+.ws-respinline .resp-form--handover { gap: var(--space-18px); }
+@media (max-width: 719.98px) {
+  .ws-respinline .resp-form--handover .resp-row { grid-template-columns: minmax(0, 1fr); }
+  .ws-respinline .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
+  .ws-respinline .resp-form--handover .psl-input:not(textarea) { min-height: var(--control-phone); }
+  .ws-respinline .resp-attest { min-height: var(--control-phone); align-items: center; }
+  /* UI-1-4: the phone board has no card; the screen heading above names the form, the panel head stays for screen readers */
+  .ws-respinline { background: none; border: none; }
+  .ws-respinline .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .ws-respinline .psl-panel__body { padding: 0; }
+}
+/* UI-1-3: Support replied is one field: who replied and when, side by side */
+.ws-respinline .resp-replied { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10px); }
+.ws-respinline .resp-replied .resp-static { flex: 1 1 auto; }
+.ws-respinline .resp-replied .resp-field { flex: 0 1 14rem; }
+
+/* UI-1-2: the handover rows are a label with its value at the far end in mono caps, as SCR-48 draws them; a neutral tag is plain text, any other tone stays a chip */
+.ws[data-line="delivery_handover"] .ws-rows--checklist .ws-row__main, .ws[data-line="delivery_handover"] .ws-rows--checklist .ws-stack { flex: 1 1 auto; }
+.ws[data-line="delivery_handover"] .ws-rows--checklist .ws-stack > span:first-child { display: flex; justify-content: space-between; align-items: center; gap: var(--space-10px); }
+.ws[data-line="delivery_handover"] .ws-rows--checklist .psl-tag--neutral { padding: 0; background: none; font-family: var(--font-mono); font-weight: 400; color: var(--ink-muted); text-transform: uppercase; }
+
+/* F-45: the ledger source boards draw the stations as small boxes with the number and the name; the status word stays for
+   screen readers. Their facts read the label in body weight, as the boards draw them. */
+.ws[data-line="ledger_sources"] .ws-stations .psl-station { min-height: 0; padding: var(--space-2) var(--space-10px); gap: 0; }
+.ws[data-line="ledger_sources"] .ws-stations .psl-station strong { font-family: var(--font-sans); font-size: var(--text-hint-size); font-weight: 600; line-height: 1.3; }
+.ws[data-line="ledger_sources"] .ws-stations .psl-station span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ws[data-line="ledger_sources"] .ws-fact dt { font-weight: 400; }
+/* F-43: the cash forecast board draws its eight stations as equal columns that shrink to fit the main column (no sideways scroll) */
+.ws[data-line="cash_forecast"] .ws-stations .psl-track { grid-auto-columns: minmax(0, 1fr); }
+.ws[data-line="cash_forecast"] .ws-stations .psl-station { min-width: 0; }
+/* F-43 (UI-1-1): the verified figures are the board's dark strip, each label over its value; a cell's tag tone colours it (six columns
+   on desktop, three on a phone). The one-sentence limit under it is a muted caption with no panel. */
+.ws-section--figures.ws-section--strip { border: var(--rule-strong) solid var(--ink); background: var(--ink); }
+.ws-section--figures.ws-section--strip .ws-section__body { padding: 0; }
+.ws-figstrip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--rule-strong); margin: 0; }
+.ws-figstrip__cell { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; padding: var(--space-2); background: var(--ink); color: var(--on-strong); }
+.ws-figstrip__cell[data-tone="done"] { background: var(--verified); }
+.ws-figstrip dt { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: .06em; }
+.ws-figstrip dd { margin: 0; font-family: var(--font-display); font-weight: 700; overflow-wrap: anywhere; }
+@media (min-width: 720px) {
+  .ws-figstrip { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; }
+  .ws-figstrip__cell { padding: var(--space-3) var(--space-14px); }
+  .ws-figstrip dd { font-size: var(--text-fact-size); }
+}
+.ws-caption { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }

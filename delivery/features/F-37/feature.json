@@ -3,26 +3,67 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-37",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "RFP response, part 1: the PM works through the RFP's requirements inside the RFP frame, and accepts, edits or replaces each of Tola's suggested answers (contract mock only)",
+  "state": "DONE",
   "task_ids": [
     "FE-RFP-RESPONSE"
   ],
-  "operation_ids": [],
-  "acceptance_criteria": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-WORK-STEP",
+    "E-RESPONSE",
+    "E-EVIDENCE-UPLOAD",
+    "E-TASK-CLAIM"
+  ],
+  "acceptance_criteria": [
+    "**Frame from `rfp`.** On `/work/W-3401` at 1440 the page shows the RFP frame: eyebrow \"Pre-sale / RFP \u00b7 TL-RFP-2026-014\", the one h1 \"Tamarind Loans \u00b7 loan origination RFP\", \"DEADLINE 28 NOV \u00b7 16 DAYS\", \"PM Tunde Bello\", and the tabs in returned order. Requirements has `aria-current=\"page\"` and is not a link. Team input links to `/work/W-3401/respond?task=T-3401`. Pricing, Submission and Outcome are plain text, not focusable. A \"History\" link goes to `/work/W-3401/history`. On `/work/W-3401/respond?task=T-3401`, Team input is current and Requirements links to `/work/W-3401`. At 390 there is no frame; the header shows the title and the deadline tag, and the back link reads \"\u2190 Queue\". \u2014 verify: `cd frontend && npx vitest run tests/rfp-requirements.test.tsx`; pages at 1440 and 390.",
+    "**Rows, progress and Tola from data.** W-3401 shows R-01 to R-06, each with its requirement, \"RFP p.N\", answer and status tag as returned, \"6 of 64\" in the inert toolbar, the three Progress figures with their note, Tola's note labelled as Tola's, and the \"Before review\" checklist with Engineering and QA done (date and file as returned) and \"Record\" on Security and Product. No board string is in `src` (`grep -rn \"38 of 64\\|NEEDS CLARIFICATION\\|SUGGESTED BY TOLA\\|Harmattan\" frontend/src` returns nothing). A copy with a different figure value shows that value; nothing on the page counts rows. \u2014 verify: component tests on the fixture and on modified copies.",
+    "**Unknown never 0; no price.** A copy whose \"Requirements answered\" figure has no value shows \"Unknown\", never \"0\" or a blank. A copy with no `total` shows no \"of\" count. No \"\u20a6\", amount, rate or costing version appears on any F-37 page (`document.body.textContent` checked on W-3401 to W-3404). \u2014 verify: component tests on modified copies.",
+    "**Send for review only as returned.** \"Send for review\" is a disabled button with the returned reason \"Available once every requirement has an answer and all four teams have given input.\" and its consequence. It has no href, and pressing it, or pressing Enter on it, sends no request. A copy without the step draws no button. \u2014 verify: component test with a recording `fetch`.",
+    "**Record links to the team-input form.** \"Record\" on Security and Product goes to F-18's form for T-3401 (`/work/W-3401/respond?task=T-3401`), or opens F-31's drawer if F-31 is on the base (Conflicts 5). Engineering and QA have no Record. W-3404 (`you_can_act: false`, no steps) draws no Record, no Add and no Send. \u2014 verify: component tests; e2e at 1440 follows the link and sees F-18's form inside the frame.",
+    "**Add a requirement.** \"Add a requirement from the RFP\" opens the step form with Requirement and RFP page, both required as returned. Submitting sends one POST `/api/v1/work/W-3401/steps` that validates against the generated request schema: `step: \"add_requirement\"`, `inputs {requirement (trimmed), rfp_page: <integer>}`, a UUID `idempotency_key`, no `item_ids`. An empty field names itself and sends nothing. \u2014 verify: component test with a recording `fetch`.",
+    "**Accept one.** On W-3402 the side panel shows R-07's requirement, Tola's answer labelled \"Suggested by Tola\", the past-answer line as returned (with no \"that bid was won\"), the suggested status, the consequence and three buttons: \"Accept answer\", \"Edit answer\", \"Write my own\". Pressing \"Accept answer\" sends exactly one POST with `{expected_revision: <workspace.revision>, step: \"accept\", item_ids: [\"R-07\"], idempotency_key}` and CSRF, with no `inputs`. A double press sends one. The page re-reads, the notice reads \"R-07 accepted under your name.\", the R-07 row shows ADDRESSED, and the panel holds R-08, all from `W-3402.next.accept`. Before the re-read lands, the R-07 row keeps \"SUGGESTED BY TOLA\". \u2014 verify: component tests with a recording `fetch`; `GET /__mock/workspace-log`.",
+    "**Accept selected sends only the ticked rows.** Ticking R-07 and R-09 shows \"2 selected\", and \"Accept selected\" sends `item_ids: [\"R-07\", \"R-09\"]` with `step: \"accept_selected\"`. The select-all header ticks exactly the four rows shown (`aria-label` \"Select all shown rows\", mixed state when one to three are ticked) and never sends a filter or a count. With nothing ticked \"Accept selected\" is inert. A mock call naming R-01 (no `accept_selected` on it) \u2192 422 `item_ids`. After 200 the re-read shows R-07 and R-09 accepted and R-08 and R-10 still suggested. \u2014 verify: component tests; `rfp-requirements-mock.test.ts`.",
+    "**Edit and accept.** \"Edit answer\" opens the form with Your answer filled with Tola's text and Status on \"Addressed\", both from the item's `values`. The submit reads \"Save and accept\". Changing the text and Status to \"Clarify\" sends `step: \"edit_accept\"`, `item_ids: [\"R-07\"]`, `inputs {answer: <typed, trimmed>, status: \"clarify\"}`. Cancel with no change closes at once and sends nothing. Cancel or Escape after a change asks \"Discard your changes?\": \"Keep editing\" returns to the form with the text, and \"Discard\" closes it with focus on \"Edit answer\". Neither sends a request. A copy without `values` opens the form empty. \u2014 verify: component tests.",
+    "**Write my own.** \"Write my own\" opens the form with \"Tola's suggestion (not used)\" and Tola's text shown read-only, an empty Your answer, the optional reason with the returned help, and Status. The submit reads \"Save my answer\". Pressing it empty names Your answer and sends nothing. Filled, it sends `step: \"write_own\"`, `inputs {answer, status, reason}`; with the reason empty, `reason` is absent. The suggestion text is never in the body. The page never shows the reason anywhere a client would see it, and it shows no sentence saying Tola learns from it. \u2014 verify: component tests; `grep -rn \"suggest better next time\" frontend/src frontend/mock` returns nothing.",
+    "**Failures never say accepted.** For each of the four steps:",
+    "**Uncertain step.** On W-3403, \"Accept answer\" answers `effect_uncertain`. The page shows the \"being checked\" notice, every step is off, a reload keeps them off, and exactly one `accept` request is in the mock log. \u2014 verify: component test; e2e.",
+    "**Agent text is only displayed.** Tola's note, the \"Suggested by Tola\" rows and the suggested answer appear exactly as returned and labelled as Tola's. Nothing marks them verified or counts them as answered before an accept's re-read. A copy with the suggestion `restricted: true` shows \"Restricted\" and none of its text, past-answer line or buttons. \u2014 verify: component tests on `document.body.textContent` and on modified copies.",
+    "**401, 403, 404.** 401 on the read or any write \u2192 signed-out with `next=/work/<id>`. 403 and 404 on W-3401 to W-3404 look the same, with no reference, client, title, answer or name. Persona `none` gets the not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**Nothing from `/me`.** No control, name, tab link or status comes from `/me` or a role. The same fixture gives the same controls for personas `pm`, `finance_lead` and `ceo`. A copy with the steps removed draws none. \u2014 verify: `git diff` adds no `useMe` or `/api/v1/me` reference under `features/workspace`, `features/work-item` or `features/rfp`; component tests with three personas.",
+    "**Phone.** At 390 each page is one column with the same sections in the same order as desktop (Conflicts 13). The table stacks with its labels. \"Edit answer\", \"Write my own\" and \"Add a requirement from the RFP\" open the full-height `Drawer` with the desktop form's fields and outcomes. Escape and Cancel close it (after the discard question when changed) and return focus to the button. There is no sideways scroll. Every button, checkbox label, row control, tab and link outside running text is at least 44px (D-92c). \u2014 verify: e2e at 390, measuring target boxes.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over all 8 boards, on a production build: the two live default URLs, plus the six driver-frozen pages for review, edit and reject. For every board, coverage after approved exceptions is 100%, and visual is at least 90 or a board-level D-83 waiver (floor 70) is signed in `fidelity-exceptions.json` citing the shared frame. Every exception has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply (an answer, a tag, a count, a name, a date). \u2014 verify: the fidelity command per board (`--width 1440` and `--width 390`); `round-<N>/fidelity/`; re-run of `drive-states.mjs`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390. Checked on W-3401 to W-3404, the open edit form, the open write-own form, the discard question, a 422 in each form, the uncertain state, the not-open view and the empty workspace. Every field and checkbox is labelled. Errors are announced. Status words are in text, not colour only. Focus is visible and stays in the open Drawer. Nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/rfp-requirements.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(` or `hsl(` in any CSS, and no local copy of a component `@/components` exports. The phone forms use the shared `Drawer`. The discard question uses `Callout` and `Button`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `rfp-requirements-mock.test.ts` checks that every new fixture validates against the generated E-WORK-ITEM schema after the overlay is stripped. It checks that every `steps.json` 200 body validates against the E-WORK-STEP 200 schema, the `.next.<step>` rule (and that F-28's audience rule still wins), the `item_ids` 422, the uncertain script, and that reset clears. \u2014 verify: `cd frontend && npx vitest run tests/rfp-requirements.test.tsx tests/rfp-requirements-mock.test.ts tests/mock-contract.test.ts tests/workspace.test.tsx tests/workspace-step.test.tsx tests/workspace-mock.test.ts tests/work-item.test.tsx tests/work-item-board.test.tsx`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/shell/**`, `src/features/response/**`, any existing fixture or the protected paths. The only new fields are the two overlay proposals (`values` choice prefill, `submit_label`), each listed as a contract proposal in build.md with G-26-1/-2/-3. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing F-18 RFP tests and the rest kept green.** `delivery/checks.sh` passes. `tests/rfp.test.tsx`, `tests/rfp-mock.test.ts`, `tests/response.test.tsx`, `tests/response-mock.test.ts` and the e2e `rfp` and `response` specs pass unchanged. Requirements stays plain text on W-2101 and W-2103, and Team input still links to `/work/W-2103` there. The F-17, F-23 and F-30 tests and e2e under Context also pass unchanged: no assertion is edited, skipped or loosened. \u2014 verify: `checks.sh` output and the e2e output in build.md; `git diff --stat frontend/tests frontend/e2e` shows only new files."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The page has several behaviours: three per-row writes plus a bulk write on the shared F-17 step path, edits to the shared F-18 `RfpFrame`, and fields that are proposals only (G-26-1, -2 and -3 are additive), hence `contract-change`. It is not high because this part moves no money, sends nothing outside, changes no authority and runs on the mock only. The answers are internal until review, and each accept is recorded under the PM's name. PRODUCT-ACCEPTANCE is required because the accept, edit and write-own flows and their wording are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-37/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,41 +76,1169 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T03:39:11Z",
+      "seconds": 461.8,
+      "evidence_ref": "delivery/features/F-37/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:00:39Z",
+      "seconds": 629.3,
+      "evidence_ref": "delivery/features/F-37/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:30:41Z",
+      "seconds": 357.3,
+      "evidence_ref": "delivery/features/F-37/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "befd93dcf5415e1791379530158a4fd4dd64c81a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:42:37Z",
+      "seconds": 340.1,
+      "evidence_ref": "delivery/features/F-37/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T11:35:19Z",
+      "seconds": 417.1,
+      "evidence_ref": "delivery/features/F-37/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "required": true,
+      "assessment_reason": "delivery/features/F-37/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 19 Nov 2026 \u2014 D-126",
+      "snapshot_ref": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`WorkItemOverview.tsx` (`rfpPage`) drops every task panel on desktop for any `rfp_response` item that has `rfp`, not just the team-input task the tab and Record reach. An actionable task of another kind (a decision task) would have no entry point. Expected: hide only tasks with `response.variant === 'team_input'` that the frame links to, as `RfpFrame` already selects them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "desktop RFP page hides only the team-input task panel"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "`WorkItemOverview.tsx` now hides only tasks with `response.variant === 'team_input'` on the desktop RFP page. The new test adds an approve task and still finds its panel."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "desktop RFP page hides only the team-input task panel"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemOverview.tsx` now hides only tasks with `response.variant === 'team_input'` on the desktop RFP page. The new test adds an approve task and still finds its panel."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Sections.tsx` changes \"Suggested by <agent>\" for every line: it now shows whenever a tag label lacks the agent's name, where before any tag hid it. Only W-2002 is affected today and it still hides it, but this is not scoped to rfp_response. Gate it on the line, or note it for the F-30 and F-31 owners.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "\"Suggested by\" rule restored to the original, no longer widened for all lines"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "`Sections.tsx` is back to `item.agent && !item.tag`, so no other line changes. The test for one Tola is consistent with it."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "\"Suggested by\" rule restored to the original, no longer widened for all lines"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`Sections.tsx` is back to `item.agent && !item.tag`, so no other line changes. The test for one Tola is consistent with it."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`StepForm.tsx` choice prefill from `initial` applies to every line that passes `itemValues` (F-23, F-30, F-31). It is correct, but unscoped, and no other line has a test for it. The same goes for `inSide` moving figures and checklist to the side column: it applies to W-2002 and W-2006, and their tests pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`RfpFrame.tsx`: when the person has no actionable team-input task (for example W-3404), Team input falls back to `work(target)`, a link to the page you are already on. Draw it as plain text, or leave it as the page did before.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "Team input is plain text when no actionable task exists on the requirements page"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "`RfpFrame.tsx`: Team input is plain text only when `current === 'requirements'` and no task exists. Other pages keep the old link."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Team input is plain text when no actionable task exists on the requirements page"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`RfpFrame.tsx`: Team input is plain text only when `current === 'requirements'` and no task exists. Other pages keep the old link."
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Workspace.tsx` `sideNote` and the `ws-side` condition repeat `RFP_LINE && !phone` four times. One local `rfpDesktop` would be simpler.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Record team input drawer at 1440 (height 844): the \"Record input\" button sits over the Note field, so the field is cut off until you scroll. Shared F-18/F-31 drawer, not part-1 code. Seen in a screenshot, not confirmed at other heights.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Add requirement empty-field message reads \"Add rfp page to continue.\" (lowercase \"rfp\", built from the field label). Expected \"Add the RFP page to continue.\" Shared StepForm.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone, W-3402: a red \"RECORD TEAM INPUT\" card says \"Only a PM can decide. You are PM.\" above the table, which desktop does not draw. It repeats the Record buttons and the wording is unhelpful. The phone header also shows \"revision 7\", a technical detail.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone: the select-all row is an empty bordered box with a lone checkbox, with no visible label. The accessible name is \"Select all shown rows\". A visible \"Select all\" would be clearer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After \"Accept selected\" or a single accept, the \"N selected\" count carries over (4 selected, then 3 selected after R-07 is accepted) while the accepted row stays in the list. Fixture-driven but could confuse. Clearing the ticks after a successful write would be safer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"Accept selected\" is drawn as a second blue primary button on the review, edit and reject pages. The board draws it as an outlined secondary button beside \"1 selected\", and spec.md line 92 does not mark `accept_selected` as primary (only `accept` is). Expected: `emphasis: \"secondary\"` (or no emphasis), so \"Accept answer\" is the only primary in view. Actual: `frontend/mock/fixtures/work/W-3402.json:181` (and the same step in W-3403/W-3404) has `\"emphasis\": \"primary\"`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "Accept selected is secondary in the review, edit and reject fixtures"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "live W-3402 at 1440 and 390: \"Accept selected\" is grey secondary (rgb 201,205,199); \"Accept answer\" is the only blue primary in the review panel."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Accept selected is secondary in the review, edit and reject fixtures"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "live W-3402 at 1440 and 390: \"Accept selected\" is grey secondary (rgb 201,205,199); \"Accept answer\" is the only blue primary in the review panel."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "On the desktop default board Tola's note is in the wrong place and below the fold. The board draws Progress, then Tola's note, then Before review and Send for review in the right column. The page draws Progress, Before review, Decide, and only then Tola's note, at y\u22481490 against y\u2248506 on the board (report.json \"misplaced\": Text \"Tola\"). Expected: the note directly after the Progress section in the side column. Actual: `frontend/src/features/workspace/Workspace.tsx:~822` appends `<AgentNote>` after all the side sections.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "Tola's note moved to directly after Progress in the side column"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "W-3401 at 1440: Tola's note sits directly after Progress, before Before review and Decide."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Tola's note moved to directly after Progress in the side column"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3401 at 1440: Tola's note sits directly after Progress, before Before review and Decide."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The review, edit and reject boards draw only the filtered table and the \"Review Tola's suggestion\" panel, and spec.md line 92 (W-3402) lists only `table` and `suggestions`. The fixtures also return Tola's note and the \"Before review\" checklist, which add about 800px to the side column on desktop and two more sections on phones. These are the \"extra\" items in the three desktop review-state reports and a large part of their visual gap (71.0, 71.0, 70.5). Expected: those sections left out of W-3402, W-3403 and W-3404, or Conflicts updated to say they are wanted. Actual: `frontend/mock/fixtures/work/W-3402.json:170` (`agent_note`) and `:466` (`before_review`); W-3403 `:170`, `:466`; W-3404 `:170`, `:394`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "review, edit and reject fixtures no longer return the note or Before review checklist"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "W-3402 shows only the table and \"Review Tola's suggestion\"; no note or Before review checklist at either width."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "review, edit and reject fixtures no longer return the note or Before review checklist"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3402 shows only the table and \"Review Tola's suggestion\"; no note or Before review checklist at either width."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The review panel shows \"Tola\" twice and its \"Status\" exception has the wrong reason. (a) The panel's name line shows \"Tola\" (`Sections.tsx:500`, `section.agent`). This round's change at `Sections.tsx:354` adds \"Suggested by Tola\" under the item whenever the tag label does not contain the agent's name, so \"Tola\" appears twice. The board shows neither line; it shows a \"Tola's suggested answer\" heading above the answer box. Expected: one attribution only. (b) On SCR-26-desktop-review and SCR-26-mobile-review, the board draws a \"Status\" control in the panel before any form opens (Addressed / Clarify / Out of scope). The page draws a returned \"ADDRESSED\" tag instead. The exception's reason (\"field labels are drawn by the shared step form\") is only true on the edit and reject boards. Expected: a separate exception under its own Conflicts item that names the missing status control on the review panel, so the design engineer signs it knowingly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "one Tola in the review panel; Status exception relabelled honestly (missing control on review boards)"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "panel names Tola once (name line; the tag no longer repeats it). The Status exception now separates the review boards (missing control, Conflicts 4) from edit/reject (shared form label, Conflicts 12). Honest."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "one Tola in the review panel; Status exception relabelled honestly (missing control on review boards)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "panel names Tola once (name line; the tag no longer repeats it). The Status exception now separates the review boards (missing control, Conflicts 4) from edit/reject (shared form label, Conflicts 12). Honest."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone stacked table: status tags stretch across the value column (measured 204px live at 390, against compact tags on the board and 136px on desktop). The select-box cell also leaves a short loose rule under each checkbox. Cause: `.ws-table--stack td[data-label] { display: grid; \u2026 }` at `frontend/src/features/workspace/workspace.css:169` stretches the tag. Expected: tags at their natural width (for example, `justify-items: start` on the value cell) and no loose rule. This rule is shared, so check the F-30 and F-31 stacked tables after the change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "phone stacked-table tags at natural width (justify-items: start)"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T13:13:38Z",
+          "refs": [
+            "same evidence as UI-2-1; tags natural width, no loose rule."
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "phone stacked-table tags at natural width (justify-items: start)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "same evidence as UI-2-1; tags natural width, no loose rule."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`workspace.css` `justify-items: start` on `.ws-table--stack td[data-label]` is not scoped to the RFP line. It applies to every stacked phone table (F-30, F-31, income, fixed assets). Cells hold only text and tags (Sections.tsx:262), so no control is shrunk. A right-aligned `num` cell may now sit at the left of its column on a phone. Scope it with `[data-line=\"rfp_response\"]`, or have the F-30 and F-31 owners look at it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T11:35:19Z",
+          "refs": [
+            "justify-items scoped to the RFP line"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "refs": [
+            "The RFP pages render normally at both widths, 0 page errors. The F-30/F-31 stacked tables were not checked."
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "justify-items scoped to the RFP line"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "The RFP pages render normally at both widths, 0 page errors. The F-30/F-31 stacked tables were not checked."
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Workspace.tsx`: `rfpSideNote`, `sideNote`, `rfpNote` and `noteAfter` repeat one condition (TECH-1-5 still open). Behaviour is correct.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "UI-1-5 is only half fixed. At 390 the stacked table still draws a short loose rule under each select-box cell and under the header box (screenshot scratchpad/ui/r2-W-3402-390.png). Tags are now natural width, but the checkbox cell border remains. Expected: no stray rule; fix in `workspace.css` for `.ws-table--stack` and re-check the F-30/F-31 stacked tables, which the builder did not look at.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T11:35:19Z",
+          "refs": [
+            "border removed on the select-box cell and header box in `.ws-table--stack`"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T13:13:38Z",
+          "refs": [
+            "live W-3402 at 390: select-box cells and header box have 0px borders, screenshot shows no stray rule; no horizontal overflow at 390 or 1440. At 1440 the borders are unchanged (rule is phone-only)."
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "border removed on the select-box cell and header box in `.ws-table--stack`"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "live W-3402 at 390: select-box cells and header box have 0px borders, screenshot shows no stray rule; no horizontal overflow at 390 or 1440. At 1440 the borders are unchanged (rule is phone-only)."
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "fixtures",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Exceptions \"From PSL's past answer: Harmattan Bank RFP 2025 \u00b7 R-12 \u00b7 that bid was won\" and the \"Harmattan Bank RFP 2025 \u00b7 R-12\" link are filed as `missing` because \"no field returns the bid result or link\". The board draws both, and the contract says a missing field is built with mock data, not omitted. Expected: add the result text and link to the W-3402/W-3403 fixtures and remove those two exceptions (and the phone \"From Harmattan\u2026\" one), or have the design engineer approve them as a drawable-element waiver.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T11:35:19Z",
+          "refs": [
+            "past-answer result and link added to the W-3402/W-3403 fixtures; exceptions removed"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T13:17:23Z",
+          "refs": [
+            "36db1217"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": "round-3/review-ui.md verified from source; the coordinator restarted the demo and the mock now serves 'that bid was won' on W-3402"
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "past-answer result and link added to the W-3402/W-3403 fixtures; exceptions removed"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "36db1217"
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Record team input on W-3401 (drawer at both widths): proof upload (200) and claim (200) work, but `POST /api/v1/tasks/T-3401/response` returns 501 `not_mocked`. The UI shows \"We couldn't confirm your input was recorded\u2026 reloaded\" and claims no success, but the PM journey \"record the Engineering Lead's part with proof\" cannot complete on this stack. The checklist stays at Record. Mock gap in the shared F-18/F-31 response mock (`frontend/mock/response.mjs`), not part-1 code. The spec only requires the link and drawer (AC5). Add a T-3401 response handler or prove it against the real backend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The 500 for E-WORK-STEP cannot be triggered by `psl_mock_scenario` (not declared, `mock/workspace.mjs:143`). AC11 says \"psl_mock_scenario 500\". Add a scripted 500 (a `.steps.json` entry or a cookie) so the e2e and QA can drive it without a route override.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-3",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"N selected\" count carries over after Accept answer (the same as UX-1-5). Select-all after one accept gives \"4 SELECTED\" while the accepted R-07 stays in the list. Seen again at both widths; confirms UX-1-5.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T13:25:32Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty. Set it to exactly: E-WORK-ITEM, E-WORK-STEP, E-RESPONSE, E-EVIDENCE-UPLOAD, E-TASK-CLAIM. (The last two are only reached through the F-31 drawer from the Record link; drop them if the coordinator wants only the endpoints this feature calls directly.)",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T13:29:54Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The branch has no F-37 section in delivery/BACKEND-HANDOFF.md (the section does not exist at HEAD; the only RFP lines are F-41/F-42). The G-26-1..9 gaps are recorded in delivery/backend-handoff/gaps-b-rfp-planning.md:65-73 and in `frontend/mock/proposals/rfp-response.json`, but the backend developer gets no \"Added during F-37\" section naming: the step names (`accept`, `accept_selected`, `edit_accept`, `write_own`, `add_requirement`), `steps[].submit_label` and `steps[].fields[].value` as mock overlay, `items[].team_key`, the mock's 422 on `item_ids`, and the questions (tab views G-26-1, section read G-26-2, past-answer source and \"that bid was won\" G-26-5, the record-input response gap QA-3-1). Add it before the PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T13:29:54Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC17 (fidelity) is not fully met until the design engineer signs the 8 visual waivers (70.5 to 74.7), the 48 exceptions (all \"builder proposal, pending design engineer\") and the round-1 layout rework. Round 3 did not re-run the fidelity tool: the review boards changed by one text suffix and one link, and the three Harmattan exceptions were removed without a re-score. Round-2 scores stand.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T13:29:54Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Round 3 draws \"that bid was won\" and the Harmattan link from fixture data (W-3402/W-3403, G-26-5). The overlay comment and spec Conflicts 2 treat the result wording as a product question; the data is mock, but product acceptance should confirm the wording and that the real backend must supply the result before it shows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T13:29:54Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-5",
+      "round": 3,
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-3-1, scope judgement. Record team input cannot complete on the mock: `POST /api/v1/tasks/T-3401/response` returns 501 `not_mocked` because the shared F-18/F-31 response mock (`frontend/mock/response.mjs`) has no T-3401 handler. This is IN scope as accepted: spec AC5 requires only the link and the drawer opening, and both are verified (proof upload 200, claim 200, honest \"couldn't confirm\" message, no false success). The completed record is part of the F-18/F-31 flow, not part 1. Add a T-3401 handler (or prove it against the real backend) as a follow-up; it does not block.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T13:29:54Z",
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+          "evidence_refs": [
+            "delivery/features/F-37/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-37/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+          "evidence_refs": [
+            "delivery/features/F-37/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+          "evidence_refs": [
+            "delivery/features/F-37/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "evidence_refs": [
+            "delivery/features/F-37/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-37/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "evidence_refs": [
+            "delivery/features/F-37/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "evidence_refs": [
+            "delivery/features/F-37/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -78,9 +1247,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -89,21 +1258,1121 @@
   "git": {
     "repository": null,
     "task_id": "FE-RFP-RESPONSE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
-    "pr_url": null,
-    "pr_number": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
+    "task_branch": "fe-rfp-response-requirements-answers",
+    "head_sha": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-37",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/76",
+    "pr_number": 76,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-126",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "aa94a76c8484e6146a77ea33b870eedbdc16fd0e",
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      ".claude/agents/builder.md",
+      ".claude/agents/qa.md",
+      ".claude/agents/reviewer-security.md",
+      ".claude/agents/reviewer-ui.md",
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/COORDINATOR-HANDOFF.md",
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/builder-checklist.md",
+      "delivery/config.json",
+      "delivery/events.jsonl",
+      "delivery/features/F-12/feature.json",
+      "delivery/features/F-34/feature.json",
+      "delivery/features/F-34/round-3/acceptance-pmo.md",
+      "delivery/features/F-34/round-3/acceptance-product.md",
+      "delivery/features/F-34/round-3/build.md",
+      "delivery/features/F-34/round-3/merge-checks-3.log",
+      "delivery/features/F-34/round-3/review-qa.md",
+      "delivery/features/F-34/round-3/review-technical.md",
+      "delivery/features/F-34/round-3/review-ui.md",
+      "delivery/features/F-34/round-3/review-ux.md",
+      "delivery/features/F-35/decision.md",
+      "delivery/features/F-35/feature.json",
+      "delivery/features/F-35/fidelity-exceptions.json",
+      "delivery/features/F-35/round-2/checks.md",
+      "delivery/features/F-35/round-2/review-qa.md",
+      "delivery/features/F-35/round-2/review-security.md",
+      "delivery/features/F-35/round-2/review-technical.md",
+      "delivery/features/F-35/round-2/review-ui.md",
+      "delivery/features/F-35/round-2/review-ux.md",
+      "delivery/features/F-35/round-3/acceptance-pmo.md",
+      "delivery/features/F-35/round-3/acceptance-product.md",
+      "delivery/features/F-35/round-3/build.md",
+      "delivery/features/F-35/round-3/checks.md",
+      "delivery/features/F-35/round-3/merge-checks.log",
+      "delivery/features/F-35/round-3/review-qa.md",
+      "delivery/features/F-35/round-3/review-security.md",
+      "delivery/features/F-35/round-3/review-technical.md",
+      "delivery/features/F-35/round-3/review-ui.md",
+      "delivery/features/F-35/round-3/review-ux.md",
+      "delivery/features/F-36/feature.json",
+      "delivery/features/F-36/round-3/acceptance-pmo.md",
+      "delivery/features/F-36/round-3/acceptance-product.md",
+      "delivery/features/F-36/round-3/build.md",
+      "delivery/features/F-36/round-3/merge-checks-3.log",
+      "delivery/features/F-36/round-3/merge-checks-4.log",
+      "delivery/features/F-36/round-3/review-qa.md",
+      "delivery/features/F-36/round-3/review-security.md",
+      "delivery/features/F-36/round-3/review-technical.md",
+      "delivery/features/F-36/round-3/review-ui.md",
+      "delivery/features/F-36/round-3/review-ux.md",
+      "delivery/features/F-37/decision.md",
+      "delivery/features/F-37/feature.json",
+      "delivery/features/F-37/fidelity-exceptions.json",
+      "delivery/features/F-37/round-1/build.md",
+      "delivery/features/F-37/round-1/checks.md",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-1440/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-edit-1440/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-reject-1440/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-390/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-edit-390/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-reject-390/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/board-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/board.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/board.rendered.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/diff.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/page-marked.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/page.png",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/report.html",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/report.json",
+      "delivery/features/F-37/round-1/fidelity/SCR-26-mobile-review-390/side-by-side.png",
+      "delivery/features/F-37/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-37/round-1/fidelity/frozen/SCR-26-desktop-edit-1440.html",
+      "delivery/features/F-37/round-1/fidelity/frozen/SCR-26-desktop-reject-1440.html",
+      "delivery/features/F-37/round-1/fidelity/frozen/SCR-26-desktop-review-1440.html",
+      "delivery/features/F-37/round-1/fidelity/frozen/SCR-26-mobile-edit-390.html",
+      "delivery/features/F-37/round-1/fidelity/frozen/SCR-26-mobile-reject-390.html",
+      "delivery/features/F-37/round-1/fidelity/frozen/SCR-26-mobile-review-390.html",
+      "delivery/features/F-37/round-1/fidelity/run.sh",
+      "delivery/features/F-37/round-1/fidelity/scores.txt",
+      "delivery/features/F-37/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-37/round-1/review-technical.md",
+      "delivery/features/F-37/round-1/review-ui.md",
+      "delivery/features/F-37/round-1/review-ux.md",
+      "delivery/features/F-37/round-2/build.md",
+      "delivery/features/F-37/round-2/checks.md",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-1440/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-edit-1440/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-reject-1440/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-390/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-edit-390/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-reject-390/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/board-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/board.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/board.rendered.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/diff.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/page-marked.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/page.png",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/report.html",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/report.json",
+      "delivery/features/F-37/round-2/fidelity/SCR-26-mobile-review-390/side-by-side.png",
+      "delivery/features/F-37/round-2/fidelity/drive-states.mjs",
+      "delivery/features/F-37/round-2/fidelity/fidelity-exceptions.json",
+      "delivery/features/F-37/round-2/fidelity/frozen/SCR-26-desktop-edit-1440.html",
+      "delivery/features/F-37/round-2/fidelity/frozen/SCR-26-desktop-reject-1440.html",
+      "delivery/features/F-37/round-2/fidelity/frozen/SCR-26-desktop-review-1440.html",
+      "delivery/features/F-37/round-2/fidelity/frozen/SCR-26-mobile-edit-390.html",
+      "delivery/features/F-37/round-2/fidelity/frozen/SCR-26-mobile-reject-390.html",
+      "delivery/features/F-37/round-2/fidelity/frozen/SCR-26-mobile-review-390.html",
+      "delivery/features/F-37/round-2/fidelity/run.sh",
+      "delivery/features/F-37/round-2/fidelity/scores.txt",
+      "delivery/features/F-37/round-2/fidelity/serve-frozen.mjs",
+      "delivery/features/F-37/round-2/review-technical.md",
+      "delivery/features/F-37/round-2/review-ui.md",
+      "delivery/features/F-37/round-2/review-ux.md",
+      "delivery/features/F-37/round-3/acceptance-pmo.md",
+      "delivery/features/F-37/round-3/acceptance-product.md",
+      "delivery/features/F-37/round-3/build.md",
+      "delivery/features/F-37/round-3/checks.md",
+      "delivery/features/F-37/round-3/review-qa.md",
+      "delivery/features/F-37/round-3/review-technical.md",
+      "delivery/features/F-37/round-3/review-ui.md",
+      "delivery/features/F-37/round-3/review-ux.md",
+      "delivery/features/F-38/readiness.md",
+      "delivery/features/F-39/decision.md",
+      "delivery/features/F-39/feature.json",
+      "delivery/features/F-39/fidelity-exceptions.json",
+      "delivery/features/F-39/round-1/review-technical.md",
+      "delivery/features/F-39/round-1/review-ui.md",
+      "delivery/features/F-39/round-1/review-ux.md",
+      "delivery/features/F-39/round-2/build.md",
+      "delivery/features/F-39/round-2/checks.md",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-decide-1440/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-draft-1440/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-investigating-1440/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-desktop-not-escalated-1440/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-decide-390/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-draft-390/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-investigating-390/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/board-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/board.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/board.rendered.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/diff.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/page-marked.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/page.png",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/report.html",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/report.json",
+      "delivery/features/F-39/round-2/fidelity/SCR-51-mobile-not-escalated-390/side-by-side.png",
+      "delivery/features/F-39/round-2/fidelity/run.sh",
+      "delivery/features/F-39/round-2/fidelity/scores.txt",
+      "delivery/features/F-39/round-2/review-technical.md",
+      "delivery/features/F-39/round-2/review-ui.md",
+      "delivery/features/F-39/round-2/review-ux.md",
+      "delivery/features/F-39/round-3/build.md",
+      "delivery/features/F-39/round-3/checks.md",
+      "delivery/features/F-39/round-3/review-qa.md",
+      "delivery/features/F-39/round-3/review-technical.md",
+      "delivery/features/F-39/round-3/review-ui.md",
+      "delivery/features/F-39/round-3/review-ux.md",
+      "delivery/features/F-39/round-4/acceptance-pmo.md",
+      "delivery/features/F-39/round-4/acceptance-product.md",
+      "delivery/features/F-39/round-4/build.md",
+      "delivery/features/F-39/round-4/checks.md",
+      "delivery/features/F-39/round-4/merge-checks.log",
+      "delivery/features/F-39/round-4/review-qa.md",
+      "delivery/features/F-39/round-4/review-technical.md",
+      "delivery/features/F-39/round-4/review-ui.md",
+      "delivery/features/F-39/round-4/review-ux.md",
+      "delivery/features/F-40/feature.json",
+      "delivery/features/F-40/fidelity-exceptions.json",
+      "delivery/features/F-40/readiness.md",
+      "delivery/features/F-40/round-1/build.md",
+      "delivery/features/F-40/round-1/checks.md",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-1440/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-gaps-1440/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-received-1440/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-desktop-record-1440/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-390/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-gaps-390/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-received-390/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/board-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/board.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/board.rendered.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/diff.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/page-marked.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/page.png",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/report.html",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/report.json",
+      "delivery/features/F-40/round-1/fidelity/SCR-48-mobile-record-390/side-by-side.png",
+      "delivery/features/F-40/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-40/round-1/fidelity/frozen/SCR-48-desktop-record-1440.html",
+      "delivery/features/F-40/round-1/fidelity/frozen/SCR-48-mobile-record-390.html",
+      "delivery/features/F-40/round-1/fidelity/run.sh",
+      "delivery/features/F-40/round-1/fidelity/scores.txt",
+      "delivery/features/F-40/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-40/round-1/review-security.md",
+      "delivery/features/F-40/round-1/review-technical.md",
+      "delivery/features/F-40/round-1/review-ui.md",
+      "delivery/features/F-40/round-1/review-ux.md",
+      "delivery/features/F-40/round-2/build.md",
+      "delivery/features/F-40/round-2/checks.md",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-1440/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-gaps-1440/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-received-1440/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-desktop-record-1440/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-390/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-gaps-390/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-received-390/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/board-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/board.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/board.rendered.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/diff.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/page-marked.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/page.png",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/report.html",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/report.json",
+      "delivery/features/F-40/round-2/fidelity/SCR-48-mobile-record-390/side-by-side.png",
+      "delivery/features/F-40/round-2/fidelity/drive-states.mjs",
+      "delivery/features/F-40/round-2/fidelity/frozen.out",
+      "delivery/features/F-40/round-2/fidelity/frozen/SCR-48-desktop-record-1440.html",
+      "delivery/features/F-40/round-2/fidelity/frozen/SCR-48-mobile-record-390.html",
+      "delivery/features/F-40/round-2/fidelity/live.out",
+      "delivery/features/F-40/round-2/fidelity/run.sh",
+      "delivery/features/F-40/round-2/fidelity/scores.txt",
+      "delivery/features/F-40/round-2/fidelity/serve-frozen.mjs",
+      "delivery/features/F-40/round-2/review-security.md",
+      "delivery/features/F-40/round-2/review-technical.md",
+      "delivery/features/F-40/round-2/review-ui.md",
+      "delivery/features/F-40/round-2/review-ux.md",
+      "delivery/features/F-40/round-3/build.md",
+      "delivery/features/F-40/round-3/checks.md",
+      "delivery/features/F-40/round-3/review-security.md",
+      "delivery/features/F-40/round-3/review-technical.md",
+      "delivery/features/F-40/round-3/review-ux.md",
+      "delivery/features/F-43/decision.md",
+      "delivery/features/F-43/feature.json",
+      "delivery/features/F-43/fidelity-exceptions.json",
+      "delivery/features/F-43/readiness.md",
+      "delivery/features/F-43/round-1/build.md",
+      "delivery/features/F-43/round-1/checks.md",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-investigating-1440/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-uncertain-1440/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-investigating-390/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-review-390/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-uncertain-390/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/board-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/board.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/diff.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/page-marked.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/page.png",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/report.html",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/report.json",
+      "delivery/features/F-43/round-1/fidelity/SCR-56-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-43/round-1/fidelity/run.sh",
+      "delivery/features/F-43/round-1/fidelity/scores.txt",
+      "delivery/features/F-43/round-1/review-security.md",
+      "delivery/features/F-43/round-1/review-technical.md",
+      "delivery/features/F-43/round-1/review-ui.md",
+      "delivery/features/F-43/round-1/review-ux.md",
+      "delivery/features/F-43/round-2/acceptance-pmo.md",
+      "delivery/features/F-43/round-2/acceptance-product.md",
+      "delivery/features/F-43/round-2/build.md",
+      "delivery/features/F-43/round-2/checks.md",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-investigating-1440/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-uncertain-1440/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-investigating-390/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-review-390/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-uncertain-390/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/board-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/board.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/diff.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/page-marked.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/page.png",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/report.html",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/report.json",
+      "delivery/features/F-43/round-2/fidelity/SCR-56-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-43/round-2/fidelity/run.sh",
+      "delivery/features/F-43/round-2/fidelity/scores.txt",
+      "delivery/features/F-43/round-2/merge-checks.log",
+      "delivery/features/F-43/round-2/review-qa.md",
+      "delivery/features/F-43/round-2/review-security.md",
+      "delivery/features/F-43/round-2/review-technical.md",
+      "delivery/features/F-43/round-2/review-ui.md",
+      "delivery/features/F-43/round-2/review-ux.md",
+      "delivery/features/F-45/decision.md",
+      "delivery/features/F-45/feature.json",
+      "delivery/features/F-45/fidelity-exceptions.json",
+      "delivery/features/F-45/readiness.md",
+      "delivery/features/F-45/round-1/acceptance-pmo.md",
+      "delivery/features/F-45/round-1/acceptance-product.md",
+      "delivery/features/F-45/round-1/build.md",
+      "delivery/features/F-45/round-1/checks.md",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-investigating-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-observe-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-investigating-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-observe-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-review-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/board.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/page.png",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/report.html",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/report.json",
+      "delivery/features/F-45/round-1/fidelity-2/SCR-58-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity-2/drive-states.mjs",
+      "delivery/features/F-45/round-1/fidelity-2/frozen/SCR-58-desktop-observe-1440.html",
+      "delivery/features/F-45/round-1/fidelity-2/frozen/SCR-58-mobile-observe-390.html",
+      "delivery/features/F-45/round-1/fidelity-2/run.sh",
+      "delivery/features/F-45/round-1/fidelity-2/scores.txt",
+      "delivery/features/F-45/round-1/fidelity-2/serve-frozen.mjs",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-investigating-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-observe-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-investigating-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-observe-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-review-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/board-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/board.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/diff.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/page-marked.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/page.png",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/report.html",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/report.json",
+      "delivery/features/F-45/round-1/fidelity/SCR-58-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-45/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-45/round-1/fidelity/frozen/SCR-58-desktop-observe-1440.html",
+      "delivery/features/F-45/round-1/fidelity/frozen/SCR-58-mobile-observe-390.html",
+      "delivery/features/F-45/round-1/fidelity/run.sh",
+      "delivery/features/F-45/round-1/fidelity/scores.txt",
+      "delivery/features/F-45/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-45/round-1/review-qa.md",
+      "delivery/features/F-45/round-1/review-security.md",
+      "delivery/features/F-45/round-1/review-technical.md",
+      "delivery/features/F-45/round-1/review-ui.md",
+      "delivery/features/F-45/round-1/review-ux.md",
+      "delivery/features/F-45/round-2/build.md",
+      "delivery/features/F-45/round-2/fidelity/v-1440/board-marked.png",
+      "delivery/features/F-45/round-2/fidelity/v-1440/board.png",
+      "delivery/features/F-45/round-2/fidelity/v-1440/board.rendered.html",
+      "delivery/features/F-45/round-2/fidelity/v-1440/diff.png",
+      "delivery/features/F-45/round-2/fidelity/v-1440/page-marked.png",
+      "delivery/features/F-45/round-2/fidelity/v-1440/page.png",
+      "delivery/features/F-45/round-2/fidelity/v-1440/report.html",
+      "delivery/features/F-45/round-2/fidelity/v-1440/report.json",
+      "delivery/features/F-45/round-2/fidelity/v-1440/side-by-side.png",
+      "delivery/features/F-45/round-2/fidelity/v-390/board-marked.png",
+      "delivery/features/F-45/round-2/fidelity/v-390/board.png",
+      "delivery/features/F-45/round-2/fidelity/v-390/board.rendered.html",
+      "delivery/features/F-45/round-2/fidelity/v-390/diff.png",
+      "delivery/features/F-45/round-2/fidelity/v-390/page-marked.png",
+      "delivery/features/F-45/round-2/fidelity/v-390/page.png",
+      "delivery/features/F-45/round-2/fidelity/v-390/report.html",
+      "delivery/features/F-45/round-2/fidelity/v-390/report.json",
+      "delivery/features/F-45/round-2/fidelity/v-390/side-by-side.png",
+      "delivery/features/F-45/round-2/merge-checks.log",
+      "delivery/features/F-46/feature.json",
+      "delivery/features/F-48/feature.json",
+      "delivery/features/F-48/round-1/build.md",
+      "delivery/features/F-48/round-1/checks.md",
+      "delivery/psl-decisions/PSL-DECISIONS.html",
+      "delivery/psl-decisions/PSL-DECISIONS.pdf",
+      "delivery/psl-decisions/build_decisions.py",
+      "frontend/e2e/cash-forecast.spec.ts",
+      "frontend/e2e/delivery-hypercare.spec.ts",
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/escalation.spec.ts",
+      "frontend/e2e/leadership-report.spec.ts",
+      "frontend/e2e/ledger-source.spec.ts",
+      "frontend/e2e/rfp-assign.spec.ts",
+      "frontend/e2e/rfp-requirements.spec.ts",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/fixtures/E-WORK-LIST.board.json",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/response/W-4003.delivered.json",
+      "frontend/mock/fixtures/response/W-4003.not_delivered.json",
+      "frontend/mock/fixtures/response/W-4003.unknown.json",
+      "frontend/mock/fixtures/work/W-3101.json",
+      "frontend/mock/fixtures/work/W-3101.next.json",
+      "frontend/mock/fixtures/work/W-3101.steps.json",
+      "frontend/mock/fixtures/work/W-3102.json",
+      "frontend/mock/fixtures/work/W-3102.next.json",
+      "frontend/mock/fixtures/work/W-3102.steps.json",
+      "frontend/mock/fixtures/work/W-3103.json",
+      "frontend/mock/fixtures/work/W-3104.json",
+      "frontend/mock/fixtures/work/W-3105.json",
+      "frontend/mock/fixtures/work/W-3105.steps.json",
+      "frontend/mock/fixtures/work/W-3106.json",
+      "frontend/mock/fixtures/work/W-3106.next.json",
+      "frontend/mock/fixtures/work/W-3106.steps.json",
+      "frontend/mock/fixtures/work/W-3107.json",
+      "frontend/mock/fixtures/work/W-3107.steps.json",
+      "frontend/mock/fixtures/work/W-3108.json",
+      "frontend/mock/fixtures/work/W-3108.next.json",
+      "frontend/mock/fixtures/work/W-3108.steps.json",
+      "frontend/mock/fixtures/work/W-3109.json",
+      "frontend/mock/fixtures/work/W-3110.json",
+      "frontend/mock/fixtures/work/W-3111.json",
+      "frontend/mock/fixtures/work/W-3112.json",
+      "frontend/mock/fixtures/work/W-3112.next.json",
+      "frontend/mock/fixtures/work/W-3112.steps.json",
+      "frontend/mock/fixtures/work/W-3120.json",
+      "frontend/mock/fixtures/work/W-3201.json",
+      "frontend/mock/fixtures/work/W-3202.approve.json",
+      "frontend/mock/fixtures/work/W-3202.json",
+      "frontend/mock/fixtures/work/W-3202.return.json",
+      "frontend/mock/fixtures/work/W-3203.json",
+      "frontend/mock/fixtures/work/W-3204.json",
+      "frontend/mock/fixtures/work/W-3205.json",
+      "frontend/mock/fixtures/work/W-3205.next.json",
+      "frontend/mock/fixtures/work/W-3205.steps.json",
+      "frontend/mock/fixtures/work/W-3206.json",
+      "frontend/mock/fixtures/work/W-3207.json",
+      "frontend/mock/fixtures/work/W-3208.json",
+      "frontend/mock/fixtures/work/W-3209.approve.json",
+      "frontend/mock/fixtures/work/W-3209.json",
+      "frontend/mock/fixtures/work/W-3210.json",
+      "frontend/mock/fixtures/work/W-3211.json",
+      "frontend/mock/fixtures/work/W-3212.json",
+      "frontend/mock/fixtures/work/W-3212.steps.json",
+      "frontend/mock/fixtures/work/W-3301.json",
+      "frontend/mock/fixtures/work/W-3301.next.json",
+      "frontend/mock/fixtures/work/W-3302.json",
+      "frontend/mock/fixtures/work/W-3302.next.json",
+      "frontend/mock/fixtures/work/W-3303.json",
+      "frontend/mock/fixtures/work/W-3303.next.json",
+      "frontend/mock/fixtures/work/W-3304.json",
+      "frontend/mock/fixtures/work/W-3305.json",
+      "frontend/mock/fixtures/work/W-3306.assign.json",
+      "frontend/mock/fixtures/work/W-3306.json",
+      "frontend/mock/fixtures/work/W-3306.next.json",
+      "frontend/mock/fixtures/work/W-3401.json",
+      "frontend/mock/fixtures/work/W-3402.json",
+      "frontend/mock/fixtures/work/W-3402.next.accept.json",
+      "frontend/mock/fixtures/work/W-3402.next.accept_selected.json",
+      "frontend/mock/fixtures/work/W-3402.next.edit_accept.json",
+      "frontend/mock/fixtures/work/W-3402.next.write_own.json",
+      "frontend/mock/fixtures/work/W-3402.steps.json",
+      "frontend/mock/fixtures/work/W-3403.json",
+      "frontend/mock/fixtures/work/W-3403.next.json",
+      "frontend/mock/fixtures/work/W-3403.steps.json",
+      "frontend/mock/fixtures/work/W-3404.json",
+      "frontend/mock/fixtures/work/W-3601.json",
+      "frontend/mock/fixtures/work/W-3602.approve.json",
+      "frontend/mock/fixtures/work/W-3602.json",
+      "frontend/mock/fixtures/work/W-3602.reject.json",
+      "frontend/mock/fixtures/work/W-3603.json",
+      "frontend/mock/fixtures/work/W-3604.json",
+      "frontend/mock/fixtures/work/W-3604.next.json",
+      "frontend/mock/fixtures/work/W-3604.steps.json",
+      "frontend/mock/fixtures/work/W-3605.json",
+      "frontend/mock/fixtures/work/W-3606.json",
+      "frontend/mock/fixtures/work/W-3607.approve.json",
+      "frontend/mock/fixtures/work/W-3607.json",
+      "frontend/mock/fixtures/work/W-3608.json",
+      "frontend/mock/fixtures/work/W-3609.json",
+      "frontend/mock/fixtures/work/W-4001.json",
+      "frontend/mock/fixtures/work/W-4002.approve.json",
+      "frontend/mock/fixtures/work/W-4002.json",
+      "frontend/mock/fixtures/work/W-4002.reject.json",
+      "frontend/mock/fixtures/work/W-4002.return.json",
+      "frontend/mock/fixtures/work/W-4003.json",
+      "frontend/mock/fixtures/work/W-4004.json",
+      "frontend/mock/fixtures/work/W-4005.json",
+      "frontend/mock/fixtures/work/W-4006.json",
+      "frontend/mock/fixtures/work/W-4007.json",
+      "frontend/mock/fixtures/work/W-4008.json",
+      "frontend/mock/fixtures/work/W-4009.json",
+      "frontend/mock/fixtures/work/W-4010.json",
+      "frontend/mock/fixtures/work/W-4011.json",
+      "frontend/mock/fixtures/work/W-4012.json",
+      "frontend/mock/fixtures/work/W-4013.approve.json",
+      "frontend/mock/fixtures/work/W-4013.json",
+      "frontend/mock/fixtures/work/W-4013.reject.json",
+      "frontend/mock/fixtures/work/W-4013.return.json",
+      "frontend/mock/fixtures/work/W-4201.json",
+      "frontend/mock/fixtures/work/W-4202.json",
+      "frontend/mock/fixtures/work/W-4202.next.json",
+      "frontend/mock/fixtures/work/W-4202.steps.json",
+      "frontend/mock/fixtures/work/W-4203.approve.json",
+      "frontend/mock/fixtures/work/W-4203.json",
+      "frontend/mock/fixtures/work/W-4203.reject.json",
+      "frontend/mock/fixtures/work/W-4204.json",
+      "frontend/mock/fixtures/work/W-4205.json",
+      "frontend/mock/fixtures/work/W-4206.json",
+      "frontend/mock/fixtures/work/W-4207.json",
+      "frontend/mock/fixtures/work/W-4208.json",
+      "frontend/mock/fixtures/work/W-4208.next.json",
+      "frontend/mock/fixtures/work/W-4208.steps.json",
+      "frontend/mock/fixtures/work/W-4209.json",
+      "frontend/mock/fixtures/work/W-4210.json",
+      "frontend/mock/fixtures/work/W-4211.json",
+      "frontend/mock/fixtures/work/W-4212.approve.json",
+      "frontend/mock/fixtures/work/W-4212.json",
+      "frontend/mock/fixtures/work/W-4212.reject.json",
+      "frontend/mock/fixtures/work/W-4213.json",
+      "frontend/mock/fixtures/work/W-4213.next.json",
+      "frontend/mock/fixtures/work/W-4213.steps.json",
+      "frontend/mock/proposals/delivery-hypercare.json",
+      "frontend/mock/proposals/rfp-assign.json",
+      "frontend/mock/proposals/rfp-response.json",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/response/ReconcilePanel.tsx",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/rfp/AssignPmDrawer.tsx",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/rfp/proposals.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/AssignForm.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceAssign.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/asset-schedule.test.tsx",
+      "frontend/tests/assistant.test.tsx",
+      "frontend/tests/cash-forecast-mock.test.ts",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/clients.test.tsx",
+      "frontend/tests/components/date-field.test.tsx",
+      "frontend/tests/components/lists-and-states.test.tsx",
+      "frontend/tests/components/overlays.test.tsx",
+      "frontend/tests/components/segmented-tabs.test.tsx",
+      "frontend/tests/components/select.test.tsx",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/delivery-hypercare-mock.test.ts",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/escalation-mock.test.ts",
+      "frontend/tests/escalation.test.tsx",
+      "frontend/tests/hypercare.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/income-schedule.test.tsx",
+      "frontend/tests/leadership-report-mock.test.ts",
+      "frontend/tests/leadership-report.test.tsx",
+      "frontend/tests/ledger-source-mock.test.ts",
+      "frontend/tests/ledger-source.test.tsx",
+      "frontend/tests/minutes.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/money.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/overview-floor.test.tsx",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/rfp-assign-mock.test.ts",
+      "frontend/tests/rfp-assign.test.tsx",
+      "frontend/tests/rfp-requirements-mock.test.ts",
+      "frontend/tests/rfp-requirements.test.tsx",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/start-work-proof-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx",
+      "frontend/tests/weekly-returned-received.test.tsx",
+      "frontend/tests/work-item.test.tsx",
+      "frontend/tests/workspace-step.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -123,12 +2392,19 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-37/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "1099 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -136,15 +2412,155 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T19:45:13Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T19:45:14Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T03:39:14Z",
+      "round": 1,
+      "head": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T03:44:21Z",
+      "round": 1,
+      "head": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T03:44:22Z",
+      "round": 2,
+      "head": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T10:30:43Z",
+      "round": 2,
+      "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T10:32:06Z",
+      "round": 2,
+      "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T10:32:06Z",
+      "round": 3,
+      "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T11:35:20Z",
+      "round": 3,
+      "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T13:17:26Z",
+      "round": 3,
+      "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T13:29:55Z",
+      "round": 3,
+      "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-19T15:04:04Z",
+      "round": 3,
+      "head": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-19T15:04:10Z",
+      "round": 3,
+      "head": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-19T15:04:10Z",
+      "round": 3,
+      "head": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-19T15:04:11Z",
+      "round": 3,
+      "head": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-19T15:04:11Z",
+      "round": 3,
+      "head": "435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-37/readiness.md",
+      "delivery/features/F-37/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "36db1217cc448105529fc82e2e2ec5087be13606"
   },
   "blocked": null
 }

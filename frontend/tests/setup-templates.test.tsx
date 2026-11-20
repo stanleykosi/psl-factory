@@ -408,8 +408,8 @@ describe('success (AC 8)', () => {
     expect(within(first).getByText('Version 2 · PDF')).toBeTruthy();
     expect(within(first).getByText('1 version · Changed by Ada Okafor, 14 Nov')).toBeTruthy();
     expect(within(first).getByText('TEST TEMPLATE')).toBeTruthy();
-    expect(document.activeElement?.textContent).toBe('Invoice');
-    expect(document.activeElement?.getAttribute('data-name-for')).toBe('T-01');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Invoice'));
+    await waitFor(() => expect(document.activeElement?.getAttribute('data-name-for')).toBe('T-01'));
   });
 
   it('shows the badge exactly as the reload returns it: false removes the tag with no extra claim, true keeps it', async () => {
@@ -696,11 +696,11 @@ describe('no double submit (AC 12)', () => {
     const p = await openPanel('Invoice');
     fireEvent.click(p.getByRole('button', { name: 'Cancel' }));
     expect(desktop().queryByRole('region', { name: /^Upload a version of/ })).toBeNull();
-    expect(document.activeElement).toBe(within(rowOf('Invoice')).getByRole('button', { name: UPLOAD }));
+    await waitFor(() => expect(document.activeElement).toBe(within(rowOf('Invoice')).getByRole('button', { name: UPLOAD })));
     await openPanel('Minutes');
     fireEvent.keyDown(panel().getByLabelText('Note (optional)'), { key: 'Escape' });
     expect(desktop().queryByRole('region', { name: /^Upload a version of/ })).toBeNull();
-    expect(document.activeElement).toBe(within(rowOf('Minutes')).getByRole('button', { name: UPLOAD }));
+    await waitFor(() => expect(document.activeElement).toBe(within(rowOf('Minutes')).getByRole('button', { name: UPLOAD })));
   });
 });
 

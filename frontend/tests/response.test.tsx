@@ -123,6 +123,8 @@ async function addFile(file = pdf()) {
   fireEvent.change(fileInput(), { target: { files: [file] } });
   await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
   await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+  // the upload only counts once the form shows the file
+  await waitFor(() => expect(document.body.textContent).toContain(file.name));
 }
 function choose(label: string) {
   fireEvent.click(screen.getByRole('radio', { name: label }));
@@ -745,7 +747,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     expect(screen.queryByText('Choose what happened to continue.')).toBeNull();
     fireEvent.click(go);
     expect(screen.getByRole('alert').textContent).toBe('Choose what happened to continue.');
-    expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
+    await waitFor(() => expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]));
     expect(writes()).toHaveLength(0);
     fireEvent.click(screen.getByRole('radio', { name: /It didn’t arrive/ }));
     expect(screen.queryByText('Choose what happened to continue.')).toBeNull();

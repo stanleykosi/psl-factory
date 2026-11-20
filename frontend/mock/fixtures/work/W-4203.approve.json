@@ -1,0 +1,184 @@
+{
+  "id": "W-4203",
+  "title": "QuickBooks journal JE-7741 · October",
+  "line": "Ledger sources",
+  "reference": "LED-0052",
+  "state": "verified",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Capture lineage",
+      "status": "done"
+    },
+    {
+      "name": "Record what was found",
+      "status": "done"
+    },
+    {
+      "name": "Independent review",
+      "status": "done"
+    },
+    {
+      "name": "Verified",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-14T15:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-14T15:30:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-14T15:30:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-14T15:30:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4203",
+      "kind": "decide",
+      "title": "Review the ledger source",
+      "required_role": "Ledger reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "LED-0052 v1",
+          "number": 1,
+          "drafted_at": "2026-11-14T14:40:00Z"
+        },
+        "basis": "Approve JE-7741 as a supplied reference. You captured nothing and observed nothing here, so you can review.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Ledger reviewer",
+              "status": "approved",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the ledger source file",
+        "status": "done",
+        "source": "QB_EXPORT_JE7741.PDF"
+      },
+      {
+        "text": "Checked date and period",
+        "status": "done",
+        "source": "28 OCT · 2026-10"
+      },
+      {
+        "text": "Checked where it came from",
+        "status": "done",
+        "source": "QUICKBOOKS · REALM PSL-NG"
+      },
+      {
+        "text": "Capture the lineage",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-14T14:12:00Z"
+  },
+  "next_step": "Nothing more is needed. The reference is recorded; nothing is posted.",
+  "sample": true,
+  "case_id": "C-LED-0052",
+  "case_revision": 4,
+  "workspace": {
+    "line_key": "ledger_sources",
+    "screen": "SCR-58",
+    "view": "verified",
+    "status": {
+      "label": "VERIFIED",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "recorded",
+        "kind": "facts",
+        "title": "Recorded",
+        "items": [
+          {
+            "id": "V-1",
+            "label": "Posting performed",
+            "value": "NO"
+          },
+          {
+            "id": "V-2",
+            "label": "Authenticity certified",
+            "value": "NO"
+          },
+          {
+            "id": "V-3",
+            "label": "Completeness certified",
+            "value": "NO"
+          },
+          {
+            "id": "V-4",
+            "label": "Reference recorded",
+            "value": "YES · 14 NOV"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "A reference only. If the source changes later, a re-check reopens it."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "ledger_sources",
+          "label": "LEDGER SOURCES"
+        },
+        {
+          "value": "LED-0052",
+          "label": "LED-0052"
+        }
+      ]
+    },
+    "revision": 4
+  }
+}

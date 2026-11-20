@@ -1,0 +1,389 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T16:07:57.129Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-40-mobile-draft.dc.html",
+  "boardName": "SCR-40-mobile-draft.dc.html",
+  "pageUrl": "http://localhost:4985/work/W-3501",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-38/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "3 board item(s) are missing from the page and are not approved exceptions (coverage 57.1% with exceptions, needs 100%).",
+    "Visual match 78.1 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 57.1,
+    "coverageWithExceptions": 57.1,
+    "visual": 78.1
+  },
+  "visual": {
+    "score": 78.1,
+    "allCellsScore": 78.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1249,
+    "cell": 12,
+    "contentCells": 2293,
+    "mismatchedCells": 502
+  },
+  "coverage": {
+    "total": 7,
+    "found": 4,
+    "coverage": 57.1,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Submission pack",
+        "pageName": "Submission pack · v1",
+        "pageRole": "heading",
+        "similarity": 90,
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 256,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checks",
+        "pageName": "CHECKS",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 349,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 412,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Send for review",
+        "pageName": "Send for review",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← RFP",
+        "key": "link: ← RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v1",
+        "key": "text: v1",
+        "container": "page",
+        "boardBox": {
+          "x": 267,
+          "y": 21,
+          "w": 14,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DEADLINE 28 NOV · 6 DAYS",
+        "key": "text: DEADLINE 28 NOV · 6 DAYS",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Send for review\"",
+        "kind": "Link",
+        "name": "Send for review",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to RFP",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 41,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TL-RFP-2026-014",
+        "container": "main",
+        "pageBox": {
+          "x": 124,
+          "y": 0,
+          "w": 108,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 74,
+          "y": 749,
+          "w": 156,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 74,
+          "y": 770,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 309,
+          "y": 757,
+          "w": 49,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 10:15",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 1045,
+          "w": 81,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10:15",
+        "container": "complementary",
+        "pageBox": {
+          "x": 78,
+          "y": 1046,
+          "w": 35,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 307,
+          "y": 1033,
+          "w": 51,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "A document reviewer checks the pack. After that it's sent the way the RFP asks: here, by email to procurement@tamarindloans.example.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 711,
+          "w": 358,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Edit cover letter",
+        "container": "complementary",
+        "pageBox": {
+          "x": 199,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 3
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -463,7 +463,7 @@ describe('history', () => {
     expect(screen.getByRole('radio', { name: 'Evidence' }).tabIndex).toBe(-1);
     fireEvent.keyDown(allOption, { key: 'ArrowLeft' });
     await waitFor(() => expect(screen.getByRole('radio', { name: 'Evidence' }).getAttribute('aria-checked')).toBe('true'));
-    expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'Evidence' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'Evidence' })));
     await waitFor(() => expect(historyUrls().at(-1)!.search).toBe('?kind=evidence&limit=20'));
   });
 

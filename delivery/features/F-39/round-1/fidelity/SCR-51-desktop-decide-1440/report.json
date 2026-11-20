@@ -1,0 +1,1089 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T19:11:00.468Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-desktop-decide.dc.html",
+  "boardName": "SCR-51-desktop-decide.dc.html",
+  "pageUrl": "http://localhost:4937/work/W-3602",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 77.3 is below 90.",
+    "10 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 71,
+    "coverageWithExceptions": 100,
+    "visual": 77.3
+  },
+  "visual": {
+    "score": 77.3,
+    "allCellsScore": 91.2,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 3484,
+    "mismatchedCells": 792
+  },
+  "coverage": {
+    "total": 31,
+    "found": 22,
+    "coverage": 71,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 577
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 661
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Client test data three weeks late",
+        "pageName": "Client test data three weeks late",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 644,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 628,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOUR DECISION",
+        "pageName": "YOUR DECISION",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1243,
+          "y": 133,
+          "w": 109,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1240,
+          "y": 120,
+          "w": 112,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "pageName": "Milestones",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 176,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 6",
+        "pageName": "Documents",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 305,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 366,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 438,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 473,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 6",
+        "pageName": "Registers",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #1F2427 on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 514,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 549,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 9",
+        "pageName": "Actions",
+        "pageRole": "link",
+        "similarity": 91,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 634,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 643,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WHAT TOLA FOUND",
+        "pageName": "WHAT TOLA FOUND",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 244,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 249,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 242,
+          "w": 340,
+          "h": 335
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 247,
+          "w": 340,
+          "h": 415
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECIDE · PMO LEAD",
+        "pageName": "DECIDE · PMO LEAD",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#C8401C), none on the board"
+        ],
+        "boardBox": {
+          "x": 1014,
+          "y": 244,
+          "w": 336,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 249,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Escalating means a formal message to the client's sponsor, reviewed before it's sent.",
+        "pageName": "Escalating means a formal message to the client's sponsor, reviewed before it's sent.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 293,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 607,
+          "w": 308,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Escalate to the client",
+        "pageName": "Escalate to the client",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 453,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 487,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Don't escalate",
+        "pageName": "Don't escalate",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 511,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 545,
+          "w": 308,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 12: the decide board is served to the pm persona; Overview and Setup belong to the PMO Lead nav the mock has no persona for (F-32 precedent).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "key": "link: Setup",
+        "container": "navigation",
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 12: as Overview.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "key": "text: Kemi Adebayo · PMO Lead",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1199,
+          "y": 20,
+          "w": 153,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 12: the signed-in name comes from /me; the mock has no PMO Lead persona.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / LAGOON HEALTH / REGISTERS / ESCALATIONS / ESC-0012",
+        "key": "text: PROJECTS / LAGOON HEALTH / REGISTERS / ESCALATIONS / ESC-0012",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: the frame draws workspace.context.crumbs as a list of plain items as returned, not one text line.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "key": "link: PROJECTS",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: the crumbs are workspace.context.crumbs as returned, drawn by the frame as plain items (not links).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "LAGOON HEALTH",
+        "key": "link: LAGOON HEALTH",
+        "container": "main",
+        "boardBox": {
+          "x": 167,
+          "y": 84,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: as PROJECTS.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "key": "tablist: Project",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 654,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 9: the project tab bar links every tab and marks none current (F-30); it is drawn by the frame as a nav, not a tablist.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Note (needed to return or refuse)",
+        "key": "text: Note (needed to return or refuse)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 341,
+          "w": 308,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2: the shared rule names only the offered verdicts that need a note: \"Note (needed to reject)\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(needed to return or refuse)",
+        "key": "text: (needed to return or refuse)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1062,
+          "y": 341,
+          "w": 174,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2: as above.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Heading \"Client test data three weeks late\"",
+        "kind": "Heading",
+        "name": "Client test data three weeks late",
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 644,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 628,
+          "h": 35
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Text \"YOUR DECISION\""
+        ]
+      },
+      {
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Milestones 4\"",
+        "kind": "Tab",
+        "name": "Milestones 4",
+        "boardBox": {
+          "x": 176,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Documents 6\"",
+        "kind": "Tab",
+        "name": "Documents 6",
+        "boardBox": {
+          "x": 305,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 366,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Money\"",
+        "kind": "Tab",
+        "name": "Money",
+        "boardBox": {
+          "x": 438,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 473,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Registers 6\"",
+        "kind": "Tab",
+        "name": "Registers 6",
+        "boardBox": {
+          "x": 514,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 549,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Actions 9\"",
+        "kind": "Tab",
+        "name": "Actions 9",
+        "boardBox": {
+          "x": 634,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 643,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Escalating means a formal message to the client's sponsor, reviewed before it's sent.\"",
+        "kind": "Text",
+        "name": "Escalating means a formal message to the client's sponsor, reviewed before it's sent.",
+        "boardBox": {
+          "x": 1028,
+          "y": 293,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 607,
+          "w": 308,
+          "h": 39
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"DECIDE · PMO LEAD\"; on the page it comes after Link \"Don't escalate\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PM",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 455,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 149,
+          "y": 85,
+          "w": 120,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REGISTERS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 269,
+          "y": 85,
+          "w": 89,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ESCALATIONS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 358,
+          "y": 85,
+          "w": 104,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ESC-0012",
+        "container": "navigation",
+        "pageBox": {
+          "x": 462,
+          "y": 85,
+          "w": 81,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 637,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Delivery",
+        "container": "navigation",
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 87,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Escalate ESC-0012 to the client, or leave the issue with its owner.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 306,
+          "w": 308,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(needed to reject)",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1062,
+          "y": 361,
+          "w": 112,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (needed to reject)",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 387,
+          "w": 308,
+          "h": 88
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

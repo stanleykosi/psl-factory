@@ -6,10 +6,10 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { Button, Callout, formatDayMonth, formatDayTime, Tag, Unknown as UnknownValue } from '@/components';
+import { Button, Callout, formatDayMonth, formatDayTime, formatSize, Icon, Tag, Unknown as UnknownValue } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
 
-import { columnDayMonth } from './proposals';
+import { columnDayMonth, itemAttachment } from './proposals';
 
 import {
   agentName,
@@ -39,6 +39,8 @@ export type ItemControls = {
   item?: (section: Section, item: Item) => ReactNode;
   /** The checkbox for an `items` step. */
   select?: (section: Section, item: Item) => ReactNode;
+  /** F-37: the header box that ticks or unticks the rows on screen (never rows that are not drawn). */
+  selectAll?: (section: Section) => ReactNode;
   /** The open form for one of the item's steps, drawn under its row. */
   after?: (section: Section, item: Item) => ReactNode;
   /** The `items` step button under the section. */
@@ -105,6 +107,22 @@ const citedInLabel = (item: Item) => {
 
 const Detail = ({ text }: { text?: string }) => (text ? <span className="ws-detail">{text}</span> : null);
 
+/** PROPOSAL (G-SCR32-3, F-41): the file that goes with a message, as text only. */
+function Attachment({ item }: { item: Item }) {
+  const file = itemAttachment(item);
+  if (!file) return null;
+  return (
+    <span className="ws-attachment">
+      <Icon name="clip" />
+      <span>
+        <strong>{file.label}</strong>
+        <span className="cmp-sr"> · </span>
+        <span className="ws-attachment__meta">Uploaded · {formatSize(file.sizeBytes)}</span>
+      </span>
+    </span>
+  );
+}
+
 function Restricted({ label }: { label?: string }) {
   return <p className="ws-restricted">{label ?? WS_TEXT.restricted}</p>;
 }
@@ -158,7 +176,11 @@ function FactsList({ section, strip }: { section: Section; strip?: boolean }) {
           ) : (
             <>
               <dt>{item.label ?? item.text}</dt>
-              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : item.severity ? <StatusWord value={item.severity} kind="severity" /> : <Unknown />}</dd>
+              {/* F-43 (UI-1-2): a tag the backend sends with a fact ("ACCEPTED", "UNKNOWN") is drawn in its tone, in place of the same words as plain text */}
+              <dd>
+                {item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) && item.value !== item.tag?.label ? item.value : item.tag ? null : item.severity ? <StatusWord value={item.severity} kind="severity" /> : <Unknown />}
+                {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
+              </dd>
             </>
           )}
         </div>
@@ -166,6 +188,40 @@ function FactsList({ section, strip }: { section: Section; strip?: boolean }) {
     </dl>
   );
 }
+
+/** F-43 (UI-1-1): a line's figures as the board's strip of cells, each label over its value as returned; a tag's tone colours its cell
+ *  and its words are drawn only when they are not the label's own. */
+function FiguresStrip({ section }: { section: Section }) {
+  return (
+    <dl className="ws-figstrip">
+      {section.items.map((item) => (
+        <div key={item.id} className="ws-figstrip__cell" data-tone={item.tag && !item.restricted ? tagTone(item.tag.tone) : undefined}>
+          {item.restricted ? (
+            <dd>{WS_TEXT.restricted}</dd>
+          ) : (
+            <>
+              <dt>{item.label ?? item.text}</dt>
+              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : <Unknown />}</dd>
+              {item.tag && item.tag.label !== (item.label ?? item.text) && (
+                <dd>
+                  <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>
+                </dd>
+              )}
+            </>
+          )}
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** F-43 (UI-1-1): a one-sentence untitled text section drawn as the board's muted caption, with no panel. */
+const captionText = (section: Section) => {
+  const [item] = section.items;
+  if (section.kind !== 'text' || section.title || section.note || section.restricted || section.items.length !== 1) return undefined;
+  if (item.restricted || item.label || item.detail || item.tag || (item.cites ?? []).length > 0 || !hasValue(item.text)) return undefined;
+  return item.text;
+};
 
 function CellValue({ cell, column }: { cell: Cell | undefined; column: Column }) {
   const kind = column.kind ?? 'text';
@@ -209,8 +265,9 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
         <thead>
           <tr>
             {selectable && (
-              <th className="psl-check-cell">
+              <th className={controls?.selectAll?.(section) ? 'psl-check-cell ws-selectall' : 'psl-check-cell'}>
                 <span className="cmp-sr">Select</span>
+                {controls?.selectAll?.(section)}
               </th>
             )}
             {columns.map((c) => (
@@ -291,6 +348,13 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                       <>
                         {' '}
                         <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>
+                      </>
+                    )}
+                    {/* F-38: the label the backend gives a check's source ("FROM THE RFP, P.2"); no earlier checklist carries one */}
+                    {item.cite_label && (
+                      <>
+                        {' '}
+                        <Cites item={{ ...item, cites: [] }} />
                       </>
                     )}
                   </span>
@@ -389,6 +453,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                   <Lead item={item} />
                 </span>
                 <Detail text={item.detail} />
+                <Attachment item={item} />
               </span>,
               <>
                 {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
@@ -448,8 +513,10 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   );
 }
 
-/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
-export function SectionView({ section, level, controls, banner = 'warning', strip = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; banner?: 'warning' | 'success' | 'problem' }) {
+/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default
+ *  (information on the leadership report while the agent drafts, F-35).
+ *  `strip` draws facts (F-30) or figures (F-43) as a strip of cells; `caption` draws a one-sentence untitled text section as a caption (F-43). */
+export function SectionView({ section, level, controls, banner = 'warning', strip = false, caption = false, lead = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; caption?: boolean; lead?: boolean; banner?: 'warning' | 'success' | 'problem' | 'info' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
@@ -463,6 +530,23 @@ export function SectionView({ section, level, controls, banner = 'warning', stri
       </Callout>
     );
   }
+  // F-38: the submission page's lead sentence (one returned text item) is the board's band with its icon, in the status tone; the item's own tag stays beside it
+  if (lead && !restricted && section.kind === 'text' && !section.title && section.items.length === 1 && hasValue(section.items[0].text)) {
+    const [item] = section.items;
+    return (
+      <Callout kind={banner} announce={false} className="ws-note">
+        {item.text}
+        {item.tag && (
+          <>
+            {' '}
+            <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>
+          </>
+        )}
+      </Callout>
+    );
+  }
+  const captioned = caption ? captionText(section) : undefined;
+  if (captioned !== undefined) return <p className="ws-caption">{captioned}</p>;
   return (
     <section className={`psl-panel ws-section ws-section--${section.kind}${strip ? ' ws-section--strip' : ''}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
       {section.title && (
@@ -487,6 +571,8 @@ export function SectionView({ section, level, controls, banner = 'warning', stri
               <p className="ws-empty">{WS_TEXT.empty}</p>
             ) : section.kind === 'facts' ? (
               <FactsList section={section} strip={strip} />
+            ) : strip && section.kind === 'figures' ? (
+              <FiguresStrip section={section} />
             ) : section.kind === 'table' ? (
               <Table section={section} controls={controls} />
             ) : (

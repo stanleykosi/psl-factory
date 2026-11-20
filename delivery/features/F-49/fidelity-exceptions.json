@@ -1,0 +1,196 @@
+{
+ "exceptions": [
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "table",
+   "name": "(table)",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "columnheader",
+   "name": "WORK",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "columnheader",
+   "name": "STATE",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "columnheader",
+   "name": "AGE",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "2h",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "1d",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "\u00d7",
+   "category": "component",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the close control is a button named Close, not text.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "Logging an RFP opens a new pre-engagement workspace for it. The RFP reference can't be changed later.",
+   "category": "claim",
+   "conflicts": 2,
+   "reason": "Conflicts 2: not drawn; claims a workspace and an immutable reference that no source states (G-23-5).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "New client \u00b7 they'll be added to the client register",
+   "category": "claim",
+   "conflicts": 1,
+   "reason": "Conflicts 1: not drawn; no operation creates a client (G-23-1).",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "From the RFP. Shown on the submission pack and used to send it.",
+   "category": "claim",
+   "conflicts": 4,
+   "reason": "Conflicts 4: page draws the line's help 'Where the client wants it sent.' instead.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "Taken from page 2 of the RFP (proof attached)",
+   "category": "claim",
+   "conflicts": 3,
+   "reason": "Conflicts 3: page draws the line's help 'Enter it as the RFP states it.'; no page number or proof is returned.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "12 Nov 2026, 09:40 WAT",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control; no WAT text is drawn.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "28 Nov 2026, 17:00 WAT",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "Tamarind Loans Ltd \u25be",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "TL-RFP-2026-014",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text typed into an input, matched by control.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "procurement@tamarindloans.example",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text typed into an input, matched by control.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "Received from their procurement lead by email.",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text typed into the Note box, matched by control.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "link",
+   "name": "\u2190 My work",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the phone form is a bottom sheet; the page bar is not drawn.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "Opens a new pre-engagement workspace",
+   "category": "claim",
+   "conflicts": 2,
+   "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 \u00b7 change line'.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "12 Nov, 09:40",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "28 Nov, 17:00",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  },
+  {
+   "role": "text",
+   "name": "Submit by",
+   "category": "words",
+   "conflicts": 5,
+   "reason": "Conflicts 5: both widths use the desktop words ('How the client wants it submitted').",
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
+  }
+ ]
+}

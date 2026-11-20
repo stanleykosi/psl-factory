@@ -1,0 +1,143 @@
+{
+  "id": "W-4208",
+  "title": "QuickBooks journal JE-7741 · October",
+  "line": "Ledger sources",
+  "reference": "LED-0052",
+  "state": "waiting",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Capture lineage",
+      "status": "done"
+    },
+    {
+      "name": "Record what was found",
+      "status": "stopped"
+    },
+    {
+      "name": "Independent review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the ledger source file",
+        "status": "done",
+        "source": "QB_EXPORT_JE7741.PDF"
+      },
+      {
+        "text": "Checked date and period",
+        "status": "done",
+        "source": "28 OCT · 2026-10"
+      },
+      {
+        "text": "Checked where it came from",
+        "status": "done",
+        "source": "QUICKBOOKS · REALM PSL-NG"
+      },
+      {
+        "text": "Capture the lineage",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-14T14:12:00Z"
+  },
+  "next_step": "The check stays held until Verification rules are set in Setup.",
+  "sample": true,
+  "case_id": "C-LED-0052",
+  "case_revision": 4,
+  "workspace": {
+    "line_key": "ledger_sources",
+    "screen": "SCR-58",
+    "view": "check_held",
+    "status": {
+      "label": "CHECK HELD",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "held",
+        "kind": "facts",
+        "title": "Why it’s held",
+        "items": [
+          {
+            "id": "H-1",
+            "label": "What was found",
+            "value": "UNKNOWN",
+            "tag": {
+              "label": "UNKNOWN",
+              "tone": "stopped"
+            }
+          },
+          {
+            "id": "H-2",
+            "label": "Verification rules",
+            "value": "NOT SET",
+            "tag": {
+              "label": "NOT SET",
+              "tone": "stopped"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "The check stays held. What happens next depends on Verification rules, which an admin sets in Setup · Finance rules."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "ledger_sources",
+          "label": "LEDGER SOURCES"
+        },
+        {
+          "value": "LED-0052",
+          "label": "LED-0052"
+        }
+      ]
+    },
+    "revision": 3
+  }
+}

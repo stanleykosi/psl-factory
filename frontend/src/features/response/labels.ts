@@ -8,7 +8,7 @@ export const RECORDABLE: ReadonlySet<ResponseVariant> = new Set(['client_respons
 export const RESPONSE_LABELS = {
   /** The SCR-02 waiting panel's link, in place of "Open the decision". */
   entry: { client_response: 'Record the client’s response', sow_signature: 'Record the client’s signature', team_input: 'Record team input' } as Partial<Record<ResponseVariant, string>>,
-  record: { client_response: 'Record response', sow_signature: 'Record signature', team_input: 'Record input' } as Partial<Record<ResponseVariant, string>>,
+  record: { client_response: 'Record response', sow_signature: 'Record signature', team_input: 'Record input', support_handover: 'Record reply' } as Partial<Record<ResponseVariant, string>>,
   busy: 'Recording…',
 };
 
@@ -27,7 +27,7 @@ export const AGENT_LABELS: Record<AgentKey, { name: string; role: string }> = {
 
 /** "Client contact · Dr Amaka Obi, Lagoon Health" (client_response) or "Ngozi Bello · Head of …, Tamarind Loans". */
 export function responderText(r: Responder, variant: ResponseVariant): string {
-  if (variant === 'sow_signature') {
+  if (variant === 'sow_signature' || variant === 'support_handover') {
     const after = [r.role, r.organisation].filter(Boolean).join(', ');
     return after ? `${r.name} · ${after}` : r.name;
   }
@@ -37,6 +37,7 @@ export function responderText(r: Responder, variant: ResponseVariant): string {
 
 /** "184 KB" or "1.1 MB". */
 export function fileSize(bytes: number): string {
+  if (!Number.isFinite(bytes)) return 'Size unknown';
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
@@ -73,9 +74,12 @@ export function checksSentence(checks: Reconcile['checks']): string | undefined 
   return `${who} checked ${plural(checks.count, 'time')}${over ? ` over ${over}` : ''} and found no delivery receipt.`;
 }
 
-/** One reconcile option: the bold lead and the rest, from the API's notes. */
-export function outcomeWords(outcome: ReconcileOutcome, reconcile: Reconcile): { lead: string; rest?: string } {
-  if (outcome === 'delivered') return { lead: 'It arrived.', rest: 'I have proof the client received it (upload it next).' };
+/** F-43 (spec Conflicts 4): the internal cash forecast's reconcile words; every other line keeps the client-invoice words. */
+export const INTERNAL_RECONCILE_LINE = 'cash_forecast';
+
+/** One reconcile option: the bold lead and the rest, from the API's notes. `internal`: the delivery went to someone inside PSL. */
+export function outcomeWords(outcome: ReconcileOutcome, reconcile: Reconcile, internal = false): { lead: string; rest?: string } {
+  if (outcome === 'delivered') return { lead: 'It arrived.', rest: internal ? 'I have proof it was received (upload it next).' : 'I have proof the client received it (upload it next).' };
   if (outcome === 'not_delivered') return { lead: 'It didn’t arrive.', rest: reconcile.resend ? sentence(`Allow ${reconcile.resend}`) : undefined };
   return { lead: 'I can’t tell yet.', rest: reconcile.unknown_note ? sentence(reconcile.unknown_note) : undefined };
 }

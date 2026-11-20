@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectJourneyPage } from '@/features/projects/ProjectJourney';
@@ -391,7 +391,7 @@ describe('phone (390): cards and the bottom sheet', () => {
     await until(() => expect(screen.queryByRole('dialog')).toBeNull());
     const amount = panel().querySelectorAll('.money__card')[1].querySelector('a')!;
     expect(amount.textContent).toBe('₦4,250,000.00');
-    expect(document.activeElement).toBe(amount);
+    await waitFor(() => expect(document.activeElement).toBe(amount));
   });
 
   it('the close button closes the sheet too', async () => {

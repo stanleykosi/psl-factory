@@ -1,0 +1,387 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T21:59:30.423Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-40-mobile-submitted.dc.html",
+  "boardName": "SCR-40-mobile-submitted.dc.html",
+  "pageUrl": "http://localhost:4985/work/W-3503",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-38/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 83.6 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 66.7,
+    "coverageWithExceptions": 100,
+    "visual": 83.6
+  },
+  "visual": {
+    "score": 83.6,
+    "allCellsScore": 83.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1029,
+    "cell": 12,
+    "contentCells": 2304,
+    "mismatchedCells": 378
+  },
+  "coverage": {
+    "total": 6,
+    "found": 4,
+    "coverage": 66.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "pageName": "Done",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "capitals on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 203,
+          "y": 0,
+          "w": 29,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Submitted",
+        "pageName": "Submitted · delivery confirmed",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Submitted\" on the board, \"Submitted · delivery confirmed\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record the outcome",
+        "pageName": "Record the outcome",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← RFP",
+        "key": "link: ← RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 19 (phone wording): the phone bar's back link is the shell's own 'Back to RFP' to the first other tab with a page (W-2101), not the board's '← RFP' text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Email delivered · ref TL-SUB-0091.",
+        "key": "text: Email delivered · ref TL-SUB-0091.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 218,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 20: the phone board draws a shorter one-line sentence than the desktop; the contract returns one banner sentence per item (drawn in the band), so the page does not compose a second wording from the ref.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"DONE\"",
+        "kind": "Text",
+        "name": "DONE",
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 203,
+          "y": 0,
+          "w": 29,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (69% across), middle on the page (56% across)"
+        ]
+      },
+      {
+        "label": "Link \"Record the outcome\"",
+        "kind": "Link",
+        "name": "Record the outcome",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to RFP",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 41,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SUBMITTED 26 NOV",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 128,
+          "w": 134,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Emailed to procurement@tamarindloans.example, the address the RFP gives on p.2. Their mail server accepted it (ref TL-SUB-0091), so the response is verified as sent. RECEIPT CONFIRMED",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 173,
+          "w": 306,
+          "h": 107
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT CONFIRMED",
+        "container": "main",
+        "pageBox": {
+          "x": 172,
+          "y": 257,
+          "w": 139,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "WHAT HAPPENED",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 305,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "SENT TO",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 552,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "If delivery hadn't been confirmed (a bounce, or no answer from their mail server), this would show \"Effect uncertain\" and someone would check with the client before anything is sent again.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 698,
+          "w": 306,
+          "h": 105
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 829,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "When the client announces the result, record it here: won, lost or still pending.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 866,
+          "w": 326,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

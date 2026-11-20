@@ -1,0 +1,20 @@
+{
+  "send_reminder": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  },
+  "edit_draft": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  },
+  "set_aside": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  }
+}

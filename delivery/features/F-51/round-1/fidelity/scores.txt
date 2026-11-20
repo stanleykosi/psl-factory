@@ -1,0 +1,5 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-04-desktop-ppe-1440	1440	87.2	87.2	42.8	False
+SCR-04-mobile-ppe-390	390	64.3	64.3	49.8	False
+SCR-04-desktop-forecast-1440	1440	82.1	82.1	42.1	False
+SCR-04-mobile-forecast-390	390	50	50	47.4	False

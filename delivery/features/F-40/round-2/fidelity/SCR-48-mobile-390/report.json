@@ -1,0 +1,416 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T10:13:43.606Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-48-mobile.dc.html",
+  "boardName": "SCR-48-mobile.dc.html",
+  "pageUrl": "http://localhost:4975/work/W-3701",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-40/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 86.8 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 55.6,
+    "coverageWithExceptions": 100,
+    "visual": 86.8
+  },
+  "visual": {
+    "score": 86.8,
+    "allCellsScore": 86.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 936,
+    "cell": 12,
+    "contentCells": 2287,
+    "mismatchedCells": 303
+  },
+  "coverage": {
+    "total": 9,
+    "found": 5,
+    "coverage": 55.6,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HND-0048",
+        "pageName": "HND-0048",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Support handover",
+        "pageName": "Support handover",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 218,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Support handover v1",
+        "pageName": "SUPPORT HANDOVER V1",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 136,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 369,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Publish to Support",
+        "pageName": "Publish to Support",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: the visible text and the target now match the board (Delivery tab); the shared phone bar names the link 'Back to Delivery' (F-22 PhoneBar aria-label), so the tool reads a different accessible name.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · done",
+        "key": "text: Tola · PMO agent · done",
+        "container": "page",
+        "boardBox": {
+          "x": 74,
+          "y": 134,
+          "w": 136,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "page",
+        "boardBox": {
+          "x": 309,
+          "y": 122,
+          "w": 49,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted 08 Apr",
+        "key": "text: Drafted 08 Apr",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 315,
+          "w": 354,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 9: Tola's panel is a returned checklist section with its as-of line and the Ask Tola link in the links row, not the working-agent card (Conflicts 9).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"HND-0048\"",
+        "kind": "Text",
+        "name": "HND-0048",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"Support handover v1\"",
+        "kind": "Text",
+        "name": "Support handover v1",
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 136,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 369,
+          "w": 354,
+          "h": 37
+        },
+        "reasons": [
+          "across the page: middle on the board (36% across), middle on the page (50% across)"
+        ]
+      },
+      {
+        "label": "Link \"Publish to Support\"",
+        "kind": "Link",
+        "name": "Publish to Support",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Delivery",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 106,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HANDOVER · READY TO PUBLISH",
+        "container": "main",
+        "pageBox": {
+          "x": 112,
+          "y": 103,
+          "w": 208,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 746,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Publishing sends it to Support. Then you record whether they received it or found gaps.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 738,
+          "w": 358,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

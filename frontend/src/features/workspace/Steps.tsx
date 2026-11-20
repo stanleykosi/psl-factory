@@ -64,7 +64,9 @@ export function StepControl({ workId, step, tasks, off, pending, none, onPress, 
     // F-32: authority is the task's `you_can_act` as the backend returned it; a missing task is unavailable too.
     const task = tasks?.find((t) => t.id === step.task_id);
     if (!task?.you_can_act) {
-      const reason = task?.decision ? cannotActCopy(task.cannot_act_reason, { ...task, decision: task.decision }).heading : NO_TASK;
+      // F-40: a task with no decision block (a handover reply) still says whose it is when the reason is the role
+      const named = task?.decision || (task?.cannot_act_reason === 'not_your_role' && task.required_role);
+      const reason = task && named ? cannotActCopy(task.cannot_act_reason, task as Parameters<typeof cannotActCopy>[1]).heading : NO_TASK;
       return (
         <span className="ws-control">
           <Button kind={stepKind(step)} aria-disabled="true" aria-describedby={[describedBy, reasonId].filter(Boolean).join(' ')} ref={controlRef}>

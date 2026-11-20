@@ -4,13 +4,14 @@
 // `required` as aria-required ("(optional)" on the label otherwise). A 422 message sits under the control with
 // aria-invalid and aria-describedby. Values are kept as typed; intake.ts turns them into the submitted shapes.
 // As the boards draw them: a date range is one field box, a display value and a 422 for a field this drawer does
-// not render are read-only boxes, and an optional proof field is its dashed box, disabled until FE-M2A-PROOF.
+// not render are read-only boxes. Proof (evidence) fields are StartProof's.
 import { useId, type ReactNode } from 'react';
 
 import { DateField, Icon, Segmented, Select, TextArea, TextField } from '@/components';
 
-import type { FieldValue, RangeValue } from './intake';
-import { RecordPicker } from './RecordPicker';
+import { isNew, type FieldValue, type NewValue, type RangeValue } from './intake';
+import { fourSegments, optionalAsLine, selectChoice } from './labels';
+import { NEW_CLIENT, RecordPicker } from './RecordPicker';
 import type { Field, LineOption } from './types';
 
 type Props = {
@@ -33,11 +34,11 @@ type Props = {
 const NATIVE: Record<string, string> = { period: 'month', datetime: 'datetime-local', integer: 'number' };
 
 /** The label of a field whose control brings none of its own (a choice row, a range, a record picker, a display value). */
-function Label({ id, field, as = 'span' }: { id: string; field: Field; as?: 'span' | 'legend' }) {
+function Label({ id, field, as = 'span', plain = false }: { id: string; field: Field; as?: 'span' | 'legend'; plain?: boolean }) {
   const Tag = as;
   return (
     <Tag className="psl-label" id={id}>
-      {!field.required && field.type !== 'display' && field.type !== 'evidence' ? `${field.label} (optional)` : field.label}
+      {!field.required && !plain && field.type !== 'display' ? `${field.label} (optional)` : field.label}
     </Tag>
   );
 }
@@ -52,11 +53,16 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
   const hintText = movedHelp ? undefined : field.help;
   const waitId = `${id}-wait`;
   const invalid = error !== undefined;
+  // F-49: a "New client" asks for a name; its message sits under that box.
+  const adding = isNew(value);
   // The library fields take one hint line; the things this drawer says beside a control are joined into it.
+  // F-51: on that line an optional record or choice reads "Optional" as a muted line under the control (the boards).
+  const optionalLine = !field.required && (field.type === 'choice' || field.type === 'record') && optionalAsLine(lineKey);
   const lines: ReactNode[] = [
     waiting && <span key="wait" id={waitId}>Choose {parentLabel ?? 'the field above'} first</span>,
     hintText && <span key="help" id={helpId}>{hintText}</span>,
     note && <span key="note" id={noteId}>{note}</span>,
+    optionalLine && <span key="optional">Optional</span>,
   ].filter(Boolean);
   const hint = lines.length > 0 ? <span className="sw-hintlines">{lines}</span> : undefined;
   // For controls the library does not draw: the same messages under them.
@@ -82,7 +88,8 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
           {note}
         </span>
       )}
-      {error && (
+      {optionalLine && <span className="psl-hint">Optional</span>}
+      {error && !adding && (
         <span className="psl-error" id={`${id}-error`}>
           <Icon name="warn" />
           <span>{error}</span>
@@ -91,10 +98,10 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     </>
   );
   const describedBy =
-    [waiting && waitId, (hintText || (movedHelp && !movedHelp.text)) && helpId, note && noteId, error && `${id}-error`].filter(Boolean).join(' ') || undefined;
+    [waiting && waitId, (hintText || (movedHelp && !movedHelp.text)) && helpId, note && noteId, error && !adding && `${id}-error`].filter(Boolean).join(' ') || undefined;
   const common = { 'aria-required': field.required || undefined, 'aria-describedby': movedHelp && !movedHelp.text ? movedHelp.id : undefined };
   const label = !field.required ? field.label : field.label;
-  const optional = !field.required;
+  const optional = !field.required && !optionalLine;
   const text = typeof value === 'string' ? value : '';
   const frame = (children: ReactNode) => (
     <div className="psl-field sw-field" data-field={field.name}>
@@ -146,7 +153,8 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     }
     case 'choice': {
       const options = field.options ?? [];
-      if (options.length > 3) {
+      // three or fewer are joined segments; the RFP line's submission method has four, drawn as segments too (SCR-23)
+      if (options.length > (fourSegments(lineKey) ? 4 : 3) || selectChoice(lineKey, field.name)) {
         return frame(
           <Select
             id={controlId}
@@ -168,7 +176,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
           <div aria-describedby={describedBy} aria-invalid={invalid || undefined}>
             <Segmented
               labelledBy={labelId}
-              className="sw-seg"
+              className={options.length === 4 ? 'sw-seg sw-seg--four' : 'sw-seg'}
               options={options.map((option) => ({ value: option.value, label: option.label, disabled: readOnly }))}
               value={typeof value === 'string' ? value : undefined}
               onChange={(next) => !readOnly && onChange(next)}
@@ -182,19 +190,29 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     case 'records':
       return frame(
         <>
-          <Label id={labelId} field={field} />
+          <Label id={labelId} field={field} plain={optionalLine} />
           <RecordPicker
             key={parent ?? ''}
             lineKey={lineKey}
             field={field}
             parent={parent}
-            value={value as LineOption | LineOption[] | undefined}
+            value={value as LineOption | LineOption[] | NewValue | undefined}
             onChange={onChange}
             disabled={readOnly || waiting}
             labelId={labelId}
             describedBy={describedBy}
             invalid={invalid}
           />
+          {isNew(value) && (
+            <TextField
+              label={`Name of the ${NEW_CLIENT.toLowerCase()}`}
+              value={value.new.name}
+              readOnly={readOnly}
+              error={error}
+              aria-required
+              onChange={(event) => onChange({ new: { name: event.target.value } })}
+            />
+          )}
           {under}
         </>,
       );
@@ -203,17 +221,6 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
         <>
           <Label id={labelId} field={field} />
           <span className="psl-input sw-display">{field.value}</span>
-          {under}
-        </>,
-      );
-    case 'evidence':
-      return frame(
-        <>
-          <Label id={labelId} field={field} />
-          <span className="sw-proof" aria-disabled="true">
-            <Icon name="clip" />
-            Proof upload comes next
-          </span>
           {under}
         </>,
       );

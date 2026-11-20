@@ -100,10 +100,12 @@ describe('F-33 fixtures', () => {
     expect(names).not.toContain('W-2702.next.json');
   });
 
-  it('the verdict overlay appears only on W-27xx steps that carry a task id; W-2706 names no reviewer and has no task', () => {
+  it('the verdict overlay appears only on W-27xx (and F-35 W-32xx, F-39 W-36xx, F-38 W-35xx, F-42 W-39xx, F-43 W-40xx, F-45 W-42xx) steps that carry a task id; W-2706 names no reviewer and has no task', () => {
     const all = readdirSync(workDir).filter((name) => name.endsWith('.json'));
     const carrying = all.filter((name) => /"verdict"/.test(readFileSync(join(workDir, name), 'utf8')));
-    expect(carrying.every((name) => /^W-27/.test(name))).toBe(true);
+    // F-39's escalation boards (W-36xx) and F-38's submission boards (W-35xx) reuse the same overlay for their decide steps
+    // F-35 reuses the overlay on the leadership report's review fixtures (W-32xx)
+    expect(carrying.every((name) => /^W-(27|32|35|36|39|40|42)/.test(name))).toBe(true);
     const hold = readItem('W-2706.json');
     expect(hold.tasks).toEqual([]);
     expect(hold.workspace.steps).toBeUndefined();

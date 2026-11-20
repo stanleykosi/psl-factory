@@ -1,0 +1,8 @@
+head ef0362f8cfe0fd7dab7e1ce57eb419db93395954, load { 6.96 8.66 13.89 }
+checks exit 0
+ Test Files  136 passed (136)
+      Tests  3352 passed (3352)
+e2e exit 0
+  ✓  34 e2e/start-work.spec.ts:203:3 › a start, end to end on the contract mock › ceo at /my-work sees the chooser from the main button (680ms)
+
+  34 passed (2.0m)

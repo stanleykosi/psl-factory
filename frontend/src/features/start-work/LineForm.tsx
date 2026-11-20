@@ -7,7 +7,7 @@
 // "Line chosen from the Start work menu · change line" over Back or Cancel and the start button; on the phone the
 // sheet head reads "Step 2 of 2 · change line" and the footer is the start button alone.
 import Link from 'next/link';
-import { Fragment, type ReactNode } from 'react';
+import { Fragment, useEffect, type ReactNode } from 'react';
 
 import { Button, Callout, Icon } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
@@ -15,7 +15,8 @@ import { SignedOutState } from '@/shell/FrameStates';
 import { DrawerFrame, useWide } from './DrawerFrame';
 import { caseOptionUnusable, parentValue, startableHere } from './intake';
 import { IntakeField } from './IntakeField';
-import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, startLabel } from './labels';
+import { StartProof } from './StartProof';
+import { AGENT_NAMES, drawerEyebrow, drawerTitle, helpMovesBelowProof, footerGoesBack, journeyLabel, pairedFields, startLabel } from './labels';
 import type { Field, FieldProblem, Line } from './types';
 import { useStartForm, type Notice } from './useStartWork';
 
@@ -182,6 +183,14 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
   const agent = line.next?.agent ? AGENT_NAMES[line.next.agent] : undefined;
   const { notice, noticeSeq } = form;
 
+  // A press that found required fields empty: focus goes to the first one drawn.
+  const { seq: focusSeq, name: focusName } = form.focus;
+  useEffect(() => {
+    if (focusSeq === 0) return;
+    const box = document.querySelector<HTMLElement>(`[data-field="${CSS.escape(focusName)}"]`);
+    box?.querySelector<HTMLElement>('input:not([disabled]):not([hidden]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [role="combobox"]:not([disabled]), [role="radio"][tabindex="0"]')?.focus();
+  }, [focusSeq, focusName]);
+
   const readOnly = form.uncertain || form.busy || form.prefilling;
   const unusable = caseOptionUnusable(line, form.values);
   const labels = Object.fromEntries(form.fields.map((f) => [f.name, f.label]));
@@ -209,7 +218,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
 
   if (form.signedOut) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={back} focusKey="signed-out">
+      <DrawerFrame eyebrow={drawerEyebrow(line)} title={title} subline={subline} onClose={onClose} footer={back} focusKey="signed-out">
         <SignedOutState pathname={pathname} />
       </DrawerFrame>
     );
@@ -217,7 +226,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
 
   if (!here) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={back} focusKey={`cant-${line.key}`}>
+      <DrawerFrame eyebrow={drawerEyebrow(line)} title={title} subline={subline} onClose={onClose} footer={back} focusKey={`cant-${line.key}`}>
         <Callout kind="info">
           You can&rsquo;t start this line from here yet. <Link href="/assistant" onClick={onClose}>Describe it to Tola</Link> and
           she&rsquo;ll help you start it.
@@ -226,7 +235,9 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
     );
   }
 
-  const canPress = !form.prefilling && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
+  // Held while any proof is uploading or failed, so nobody starts believing a file went with it (Conflicts 5).
+  const canPress =
+    !form.prefilling && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || (form.caseRef !== null && !form.proofHeld));
   const footer = (
     <>
       {form.uncertain && <span className="psl-hint sw-foothint">If it started, it will appear in My work.</span>}
@@ -246,24 +257,54 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
     </>
   );
 
+  const renderField = (field: Field, at: number) =>
+    field.type === 'evidence' ? (
+      <StartProof
+        key={field.name}
+        field={field}
+        sendCase={form.sendCase}
+        readOnly={readOnly}
+        error={form.fieldErrors[field.name]}
+        movedHelp={helpMovesBelowProof(line.key) ? movedHelp(form.fields, at) : undefined}
+        moved={form.proofMoved}
+        reread={form.rereadCase}
+        onState={form.reportProof}
+        onSignedOut={form.signOut}
+        onRefused={form.proofRefused}
+      />
+    ) : (
+      <IntakeField
+        key={field.name}
+        lineKey={line.key}
+        field={field}
+        value={form.values[field.name]}
+        onChange={(value) => form.setValue(field.name, value)}
+        parent={parentValue(field, form.values)}
+        parentLabel={field.depends_on ? labels[field.depends_on] : undefined}
+        // The project can't change while a file uploads to its case.
+        readOnly={readOnly || (field.name === line.case_field && form.proofBusy)}
+        error={form.fieldErrors[field.name]}
+        note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
+        movedHelp={helpMovesBelowProof(line.key) ? movedHelp(form.fields, at) : undefined}
+      />
+    );
+
   return (
-    <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`line-${line.key}`}>
+    <DrawerFrame eyebrow={drawerEyebrow(line)} title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`line-${line.key}`}>
       {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} seq={noticeSeq} />}
-      {form.fields.map((field, at) => (
-        <IntakeField
-          key={field.name}
-          lineKey={line.key}
-          field={field}
-          value={form.values[field.name]}
-          onChange={(value) => form.setValue(field.name, value)}
-          parent={parentValue(field, form.values)}
-          parentLabel={field.depends_on ? labels[field.depends_on] : undefined}
-          readOnly={readOnly}
-          error={form.fieldErrors[field.name]}
-          note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
-          movedHelp={movedHelp(form.fields, at)}
-        />
-      ))}
+      {form.fields.map((field, at) => {
+        const pair = pairedFields(line.key);
+        if (pair && field.name === pair[1] && form.fields[at - 1]?.name === pair[0]) return null;
+        if (pair && field.name === pair[0] && form.fields[at + 1]?.name === pair[1]) {
+          return (
+            <div key={field.name} className="sw-pair">
+              {renderField(field, at)}
+              {renderField(form.fields[at + 1], at + 1)}
+            </div>
+          );
+        }
+        return renderField(field, at);
+      })}
       {notice?.kind === 'invalid' && notice.unmatched.map((problem, at) => <ProblemBox key={`${problem.name}-${at}`} problem={problem} />)}
       {line.next && <WhatHappensNext lineKey={line.key} next={line.next} wide={wide} />}
     </DrawerFrame>

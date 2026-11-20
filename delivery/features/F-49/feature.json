@@ -1,0 +1,978 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-49",
+  "outcome": "Log a received RFP: a person fills in the client, reference, RFP document, received time, submission method and deadline in the Start work drawer and lands on the new RFP (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-RFP-INTAKE"
+  ],
+  "operation_ids": [
+    "E-LINES",
+    "E-LINE-OPTIONS",
+    "E-EVIDENCE-UPLOAD",
+    "E-WORK-START",
+    "E-WORK-ITEM"
+  ],
+  "acceptance_criteria": [
+    "**The line is drawn from data.** As `pmo_lead`, Start work lists \"Log a received RFP\" under \"Pre-sale\". Its drawer shows, in this order, Client or prospect, RFP reference (help \"As written on their document\"), The RFP document, Received, \"How the client wants it submitted\" (4 choices), \"Submission deadline\" (3 choices) and Note \"(optional)\"; the button reads \"Log RFP\"; the eyebrow reads \"START WORK \u00b7 PRE-SALE\". `grep -rn \"Tamarind\\|TL-RFP\\|procurement@\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/rfp-intake.test.tsx`; drawer at 1440 and 390.",
+    "**Nobody but the grant sees it.** As `pm`, `ceo`, `finance_lead` and `none` the line is absent from the chooser; `/me` `startable_lines` equals the E-LINES keys for every persona; the new code reads no `useMe`, `/api/v1/me` or `roles` (`grep -rn \"useMe\\|/api/v1/me\\|roles\" frontend/src/features/start-work` returns nothing). A `none` request for the client options and an upload from a persona without the line answer 404 and look the same as a 403. \u2014 verify: `tests/rfp-intake-mock.test.ts`; grep.",
+    "**Clients only from the backend.** The Client picker lists exactly CL-3506 \"Tamarind Loans Ltd\", CL-3507 and CL-3508, with no typed-in option and no \"New client\" row. \u2014 verify: component test with a recording `fetch`.",
+    "**New client only under the overlay.** With the cookie `psl_mock_rfp=new_client` the picker ends with \"New client\" and a required name box; choosing it and typing \"Acme Foods\" sends `intake.client = {new: {name: \"Acme Foods\"}}`; an empty name shows F-05's required message and sends nothing. Without the cookie no such row exists and no `{new: \u2026}` is ever sent. The sentence \"added to the client register\" is not in the page. \u2014 verify: component test; `grep -rn \"client register\" frontend/src` returns nothing.",
+    "**Deadline has three separate values.** Choosing Unknown or Not stated sends `deadline_status` with that value and no `deadline_at`, even after a date was typed under Stated and then the choice was changed (the typed date is dropped and not sent). Choosing Stated draws the Deadline control and sends `deadline_at` as an ISO instant. No request ever carries a date for Unknown or Not stated, and nothing fills a default date. \u2014 verify: component tests with a recording `fetch`; `rfp-intake-mock.test.ts`.",
+    "**Conditional fields follow the line's `show_when`.** With the overlay, \"Submit to\" is drawn only for Email and Client portal; By hand and Not stated hide it and its value is not sent. Without the overlay (a copy of the line with `show_when` removed) every field is drawn, optional ones stay optional, and a stated deadline with no date is refused only by the backend's 422 \"Enter the deadline the RFP states.\" shown under Deadline. \u2014 verify: component tests on both line copies.",
+    "**Phone fields match desktop.** At 390 the sheet shows the same fields, words and order as desktop in one column, including Note, with \"Log RFP\" pinned and no sideways scroll. Cancel is desktop-only. \u2014 verify: e2e at 390 and 1440.",
+    "**The document uploads when chosen.** Choosing the file (2.4 MB, the board's name) sends one POST `/api/v1/cases/C-RFP-INTAKE/evidence` with `X-CSRFToken` and `{kind: \"rfp_document\", filename, content_base64, case_revision: 5}`; the card reads \"Uploading\u2026\", then \"Uploaded \u00b7 2.4 MB\" only after an `evidence_id` is returned; the start sends that id and `case_revision: 6`. With the upload made to fail (`psl_mock_scenario=500`) the card reads \"Not uploaded\" and \"Log RFP\" sends nothing until Try again succeeds or the file is removed. There is no `accept` attribute and no size or type check in the diff. \u2014 verify: `tests/rfp-intake.test.tsx`; `git diff -U0 frontend/src | grep -nE \"PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]\"` returns nothing.",
+    "**One start, from the board's values.** With the board's values the page sends exactly one POST `/api/v1/work` with `X-CSRFToken` and the body in the example (validated against the generated E-WORK-START request schema; no extra key), using the key made when the drawer opened, and lands on `/work/W-3351`, where the RFP shows as Unassigned. A double press sends one. Opening the drawer again gives a new key. Uploading made no new key. \u2014 verify: component test; `GET /__mock/...` start log in `rfp-intake-mock.test.ts`; e2e request log.",
+    "**The logged RFP shows in Unassigned.** After the start, `pmo_lead`'s `/my-work?queue=unassigned` has one more row for the new RFP (its reference as typed) and the Unassigned count is one higher; pressing it opens F-36's assign panel (`?queue=unassigned&assign=W-3351`). `/__mock/reset` restores the list. \u2014 verify: e2e; `rfp-intake-mock.test.ts`.",
+    "**No browser rules on what the backend decides.** A \"Received\" time in the future, a repeated reference and a repeated file are all sent; the page shows nothing about them before the answer. The mock's 422s \"Received can't be in the future.\" (under Received) and \"This RFP is already logged for that client.\" (under RFP reference) appear as returned, with the entries kept and a top summary. The diff contains no date comparison on `received_at` and no duplicate check. \u2014 verify: component tests; grep on the diff.",
+    "**Stale.** With `psl_mock_scenario=stale` the 409 re-reads the revision, keeps every typed value and the uploaded card, and the next press sends the re-read revision with a new key and succeeds. After 60 seconds of fake time there is still one POST. \u2014 verify: component test with fake timers.",
+    "**Uncertain never says logged.** With `psl_mock_start_work=start_uncertain` the drawer shows \"Check again\" and \"If it started, it will appear in My work.\" and never \"logged\" or \"started\". Check again sends the identical body and key and lands on `/work/W-3351`; the mock records one start. A network failure behaves the same. With `upload_uncertain` the card reads \"Not uploaded\", Try again re-reads the revision first, and the start sends only the second id. \u2014 verify: component tests; e2e request log.",
+    "**Access.** A 401 on E-LINES, the upload or the start shows the signed-out state with `next` set to the current page. A 403 and a 404 on the start show \"You can't start this here.\" with no client, reference or file name, and nothing differs between them. A start without the CSRF header answers 403 and shows the same refusal. \u2014 verify: component tests with a recording `fetch`; mock tests.",
+    "**Plain text, no claims.** A reference or note of `<img src=x onerror=alert(1)>` and a 422 message containing `<b>bold</b>` render as literal text. The drawer has no `<a>` whose `href` comes from a returned value. The page text never contains \"Tola\", \"has read\", \"its own case\" or \"workspace\" (`textContent` check on every state). \u2014 verify: component test; grep.",
+    "**Unknown, never 0.** A line copy with `case_revision` removed stays \"can't start here yet\" (F-05) and sends nothing. An upload 200 without `case_revision` never makes the start send 0 or blank. No card reads \"0 KB\". \u2014 verify: component tests.",
+    "**Phone targets (D-92c).** At 390 every button, input, segment, the Select and the document card's \"Choose a file\", \"\u00d7\" and Try again are at least 44 by 44 px. \u2014 verify: e2e measures `getBoundingClientRect` for each control before and after an upload.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over both boards on a production build, with the cookies in the Boards table. Element coverage after approved exceptions is 100% on each board, and visual is at least 90 or carries a board-level waiver citing D-83, never under 70. Every exception has `role`, `name`, `category`, `reason` and `approved_by` and maps to a Conflicts number. None covers a value the data can supply (a label, a help line, an option or a count). \u2014 verify: the fidelity command per board (`--width 1440`, `--width 390`); `round-<N>/fidelity/`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on the empty drawer, the Stated state, uploading, uploaded, failed, the 422 state, \"Check again\" and the not-open state. Every field has a label; the segmented groups are labelled by their field label; errors and notices are announced (`role=\"status\"` or `alert`); focus moves to the first field with an error. Nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/rfp-intake.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(` or `hsl(` in any `.css`, no raw px outside tokens, and no local copy of `ProofField`, `useEvidenceUpload` or any `@/components` export. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `rfp-intake-mock.test.ts` checks: the new line validates against the generated E-LINES schema, `options/client.json` against E-LINE-OPTIONS, `W-3351` against E-WORK-ITEM (with overlay keys removed; the overlay keys validate against `proposals/rfp-intake.json`); every upload answer validates against the E-EVIDENCE-UPLOAD 200 schema; an extra key is a 422; `{new: \u2026}` is accepted only with `allow_new`; `deadline_at` is refused unless the state is stated; reset restores revision 5 on `C-RFP-INTAKE` and the Unassigned list. \u2014 verify: `cd frontend && npx vitest run tests/rfp-intake.test.tsx tests/rfp-intake-mock.test.ts tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/components/**`, `frontend/src/shell/**`, `frontend/src/features/response/**`, `frontend/src/features/rfp/**`, `apps/**`, `architecture/**`, `design/**`, the protected paths, or existing fixtures other than the two named under Lanes. Every overlay (`show_when`, `allow_new`, `deadline_status`, `{new: {name}}`) and cookie is listed in build.md as a contract proposal with its gap number. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing behaviour green.** `delivery/checks.sh` passes. F-05, F-47 and F-36 still pass: `cd frontend && npx vitest run tests/start-work.test.tsx tests/start-work-intake.test.ts tests/start-work-mock.test.ts tests/start-work-prefill.test.tsx tests/start-work-proof.test.tsx tests/start-work-proof-mock.test.ts tests/rfp-assign.test.tsx tests/rfp-assign-mock.test.ts tests/my-work.test.tsx tests/mock-work-list.test.ts tests/response.test.tsx`, plus the e2e command under Lanes. `pm`, `ceo` and `finance_lead` still show their F-05 and F-47 lines (8, 8 and 3). \u2014 verify: the commands; build.md output."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It creates a client-bid work item and uploads append-only evidence to a shared fixed intake case, so a wrong revision hits other loggers (G-23-5). But it is a single drawer on F-47's merged upload path, with no money, migration, client sending or release. SURFACES: ui (2 boards), api (E-LINES, E-WORK-START, E-EVIDENCE-UPLOAD), contract-change (the `rfp_intake` line, `show_when`, deadline state and `allow_new` as mock overlays). `security` is not ticked, because F-47's case-scoped upload grant is reused unchanged. PRODUCT-ACCEPTANCE is required, because logging an RFP is a new client flow with new wording."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-49/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T22:00:22Z",
+      "seconds": 539.0,
+      "evidence_ref": "delivery/features/F-49/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T22:27:58Z",
+      "seconds": 368.8,
+      "evidence_ref": "delivery/features/F-49/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T23:40:57Z",
+      "seconds": 373.1,
+      "evidence_ref": "delivery/features/F-49/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-49/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 20 Nov 2026 \u2014 D-132",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The tighter grep in `tests/rfp-intake-mock.test.ts:293` (`\\buseMe\\b | /api/v1/me | useRoles | \\.roles\\b`) is reasonable, since the spec's pattern matches `useMemo` and an old LineChooser comment. But it would miss a new bare `roles` identifier, and build.md says `roles:` while the test does not include it. Add `roles:` or `\\broles\\b` with the LineChooser comment excluded.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`useStartWork.ts` submit: the empty-name check calls `setFieldErrors({ [nameless.name]: ... })`. That replaces every other field error rather than merging. It only matters when a 422 is still showing. Merge it to keep the others.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "field errors merged"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-20T08:22:03Z",
+          "refs": [
+            "not exercised by a browser path I could trigger; not retested."
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "field errors merged"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "not exercised by a browser path I could trigger; not retested."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`rfp-intake-mock.test.ts` fails with ECONNRESET in `beforeEach` (`/__mock/reset`) when run in parallel with other files. It was 1 failed of 180 in my 6-file run, and 18/18 on two solo runs. This is the flake build.md already reports and the gate's F-38 flake note matches. Not caused by the feature logic.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec allowed a row in `tests/mock-contract.test.ts` for the new line. None was added. Coverage is in `rfp-intake-mock.test.ts` instead.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "In the uncertain state the form is locked and the chosen submission method loses its selected fill, so the PMO Lead cannot see what was chosen. Keep the selection visible when disabled.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Received and Deadline controls are the browser's native date-time input (mm/dd/yyyy, am/pm); Nigerian users may expect day-first. Accepted by spec (conflict 6); consider help text or a later custom control.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "builder",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Phone gate not passed: visual 67.9 is under the 70 floor and coverage 34.8 with no valid exceptions. The capture scrolled the sheet (side-by-side shows the sheet starting at \"Received\"), so the number cannot be trusted. Fix the driver (round-1/fidelity/_driver/act.mjs: scroll the sheet body to the top before capture, or capture at a height that shows the whole form) and re-run once; a score under 70 after that is a design-engineer decision, not a waiver by builder.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "driver captures the whole sheet (1202px tall page)"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T00:18:10Z",
+          "refs": [
+            "139eceeb"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": "round-2/review-ui.md: phone 59 is the tool's union scoring of a taller sheet, not a defect; floor exception accepted by the design engineer under D-131"
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "driver captures the whole sheet (1202px tall page)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "139eceeb"
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "builder",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The six \"scroll-capture\" exceptions (Client or prospect, RFP reference, Received, Submit to, Deadline, Note) in fidelity-exceptions.json are labels the page draws from data; the gate rule forbids excepting a value the data can supply, and a driver limit is not a board difference. Remove them and fix the capture (UI-1-1). Verified live: all six labels render at both widths.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "six scroll-capture exceptions removed"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T00:17:45Z",
+          "refs": [
+            "fidelity-exceptions.json has 24 entries and none for Client or prospect, RFP reference, Received, Submit to, Deadline or Note labels; all six labels (plus the Note and Submit to labels) render in the live dialog at both widths."
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "six scroll-capture exceptions removed"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "fidelity-exceptions.json has 24 entries and none for Client or prospect, RFP reference, Received, Submit to, Deadline or Note labels; all six labels (plus the Note and Submit to labels) render in the live dialog at both widths."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone submission method is a 2x2 grid (Email / Client portal over By hand / Not stated); the SCR-23-mobile board draws one row of four (Email, Portal, By hand, Not stated) with the Deadline choice in one row of three. Restyled and not in the exceptions. Use a single row of four at 390 (labels fit at the board's width) or have the design engineer approve the grid as an exception with conflict number. Evidence: side-by-side.png phone, m-3top.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T23:40:57Z",
+          "refs": [
+            "phone submission method in one row"
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T00:17:45Z",
+          "refs": [
+            "live at 390: the four method options sit on one row (Email x=18, Client portal x=85, By hand x=194, Not stated x=277, all y=649); the deadline choice is one row of three (y=837). At 1440 both are single rows as well."
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "phone submission method in one row"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "live at 390: the four method options sit on one row (Email x=18, Client portal x=85, By hand x=194, Not stated x=277, all y=649); the deadline choice is one row of three (y=837). At 1440 both are single rows as well."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "design engineer",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop visual 74.2 is under 90 and needs a board-level D-83 waiver signed by the design engineer; none is signed (builder only proposes). Real contributors seen: taller drawer (help lines and \"(optional)\" under fields), no info banner (conflict 2), no \"New client\" sentence (conflict 1), native date-time control text format (11/12/2026, 09:40 am) in place of \"12 Nov 2026, 09:40 WAT\" (conflict 6), the page behind the scrim shows the empty My work state not the board's list (frame, conflict 8).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-20T00:17:42Z",
+          "refs": [],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": "accepted for sign-off: tool limit / waiver"
+        }
+      ],
+      "risk_authority": "D-131"
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Note for later: phone sheet shows \"Step 2 of 2 \u00b7 change line\" and the native date control; both accepted by spec (conflicts 2, 6). The disabled state in the uncertain panel drops the selected fill on Email, so the chosen method is no longer visible; grey the segment instead of removing the selection.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:38:23Z",
+          "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Pressing \"Log RFP\" with every required field empty sends a start with `intake: {}` and relies on the mock's 422 (\"6 things to fix\") for the required messages. The spec says the required message shows and nothing is sent. This is likely the shared F-05 behaviour (not checked on another line); no write results, so it is harmless against the mock, but confirm the intent.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T08:22:03Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-20T08:24:26Z",
+          "refs": [],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": "accepted as follow-up"
+        }
+      ],
+      "risk_authority": "D-132"
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`operation_ids` in feature.json is empty. Set it to E-LINES, E-LINE-OPTIONS, E-EVIDENCE-UPLOAD, E-WORK-START, E-ME (readiness lists these five) and add E-WORK-ITEM, which the landing page reads. Do this before the PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "design engineer",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Fidelity (criterion 18) is not met as written: desktop coverage with exceptions 86.5 and visual 74.2; phone 78.3 and visual 59. The desktop D-83 waiver (UI-1-4) and the phone floor exception (UI-1-1) are accepted under D-131. Still unsigned: the 24 exceptions in fidelity-exceptions.json, all \"builder proposal, pending design engineer\" (9 frame, 8 sample data, 5 claim, 1 component, 1 words). The UI reviewer also asks that the phone exception name the order swap (board draws Deadline before Submit by) and the wording differences (conflicts 5, 7).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-2-1: judgement below.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Criterion 1's grep `Tamarind | TL-RFP | procurement@` over frontend/src is not literally empty: three hits are code comments in features/response and features/rfp. They predate this change and the diff adds none. The new code has no board strings.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Round-2 build.md reports a start-work.test.tsx focus-test flake and says the gate is not green. checks.md for this head reads GATE PASS, attempt 1. Treat as the known flake, fixed by #81.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+          "evidence_refs": [
+            "delivery/features/F-49/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-49/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+          "evidence_refs": [
+            "delivery/features/F-49/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+          "evidence_refs": [
+            "delivery/features/F-49/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-RFP-INTAKE",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "4fc80166d2df5ba46d5b305a63af05b471211959",
+    "task_branch": "fe-rfp-intake-log-received-rfp",
+    "head_sha": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-49",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/82",
+    "pr_number": 82,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-132",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "9fc9dc0bc03fc3805609fc97a3f7a9ce297aae6a",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-intake.spec.ts",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/start-work/lines.pmo_lead.json",
+      "frontend/mock/fixtures/start-work/options/client.json",
+      "frontend/mock/fixtures/work/W-3351.json",
+      "frontend/mock/proposals/rfp-intake.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/showWhen.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/tests/rfp-intake-mock.test.ts",
+      "frontend/tests/rfp-intake.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-49/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "19 changed files exceed the auto-merge limit of 15",
+      "finding UI-1-4 was accepted as a risk",
+      "finding QA-2-1 was accepted as a risk",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-19T17:44:25Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T17:54:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T17:55:28Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T22:27:59Z",
+      "round": 1,
+      "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T22:38:23Z",
+      "round": 1,
+      "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T22:38:23Z",
+      "round": 2,
+      "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T23:40:58Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T00:18:13Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T08:23:44Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T08:25:36Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T08:25:41Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T08:25:42Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T08:25:43Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T08:25:44Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-49/readiness.md",
+      "delivery/features/F-49/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+  },
+  "blocked": null
+}

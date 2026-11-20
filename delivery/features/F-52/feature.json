@@ -1,0 +1,498 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-52",
+  "outcome": "F-52 Follow-up batch A: fixes on merged screens",
+  "state": "DONE",
+  "task_ids": [
+    "FE-FOLLOWUPS-1"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "On the income schedule line (F-33), after a decide answered 200, the page says the version is approved only when the re-read shows the decided state. While the re-read still serves the review, it shows the neutral \"result not confirmed\" wording F-45 uses, and never \"approved\" or \"verified\". \u2014 verify: component test that fails on the old code.",
+    "On the income schedule line, a real two-reviewer sequence through the mock (the task closes, then the second reviewer's decide gets a 409) leaves a lasting stale notice and the unsent note, with no decide buttons. \u2014 verify: test.",
+    "On the leadership report line (F-35), the stale notice adds one sentence telling the reviewer what to do next (\"Read the current version above; nothing was recorded for you.\"), and focus moves to the notice when it appears. \u2014 verify: test for the text and `document.activeElement`.",
+    "The escalation mock serves W-3602's send-for-review step answer (fixture), so \"Send for review\" completes and the re-read shows the next state. \u2014 verify: mock test plus an e2e or component test.",
+    "The response mock answers `POST /api/v1/tasks/T-3401/response` with `team_input` (no 501), so F-37's \"Record team input\" completes with proof on the mock. \u2014 verify: mock test plus a component test of the completed state.",
+    "The shared header's History link is at least 44 by 44 px at 390. Desktop is unchanged. \u2014 verify: e2e measuring `getBoundingClientRect` on two lines.",
+    "tests/rfp-intake-mock.test.ts no longer fails on ECONNRESET in beforeEach (a retry or `Connection: close`), and the file passes 5 runs in a row. \u2014 verify: the runs.",
+    "No other line's behaviour changes. checks.sh passes, and the e2e for income-schedule, leadership-report, escalation, rfp-requirements and one more line passes. \u2014 verify: checks and e2e."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "contract-change"
+    ],
+    "rated_by": "coordinator (D-123, follow-up batch; the user said \"yeah lets run the followups too\", 20 Nov)",
+    "rationale": "Medium. Items 1\u20133 change what a person reads on merged screens (wording timing, notice text and focus). The rest are mock data, a tap-target size and a test fix. No write, authority, money or send path changes."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-52/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T10:08:56Z",
+      "seconds": 683.3,
+      "evidence_ref": "delivery/features/F-52/round-1/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-52/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 20 Nov 2026 \u2014 D-134",
+      "snapshot_ref": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Stale notice on W-3202 reads \"This review changed while you were reading it, so nothing was recorded. / Read the current version above; nothing was recorded for you.\" \"nothing was recorded\" appears twice, and the current state (status, Recipients) is below the notice, not above. The sentence is the spec's exact wording (criterion 3), so only the product owner can change it. frontend/src/features/workspace/InlineDecide.tsx (DECIDE_TEXT.staleNext).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T10:18:39Z",
+          "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "operation_ids is empty in feature.json. none: no new endpoint (spec: contract mock only; fixtures and handlers on existing endpoints).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:26:09Z",
+          "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-1-1: the spec's exact sentence says \"above\" while the current version is below the notice, and \"nothing was recorded\" appears twice. Wording is the design engineer's to accept or change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-52/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:26:09Z",
+          "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-FOLLOWUPS-1",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "db8edd91d2e462b02c8087a63207837d3d44477f",
+    "task_branch": "fe-followups-1-batch-a",
+    "head_sha": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-52",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/84",
+    "pr_number": 84,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-134",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "531edba0965cda1df0a5b44a573b7579bcebaa74",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-51/feature.json",
+      "delivery/features/F-51/fidelity-exceptions.json",
+      "delivery/features/F-51/round-1/build.md",
+      "delivery/features/F-51/round-1/checks.md",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/scores.txt",
+      "delivery/features/F-51/round-1/review-technical.md",
+      "delivery/features/F-51/round-1/review-ui.md",
+      "delivery/features/F-51/round-1/review-ux.md",
+      "delivery/features/F-51/round-2/build.md",
+      "delivery/features/F-51/round-2/checks.md",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/_driver/act.mjs",
+      "delivery/features/F-51/round-2/fidelity/_driver/fid-driver.mjs",
+      "delivery/features/F-51/round-2/fidelity/_driver/run.sh",
+      "delivery/features/F-51/round-2/fidelity/scores.txt",
+      "delivery/features/F-51/round-2/review-qa.md",
+      "delivery/features/F-51/round-2/review-technical.md",
+      "delivery/features/F-51/round-2/review-ui.md",
+      "delivery/features/F-51/round-2/review-ux.md",
+      "delivery/features/F-52/decision.md",
+      "delivery/features/F-52/feature.json",
+      "delivery/features/F-52/readiness.md",
+      "delivery/features/F-52/round-1/acceptance-pmo.md",
+      "delivery/features/F-52/round-1/acceptance-product.md",
+      "delivery/features/F-52/round-1/build.md",
+      "delivery/features/F-52/round-1/checks.md",
+      "delivery/features/F-52/round-1/review-qa.md",
+      "delivery/features/F-52/round-1/review-technical.md",
+      "delivery/features/F-52/round-1/review-ui.md",
+      "delivery/features/F-52/round-1/review-ux.md",
+      "delivery/features/F-52/spec.md",
+      "frontend/e2e/history-link.spec.ts",
+      "frontend/mock/fixtures/response/W-3401.recorded.json",
+      "frontend/mock/fixtures/work/W-3602.next.send_for_review.json",
+      "frontend/mock/fixtures/work/W-3602.steps.json",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/escalation-mock.test.ts",
+      "frontend/tests/escalation.test.tsx",
+      "frontend/tests/income-schedule.test.tsx",
+      "frontend/tests/leadership-report.test.tsx",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/rfp-intake-mock.test.ts",
+      "frontend/tests/rfp-requirements.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-52/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "119 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-20T09:10:08Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-20T09:10:33Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T09:11:16Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T10:08:57Z",
+      "round": 1,
+      "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T10:18:39Z",
+      "round": 1,
+      "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T10:26:10Z",
+      "round": 1,
+      "head": "7fa112fbc1c004292685163cfe2e8a25ad525c54",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T10:29:28Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T10:29:34Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T10:29:35Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T10:29:36Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T10:29:36Z",
+      "round": 1,
+      "head": "523029ab661c7bc84edc76060a7e30aa9e46ef0e",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-52/readiness.md",
+      "delivery/features/F-52/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "7fa112fbc1c004292685163cfe2e8a25ad525c54"
+  },
+  "blocked": null
+}

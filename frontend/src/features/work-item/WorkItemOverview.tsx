@@ -12,8 +12,10 @@ import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
+import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';
+import { AGENT_BESIDE_LINES, forecastLine, STATION_LINES } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
-import { Workspace } from '@/features/workspace/Workspace';
+import { drawsAgentCard, Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
@@ -699,22 +701,24 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // D-73: the line boards draw the workspace straight under the title. The facts, stations, agent card and next step
   // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
   if (item.workspace) {
-    // F-33: the income schedule boards draw the station row (desktop) and the working agent's card in the workspace itself
-    const income = item.workspace.line_key === 'income_schedules';
+    // F-33, F-35: the income schedule boards draw the station row (desktop), and they and the leadership report boards draw the
+    // working agent's card, in the workspace itself
+    const lineKey = item.workspace.line_key;
     before = (
       <div className="cmp-sr">
         <FactsStrip facts={item.facts} paidNote={false} />
-        {!(income && !phone) && <StationTrack stations={item.stations} state={item.state} />}
+        {!(STATION_LINES.has(lineKey) && !phone) && <StationTrack stations={item.stations} state={item.state} />}
       </div>
     );
     main = (
       <div className="cmp-sr">
-        {!(income && agent.status === 'working') && <AgentCard agent={item.agent} />}
+        {!drawsAgentCard(lineKey, agent.status) && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );
-    // F-30: the issue follow-up boards draw no exceptions button above the workspace
-    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' ? (
+    // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42, F-43, F-45: nor do the fixed asset,
+    // cash forecast and ledger source boards, whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
+    after = hasExceptionsLink(item) && !['issue_followup', 'fixed_assets', 'ledger_sources', INTERNAL_RECONCILE_LINE].includes(item.workspace.line_key) ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
@@ -723,9 +727,14 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
 
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
-  // F-33: on the income schedule line a decided task has nothing left to open; the workspace shows what it became.
-  const settled = (task: WorkItem['tasks'][number]) => item.workspace?.line_key === 'income_schedules' && task.cannot_act_reason === 'already_decided';
-  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
+  // F-33, F-35, F-42: on the lines that decide in place a decided task has nothing left to open; the workspace shows what it became.
+  // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page. F-38: nor do the submission boards.
+  const settled = (task: WorkItem['tasks'][number]) =>
+    (AGENT_BESIDE_LINES.has(item.workspace?.line_key ?? '') && task.cannot_act_reason === 'already_decided') ||
+    ((item.workspace?.line_key === 'escalation' || item.workspace?.line_key === 'rfp_submission') && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
+  // F-37: on the RFP requirements page the team-input task is reached from the Team input tab and each team's Record; the board draws no second panel for it
+  const rfpPage = !phone && item.workspace?.line_key === 'rfp_response' && item.rfp !== undefined;
+  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task) && !(rfpPage && (task.response as { variant?: string } | undefined)?.variant === 'team_input'));
 
   return (
     <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>
@@ -734,10 +743,11 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
       <div className={item.workspace?.line_key === 'delivery_release' && shownTasks.length > 0 ? 'work-columns work-columns--lone' : 'work-columns'}>
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
-          <ReconcilePanel id={id} item={asResponseItem(item)} />
+          {/* F-43: the cash forecast's workspace draws it, in the board's place at each width */}
+          {!(item.workspace && forecastLine(item.workspace.line_key)) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
           {aside}
           {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
-          <RfpOutcomeLink id={id} item={item} />
+          {item.workspace?.line_key !== 'rfp_submission' && <RfpOutcomeLink id={id} item={item} />}
           {view?.task_note && shownTasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>

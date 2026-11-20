@@ -1,0 +1,1289 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-51",
+  "outcome": "Start work: open a fixed asset schedule with its proof file, and start a cash forecast from its scenario, as-of date, months and audience (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-M2A-PROOF"
+  ],
+  "operation_ids": [
+    "E-LINES",
+    "E-LINE-OPTIONS",
+    "E-EVIDENCE-UPLOAD",
+    "E-WORK-START"
+  ],
+  "acceptance_criteria": [
+    "**Fixed-asset drawer from data.** As `finance_lead`, \"Fixed asset schedule\" shows Proof (the file box), \"Prior schedule (optional)\" and \"Accounting note (optional)\", in that order, with the button \"Start schedule\". Every word comes from the E-LINES fixture; no board string is in `src`. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast.test.tsx`; `grep -rn \"ppe_register_oct\\|PPE-0005\\|Base case \u00b7 v4\\|All 3 accepted\" frontend/src` returns nothing; drawer at 1440 and 390.",
+    "**Forecast drawer from data, no file.** \"Cash forecast\" shows Scenario, As of, Months, Audience (Internal / Management / Group) and Sources \"All 3 accepted\", with the button \"Start forecast\". It has no Proof box, no file input and no \"Choose a file\". The Sources text is the fixture's `value`; changing the fixture changes the page. \u2014 verify: component test (`input[type=file]` count 0; Sources follows a changed fixture); drawer at 1440 and 390.",
+    "**Nothing computed or defaulted in the browser.** No audience is preselected; Months and As of are empty until typed; the page never counts sources, never reads \"accepted\" itself, never checks a month range or date, and renders no value the line did not send. Start stays off until the four required fields are filled. \u2014 verify: component test (initial values empty; Start disabled); `git diff -U0 frontend/src | grep -nE \"months *[<>]|new Date\\(|accepted\"` returns nothing.",
+    "**Only Finance gets the lines.** `finance_lead` is offered both lines; `pm`, `ceo` and `none` are offered neither, and `/me` `startable_lines` equals E-LINES keys for every persona. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast-mock.test.ts tests/start-work-mock.test.ts`.",
+    "**Uploaded only when the backend says so.** Choosing `ppe_register_oct.xlsx` (98,304 bytes) sends one POST `/api/v1/cases/C-FIN-PPE/evidence` with CSRF and `{kind: \"ppe_register\", filename, content_base64, case_revision: 4}` (validates against the generated request schema, no extra keys). The card reads \"Uploading\u2026\" until the answer, then \"Uploaded \u00b7 96 KB\". An answer without `evidence_id` reads \"Not uploaded\" and the start sends no proof. \u2014 verify: component test with a recording `fetch`; e2e request log.",
+    "**Proof is required; revision chains.** With no file, Start is off and a start sent by other means answers 422 \"Proof is required.\" under the Proof box. Two uploads in a row send revisions 4 then 5; the start sends revision 6 and the second id. Removing the \"\u00d7\" card stops it being sent, sends no request, and the drawer never says \"deleted\". \u2014 verify: component test; `tests/start-work-ppe-forecast-mock.test.ts`; `grep -rn \"deleted\" frontend/src/features/start-work` returns nothing.",
+    "**Start is held while proof is unsure.** While an upload runs and while a card reads \"Not uploaded\", Start is disabled and sends nothing; removing the card or a successful Try again enables it (the file is required, so removing leaves it off). \u2014 verify: component test with a deferred upload.",
+    "**Wrong record.** A start carrying an evidence id from another case or persona, or one never issued, answers 422 \"That proof isn't on this record. Add it again.\" under Proof. As `finance_lead`, an upload to `C-0101` or `C-FIN-LEDGER` with kind `ppe_register` answers 404, shown as \"You can't add proof to this item.\". \u2014 verify: `tests/start-work-ppe-forecast-mock.test.ts`.",
+    "**Each start lands on its work item.** The fixed-asset drawer filled as in the Boards table sends exactly one E-WORK-START and lands on `/work/W-3901`; the forecast drawer sends exactly one and lands on `/work/W-4001`. A double press sends one (idempotency key from drawer open, uploads make none). \u2014 verify: component tests; e2e request log.",
+    "**Forecast sends the typed values only.** The forecast body has `scenario`, `as_of`, `months` (an integer), `audience`, no `sources`, no evidence and no field not filled. The 422 messages \"Months must be between 1 and 12.\", \"As of must be a date.\" and \"Choose one of the listed audiences.\" show word for word under their own field and keep every typed value. \u2014 verify: component test with a recording `fetch`; mock test.",
+    "**A held run does not hold the form.** With `psl_mock_start_work=start_hold`, a forecast start returns 201 and lands on `/work/W-4006`, whose page shows \"SETUP NEEDED\" and no preparer or reviewer name. The drawer shows no rule, no setup link, and never says the forecast was prepared. \u2014 verify: e2e (land on W-4006, text present, no Decide panel).",
+    "**Uncertain and stale.** With `start_uncertain` the drawer shows \"Check again\" and \"If it started, it will appear in My work.\", never \"started\"; Check again sends the identical body and key and the mock records one start (both lines). With `upload_uncertain` on the fixed-asset drawer the card says \"Not uploaded\", Try again re-reads, and the start sends only the second id and its revision. A stale 409 on the start or upload re-reads E-LINES, keeps typed values and cards, and sends the re-read revision with a new key. \u2014 verify: component and e2e tests; mock test.",
+    "**Access.** Without CSRF an upload or start answers 403 and shows the refusal; 401 shows the signed-out state with `next` set to the current page; 403 and 404 on the start read \"You can't start this here.\"; 403 and 404 on upload read alike. A fixed line without `case_revision` stays \"can't start here yet\" and sends nothing. \u2014 verify: component tests with a recording `fetch`; mock tests.",
+    "**Plain text, no limits, no authority from roles.** A file named `<img src=x onerror=alert(1)>.xlsx` and a 422 containing `<b>bold</b>` render as literal text; no `<a>` takes an `href` from an upload or E-LINES value; the file input has no `accept`; the diff adds no size or type check; the new code reads neither `/me` nor roles. Unknown is never 0: no card reads \"0 KB\", and an upload 200 without `case_revision` sends the last known revision, never 0 or blank. \u2014 verify: component test; `git diff -U0 frontend/src | grep -nE \"PROOF_TYPES|PROOF_MAX_BYTES|accept=|useMe|/api/v1/me|roles\"` returns nothing.",
+    "**Phone.** At 390 each drawer opens in F-05's bottom sheet with the same fields and order as desktop; nothing scrolls sideways; the \"\u00d7\", \"Choose a file\", Try again, Start and every segment and select are at least 44 by 44 px; Escape and Cancel close and return focus. \u2014 verify: e2e at 390 measuring bounding boxes.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 4 boards at 1440 and 390 on a production build. Coverage after approved exceptions is 100%; visual at least 90, or a board-level D-83 waiver with visual at least 70. Every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number, and none covers a value the data can supply. \u2014 verify: the fidelity command; `round-<N>/fidelity/scores.txt`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on both drawers in: empty, uploading, uploaded, failed, a 422 under a field (Proof, Months), and \"Check again\". The Proof group is labelled; the file input is named; errors and uploading are announced as text, not colour. \u2014 verify: `e2e/start-work-ppe-forecast.spec.ts`.",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens, and no local copy of `ProofField`, `useEvidenceUpload` or any `@/components` export. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract, F-47 unchanged.** New lines and options validate against the generated E-LINES and E-LINE-OPTIONS schemas; every upload answer validates against the E-EVIDENCE-UPLOAD 200 schema; reset restores `C-FIN-PPE` 4 and `C-FIN-FORECAST` 2 and keeps `C-0101` 6, `C-FIN-SCHEDULES` 3, `C-FIN-LEDGER` 2; F-47's tests are green without a rewritten assertion; `git diff --stat` shows no change in `frontend/src/api/**`, `components/**`, `shell/**`, `features/response/**`, `mock/response.mjs`, `evidence.mjs`, `setup.mjs`, any existing fixture other than `lines.finance_lead.json` and `me.finance_lead.json`, `apps/**`, `architecture/**`, `design/**`, or the protected paths. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast-mock.test.ts tests/start-work-proof-mock.test.ts tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Existing tests green; build.md evidence.** `delivery/checks.sh` passes and the Context tests pass. build.md lists commands and results, the 4 scores and waivers, every exception with its Conflicts number, every mock-only field and cookie (`start_hold` is new), the allowed edits outside the lane, the backend items and the held list. \u2014 verify: `delivery/checks.sh`; file content."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It reuses F-47's merged upload and start path, and F-47 already got the high-risk review of the proof upload and the revision chain. The new part is two fixed-case lines on that path: the fixed-asset upload is append-only on a shared Finance case, so a stale revision would still hit another logger, and the forecast only starts a run. No money field, payroll or client sending is in this slice. SURFACES: ui, api, contract-change (the two lines and their fields, as the consumer of the proposed D-START-INTAKE). PRODUCT-ACCEPTANCE is required, because both drawers are new to the client."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-51/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T09:28:06Z",
+      "seconds": 555.1,
+      "evidence_ref": "delivery/features/F-51/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T10:19:16Z",
+      "seconds": 584.5,
+      "evidence_ref": "delivery/features/F-51/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-51/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 20 Nov 2026 \u2014 D-135",
+      "snapshot_ref": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Start stays enabled with empty required fields; the server then answers \"<Label> is required.\" under each field (F-05 behaviour, build.md criterion 3 marked partial). The boards draw an enabled \"Start schedule/forecast\", so this may be fine, but build.md asks for a decision and the spec criterion says \"nothing computed or defaulted\". Needs an explicit decision before PASS.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "required fields shown and nothing sent (answers the open Start-enabled decision: Start stays enabled, press names the fields)"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "Fixed asset schedule with no proof: \"Proof is required.\" on the page, focus on the Proof control, no POST sent. Cash forecast: Scenario, As of and Months each name their error, focus on Scenario, nothing sent. Income schedule line: Kind, Reference, Mapping note, Proof named, focus on Kind, nothing sent. Same at 390."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "required fields shown and nothing sent (answers the open Start-enabled decision: Start stays enabled, press names the fields)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Fixed asset schedule with no proof: \"Proof is required.\" on the page, focus on the Proof control, no POST sent. Cash forecast: Scenario, As of and Months each name their error, focus on Scenario, nothing sent. Income schedule line: Kind, Reference, Mapping note, Proof named, focus on Kind, nothing sent. Same at 390."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Accounting note shows \"Sample note A\" to \"D\" (four placeholder choices, spec said two). Visible placeholder copy in a Finance drawer must be flagged as sample; the line cannot carry `sample: true`. Confirm with the design engineer or reduce to the spec's two options.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "two Accounting note options, \"Sample: note A\" and \"Sample: note B\", drawn as a select"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "Accounting note is a select with exactly two options, \"Sample: note A\" and \"Sample: note B\", clearly marked as samples, at 1440 and 390."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "two Accounting note options, \"Sample: note A\" and \"Sample: note B\", drawn as a select"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Accounting note is a select with exactly two options, \"Sample: note A\" and \"Sample: note B\", clearly marked as samples, at 1440 and 390."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone sheet shows \"Step 2 of 2\" and a drag handle that the boards omit, and the sheet is taller than the board. Acceptable usability (44 px targets, Escape returns focus per e2e) but record as a difference.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Wrong-record uploads are refused (4xx) but not a guaranteed 404 (criterion 8 partial). Mock only; already in BACKEND-HANDOFF.md.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "As of and Months sit side by side on both forecast boards (mobile board clearly) but stack in the build (forecast 390 side-by-side; desktop per build.md). Expected the board's two-column row; shared field layout in the start-work LineForm is not changed. Fix, or have the design engineer record it in fidelity-exceptions.json as a layout exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "As of and Months share one row (`.sw-pair`, 12px gap) at 1440 and 390"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "As of (x 976, w 159) and Months (x 1197) share one row at 1440; at 390 As of x 30 and Months x 201, same y band. Screenshot fc-390 shows the pair with errors under each."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "As of and Months share one row (`.sw-pair`, 12px gap) at 1440 and 390"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "As of (x 976, w 159) and Months (x 1197) share one row at 1440; at 390 As of x 30 and Months x 201, same y band. Screenshot fc-390 shows the pair with errors under each."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"Optional\" is drawn by the boards as a separate muted line under Prior schedule and Accounting note (desktop and phone); the build puts \"(optional)\" in the label and draws no line. Exception 10 hides a missing drawable element and changes the label text (\"Prior schedule\" vs \"Prior schedule (optional)\"). Either draw the helper line or get an explicit design-engineer approval of the F-05 convention; the exception is not yet honest as a copy-only difference.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "\"Optional\" is a separate muted line under Prior schedule and Accounting note, fixed_assets only"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "\"Optional\" is a separate muted line under Prior schedule and Accounting note (count 2) at both widths, ppe-1440 screenshot; not on the forecast line."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "\"Optional\" is a separate muted line under Prior schedule and Accounting note, fixed_assets only"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Optional\" is a separate muted line under Prior schedule and Accounting note (count 2) at both widths, ppe-1440 screenshot; not on the forecast line."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "product",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Audience: board shows Management selected, build selects nothing. This is D-130 (accepted conflict); the segmented control otherwise matches (3 equal segments, black fill selected). Not a build fault; list it as an approved difference so the score gap is explained. No action by frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "Audience default read from the line's data (Management selected); a line naming none selects none"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "Audience \"Management\" is checked on load at 1440 and 390 (black fill segment, 3 equal segments), read from the line data."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Audience default read from the line's data (Management selected); a line naming none selects none"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Audience \"Management\" is checked on load at 1440 and 390 (black fill segment, 3 equal segments), read from the line data."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone: board is a full page (back bar \"\u2190 My work\", \"START\" eyebrow, \"+ Start\" button, no step line, no close x); the build is F-05's bottom sheet with \"Step 2 of 2 \u00b7 change line\", a drag handle and a close x, and the sheet is taller than the board (footer at ~800 px vs ~760 px on the board scaled). Exceptions 11 and 12 are honest about the missing bar items (frame), but the sheet-vs-page choice needs design-engineer approval; the \"Step 2 of 2\" line is an extra element with no board counterpart and is unlisted.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "kept F-05's bottom sheet; honest exceptions citing the signed 14 and 19 Nov frame items"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "Phone keeps F-05's bottom sheet; exceptions for \"\u2190 My work\" and \"START\" now cite the design engineer's signed 14/19 Nov F-05/F-47 frame; \"Step 2 of 2\" is covered by the START exception text. Sheet fits at 390, no overflow."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "kept F-05's bottom sheet; honest exceptions citing the signed 14 and 19 Nov frame items"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Phone keeps F-05's bottom sheet; exceptions for \"\u2190 My work\" and \"START\" now cite the design engineer's signed 14/19 Nov F-05/F-47 frame; \"Step 2 of 2\" is covered by the START exception text. Sheet fits at 390, no overflow."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Extra elements not on boards and not listed: the remove \"x\" on the proof card (needed behaviour, should be recorded as an approved extra), the calendar icon in As of (native date input), and the top-bar items Overview/Setup/Unassigned tab (frame, same family as exception 2/3). Record them in fidelity-exceptions.json or confirm they are tool-ignored extras.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T10:19:16Z",
+          "refs": [
+            "exceptions for the proof card's remove \"\u00d7\" and the calendar icon"
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T10:23:08Z",
+          "refs": [
+            "Remove x on the proof card and the calendar icon in As of are both listed (components, conflict 5) and visible in the screenshots as described."
+          ],
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "exceptions for the proof card's remove \"\u00d7\" and the calendar icon"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Remove x on the proof card and the calendar icon in As of are both listed (components, conflict 5) and visible in the screenshots as described."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Exceptions 5-8 (typed dates, Months \"6\", chosen scenario and prior schedule text) hide data values only in the sense that the tool reads input values as no text; in the live captures all four values are visible (\"31 Oct 2026\", \"6\", \"Base case \u00b7 v4\", \"PPE-0005 \u00b7 September\"), so they are honest. Exceptions 4 and 6 (As of, Months labels) are also honest: both labels are visible above their inputs. \"Tunde Bello \u00b7 PMO\" (exception 1) is honest per D-130 conflict 2.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T09:31:31Z",
+          "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Shared change: F-05, F-47, F-49 and F-51 lines now all show the required messages and focus the first field on Start. Contract has no field for a choice default (builder used the field-level `value`). Coordinator may want it defined.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-20T10:23:08Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Sign off the four low visual scores as floor exceptions and the pending exceptions in fidelity-exceptions.json.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-20T10:23:08Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec criterion 8 says an upload of kind `ppe_register` to `C-0101` or `C-FIN-LEDGER` as `finance_lead` answers 404. The live mock answers 422 \"Check these fields: kind.\" (owned by the F-09/F-11 handler). The mock test accepts any 4xx and its comment records this, so it is a spec/mock wording gap, not a user-facing fault: the page shows a refusal and nothing moves. frontend/mock/start-work.mjs ownsUpload, frontend/tests/start-work-ppe-forecast-mock.test.ts:150.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T10:28:21Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty. Set it to exactly: E-LINES, E-LINE-OPTIONS, E-EVIDENCE-UPLOAD, E-WORK-START, E-ME.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC 16 (fidelity) is not met until the design engineer signs the floor exceptions for visual 42 to 50, and all 13 exceptions (all \"builder proposal, pending design engineer\"), including the signed F-05/F-47 phone sheet frame (this board's use), the remove \"x\" and the calendar icon.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The shared empty-submit behaviour change touches every Start work line. Start stays enabled; a press names each empty required field, focuses the first and sends nothing. The design engineer should accept it for all lines. Project lines still keep Start off until a project is chosen.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Handoff (BACKEND-HANDOFF.md, F-51 section) is stale: it says the Accounting-note placeholders are \"Sample note A to D\"; the fixture now has two (\"Sample: note A/B\"). It also omits the shared empty-submit check and that the Audience default is read from the field-level `value`. Correct before the PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Contract has no choice-default field (TECH-2-2, UX-2-1); the builder used field-level `value`. The coordinator should define it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Backend follow-up: an upload of kind ppe_register to C-0101 or C-FIN-LEDGER as finance_lead answers 422 \"Check these fields: kind.\" on the mock, not the 404 in spec criterion 8 (QA-2-1). The page shows a refusal either way; the real backend should settle 404 versus 422.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-7",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-2-1: the F-05 422 test lost its \"Start greyed after a 422 until a change\" assertion; add one at frontend/tests/start-work.test.tsx:501.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-8",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is required (readiness) and pending: both drawers are new to the client.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T10:30:26Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+          "evidence_refs": [
+            "delivery/features/F-51/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-51/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+          "evidence_refs": [
+            "delivery/features/F-51/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+          "evidence_refs": [
+            "delivery/features/F-51/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-M2A-PROOF",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "77fea5ba2125aee99fca11eb4e57caf3b04e6d6c",
+    "task_branch": "fe-m2a-proof-fixed-asset-proof-field",
+    "head_sha": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-51",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/85",
+    "pr_number": 85,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-135",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "d122c697c7ad23467d6327f38e670b722341f8a3",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-38/decision.md",
+      "delivery/features/F-38/feature.json",
+      "delivery/features/F-38/fidelity-exceptions.json",
+      "delivery/features/F-38/round-3/acceptance-pmo.md",
+      "delivery/features/F-38/round-3/acceptance-product.md",
+      "delivery/features/F-38/round-3/build.md",
+      "delivery/features/F-38/round-3/merge-checks.log",
+      "delivery/features/F-38/round-3/review-qa.md",
+      "delivery/features/F-38/round-3/review-security.md",
+      "delivery/features/F-38/round-3/review-technical.md",
+      "delivery/features/F-38/round-3/review-ui.md",
+      "delivery/features/F-38/round-3/review-ux.md",
+      "delivery/features/F-51/decision.md",
+      "delivery/features/F-51/feature.json",
+      "delivery/features/F-51/fidelity-exceptions.json",
+      "delivery/features/F-51/round-1/build.md",
+      "delivery/features/F-51/round-1/checks.md",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-forecast-1440/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-desktop-ppe-1440/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-forecast-390/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/board-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/board.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/board.rendered.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/diff.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/page-marked.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/page.png",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/report.html",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/report.json",
+      "delivery/features/F-51/round-1/fidelity/SCR-04-mobile-ppe-390/side-by-side.png",
+      "delivery/features/F-51/round-1/fidelity/_driver/act.mjs",
+      "delivery/features/F-51/round-1/fidelity/_driver/fid-driver.mjs",
+      "delivery/features/F-51/round-1/fidelity/_driver/run.sh",
+      "delivery/features/F-51/round-1/fidelity/scores.txt",
+      "delivery/features/F-51/round-1/review-technical.md",
+      "delivery/features/F-51/round-1/review-ui.md",
+      "delivery/features/F-51/round-1/review-ux.md",
+      "delivery/features/F-51/round-2/acceptance-pmo.md",
+      "delivery/features/F-51/round-2/acceptance-product.md",
+      "delivery/features/F-51/round-2/build.md",
+      "delivery/features/F-51/round-2/checks.md",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-forecast-1440/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-desktop-ppe-1440/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-forecast-390/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/board-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/board.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/board.rendered.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/diff.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/page-marked.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/page.png",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/report.html",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/report.json",
+      "delivery/features/F-51/round-2/fidelity/SCR-04-mobile-ppe-390/side-by-side.png",
+      "delivery/features/F-51/round-2/fidelity/_driver/act.mjs",
+      "delivery/features/F-51/round-2/fidelity/_driver/fid-driver.mjs",
+      "delivery/features/F-51/round-2/fidelity/_driver/run.sh",
+      "delivery/features/F-51/round-2/fidelity/scores.txt",
+      "delivery/features/F-51/round-2/review-qa.md",
+      "delivery/features/F-51/round-2/review-technical.md",
+      "delivery/features/F-51/round-2/review-ui.md",
+      "delivery/features/F-51/round-2/review-ux.md",
+      "delivery/features/F-52/decision.md",
+      "delivery/features/F-52/feature.json",
+      "delivery/features/F-52/readiness.md",
+      "delivery/features/F-52/round-1/acceptance-pmo.md",
+      "delivery/features/F-52/round-1/acceptance-product.md",
+      "delivery/features/F-52/round-1/build.md",
+      "delivery/features/F-52/round-1/checks.md",
+      "delivery/features/F-52/round-1/review-qa.md",
+      "delivery/features/F-52/round-1/review-technical.md",
+      "delivery/features/F-52/round-1/review-ui.md",
+      "delivery/features/F-52/round-1/review-ux.md",
+      "delivery/features/F-52/spec.md",
+      "frontend/e2e/history-link.spec.ts",
+      "frontend/e2e/rfp-submission.spec.ts",
+      "frontend/e2e/start-work-ppe-forecast.spec.ts",
+      "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/D-3501.1.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/response/W-3401.recorded.json",
+      "frontend/mock/fixtures/response/W-3505.delivered.json",
+      "frontend/mock/fixtures/response/W-3505.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3505.unknown.json",
+      "frontend/mock/fixtures/start-work/lines.finance_lead.json",
+      "frontend/mock/fixtures/start-work/options/prior_schedule.json",
+      "frontend/mock/fixtures/start-work/options/scenario.json",
+      "frontend/mock/fixtures/work/W-3501.json",
+      "frontend/mock/fixtures/work/W-3501.next.json",
+      "frontend/mock/fixtures/work/W-3501.steps.json",
+      "frontend/mock/fixtures/work/W-3502.approve.json",
+      "frontend/mock/fixtures/work/W-3502.json",
+      "frontend/mock/fixtures/work/W-3502.reject.json",
+      "frontend/mock/fixtures/work/W-3502.return.json",
+      "frontend/mock/fixtures/work/W-3503.json",
+      "frontend/mock/fixtures/work/W-3504.json",
+      "frontend/mock/fixtures/work/W-3505.approve.json",
+      "frontend/mock/fixtures/work/W-3505.json",
+      "frontend/mock/fixtures/work/W-3506.json",
+      "frontend/mock/fixtures/work/W-3506.next.json",
+      "frontend/mock/fixtures/work/W-3507.json",
+      "frontend/mock/fixtures/work/W-3508.json",
+      "frontend/mock/fixtures/work/W-3509.json",
+      "frontend/mock/fixtures/work/W-3602.next.send_for_review.json",
+      "frontend/mock/fixtures/work/W-3602.steps.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/escalation-mock.test.ts",
+      "frontend/tests/escalation.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/income-schedule.test.tsx",
+      "frontend/tests/leadership-report.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/rfp-intake-mock.test.ts",
+      "frontend/tests/rfp-intake.test.tsx",
+      "frontend/tests/rfp-requirements.test.tsx",
+      "frontend/tests/rfp-submission-mock.test.ts",
+      "frontend/tests/rfp-submission.test.tsx",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work-ppe-forecast-mock.test.ts",
+      "frontend/tests/start-work-ppe-forecast.test.tsx",
+      "frontend/tests/start-work-proof-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-51/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "190 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-19T17:44:25Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T17:54:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T08:27:09Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T09:28:07Z",
+      "round": 1,
+      "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-20T09:31:58Z",
+      "round": 1,
+      "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T09:31:59Z",
+      "round": 2,
+      "head": "c4bd4510133c0c807bf0ae1d2068f8b7a14b6ff8",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T10:19:20Z",
+      "round": 2,
+      "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-20T10:23:08Z",
+      "round": 2,
+      "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T10:30:27Z",
+      "round": 2,
+      "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-20T10:41:27Z",
+      "round": 2,
+      "head": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-20T10:41:32Z",
+      "round": 2,
+      "head": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-20T10:41:33Z",
+      "round": 2,
+      "head": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-20T10:41:34Z",
+      "round": 2,
+      "head": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-20T10:41:34Z",
+      "round": 2,
+      "head": "ef0362f8cfe0fd7dab7e1ce57eb419db93395954",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-51/readiness.md",
+      "delivery/features/F-51/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+  },
+  "blocked": null
+}

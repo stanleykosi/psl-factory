@@ -103,6 +103,8 @@ async function addFile(f = file()) {
   fireEvent.change(fileInput(), { target: { files: [f] } });
   await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
   await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+  // the upload only counts once the form shows the file
+  await waitFor(() => expect(document.body.textContent).toContain(f.name));
 }
 const choose = (name: string) => fireEvent.click(screen.getByRole('radio', { name }));
 const type = (label: string | RegExp, value: string): void => {
@@ -913,7 +915,7 @@ describe('the follow-up is a person’s action (INV-AGENT, INV-RESEND)', () => {
     fireEvent.click(button('Send follow-up'));
     const status = await screen.findByText(/^Sent /);
     expect(text()).not.toContain('It goes only if you send it');
-    expect(document.activeElement).toBe(status);
+    await waitFor(() => expect(document.activeElement).toBe(status));
   });
 
   it('W-2111: effect_uncertain shows the callout and no Send, after one reload and no second POST', async () => {
