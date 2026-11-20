@@ -1,0 +1,66 @@
+{
+  "id": "W-5014",
+  "title": "PMO · Leadership report (October)",
+  "line": "Leadership report",
+  "reference": "LDR-0019",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Collect records",
+      "status": "done"
+    },
+    {
+      "name": "Draft the report",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Delivered the October report to the leadership group",
+        "status": "done",
+        "source": "Report v2"
+      }
+    ]
+  },
+  "next_step": "Done. The October report was reviewed and delivered.",
+  "sample": true
+}

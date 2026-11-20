@@ -1,0 +1,80 @@
+{
+  "conversation_id": "CV-2445",
+  "agent": "tola",
+  "title": "Which projects need me this week?",
+  "status": "answered",
+  "context": {
+    "access": [
+      "CEO · read all projects and decisions"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Which projects need me this week?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-09T16:30:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "Four projects have something for you. Kora Logistics needs your approval of SOW v3, Harbour Bank needs the costing approved, Harmattan Bank has an emergency change, and Lagoon Health has an escalation. Ojo Foods will reach you after the PMO Lead reviews the plan.",
+      "steps": [
+        "Listed the projects with open decisions",
+        "Checked who each decision is waiting on"
+      ],
+      "sources": [],
+      "at": "2026-11-09T16:31:00Z",
+      "step_details": [
+        {
+          "text": "Listed the projects with open decisions",
+          "state": "done",
+          "reference": {
+            "label": "PROJECTS"
+          }
+        },
+        {
+          "text": "Checked who each decision is waiting on",
+          "state": "done",
+          "reference": {
+            "label": "WORK ITEMS"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "PROJECT",
+          "label": "PROJECT · Kora Logistics fleet tracker",
+          "restricted": false,
+          "link": {
+            "case_id": "P-0103"
+          }
+        },
+        {
+          "kind": "PROJECT",
+          "label": "PROJECT · Harmattan Bank mobile onboarding",
+          "restricted": false,
+          "link": {
+            "case_id": "P-0102"
+          }
+        },
+        {
+          "kind": "PROJECT",
+          "label": "PROJECT · Lagoon Health patient app",
+          "restricted": false,
+          "link": {
+            "case_id": "P-0101"
+          }
+        },
+        {
+          "kind": "WORK ITEM",
+          "label": "PLAN · PLN-0052",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5006"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "id": "W-5009",
+  "title": "Lagoon Health · Release to production",
+  "line": "Release gates",
+  "reference": "RLG-0044",
+  "state": "waiting",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Test results",
+      "status": "done"
+    },
+    {
+      "name": "Gate check",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead decides",
+      "status": "waiting"
+    },
+    {
+      "name": "Go live",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Checked the release gates against the test results",
+        "status": "done",
+        "source": "Test report"
+      }
+    ]
+  },
+  "next_step": "The PMO Lead decides on the release. You are told when it has gone live.",
+  "sample": true
+}

@@ -126,6 +126,51 @@
       "status": "cannot_answer",
       "status_line": "Can’t share",
       "updated_at": "2026-11-18T15:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2441",
+      "_persona": "ceo",
+      "title": "What is waiting for my decision?",
+      "agent": "tola",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-10T09:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2442",
+      "_persona": "ceo",
+      "title": "Is the Kora Logistics SOW v3 ready for me to approve?",
+      "agent": "tola",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-10T09:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2443",
+      "_persona": "ceo",
+      "title": "Which client invoices are still unpaid?",
+      "agent": "chidi",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-10T08:51:00Z"
+    },
+    {
+      "conversation_id": "CV-2444",
+      "_persona": "ceo",
+      "title": "Can I see what the Delivery team is paid?",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-10T08:11:00Z"
+    },
+    {
+      "conversation_id": "CV-2445",
+      "_persona": "ceo",
+      "title": "Which projects need me this week?",
+      "agent": "tola",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-09T16:31:00Z"
     }
   ]
 }

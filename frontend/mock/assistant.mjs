@@ -29,6 +29,8 @@ const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.'
 const SAMPLE = 'Sample answer from the contract mock. No agent ran.';
 // F-55: the HR stand-in's answer to a new message; it never shows pay amounts.
 const HR_SAMPLE = 'Sample answer from the contract mock. No agent ran. I can help with staff lists and business units. I do not show pay amounts: who can see payroll has not been set up yet.';
+// D-150: the CEO stand-in's answer to a new message; it shows no pay amounts.
+const CEO_SAMPLE = 'Sample answer from the contract mock. No agent ran. I can show what waits for your decision and how the projects are doing. I do not show pay amounts: who can see payroll has not been set up yet.';
 const STARTED = { work_id: 'W-1401', reference: 'INV-0415' };
 const HOOKS = { '[409]': 409, '[422]': 422, '[500]': 500 };
 const HOOK_BODIES = {
@@ -221,7 +223,7 @@ export function createAssistantMock({ openapi }) {
       : [{ text: 'Read your question' }];
     const placeholder = {
       role: 'agent',
-      text: wantsWork ? 'Working on it.' : persona === 'hr' || persona === 'hr_lead' ? HR_SAMPLE : SAMPLE,
+      text: wantsWork ? 'Working on it.' : persona === 'hr' || persona === 'hr_lead' ? HR_SAMPLE : persona === 'ceo' ? CEO_SAMPLE : SAMPLE,
       steps: steps.map((s) => s.text),
       sources: [],
       at,

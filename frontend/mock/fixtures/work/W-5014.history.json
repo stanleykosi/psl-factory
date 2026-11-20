@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "at": "2026-10-31T09:42:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Verified",
+      "restricted": false,
+      "detail": "Delivered",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-10-31T08:12:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Delivered the report",
+      "restricted": false,
+      "detail": "Leadership group",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-10-31T04:42:00Z",
+      "actor_kind": "person",
+      "actor": "Folake Bello · CEO",
+      "event": "Reviewed",
+      "restricted": false,
+      "detail": "Report v2",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-10-31T01:22:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted report v2",
+      "restricted": false,
+      "detail": "Changed: payments section",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-10-30T18:42:00Z",
+      "actor_kind": "person",
+      "actor": "Folake Bello · CEO",
+      "event": "Returned report v1",
+      "restricted": false,
+      "detail": "Show unknown payment dates as unknown",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-10-30T10:22:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Collected the records",
+      "restricted": false,
+      "_kind": "agent_work"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

@@ -1,0 +1,88 @@
+{
+  "conversation_id": "CV-2441",
+  "agent": "tola",
+  "title": "What is waiting for my decision?",
+  "status": "answered",
+  "context": {
+    "access": [
+      "CEO · read all projects and decisions"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "What is waiting for my decision?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-10T09:30:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "Five things. Kora Logistics statement of work v3 and the Harbour Bank mobile onboarding costing are both at the last step of their chain. Harmattan Bank has an emergency change, Lagoon Health has an escalation, and the November leadership report is ready for your review. The emergency change has no cost estimate yet, so I show it as unknown. This is sample data from the CEO stand-in.",
+      "steps": [
+        "Listed the decisions assigned to the CEO",
+        "Read each request"
+      ],
+      "sources": [],
+      "at": "2026-11-10T09:31:00Z",
+      "step_details": [
+        {
+          "text": "Listed the decisions assigned to the CEO",
+          "state": "done",
+          "reference": {
+            "label": "MY WORK · Needs me"
+          }
+        },
+        {
+          "text": "Read each request",
+          "state": "done",
+          "reference": {
+            "label": "WORK ITEMS"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "SOW",
+          "label": "SOW · PLN-0050",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5001"
+          }
+        },
+        {
+          "kind": "COSTING",
+          "label": "COSTING · CST-0207",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5002"
+          }
+        },
+        {
+          "kind": "EMERGENCY CHANGE",
+          "label": "EMERGENCY CHANGE · EMC-0012",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5003"
+          }
+        },
+        {
+          "kind": "ESCALATION",
+          "label": "ESCALATION · ESC-0031",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5004"
+          }
+        },
+        {
+          "kind": "REPORT",
+          "label": "LEADERSHIP REPORT · LDR-0020",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5005"
+          }
+        }
+      ]
+    }
+  ]
+}

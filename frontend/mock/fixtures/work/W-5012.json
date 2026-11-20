@@ -1,0 +1,75 @@
+{
+  "id": "W-5012",
+  "title": "Abuja Clinics · Weekly client update",
+  "line": "Weekly client update",
+  "reference": "WCU-0028",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Collect records",
+      "status": "done"
+    },
+    {
+      "name": "Draft the update",
+      "status": "done"
+    },
+    {
+      "name": "PM review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the update to the client",
+        "status": "done",
+        "source": "Weekly update"
+      },
+      {
+        "text": "Recorded the client’s receipt",
+        "status": "done",
+        "source": "Client reply"
+      }
+    ]
+  },
+  "next_step": "Done. The update was sent and the client’s receipt is recorded.",
+  "sample": true
+}

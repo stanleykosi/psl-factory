@@ -2,6 +2,7 @@
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
 // Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead | hr | hr_lead; default finance_lead). hr is a stand-in (D-142): PSL has not defined what HR staff may see..
+// ceo (D-150) has sample data of its own: W-50xx rows and items, alerts, Assistant conversations; and it sees every project.
 // Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.

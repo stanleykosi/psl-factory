@@ -1,0 +1,132 @@
+{
+  "id": "W-5006",
+  "title": "Ojo Foods · Ordering app plan",
+  "line": "Plan a project",
+  "reference": "PLN-0052",
+  "state": "waiting",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Costing",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "waiting"
+    },
+    {
+      "name": "CEO approval",
+      "status": "not_started"
+    },
+    {
+      "name": "Send the plan",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-5006",
+      "kind": "decide",
+      "title": "Approve plan v2",
+      "required_role": "CEO",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Plan v2",
+          "number": 2,
+          "drafted_at": "2026-11-06T11:00:00Z"
+        },
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PM",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PM",
+              "person": "Tunde Bello",
+              "status": "approved",
+              "is_you": false,
+              "decided_at": "2026-11-08T15:20:00Z"
+            },
+            {
+              "position": 2,
+              "role": "PMO Lead",
+              "person": "Kemi Adebayo",
+              "status": "current",
+              "is_you": false
+            },
+            {
+              "position": 3,
+              "role": "CEO",
+              "person": "Folake Bello",
+              "status": "not_yet",
+              "is_you": true
+            }
+          ],
+          "your_step": 3,
+          "step_count": 3
+        },
+        "basis": "Plan v2 · 3 phases"
+      },
+      "cannot_act_reason": "not_your_turn",
+      "asked": [
+        {
+          "name": "Kemi Adebayo",
+          "role": "PMO Lead"
+        }
+      ]
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted plan v2 from the scope notes",
+        "status": "done",
+        "source": "Scope v2"
+      }
+    ]
+  },
+  "next_step": "The PMO Lead reviews plan v2, then you decide.",
+  "sample": true
+}

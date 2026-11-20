@@ -1,0 +1,66 @@
+{
+  "conversation_id": "CV-2443",
+  "agent": "chidi",
+  "title": "Which client invoices are still unpaid?",
+  "status": "answered",
+  "context": {
+    "access": [
+      "CEO · read all projects and decisions"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Which client invoices are still unpaid?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-10T08:50:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "Two invoices have been sent and have no receipt recorded: Lagoon Health milestone 2 and Harbour Bank milestone 3. Whether Harbour Bank has paid is not known yet, because the bank statement has not been matched. I do not treat that as paid or unpaid. Payment exceptions are handled by Finance; I can show the history but not change anything.",
+      "steps": [
+        "Listed invoices sent without a receipt",
+        "Checked the latest bank statement matching"
+      ],
+      "sources": [],
+      "at": "2026-11-10T08:51:00Z",
+      "step_details": [
+        {
+          "text": "Listed invoices sent without a receipt",
+          "state": "done",
+          "reference": {
+            "label": "INVOICES · sent"
+          }
+        },
+        {
+          "text": "Checked the latest bank statement matching",
+          "state": "done",
+          "reference": {
+            "label": "BANK STATEMENT · October"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "INVOICE",
+          "label": "INVOICE · Lagoon Health milestone 2",
+          "restricted": false,
+          "link": {
+            "work_id": "W-1001"
+          }
+        },
+        {
+          "kind": "INVOICE",
+          "label": "INVOICE · Harbour Bank milestone 3",
+          "restricted": false
+        },
+        {
+          "kind": "BANK STATEMENT",
+          "label": "BANK STATEMENT · October",
+          "restricted": true
+        }
+      ]
+    }
+  ]
+}

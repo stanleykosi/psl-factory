@@ -56,7 +56,7 @@ describe('fixtures', () => {
   const ids = readdirSync(dir).filter((n) => /^CV-\d+\.json$/.test(n)).map((n) => n.slice(0, -5));
 
   it('there are the eight board conversations, minus the reserved no-access id', () => {
-    expect(ids).toEqual(['CV-2401', 'CV-2402', 'CV-2403', 'CV-2404', 'CV-2405', 'CV-2406', 'CV-2411', 'CV-2421', 'CV-2422', 'CV-2423', 'CV-2424', 'CV-2425', 'CV-2431', 'CV-2432', 'CV-2433']);
+    expect(ids).toEqual(['CV-2401', 'CV-2402', 'CV-2403', 'CV-2404', 'CV-2405', 'CV-2406', 'CV-2411', 'CV-2421', 'CV-2422', 'CV-2423', 'CV-2424', 'CV-2425', 'CV-2431', 'CV-2432', 'CV-2433', 'CV-2441', 'CV-2442', 'CV-2443', 'CV-2444', 'CV-2445']);
   });
 
   for (const id of ids) {
@@ -79,7 +79,7 @@ describe('fixtures', () => {
 });
 
 describe('E-CONVERSATIONS and E-CONVERSATION', () => {
-  it('each persona is served its own list: pm five, finance_lead one, ceo none', async () => {
+  it('each persona is served its own list: pm five, finance_lead one, ceo five (D-150), admin none', async () => {
     const pm = (await get('/api/v1/assistant/conversations')).body;
     expect(pm.items.map((r: any) => [r.conversation_id, r.status_line])).toEqual([
       ['CV-2401', 'Drafted · ready to start'],
@@ -89,7 +89,8 @@ describe('E-CONVERSATIONS and E-CONVERSATION', () => {
       ['CV-2405', 'Working · step 3 of 5'],
     ]);
     expect((await get('/api/v1/assistant/conversations', 'finance_lead')).body.items.map((r: any) => r.conversation_id)).toEqual(['CV-2411']);
-    expect((await get('/api/v1/assistant/conversations', 'ceo')).body.items).toEqual([]);
+    expect((await get('/api/v1/assistant/conversations', 'ceo')).body.items.map((r: any) => r.conversation_id)).toEqual(['CV-2441', 'CV-2442', 'CV-2443', 'CV-2444', 'CV-2445']);
+    expect((await get('/api/v1/assistant/conversations', 'admin')).body.items).toEqual([]);
   });
 
   it('pages by limit and cursor', async () => {

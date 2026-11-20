@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "at": "2026-11-10T08:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Asked the CEO to approve",
+      "restricted": false,
+      "detail": "Emergency change",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T08:17:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 2 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-10T07:32:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 1 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-10T07:22:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Listed what the fix would touch",
+      "restricted": false,
+      "detail": "2 screens, 1 batch job",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T06:52:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added the incident log",
+      "restricted": false,
+      "detail": "INC-0231",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-10T06:32:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Started the emergency change",
+      "restricted": false,
+      "_kind": "agent_work"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

@@ -142,7 +142,7 @@ describe('default state (SCR-05-desktop)', () => {
   });
 
   it('the list is empty in words when there are no conversations', async () => {
-    await open('/assistant', 'ceo');
+    await open('/assistant', 'admin');
     expect(await screen.findByText('No conversations yet.')).toBeTruthy();
   });
 

@@ -247,9 +247,9 @@ describe('Record the reply (G-48-1, G-F40-1)', () => {
 });
 
 describe('round 2: who can open a handover item (UX-1-3)', () => {
-  it('a persona not on P-0101’s list gets 404 on the item and its history; the PM still reads it', async () => {
+  it('a persona not on P-0101’s list (hr; the CEO now sees every project) gets 404 on the item and its history; the PM still reads it', async () => {
     for (const id of ['W-3701', 'W-3704', 'W-3705']) {
-      expect((await send('GET', `/api/v1/work/${id}`, 'ceo')).status).toBe(404);
+      expect((await send('GET', `/api/v1/work/${id}`, 'hr')).status).toBe(404);
       expect((await send('GET', `/api/v1/work/${id}`, 'none')).status).toBe(404);
       expect((await send('GET', `/api/v1/work/${id}`, 'pm')).status).toBe(200);
     }

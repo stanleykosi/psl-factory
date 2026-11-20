@@ -1,0 +1,66 @@
+{
+  "id": "W-5010",
+  "title": "Ikeja Retail · Go-live report",
+  "line": "Weekly client update",
+  "reference": "WCU-0029",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Collect records",
+      "status": "done"
+    },
+    {
+      "name": "Draft the report",
+      "status": "current_agent"
+    },
+    {
+      "name": "PM review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Collected the go-live records",
+        "status": "done",
+        "source": "Go-live checklist"
+      }
+    ]
+  },
+  "next_step": "Chidi is drafting the go-live report. The PM reviews it before it is sent.",
+  "sample": true
+}

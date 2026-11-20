@@ -1,0 +1,135 @@
+{
+  "id": "W-5003",
+  "title": "Harmattan Bank · Emergency change for an incident",
+  "line": "Emergency change for an incident",
+  "reference": "EMC-0012",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Log the incident",
+      "status": "done"
+    },
+    {
+      "name": "Assess the impact",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "done"
+    },
+    {
+      "name": "CEO approval",
+      "status": "current_person"
+    },
+    {
+      "name": "Apply the change",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "current"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-5003",
+      "kind": "decide",
+      "title": "Approve the emergency change",
+      "required_role": "CEO",
+      "you_can_act": true,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "Emergency change 1",
+          "number": 1,
+          "drafted_at": "2026-11-10T07:50:00Z"
+        },
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PM",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PM",
+              "person": "Tunde Bello",
+              "status": "approved",
+              "is_you": false,
+              "decided_at": "2026-11-08T15:20:00Z"
+            },
+            {
+              "position": 2,
+              "role": "PMO Lead",
+              "person": "Kemi Adebayo",
+              "status": "approved",
+              "is_you": false,
+              "decided_at": "2026-11-08T15:20:00Z"
+            },
+            {
+              "position": 3,
+              "role": "CEO",
+              "person": "Folake Bello",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "your_step": 3,
+          "step_count": 3
+        },
+        "amount": {
+          "currency": "NGN",
+          "unknown": true
+        },
+        "basis": "Emergency change · cost not estimated yet"
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the incident log",
+        "status": "done",
+        "source": "Incident INC-0231"
+      },
+      {
+        "text": "Listed what the fix would touch",
+        "status": "done",
+        "source": "Release plan"
+      }
+    ]
+  },
+  "next_step": "You decide whether the emergency change goes ahead. The cost is not known yet.",
+  "sample": true
+}
