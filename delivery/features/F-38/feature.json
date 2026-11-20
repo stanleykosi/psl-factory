@@ -4,11 +4,18 @@
   "project_id": "psl-factory",
   "feature_id": "F-38",
   "outcome": "RFP submission: the PM sends Tola's submission pack for review, the document reviewer decides on that exact pack, and the Submission tab shows \"Submitted\" and the receipt only as the backend returns them (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-RFP-SUBMIT"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-WORK-STEP",
+    "E-TASK-CLAIM",
+    "E-TASK-DECIDE",
+    "E-WORK-ACTION",
+    "E-DOCUMENT"
+  ],
   "acceptance_criteria": [
     "**Coverage and visual.** Each of the 8 boards (table under Boards) is checked at its width on a production build.",
     "**Exceptions limited.**",
@@ -138,18 +145,22 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -1122,6 +1133,167 @@
         }
       ],
       "risk_authority": "D-131"
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In the mock, W-3502 shows the pack and a live \"Approve and submit\" to pm, finance_lead, admin and pmo_lead (only persona \"none\" is refused), because mock fixtures do not model per-persona roles. \"Pack only for personas who can open it\" and \"wrong user\" cannot be proved here; the backend must refuse them per record and the page must draw only what it returns (the page does: W-3509 `you_can_act: false` draws no buttons). Re-prove against the real backend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a 409 on a Return with a note (W-3506), the note is kept (it reappears in the textarea after \"Review the latest\"), but the form is closed and only \"Review the latest\" is shown, so the kept note is not visible until pressed. Matches the spec (\"keep the note\"); noted for UX only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json operation_ids is empty. Set it to exactly: E-WORK-ITEM, E-WORK-STEP, E-TASK-CLAIM, E-TASK-DECIDE, E-WORK-ACTION, E-DOCUMENT.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC 1 and 2 (fidelity, exceptions) are met only after the design engineer signs the 8 visual waivers (accepted as risk under D-131) and the 25 exceptions in fidelity-exceptions.json. Round 3 measured one board; the other 7 scores are from round 2.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The branch does not contain current dlv-00-delivery-setup (12 commits behind at the time of review). The pre-merge sync must re-run checks.sh, and the shared files (Workspace.tsx, InlineDecide.tsx, the two allowlist tests) may conflict with other merged features.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is required and pending: test-template part may be approved and sent (G-40-6), submit-by lead time (G-40-5), what Return and Reject do to the RFP (G-40-7, D-RETURN), and whether the person who may submit (rfp.submit) is the document reviewer. D-COSTING-RULE and D-ALERT-PROVIDERS are open, so no real send exists.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-5",
+      "round": 3,
+      "snapshot_ref": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried forward, not blocking: UX-1-3 (shared reconcile panel says \"invoiced twice\" on a submission), UX-1-4/UX-1-5 (facts strip and stepper not on boards; small History target), TECH-2-2, TECH-1-2, TECH-1-4, TECH-1-5.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:29:16Z",
+          "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1343,9 +1515,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-38/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -1435,6 +1609,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-20T00:18:11Z",
+      "round": 3,
+      "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T08:29:17Z",
       "round": 3,
       "head": "4b70abcdc0d7a345e6f66a90324b6f92411878c3",
       "reason": null

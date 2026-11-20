@@ -3677,3 +3677,15 @@
 {"at":"2026-11-20T08:25:43Z","feature":"F-49","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"9fc9dc0bc03fc3805609fc97a3f7a9ce297aae6a"}}
 {"at":"2026-11-20T08:25:43Z","feature":"F-49","round":2,"kind":"transition","head":"139eceeb05c3","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-20T08:25:44Z","feature":"F-49","round":2,"kind":"transition","head":"139eceeb05c3","from":"MERGED","to":"DONE"}
+{"at":"2026-11-20T08:27:09Z","feature":"F-51","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-20T08:27:09Z","feature":"F-38","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"4b70abcdc0d7","findings":{"QA-3-1":"low","QA-3-2":"low"},"written_at":"2026-11-20T08:26:57Z"}
+{"at":"2026-11-20T08:29:04Z","feature":"F-38","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"4b70abcdc0d7","findings":{"PMO-3-1":"medium","PMO-3-2":"medium","PMO-3-3":"medium","PMO-3-4":"low","PMO-3-5":"low"},"written_at":"2026-11-20T08:29:02Z"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"QA-3-1","by":"qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"QA-3-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"medium","owner":"coordinator","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"medium","owner":"coordinator","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"finding","action":"add","finding":"PMO-3-5","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-20T08:29:16Z","feature":"F-38","round":3,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-20T08:29:17Z","feature":"F-38","round":3,"kind":"transition","head":"4b70abcdc0d7","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
