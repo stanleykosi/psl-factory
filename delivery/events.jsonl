@@ -3762,3 +3762,6 @@
 {"at":"2026-11-20T10:26:09Z","feature":"F-52","round":1,"kind":"finding","action":"add","finding":"PMO-1-2","by":"pmo-acceptance","severity":"low","owner":"product","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-20T10:26:09Z","feature":"F-52","round":1,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
 {"at":"2026-11-20T10:26:10Z","feature":"F-52","round":1,"kind":"transition","head":"7fa112fbc1c0","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-20T10:28:20Z","feature":"F-51","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"b50b0b7ca04b","findings":{"QA-2-1":"low"},"written_at":"2026-11-20T10:28:17Z"}
+{"at":"2026-11-20T10:28:21Z","feature":"F-51","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T10:28:46Z","feature":"F-52","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"7fa112fbc1c0","written_at":"2026-11-20T10:28:46Z"}

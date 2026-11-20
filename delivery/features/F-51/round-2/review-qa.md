@@ -1,0 +1,20 @@
+VERDICT: PASS
+REVIEWER: qa
+COMMIT: b50b0b7ca04b9583c63fbe723de49d90aebbd987
+AUTHORITY: delivery integrated QA
+
+## Summary
+- Live demo (app 4965, mock 4964, production build) driven with Playwright from the worktree's node_modules at 1440 and 390, mock reset before each case. Scripts are in the scratchpad, not the worktree.
+- Fixed assets, forecast, the shared empty-press rule, refusals, uncertain and access all behave to spec at both widths. No claim of success on any failure path.
+- Not exercised: `upload_uncertain`, `start_hold` landing on W-4006, 401 signed-out state, axe scans (covered by e2e in build.md, which I did not rerun), real backend (contract mock only, by the recorded exception).
+
+## Findings
+- QA-2-1 | non-blocking | low | integration | Spec criterion 8 says an upload of kind `ppe_register` to `C-0101` or `C-FIN-LEDGER` as `finance_lead` answers 404. The live mock answers 422 "Check these fields: kind." (owned by the F-09/F-11 handler). The mock test accepts any 4xx and its comment records this, so it is a spec/mock wording gap, not a user-facing fault: the page shows a refusal and nothing moves. frontend/mock/start-work.mjs ownsUpload, frontend/tests/start-work-ppe-forecast-mock.test.ts:150.
+
+## Verified
+- Fixed assets, proof (1440 and 390) | verified | Upload a.xlsx: "Uploaded · 96 KB", one POST to /cases/C-FIN-PPE/evidence at revision 4. Remove "×": no request, no "deleted" text, Start stays enabled only until pressed (empty press then names Proof). A failed upload (500 injected once) reads "Not uploaded · 96 KB / Couldn't upload. Try again.", Start disabled; Try again succeeds (revisions 4, 5, 5). Start schedule double-clicked: exactly one POST /api/v1/work with idempotency_key, case_revision 6, proof EV-SW-C-FIN-PPE-2, accounting_note sample_note_a, lands on /work/W-3901. Accounting note options are exactly "Sample: note A" and "Sample: note B".
+- Forecast (1440 and 390) | verified | No file input; Audience opens on Management. As of / Months / Scenario filled, double-click sends one start (scenario FC-SC-4, as_of 2026-10-31, months 6 integer, audience management, no sources) and lands on /work/W-4001. Direct calls: months 13 gives 422 "Months must be between 1 and 12.", as_of "xx" gives "As of must be a date.", audience "bogus" gives "Choose one of the listed audiences."; same key sent twice returns the same W-4001.
+- Failures on the forecast start (both widths) | verified | Injected 403 and 404: dialog stays, reads "You can't start this here.", no "Started". 409: "This record changed since you opened the form... press start again", no success. 500: "If it started, it will appear in My work." with Check again, no success. Real `start_uncertain` cookie: Check again resends the identical body and key (2 sends, one key), then lands on W-4001.
+- Shared empty-submit rule (1440 and 390) | verified | Zero POSTs after pressing Start on an empty form, messages on the page, focus inside the drawer on the first field: fixed assets ("Proof is required."), cash forecast (Scenario, As of, Months), income schedules F-47 (Kind, Reference, Mapping note, Proof; focus on Kind), PMO Lead RFP line F-49 (six fields named; document, client etc.). Invoice (F-05) keeps Start disabled until a project is chosen (unchanged, not testable by empty press); F-47 line stands as the F-05/F-47 check.
+- Access | verified | E-LINES and /me `startable_lines` for pmo_lead (9 lines), pm (8) and none (0) contain neither fixed_assets nor cash_forecast, at both widths. Direct calls as pm, pmo_lead, ceo: start 403 "Your role does not allow you to start this line.", upload 404; as none: 403 and 403. Missing CSRF on upload and start: 403 csrf_failed. Finance upload to C-FIN-PPE without CSRF refused, with CSRF 200.
+- Round-2 fixes UI-1-1 to UI-1-3, UX-1-1, UX-1-2, TECH-1-1, F-49 QA-2-1 | verified | Each reproduced above: shared empty press names fields and sends nothing on F-51, F-47 and F-49 lines; Audience default Management from data; two sample notes; As of / Months pair row covered by the UI review (not re-measured here). UI-1-4 and UI-1-5 are design-exception items, not QA scope.

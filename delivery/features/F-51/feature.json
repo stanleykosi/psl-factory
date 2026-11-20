@@ -105,11 +105,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -615,6 +617,29 @@
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-20T10:23:08Z",
+          "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "b50b0b7ca04b9583c63fbe723de49d90aebbd987",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec criterion 8 says an upload of kind `ppe_register` to `C-0101` or `C-FIN-LEDGER` as `finance_lead` answers 404. The live mock answers 422 \"Check these fields: kind.\" (owned by the F-09/F-11 handler). The mock test accepts any 4xx and its comment records this, so it is a spec/mock wording gap, not a user-facing fault: the page shows a refusal and nothing moves. frontend/mock/start-work.mjs ownsUpload, frontend/tests/start-work-ppe-forecast-mock.test.ts:150.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-51/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T10:28:21Z",
           "head": "b50b0b7ca04b9583c63fbe723de49d90aebbd987"
         }
       ]
