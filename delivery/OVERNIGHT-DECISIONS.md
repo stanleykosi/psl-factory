@@ -295,3 +295,6 @@ F-53 design-system conformance part 2 is signed: 58 raw controls and tables repl
 
 ## D-137 (20 Nov): paging starts at 10, grows in place, and inactive options
 The design engineer, on My work: "it should start from 10 and when a user increases, the entire table doesnt need to load just add the amount the person wants to the table. also if list isnt up to 10 other numbers should be inactive." Applied to F-54 on every list: default 10 rows (was 20 under D-PAGING r2); a larger rows-per-page choice appends only the extra rows; a smaller one trims without a fetch; an option is disabled when the total is at or below the next smaller option.
+
+## D-138 (20 Nov): the assistant's conversation list scrolls infinitely
+The design engineer, on the assistant's side list: "remove this, we dont need it here, let the list be infinite scroll". In F-54 the conversation list has no paging footer; the next conversations load as the user scrolls (or tabs) to the end. Every other list keeps the shared footer (D-137).
