@@ -703,8 +703,10 @@ describe('outcome guards', () => {
     await openOutcome();
     await fillOutcome('Won');
     fireEvent.click(button('Record won'));
-    await screen.findByText('Outcome recorded.');
-    expect(screen.getByRole('status').textContent).toBe('Outcome recorded. Won');
+    await waitFor(() => expect(document.querySelector('.psl-toast')?.textContent).toBe('Outcome recorded. Won'));
+    expect(text()).toContain('What was recorded');
+    expect(text()).toContain('Outcome: Won');
+    expect(document.querySelector('.psl-callout--success')).toBeNull();
     expect(text()).not.toContain('What’s recorded');
   });
 

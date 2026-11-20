@@ -417,15 +417,20 @@ describe('claim, one write at a time', () => {
   });
 });
 
+const toast = () => document.querySelector('.psl-toast')?.textContent ?? undefined;
+
 describe('success (SCR-16-desktop-success)', () => {
   it('shows what was recorded and what happens next, with no form controls', async () => {
     await open();
     await fillW1601();
     fireEvent.click(recordButton('Record response'));
-    const status = await screen.findByRole('status');
+    await waitFor(() => expect(toast()).toBe('Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.'));
     expect(text()).toContain('REL-0077 · LAGOON HEALTH');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Client UAT response');
-    expect(status.textContent).toBe('Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.');
+    // The page keeps the record read-only, with no success callout.
+    expect(text()).toContain('What was recorded');
+    expect(text()).toContain('Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.');
+    expect(document.querySelector('.psl-callout--success')).toBeNull();
     expect(text()).toContain('What happens next');
     expect(text()).toContain('The release line moves on to go-live readiness.');
     expect(text()).toContain('Milestone 2 can now be marked complete, which lets Chidi draft its invoice.');
@@ -443,7 +448,7 @@ describe('success (SCR-16-desktop-success)', () => {
     await addFile();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await waitFor(() => expect(toast()).toContain('Response recorded.'));
     await expectPhoneBack('Work item', '/work/W-1601');
     expect(document.querySelector('.psl-phonebar .shell-phonenote')!.textContent).toBe('REL-0077');
     expect(screen.getByRole('link', { name: 'Back to my queue' }).getAttribute('href')).toBe('/my-work');
@@ -452,7 +457,9 @@ describe('success (SCR-16-desktop-success)', () => {
   it('a task that is already recorded opens on the success view', async () => {
     answers.item = () => json(200, item('W-1601.recorded'));
     await open();
-    expect(screen.getByRole('status').textContent).toMatch(/^Response recorded\. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at \d\d:\d\d with 1 proof file\.$/);
+    expect(text()).toMatch(/What was recorded\s*Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at \d\d:\d\d with 1 proof file\./);
+    // Opening an already-recorded task is not a submit: no toast.
+    expect(toast()).toBeUndefined();
     // The same eyebrow and heading as the view right after Record.
     expect(text()).toContain('REL-0077 · LAGOON HEALTH');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Client UAT response');
@@ -497,7 +504,8 @@ describe('absent fields are left out (W-1606)', () => {
     await addFile();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Response recorded. Recorded by Tunde Bello at 15:04.'));
+    await waitFor(() => expect(toast()).toBe('Response recorded. Recorded by Tunde Bello at 15:04.'));
+    expect(text()).toContain('What was recorded');
     expect(text()).not.toContain('received by');
     expect(text()).not.toContain('proof file');
     expect(text()).not.toContain('What happens next');

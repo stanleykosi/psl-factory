@@ -3,7 +3,7 @@
 // SCR-16 RFP outcome (/work/[id]/outcome). What is offered comes only from rfp_outcome on E-WORK-ITEM (results,
 // reasons, record_as, recorded); nothing from /me decides it (INV-ACCESS). Desktop pages sit inside the RFP
 // frame drawn from `rfp`; phones show "← RFP" and the bar note instead. Times are WAT.
-import { Button, useIsPhone } from '@/components';
+import { Button, useIsPhone, useToastWhen } from '@/components';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -107,6 +107,8 @@ export function OutcomeView({ id }: { id: string }) {
   const formOpen = page.kind === 'item' && !showRecorded && outcomeOpen(item?.rfp_outcome);
   const note = page.kind === 'recorded' ? resultNote(page.result) : showRecorded ? resultNote(recorded.result) : formOpen ? 'OUTCOME' : undefined;
   usePhoneBack({ label: item?.rfp ? 'RFP' : 'Work item', href: work(id), note });
+  // The result of the submit is a toast; the page keeps the lasting record.
+  useToastWhen(flow.justRecorded ? (RESULT_LABELS[flow.justRecorded as keyof typeof RESULT_LABELS] ?? '') : null, 'Outcome recorded.');
 
   if (page.kind === 'loading') return <LoadingState />;
   if (page.kind === 'error') {
@@ -123,10 +125,10 @@ export function OutcomeView({ id }: { id: string }) {
       <div className="resp-page rfp-page">
         <Header id={id} item={current} title={recordedHeading(page.result)} phone={phone} />
         {phone && <h1 className="shell-title">{recordedHeading(page.result)}</h1>}
-        <div className="psl-callout psl-callout--success" role="status">
-          <span>
-            <strong>Outcome recorded.</strong> {RESULT_LABELS[page.result] ?? ''}
-          </span>
+        <div className="resp-next">
+          <strong>What was recorded</strong>
+          <span>Outcome: {RESULT_LABELS[page.result] ?? page.result}</span>
+          <span>We couldn’t reload the work item, so only the result is shown. The work item shows where things stand now.</span>
         </div>
       </div>
     );

@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { Button, formatClock, formatDayMonth, useIsPhone } from '@/components';
+import { Button, formatClock, formatDayMonth, useIsPhone, useToastWhen } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -15,7 +15,7 @@ import { currentStationIndex } from '@/features/work-item/labels';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
 import type { Recorded, ResponseTask, ResponseWorkItem, TaskResponse } from './contract';
-import { CheckIcon, InfoIcon } from './icons';
+import { InfoIcon } from './icons';
 import { plural, RECORDABLE } from './labels';
 import { AgentAside, ClientResponseForm, SowSignatureForm } from './ResponseForm';
 import { TeamInputForm } from './TeamInputForm';
@@ -136,7 +136,7 @@ function recordedSentence(recorded: Recorded, response: TaskResponse | undefined
   return `${tail.charAt(0).toUpperCase()}${tail.slice(1)}${proof}.`;
 }
 
-function SuccessView({ id, before, task, recorded, next, responderId, station, phone }: {
+function SuccessView({ id, before, task, recorded, next, responderId, station, fresh, phone }: {
   id: string;
   before: ResponseWorkItem;
   task: ResponseTask | undefined;
@@ -144,23 +144,24 @@ function SuccessView({ id, before, task, recorded, next, responderId, station, p
   next: string[] | undefined;
   responderId: string | undefined;
   station: string | undefined;
+  fresh: boolean;
   phone: boolean;
 }) {
   const response = task?.response;
   const organisation = response?.responders.find((r) => r.id === responderId)?.organisation;
   const current = currentStationIndex(before.stations);
   const heading = station ?? (current >= 0 ? before.stations[current].name : (task?.title ?? before.title));
+  const sentence = recorded ? recordedSentence(recorded, response) : undefined;
+  // The result of the submit is a toast; the page below keeps the lasting record.
+  useToastWhen(fresh ? (sentence ?? 'Response recorded.') : null, sentence ? 'Response recorded.' : undefined);
   return (
     <>
       {!phone && <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>}
       <h1 className="shell-title resp-title resp-title--tight resp-title--done">{heading}</h1>
       <div className="resp-success">
-        <div className="psl-callout psl-callout--success" role="status">
-          <CheckIcon />
-          <span>
-            <strong>Response recorded.</strong>
-            {recorded && ` ${recordedSentence(recorded, response)}`}
-          </span>
+        <div className="resp-next">
+          <strong>What was recorded</strong>
+          <span>{sentence ?? 'The response is recorded in the work item’s history.'}</span>
         </div>
         {next && next.length > 0 && (
           <div className="resp-next">
@@ -237,6 +238,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
           next={view.next}
           responderId={view.responderId}
           station={view.station}
+          fresh={view.fresh === true}
           phone={phone}
         />
       </div>

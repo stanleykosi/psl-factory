@@ -158,7 +158,7 @@ test('team input records through the mock: claim, proof, record, success', async
   await fillWhen(page, 'Received', '2026-11-12T15:10');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Record input' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Response recorded.' })).toBeVisible();
 });
 
 test('at 390 the pinned Record is on screen, the size of F-09’s, and targets are at least 44px', async ({ page }) => {

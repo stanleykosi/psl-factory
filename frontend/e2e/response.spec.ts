@@ -39,7 +39,7 @@ async function fill(page: Page, { file = true, attest = true } = {}) {
 
 async function record(page: Page) {
   await page.getByRole('button', { name: 'Record response' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Response recorded.' })).toBeVisible();
 }
 
 test.beforeEach(async ({ request, context, baseURL }) => {
@@ -159,7 +159,7 @@ test('an uncertain record (record-then-fail) is re-read, shows the success view 
   await fill(page);
   await page.getByRole('button', { name: 'Record response' }).click();
   await expect(page.getByText('We couldn’t confirm your response was recorded. We’ve reloaded this item so you can see whether it was.')).toBeVisible();
-  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Response recorded.' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Client UAT response');
   expect(sent).toBe(1);
 });
