@@ -12,7 +12,6 @@
 import { WORK_IDS } from './start-work.mjs';
 
 export const LINE_STEP_MS = 2500;
-const STEPS_PER_STATION = 3;
 
 const AGENTS = {
   chidi: { name: 'Chidi', role: 'Finance agent' },
