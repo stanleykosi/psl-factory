@@ -298,3 +298,6 @@ The design engineer, on My work: "it should start from 10 and when a user increa
 
 ## D-138 (20 Nov): the assistant's conversation list scrolls infinitely
 The design engineer, on the assistant's side list: "remove this, we dont need it here, let the list be infinite scroll". In F-54 the conversation list has no paging footer; the next conversations load as the user scrolls (or tabs) to the end. Every other list keeps the shared footer (D-137).
+
+## D-139 (20 Nov): the assistant's message box is centred
+The design engineer: "if the text area isnt full width then, center it cos aligning to the left looks weird". In F-54 the assistant composer and conversation thread (max 880px) are centred in their column, under the centred heading. Phones keep the full-width bar.
