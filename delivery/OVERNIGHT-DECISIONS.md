@@ -277,3 +277,12 @@ F-49 log a received RFP (Sign-off list 3): the D-131 desktop waiver and phone fl
 
 ## D-133 · F-38 signed (20 Nov 2026, design engineer: "Sign F-38")
 F-38 RFP submit (Sign-off list 3): the 8 visual waivers (D-131, confirmed), the 25 exceptions, and product acceptance on the contract mock. Follow-ups: reconcile "arrived" with an upload; per-persona access once the backend models roles. Merge into dlv-00 approved after the dlv-00 merge and re-check.
+
+## D-134 · F-52 follow-up batch A signed (20 Nov 2026, design engineer: "Sign F-52")
+Accepted:
+- the income line shows "approved" only after the re-read confirms it;
+- the F-35 stale notice gains its new sentence and takes focus;
+- the W-3602 and T-3401 mock completions;
+- the History link at 44px on phones.
+
+Merge into dlv-00 approved.

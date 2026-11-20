@@ -1,0 +1,1070 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-20T10:05:43.494Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-51/design/canvas/project/SCR-04-mobile-ppe.dc.html",
+  "boardName": "SCR-04-mobile-ppe.dc.html",
+  "pageUrl": "http://localhost:4965/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-51/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 49.9 is below 90.",
+    "9 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 71.4,
+    "coverageWithExceptions": 100,
+    "visual": 49.9
+  },
+  "visual": {
+    "score": 49.9,
+    "allCellsScore": 58.4,
+    "width": 390,
+    "height": 2684,
+    "boardHeight": 844,
+    "pageHeight": 2684,
+    "cell": 12,
+    "contentCells": 6093,
+    "mismatchedCells": 3053
+  },
+  "coverage": {
+    "total": 14,
+    "found": 10,
+    "coverage": 71.4,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Fixed asset schedule",
+        "pageName": "Fixed asset schedule",
+        "pageRole": "text",
+        "similarity": 100,
+        "note": "not marked up as a heading on the page",
+        "looks": [
+          "text size 20px on the board, 18px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 149,
+          "w": 212,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 220,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ppe_register_oct.xlsx",
+        "pageName": "ppe_register_oct.xlsx",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 141,
+          "w": 138,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 264,
+          "w": 244,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 96 KB",
+        "pageName": "Uploaded · 96 KB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 161,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 285,
+          "w": 244,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Prior schedule",
+        "pageName": "Prior schedule",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 201,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 329,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Optional",
+        "pageName": "Optional",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 280,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 406,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Accounting note",
+        "pageName": "Accounting note",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 309,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 434,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Optional",
+        "pageName": "Optional",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 388,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 511,
+          "w": 50,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start schedule",
+        "pageName": "Start schedule",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 816,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 5: the phone form is F-05's bottom sheet over My work, so the board's '← My work' bar is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "START",
+        "key": "text: START",
+        "container": "page",
+        "boardBox": {
+          "x": 245,
+          "y": 21,
+          "w": 36,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 5: the phone sheet draws 'START WORK' in its own header (desktop eyebrow), not the board's page bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PPE-0005 · September ▾",
+        "key": "text: PPE-0005 · September ▾",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 226,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 5: text inside a control (the chosen prior schedule, from E-LINE-OPTIONS); matched by the control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "None ▾",
+        "key": "text: None ▾",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 334,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 5: the board shows the empty choice as 'None ▾'; the page shows the line's placeholder 'None' in the select (text inside a control).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Fixed asset schedule\"",
+        "kind": "Heading",
+        "name": "Fixed asset schedule",
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 149,
+          "w": 212,
+          "h": 24
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 220,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"ppe_register_oct.xlsx\"",
+        "kind": "Text",
+        "name": "ppe_register_oct.xlsx",
+        "boardBox": {
+          "x": 58,
+          "y": 141,
+          "w": 138,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 264,
+          "w": 244,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 96 KB\"",
+        "kind": "Text",
+        "name": "Uploaded · 96 KB",
+        "boardBox": {
+          "x": 58,
+          "y": 161,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 285,
+          "w": 244,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Prior schedule\"",
+        "kind": "Text",
+        "name": "Prior schedule",
+        "boardBox": {
+          "x": 16,
+          "y": 201,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 329,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Optional\"",
+        "kind": "Text",
+        "name": "Optional",
+        "boardBox": {
+          "x": 16,
+          "y": 280,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 406,
+          "w": 358,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Accounting note\"",
+        "kind": "Text",
+        "name": "Accounting note",
+        "boardBox": {
+          "x": 16,
+          "y": 309,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 434,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Optional\"",
+        "kind": "Text",
+        "name": "Optional",
+        "boardBox": {
+          "x": 16,
+          "y": 388,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 511,
+          "w": 50,
+          "h": 17
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Link \"Start schedule\"",
+        "kind": "Link",
+        "name": "Start schedule",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 816,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 70,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 24",
+        "container": "tablist",
+        "pageBox": {
+          "x": 18,
+          "y": 114,
+          "w": 130,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 12",
+        "container": "tablist",
+        "pageBox": {
+          "x": 148,
+          "y": 114,
+          "w": 182,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 6",
+        "container": "tablist",
+        "pageBox": {
+          "x": 329,
+          "y": 114,
+          "w": 92,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Unassigned 2",
+        "container": "tablist",
+        "pageBox": {
+          "x": 421,
+          "y": 114,
+          "w": 136,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 304,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 330,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Needs me",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 228,
+          "w": 358,
+          "h": 2440
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Ikeja Retail · Planning budget 2m READY TO CONTINUE Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 228,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Ikeja Retail · Milestone 1 invoice 5m ACTION NEEDED Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 342,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Coastal Freight · Milestone 2 invoice 15m WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 456,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Lagoon Health · Milestone 3 invoice 25m READY TO CONTINUE Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 570,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Eko Insurance · Milestone 4 invoice 30m WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 684,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Kora Logistics · Milestone 1 invoice 40m EFFECT UNCERTAIN Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 799,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Eko Insurance · Receipt for INV-0401 1h WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 913,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Zuma Cement · Payment exception 1h WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1027,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Lagoon Health · Milestone 2 invoice 2h WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1141,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Benin Agro · October statement 3h ACTION NEEDED Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1255,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Abuja Clinics · Receipt for INV-0395 4h EFFECT UNCERTAIN Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1369,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Delta Foods · Milestone 3 invoice 6h READY TO CONTINUE Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1483,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Niger Delta Power · Payment exception 8h WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1597,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Harbour Bank · September statement 12h ACTION NEEDED Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1711,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DECIDE Kora Logistics · SOW v3 costing 18h WAITING Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1825,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Harbour Bank · Receipt for INV-0398 1d ACTION NEEDED Finance Officer",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1939,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "DO Savanna Telecom · Receipt for INV-0388 1d ACTION NEEDED Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 2054,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Kora Logistics · Payment exception 2d SETUP NEEDED Finance Lead",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 2168,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Ojo Foods · Ordering app plan 3d OWNER NEEDED Design Lead (not set)",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 2282,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "FIX Benin Agro · Payment exception 4d OWNER NEEDED CFO (not set)",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 2396,
+          "w": 358,
+          "h": 106
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "20 of 24 showing",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 2524,
+          "w": 326,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "10",
+        "container": "main",
+        "pageBox": {
+          "x": 226,
+          "y": 2556,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "20",
+        "container": "main",
+        "pageBox": {
+          "x": 270,
+          "y": 2556,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "50",
+        "container": "main",
+        "pageBox": {
+          "x": 314,
+          "y": 2556,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Show 4 more",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 2612,
+          "w": 326,
+          "h": 44
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Fixed asset schedule",
+        "container": "page",
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 758
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 173,
+          "w": 212,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 89,
+          "y": 160,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 330,
+          "y": 148,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove ppe_register_oct.xlsx",
+        "container": "dialog",
+        "pageBox": {
+          "x": 312,
+          "y": 259,
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Prior schedule",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 356,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Accounting note",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 461,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-51/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
