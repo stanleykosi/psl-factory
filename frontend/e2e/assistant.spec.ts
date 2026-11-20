@@ -289,3 +289,27 @@ test('the conversation list loads the next page as it is scrolled to the end, wi
   expect(await first!.evaluate((el) => el.isConnected)).toBe(true);
   expect(await links.first().evaluate((el, h) => el === h, first)).toBe(true);
 });
+
+test('desktop: only the thread scrolls; both side footers and the composer keep their place (D-140)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 520 });
+  await ready(page, '/assistant/CV-2404');
+  const scroller = page.locator('.as__scroll');
+  const pieces = [page.locator('.as__note'), page.locator('.as__cannot'), page.locator('.as__composer'), page.locator('.as__talk'), page.locator('.as__new')];
+  const place = async () => Promise.all(pieces.map(async (p) => (await p.boundingBox())!));
+  // the thread is longer than its window, so it has something to scroll, and it opens at the latest message
+  const m = await scroller.evaluate((el) => ({ over: el.scrollHeight > el.clientHeight, atEnd: Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) < 2 }));
+  expect(m.over).toBe(true);
+  expect(m.atEnd).toBe(true);
+  const before = await place();
+  await scroller.evaluate((el) => (el.scrollTop = 0));
+  await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBe(0);
+  const after = await place();
+  after.forEach((box, i) => {
+    expect(Math.abs(box.x - before[i].x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(box.y - before[i].y)).toBeLessThanOrEqual(1);
+  });
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight)).toBe(true);
+  // both footers sit inside the window
+  for (const box of before.slice(0, 3)) expect(box.y + box.height).toBeLessThanOrEqual(520);
+});

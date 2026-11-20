@@ -95,3 +95,26 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 }
 
 .as__open { padding: var(--space-3) var(--space-4) var(--space-18px); }
+
+/* D-140, desktop and tablet: the page does not scroll. The Assistant fills the space under the top bar; the two side
+   columns keep their top and their footer in place and scroll only the middle; the centre keeps "Talk to" at the top
+   and the composer at the bottom, and only the thread scrolls. Phones keep the page scroll and the docked composer. */
+.as__listscroll, .as__sidebody, .as__scroll { display: contents; }
+@media (min-width: 720px) {
+  html:has(.as) { overflow: hidden; }
+  .as { height: calc(100dvh - var(--space-7) - var(--space-3)); min-height: 0; overflow: hidden; grid-template-rows: minmax(0, 1fr); }
+  .as__list, .as__side, .as__center { min-height: 0; overflow: hidden; }
+  .as__listscroll, .as__sidebody, .as__scroll { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  .as__listscroll { gap: var(--space-10px); }
+  .as__sidebody { gap: var(--space-14px); }
+  .as__scroll { overflow-anchor: auto; }
+  .as__note { margin: 0; flex: none; }
+  .as__cannot { margin: 0; flex: none; }
+  .as__home { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+  .as__state { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+  .as__composer, .as__open { flex: none; }
+}
+@media (min-width: 720px) and (max-width: 1079.98px) {
+  .as { grid-template-rows: minmax(0, 1fr) minmax(0, auto); }
+  .as__side { max-height: 15rem; }
+}

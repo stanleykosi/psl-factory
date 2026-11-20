@@ -26,6 +26,7 @@ export function SidePanel({ agent, pose, status, project, access }: {
   const who = AGENTS[agent];
   return (
     <aside className="as__side" aria-label="Agent and context">
+      <div className="as__sidebody">
       <div className={`as__pose as__pose--${agent}`}>
         <img src={`/agents/${agent}-${pose}.png`} alt={`${who.name} pose`} />
       </div>
@@ -39,6 +40,7 @@ export function SidePanel({ agent, pose, status, project, access }: {
       <div className="as__fact">
         <span>Your access</span>
         <span>{access && access.length > 0 ? access.join(', ') : 'Records you can see'}</span>
+      </div>
       </div>
       <p className="as__cannot">{CANNOT_NOTE}</p>
     </aside>

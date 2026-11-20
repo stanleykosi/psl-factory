@@ -43,7 +43,7 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
             <NextLink href="/assistant" className={`${buttonClass('secondary', 'lg')} as__new`}>
               + New request
             </NextLink>
-            {rows}
+            <div className="as__listscroll">{rows}</div>
             <p className="as__note">{LIST_NOTE}</p>
           </aside>
         )}

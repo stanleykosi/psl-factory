@@ -4,7 +4,7 @@
 // composer for the agent that answered. A conversation that is not the person's, or unknown, shows nothing of it.
 import { usePathname, useRouter } from 'next/navigation';
 import NextLink from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { AGENTS, buttonClass, EmptyState, ErrorState, Loading, Skeleton, useIsPhone, VisuallyHidden } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
@@ -38,6 +38,13 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
     await reload();
     void list.refresh();
   }, [reload, list]);
+  // Only the thread scrolls on desktop: a conversation that opens, or a reply that arrives, shows the latest message.
+  const scroller = useRef<HTMLDivElement>(null);
+  const messageCount = conversation.messages.length;
+  useEffect(() => {
+    const el = scroller.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messageCount, id]);
   const started = conversation.messages.find((m) => m.draft?.started)?.draft?.started;
   const name = agent ? AGENTS[agent].name : '';
   return (
@@ -48,12 +55,14 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
         <VisuallyHidden>
           <h1>{conversation.title ?? 'Conversation'}</h1>
         </VisuallyHidden>
-        <Thread conversation={conversation} reread={afterStart} />
-        {refreshFailed && (
-          <p className="psl-hint as__refresh" role="status">
-            {REFRESH_FAILED}
-          </p>
-        )}
+        <div className="as__scroll" ref={scroller}>
+          <Thread conversation={conversation} reread={afterStart} />
+          {refreshFailed && (
+            <p className="psl-hint as__refresh" role="status">
+              {REFRESH_FAILED}
+            </p>
+          )}
+        </div>
         {agent && phone && started ? (
           // Phones: once the draft is started the footer action is the way to the work item, as the board draws it.
           <div className="as__open">

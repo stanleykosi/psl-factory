@@ -46,9 +46,14 @@ export function ConversationList({ state, currentId, onMore, onRetry, pathname, 
   useEffect(() => {
     const node = sentinel.current;
     if (!node || !hasNext || !idle || typeof IntersectionObserver === 'undefined') return undefined;
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) latest.current(DEFAULT_PAGE_SIZE);
-    });
+    // The list scrolls inside its own column on desktop, so that column is the observer's root (the page on a phone sheet).
+    const root = node.closest('.as__listscroll');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) latest.current(DEFAULT_PAGE_SIZE);
+      },
+      { root },
+    );
     observer.observe(node);
     return () => observer.disconnect();
   }, [hasNext, idle, count]);
