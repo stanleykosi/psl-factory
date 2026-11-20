@@ -12,7 +12,7 @@
 .floor__chip--empty { border-color: var(--ink-subtle); color: var(--ink-muted); }
 .floor__chip--person { background: var(--signal); border-color: var(--signal); color: var(--on-strong); }
 .floor__chip--person em { font: 500 10px/18px var(--font-mono); font-style: normal; letter-spacing: 0.06em; }
-.floor__chip--hot, .floor__chip:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: 2px; }
+.floor__chip--hot { box-shadow: inset 0 0 0 var(--rule-strong) var(--focus); }
 
 .floor__line { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: var(--space-1) var(--space-2); background: var(--ink); color: var(--surface); }
 .floor__line strong { font: 700 13px/16px var(--font-display); white-space: nowrap; }

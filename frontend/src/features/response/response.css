@@ -56,14 +56,15 @@
 .resp-pill input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); }
 .resp-pill:has(input:checked) { background: var(--ink); color: var(--on-strong); }
 .resp-pill:has(input:checked) input { accent-color: var(--on-strong); }
-.resp-pill input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.resp-pill:has(input:checked) input:focus-visible { outline-color: var(--focus-on-strong); }
+.resp-pill input:focus-visible, .resp-option input:focus-visible { box-shadow: none !important; }
+.resp-pill:has(input:focus-visible), .resp-option:has(input:focus-visible) { border-color: var(--focus); }
+.resp-pill:has(input:checked:focus-visible) { border-color: var(--focus-on-strong); }
 .resp-seg { display: flex; }
 .resp-segopt { position: relative; }
 .resp-segopt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .resp-segopt:has(input:checked) { background: var(--ink); color: var(--on-strong); }
-.resp-segopt:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: -4px; }
-.resp-segopt:has(input:checked:focus-visible) { outline-color: var(--focus-on-strong); }
+.resp-segopt:has(input:focus-visible) { box-shadow: inset 0 0 0 2px var(--focus); }
+.resp-segopt:has(input:checked:focus-visible) { box-shadow: inset 0 0 0 2px var(--focus-on-strong); }
 
 /* proof */
 .resp-drop { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; padding: var(--space-3); border: 2px dashed var(--ink); background: var(--steel); }
@@ -110,7 +111,6 @@
 .resp-options { display: flex; flex-direction: column; gap: var(--space-10px); }
 .resp-option { display: flex; gap: var(--space-10px); align-items: flex-start; padding: var(--space-10px); border: 2px solid var(--ink); line-height: 1.5; cursor: pointer; }
 .resp-option input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
-.resp-option input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .resp-reconcile .resp-footnote { font-size: var(--text-small-size); }
 @media (min-width: 720px) {
   .resp-actionbar { padding: 0; border-top: none; background: none; }

@@ -17,7 +17,6 @@
 .alerts-link { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); color: var(--ink); text-decoration: none; }
 .psl .alerts-link { color: var(--ink); }
 .alerts-link:hover { background: var(--surface-subtle); }
-.alerts-link:focus-visible { outline-offset: -3px; }
 .alerts-row .psl-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .alerts-body { display: flex; flex-direction: column; min-width: 0; }
 .alerts-text { font-weight: 400; overflow-wrap: anywhere; }

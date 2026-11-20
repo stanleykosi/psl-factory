@@ -12,8 +12,8 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as .as-row { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-10px); align-items: center; padding: var(--space-2) var(--space-10px); color: var(--ink); text-decoration: none; background: var(--surface); }
 .as-row .psl-avatar { width: var(--space-6); height: var(--space-6); }
 .as-row:hover { background: var(--steel); }
-.as-row:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: calc(var(--rule-strong) * -1); }
 .as-row[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
+.as-row[aria-current="page"]:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-on-strong) !important; }
 .as-row[aria-current="page"] .as-row__sub { color: var(--nav-muted); }
 .as-row__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; }
 .as-row__title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -24,7 +24,6 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__eyebrow { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); margin-right: var(--space-1); }
 .as-chip { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-sm); padding: 0 var(--space-14px) 0 var(--space-1); border: none; box-shadow: inset 0 0 0 var(--rule-strong) var(--disabled); border-radius: 999px; background: var(--surface); font: inherit; font-weight: 600; color: var(--ink); cursor: pointer; }
 .as-chip:hover { background: var(--steel); }
-.as-chip:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
 .as-chip[aria-pressed="true"] { box-shadow: inset 0 0 0 var(--rule-strong) var(--ink); }
 .as-chip--tola[aria-pressed="true"] { background: var(--mascot-tola-tint); }
 .as-chip--chidi[aria-pressed="true"] { background: var(--mascot-chidi-tint); }
@@ -41,7 +40,6 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__composer { margin: 0 auto var(--space-5); width: calc(100% - var(--space-6) * 2); max-width: 880px; display: flex; flex-direction: column; gap: var(--space-2); }
 .as-tool { height: var(--control-sm); padding: 0 var(--space-3); border: 1.5px solid var(--disabled); background: var(--surface); font: inherit; color: var(--ink); cursor: pointer; white-space: nowrap; }
 .as-tool:hover { background: var(--steel); }
-.as-tool:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
 .as-mention__pop { width: calc(var(--space-7) * 8); max-width: calc(100vw - var(--space-5) * 2); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
 .as-mention__list { list-style: none; margin: 0; padding: 0; max-height: calc(var(--space-7) * 5); overflow: auto; }
 .as-mention__item { width: 100%; border: none; background: none; font: inherit; text-align: left; }

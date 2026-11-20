@@ -29,7 +29,6 @@
 .cmp-menuhead { padding: var(--space-3) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); }
 .cmp-menuhead strong { display: block; }
 .psl-menuitem.cmp-menubutton { width: 100%; border: none; background: none; font: inherit; text-align: left; }
-.cmp-menu .psl-menuitem:focus-visible { outline-offset: calc(var(--rule-strong) * -1); }
 
 /* inputs that wrap an <input> (money, date): the ring sits on the box */
 .psl-input.cmp-wrapped:focus-within { outline: none; border-color: var(--focus); background: var(--surface); }
@@ -152,7 +151,6 @@
 .cmp-source { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink); }
 .cmp-source__box { display: inline-flex; align-items: center; gap: var(--space-6px); font-family: var(--font-mono); font-size: var(--text-reference-size); line-height: var(--text-reference-line); padding: var(--space-1) var(--space-2); border: 1.5px solid var(--action); }
 .cmp-source--link:hover .cmp-source__box { background: var(--action-tint); color: var(--action-ink); }
-.cmp-source--link:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
 .cmp-source--restricted { color: var(--ink-muted); }
 .cmp-source--restricted .cmp-source__box { border: 1.5px dashed var(--ink-muted); }
 .cmp-source .psl-icon { width: var(--space-14px); height: var(--space-14px); }
@@ -201,7 +199,8 @@
 .cmp-composer__send:hover { background: var(--ink-strong); }
 .cmp-composer__send[aria-disabled="true"] { background: var(--disabled); color: var(--ink-subtle); cursor: not-allowed; }
 .cmp-composer__send[aria-busy="true"] { background: var(--ink); color: var(--on-strong); cursor: progress; }
-.cmp-composer__send:focus-visible, .cmp-composer__mic:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-composer__send:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-on-strong) !important; }
+.cmp-composer__input:focus-visible { box-shadow: none !important; }
 
 /* phones: every target at least 44px (D-92 c) */
 @media (max-width: 719.98px) {

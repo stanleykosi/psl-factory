@@ -9,10 +9,17 @@
 .psl a { color: var(--action); }
 .psl-mono { font-family: var(--font-mono); }
 
-/* ---------- focus ring: one rule everywhere ---------- */
+/* ---------- focus (D-143, D-144): the control's own edge turns var(--focus) in place; no outline anywhere ---------- */
 .psl :focus { outline: none; }
-.psl :focus-visible, .psl .is-focus { outline: 2px solid var(--focus); outline-offset: 2px; }
-.psl-on-dark :focus-visible, .psl-on-dark .is-focus { outline-color: var(--focus-on-strong); }
+/* Controls drawn with an inset shadow edge (buttons, options, tabs, cards) turn that edge blue; a borderless control gets the
+   same 2px edge as an inset shadow, so focus changes only a colour and nothing moves. */
+.psl :focus-visible, .psl .is-focus { outline: none !important; box-shadow: inset 0 0 0 2px var(--focus) !important; }
+/* filled and dark controls: the edge is on-strong (a blue edge on a dark or blue fill cannot be seen) */
+.psl-on-dark :focus-visible, .psl-on-dark .is-focus,
+.psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):not(.psl-btn--text):focus-visible,
+.psl-seg__opt[aria-checked="true"]:focus-visible, .psl-tab[aria-selected="true"]:focus-visible, .psl-tab[aria-current="page"]:focus-visible, .psl-navlink:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-on-strong) !important; }
+/* links in running text and text buttons: a blue underline */
+.psl a:not([class]):focus-visible, .psl a.psl-link:focus-visible, .psl .psl-btn--text:focus-visible { box-shadow: none !important; text-decoration: underline; text-decoration-color: var(--focus); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 
 /* ---------- icon ---------- */
 .psl-icon { width: 18px; height: 18px; flex: none; display: inline-block; vertical-align: middle; }
@@ -94,10 +101,9 @@
 .psl-input::placeholder { color: var(--ink-subtle); }
 .psl-input.is-placeholder { color: var(--ink-subtle); }
 .psl-input:hover, .psl-input.is-hover { background: var(--surface-subtle); }
-/* D-143: a text field shows focus by changing its own border in place: no outer ring, no offset, no layout shift */
-.psl-input:focus-visible, .psl-input:focus, .psl-input.is-focus { outline: none; border-color: var(--focus); background: var(--surface); }
+.psl-input:focus-visible, .psl-input:focus, .psl-input.is-focus { box-shadow: none !important; border-color: var(--focus) !important; background: var(--surface); }
+.psl-input input:focus-visible, .psl-composer textarea:focus-visible { box-shadow: none !important; }
 .psl-input.is-error, .psl-input[aria-invalid="true"] { border-color: var(--signal); }
-.psl-input.is-error:focus, .psl-input[aria-invalid="true"]:focus, .psl-input.is-error.is-focus { border-color: var(--focus); }
 .psl-input[disabled], .psl-input.is-disabled { background: var(--steel); border-color: var(--disabled); color: var(--ink-muted); cursor: not-allowed; }
 .psl-input[readonly], .psl-input.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
 .psl-input--area { min-height: 88px; padding: 10px 12px; align-items: flex-start; resize: vertical; line-height: 1.5; }
@@ -120,7 +126,7 @@
 .psl-select { justify-content: space-between; cursor: pointer; text-align: left; }
 .psl-select .psl-chev { transition: transform 120ms ease-out; }
 .psl-select.is-open .psl-chev { transform: rotate(180deg); }
-.psl-select.is-open { outline: none; border-color: var(--focus); }
+.psl-select.is-open { border-color: var(--focus); }
 
 /* popover surfaces: listbox, menu, filter panel, date picker */
 .psl-pop { background: var(--surface); border: 2px solid var(--ink); box-shadow: var(--shadow-pop); }
@@ -159,8 +165,8 @@
 .psl-radio input { border-radius: 50%; }
 .psl-radio input:checked, .psl-radio input.is-checked { background: radial-gradient(circle, var(--ink) 0 4.5px, var(--surface) 5px); }
 .psl-check:hover input, .psl-radio:hover input, .psl-check.is-hover input, .psl-radio.is-hover input { box-shadow: 0 0 0 4px var(--neutral-tint); }
-.psl-check input:focus-visible, .psl-radio input:focus-visible, .psl-check.is-focus input, .psl-radio.is-focus input { outline: 2px solid var(--focus); outline-offset: 2px; }
-.psl-check.is-focus, .psl-radio.is-focus { outline: none; }
+.psl-check input:focus-visible, .psl-radio input:focus-visible, .psl-check.is-focus input, .psl-radio.is-focus input { box-shadow: none !important; border-color: var(--focus) !important; }
+.psl-check.is-focus, .psl-radio.is-focus { box-shadow: none !important; }
 .psl-check.is-error input, .psl-radio.is-error input { border-color: var(--signal); }
 .psl-check.is-disabled, .psl-radio.is-disabled { color: var(--ink-muted); cursor: not-allowed; }
 .psl-check.is-disabled input, .psl-radio.is-disabled input { border-color: var(--disabled); background-color: var(--steel); cursor: not-allowed; }
@@ -174,7 +180,6 @@
 .psl-choice small { display: block; font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
 .psl-choice:hover, .psl-choice.is-hover { background: var(--surface-subtle); }
 .psl-choice.is-selected, .psl-choice:has(input:checked) { box-shadow: inset 0 0 0 2px var(--ink); }
-.psl-choice.is-focus { outline: 2px solid var(--focus); outline-offset: 2px; }
 .psl-choice.is-disabled { border-color: var(--disabled); color: var(--ink-muted); cursor: not-allowed; background: var(--steel); }
 .psl-choice.is-disabled input { border-color: var(--disabled); background: var(--steel); }
 .psl-choice.is-error { border-color: var(--signal); }
@@ -185,8 +190,6 @@
   white-space: nowrap; border: none; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); background: var(--surface); color: var(--ink); cursor: pointer; }
 .psl-seg__opt:hover, .psl-seg__opt.is-hover { background: var(--steel); }
 .psl-seg__opt[aria-checked="true"] { background: var(--ink); color: var(--on-strong); }
-.psl-seg__opt:focus-visible, .psl-seg__opt.is-focus { outline-offset: -4px; outline-color: var(--focus); }
-.psl-seg__opt[aria-checked="true"].is-focus { outline-color: var(--focus-on-strong); }
 .psl-seg__opt[aria-disabled="true"] { color: var(--ink-subtle); background: var(--steel); cursor: not-allowed; }
 .psl-seg--phone .psl-seg__opt { min-height: var(--control-md); font-size: 15px; }
 
@@ -196,8 +199,6 @@
 .psl .psl-tab { color: var(--ink); }
 .psl-tab:hover, .psl-tab.is-hover { background: var(--steel); }
 .psl-tab[aria-selected="true"], .psl .psl-tab[aria-selected="true"] { background: var(--ink); color: var(--on-strong); }
-.psl-tab:focus-visible, .psl-tab.is-focus { outline-offset: -4px; }
-.psl-tab[aria-selected="true"].is-focus { outline-color: var(--focus-on-strong); }
 .psl-tabs--strip { border-left: 2px solid var(--ink); border-right: none; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
 
 /* count badge */
@@ -260,7 +261,6 @@
 .psl .psl-navlink { color: var(--nav-muted); }
 .psl-navlink:hover, .psl-navlink.is-hover, .psl .psl-navlink.is-hover { color: var(--on-strong); border-bottom-color: var(--nav-muted); }
 .psl-navlink[aria-current="page"], .psl .psl-navlink[aria-current="page"] { color: var(--on-strong); font-weight: 500; border-bottom-color: var(--signal); }
-.psl-navlink:focus-visible, .psl-navlink.is-focus { outline: 2px solid var(--focus-on-strong); outline-offset: -4px; }
 .psl-nav__who { font-size: 13px; color: var(--nav-muted); white-space: nowrap; }
 .psl-phonebar { background: var(--ink); color: var(--on-strong); padding: 6px 16px; display: flex; justify-content: space-between; align-items: center; min-height: 56px; }
 .psl-phonebar a, .psl .psl-phonebar a { color: var(--on-strong); min-height: 44px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
@@ -306,7 +306,6 @@
 .psl-row { display: grid; grid-template-columns: minmax(0, 1fr) 200px auto 56px; gap: 16px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--rule-soft); color: var(--ink); text-decoration: none; }
 .psl-row:last-child { border-bottom: none; }
 .psl-row:hover, .psl-row.is-hover { background: var(--surface-subtle); }
-.psl-row.is-focus { outline-offset: -3px; }
 .psl-row__title { font-weight: 600; display: block; }
 .psl-row__meta { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
 .psl-row__age { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); text-align: right; }
@@ -467,7 +466,7 @@
 .psl-msg__who { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--action-ink); font-weight: 600; }
 .psl-composer { display: flex; gap: 8px; align-items: flex-end; padding: 8px; background: var(--surface); border: 2px solid var(--ink); }
 .psl-composer textarea { flex: 1; border: none; resize: none; font: inherit; min-height: 44px; padding: 10px 6px; outline: none; background: none; }
-.psl-composer.is-focus { outline: none; border-color: var(--focus); }
+.psl-composer.is-focus { box-shadow: none !important; border-color: var(--focus); }
 .psl-suggest { display: flex; flex-wrap: wrap; gap: 8px; }
 .psl-suggestion { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 2px solid var(--ink); background: var(--surface); font: inherit; font-size: 14px; color: var(--ink); cursor: pointer; text-align: left; }
 .psl-suggestion:hover, .psl-suggestion.is-hover { background: var(--steel); }
