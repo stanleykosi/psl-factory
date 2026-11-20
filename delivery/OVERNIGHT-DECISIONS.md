@@ -328,3 +328,6 @@ The design engineer: "lets switch to hr lead now". The F-55 HR sample data was m
 
 ## D-148 (20 Nov): white focus edge on filled dark or blue controls
 The builder kept a white edge (--focus-on-strong) instead of blue on filled dark or blue controls (primary, dark and confirm buttons, selected tabs and options, the dark top bar, the send button), because blue on those fills cannot be seen. The design engineer: "thats good". Accepted as the one exception to D-144.
+
+## D-149 (20 Nov): phone work-item tabs get their own row
+The design engineer, on /work/W-1713/history at phone width: "no idea why the overview and history tab are so tight in this resolution". The tabs were squeezed onto the tag line with negative margins that pulled them into the title and the filter. On phones they now sit on their own full-width row under the tag line, two equal halves, 44px tall, with normal spacing. Same on Overview and History.
