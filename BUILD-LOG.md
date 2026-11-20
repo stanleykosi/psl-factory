@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. The trial session verified the corrected Finance schedules, recorded a separate Head approval and started the two-project leadership report. It activated the narrower Group Forecast rule, prepared the successor bid and submitted the HR-held payroll facts. Scoped browser completion reached 137. Isolated 259 passed the weekly draft cases and older Alerts cases. 260 runs the corrected invoice fixture with the next exact-source checks.
+
 20 November 2026. Hosted verified 258 and prepared scoped sample records. In one admitted account session, Engineering returned exact bid response 25 and the payroll source holder submitted private name and settlement facts against input 61. The native timing form issued proof 33567. The trial reviewer sign-in was requested once after the preparer batch. Scoped browser count remains 134.
 
 20 November 2026. Candidate 258 passed all 18 PostgreSQL tests and the original preservation probes. Weekly report sections now have separate exact citations. The Finance Forecast review displays the current month totals while keeping unknown amounts distinct from zero and omitting private calculations from Group Forecast. The distinct-reviewer bid and private payroll sample gates passed.
