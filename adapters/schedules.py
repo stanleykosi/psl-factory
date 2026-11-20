@@ -4,8 +4,9 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from apps.identity.services import require
 class SuppliedScheduleAdapter:
- def read(self,evidence):
-  if evidence.kind!='schedule_inventory' or len(evidence.body)>128000:raise ValidationError('Bounded supplied schedule inventory evidence required')
+ def read(self,evidence,kind='schedule_inventory'):
+  if kind not in ('schedule_inventory','income_detail') or evidence.kind!=kind or len(evidence.body)>128000:
+   raise ValidationError('Choose the exact supplied schedule evidence for this work.')
   def pairs(items):
    result={}
    for key,value in items:
@@ -13,7 +14,7 @@ class SuppliedScheduleAdapter:
     result[key]=value
    return result
   try:return json.loads(evidence.body,object_pairs_hook=pairs,parse_constant=lambda x:(_ for _ in ()).throw(ValueError()))
-  except (ValueError,TypeError,RecursionError):raise ValidationError('Finite inventory JSON required')
+  except (ValueError,TypeError,RecursionError):raise ValidationError('The supplied schedule evidence is not valid structured data.')
 
 class LocalScheduleReportAdapter:
  @transaction.atomic

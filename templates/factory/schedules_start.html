@@ -1,5 +1,18 @@
 {% extends 'base.html' %}{% block content %}
 <h1>Prepare an income detail or inventory</h1><p>Select exact supplied income detail or inventory. Finance retains treatment, inclusion and output decisions.</p>
-<form method="get"><input type="hidden" name="definition" value="finance-schedules/v1">{{ form.case.as_field_group }}<button>Select case</button></form>
-{% if case %}<p><a href="{% url 'finance_schedules' case.pk %}">Inspect native evidence or configure schedule policy</a></p><form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start income detail or inventory work</button></form>{% endif %}
+<form method="get"><input type="hidden" name="definition" value="finance-schedules/v1">{{ form.case.as_field_group }}<button>Select workspace</button></form>
+{% if case %}
+  <p><a href="{% url 'finance_schedules' case.pk %}">Find or record schedule evidence</a></p>
+  <form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.non_field_errors }}
+    <p>{{ inputs_form.kind.as_field_group }}</p>
+    <p>{{ inputs_form.parent_id.as_field_group }}</p>
+    <p>{{ inputs_form.evidence_id.as_field_group }}</p>
+    <details {% if inputs_form.payload.errors or inputs_form.payload.value %}open{% endif %}>
+      <summary>Use a separately reviewed income detail override</summary>
+      <p>Leave this blank to use the exact selected evidence.</p>
+      {{ inputs_form.payload.as_field_group }}
+    </details>
+    <button>Start income detail or inventory work</button>
+  </form>
+{% endif %}
 {% endblock %}

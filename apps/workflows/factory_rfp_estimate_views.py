@@ -7,7 +7,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 
 from apps.identity.services import active_case_grants
-from apps.pmo import rfp_estimate_requests as estimate
+from apps.pmo import rfp_estimate_model, rfp_estimate_requests as estimate
 
 from . import factory_rfp
 
@@ -15,6 +15,7 @@ from . import factory_rfp
 class ReviewForm(forms.Form):
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     draft = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    model_turn = forms.UUIDField(required=False, widget=forms.HiddenInput)
     channel = forms.ChoiceField(label='Send by')
     due_on = forms.DateField(label='Estimate needed by', widget=forms.DateInput(attrs={'type': 'date'}))
     body = forms.CharField(max_length=4000, label='Message', widget=forms.Textarea(attrs={'rows': 6}))
@@ -48,6 +49,13 @@ def detail(request, work_id):
     except ValidationError:
         scope = None
     draft = estimate.current_draft(actor, work, scope) if scope else None
+    model_turn = rfp_estimate_model.latest(actor, work, scope) if scope else None
+    model_answer = None
+    if model_turn and model_turn.status == 'answered':
+        try:
+            model_answer = rfp_estimate_model.checked_answer(actor, work, scope, model_turn.pk)
+        except (PermissionDenied, ValidationError):
+            pass
     reviewed = (work.estimate_requests.filter(actor=actor).select_related('dispatch__receipt', 'attachment')
                 .order_by('-pk').first())
     dispatch = getattr(reviewed, 'dispatch', None)
@@ -56,11 +64,18 @@ def detail(request, work_id):
     review = None
     if draft and destinations:
         review = ReviewForm(request.POST if decision == 'review' else None, initial={
-            'revision': case.revision, 'draft': draft.pk, 'body': draft.evidence.body})
+            'revision': case.revision, 'draft': draft.pk,
+            'body': model_answer.answer if model_answer else draft.evidence.body,
+            'model_turn': model_answer.pk if model_answer else None})
         channels = {'email': 'Email', 'whatsapp': 'WhatsApp'}
         review.fields['channel'].choices = [(key, f'{channels[key]} · {route["contact"]}') for key, route in destinations.items()]
         review.fields['evidence'].queryset = case.evidence.filter(kind='policy_decision').order_by('-version')
-        review.fields['attachment'].queryset = estimate.attachments(actor, work)
+        if any(route['allow_attachment'] for route in destinations.values()):
+            review.fields['attachment'].queryset = estimate.attachments(actor, work)
+            review.fields['attachment'].label_from_instance = lambda file: file.name
+        else:
+            review.fields['attachment'].queryset = estimate.attachments(actor, work).none()
+            review.fields['attachment'].widget = forms.HiddenInput()
     receipt_form = None
     if dispatch and not receipt and reviewed.payload['route']['method'] == 'manual_receipt':
         receipt_form = ReceiptForm(request.POST if decision == 'receipt' else None, initial={
@@ -72,11 +87,14 @@ def detail(request, work_id):
         try:
             if decision == 'prepare':
                 estimate.prepare(actor, work.pk, int(request.POST.get('revision', '')))
+            elif decision == 'prepare_tola':
+                rfp_estimate_model.request(actor, work.pk, int(request.POST.get('revision', '')))
             elif decision == 'review' and review and review.is_valid():
                 value = review.cleaned_data
                 attachment = value['attachment']
                 estimate.review(actor, work.pk, value['revision'], value['draft'], value['channel'], value['due_on'],
-                                value['body'], value['evidence'].pk, attachment.pk if attachment else None)
+                                value['body'], value['evidence'].pk, attachment.pk if attachment else None,
+                                value['model_turn'])
             elif decision == 'release':
                 estimate.release(actor, work.pk, int(request.POST.get('revision', '')), int(request.POST.get('request', '')))
             elif decision == 'receipt' and receipt_form and receipt_form.is_valid():
@@ -88,12 +106,17 @@ def detail(request, work_id):
         except (ValidationError, ValueError) as exc:
             messages.error(request, str(exc))
         else:
-            messages.success(request, 'Security request updated. The estimate is recorded separately when it arrives.')
+            message = ('Tola is preparing wording from the selected bid.' if decision == 'prepare_tola'
+                       else 'Security request updated. The estimate is recorded separately when it arrives.')
+            messages.success(request, message)
             return redirect('factory_rfp_security_estimate', work_id=work.pk)
     return render(request, 'factory/rfp_security_estimate.html', {
         'work': work, 'case': case, 'draft': draft, 'destinations': destinations, 'review_form': review,
         'can_prepare': scope and (case.pk, 'agent.rfp') in grants, 'reviewed': reviewed, 'dispatch': dispatch,
         'receipt': receipt, 'receipt_form': receipt_form if can_send else None,
+        'model_turn': model_turn, 'model_answer': model_answer,
+        'can_ask_tola': bool(scope and (case.pk, 'agent.rfp') in grants and rfp_estimate_model.available(actor, work)
+                            and (model_turn is None or model_turn.status == 'held')),
         'can_release': bool(scope and configuration and reviewed and not dispatch and can_send
                             and reviewed.configuration_id == configuration.pk and reviewed.payload['scope'] == scope),
         'can_configure': all((case.pk, action) in grants for action in ('ops.read', 'policy.configure')),

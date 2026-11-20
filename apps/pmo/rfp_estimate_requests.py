@@ -102,7 +102,7 @@ def attachments(actor, work):
 
 
 @transaction.atomic
-def review(actor, work_id, expected, draft_id, channel, due_on, body, evidence_id, attachment_id=None):
+def review(actor, work_id, expected, draft_id, channel, due_on, body, evidence_id, attachment_id=None, model_turn=None):
     work = lock_work(actor, work_id, expected, 'prepare')
     root, pins = scope(actor, work)
     draft = current_draft(actor, work, pins)
@@ -122,6 +122,10 @@ def review(actor, work_id, expected, draft_id, channel, due_on, body, evidence_i
             raise ValidationError('Choose one of your own private files on a route approved for attachments.')
     payload = {'scope': pins, 'route': route, 'body': body.strip(), 'requested_by': due_on.isoformat(),
                'attachment': {'id': attachment.pk, 'sha256': attachment.sha256, 'name': attachment.name} if attachment else None}
+    if model_turn is not None:
+        from .rfp_estimate_model import checked_answer
+        turn = checked_answer(actor, work, pins, model_turn)
+        payload['model_draft'] = {'turn': str(turn.pk), 'context': turn.context_hash}
     if work.estimate_requests.filter(dispatch__isnull=False, dispatch__receipt__isnull=True).exists():
         raise ValidationError('Record the result of the original request before reviewing a replacement.')
     prior = work.estimate_requests.order_by('-pk').first()
@@ -150,9 +154,19 @@ def release(actor, work_id, expected, request_id):
     if (cfg is None or cfg.pk != reviewed.configuration_id or allowed.get(route['channel']) != route
             or reviewed.payload['scope'] != pins or digest(reviewed.payload) != reviewed.sha256):
         raise ValidationError('The current source, destination or authority changed. Review the request again.')
+    model_draft = reviewed.payload.get('model_draft')
+    if model_draft:
+        from uuid import UUID
+        from .rfp_estimate_model import checked_answer
+        turn = checked_answer(actor, work, pins, UUID(model_draft['turn']))
+        if turn.context_hash != model_draft['context']:
+            raise ValidationError('The model source check changed. Review the request again.')
     if reviewed.attachment_id:
         from adapters.case_uploads import read
-        read(reviewed.attachment)
+        try:
+            read(reviewed.attachment)
+        except (OSError, ValidationError) as exc:
+            raise ValidationError('The selected private file could not be verified. Check it before releasing the request.') from exc
     dispatch = RFPEstimateDispatch.objects.create(request=reviewed, actor=actor)
     if route['method'] == 'synthetic_mailbox':
         reference = SyntheticSecurityInbox().deliver(dispatch)

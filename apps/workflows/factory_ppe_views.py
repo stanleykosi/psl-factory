@@ -20,6 +20,8 @@ class InputsForm(forms.Form):
         self.fields['register_id']=forms.ModelChoiceField(queryset=ScheduleWork.objects.filter(case=case,kind='ppe_register').order_by('-pk'),label='Exact supplied register')
         self.fields['prior_id']=forms.ModelChoiceField(queryset=ScheduleWork.objects.filter(case=case,kind='ppe_schedule').order_by('-pk'),required=False,label='Prior approved schedule')
         self.fields['ledger_id']=forms.ModelChoiceField(queryset=FinanceRun.objects.filter(case=case,kind='mapping').order_by('-pk'),required=False,label='Exact read-only accounting note')
+        for name in ('register_id', 'prior_id'):
+            self.fields[name].label_from_instance = lambda row: f'{row.reference} · version {row.version}'
     def ids(self):return [self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['register_id','prior_id','ledger_id']]
 
 class StartForm(StartWithBackground):

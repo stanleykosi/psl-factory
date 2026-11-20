@@ -123,6 +123,7 @@ urlpatterns += [path('cases/<uuid:case_id>/identity-resolution/',identity_resolu
 from apps.baas import summary_views
 urlpatterns += [path('cases/<uuid:case_id>/support/summaries/',summary_views.workbench,name='complaint_summaries'),path('cases/<uuid:case_id>/support/summaries/<int:pk>/',summary_views.view,name='complaint_summary_draft'),path('cases/<uuid:case_id>/support/summaries/<int:pk>/export/',summary_views.view,{'reviewed':True},name='complaint_summary_export')]
 from apps.core import workbench_views
+from apps.identity import work_access_views
 urlpatterns += [path('work/',workbench_views.inbox,name='work_inbox')]
 urlpatterns += pilot_patterns
 urlpatterns += [path('cases/<uuid:case_id>/pilot/contracts/<int:contract_id>/bindings/',pilot_binding_views.workbench,name='pilot_bindings'),
@@ -146,6 +147,7 @@ urlpatterns += [path('workspaces/',workbench_views.home,name='workspace_overview
     path('factory/new/',factory_views.create,name='factory_create'),
     path('factory/start/',factory_views.intake,name='factory_intake'),
     path('work/<int:work_id>/',factory_views.detail,name='factory_detail'),
+    path('work/<int:work_id>/ask-for-access/',work_access_views.request_access,name='work_access_request'),
     path('work/<int:work_id>/worker-recovery/',factory_execution_views.review,name='factory_execution_review'),
     path('cases/<uuid:case_id>/factory/worker-recovery/',factory_execution_views.configuration,name='factory_execution_configuration'),
     path('work/<int:work_id>/coordinator/reconcile/',factory_coordinator_views.reconcile,name='factory_coordinator_reconcile'),

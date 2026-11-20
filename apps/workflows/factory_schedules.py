@@ -30,11 +30,12 @@ def inputs(actor,case,kind,parent_id,evidence_id,payload,check=True):
     native.readable(actor,case)
     data={'protocol':PROTOCOL,'kind':kind,'parent_id':parent_id,'evidence_id':evidence_id,'payload':payload};validate(SCHEMA,data)
     if type(evidence_id) is not int or parent_id is not None and type(parent_id) is not int:raise ValidationError('Exact integer native references required')
-    e=subject(case,evidence_id,'income_detail' if kind=='income' else 'schedule_inventory')
+    evidence_kind='income_detail' if kind=='income' else 'schedule_inventory'
+    e=subject(case,evidence_id,evidence_kind)
     parent=FinanceRun.objects.filter(case=case,pk=parent_id,kind='mapping').first() if parent_id else None
     if kind=='income' and not parent:raise ValidationError('Select this case exact mapping note')
     if kind=='inventory' and (parent_id is not None or payload is not None):raise ValidationError('Inventory comes only from exact supplied evidence')
-    body=payload if kind=='income' else SuppliedScheduleAdapter().read(e)
+    body=payload if kind=='income' and payload is not None else SuppliedScheduleAdapter().read(e,evidence_kind)
     validate(native.DETAIL if kind=='income' else native.INVENTORY_BODY,body)
     if len(json.dumps(data))>120000:raise ValidationError('Bounded supplied schedule input required')
     if check and parent:analysis.ensure_current(parent)
@@ -145,7 +146,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             findings=[{'key':r['key'],'owner_selected':r['owner_id'] is not None,'unselected_dependencies':sorted(set(r['dependencies'])-keys),'source_link_count':len(r['source_evidence_ids']),'formula_link_count':len(r['formula_evidence_ids']),'validation_package':r['validation_package_id'],'consumer_refs':r['consumer_refs']} for r in body['schedules']]
         return {'head':work.source_head_id,'source_findings':findings,'investigation':report(work,work.execution_actor),'questions':['Finance must decide manual detail treatment and resolve duplicate evidence.','Supplied inventory does not establish complete native workbook scope. Each schedule needs its own owner, dependencies and AF13 evidence.'],'private_amounts_disclosed':False,'approval_granted':False}
     if kind=='ACT08':
-        w=native.prepare(work.execution_actor,c.pk,data['kind'],work.request['reference'],data['parent_id'],data['payload'],e.pk,c.revision)
+        w=native.prepare(work.execution_actor,c.pk,data['kind'],work.request['reference'],data['parent_id'],
+                         body if data['kind']=='income' else None,e.pk,c.revision)
         return {'head':work.source_head_id,'schedule':w.pk,'status':w.result['status'],'ledger_posted':False}
     if kind=='ACT13':
         require(work.execution_actor,c,'schedules.report');result=verify(work,work.execution_actor);work.status='verified';return result

@@ -4,7 +4,7 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 ## Current implementation and verification
 
-The 220 Railway preview serves the reviewed Security request and corrected archive guidance. Finance `0082` and Project `0074` are applied and immutable on the preview. All eight grouped 220 tests passed. The browser verified the missing Security contact and synthetic release through original receipt and native input. Candidate 221 found a missing approval prerequisite in the drafting fixture. The corrected 222 batch is running.
+The 225 Railway preview serves opaque work access requests, Tola drafting with the worker-held credential and named Finance intake. Identity `0011`, Finance `0082` and Project `0074` are applied and immutable. All 20 grouped PostgreSQL tests and both preservation probes passed after correcting the 224 masked-token assertion. The browser verified the Tola draft, human edit and sample receipt, equal opaque denial for a missing or unavailable target, and the original asset and accounts work and two new exact schedule intakes.
 
 Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate 201 finished all 487 PostgreSQL tests across 36 modules in 7,478.882 seconds. The final result was four failures, three errors and exit 1. The seven traces cover the bid form, Standard Change fixture authority, invoice test setup and database scope, and the fixed-asset linked-note authority check.
 
@@ -12,7 +12,7 @@ Candidate 202 groups the corrections, release and archive progress, in-page hand
 
 The grouped 205 PostgreSQL regression passed all 520 tests. Candidate 206 passed all four Finance tests and found three Project test setup errors. Candidate 207 corrected them together and passed all ten Project tests and both original receipt probes. The 208 PostgreSQL regression verified that preparation finds the original sample after a second native report was created in its workspace.
 
-The 262-state ledger records 259 directly observed, with 67 completed scoped journeys, 192 observed with open checks and three unseen. Hosted 220 observed the Security request and intake handoff. Hosted 219 observed active archive, income and forecast steps and verified all three Assistant entry routes. [State ledger](docs/design/screen-state-acceptance.md).
+All 262 design states have direct browser evidence. The ledger records 79 completed scoped journeys and 183 with open checks. Hosted 223 verified the active report publication and original receipt without resending. All 21 queue pages were walked. Deep queue latency, exact client testing pack and reminders, separate Finance recipient and correction paths and other variants remain. [State ledger](docs/design/screen-state-acceptance.md).
 
 In the signed-agreement browser journey, sample case11f14978 retained the exact receipt and private Word proof. It refused future response time and adoption before both signatures were checked. The model cited the original sample file, a human reviewed the draft, and separate human signature checks preceded adoption and the Finance intake receipt. Desktop and phone checks passed. The revised-agreement branch, historical recovery and browser correction cases stay open.
 

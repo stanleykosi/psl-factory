@@ -53,6 +53,16 @@ class ObservableCoordinator(SyntheticFactoryCoordinator):
         return super().choose(context)
 
 
+def publication_window(original):
+    def deliver(adapter, job_id, fence):
+        publication = PublicationJob.objects.select_related('publication__factory_work__case').get(pk=job_id).publication
+        if publication.factory_work_id and sample_key(publication.factory_work) in ('accounts_observable', 'accounts_publish_observable'):
+            sleep(WINDOW_SECONDS)
+        return original(adapter, job_id, fence)
+
+    return patch.object(InternalPublicationAdapter, 'deliver', deliver)
+
+
 def work_progress():
     require_acceptance()
     normal = factory.run_once
@@ -70,21 +80,14 @@ def work_progress():
                     provider = ObservableCoordinator(steps)
         return normal(work_id, provider=provider, adapter=adapter)
 
-    with patch.object(factory, 'run_once', side_effect=one_step):
+    with (patch.object(factory, 'run_once', side_effect=one_step),
+          publication_window(InternalPublicationAdapter.deliver)):
         call_command('work_factory_progress')
 
 
 def work_publications():
     require_acceptance()
-    normal = InternalPublicationAdapter.deliver
-
-    def deliver(adapter, job_id, fence):
-        publication = PublicationJob.objects.select_related('publication__factory_work__case').get(pk=job_id).publication
-        if publication.factory_work_id and sample_key(publication.factory_work) in ('accounts_observable', 'accounts_publish_observable'):
-            sleep(WINDOW_SECONDS)
-        return normal(adapter, job_id, fence)
-
-    with patch.object(InternalPublicationAdapter, 'deliver', deliver):
+    with publication_window(InternalPublicationAdapter.deliver):
         call_command('work_publications', limit=20)
 
 

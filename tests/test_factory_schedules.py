@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.test import TestCase,Client
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError
+from django.urls import reverse
 from django.utils import timezone
 from apps.identity.models import Grant
 from apps.finance import schedules,analysis
@@ -33,6 +34,31 @@ class FactorySchedulesTests(TestCase):
             c.execute("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename");names=[r[0] for r in c.fetchall()];result={}
             for n in names:c.execute('SELECT to_jsonb(t)::text FROM '+connection.ops.quote_name(n)+' t ORDER BY to_jsonb(t)::text');result[n]=c.fetchall()
             return result
+
+    def test_start_uses_selected_income_and_inventory_evidence_without_json_override(self):
+        f = self.f
+        income_source = evidence(f, 'income_detail', json.dumps(self.payload))
+        inventory_source = evidence(f, 'schedule_inventory', json.dumps(f['values']['inventory']))
+        self.client.force_login(f['actor'])
+        url = reverse('factory_create') + '?definition=' + flow.DEFINITION + '&case=' + str(f['case'].pk)
+        self.assertContains(self.client.get(url), 'Leave this blank to use the exact selected evidence.')
+        for kind, source, parent in [('income', income_source, f['parent'].pk), ('inventory', inventory_source, '')]:
+            with self.subTest(kind=kind):
+                values = {'definition': flow.DEFINITION, 'case': f['case'].pk, 'key': f'drawer-{kind}', 'kind': kind,
+                          'reference': f'sample-{kind}', 'revision': rev(f['case']), 'parent_id': parent,
+                          'evidence_id': source.pk, 'payload': ''}
+                response = self.client.post(url, values)
+                self.assertEqual(response.status_code, 302, response.context and response.context['form'].errors)
+                self.work = FactoryWork.objects.get(key=f'drawer-{kind}')
+                self.advance()
+                schedule = flow.schedule(self.work)
+                self.assertIsNotNone(schedule, self.work.finding)
+                self.assertEqual(schedule.evidence_id, source.pk)
+                self.assertFalse(schedule.reviews.exists())
+                if kind == 'income':
+                    self.assertEqual(schedule.result['adjusted_total'], '-1000')
+                else:
+                    self.assertFalse(schedule.result['complete_inventory'])
     def test_income_native_chain_and_read_only_metadata(self):
         f=self.f;self.start()
         check_investigation_progress(self, f['actor'], self.work, 'Investigating the selected income and schedule evidence.')

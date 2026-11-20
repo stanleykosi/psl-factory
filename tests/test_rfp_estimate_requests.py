@@ -1,5 +1,7 @@
 import json
 from datetime import timedelta
+from hashlib import sha256
+from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError, transaction
@@ -8,9 +10,11 @@ from django.urls import reverse
 from django.utils import timezone
 
 from adapters.rfp_estimate_requests import receipt_fields
+from apps.agents import assistant
+from apps.agents.models import CaseUpload
 from apps.core.evidence_access import public_evidence
 from apps.core.services import add_evidence
-from apps.pmo import rfp, rfp_estimate_requests as service
+from apps.pmo import rfp, rfp_estimate_model, rfp_estimate_requests as service
 from apps.pmo.models import RFPEstimateDispatch, RFPEstimateMailbox, RFPEstimateReceipt, RFPSubmission
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.rfp_estimate_request_validators import COMPONENT
@@ -28,9 +32,9 @@ class RFPEstimateRequestTests(TestCase):
         cls.evidence = cls.sample['evidence']['policy_decision']
         cls.path = reverse('factory_rfp_security_estimate', args=[cls.work.pk])
 
-    def configure(self, method='synthetic_mailbox', *, channel='email', destination='security@example.invalid'):
+    def configure(self, method='synthetic_mailbox', *, channel='email', destination='security@example.invalid', attachment=False):
         value = {'routes': [{'channel': channel, 'contact': 'Sample Security', 'destination': destination,
-                            'method': method, 'allow_attachment': False}]}
+                            'method': method, 'allow_attachment': attachment}]}
         cfg = draft_operator_policy(self.actor, self.case.pk, COMPONENT, value, self.evidence.pk, timezone.now())
         transition(self.actor, cfg.pk, 'validated')
         transition(self.actor, cfg.pk, 'active')
@@ -101,3 +105,35 @@ class RFPEstimateRequestTests(TestCase):
         self.assertTrue(receipt.delivered)
         self.assertFalse(public_evidence(self.case.evidence.filter(pk=proof.pk)).exists())
         self.assertEqual(RFPEstimateReceipt.objects.count(), 1)
+
+    def test_tola_uses_only_selected_bid_metadata_and_review_pins_human_text(self):
+        self.configure(attachment=True)
+        self.client.force_login(self.actor)
+        env = {'OPENROUTER_MODEL': 'synthetic-test-model', 'OPENROUTER_API_KEY': 'synthetic-test-key'}
+        with patch.dict('os.environ', {'OPENROUTER_MODEL': env['OPENROUTER_MODEL']}, clear=True):
+            self.assertContains(self.client.get(self.path), 'Draft with Tola')
+            response = self.client.post(self.path, {'action': 'prepare_tola', 'revision': rev(self.case)}, follow=True)
+        self.assertContains(response, 'Tola is preparing wording from the selected bid.')
+        _, scope = service.scope(self.actor, self.work)
+        turn = rfp_estimate_model.latest(self.actor, self.work, scope)
+        self.assertEqual(turn.status, 'queued')
+        with patch.dict('os.environ', env), patch.object(assistant.openrouter, 'answer', return_value={
+                'answer': 'Please share the Security estimate for the sample bid.', 'citations': ['S1'], 'next_work': '',
+        }) as model:
+            self.assertTrue(assistant.worker_once())
+        self.assertEqual([item['label'] for item in model.call_args.args[3]], ['Received bid request'])
+        self.assertContains(self.client.get(self.path), 'Suggested by Tola')
+        draft = service.current_draft(self.actor, self.work, scope)
+        data = b'Synthetic private bid attachment'
+        file = CaseUpload.objects.create(case=self.case, actor=self.actor, name='Sample bid attachment.pdf',
+                                         size=len(data), sha256=sha256(data).hexdigest(), key='synthetic-security-attachment')
+        reviewed = service.review(self.actor, self.work.pk, rev(self.case), draft.pk, 'email', timezone.localdate(),
+                                  'Human revision of the synthetic model wording', self.evidence.pk,
+                                  attachment_id=file.pk, model_turn=turn.pk)
+        self.assertEqual(reviewed.payload['model_draft']['turn'], str(turn.pk))
+        self.assertFalse(RFPEstimateDispatch.objects.exists())
+        with patch('adapters.case_uploads.read', return_value=data) as read:
+            dispatch = service.release(self.actor, self.work.pk, rev(self.case), reviewed.pk)
+        read.assert_called_once_with(file)
+        self.assertEqual(dispatch.mailbox.payload['body'], 'Human revision of the synthetic model wording')
+        self.assertEqual(dispatch.mailbox.payload['attachment']['sha256'], file.sha256)

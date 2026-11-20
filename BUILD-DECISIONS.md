@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. The Security drafting form uses the existing Tola conversation and only the exact selected received bid metadata. The web reserves work with the configured model name and scoped access. The worker holds the provider credential and performs the model call. Human review seals any edited wording, due date, selected recipient route and file reference before release.
+
+20 November 2026. An authenticated request to open an opaque work link records only the account and the submitted work reference. The acknowledgement is the same for denied or missing work. Current technical workspace administrators may review matching requests through People and access. An earlier unmatched reference cannot attach to a record created later. Recording a request has no grant or business-role effect.
+
 20 November 2026. Security estimate requests cite the exact received bid, current assignment and selected requirements. The draft can be prepared while contact settings are missing. A separate human review pins wording, due date, route and any permitted private attachment. Release records one original operation. The synthetic inbox has its own stored copy and receipt. Manual channels require matching original delivery evidence. The actual contributor still records the estimate. Real contact, channel and attachment choices are deferred.
 
 20 November 2026. Bid adjustments modify only named currency inputs in the exact reviewed calculator under a configured cumulative limit. The assigned project manager records the amount and reason. The native calculator produces a new source and the bid needs fresh human decisions. The agreement with the client retains its separate approved terms. The calculator mapping and permitted limits are deferred owner settings.

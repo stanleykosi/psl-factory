@@ -42,6 +42,8 @@ PREPARATION = {
     'bid_cost_adjustment': ('rfp-response/v1', 'SAMPLE bid costing adjustment'),
     'bid_security_request': ('rfp-response/v1', 'SAMPLE bid Security estimate request'),
     'bid_security_hold': ('rfp-response/v1', 'SAMPLE bid Security contact needed'),
+    'bid_security_model': ('rfp-response/v1', 'SAMPLE bid Security wording with Tola'),
+    'bid_security_worker_model': ('rfp-response/v1', 'SAMPLE bid Security wording from the worker'),
     'leadership': ('pmo-leadership-report/v1', 'SAMPLE leadership report walkthrough'),
     'tuesday': ('pmo-leadership-report/v1', 'SAMPLE Tuesday report walkthrough'),
     'accounts': ('finance-accounts/v1', 'SAMPLE accounts close walkthrough'),
@@ -249,20 +251,55 @@ def prepare_bid_cost_adjustment(actor, case):
     return work
 
 
-def prepare_bid_security_request(actor, case, *, configured=True):
+def prepare_bid_security_request(actor, case, *, configured=True, model_sample=False, reference=None):
     from apps.policy.rfp_estimate_request_validators import COMPONENT
     from tests.factory_rfp_helpers import configured as bid_fixture, start
 
-    reference = 'SAMPLE-SECURITY-REQUEST' if configured else 'SAMPLE-SECURITY-CONTACT-HOLD'
+    reference = reference or ('SAMPLE-SECURITY-MODEL' if model_sample else
+                 'SAMPLE-SECURITY-REQUEST' if configured else 'SAMPLE-SECURITY-CONTACT-HOLD')
     data = bid_fixture(reference, context=(actor, case), include_security=False)
     if configured:
-        policy = draft_operator_policy(actor, case.pk, COMPONENT, {'routes': [
+        routes = [
             {'channel': 'email', 'contact': 'SAMPLE Security estimator', 'destination': 'security@example.invalid',
              'method': 'synthetic_mailbox', 'allow_attachment': False},
-        ]}, data['evidence']['policy_decision'].pk, timezone.now())
+        ]
+        if model_sample:
+            routes.append({'channel': 'whatsapp', 'contact': 'SAMPLE Security estimator', 'destination': 'synthetic:security',
+                           'method': 'synthetic_mailbox', 'allow_attachment': True})
+        policy = draft_operator_policy(actor, case.pk, COMPONENT, {'routes': routes}, data['evidence']['policy_decision'].pk, timezone.now())
         transition(actor, policy.pk, 'validated')
         transition(actor, policy.pk, 'active')
     return start(data, key=reference)
+
+
+@transaction.atomic
+def prepare_security_model_attachment(actor, key='bid_security_model'):
+    from hashlib import sha256
+    from io import BytesIO
+    from uuid import uuid4
+
+    from pypdf import PdfWriter
+
+    from adapters import case_uploads
+    from apps.agents.models import CaseUpload
+
+    sample = prepare_project(actor, key)
+    case = Case.objects.select_for_update().get(pk=sample['case'], tenant=TENANT, synthetic=True)
+    filename = 'SAMPLE security request pack.pdf'
+    file = CaseUpload.objects.filter(case=case, actor=actor, name=filename).first()
+    if file is None:
+        stream = BytesIO()
+        pdf = PdfWriter()
+        pdf.add_blank_page(width=420, height=595)
+        pdf.add_metadata({'/Title': 'Fictional bid attachment for the Security request test'})
+        pdf.write(stream)
+        data = stream.getvalue()
+        key = f'case-uploads/{case.pk}/{uuid4().hex}'
+        case_uploads.put(key, data)
+        file = CaseUpload.objects.create(case=case, actor=actor, name=filename, key=key,
+                                         sha256=sha256(data).hexdigest(), size=len(data))
+    case_uploads.read(file)
+    return dict(sample, attachment=file.pk)
 
 
 def prepare_independent_invoice_reviewer(actor, case, work):
@@ -398,6 +435,27 @@ def prepare_schedules(actor, case, *, check_duplicates=False):
 
 
 @transaction.atomic
+def prepare_schedule_drawer_sources(actor):
+    from apps.core.models import Evidence
+    from tests import finance_analysis_helpers, schedule_helpers, test_factory_schedules
+
+    title = 'SAMPLE income and inventory drawer sources'
+    case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
+    if created:
+        Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        with (patch.object(finance_analysis_helpers, 'setup_case', return_value=(actor, case)),
+              patch.object(test_factory_schedules, 'fixture', side_effect=partial(
+                  schedule_helpers.fixture, reviewer_username='batch-drawer-schedule-reviewer',
+                  recipient_username='batch-drawer-finance-reader'))):
+            entry = test_factory_schedules.FactorySchedulesTests()
+            entry.setUp()
+        for kind, payload in [('income_detail', entry.payload), ('schedule_inventory', entry.f['values']['inventory'])]:
+            add_evidence(actor, case.pk, kind, json.dumps(payload), 'synthetic:drawer-schedule-source')
+    ids = dict(Evidence.objects.filter(case=case, source='synthetic:drawer-schedule-source').values_list('kind', 'pk'))
+    return {'case': str(case.pk), 'sources': ids, 'existing_sources_preserved': not created}
+
+
+@transaction.atomic
 def prepare_independent_finance_review(actor, key):
     from tests import finance_analysis_helpers, ppe_helpers, schedule_helpers, test_factory_ppe, test_factory_schedules
 
@@ -491,6 +549,9 @@ def prepare_project(actor, key):
                    'bid_final_costing': prepare_final_costing, 'bid_cost_adjustment': prepare_bid_cost_adjustment,
                    'bid_security_request': prepare_bid_security_request,
                    'bid_security_hold': partial(prepare_bid_security_request, configured=False),
+                   'bid_security_model': partial(prepare_bid_security_request, model_sample=True),
+                   'bid_security_worker_model': partial(prepare_bid_security_request, model_sample=True,
+                                                        reference='SAMPLE-SECURITY-WORKER'),
                    'leadership': prepare_leadership, 'tuesday': prepare_leadership,
                    'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts,
                    'accounts_reviewer_needed': partial(prepare_accounts, independent_allocation=True),
@@ -600,6 +661,8 @@ def run():
     from tests.railway_commercial_client_seed import prepare_rework
 
     sessions = {key: lambda key=key: prepare_project(actor, key) for key in PREPARATION}
+    sessions['bid_security_model'] = lambda: prepare_security_model_attachment(actor)
+    sessions['bid_security_worker_model'] = lambda: prepare_security_model_attachment(actor, 'bid_security_worker_model')
     sessions.update({key: lambda key=key: prepare_project(actor, key) for key in PROGRESS_PREPARATION})
     sessions.update({key: lambda key=key: prepare_project(actor, key) for key in OBSERVABLE_PREPARATION})
     sessions.update({key: lambda key=key: prepare_invoice_decision_variant(actor, key)
@@ -611,6 +674,7 @@ def run():
     sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)
     sessions['hr_payroll_correction'] = lambda: prepare_hr_payroll_correction(actor)
+    sessions['schedule_drawer_sources'] = lambda: prepare_schedule_drawer_sources(actor)
     sessions['unreadable_invoice'] = prepare_unreadable_invoice
     failed = False
     for key, prepare in sessions.items():

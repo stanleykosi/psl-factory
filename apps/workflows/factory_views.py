@@ -851,7 +851,12 @@ def detail(request,work_id,focus=None):
 def _detail(request,work_id,focus=None):
     from .screen_focus import SCREENS, require_action
 
-    work=get_object_or_404(visible(request.user,work_id=work_id))
+    work=visible(request.user,work_id=work_id).first()
+    if work is None:
+        if request.method in ('GET','HEAD'):
+            from apps.identity.work_access_views import unavailable
+            return unavailable(request,work_id)
+        raise Http404
     if focus and focus not in SCREENS.get(work.definition, {}):
         raise Http404
     if work.definition=='engagement/v1':

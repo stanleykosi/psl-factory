@@ -2,10 +2,12 @@
 import json
 from pathlib import Path
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import connection
 from django.test import TestCase, Client
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
-from apps.core.models import Audit
+from apps.core.models import Audit, Case
 from apps.core.services import add_evidence
 from apps.finance.models import FinancialImport, FinanceSource, FinanceRun, ImportValidation
 from apps.finance.services import capture_import
@@ -21,6 +23,29 @@ class AccountingSuppliedIntakeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.data=fixture(username='supplied-maker',recipient_username='supplied-reader')
+
+    def test_workspace_selector_uses_named_batched_exact_grants(self):
+        actor, case, *_ = self.data
+        self.client.force_login(actor)
+        url = reverse('factory_create') + '?definition=finance-accounts/v1'
+        listed = self.client.get(url)
+        self.assertNotContains(listed, 'Case object')
+        with CaptureQueriesContext(connection) as baseline:
+            self.client.get(url)
+        hidden = Case.objects.create(tenant=case.tenant, title='SAMPLE hidden accounting selector', kind='project', synthetic=True)
+        Grant.objects.create(case=hidden, user=actor, action='case.read')
+        workspaces = Case.objects.bulk_create([
+            Case(tenant=case.tenant, title=f'SAMPLE accounting selector {index}', kind='project', synthetic=True)
+            for index in range(24)
+        ])
+        Grant.objects.bulk_create([Grant(case=item, user=actor, action=action) for item in workspaces
+                                   for action in ('case.read', 'factory.start', 'finance.read', 'evidence.add')])
+        with CaptureQueriesContext(connection) as expanded:
+            listed = self.client.get(url)
+        self.assertLessEqual(len(expanded), len(baseline) + 2)
+        self.assertContains(listed, 'SAMPLE accounting selector 23')
+        self.assertNotContains(listed, hidden.title)
+        self.assertEqual(self.client.get(url + '&case=' + str(hidden.pk)).status_code, 404)
 
     def supplied(self,body=None,with_units=False):
         a,c,e,values,configs,source,template,recipient=self.data

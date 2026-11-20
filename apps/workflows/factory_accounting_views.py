@@ -8,10 +8,11 @@ from django.shortcuts import get_object_or_404,render,redirect
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
-from apps.identity.services import visible_cases,require
 from apps.identity.models import Grant
 from apps.core.evidence_access import public_evidence
+from apps.core.presentation import workspace_name
 from apps.core.read_observation import read_observation
+from apps.core.workbench import active, granted
 from apps.finance.models import FinanceSource,FinanceAdjustment,FinanceRun
 from apps.core.models import Evidence, Audit
 from . import factory_accounting_intake as intake
@@ -89,19 +90,16 @@ class ConfirmUnitsForm(forms.Form):
 
 
 def create(request):
-    cases=[]
-    for case in visible_cases(request.user).order_by('title'):
-        try:
-            runtime.access(request.user,case,'factory.start',service.DEFINITION);require(request.user,case,'evidence.add')
-        except PermissionDenied:continue
-        cases.append(case)
+    active(request.user)
+    cases = granted(request.user, ['factory.start', 'finance.read', 'evidence.add']).order_by('title', 'pk')
     selected=request.GET.get('case')
     if not selected:
-        field=forms.ModelChoiceField(queryset=visible_cases(request.user).filter(pk__in=[c.pk for c in cases]),label='Workspace')
+        field=forms.ModelChoiceField(queryset=cases,label='Workspace')
+        field.label_from_instance = workspace_name
         return render(request,'factory/accounting_start.html',{'workspace_field':field.widget.render('case',None,attrs={'id':'accounting-workspace'}),'definition':service.DEFINITION})
     try:UUID(selected)
     except (ValueError,TypeError,AttributeError):raise Http404 from None
-    case=get_object_or_404(visible_cases(request.user).filter(pk__in=[c.pk for c in cases]),pk=selected)
+    case=get_object_or_404(cases,pk=selected)
     action=request.POST.get('action','existing') if request.method=='POST' else None
     form=StartForm(case,request.POST if action=='existing' else None)
     supplied=SuppliedIntakeForm(case,request.POST if action=='supplied' else None,prefix='supplied')

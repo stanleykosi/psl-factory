@@ -2,6 +2,16 @@
 {% block title %}Workspace access · PSL Factory{% endblock %}
 {% block content %}
 <header class="page-heading"><div><h1>People and access</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Back to workspace</a></header>
+<section class="card table-wrap"><h2>Work access requests</h2>
+  {% if work_requests %}<table><thead><tr><th>Account</th><th>Work reference</th><th>Requested</th></tr></thead>
+  <tbody>{% for record in work_requests %}<tr><td>{{ record.requester__username }}</td><td>{{ record.work_reference }}</td><td>{{ record.created_at }}</td></tr>{% endfor %}</tbody></table>
+  {% else %}<p>No requests for this workspace.</p>{% endif %}
+  {% if work_requests.has_other_pages %}<nav class="factory-queues" aria-label="Work access request pages">
+    {% if work_requests.has_previous %}<a href="?person={{ search|urlencode }}&amp;page={{ people.number }}&amp;request_page={{ work_requests.previous_page_number }}">Previous requests</a>{% endif %}
+    <span>Page {{ work_requests.number }} of {{ work_requests.paginator.num_pages }}</span>
+    {% if work_requests.has_next %}<a href="?person={{ search|urlencode }}&amp;page={{ people.number }}&amp;request_page={{ work_requests.next_page_number }}">Next requests</a>{% endif %}
+  </nav>{% endif %}
+</section>
 <section class="card table-wrap">
   <h2>Staff accounts in this workspace</h2>
   {% if staff_access.allow_invite %}<p><a class="button secondary" href="{% url 'staff_invites' case.pk %}">Invite staff</a></p>{% endif %}

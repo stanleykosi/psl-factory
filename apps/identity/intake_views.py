@@ -5,14 +5,15 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError,transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from apps.core.views import accessible_case
 from . import intake as d
 from .intake_models import AccessChange
 from .intake_models import TenantAuthority
-from .models import Grant
+from apps.workflows.models import FactoryWork
+from .models import Grant, WorkAccessRequest
 
 class NewCase(forms.Form):
     tenant=forms.ChoiceField(label='Organization')
@@ -64,10 +65,15 @@ def access(request,case_id):
         access_by_account[user_id].append(action)
     for row in page.object_list:
         row['record_actions']=access_by_account[row['user_id']]
+    same_workspace = FactoryWork.objects.filter(case=c, pk=OuterRef('work_reference'), created_at__lte=OuterRef('created_at'))
+    requests = WorkAccessRequest.objects.filter(Exists(same_workspace)).order_by('-pk').values(
+        'requester__username', 'work_reference', 'created_at')
+    request_page = Paginator(requests, 25).get_page(request.GET.get('request_page'))
     response=render(request,'identity/access.html',{
         'case':c,'form':form,'search':search,'people':page,
         'staff_access':cfg.value.get('staff_lifecycle',{}),
         'history':AccessChange.objects.filter(case=c,action__in=cfg.value['allowed_actions']).order_by('-pk')[:100],
+        'work_requests': request_page,
     })
     response['Cache-Control']='no-store'
     return response

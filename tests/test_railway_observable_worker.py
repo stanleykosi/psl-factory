@@ -43,7 +43,7 @@ class ObservableWorkerTests(TestCase):
 
     def test_report_samples_stop_before_the_exact_draft_and_original_publication(self):
         from apps.documents.models import PublicationJob
-        from apps.workflows import factory_accounting
+        from apps.workflows import factory_accounting, factory_progress
 
         actor = get_user_model().objects.create_user('synthetic-report-observation-reviewer')
         for key, step in [('accounts_draft_observable', 'ACT09'), ('accounts_publish_observable', 'ACT11')]:
@@ -58,3 +58,17 @@ class ObservableWorkerTests(TestCase):
                 self.assertEqual(bool(state['document']), step == 'ACT11')
                 self.assertFalse(PublicationJob.objects.filter(publication__factory_work=work).exists())
                 self.assertEqual(prepare_project(actor, key)['work'], work.pk)
+                if step == 'ACT11':
+                    self.client.force_login(actor)
+                    factory_progress.set_progress(actor, work.pk, work.revision, True)
+
+                    def see_exact_lease(_):
+                        self.assertEqual(PublicationJob.objects.get(publication__factory_work=work).status, 'leased')
+                        self.assertContains(self.client.get(sample['path']), 'Report delivery is in progress.')
+
+                    env = {'RAILWAY_PROJECT_ID': worker.PREVIEW_PROJECT, 'RAILWAY_ENVIRONMENT_NAME': 'design-acceptance',
+                           'PSL_ACCEPTANCE_OBSERVABLE_WORKER': '1'}
+                    with patch.dict('os.environ', env), patch.object(worker, 'sleep', side_effect=see_exact_lease) as observing:
+                        worker.work_progress()
+                    observing.assert_called_once_with(worker.WINDOW_SECONDS)
+                    self.assertEqual(PublicationJob.objects.get(publication__factory_work=work).status, 'confirmed')
