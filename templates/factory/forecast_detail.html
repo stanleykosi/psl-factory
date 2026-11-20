@@ -33,6 +33,22 @@
   </details>
 </section>
 {% endif %}{% endif %}
+{% if group_decisions.current %}
+<section class="card" aria-label="Current group forecast decision">
+  <h2>{{ group_decisions.current.verdict }}</h2>
+  <p>Group report {{ group_decisions.current.version }} · <time datetime="{{ group_decisions.current.recorded_at|date:'c' }}">{{ group_decisions.current.recorded_at|date:'d M Y, H:i T' }}</time></p>
+  <p>{{ group_decisions.current.note|linebreaksbr }}</p>
+</section>
+{% endif %}
+{% if group_decisions.history %}
+<details class="card"><summary>Earlier group forecast decisions</summary>
+  {% for decision in group_decisions.history %}
+  <section><h3>{{ decision.verdict }}</h3>
+  <p>Group report {{ decision.version }} · <time datetime="{{ decision.recorded_at|date:'c' }}">{{ decision.recorded_at|date:'d M Y, H:i T' }}</time></p>
+  <p>{{ decision.note|linebreaksbr }}</p></section>
+  {% endfor %}
+</details>
+{% endif %}
 {% if commands %}<section class="card"><h2>{% if focus == 'response' %}Actual cash and matching{% else %}Human Finance decisions{% endif %}</h2>{% for command in commands %}<details><summary>{{ command.label }}</summary><form method="post">{% csrf_token %}<input type="hidden" name="work_revision" value="{{ row.work.revision }}"><input type="hidden" name="selected_scenario" value="{{ row.forecast.scenario.pk }}">{{ command.form.as_p }}<button>{% if command.action == 'review' or command.action == 'group_review' %}Record decision{% else %}Record update{% endif %}</button></form></details>{% endfor %}</section>{% endif %}
 {% if row.forecast.document %}
 {% if row.forecast.document.version.audience == 'group' %}

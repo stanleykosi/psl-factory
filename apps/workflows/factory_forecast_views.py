@@ -158,6 +158,13 @@ def detail(request,work,focus=None):
             forms_list=[entry for entry in forms_list if
                         (entry['action']!='review' or row['forecast']['review_roles']) and
                         (entry['action']!='group_review' or row['forecast']['group_disclosure'])]
+    group_decisions=None
+    if selected['audience']=='group' and focus in (None,'decision'):
+        from .factory_forecast_decisions import readback
+        try:
+            group_decisions=readback(request.user,work,row['forecast'])
+        except (ValidationError,PermissionDenied):
+            pass
     group_table=None
     group_rules_form=None
     if selected['audience']=='group' and focus in (None,'decision') and permitted(request.user,work,'policy.configure'):
@@ -183,7 +190,7 @@ def detail(request,work,focus=None):
             group_table={'headers':headers,'rows':[[item[name] for name in headers] for item in projected['rows']],
                          'metadata':projected['metadata']}
     response = render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
-        'group_table':group_table,
+        'group_table':group_table,'group_decisions':group_decisions,
         'group_rules_form':group_rules_form,
         'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),
         'last_observation':last_observation,'can_attach_proof':can_attach_proof,'delivery_outcomes':recovery.OUTCOMES,

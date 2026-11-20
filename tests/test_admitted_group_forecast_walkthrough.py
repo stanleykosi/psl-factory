@@ -1,7 +1,9 @@
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from apps.documents.models import ControlledReview, Publication, PublicationReceipt
@@ -43,10 +45,13 @@ class AdmittedGroupForecastWalkthroughTests(TestCase):
         self.assertEqual(old.version.created_by_id, maker.pk)
         decision_path = sample['decision_path']
 
+        returned_reason = 'Remove the expected date before this sample report is shared with the group.'
+        approval_reason = 'The narrowed report and its exact recipient are approved.'
+
         def review_fields(verdict, version_id):
             return {'action': 'group_review', 'work_revision': work.revision, 'revision': rev(case),
                     'selected_scenario': sample['selection']['scenario_id'], 'version': version_id,
-                    'role': 'Finance', 'verdict': verdict, 'reason': 'Exact synthetic group content reviewed.'}
+                    'role': 'Finance', 'verdict': verdict, 'reason': returned_reason if verdict == 'return' else approval_reason}
 
         self.client.force_login(maker)
         self.assertEqual(self.client.post(decision_path, review_fields('approve', old.version_id)).status_code, 403)
@@ -55,8 +60,31 @@ class AdmittedGroupForecastWalkthroughTests(TestCase):
         self.assertRedirects(self.client.post(decision_path, review_fields('return', old.version_id)), decision_path,
                              fetch_redirect_response=False)
         self.assertEqual(ControlledReview.objects.get(version=old.version).verdict, 'return')
+        returned = self.client.get(decision_path)
+        self.assertContains(returned, 'Returned for correction')
+        self.assertContains(returned, returned_reason)
+        self.assertEqual(returned.context['group_decisions']['current']['version'], old.version_id)
+        self.assertIn('no-store', returned['Cache-Control'])
+
+        observer = get_user_model().objects.create_user('sample-forecast-work-reader')
+        Grant.objects.bulk_create([Grant(case=case, user=observer, action=action) for action in
+                                   ('case.read', 'factory.read', 'finance.read', 'document.review_controlled')])
+        self.client.force_login(observer)
+        with CaptureQueriesContext(connection) as observed:
+            self.assertNotContains(self.client.get(decision_path), returned_reason)
+        self.assertFalse(any('"documents_controlledreview"."note"' in query['sql'] for query in observed))
 
         self.client.force_login(maker)
+        self.assertContains(self.client.get(decision_path), returned_reason)
+        for holder, permission in ((reviewer, 'document.review_controlled'), (maker, 'finance.forecast.capture')):
+            grant = Grant.objects.get(case=case, user=holder, action=permission)
+            Grant.objects.filter(pk=grant.pk).update(active=False)
+            try:
+                with CaptureQueriesContext(connection) as observed:
+                    self.assertNotContains(self.client.get(decision_path), returned_reason)
+                self.assertFalse(any('"documents_controlledreview"."note"' in query['sql'] for query in observed))
+            finally:
+                Grant.objects.filter(pk=grant.pk).update(active=True)
         disclosure = {'action': 'group_rules', 'work_revision': work.revision, 'case_revision': rev(case),
             'base_configuration': sample['configuration'], 'rows': ['receipt-1'], 'fields': ['kind', 'residual'],
             'metadata': ['currency', 'basis', 'as_of'], 'recipients': [sample['recipient']], 'reviewer_roles': ['Finance'],
@@ -77,6 +105,10 @@ class AdmittedGroupForecastWalkthroughTests(TestCase):
         self.assertFalse(fresh.version.reviews.exists())
 
         self.client.force_login(reviewer)
+        waiting = self.client.get(decision_path)
+        self.assertContains(waiting, 'Earlier group forecast decisions')
+        self.assertContains(waiting, returned_reason)
+        self.assertIsNone(waiting.context['group_decisions']['current'])
         self.assertRedirects(self.client.post(decision_path, review_fields('approve', fresh.version_id)), decision_path,
                              fetch_redirect_response=False)
         factory.run_until_wait(work.pk)
@@ -85,3 +117,9 @@ class AdmittedGroupForecastWalkthroughTests(TestCase):
         receipt = PublicationReceipt.objects.get(publication__factory_work=work)
         self.assertEqual((receipt.publication.version_id, receipt.recipient_id), (fresh.version_id, sample['recipient']))
         self.assertEqual(old.version.reviews.get().verdict, 'return')
+        with CaptureQueriesContext(connection) as observed:
+            readback = self.client.get(decision_path)
+        self.assertContains(readback, approval_reason)
+        self.assertEqual(readback.context['group_decisions']['current']['version'], fresh.version_id)
+        self.assertEqual([decision['version'] for decision in readback.context['group_decisions']['history']], [old.version_id])
+        self.assertTrue(any('"documents_controlledreview"' in query['sql'] and 'LIMIT 12' in query['sql'] for query in observed))
