@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "value": "CL-3506",
+      "label": "Tamarind Loans Ltd",
+      "sample": true,
+      "_personas": [
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "CL-3507",
+      "label": "Harmattan Bank",
+      "sample": true,
+      "_personas": [
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "CL-3508",
+      "label": "Kora Logistics",
+      "sample": true,
+      "_personas": [
+        "pmo_lead"
+      ]
+    }
+  ]
+}

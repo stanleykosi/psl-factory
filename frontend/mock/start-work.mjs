@@ -29,7 +29,7 @@ export const START_OPERATIONS = ['E-LINES', 'E-LINE-OPTIONS', 'E-WORK-START'];
 const dir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'start-work');
 const readJson = (path) => JSON.parse(readFileSync(join(dir, path), 'utf8'));
 
-const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none'];
+const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'pmo_lead'];
 const LIMITS = [10, 20, 50];
 // Fields whose options share a file with another field's name.
 const OPTION_FILES = { from_issue: 'issue', status_cites: 'records', risks_cites: 'records', timeline_cites: 'records', next_steps_cites: 'records' };
@@ -48,7 +48,11 @@ const WORK_IDS = {
   income_schedules: 'W-4401',
   // F-45: the ledger start lands on the ledger source's investigating page (W-4201, spec Lanes); W-4402 stays as a fixture
   ledger_sources: 'W-4201',
+  // F-49: the logged RFP's work item (fixtures/work/W-3351.json), Unassigned for F-36's assign panel
+  rfp_intake: 'W-3351',
 };
+// F-49: the state a start answers with; every other line answers processing.
+const START_STATES = { rfp_intake: 'owner_needed' };
 const KIND_WORDS = { date: 'date', date_range: 'date range', period: 'period', datetime: 'date and time', integer: 'whole number' };
 
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
@@ -62,6 +66,15 @@ const INVALID = 'Check the highlighted fields and try again.';
 const LOST = { code: 'mock_lost', message: 'The mock applied this and dropped the reply.' };
 const NOT_ON_RECORD = "That proof isn't on this record. Add it again.";
 const UNCERTAIN = ['upload_uncertain', 'start_uncertain'];
+// F-49 (G-23-1): the mock-only cookie psl_mock_rfp=new_client serves `allow_new` on the RFP line's client field.
+const NEW_CLIENT_COOKIE = 'psl_mock_rfp';
+
+// F-49: the RFPs logged since the last reset, by work id, for the Unassigned list (work-list.mjs).
+const logged = new Map();
+/** The RFPs a start has logged, as {work_id, reference, client}. */
+export const loggedRfps = () => [...logged.values()];
+
+const isNewClient = (v) => v !== null && typeof v === 'object' && !Array.isArray(v) && 'new' in v && v.new !== null && typeof v.new === 'object';
 
 // A malformed segment such as `%` keeps its raw text instead of crashing the mock.
 function decodePart(value) {
@@ -109,6 +122,7 @@ export function createStartWorkMock(openapi) {
   const uploadOp = Object.values(openapi.paths['/api/v1/cases/{case_id}/evidence']).find((op) => op?.operationId === 'E-EVIDENCE-UPLOAD');
   const validateUpload = ajv.compile(uploadOp.requestBody.content['application/json'].schema);
   const lines = Object.fromEntries(PERSONAS.map((p) => [p, readJson(`lines.${p}.json`)]));
+  logged.clear();
   const optionCache = new Map();
   // idempotency_key -> {body, response}; in memory only.
   const started = new Map();
@@ -118,6 +132,8 @@ export function createStartWorkMock(openapi) {
   const issued = new Map();
   // "<persona> <fixture>": the uncertain fixtures already used since the last reset.
   const used = new Set();
+  // F-49: "<client>|<reference>" of every RFP logged since the last reset.
+  const refs = new Set();
 
   const revisionOf = (persona, caseId, base) => revisions.get(`${persona}:${caseId}`) ?? base;
   /** One uncertain fixture, once per reset: true the first time the cookie names it for this persona. */
@@ -140,15 +156,21 @@ export function createStartWorkMock(openapi) {
     );
   }
 
+  /** The mock overlay `allow_new` (G-23-1): only the RFP line's client field, only with the cookie. */
+  const allowsNew = (line, cookies) => line.key === 'rfp_intake' && cookies?.[NEW_CLIENT_COOKIE] === 'new_client';
   const lineFor = (persona, key) => lines[persona]?.items.find((line) => line.key === key);
   /** E-LINES as served now: a fixed case carries its current revision. */
-  const servedLines = (persona) => ({
+  const servedLines = (persona, cookies) => ({
     ...lines[persona],
-    items: lines[persona].items.map((line) =>
-      line.case_scope === 'fixed' && line.case_id !== undefined && line.case_revision !== undefined
-        ? { ...line, case_revision: revisionOf(persona, line.case_id, line.case_revision) }
-        : line,
-    ),
+    items: lines[persona].items.map((line) => {
+      const fixed =
+        line.case_scope === 'fixed' && line.case_id !== undefined && line.case_revision !== undefined
+          ? { ...line, case_revision: revisionOf(persona, line.case_id, line.case_revision) }
+          : line;
+      return allowsNew(fixed, cookies)
+        ? { ...fixed, intake: fixed.intake.map((f) => (f.name === 'client' ? { ...f, allow_new: true } : f)) }
+        : fixed;
+    }),
   });
   const withRevision = (persona, row) =>
     row.case_id !== undefined && row.case_revision !== undefined ? { ...row, case_revision: revisionOf(persona, row.case_id, row.case_revision) } : row;
@@ -177,7 +199,7 @@ export function createStartWorkMock(openapi) {
   }
 
   /** Per-field problems with the intake, as {name, message}. */
-  function intakeProblems(line, intake, persona, caseId) {
+  function intakeProblems(line, intake, persona, caseId, cookies) {
     const fields = [];
     const known = new Map(line.intake.map((f) => [f.name, f]));
     for (const name of Object.keys(intake)) {
@@ -201,6 +223,12 @@ export function createStartWorkMock(openapi) {
         if ((!field.multiple && Array.isArray(value)) || !field.evidence_kind || !ids.every((id) => typeof id === 'string' && mine?.get(id) === field.evidence_kind)) {
           fields.push({ name: field.name, message: NOT_ON_RECORD });
         }
+      } else if (field.type === 'record' && isNewClient(value)) {
+        if (!allowsNew(line, cookies) || Object.keys(value).length !== 1 || Object.keys(value.new).some((k) => k !== 'name')) {
+          fields.push({ name: field.name, message: 'Choose one from the list.' });
+        } else if (typeof value.new.name !== 'string' || value.new.name.trim() === '') {
+          fields.push({ name: field.name, message: `${field.label} is required.` });
+        }
       } else if (field.type === 'record' || field.type === 'records') {
         const values = field.type === 'records' && Array.isArray(value) ? value : [value];
         const rows = served(persona, field, intake[field.depends_on]);
@@ -220,7 +248,28 @@ export function createStartWorkMock(openapi) {
         message: "The client register has no billing contact for Harmattan Bank. Add one in the project's client details.",
       });
     }
+    if (line.key === 'rfp_intake') rfpProblems(intake, fields, persona);
     return fields;
+  }
+
+  /** F-49, backend-stated samples (G-23-2, G-23-3, readiness question 3): the deadline's rules, a "Received" in the
+   *  future (against the mock's clock) and a reference already logged for the client. */
+  function rfpProblems(intake, fields, persona) {
+    const named = (name) => fields.some((f) => f.name === name);
+    const stated = intake.deadline_status === 'stated';
+    if (!isBlank(intake.deadline_at) && !stated && !named('deadline_at')) {
+      fields.push({ name: 'deadline_at', message: 'A deadline can only be entered when it is stated.' });
+    }
+    if (stated && isBlank(intake.deadline_at) && !named('deadline_at')) {
+      fields.push({ name: 'deadline_at', message: 'Enter the deadline the RFP states.' });
+    }
+    if (SHAPES.datetime(intake.received_at) && Date.parse(intake.received_at) > Date.parse(lines[persona].as_of) && !named('received_at')) {
+      fields.push({ name: 'received_at', message: "Received can't be in the future." });
+    }
+    const client = isNewClient(intake.client) ? `new:${String(intake.client.new.name).trim().toLowerCase()}` : intake.client;
+    if (typeof intake.rfp_reference === 'string' && refs.has(`${client}|${intake.rfp_reference.trim().toLowerCase()}`) && !named('rfp_reference')) {
+      fields.push({ name: 'rfp_reference', message: 'This RFP is already logged for that client.' });
+    }
   }
 
   /** The fixture revision of a case this line starts on for this persona, or undefined when it doesn't start there. */
@@ -280,6 +329,14 @@ export function createStartWorkMock(openapi) {
     return [200, { evidence_id: evidenceId, sha256: createHash('sha256').update(bytes).digest('hex'), case_revision: current + 1 }];
   }
 
+  /** Remembers a logged RFP: its duplicate key and the Unassigned row work-list.mjs adds. */
+  function logRfp(intake, persona) {
+    const chosen = isNewClient(intake.client) ? undefined : served(persona, { name: 'client' }).find((row) => row.value === intake.client);
+    const client = chosen?.label ?? String(intake.client.new.name).trim();
+    refs.add(`${isNewClient(intake.client) ? `new:${client.toLowerCase()}` : intake.client}|${intake.rfp_reference.trim().toLowerCase()}`);
+    logged.set(WORK_IDS.rfp_intake, { work_id: WORK_IDS.rfp_intake, reference: intake.rfp_reference.trim(), client });
+  }
+
   function start(raw, persona, cookies) {
     let body;
     try {
@@ -302,10 +359,11 @@ export function createStartWorkMock(openapi) {
     if (base === undefined) return [404, NOT_FOUND];
     if (body.case_revision !== revisionOf(persona, body.case_id, base)) return [409, STALE];
 
-    const fields = intakeProblems(line, body.intake, persona, body.case_id);
+    const fields = intakeProblems(line, body.intake, persona, body.case_id, cookies);
     if (fields.length > 0) return [422, { code: 'invalid', message: INVALID, fields }];
-    const response = [201, { work_id: WORK_IDS[line.key], state: 'processing' }];
+    const response = [201, { work_id: WORK_IDS[line.key], state: START_STATES[line.key] ?? 'processing' }];
     started.set(body.idempotency_key, { body, response });
+    if (line.key === 'rfp_intake') logRfp(body.intake, persona);
     if (uncertainOnce(persona, cookies, 'start_uncertain')) return [500, LOST];
     return response;
   }
@@ -319,9 +377,11 @@ export function createStartWorkMock(openapi) {
       revisions.clear();
       issued.clear();
       used.clear();
+      refs.clear();
+      logged.clear();
     },
     handle(operationId, { url, raw, persona, cookies }) {
-      if (operationId === 'E-LINES') return [200, servedLines(persona)];
+      if (operationId === 'E-LINES') return [200, servedLines(persona, cookies)];
       if (operationId === 'E-LINE-OPTIONS') return options(url, persona);
       if (operationId === 'E-EVIDENCE-UPLOAD') return upload(url, raw, persona, cookies);
       return start(raw, persona, cookies);

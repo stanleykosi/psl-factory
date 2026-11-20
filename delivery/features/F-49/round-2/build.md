@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: e047f82dfb495a681d65f9fe0dc0767add0e1fb7
+COMMIT: 139eceeb05c331741f89d45b9b995c5175ca1fa0
 BUILDER: builder
 LANE: full
 
@@ -34,3 +34,4 @@ Other criteria: rfp-intake e2e 10/10 passed (desktop and phone).
 - rfp-intake e2e: 10 passed.
 - Demo left running on 4965/4964 (not stopped or rebuilt by me; the e2e run rebuilt frontend/.next, so the coordinator may want to confirm 4965 still serves; it returned 200).
 - Worktree clean, pushed.
+- Coordinator: merged dlv-00 (139eceeb05c331741f89d45b9b995c5175ca1fa0) to take test fix #81; base_sha 4fc80166d2df5ba46d5b305a63af05b471211959.

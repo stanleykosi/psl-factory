@@ -6,7 +6,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "link",
@@ -14,7 +14,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "table",
@@ -22,7 +22,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "columnheader",
@@ -30,7 +30,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "columnheader",
@@ -38,7 +38,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "columnheader",
@@ -46,7 +46,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -54,7 +54,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -62,7 +62,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -70,7 +70,7 @@
    "category": "component",
    "conflicts": 8,
    "reason": "Conflicts 8: the close control is a button named Close, not text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -78,7 +78,7 @@
    "category": "claim",
    "conflicts": 2,
    "reason": "Conflicts 2: not drawn; claims a workspace and an immutable reference that no source states (G-23-5).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -86,7 +86,7 @@
    "category": "claim",
    "conflicts": 1,
    "reason": "Conflicts 1: not drawn; no operation creates a client (G-23-1).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -94,7 +94,7 @@
    "category": "claim",
    "conflicts": 4,
    "reason": "Conflicts 4: page draws the line's help 'Where the client wants it sent.' instead.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -102,7 +102,7 @@
    "category": "claim",
    "conflicts": 3,
    "reason": "Conflicts 3: page draws the line's help 'Enter it as the RFP states it.'; no page number or proof is returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -110,7 +110,7 @@
    "category": "sample data",
    "conflicts": 6,
    "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control; no WAT text is drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -118,7 +118,7 @@
    "category": "sample data",
    "conflicts": 6,
    "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -126,7 +126,7 @@
    "category": "sample data",
    "conflicts": 11,
    "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -134,7 +134,7 @@
    "category": "sample data",
    "conflicts": 11,
    "reason": "Conflicts 11: text typed into an input, matched by control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -142,7 +142,7 @@
    "category": "sample data",
    "conflicts": 11,
    "reason": "Conflicts 11: text typed into an input, matched by control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -150,7 +150,7 @@
    "category": "sample data",
    "conflicts": 11,
    "reason": "Conflicts 11: text typed into the Note box, matched by control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "link",
@@ -158,7 +158,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the phone form is a bottom sheet; the page bar is not drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -166,7 +166,7 @@
    "category": "claim",
    "conflicts": 2,
    "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 \u00b7 change line'.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -174,7 +174,7 @@
    "category": "sample data",
    "conflicts": 6,
    "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -182,7 +182,7 @@
    "category": "sample data",
    "conflicts": 6,
    "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   },
   {
    "role": "text",
@@ -190,7 +190,7 @@
    "category": "words",
    "conflicts": 5,
    "reason": "Conflicts 5: both widths use the desktop words ('How the client wants it submitted').",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 20 Nov 2026 — D-132"
   }
  ]
 }

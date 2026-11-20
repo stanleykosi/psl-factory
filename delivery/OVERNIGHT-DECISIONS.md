@@ -265,3 +265,15 @@ F-48 assistant "can't" state (Sign-off list 3): the phone visual waiver (88.2) a
   - the Audience options from data ("Group" tied to the unset group-forecast rules).
 
 Differences the pages can't match become exceptions for signature after the build.
+
+## D-131 · F-38 and F-49 design items accepted so they can go to QA (20 Nov 2026, design engineer: "Accept all eight")
+- **F-38:** UI-1-4 (tab bar roles and names, the Submission chip fill, from the shared frame), UI-1-5 (h2 title under the frame's h1), UI-1-6 and UI-1-7 (shared-code colour and style differences), UI-1-9 (top bar from the shared shell; no PMO Lead persona), and UI-2-1 (the 8 visual waivers, 76.7–89).
+- **F-49:** UI-1-1 (phone floor exception: 59 is the tool's union scoring of a sheet taller than the board, with every extra row accepted under D-130) and UI-1-4 (desktop waiver, 74.2).
+
+Recorded as accepted risk. Final product sign-off still follows.
+
+## D-132 · F-49 signed; empty-submit gap accepted as a follow-up (20 Nov 2026, design engineer: "Sign, accept as follow-up")
+F-49 log a received RFP (Sign-off list 3): the D-131 desktop waiver and phone floor exception are confirmed, along with the remaining exceptions and product acceptance on the contract mock. QA-2-1 (an empty "Log RFP" sends a start and relies on the server's 422 for the required messages, where the spec says nothing is sent) is accepted as a follow-up. Merge into dlv-00 approved.
+
+## D-133 · F-38 signed (20 Nov 2026, design engineer: "Sign F-38")
+F-38 RFP submit (Sign-off list 3): the 8 visual waivers (D-131, confirmed), the 25 exceptions, and product acceptance on the contract mock. Follow-ups: reconcile "arrived" with an upload; per-persona access once the backend models roles. Merge into dlv-00 approved after the dlv-00 merge and re-check.

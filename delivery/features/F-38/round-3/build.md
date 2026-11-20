@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 48da4d86526113ca1b12b051907896059068af66
+COMMIT: 4b70abcdc0d7a345e6f66a90324b6f92411878c3
 BUILDER: builder
 LANE: full
 
@@ -27,3 +27,4 @@ LANE: full
 - Remaining differences on that board: consequence sentence above the buttons (board draws the button only), Edit cover letter is not drawn on the board, agent card below.
 - Demo rebuilt and left running: app 4985, mock 4984 (API_ORIGIN 127.0.0.1:4984).
 - UI-2-1 (unsigned waivers) is for the design engineer.
+- Coordinator: merged dlv-00 (4b70abcdc0d7a345e6f66a90324b6f92411878c3) to take test fix #81; base_sha 4fc80166d2df5ba46d5b305a63af05b471211959.
