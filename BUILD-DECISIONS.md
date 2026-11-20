@@ -1,5 +1,7 @@
 # Build decisions
 
+20 November 2026. Candidate engineering decision for the observed Hypercare timeout. The primary continuation submits the same durable worker request as the tested background control. Source recording wakes only an existing eligible request. The exact case revision, current source authority and deliberate pauses still govern work. Batch 244 verifies the candidate before promotion. F-53 informs shared Django control accessibility without changing domain command contracts.
+
 20 November 2026. Engineering decision for the accepted Railway receipt paths. A missing or uncertain external receipt keeps the original operation available for lookup. When its exact native receipt becomes visible, the work coordinator verifies that receipt and respects any existing pause. A lookup creates no replacement delivery. Production provider authenticity and live authority remain separately reviewed. The Month-end F-10 screen reads authorized close evidence and retains unknown coverage. Any separate group sign-off requires an owner-approved rule.
 
 20 November 2026. Engineering decision: Keep browser acceptance grouped by native workflow and exact role. Parallel agents may prepare and run disjoint synthetic journeys. Record one outcome per affected state from durable evidence. Keep business mutations, scoped access and version checks in their owning Django services so a future HTTP interface can reuse the same operations. API consolidation and frontend migration follow walkthrough acceptance.
