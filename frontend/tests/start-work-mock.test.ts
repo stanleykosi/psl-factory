@@ -98,7 +98,7 @@ describe('E-LINES', () => {
     expect(pm.default_line).toBe('invoice');
     expect(pm.items.map((l: Line) => l.key)).toEqual(Object.keys(VALID));
     const finance = (await get('/api/v1/lines', 'finance_lead')).body;
-    expect([finance.default_line, finance.items.map((l: Line) => l.key)]).toEqual(['invoice', ['invoice', 'income_schedules', 'ledger_sources']]);
+    expect([finance.default_line, finance.items.map((l: Line) => l.key)]).toEqual(['invoice', ['invoice', 'income_schedules', 'ledger_sources', 'fixed_assets', 'cash_forecast']]);
     const ceo = (await get('/api/v1/lines', 'ceo')).body;
     expect(ceo).not.toHaveProperty('default_line');
     expect(ceo.items).toHaveLength(8);

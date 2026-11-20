@@ -40,7 +40,7 @@
         "decided_by": [
           "Finance Lead"
         ],
-        "summary": "Chidi drafts the invoice from the signed SOW · issue, delivery and verification are automatic.",
+        "summary": "Chidi drafts the invoice from the signed SOW \u00b7 issue, delivery and verification are automatic.",
         "journey_url": "/projects"
       }
     },
@@ -121,6 +121,114 @@
           "placeholder": "None",
           "help": "Only for a correction of an earlier capture",
           "options_source": "line_options"
+        }
+      ]
+    },
+    {
+      "key": "fixed_assets",
+      "title": "Fixed asset schedule",
+      "group": "Finance back office",
+      "case_scope": "fixed",
+      "case_id": "C-FIN-PPE",
+      "case_revision": 4,
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "proof",
+          "label": "Proof",
+          "type": "evidence",
+          "required": true,
+          "evidence_kind": "ppe_register"
+        },
+        {
+          "name": "prior_schedule",
+          "label": "Prior schedule",
+          "type": "record",
+          "required": false,
+          "placeholder": "None",
+          "options_source": "line_options"
+        },
+        {
+          "name": "accounting_note",
+          "label": "Accounting note",
+          "type": "choice",
+          "required": false,
+          "placeholder": "None",
+          "options": [
+            {
+              "value": "sample_note_a",
+              "label": "Sample note A"
+            },
+            {
+              "value": "sample_note_b",
+              "label": "Sample note B"
+            },
+            {
+              "value": "sample_note_c",
+              "label": "Sample note C"
+            },
+            {
+              "value": "sample_note_d",
+              "label": "Sample note D"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cash_forecast",
+      "title": "Cash forecast",
+      "group": "Finance back office",
+      "case_scope": "fixed",
+      "case_id": "C-FIN-FORECAST",
+      "case_revision": 2,
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "scenario",
+          "label": "Scenario",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options"
+        },
+        {
+          "name": "as_of",
+          "label": "As of",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "months",
+          "label": "Months",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "audience",
+          "label": "Audience",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "internal",
+              "label": "Internal"
+            },
+            {
+              "value": "management",
+              "label": "Management"
+            },
+            {
+              "value": "group",
+              "label": "Group"
+            }
+          ]
+        },
+        {
+          "name": "sources",
+          "label": "Sources",
+          "type": "display",
+          "required": false,
+          "value": "All 3 accepted"
         }
       ]
     }

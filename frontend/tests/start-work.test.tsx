@@ -170,11 +170,11 @@ describe('the main button and the chooser', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('only lines E-LINES returned are offered (finance_lead: exactly 3; a /me key missing from E-LINES is absent)', async () => {
+  it('only lines E-LINES returned are offered (finance_lead: exactly 5; a /me key missing from E-LINES is absent)', async () => {
     persona = 'finance_lead';
     await openChooser();
-    expect(within(dialog()).getByText('LINES YOU CAN START · 3')).toBeTruthy();
-    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice', 'income_schedules', 'ledger_sources']);
+    expect(within(dialog()).getByText('LINES YOU CAN START · 5')).toBeTruthy();
+    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice', 'income_schedules', 'ledger_sources', 'fixed_assets', 'cash_forecast']);
   });
 
   it('E-LINES is read on every press, never before', async () => {

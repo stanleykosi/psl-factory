@@ -14,7 +14,7 @@
 // revisions live in one map ("<persona>:<case_id>", from the fixtures) that E-LINES, E-LINE-OPTIONS and E-WORK-START
 // read, so a re-read after a 409 sees the current one. A start's evidence value must be an id issued here on the
 // same case for the same persona. The mock-only cookie psl_mock_start_work picks an uncertain fixture, used once
-// per reset: `upload_uncertain` applies the next upload and answers 500; `start_uncertain` applies the next start
+// per reset (F-51: `start_hold` is not one of them; it holds every forecast start): `upload_uncertain` applies the next upload and answers 500; `start_uncertain` applies the next start
 // (stored under its key, so a replay answers its 201) and answers 500.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -50,7 +50,12 @@ const WORK_IDS = {
   ledger_sources: 'W-4201',
   // F-49: the logged RFP's work item (fixtures/work/W-3351.json), Unassigned for F-36's assign panel
   rfp_intake: 'W-3351',
+  // F-51: the F-42 fixed asset schedule and the F-43 cash forecast
+  fixed_assets: 'W-3901',
+  cash_forecast: 'W-4001',
 };
+// F-51: what a forecast start answers with under the cookie value start_hold (F-43's "preparer not set" item).
+const HELD_FORECAST = { work_id: 'W-4006', state: 'setup_needed' };
 // F-49: the state a start answers with; every other line answers processing.
 const START_STATES = { rfp_intake: 'owner_needed' };
 const KIND_WORDS = { date: 'date', date_range: 'date range', period: 'period', datetime: 'date and time', integer: 'whole number' };
@@ -66,6 +71,7 @@ const INVALID = 'Check the highlighted fields and try again.';
 const LOST = { code: 'mock_lost', message: 'The mock applied this and dropped the reply.' };
 const NOT_ON_RECORD = "That proof isn't on this record. Add it again.";
 const UNCERTAIN = ['upload_uncertain', 'start_uncertain'];
+const HOLD_COOKIE = 'start_hold';
 // F-49 (G-23-1): the mock-only cookie psl_mock_rfp=new_client serves `allow_new` on the RFP line's client field.
 const NEW_CLIENT_COOKIE = 'psl_mock_rfp';
 
@@ -249,7 +255,20 @@ export function createStartWorkMock(openapi) {
       });
     }
     if (line.key === 'rfp_intake') rfpProblems(intake, fields, persona);
+    if (line.key === 'cash_forecast') forecastProblems(intake, fields);
     return fields;
+  }
+
+  /** F-51, backend-stated samples (the page checks none of them): Months, As of and Audience, in the backend's words. */
+  function forecastProblems(intake, fields) {
+    const say = (name, message) => {
+      const at = fields.findIndex((f) => f.name === name);
+      if (at >= 0) fields.splice(at, 1);
+      fields.push({ name, message });
+    };
+    if (!isBlank(intake.months) && (!Number.isInteger(intake.months) || intake.months < 1 || intake.months > 12)) say('months', 'Months must be between 1 and 12.');
+    if (!isBlank(intake.as_of) && !(isDate(intake.as_of) && new Date(`${intake.as_of}T00:00:00Z`).toISOString().startsWith(intake.as_of))) say('as_of', 'As of must be a date.');
+    if (!isBlank(intake.audience) && fields.some((f) => f.name === 'audience')) say('audience', 'Choose one of the listed audiences.');
   }
 
   /** F-49, backend-stated samples (G-23-2, G-23-3, readiness question 3): the deadline's rules, a "Received" in the
@@ -361,7 +380,8 @@ export function createStartWorkMock(openapi) {
 
     const fields = intakeProblems(line, body.intake, persona, body.case_id, cookies);
     if (fields.length > 0) return [422, { code: 'invalid', message: INVALID, fields }];
-    const response = [201, { work_id: WORK_IDS[line.key], state: START_STATES[line.key] ?? 'processing' }];
+    const held = line.key === 'cash_forecast' && cookies?.psl_mock_start_work === HOLD_COOKIE;
+    const response = [201, held ? HELD_FORECAST : { work_id: WORK_IDS[line.key], state: START_STATES[line.key] ?? 'processing' }];
     started.set(body.idempotency_key, { body, response });
     if (line.key === 'rfp_intake') logRfp(body.intake, persona);
     if (uncertainOnce(persona, cookies, 'start_uncertain')) return [500, LOST];

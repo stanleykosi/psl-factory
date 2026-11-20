@@ -13,6 +13,8 @@ const START_LABELS: Record<string, string> = {
   emergency_change: 'Ask for preauthorisation',
   escalation: 'Raise escalation',
   income_schedules: 'Start schedule',
+  fixed_assets: 'Start schedule',
+  cash_forecast: 'Start forecast',
   ledger_sources: 'Record source',
   rfp_intake: 'Log RFP',
 };
