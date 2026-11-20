@@ -307,3 +307,6 @@ The design engineer: "only the chat should be scrollable. both side bar should b
 
 ## D-141 (20 Nov): the chat area's space is even on both sides
 The design engineer: "in the chat area, the padding on the left is more than that of the right which makes the area look weird". Measured: the agent's cards sat 80px in from the composer's left edge but 28px from its right, because of the avatar column. In F-54 the thread's right padding matches the left plus the avatar column, so the agent cards and the person's bubble sit equally in from the composer's edges (720px and up).
+
+## D-142 (20 Nov): an HR stand-in persona in the mock
+The design engineer asked to view the app as HR (not HR Lead). No HR persona existed. Added mock persona `hr` (Amaka Obi, role HR): My work and Assistant, Zainab only, no startable lines, empty queues and alerts. This is a stand-in for viewing only; what HR staff may see is PSL's to define (D-PAYROLL-VISIBILITY open). Committed with F-54.
