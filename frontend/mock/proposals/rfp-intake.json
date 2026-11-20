@@ -1,0 +1,42 @@
+{
+  "$comment": "F-49 contract overlay (mock only). field_extra holds the PROPOSED optional keys the mock adds to an E-LINES intake field beyond the generated type: show_when (G-23-2: the field is drawn only while another field holds one of the listed values) and allow_new (G-23-1: a client field that accepts {new: {name}}; served only with the cookie psl_mock_rfp=new_client). start_extra holds the PROPOSED intake values of E-WORK-START: client as an option value or {new: {name}}, and deadline_status (G-23-3) as unknown, stated or not_stated. The backend developer may change or refuse any of them.",
+  "field_extra": {
+    "type": "object",
+    "properties": {
+      "show_when": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "equals"],
+        "properties": {
+          "field": { "type": "string", "minLength": 1 },
+          "equals": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+        }
+      },
+      "allow_new": { "type": "boolean" }
+    }
+  },
+  "start_extra": {
+    "type": "object",
+    "properties": {
+      "client": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["new"],
+            "properties": {
+              "new": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name"],
+                "properties": { "name": { "type": "string", "minLength": 1 } }
+              }
+            }
+          }
+        ]
+      },
+      "deadline_status": { "enum": ["unknown", "stated", "not_stated"] }
+    }
+  }
+}

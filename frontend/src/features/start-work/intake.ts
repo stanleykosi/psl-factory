@@ -4,7 +4,9 @@
 import type { Field, Line, LineOption, StartBody } from './types';
 
 export type RangeValue = { from: string; to: string };
-export type FieldValue = string | RangeValue | LineOption | LineOption[];
+/** A client that is not in the list yet (F-49, overlay `allow_new`): sent as {new: {name}}. */
+export type NewValue = { new: { name: string } };
+export type FieldValue = string | RangeValue | LineOption | LineOption[] | NewValue;
 export type Values = Record<string, FieldValue | undefined>;
 export type CaseRef = Pick<StartBody, 'case_id' | 'case_revision'>;
 
@@ -54,6 +56,9 @@ export function startableHere(line: Line): boolean {
 
 const isOption = (value: FieldValue | undefined): value is LineOption =>
   typeof value === 'object' && value !== null && !Array.isArray(value) && 'value' in value;
+
+export const isNew = (value: FieldValue | undefined): value is NewValue =>
+  typeof value === 'object' && value !== null && !Array.isArray(value) && 'new' in value;
 
 /** The case: from the option chosen in case_field (project) or from the line (fixed); null when it doesn't resolve. */
 export function resolveCase(line: Line, values: Values): CaseRef | null {
@@ -130,6 +135,7 @@ function submitted(field: Field, value: FieldValue | undefined): unknown {
       return Number.isSafeInteger(number) ? number : undefined;
     }
     case 'record':
+      if (isNew(value)) return value.new.name.trim() === '' ? undefined : { new: { name: value.new.name.trim() } };
       return isOption(value) ? value.value : undefined;
     case 'records':
       return Array.isArray(value) && value.length > 0 ? value.map((option) => option.value) : undefined;

@@ -9,8 +9,9 @@ import { useId, type ReactNode } from 'react';
 
 import { DateField, Icon, Segmented, Select, TextArea, TextField } from '@/components';
 
-import type { FieldValue, RangeValue } from './intake';
-import { RecordPicker } from './RecordPicker';
+import { isNew, type FieldValue, type NewValue, type RangeValue } from './intake';
+import { fourSegments } from './labels';
+import { NEW_CLIENT, RecordPicker } from './RecordPicker';
 import type { Field, LineOption } from './types';
 
 type Props = {
@@ -52,6 +53,8 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
   const hintText = movedHelp ? undefined : field.help;
   const waitId = `${id}-wait`;
   const invalid = error !== undefined;
+  // F-49: a "New client" asks for a name; its message sits under that box.
+  const adding = isNew(value);
   // The library fields take one hint line; the things this drawer says beside a control are joined into it.
   const lines: ReactNode[] = [
     waiting && <span key="wait" id={waitId}>Choose {parentLabel ?? 'the field above'} first</span>,
@@ -82,7 +85,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
           {note}
         </span>
       )}
-      {error && (
+      {error && !adding && (
         <span className="psl-error" id={`${id}-error`}>
           <Icon name="warn" />
           <span>{error}</span>
@@ -91,7 +94,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     </>
   );
   const describedBy =
-    [waiting && waitId, (hintText || (movedHelp && !movedHelp.text)) && helpId, note && noteId, error && `${id}-error`].filter(Boolean).join(' ') || undefined;
+    [waiting && waitId, (hintText || (movedHelp && !movedHelp.text)) && helpId, note && noteId, error && !adding && `${id}-error`].filter(Boolean).join(' ') || undefined;
   const common = { 'aria-required': field.required || undefined, 'aria-describedby': movedHelp && !movedHelp.text ? movedHelp.id : undefined };
   const label = !field.required ? field.label : field.label;
   const optional = !field.required;
@@ -146,7 +149,8 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     }
     case 'choice': {
       const options = field.options ?? [];
-      if (options.length > 3) {
+      // three or fewer are joined segments; the RFP line's submission method has four, drawn as segments too (SCR-23)
+      if (options.length > (fourSegments(lineKey) ? 4 : 3)) {
         return frame(
           <Select
             id={controlId}
@@ -168,7 +172,7 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
           <div aria-describedby={describedBy} aria-invalid={invalid || undefined}>
             <Segmented
               labelledBy={labelId}
-              className="sw-seg"
+              className={options.length === 4 ? 'sw-seg sw-seg--four' : 'sw-seg'}
               options={options.map((option) => ({ value: option.value, label: option.label, disabled: readOnly }))}
               value={typeof value === 'string' ? value : undefined}
               onChange={(next) => !readOnly && onChange(next)}
@@ -188,13 +192,23 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
             lineKey={lineKey}
             field={field}
             parent={parent}
-            value={value as LineOption | LineOption[] | undefined}
+            value={value as LineOption | LineOption[] | NewValue | undefined}
             onChange={onChange}
             disabled={readOnly || waiting}
             labelId={labelId}
             describedBy={describedBy}
             invalid={invalid}
           />
+          {isNew(value) && (
+            <TextField
+              label={`Name of the ${NEW_CLIENT.toLowerCase()}`}
+              value={value.new.name}
+              readOnly={readOnly}
+              error={error}
+              aria-required
+              onChange={(event) => onChange({ new: { name: event.target.value } })}
+            />
+          )}
           {under}
         </>,
       );
