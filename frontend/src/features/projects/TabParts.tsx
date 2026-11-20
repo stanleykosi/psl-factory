@@ -5,11 +5,11 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { Button, Callout, EmptyState, ShowMore, Unknown, When } from '@/components';
+import { Button, Callout, EmptyState, usePagedRows, Unknown, When, type PageSize } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { amountText, ownerText, workHref, type Amount, type ListTab, type Owner } from './tabsModel';
+import { amountText, ownerText, workHref, type Amount, type ListTab, type Owner, type TabRows } from './tabsModel';
 import type { TabState } from './useProjectTab';
 
 /** What a tab shows until it has rows: null when ready. 403 and 404 look the same and leave no row text behind. */
@@ -75,20 +75,31 @@ export function AsOf({ value }: { value: string }) {
   );
 }
 
-/** "20 showing · Show more", and the failure of a later page. */
-export function RowsFooter({ shown, hasMore, more, onMore }: { shown: number; hasMore: boolean; more: 'idle' | 'loading' | 'error'; onMore: () => void }) {
-  if (!hasMore && more !== 'error') return null;
+/** The paging window over a tab's loaded rows (10 first, grown in place by the footer). */
+export function useTabPaging<T extends ListTab>(state: TabState<T>, more: 'idle' | 'loading' | 'error', showMore: (limit: PageSize) => Promise<void>, resetKey = '') {
+  const ready = state.status === 'ready' ? state : undefined;
+  const { rows, paging } = usePagedRows({
+    items: (ready?.rows ?? []) as TabRows[T][number][],
+    next: Boolean(ready?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey,
+  });
+  return { rows: rows as TabRows[T], paging };
+}
+
+/** The failure of a later page, under the table. */
+export function RowsFailed({ more, onRetry }: { more: 'idle' | 'loading' | 'error'; onRetry: () => void }) {
+  if (more !== 'error') return null;
   return (
     <div className="ptabs__foot">
-      <ShowMore shown={shown} hasMore={hasMore} busy={more === 'loading'} onMore={onMore} />
-      {more === 'error' && (
-        <Callout kind="problem">
-          We couldn&rsquo;t load more. Nothing was changed.{' '}
-          <Button kind="secondary" size="sm" onClick={onMore}>
-            Try again
-          </Button>
-        </Callout>
-      )}
+      <Callout kind="problem">
+        We couldn&rsquo;t load more. Nothing was changed.{' '}
+        <Button kind="secondary" size="sm" onClick={onRetry}>
+          Try again
+        </Button>
+      </Callout>
     </div>
   );
 }

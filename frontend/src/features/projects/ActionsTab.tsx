@@ -4,9 +4,9 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, ListToolbar, Table, Tag, Unknown, useIsPhone, type Column, type TagTone } from '@/components';
+import { Button, ListToolbar, ShowMore, Table, Tag, Unknown, useIsPhone, type Column, type TagTone } from '@/components';
 
-import { AsOf, OwnerValue, TabEmpty, RowLink, RowsFooter, tabStateView } from './TabParts';
+import { AsOf, OwnerValue, TabEmpty, RowLink, RowsFailed, useTabPaging, tabStateView } from './TabParts';
 import { actionsSummaryText, dueText, fromText, parseTabView, tabSearch, type ActionRow } from './tabsModel';
 import { useFocusAfterMore } from './useFocusAfterMore';
 import { useProjectTab } from './useProjectTab';
@@ -70,12 +70,13 @@ export function ActionsTab({ caseId, base }: { caseId: string; base: string }) {
   const view = useMemo(() => parseTabView(new URLSearchParams(params?.toString() ?? ''), 'actions'), [params]);
   const path = `${base}/actions`;
   const { state, more, showMore, retry } = useProjectTab(caseId, 'actions', view);
+  const { rows: pagedRows, paging } = useTabPaging(state, more, showMore, '');
   const rowsRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef(view);
   useEffect(() => {
     viewRef.current = view;
   });
-  useFocusAfterMore(rowsRef, state.status === 'ready' ? state.rows.length : 0);
+  useFocusAfterMore(rowsRef, pagedRows.length);
 
   const navigate = useCallback((q: string | undefined) => router.replace(`${path}${tabSearch({ ...viewRef.current, q })}`, { scroll: false }), [router, path]);
 
@@ -96,7 +97,7 @@ export function ActionsTab({ caseId, base }: { caseId: string; base: string }) {
 
   let body = tabStateView(state, { retry, signInPath: `${path}${tabSearch(view)}` });
   if (state.status === 'ready') {
-    const { rows } = state;
+    const rows = pagedRows;
     body =
       rows.length === 0 ? (
         view.q ? (
@@ -115,9 +116,14 @@ export function ActionsTab({ caseId, base }: { caseId: string; base: string }) {
       ) : (
         <>
           <div ref={rowsRef} className="ptabs__rows">
-            {phone ? <ActionCards rows={rows} /> : <Table className="ptabs__table" tableClassName="ptabs__actions-table" caption="Actions" columns={columns} rows={rows} rowKey={(row) => row.action_id} empty="" />}
+            {phone ? (
+              <>
+                <ActionCards rows={rows} />
+                <ShowMore solo {...paging} />
+              </>
+            ) : <Table className="ptabs__table" tableClassName="ptabs__actions-table" caption="Actions" columns={columns} rows={rows} rowKey={(row) => row.action_id} empty="" paging={paging} />}
           </div>
-          <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />
+          <RowsFailed more={more} onRetry={paging.onMore} />
           <AsOf value={state.asOf} />
           <p className="ptabs__note">Actions come from confirmed minutes.</p>
         </>

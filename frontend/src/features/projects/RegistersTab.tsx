@@ -5,11 +5,11 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, ListToolbar, PriorityTag, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
+import { Button, ListToolbar, PriorityTag, ShowMore, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { PANEL_ID } from './ProjectTabs';
-import { AsOf, NONE, TabEmpty, OwnerValue, RowLink, RowsFooter, tabStateView } from './TabParts';
+import { AsOf, NONE, TabEmpty, OwnerValue, RowLink, RowsFailed, useTabPaging, tabStateView } from './TabParts';
 import {
   ageText,
   parseTabView,
@@ -75,12 +75,13 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
   const view = useMemo(() => parseTabView(new URLSearchParams(params?.toString() ?? ''), 'registers'), [params]);
   const path = `${base}/registers`;
   const { state, more, showMore, retry } = useProjectTab(caseId, 'registers', view);
+  const { rows: pagedRows, paging } = useTabPaging(state, more, showMore, `${view.register}|${view.q ?? ''}`);
   const rowsRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef(view);
   useEffect(() => {
     viewRef.current = view;
   });
-  useFocusAfterMore(rowsRef, state.status === 'ready' ? state.rows.length : 0);
+  useFocusAfterMore(rowsRef, pagedRows.length);
 
   const navigate = useCallback((next: Partial<TabView>) => router.replace(`${path}${tabSearch({ ...viewRef.current, ...next })}`, { scroll: false }), [router, path]);
 
@@ -106,7 +107,7 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
 
   let body = shown;
   if (state.status === 'ready') {
-    const { rows } = state;
+    const rows = pagedRows;
     body =
       rows.length === 0 ? (
         view.q ? (
@@ -126,12 +127,15 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
         <>
           <div ref={rowsRef} className="ptabs__rows">
             {phone ? (
-              <RegisterCards rows={rows} />
+              <>
+                <RegisterCards rows={rows} />
+                <ShowMore solo {...paging} />
+              </>
             ) : (
-              <Table className="ptabs__table" tableClassName="ptabs__registers-table" caption={registerOf(view.register).label} columns={columns} rows={rows} rowKey={(row) => `${row.reference}-${row.title}`} empty="" />
+              <Table className="ptabs__table" tableClassName="ptabs__registers-table" caption={registerOf(view.register).label} columns={columns} rows={rows} rowKey={(row) => `${row.reference}-${row.title}`} empty="" paging={paging} />
             )}
           </div>
-          <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />
+          <RowsFailed more={more} onRetry={paging.onMore} />
           <AsOf value={state.asOf} />
           <p className="ptabs__note">Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.</p>
         </>

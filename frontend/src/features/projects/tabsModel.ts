@@ -25,8 +25,6 @@ export type TabRows = { milestones: MilestoneRow[]; documents: DocumentRow[]; re
 /** The tabs this model reads; Money keeps its own panel. */
 export const hasTabContent = (tab: ProjectTab): tab is ListTab => tab === 'milestones' || tab === 'documents' || tab === 'registers' || tab === 'actions';
 
-export const TAB_LIMIT = 20;
-
 export const REGISTERS: readonly { key: Register; label: string; word: string; count: [one: string, many: string] }[] = [
   { key: 'issues', label: 'Issues', word: 'issues', count: ['ISSUE', 'ISSUES'] },
   { key: 'changes', label: 'Changes', word: 'changes', count: ['CHANGE', 'CHANGES'] },
@@ -53,8 +51,8 @@ export function tabSearch(view: TabView): string {
 }
 
 /** The request: limit always, register on Registers only (default Issues), q only when settled, cursor for "Show more". */
-export function buildTabQuery(tab: ListTab, view: TabView, cursor?: string): TabQuery {
-  const query: TabQuery = { limit: TAB_LIMIT };
+export function buildTabQuery(tab: ListTab, view: TabView, cursor?: string, limit: TabQuery['limit'] = 10): TabQuery {
+  const query: TabQuery = { limit };
   if (tab === 'registers') query.register = view.register;
   if (view.q) query.q = view.q;
   if (cursor) query.cursor = cursor;
