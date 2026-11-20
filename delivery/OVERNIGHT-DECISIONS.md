@@ -301,3 +301,6 @@ The design engineer, on the assistant's side list: "remove this, we dont need it
 
 ## D-139 (20 Nov): the assistant's message box is centred
 The design engineer: "if the text area isnt full width then, center it cos aligning to the left looks weird". In F-54 the assistant composer and conversation thread (max 880px) are centred in their column, under the centred heading. Phones keep the full-width bar.
+
+## D-140 (20 Nov): on the Assistant only the chat scrolls
+The design engineer: "only the chat should be scrollable. both side bar should be fised except the content in them cos i need the info on the footer of noth to be visible at all times". In F-54 (desktop and tablet) the Assistant fills the window under the top bar; the conversation list and agent panel stay fixed, each scrolling only its own content with its footer note always visible; in the middle the Talk-to bar and the composer stay put and only the thread scrolls. Phones keep page scrolling with the sticky composer.
