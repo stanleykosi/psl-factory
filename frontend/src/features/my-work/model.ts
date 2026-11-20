@@ -27,7 +27,7 @@ export const QUEUES: { key: Queue; label: string; empty: string }[] = [
   { key: 'unassigned', label: 'Unassigned', empty: 'Nothing is unassigned' },
 ];
 export const LIMITS: Limit[] = [10, 20, 50];
-const DEFAULT_LIMIT: Limit = 20;
+const DEFAULT_LIMIT: Limit = 10;
 
 export type Family = 'person' | 'agent' | 'waiting' | 'done' | 'neutral';
 

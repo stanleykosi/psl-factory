@@ -40,7 +40,7 @@ export const PROJECT_TABS: readonly { key: ProjectTab; label: string; path: stri
 ];
 
 export const LIMITS: Limit[] = [10, 20, 50];
-const DEFAULT_LIMIT: Limit = 20;
+const DEFAULT_LIMIT: Limit = 10;
 export const LIST_TABS: readonly { key: ListTab; label: string }[] = [
   { key: 'active', label: 'Active' },
   { key: 'closed', label: 'Closed' },
