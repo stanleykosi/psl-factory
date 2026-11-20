@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. Continued with the trial account at the user’s request. Recorded eight current or reconciled browser journeys for 163 of 262 and confirmed that trial cannot amend usage as the preparer. Candidate 271 verified the Finance commands and the exact live leadership claim, with one older test omitted from its staging snapshot. Its corrected gate must pass before rollout.
+
 20 November 2026. Finished the prepared trial account batch on hosted 270 and recorded seven more completed journeys, for 155 of 262. Confirmed exact Finance, Planning and HR outcomes, entered the closure and asset-date returns and prepared separate Go-live and asset follow-up. Weekly and leadership publication remain in their review paths. The application build and live policies stayed in place.
 
 20 November 2026. All ten Railway shared console tests and both preservation probes passed in 270. Deployed matching web and worker. Codex verified that each of the two scoped invoice exceptions opened and returned to the same phone queue, with the stale claim still unavailable. Scoped completion reached 148. Actual invoice owner, reviewer and business settings remain deferred.
