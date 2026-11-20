@@ -1,5 +1,7 @@
 # Build progress log
 
+20 November 2026. Completed the full 520-test PostgreSQL regression across all four Railway groups. Started separate 206 focused checks. The preview serves verified 205 until the newer source passes.
+
 20 November 2026. Verified the fresh issue follow-up result and used it to record the synthetic retrospective and its due action. Phone readback passed. Updated the state audit to 44 scoped completions and froze the checked 206 source while Project Delivery finishes.
 
 20 November 2026. Completed Shared on Railway and exercised fresh private ledger intake, mismatch rejection and the retained unknown observation in the browser. Added the hold to the work view and separated the private capture field labels. The direct state audit records 43 scoped completions.
