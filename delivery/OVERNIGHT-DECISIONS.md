@@ -292,3 +292,6 @@ F-51 Start work proof field for fixed assets, plus the forecast start: the 4 flo
 
 ## D-136 · F-53 signed (20 Nov 2026, design engineer: "Sign F-53")
 F-53 design-system conformance part 2 is signed: 58 raw controls and tables replaced with shared components, and an ESLint ban on raw ones. The three visible changes are accepted: stacked response radios, date and time as two fields, counters under their boxes. The phone tap areas and mention-picker keys are accepted. Merge into dlv-00 approved.
+
+## D-137 (20 Nov): paging starts at 10, grows in place, and inactive options
+The design engineer, on My work: "it should start from 10 and when a user increases, the entire table doesnt need to load just add the amount the person wants to the table. also if list isnt up to 10 other numbers should be inactive." Applied to F-54 on every list: default 10 rows (was 20 under D-PAGING r2); a larger rows-per-page choice appends only the extra rows; a smaller one trims without a fetch; an option is disabled when the total is at or below the next smaller option.
