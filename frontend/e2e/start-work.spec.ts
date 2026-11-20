@@ -137,8 +137,8 @@ for (const [label, viewport, phone] of [
       await dialog(page).getByRole('button', { name: 'Start the invoice' }).click();
       await expect(dialog(page).getByText('Completed milestone is required.')).toBeVisible();
       await expect(dialog(page).getByRole('combobox', { name: 'Completed milestone' })).toHaveAttribute('aria-invalid', 'true');
-      await expect(dialog(page).getByRole('alert')).toHaveText(phone ? '1 thing to fix' : '1 thing to fix before Chidi can start.');
-      await expect(dialog(page).getByRole('alert')).toBeFocused();
+      // nothing is sent: the message is the page's, focus is on the first empty field
+      await expect(dialog(page).getByRole('combobox', { name: 'Completed milestone' })).toBeFocused();
       await expectNoAxeViolations(page);
 
       await page.keyboard.press('Escape');

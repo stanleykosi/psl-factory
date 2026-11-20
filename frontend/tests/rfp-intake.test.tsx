@@ -227,6 +227,17 @@ describe('the drawer and its fields', () => {
     expect(reads.length).toBeGreaterThan(0);
   });
 
+  it('QA-2-1: Log RFP with every required field empty names each one, moves focus to the first, and sends nothing', async () => {
+    await open();
+    logPress();
+    for (const label of ['Client or prospect', 'RFP reference', 'The RFP document', 'Received', 'How the client wants it submitted', 'Submission deadline']) {
+      expect(await within(dialog()).findByText(`${label} is required.`)).toBeTruthy();
+    }
+    expect(starts).toHaveLength(0);
+    expect(nav.push).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(within(dialog()).getByRole('combobox', { name: 'Client or prospect' }));
+  });
+
   it('4: with the overlay the picker ends with "New client" and a required name; an empty name sends nothing', async () => {
     cookies = { psl_mock_rfp: 'new_client' };
     await open();
