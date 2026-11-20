@@ -304,3 +304,6 @@ The design engineer: "if the text area isnt full width then, center it cos align
 
 ## D-140 (20 Nov): on the Assistant only the chat scrolls
 The design engineer: "only the chat should be scrollable. both side bar should be fised except the content in them cos i need the info on the footer of noth to be visible at all times". In F-54 (desktop and tablet) the Assistant fills the window under the top bar; the conversation list and agent panel stay fixed, each scrolling only its own content with its footer note always visible; in the middle the Talk-to bar and the composer stay put and only the thread scrolls. Phones keep page scrolling with the sticky composer.
+
+## D-141 (20 Nov): the chat area's space is even on both sides
+The design engineer: "in the chat area, the padding on the left is more than that of the right which makes the area look weird". Measured: the agent's cards sat 80px in from the composer's left edge but 28px from its right, because of the avatar column. In F-54 the thread's right padding matches the left plus the avatar column, so the agent cards and the person's bubble sit equally in from the composer's edges (720px and up).
