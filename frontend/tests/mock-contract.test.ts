@@ -68,6 +68,8 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-TEMPLATE-VERSION': { pm: 403, none: 403 },
   'E-DELEGATIONS': { pm: 403, none: 403 },
   'E-DELEGATION': { pm: 403, none: 403 },
+  // the HR stand-in (D-142) maps to the empty alerts persona, which has no N-0001 to mark read
+  'E-NOTIFICATION-READ': { hr: 404 },
 };
 // Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
 // PROPOSAL (BACKEND-HANDOFF 2, F-22): a records step field carries its saved records as a list of {value, label} in `value`;
@@ -285,6 +287,7 @@ describe('mock server matches openapi.json', () => {
       ['Sample Person', [], 'mock-csrf-none'],
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
       ['Kemi Adebayo', ['my_work', 'projects', 'assistant'], 'mock-csrf-pmo_lead'],
+      ['Amaka Obi', ['my_work', 'assistant'], 'mock-csrf-hr'],
     ]);
   });
 
