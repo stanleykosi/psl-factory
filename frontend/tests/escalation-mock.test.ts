@@ -42,7 +42,7 @@ function stripped(body: Item): unknown {
 }
 
 const workDir = join(__dirname, '../mock/fixtures/work');
-const names = readdirSync(workDir).filter((name) => /^W-36\d\d(\.[a-z]+)?\.json$/.test(name));
+const names = readdirSync(workDir).filter((name) => /^W-36\d\d(\.[a-z_]+)*\.json$/.test(name));
 const readItem = (name: string) => JSON.parse(readFileSync(join(workDir, name), 'utf8')) as Item;
 
 let server: Server;
@@ -75,7 +75,7 @@ async function getItem(id: string) {
 describe('F-39 fixtures', () => {
   it('nine items and their sidecars are schema-valid once the overlay is stripped, and every one is sample', () => {
     expect(names.filter((name) => /^W-36\d\d\.json$/.test(name))).toHaveLength(9);
-    expect(names.filter((name) => !/^W-36\d\d\.json$/.test(name)).sort()).toEqual(['W-3602.approve.json', 'W-3602.reject.json', 'W-3604.next.json', 'W-3604.steps.json', 'W-3607.approve.json']);
+    expect(names.filter((name) => !/^W-36\d\d\.json$/.test(name)).sort()).toEqual(['W-3602.approve.json', 'W-3602.next.send_for_review.json', 'W-3602.reject.json', 'W-3602.steps.json', 'W-3604.next.json', 'W-3604.steps.json', 'W-3607.approve.json']);
     for (const name of names.filter((n) => !n.includes('.steps'))) {
       const body = readItem(name);
       expectValid('E-WORK-ITEM', 200, stripped(body));
@@ -131,6 +131,24 @@ describe('F-39 claim, decide and step on the mock', () => {
     const now = await getItem('W-3607');
     expect(now.state).toBe('effect_uncertain');
     expect(now.workspace.status.label).toBe('RESULT NOT CONFIRMED');
+  });
+
+  it('F-52: after approve, W-3602 send_for_review completes and the re-read shows waiting for review', async () => {
+    const claim = await fetch(`${base}/api/v1/tasks/T-3602/claim`, { method: 'POST', headers, body: JSON.stringify({ expected_revision: 1 }) });
+    expect(claim.status).toBe(200);
+    const decide = await fetch(`${base}/api/v1/tasks/T-3602/decision`, { method: 'POST', headers, body: JSON.stringify({ verdict: 'approve', expected_revision: 1 }) });
+    expect(decide.status).toBe(200);
+    const drafted = await getItem('W-3602');
+    expect(drafted.workspace.status.label).toBe('MESSAGE DRAFTED');
+    const response = await fetch(`${base}/api/v1/work/W-3602/steps`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ expected_revision: drafted.workspace.revision, step: 'send_for_review', inputs: {}, idempotency_key: crypto.randomUUID() }),
+    });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ work_id: 'W-3602', outcome: 'done' });
+    expect((await getItem('W-3602')).workspace.status.label).toBe('WAITING FOR REVIEW');
+    await fetch(`${base}/__mock/reset`, { method: 'POST' });
   });
 
   it('the W-3604 send_for_review step serves the next sidecar: waiting for review, the PMO Lead cannot act on it here', async () => {

@@ -132,6 +132,9 @@ const RFP_LINE = 'rfp_response';
 const noteAfter = (workspace: NonNullable<WorkItem['workspace']>) => workspace.sections.find((section) => section.kind === 'figures')?.key;
 /** F-45: the ledger source's line key (SCR-58); read only to keep a stale decide's notice once its panel has gone. */
 const LEDGER_LINE = 'ledger_sources';
+// F-52: the income schedule waits for the re-read to confirm a decision, as the ledger line does
+const INCOME_LINE = 'income_schedules';
+const waitsForReread = (lineKey: string) => lineKey === LEDGER_LINE || lineKey === INCOME_LINE;
 /** F-35: the leadership report boards draw the working agent's card beside the sections too, with no stations. */
 const REPORT_LINE = 'leadership_report';
 /** F-39: the escalation boards draw Tola's card beside the sections while she works and once she has drafted. */
@@ -299,10 +302,16 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const decidedNow = decided !== null && decided.revision === workspace.revision && flow.pending === null && flow.notice === null ? decided : null;
   // F-45 (spec AC 9): on the ledger line the decision's words wait for the re-read to confirm them. A re-read that still offers
   // the decided task's verdicts has not moved on, so the notice reads "result not confirmed", never "approved" or "rejected".
-  const notMovedOn = decidedNow?.settled === true && workspace.line_key === LEDGER_LINE && decidedNow.taskId !== undefined && decideTasks.has(decidedNow.taskId);
+  const notMovedOn = decidedNow?.settled === true && waitsForReread(workspace.line_key) && decidedNow.taskId !== undefined && decideTasks.has(decidedNow.taskId);
   const decidedLabel = notMovedOn ? item.tasks.find((t) => t.id === decidedNow.taskId)?.decision?.version?.label : undefined;
   const decidedShown = notMovedOn ? { ...decidedNow, settled: false, text: DECIDE_TEXT.notConfirmed(decidedLabel ?? 'This decision') } : decidedNow;
   const staleShown = staleDecide !== null && !decideTasks.has(staleDecide.taskId) && flow.pending === null && flow.notice === null ? staleDecide : null;
+  // F-52 (F-35 UX-3-1, UX-3-3): on the leadership report the stale notice also says what to do next, and focus moves to it
+  const staleNotice = useRef<HTMLDivElement>(null);
+  const staleNext = workspace.line_key === REPORT_LINE;
+  useEffect(() => {
+    if (staleShown && staleNext) staleNotice.current?.focus();
+  }, [staleShown, staleNext]);
   const hasDecide = workspaceSteps.length > 0;
   useEffect(() => {
     const bar = decideRef.current;
@@ -757,10 +766,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           </div>
         )}
         {staleShown && (
-          <div role="alert">
+          <div role="alert" ref={staleNotice} tabIndex={staleNext ? -1 : undefined}>
             <Callout kind="warning" className="ws-notice">
               <span className="ws-stack">
                 <span>{DECIDE_TEXT.stale}</span>
+                {staleNext && <span>{DECIDE_TEXT.staleNext}</span>}
                 {staleShown.note && <span>{DECIDE_TEXT.noteNotSent(staleShown.note)}</span>}
               </span>
             </Callout>
@@ -843,7 +853,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             ))}
             {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} day={workspace.line_key === REPORT_LINE} drafted={workspace.line_key === SUBMISSION_LINE} />}
             {[...decideTasks].map(([taskId, taskSteps]) => (
-              <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={workspace.line_key === LEDGER_LINE ? (notice) => setDecided({ ...notice, taskId }) : onDecided} onDeciding={onDeciding} onStale={(note) => setStaleDecide({ taskId, note })} />
+              <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={waitsForReread(workspace.line_key) ? (notice) => setDecided({ ...notice, taskId }) : onDecided} onDeciding={onDeciding} onStale={(note) => setStaleDecide({ taskId, note })} />
             ))}
             {showPanel && (
               <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 && (preset || !(assign && assign.candidates.length > 0)) ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>

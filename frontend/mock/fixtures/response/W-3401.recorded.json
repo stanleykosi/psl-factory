@@ -1,0 +1,457 @@
+{
+  "id": "W-3401",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "current_person"
+    },
+    {
+      "name": "Pricing",
+      "status": "not_started"
+    },
+    {
+      "name": "Submission",
+      "status": "not_started"
+    },
+    {
+      "name": "Outcome",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "A PM works through the requirements and records each team’s input. Review starts once every requirement has an answer.",
+  "sample": true,
+  "case_id": "C-2101",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "deadline",
+      "label": "DEADLINE 28 NOV · 16 DAYS",
+      "at": "2026-11-28T16:00:00Z",
+      "days_left": 16
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 2,
+        "of": 4,
+        "current": true
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission"
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome"
+      }
+    ]
+  },
+  "state": "waiting",
+  "revision": 8,
+  "tasks": [
+    {
+      "id": "T-3401",
+      "kind": "record_response",
+      "title": "Record team input",
+      "required_role": "PM",
+      "you_can_act": true,
+      "revision": 5,
+      "response": {
+        "variant": "team_input",
+        "responders": [
+          {
+            "id": "P-KA",
+            "name": "Kemi Adeyemi",
+            "role": "Security lead",
+            "organisation": "PSL"
+          }
+        ],
+        "actions": [
+          {
+            "value": "estimate",
+            "label": "Estimate"
+          },
+          {
+            "value": "input",
+            "label": "Input"
+          }
+        ],
+        "teams": [
+          {
+            "key": "engineering",
+            "name": "Engineering",
+            "given": true,
+            "estimate_needed": true
+          },
+          {
+            "key": "qa",
+            "name": "QA",
+            "given": true
+          },
+          {
+            "key": "security",
+            "name": "Security",
+            "given": true,
+            "estimate_needed": true
+          },
+          {
+            "key": "product",
+            "name": "Product",
+            "given": false
+          }
+        ],
+        "blocking": "Product hasn't given input yet. Review can't start until it does.",
+        "evidence_kind": "team_input_proof",
+        "claim_required": true,
+        "intro": "Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name."
+      }
+    }
+  ],
+  "workspace": {
+    "line_key": "rfp_response",
+    "screen": "SCR-26",
+    "view": "default",
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "I matched 41 requirements to answers PSL gave in past bids. I’ve marked them “suggested”; check each one before it counts."
+      ]
+    },
+    "revision": 8,
+    "sections": [
+      {
+        "key": "requirements",
+        "kind": "table",
+        "columns": [
+          {
+            "key": "ref",
+            "label": "#",
+            "kind": "reference"
+          },
+          {
+            "key": "requirement",
+            "label": "Requirement",
+            "kind": "text"
+          },
+          {
+            "key": "answer",
+            "label": "Our response",
+            "kind": "text"
+          },
+          {
+            "key": "status",
+            "label": "Status",
+            "kind": "tag"
+          }
+        ],
+        "total": 64,
+        "next_cursor": "o:6",
+        "items": [
+          {
+            "id": "R-01",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-01"
+              },
+              {
+                "column": "requirement",
+                "text": "Borrower onboarding with BVN and NIN checks",
+                "link": {
+                  "label": "RFP p.4"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "We verify BVN and NIN through the client’s chosen KYC provider during signup."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "ADDRESSED",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-02",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-02"
+              },
+              {
+                "column": "requirement",
+                "text": "Loan application under 5 minutes on mobile",
+                "link": {
+                  "label": "RFP p.4"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Our onboarding benchmark is 3–4 minutes on mid-range Android phones."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "ADDRESSED",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-03",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-03"
+              },
+              {
+                "column": "requirement",
+                "text": "Credit scoring integration with their bureau",
+                "link": {
+                  "label": "RFP p.5"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Which bureau and API version? Asked in clarification #3."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "NEEDS CLARIFICATION",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-04",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-04"
+              },
+              {
+                "column": "requirement",
+                "text": "Repayment by card, transfer and direct debit",
+                "link": {
+                  "label": "RFP p.5"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Card and transfer through their gateway; direct debit needs their bank’s mandate API."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "NEEDS CLARIFICATION",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-05",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-05"
+              },
+              {
+                "column": "requirement",
+                "text": "Collections call-centre software",
+                "link": {
+                  "label": "RFP p.7"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Outside our offer; we integrate with their existing tool."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "OUT OF SCOPE",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-06",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-06"
+              },
+              {
+                "column": "requirement",
+                "text": "Audit trail for every loan decision",
+                "link": {
+                  "label": "RFP p.8"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Every decision, its inputs and who made it is recorded and exportable."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "ADDRESSED",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "progress",
+        "kind": "figures",
+        "title": "Progress",
+        "note": "Up to 100 rows. Every row cites the RFP page it answers.",
+        "items": [
+          {
+            "id": "answered",
+            "label": "Requirements answered",
+            "value": "38 of 64"
+          },
+          {
+            "id": "clarify",
+            "label": "Need clarification",
+            "value": "4"
+          },
+          {
+            "id": "oos",
+            "label": "Out of scope",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "key": "before_review",
+        "kind": "checklist",
+        "title": "Before review",
+        "note": "Team input 3 OF 4",
+        "items": [
+          {
+            "id": "eng",
+            "label": "Engineering",
+            "detail": "10 Nov · estimate-eng.xlsx",
+            "status": "done"
+          },
+          {
+            "id": "qa",
+            "label": "QA",
+            "detail": "11 Nov · qa-plan.pdf",
+            "status": "done"
+          },
+          {
+            "id": "sec",
+            "label": "Security",
+            "status": "done",
+            "detail": "13 Nov · security-input.pdf"
+          },
+          {
+            "id": "prod",
+            "label": "Product",
+            "status": "not_yet"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "add_requirement",
+        "label": "Add a requirement from the RFP",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "requirement",
+            "label": "Requirement",
+            "type": "long_text",
+            "required": true
+          },
+          {
+            "name": "rfp_page",
+            "label": "RFP page",
+            "type": "integer",
+            "required": true,
+            "help": "The page of the RFP it comes from"
+          }
+        ]
+      },
+      {
+        "key": "send_for_review",
+        "label": "Send for review",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "disabled_reason": "Available once every requirement has an answer and all four teams have given input.",
+        "consequence": "Reviewers: PMO Lead and Engineering Lead."
+      }
+    ]
+  }
+}
