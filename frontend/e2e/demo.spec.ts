@@ -17,8 +17,7 @@ test.beforeEach(async ({ request, context, baseURL }) => {
 async function switchRole(page: Page, role: string) {
   await page.getByRole('complementary', { name: 'Demo controls' }).getByRole('button', { name: 'Demo' }).click();
   await page.getByRole('combobox', { name: 'Role' }).click();
-  await page.getByRole('option', { name: role }).click();
-  await page.waitForLoadState('load');
+  await Promise.all([page.waitForEvent('load'), page.getByRole('option', { name: role, exact: true }).click()]);
 }
 
 test('a line run: pm starts an invoice, the steps tick, the Finance Lead decides from the demo bar, and it ends in Done', async ({ page }) => {
@@ -52,10 +51,9 @@ test('a line run: pm starts an invoice, the steps tick, the Finance Lead decides
 
   // the remaining stations run, and the item ends verified, in Done, for the starter
   await switchRole(page, 'PM');
-  await expect.poll(async () => {
-    await page.goto('/my-work?queue=done');
-    return page.getByRole('link', { name: /Invoice preparation and delivery · Demo 1/ }).count();
-  }, { timeout: 120_000, intervals: [5_000] }).toBe(1);
+  await page.goto('/my-work?queue=done');
+  // My work reads again every 15 s, so the item turns up by itself
+  await expect(page.getByRole('link', { name: /Invoice preparation and delivery · Demo 1/ })).toBeVisible({ timeout: 120_000 });
   await page.getByRole('link', { name: /Invoice preparation and delivery · Demo 1/ }).click();
   await expect(page.getByText('Done. Every step is in the history.').first()).toBeVisible();
 });
