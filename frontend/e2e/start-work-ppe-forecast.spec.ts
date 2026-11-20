@@ -230,6 +230,7 @@ for (const [label, viewport, phone] of [
       await openMyWork(page, context, 'finance_lead');
       for (const title of [ASSETS, FORECAST]) {
         await openLine(page, phone, title);
+        await dialog(page).focus();
         await page.keyboard.press('Escape');
         await expect(page.getByRole('dialog')).toHaveCount(0);
         await expect(chooserButton(page, phone)).toBeFocused();
