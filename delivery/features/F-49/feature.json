@@ -4,11 +4,17 @@
   "project_id": "psl-factory",
   "feature_id": "F-49",
   "outcome": "Log a received RFP: a person fills in the client, reference, RFP document, received time, submission method and deadline in the Start work drawer and lands on the new RFP (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-RFP-INTAKE"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-LINES",
+    "E-LINE-OPTIONS",
+    "E-EVIDENCE-UPLOAD",
+    "E-WORK-START",
+    "E-WORK-ITEM"
+  ],
   "acceptance_criteria": [
     "**The line is drawn from data.** As `pmo_lead`, Start work lists \"Log a received RFP\" under \"Pre-sale\". Its drawer shows, in this order, Client or prospect, RFP reference (help \"As written on their document\"), The RFP document, Received, \"How the client wants it submitted\" (4 choices), \"Submission deadline\" (3 choices) and Note \"(optional)\"; the button reads \"Log RFP\"; the eyebrow reads \"START WORK \u00b7 PRE-SALE\". `grep -rn \"Tamarind\\|TL-RFP\\|procurement@\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/rfp-intake.test.tsx`; drawer at 1440 and 390.",
     "**Nobody but the grant sees it.** As `pm`, `ceo`, `finance_lead` and `none` the line is absent from the chooser; `/me` `startable_lines` equals the E-LINES keys for every persona; the new code reads no `useMe`, `/api/v1/me` or `roles` (`grep -rn \"useMe\\|/api/v1/me\\|roles\" frontend/src/features/start-work` returns nothing). A `none` request for the client options and an upload from a persona without the line answer 404 and look the same as a 403. \u2014 verify: `tests/rfp-intake-mock.test.ts`; grep.",
@@ -120,18 +126,22 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -198,7 +208,7 @@
         "delivery/features/F-49/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -215,11 +225,25 @@
           ],
           "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-20T08:22:03Z",
+          "refs": [
+            "not exercised by a browser path I could trigger; not retested."
+          ],
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "field errors merged"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "not exercised by a browser path I could trigger; not retested."
       ]
     },
     {
@@ -521,6 +545,144 @@
           "head": "9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Pressing \"Log RFP\" with every required field empty sends a start with `intake: {}` and relies on the mock's 422 (\"6 things to fix\") for the required messages. The spec says the required message shows and nothing is sent. This is likely the shared F-05 behaviour (not checked on another line); no write results, so it is harmless against the mock, but confirm the intent.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T08:22:03Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`operation_ids` in feature.json is empty. Set it to E-LINES, E-LINE-OPTIONS, E-EVIDENCE-UPLOAD, E-WORK-START, E-ME (readiness lists these five) and add E-WORK-ITEM, which the landing page reads. Do this before the PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "design engineer",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Fidelity (criterion 18) is not met as written: desktop coverage with exceptions 86.5 and visual 74.2; phone 78.3 and visual 59. The desktop D-83 waiver (UI-1-4) and the phone floor exception (UI-1-1) are accepted under D-131. Still unsigned: the 24 exceptions in fidelity-exceptions.json, all \"builder proposal, pending design engineer\" (9 frame, 8 sample data, 5 claim, 1 component, 1 words). The UI reviewer also asks that the phone exception name the order swap (board draws Deadline before Submit by) and the wording differences (conflicts 5, 7).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-2-1: judgement below.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Criterion 1's grep `Tamarind | TL-RFP | procurement@` over frontend/src is not literally empty: three hits are code comments in features/response and features/rfp. They predate this change and the diff adds none. The new code has no board strings.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Round-2 build.md reports a start-work.test.tsx focus-test flake and says the gate is not green. checks.md for this head reads GATE PASS, attempt 1. Treat as the known flake, fixed by #81.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-49/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-20T08:23:43Z",
+          "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -653,9 +815,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-49/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -721,6 +885,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-20T00:18:13Z",
+      "round": 2,
+      "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-20T08:23:44Z",
       "round": 2,
       "head": "139eceeb05c331741f89d45b9b995c5175ca1fa0",
       "reason": null
