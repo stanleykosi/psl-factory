@@ -313,3 +313,6 @@ The design engineer asked to view the app as HR (not HR Lead). No HR persona exi
 
 ## D-143 (20 Nov): text fields show focus by their own border
 The design engineer, on the assistant composer: "i hate the focus on this. it is too bogus and confusing", then chose "Every text field". Every text field shows focus by turning its own border to the focus blue in place: no outer ring, no gap. On the composer only typing focus changes the box; its buttons keep their own keyboard-only ring. Checkboxes, radios, buttons, links and segmented options keep the keyboard-only ring. Added to F-54 as criterion 9.
+
+## D-144 (20 Nov): focus everywhere is the border turning blue
+The design engineer: "for the focus anywhere, let the border just change to blue color from black not any extra outline". Widens D-143 from text fields to every focusable control: buttons, segmented options, tabs, chips, checkboxes, radios, icon buttons, rows and cards: the control's own border turns var(--focus) in place, with no outline or offset. Controls without a border get a border of the same width in their resting colour (transparent or the surface) so focus only changes its colour and nothing moves. Links in running text, which have no box, show focus as a blue underline. Buttons keep the keyboard-only rule (:focus-visible); text fields show it on any focus.
