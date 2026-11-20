@@ -3822,3 +3822,6 @@
 {"at":"2026-11-20T14:18:23Z","feature":"F-53","round":1,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"37adc13c1e9e","findings":{"QA-1-1":"low","QA-1-2":"low"},"written_at":"2026-11-20T14:18:01Z"}
 {"at":"2026-11-20T14:18:23Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"QA-1-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-20T14:18:23Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"QA-1-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T14:18:42Z","feature":"F-53","round":1,"kind":"finding","action":"add","finding":"COORD-1-1","by":"coordinator","severity":"medium","owner":"frontend","blocking":true,"role":"coord"}
+{"at":"2026-11-20T14:18:42Z","feature":"F-53","round":1,"kind":"transition","head":"37adc13c1e9e","from":"INTEGRATED_QA","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-20T14:18:42Z","feature":"F-53","round":2,"kind":"transition","head":"37adc13c1e9e","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
