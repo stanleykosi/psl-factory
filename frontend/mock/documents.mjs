@@ -15,6 +15,9 @@ const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const list = readJson(join(here, 'fixtures', 'projects', 'list.json'));
 const versions = { 1: readJson(join(here, 'fixtures', 'documents', 'D-2901.1.json')), 2: readJson(join(here, 'fixtures', 'documents', 'D-2901.2.json')) };
 
+// F-38: the RFP submission pack D-3501, version 1 only, served as its fixture (no variants, no review).
+const pack = readJson(join(here, 'fixtures', 'documents', 'D-3501.1.json'));
+
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
 const RETURNED = {
   by: 'Kemi Adebayo',
@@ -64,6 +67,8 @@ export function documentRead({ url, persona, cookies = {}, work, overrides }) {
   } catch {
     // keep the raw segment
   }
+  // the pack is served to the people who can open its work item (W-3502); the persona with no sections open gets the same 404 as a missing one
+  if (id === 'D-3501') return rawVersion === '1' && persona !== 'none' ? { status: 200, body: pack } : { status: 404, body: NOT_FOUND };
   if (id !== 'D-2901') return undefined;
   const base = versions[rawVersion];
   if (!base) return { status: 404, body: NOT_FOUND };

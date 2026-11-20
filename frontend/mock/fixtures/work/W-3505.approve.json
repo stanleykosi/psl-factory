@@ -1,0 +1,211 @@
+{
+  "id": "W-3505",
+  "title": "Submission pack v1 · delivery not confirmed",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "effect_uncertain",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Tola assembles the pack",
+      "status": "done"
+    },
+    {
+      "name": "Document review",
+      "status": "done"
+    },
+    {
+      "name": "Submission",
+      "status": "current_person"
+    },
+    {
+      "name": "Outcome",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-26T13:58:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-26T13:58:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "current"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3505",
+      "kind": "decide",
+      "title": "Review the submission pack",
+      "required_role": "document reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Submission pack v1",
+          "number": 1,
+          "document_id": "D-3501"
+        },
+        "recipient": "procurement@tamarindloans.example",
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "document reviewer",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "step_count": 1,
+          "your_step": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "none"
+  },
+  "next_step": "Delivery isn't confirmed yet. Someone checks it before anything is sent again.",
+  "sample": true,
+  "case_id": "C-2102",
+  "case_revision": 3,
+  "workspace": {
+    "line_key": "rfp_submission",
+    "screen": "SCR-40",
+    "view": "default",
+    "title": "Submission pack v1 · delivery not confirmed",
+    "status": {
+      "label": "Effect uncertain",
+      "tone": "uncertain"
+    },
+    "sections": [
+      {
+        "key": "happened",
+        "kind": "timeline",
+        "title": "What happened",
+        "items": [
+          {
+            "id": "t1",
+            "text": "Approved by document reviewer · Kemi Adebayo",
+            "at": "2026-11-26T13:58:00Z"
+          },
+          {
+            "id": "t2",
+            "text": "Emailed to procurement@tamarindloans.example",
+            "at": "2026-11-26T14:42:00Z"
+          }
+        ]
+      },
+      {
+        "key": "sent_to",
+        "kind": "recipients",
+        "title": "Sent to",
+        "items": [
+          {
+            "id": "r1",
+            "text": "procurement@tamarindloans.example",
+            "channel": "Email",
+            "receipt": "uncertain"
+          }
+        ]
+      }
+    ],
+    "steps": [],
+    "links": [
+      {
+        "key": "pack",
+        "label": "Open the full pack (PDF, 6.1 MB)",
+        "target": {
+          "kind": "document",
+          "document_id": "D-3501",
+          "version": 1
+        }
+      }
+    ],
+    "revision": 2
+  },
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "deadline",
+      "label": "DEADLINE 28 NOV · 6 DAYS",
+      "at": "2026-11-28T16:00:00Z",
+      "days_left": 6
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 4,
+        "of": 4,
+        "work_id": "W-2101"
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission",
+        "work_id": "W-3505",
+        "current": true
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome"
+      }
+    ]
+  },
+  "reconcile": {
+    "what": "Submission pack v1 to procurement@tamarindloans.example",
+    "sent_at": "2026-11-26T14:42:00Z",
+    "checks": {
+      "count": 2,
+      "agent": "tola"
+    },
+    "outcomes": [
+      "delivered",
+      "not_delivered",
+      "unknown"
+    ],
+    "evidence_kind": "delivery_receipt",
+    "unknown_note": "Keep it held and check again tomorrow"
+  },
+  "allowed_actions": [
+    "reconcile"
+  ]
+}

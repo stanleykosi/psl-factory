@@ -446,6 +446,11 @@ describe('refusals and uncertain writes (AC 14, 15, 17)', () => {
     await waitFor(() => expect(status().textContent).toBe('SENT · CHECKING DELIVERIES'));
     expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
     expect(ws().getByText('Your note wasn’t sent: “Stale tab note”')).toBeTruthy();
+    // F-52: the notice says what to do next and takes focus
+    const next = ws().getByText('Read the current version above; nothing was recorded for you.');
+    const notice = next.closest('[role="alert"]');
+    expect(notice).toBeTruthy();
+    await waitFor(() => expect(document.activeElement).toBe(notice));
     expect(document.querySelector('.ws-idecide')).toBeNull();
     expect(said()).not.toMatch(/is approved|is returned/i);
     expect(posts('/decision')).toHaveLength(1);

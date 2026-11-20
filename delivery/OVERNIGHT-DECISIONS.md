@@ -274,3 +274,18 @@ Recorded as accepted risk. Final product sign-off still follows.
 
 ## D-132 · F-49 signed; empty-submit gap accepted as a follow-up (20 Nov 2026, design engineer: "Sign, accept as follow-up")
 F-49 log a received RFP (Sign-off list 3): the D-131 desktop waiver and phone floor exception are confirmed, along with the remaining exceptions and product acceptance on the contract mock. QA-2-1 (an empty "Log RFP" sends a start and relies on the server's 422 for the required messages, where the spec says nothing is sent) is accepted as a follow-up. Merge into dlv-00 approved.
+
+## D-133 · F-38 signed (20 Nov 2026, design engineer: "Sign F-38")
+F-38 RFP submit (Sign-off list 3): the 8 visual waivers (D-131, confirmed), the 25 exceptions, and product acceptance on the contract mock. Follow-ups: reconcile "arrived" with an upload; per-persona access once the backend models roles. Merge into dlv-00 approved after the dlv-00 merge and re-check.
+
+## D-134 · F-52 follow-up batch A signed (20 Nov 2026, design engineer: "Sign F-52")
+Accepted:
+- the income line shows "approved" only after the re-read confirms it;
+- the F-35 stale notice gains its new sentence and takes focus;
+- the W-3602 and T-3401 mock completions;
+- the History link at 44px on phones.
+
+Merge into dlv-00 approved.
+
+## D-135 · F-51 signed (20 Nov 2026, design engineer: "Sign F-51")
+F-51 Start work proof field for fixed assets, plus the forecast start: the 4 floor exceptions (42–50, tall-page scoring limit), the 13 exceptions, the shared Start work change (an empty required submit shows messages on the page and sends nothing, on every line; closes F-49 QA-2-1), and product acceptance on the contract mock. Backend follow-up: a wrong-case upload answers 422, not 404. Merge into dlv-00 approved.

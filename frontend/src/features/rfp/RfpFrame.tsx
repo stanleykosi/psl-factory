@@ -1,7 +1,8 @@
 // The RFP frame on the SCR-16 desktop boards: reference, title, status tag, PM and the five tabs, each drawn only
 // from `rfp` on the work item; a missing field leaves its element out. Phones draw no frame (the page sets the
 // bar's "← RFP" instead). Tabs are links in a nav, not a tablist: the screens behind Requirements, Pricing and
-// Submission are not built, so those are plain text, never a dead link or a disabled button.
+// Submission are plain text unless the response says where they are (F-37: the Requirements page; F-38: a Submission tab
+// that carries `work_id`), never a dead link or a disabled button.
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -35,7 +36,9 @@ function Tab({ id, tab, outcome, requirements, current, teamTask }: { id: string
         ? work(target)
         : tab.key === 'outcome' && outcome
           ? `${work(target)}/outcome`
-          : undefined;
+          : tab.key === 'submission' && tab.work_id
+            ? work(tab.work_id)
+            : undefined;
   if (isCurrent) {
     return (
       <span className="psl-tab rfp-tab is-current" aria-current="page">

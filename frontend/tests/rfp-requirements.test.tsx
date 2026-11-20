@@ -264,6 +264,18 @@ describe('W-3401 from data (AC 2, 3, 4, 5)', () => {
   });
 });
 
+describe('F-52: the completed team-input state the response mock serves', () => {
+  it('W-3401.recorded draws Security as in, three of four, with the Record control gone from Security', async () => {
+    await open(read('response/W-3401.recorded.json') as WorkItem);
+    const checklist = within(screen.getByRole('region', { name: 'Before review' }));
+    const rows = checklist.getAllByRole('listitem');
+    expect(rows[2].textContent).toContain('Security');
+    expect(rows[2].textContent).toContain('security-input.pdf');
+    expect(within(rows[2]).queryByRole('button', { name: 'Record' })).toBeNull();
+    expect(checklist.getByText(/3 OF 4/)).toBeTruthy();
+  });
+});
+
 describe('add a requirement (AC 6)', () => {
   it('sends step add_requirement with the trimmed requirement and an integer page, a UUID key and no item_ids; an empty field names itself and sends nothing', async () => {
     writes = [ok('Requirement R-65 added under your name.')];

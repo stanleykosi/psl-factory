@@ -1,0 +1,14 @@
+head 7f943725014bec795853dc55672d700148c062a6, load { 7.26 10.78 16.38 }
+checks exit 1
+     × the CSS adds no colour literal, and src hardcodes no field name of this line beyond labels 21ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed | 133 passed (134)
+      Tests  1 failed | 3291 passed (3292)
+e2e exit 0
+  ✓  83 e2e/rfp.spec.ts:202:1 › the follow-up Edit and Send are reached by keyboard, and Send goes through the mock once (858ms)
+
+  83 passed (3.3m)
+re-run (first run: 1 ECONNRESET flake in rfp-intake-mock beforeEach), load { 6.55 10.13 13.06 }
+checks exit 0
+ Test Files  134 passed (134)
+      Tests  3292 passed (3292)

@@ -57,6 +57,9 @@
 .ws-crumbs li + li::before { content: '/'; padding: 0 var(--space-6px); color: var(--ink-muted); }
 .ws-titleline { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
 .ws-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-page-title-phone-22-size); line-height: 1.15; overflow-wrap: anywhere; }
+/* F-38: the submission boards draw the title at 24px (20px on a phone), wide-set like the frame's */
+.ws-title--submission { font-size: var(--text-title-size); font-stretch: 112%; }
+@media (max-width: 767px) { .ws-title--submission { font-size: var(--text-drawer-title-size); } }
 .ws-status { align-self: flex-start; padding: 3px var(--space-2); font-size: var(--text-small-size); font-weight: 600; text-transform: uppercase; white-space: nowrap; }
 .ws-subtitle, .ws-byline { margin: 0; color: var(--ink-muted); }
 .ws-byline { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: baseline; }
