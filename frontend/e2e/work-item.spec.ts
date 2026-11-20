@@ -231,7 +231,8 @@ for (const [label, viewport] of [
     for (const key of ['tabs', 'title', 'main', 'side'] as const) {
       // the side column is drawn only on desktop; on a phone it follows the main column
       if (key === 'side' && viewport.width < 720) continue;
-      for (const edge of ['x', 'y', 'width'] as const) {
+      // the columns start lower on Overview (its facts and track come first), so only their x and width are compared
+      for (const edge of key === 'tabs' || key === 'title' ? (['x', 'y', 'width'] as const) : (['x', 'width'] as const)) {
         expect(Math.abs(history[key][edge] - overview[key][edge]), `${key}.${edge}`).toBeLessThanOrEqual(1);
       }
     }
