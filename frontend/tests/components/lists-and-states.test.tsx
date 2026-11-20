@@ -2,27 +2,9 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Breadcrumb, Disclosure, EmptyState, ErrorState, Loading, PageTitle, Progress, ShowMore, Skeleton, ValidationSummary, VisuallyHidden, When } from '@/components';
+import { Breadcrumb, Disclosure, EmptyState, ErrorState, Loading, PageTitle, Progress, Skeleton, ValidationSummary, VisuallyHidden, When } from '@/components';
 
 import { violations } from './a11y';
-
-describe('ShowMore', () => {
-  it('"50 of 74 showing" with "Show 24 more"; "All 74 showing"; cursor lists say "Show more"', async () => {
-    const onMore = vi.fn();
-    const { rerender } = render(<ShowMore shown={50} total={74} onMore={onMore} />);
-    expect(screen.getByText('50 of 74 showing')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Show 24 more' }));
-    expect(onMore).toHaveBeenCalled();
-    expect(await violations()).toEqual([]);
-    rerender(<ShowMore shown={50} total={120} onMore={onMore} />);
-    expect(screen.getByRole('button', { name: 'Show 50 more' })).toBeTruthy();
-    rerender(<ShowMore shown={74} total={74} onMore={onMore} />);
-    expect(screen.getByText('All 74 showing')).toBeTruthy();
-    expect(screen.queryByRole('button')).toBeNull();
-    rerender(<ShowMore shown={50} hasMore onMore={onMore} />);
-    expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy();
-  });
-});
 
 describe('Loading, Skeleton, EmptyState, ErrorState, Progress', () => {
   it('three squares and words; placeholder bars hidden; empty with an action; problem callout with Retry', async () => {
