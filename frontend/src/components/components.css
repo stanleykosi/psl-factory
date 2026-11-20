@@ -236,3 +236,19 @@
   .cmp-composer__remove { width: var(--control-md); height: var(--control-md); margin: calc((var(--control-md) - var(--chip-height)) / -2) calc(var(--space-2) * -1) calc((var(--control-md) - var(--chip-height)) / -2) 0; }
   .cmp-composer__chips { row-gap: var(--space-3); }
 }
+
+/* paging footer (ShowMore): count, rows per page, Show more. Inside a table's frame it sits under the last row; under
+   a list of cards (solo) it has the same frame. At phone width it wraps and every target is 44px. */
+.psl-showmore { flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.psl-showmore__count { margin-right: auto; }
+.psl-showmore__rows { display: inline-flex; align-items: center; gap: var(--space-2); }
+.psl-showmore__label { letter-spacing: .06em; text-transform: uppercase; font-size: var(--text-small-size); }
+.psl-showmore--solo { border: var(--rule-strong) solid var(--ink); }
+.psl-tableframe { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.psl-tableframe > .psl-tablewrap { border: 0; }
+.psl-tableframe > .psl-showmore { border-top: var(--rule-strong) solid var(--ink); }
+.psl-showmore--phone .psl-showmore__more { min-height: var(--control-md); }
+@media (max-width: 719.98px) {
+  .psl-showmore__rows { flex: 1 1 100%; justify-content: space-between; }
+  .psl-showmore__more { flex: 1 1 100%; }
+}

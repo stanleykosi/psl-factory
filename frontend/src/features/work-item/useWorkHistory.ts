@@ -4,8 +4,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
+import { usePageSize } from '@/components';
 
-import type { HistoryEntry, HistoryKind, HistoryLimit } from './labels';
+import type { HistoryEntry, HistoryKind } from './labels';
 
 export type WorkHistoryState =
   | { status: 'loading' }
@@ -15,7 +16,7 @@ export type WorkHistoryState =
 /** One work item's history (D-PAGING r2): rows in the order returned, cursor "Show more" appends. */
 export function useWorkHistory(id: string, revision: number) {
   const [kind, setKind] = useState<HistoryKind>('all');
-  const [limit, setLimit] = useState<HistoryLimit>(20);
+  const [limit, setLimit] = usePageSize();
   const [state, setState] = useState<WorkHistoryState>({ status: 'loading' });
   // Answers to an earlier filter, limit or revision are dropped.
   const request = useRef(0);

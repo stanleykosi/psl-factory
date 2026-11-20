@@ -32,17 +32,16 @@ type HeaderProps = { item: WorkItem; tab: WorkItemTab; phone: boolean; tabs: Rea
 
 /**
  * Desktop: the breadcrumb or, on the state boards, the reference and client line; then the title line with the
- * state tag; the Overview / History tabs close the crumb line (after the header on history); then the started line. Without a started line the revision stays in the page for screen readers only.
- * Phones: the title, then the tag with the tabs at the end of its line (beside the title on history); the reference sits at the end of the frame's bar, as the boards draw it.
- * History on phones reads "History · <ref>" with HISTORY in the bar.
+ * state tag; the Overview / History tabs close the crumb line; then the started line. Without a started line the revision stays in the page for screen readers only.
+ * Phones: the title, then the tag with the tabs at the end of its line; the reference sits at the end of the frame's bar, as the boards draw it.
+ * History draws this same header on every width, so switching tabs does not move it.
  */
 function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
   const tag = STATE_TAGS[item.state];
   const base = presentationOf(item);
   const view = viewFor(base, phone);
-  // The state boards and history set the tag at the far end of the title line; the default board beside it.
-  const end = tab === 'history' || boardLayout(item)?.tag === 'end';
-  const history = tab === 'history';
+  // The state boards set the tag at the far end of the title line; the default board beside it. History draws the same header.
+  const end = boardLayout(item)?.tag === 'end';
   const started = item.started_by !== undefined;
   const boardTitle = phone ? view?.phone?.title : undefined;
   const sub = (
@@ -68,34 +67,26 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
     <p className="psl-crumb work-eyebrowline">{base.eyebrow}</p>
   ) : (
     <Breadcrumb
-      items={history && base?.back_label ? [{ label: 'My work', href: '/my-work' }] : [{ label: 'My work', href: '/my-work' }, { label: item.line }]}
-      current={
-        <>
-          {history && base?.back_label && `${base.back_label} · `}
-          <span className="psl-mono">{item.reference}</span>
-        </>
-      }
+      items={[{ label: 'My work', href: '/my-work' }, { label: item.line }]}
+      current={<span className="psl-mono">{item.reference}</span>}
     />
   );
   return (
     <>
-      <header className={`work-header${end ? ' work-header--end' : ''}${history ? ' work-header--history' : ''}`}>
+      <header className={`work-header${end ? ' work-header--end' : ''}`}>
         {!phone && (
           <div className="work-crumbrow">
             {crumb}
             <div className="work-crumbright">
               {!started && sub}
-              {!history && tabs}
+              {tabs}
             </div>
           </div>
         )}
-        {phone && base && <span className="work-barref psl-mono">{history ? 'HISTORY' : item.reference}</span>}
-        {phone && !base && history && <p className="work-eyebrow psl-mono">HISTORY</p>}
+        {phone && base && <span className="work-barref psl-mono">{item.reference}</span>}
         <div className="work-titleline">
           <h1 className="shell-title">
-            {phone && history ? (
-              `History · ${item.reference}`
-            ) : boardTitle ? (
+            {boardTitle ? (
               // the phone board's shorter title is what is drawn; the contract title stays as the heading's name
               <>
                 <span aria-hidden="true">{boardTitle}</span>
@@ -106,18 +97,16 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
             )}
           </h1>
           {!phone && tagEl}
-          {phone && history && tabs}
         </div>
-        {phone && !(base && history) && (
+        {phone && (
           <div className="work-tagline">
             {tagEl}
             {sub}
-            {!history && tabs}
+            {tabs}
           </div>
         )}
         {!phone && started && sub}
       </header>
-      {!phone && history && tabs}
     </>
   );
 }

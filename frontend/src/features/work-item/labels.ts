@@ -120,7 +120,6 @@ export const HISTORY_FILTERS: readonly { kind: HistoryKind; label: string }[] = 
   { kind: 'evidence', label: 'Evidence' },
 ];
 
-export const HISTORY_LIMITS: readonly HistoryLimit[] = [10, 20, 50];
 
 export const ACTOR_TAGS: Record<HistoryEntry['actor_kind'], { text: string; tone: Tone }> = {
   person: { text: 'PERSON', tone: 'neutral' },
