@@ -303,8 +303,9 @@ body:has(.sw-phoneslot) .work-barref { right: calc(var(--space-4) + 134px + var(
   .work-noaccess .psl-panel__body { padding: 0; gap: var(--space-3); }
   .work-noaccess .shell-title { font-size: var(--text-title-size); }
   .work-noaccess .work-plain { font-size: var(--text-body-size); }
-  /* the tabs share the tag's line; they are 44px targets (D-92c), so they overlap the line's gaps (the boards draw 24px) */
-  .work-tagline .work-tabs, .work-titleline .work-tabs { margin: calc(var(--space-14px) * -1) 0 calc(var(--space-14px) * -1) auto; }
+  /* D-149: on phones the Overview / History tabs get their own full-width row under the tag line, equal halves, 44px targets, no negative margins pulling them into the title or the filter */
+  .work-tagline .work-tabs, .work-titleline .work-tabs { margin: var(--space-1) 0 0; flex: 1 1 100%; display: flex; }
+  .work-tagline .work-tabs .psl-tab, .work-titleline .work-tabs .psl-tab { flex: 1 1 0; justify-content: center; }
   .work-tabs .psl-tab { min-height: var(--control-md); padding: 0 var(--space-10px); font-size: var(--text-hint-size); }
   .work-titleline .work-tabs .psl-tab { min-height: var(--control-md); padding: 0 var(--space-6px); font-size: var(--text-small-size); gap: var(--space-1); }
   .work-titleline .work-tabs .psl-badge { display: none; }
