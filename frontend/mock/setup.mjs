@@ -117,9 +117,11 @@ export function setupRules({ url, persona, cookies }) {
   if (!AREAS.includes(area) || url.searchParams.get('area') === 'rules') return { status: 200, body: { items: [], as_of: AS_OF } };
   const data = currentData(persona, scenario, area);
   const match = /^o:(\d+)$/.exec(url.searchParams.get('cursor') ?? '');
+  const limit = Number(url.searchParams.get('limit'));
+  const pageSize = [10, 20, 50].includes(limit) ? limit : PAGE_SIZE;
   const offset = match && Number(match[1]) < data.items.length ? Number(match[1]) : 0;
-  const body = { ...data, items: data.items.slice(offset, offset + PAGE_SIZE) };
-  if (offset + PAGE_SIZE < data.items.length) body.next_cursor = `o:${offset + PAGE_SIZE}`;
+  const body = { ...data, items: data.items.slice(offset, offset + pageSize) };
+  if (offset + pageSize < data.items.length) body.next_cursor = `o:${offset + pageSize}`;
   return { status: 200, body };
 }
 

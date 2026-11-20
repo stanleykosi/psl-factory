@@ -60,10 +60,12 @@ export function delegationsList({ url, persona, cookies }) {
   const now = current(persona, scenario);
   const rows = [...data.items, ...now.added];
   const match = /^o:(\d+)$/.exec(url.searchParams.get('cursor') ?? '');
+  const limit = Number(url.searchParams.get('limit'));
+  const pageSize = [10, 20, 50].includes(limit) ? limit : PAGE_SIZE;
   const offset = match && Number(match[1]) < rows.length ? Number(match[1]) : 0;
-  const body = { ...data, items: rows.slice(offset, offset + PAGE_SIZE) };
+  const body = { ...data, items: rows.slice(offset, offset + pageSize) };
   if (now.revision !== undefined) body.revision = now.revision;
-  if (offset + PAGE_SIZE < rows.length) body.next_cursor = `o:${offset + PAGE_SIZE}`;
+  if (offset + pageSize < rows.length) body.next_cursor = `o:${offset + pageSize}`;
   return { status: 200, body };
 }
 
