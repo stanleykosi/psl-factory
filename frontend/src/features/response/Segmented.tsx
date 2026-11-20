@@ -4,6 +4,8 @@
 // Start work choice fields do. Nothing is chosen until the person chooses.
 import { useId, useRef, type KeyboardEvent } from 'react';
 
+import { Button } from '@/components';
+
 export type SegOption<T extends string> = { value: T; text: string; /** The accessible name when it differs from the text. */ name?: string; className?: string };
 
 export function Segmented<T extends string>({ label, options, value, onChange, className }: {
@@ -33,12 +35,12 @@ export function Segmented<T extends string>({ label, options, value, onChange, c
       </span>
       <div role="radiogroup" aria-labelledby={labelId} className={`psl-seg resp-segbar${className ? ` ${className}` : ''}`}>
         {options.map((o, at) => (
-          <button
+          <Button
             key={o.value}
+            kind="bare"
             ref={(el) => {
               refs.current[at] = el;
             }}
-            type="button"
             role="radio"
             className={`psl-seg__opt${o.className ? ` ${o.className}` : ''}`}
             aria-checked={at === checked}
@@ -48,7 +50,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, c
             onKeyDown={(event) => keys(event, at)}
           >
             {o.text}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

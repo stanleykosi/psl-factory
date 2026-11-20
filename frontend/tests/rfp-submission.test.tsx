@@ -601,7 +601,7 @@ describe('uncertain paths (AC 14)', () => {
     expect(await screen.findByText('Submission pack v1 · delivery not confirmed')).toBeTruthy();
     expect(body()).toContain('Effect uncertain');
     expect(sentTo().getByText(/Uncertain/)).toBeTruthy();
-    expect(screen.getByRole('radiogroup')).toBeTruthy();
+    expect(screen.getByRole('group', { name: /what happened/ })).toBeTruthy();
     expect(await screen.findByText(/Decision recorded on Submission pack v1: result not confirmed|result not confirmed/)).toBeTruthy();
     expect(body()).not.toMatch(/Submitted|Delivered|Received|Record the outcome/);
     noSecondSend();
@@ -639,7 +639,7 @@ describe('uncertain paths (AC 14)', () => {
     await open(item('W-3501'), 'Submission pack · v1');
     await click('Send for review');
     expect(await screen.findByText('We could not confirm it was recorded.')).toBeTruthy();
-    expect(screen.getByRole('radiogroup')).toBeTruthy();
+    expect(screen.getByRole('group', { name: /what happened/ })).toBeTruthy();
     expect(body()).not.toMatch(/sent for review|Done: Send for review/i);
   });
 
@@ -661,7 +661,7 @@ describe('uncertain paths (AC 14)', () => {
     expect(body()).toContain('Not delivered');
     expect(body()).toContain('Someone checks with Tamarind Loans before anything is sent again.');
     expect(buttons()).toEqual([]);
-    expect(screen.queryByRole('radiogroup')).toBeNull();
+    expect(screen.queryByRole('group', { name: /what happened/ })).toBeNull();
     expect(rowIn('Sent to', 'procurement@').textContent).toContain('Failed');
     expect(posts('/decision')).toHaveLength(0);
     expect(posts('/steps')).toHaveLength(0);
@@ -680,7 +680,7 @@ describe('uncertain paths (AC 14)', () => {
     expect(await screen.findByText(/Recorded\. Reloading the work item/)).toBeTruthy();
     cleanup();
     await open(served, 'Submission pack v1 · delivery not confirmed');
-    expect(screen.getByRole('radiogroup')).toBeTruthy();
+    expect(screen.getByRole('group', { name: /what happened/ })).toBeTruthy();
     expect(body()).toContain('Effect uncertain');
     cleanup();
 

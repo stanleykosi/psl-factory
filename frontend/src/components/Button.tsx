@@ -1,6 +1,8 @@
 'use client';
 
-// Button (design/system/project/components/Button): seven kinds, four sizes, and the busy and disabled states.
+// Button (design/system/project/components/Button): nine kinds, four sizes, and the busy and disabled states.
+// `link` is a button that does something but reads as a link (clear a search, show a source); `bare` has no look of
+// its own, for chips and small tools whose feature class draws them. Both keep the busy, disabled and focus handling.
 // Busy keeps the button's width, shows the three squares with a label that says what is happening, and ignores
 // further presses; disabled always carries its reason beside it.
 import { useId, useLayoutEffect, useRef, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
@@ -8,7 +10,7 @@ import { useId, useLayoutEffect, useRef, type ComponentPropsWithRef, type MouseE
 import { Icon, type IconName } from './Icon';
 import { assignRef, cx } from './internal';
 
-export type ButtonKind = 'primary' | 'start' | 'confirm' | 'dark' | 'secondary' | 'reject' | 'text';
+export type ButtonKind = 'primary' | 'start' | 'confirm' | 'dark' | 'secondary' | 'reject' | 'text' | 'link' | 'bare';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export type ButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & {
@@ -28,6 +30,8 @@ export type ButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & {
 
 /** The class list for a psl-btn of this kind and size, for links drawn as buttons. */
 export function buttonClass(kind: ButtonKind = 'primary', size: ButtonSize = 'md', block = false): string {
+  if (kind === 'link') return 'psl-link cmp-linkbutton';
+  if (kind === 'bare') return '';
   return cx('psl-btn', kind !== 'primary' && `psl-btn--${kind}`, size !== 'md' && `psl-btn--${size}`, block && 'psl-btn--block');
 }
 

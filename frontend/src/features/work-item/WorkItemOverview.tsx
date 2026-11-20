@@ -8,7 +8,7 @@
 import Link from 'next/link';
 import { Fragment, useId, useState, type ReactNode } from 'react';
 
-import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink, FactsStrip as SharedFactsStrip, formatClock, Panel, PersonAvatar, SampleLabel, Tag, useIsPhone, type FactValue } from '@/components';
+import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink, FactsStrip as SharedFactsStrip, formatClock, Panel, PersonAvatar, SampleLabel, Table, Tag, useIsPhone, type FactValue } from '@/components';
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
@@ -440,17 +440,14 @@ function InvoicePreview({ preview }: { preview: NonNullable<WorkItemPresentation
           {preview.issue_note}
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">DESCRIPTION</th>
-            <th scope="col">AMOUNT</th>
-          </tr>
-        </thead>
-        <tbody>
-          {preview.lines.map((line, i) => (
-            <tr key={i}>
-              <td>
+      <Table
+        caption="Invoice lines"
+        columns={[
+          {
+            key: 'description',
+            header: 'DESCRIPTION',
+            cell: (line) => (
+              <>
                 {line.description}
                 {line.detail && (
                   <>
@@ -458,16 +455,16 @@ function InvoicePreview({ preview }: { preview: NonNullable<WorkItemPresentation
                     <span className="work-invoice__detail">{line.detail}</span>
                   </>
                 )}
-              </td>
-              <td className="psl-mono">{line.amount}</td>
-            </tr>
-          ))}
-          <tr>
-            <td>Tax</td>
-            <td className="work-invoice__tax">{preview.tax}</td>
-          </tr>
-        </tbody>
-      </table>
+              </>
+            ),
+          },
+          { key: 'amount', header: 'AMOUNT', num: true, mono: true, cell: (line) => line.amount },
+        ]}
+        rows={preview.lines}
+        rowKey={(line) => String(preview.lines.indexOf(line))}
+        empty="No lines on this invoice."
+        footer={['Tax', <span key="tax" className="work-invoice__tax">{preview.tax}</span>]}
+      />
       <p className="work-invoice__foot">{preview.footer}</p>
     </article>
   );

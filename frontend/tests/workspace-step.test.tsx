@@ -471,7 +471,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     await press('Approve and send');
     const callout = await screen.findByText('Delivery to Lagoon Health couldn’t be confirmed.');
     expect(callout.closest('[role="alert"]')).not.toBeNull();
-    await screen.findByRole('radiogroup', { name: 'Confirm what happened' });
+    await screen.findByRole('group', { name: 'Confirm what happened' });
     expect(itemReads()).toHaveLength(2);
     for (const b of within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button')) expect(b.getAttribute('aria-disabled')).toBe('true');
     await press('Approve and send');
@@ -499,7 +499,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     });
     expect(itemReads()).toHaveLength(3);
     expect(posts()).toHaveLength(1);
-    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Confirm what happened' })).toBeNull();
   });
 });
 

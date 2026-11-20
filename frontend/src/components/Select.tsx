@@ -25,6 +25,8 @@ export type SelectProps = FieldText & {
   value: string | undefined;
   onChange: (value: string) => void;
   placeholder: string;
+  /** The label is read but not drawn, where the layout already names the field. */
+  hideLabel?: boolean;
   disabled?: boolean;
   id?: string;
   fieldClassName?: string;
@@ -33,7 +35,7 @@ export type SelectProps = FieldText & {
 // The listbox's max-height in psl-bundle.css, plus the 4px gap: below this much room it opens upwards.
 const LIST_ROOM = 284;
 
-export function Select({ label, optional, hint, error, options, value, onChange, placeholder, disabled = false, id, fieldClassName }: SelectProps) {
+export function Select({ label, optional, hint, error, options, value, onChange, placeholder, hideLabel = false, disabled = false, id, fieldClassName }: SelectProps) {
   const ids = useFieldIds(id, { hint, error });
   const listId = useId();
   const [open, setOpen] = useState(false);
@@ -104,7 +106,7 @@ export function Select({ label, optional, hint, error, options, value, onChange,
   const optionId = (at: number) => `${listId}-${at}`;
   return (
     <div className={cx('psl-field', fieldClassName)}>
-      <FieldLabel id={ids.label} label={label} optional={optional} />
+      <FieldLabel id={ids.label} label={label} optional={optional} hidden={hideLabel} />
       <div className="cmp-anchor">
         <button
           ref={buttonRef}
@@ -171,6 +173,7 @@ function SelectRow({ option, id, index, groupStart, selected, active, onChoose }
       <li
         id={id}
         data-index={index}
+        data-value={option.value}
         role="option"
         tabIndex={-1}
         className={cx('psl-option', active && 'is-active')}

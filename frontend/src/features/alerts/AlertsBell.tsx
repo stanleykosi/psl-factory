@@ -2,6 +2,8 @@
 
 // The alert bell (F-15, concept 3 of design/concepts/alerts-bell-concepts.html) in the top bar and the phone bar:
 // a button that opens the one alerts drawer, the unread badge, and from 1080px the red "N need you" chip.
+import { Button } from '@/components';
+
 import { badgeText, bellName } from './model';
 
 export const ALERTS_DRAWER_ID = 'alerts-drawer';
@@ -27,8 +29,8 @@ export function AlertsBell({ unread, need, open, onOpen, phone = false }: BellPr
   const badge = badgeText(unread);
   return (
     <span className="shell-bellwrap">
-      <button
-        type="button"
+      <Button
+        kind="bare"
         className={`shell-bell${open ? ' is-open' : ''}`}
         aria-label={bellName(unread, need)}
         aria-haspopup="dialog"
@@ -42,7 +44,7 @@ export function AlertsBell({ unread, need, open, onOpen, phone = false }: BellPr
             {badge}
           </span>
         )}
-      </button>
+      </Button>
       {/* In the bell's name already; the phone bar has no chip (the Needs you tab carries the count). */}
       {!phone && need > 0 && (
         <span className="shell-bellchip" aria-hidden="true">

@@ -4,7 +4,8 @@
 // (17/11/2026 or 17 Nov 2026) or pick it from the calendar. The calendar marks today with an outline, the chosen
 // day filled ink, and days that are not allowed struck through; a typed day that is not allowed shows its reason.
 // Calendar keys: arrows move a day or a week, Home/End the start or end of the week, Page Up/Down a month, Enter
-// or Space chooses, Esc closes and returns focus to the calendar button.
+// or Space chooses, Esc closes and returns focus to the calendar button. With `time` a 24-hour time sits beside the
+// date and the value is "2026-11-17T14:30"; it stays '' until both are given.
 import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
 
 import { FieldLabel, FieldMessage, useFieldIds, type FieldText } from './Field';
@@ -90,12 +91,26 @@ export type DateFieldProps = FieldText & {
   unavailable?: (iso: string) => string | undefined;
   /** ISO date marked as today; the device's date by default. */
   today?: string;
+  /** Also ask for the time of day; the value is then "2026-11-17T14:30". */
+  time?: boolean;
+  /** The label is read but not drawn, where the layout already names the field. */
+  hideLabel?: boolean;
   disabled?: boolean;
   id?: string;
   fieldClassName?: string;
 };
 
-export function DateField({ label, optional, hint, error, value, onChange, unavailable, today, disabled = false, id, fieldClassName }: DateFieldProps) {
+export function DateField({ label, optional, hint, error, value: whole, onChange: emit, unavailable, today, time = false, hideLabel = false, disabled = false, id, fieldClassName }: DateFieldProps) {
+  // With a time, the date and the time are kept apart until both are there; the value is '' before that.
+  const [draftDate, setDraftDate] = useState('');
+  const [draftTime, setDraftTime] = useState('');
+  const value = time ? (whole ? whole.slice(0, 10) : draftDate) : whole;
+  const clock = time ? (whole ? whole.slice(11, 16) : draftTime) : '';
+  const onChange = (iso: string) => {
+    if (!time) return emit(iso);
+    setDraftDate(iso);
+    emit(iso && clock ? `${iso}T${clock}` : '');
+  };
   const [text, setText] = useState(() => isoText(value));
   const [shownFor, setShownFor] = useState(value);
   const [typedError, setTypedError] = useState<string | undefined>(undefined);
@@ -140,53 +155,77 @@ export function DateField({ label, optional, hint, error, value, onChange, unava
     if (iso !== value) onChange(iso);
   }
 
+  const anchor = (
+    <div className="cmp-anchor">
+      <span ref={boxRef} className={cx('psl-input cmp-wrapped', shown && 'is-error', disabled && 'is-disabled')}>
+        <input
+          id={ids.control}
+          type="text"
+          inputMode="text"
+          autoComplete="off"
+          placeholder="DD Mmm YYYY"
+          value={text}
+          disabled={disabled}
+          aria-invalid={shown ? true : undefined}
+          aria-describedby={ids.describedBy}
+          onChange={(event) => setText(event.target.value)}
+          onBlur={(event) => commit(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') commit(event.currentTarget.value);
+          }}
+        />
+        <IconButton
+          ref={openerRef}
+          bare
+          icon="cal"
+          label="Choose a date"
+          className="cmp-inputbtn"
+          disabled={disabled}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+        />
+      </span>
+      {open && (
+        <Calendar
+          popRef={popRef}
+          value={value}
+          today={today ?? toIso(todayYmd())}
+          unavailable={unavailable}
+          onPick={pick}
+          onClose={() => {
+            setOpen(false);
+            openerRef.current?.focus();
+          }}
+        />
+      )}
+    </div>
+  );
+  const clockInput = time && (
+    <input
+      type="time"
+      className={cx('psl-input cmp-time', shown && 'is-error', disabled && 'is-disabled')}
+      aria-label={typeof label === 'string' ? `${label}, time` : 'Time'}
+      value={clock}
+      disabled={disabled}
+      onChange={(event) => {
+        setDraftTime(event.target.value);
+        emit(value && event.target.value ? `${value}T${event.target.value}` : '');
+      }}
+    />
+  );
+
   return (
     <div className={cx('psl-field', fieldClassName)}>
-      <FieldLabel htmlFor={ids.control} id={ids.label} label={label} optional={optional} />
-      <div className="cmp-anchor">
-        <span ref={boxRef} className={cx('psl-input cmp-wrapped', shown && 'is-error', disabled && 'is-disabled')}>
-          <input
-            id={ids.control}
-            type="text"
-            inputMode="text"
-            autoComplete="off"
-            placeholder="DD Mmm YYYY"
-            value={text}
-            disabled={disabled}
-            aria-invalid={shown ? true : undefined}
-            aria-describedby={ids.describedBy}
-            onChange={(event) => setText(event.target.value)}
-            onBlur={(event) => commit(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') commit(event.currentTarget.value);
-            }}
-          />
-          <IconButton
-            ref={openerRef}
-            bare
-            icon="cal"
-            label="Choose a date"
-            className="cmp-inputbtn"
-            disabled={disabled}
-            aria-haspopup="dialog"
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-          />
-        </span>
-        {open && (
-          <Calendar
-            popRef={popRef}
-            value={value}
-            today={today ?? toIso(todayYmd())}
-            unavailable={unavailable}
-            onPick={pick}
-            onClose={() => {
-              setOpen(false);
-              openerRef.current?.focus();
-            }}
-          />
-        )}
-      </div>
+      <FieldLabel htmlFor={ids.control} id={ids.label} label={label} optional={optional} hidden={hideLabel} />
+      {time ? (
+        <div className="cmp-datetime">
+          {anchor}
+          {clockInput}
+        </div>
+      ) : (
+        anchor
+      )}
       <FieldMessage id={ids.message} hint={hint} error={shown} />
     </div>
   );

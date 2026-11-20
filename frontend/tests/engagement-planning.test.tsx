@@ -19,6 +19,7 @@ import { withoutBellFeed } from './bell-feed';
 
 // @ts-expect-error plain ESM module without type declarations
 import { projects } from '../mock/projects.mjs';
+import { pick, setWhen } from './controls';
 
 configure({ asyncUtilTimeout: 5000 });
 
@@ -604,11 +605,11 @@ describe('Record department input, in the Drawer (AC 8, 9, 10)', () => {
     await waitFor(() => expect(document.body.textContent).toContain(file.name));
   }
   async function fillQa({ attest = true } = {}) {
-    fireEvent.change(dialog().getByLabelText('Who gave it'), { target: { value: 'R-QA' } });
+    pick('Who gave it', 'R-QA', dialog());
     fireEvent.change(dialog().getByLabelText(/Estimate/), { target: { value: '45' } });
     fireEvent.change(dialog().getByLabelText(/What they gave/), { target: { value: 'Test plan and QA effort for the loan app' } });
     await upload();
-    fireEvent.change(dialog().getByLabelText(/Received/), { target: { value: '2026-12-11T16:05' } });
+    setWhen('Received', '2026-12-11T16:05', dialog());
     if (attest) fireEvent.click(dialog().getByRole('checkbox'));
   }
   const recordButton = () => dialog().getByRole('button', { name: /^Record/ }) as HTMLButtonElement;
@@ -622,7 +623,7 @@ describe('Record department input, in the Drawer (AC 8, 9, 10)', () => {
     expect(dialog().getByRole('radio', { name: /^QA/ }).getAttribute('aria-checked')).toBe('true');
     expect(dialog().getByLabelText(/Estimate/)).toBeTruthy();
     expect(dialog().getByLabelText(/What they gave/)).toBeTruthy();
-    expect(dialog().getByLabelText(/Received/)).toBeTruthy();
+    expect(dialog().getByLabelText('Received')).toBeTruthy();
     expect(dialog().getByText('I confirm this input came from the team named above.')).toBeTruthy();
     expect(dialog().getByText("QA doesn't log in. This records their input under your name, with the proof attached.")).toBeTruthy();
     expect(sent.filter((r) => r.method !== 'GET')).toHaveLength(0);

@@ -155,7 +155,7 @@ for (const width of [1440, 390, 320]) {
         await control.click({ force: true });
       }
       await expect(page).toHaveURL(/\/work\/W-2305$/);
-      await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+      await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
     }
     expect(posts('/decision')).toHaveLength(1);
     expect(posts('/steps')).toHaveLength(0);

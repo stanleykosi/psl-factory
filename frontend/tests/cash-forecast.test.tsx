@@ -213,7 +213,7 @@ describe('four states from data (AC 1, 9, 10, 12)', () => {
     expect(document.querySelectorAll('.resp-reconcile')).toHaveLength(1);
     expect(reconcile.textContent).toContain('Nothing is sent again until a person records what happened.');
     expect(reconcile.textContent).not.toMatch(/client|invoiced/i);
-    const options = within(within(reconcile).getByRole('radiogroup', { name: 'Record what happened' })).getAllByRole('radio') as HTMLInputElement[];
+    const options = within(within(reconcile).getByRole('group', { name: 'Record what happened' })).getAllByRole('radio') as HTMLInputElement[];
     expect(options.map((o) => o.labels![0].textContent)).toEqual(['It arrived. I have proof it was received (upload it next).', 'It didn’t arrive.', 'I can’t tell yet. Keep it held and check again tomorrow.']);
     expect(screen.queryAllByRole('button').map((b) => b.textContent)).not.toEqual(expect.arrayContaining([expect.stringMatching(/Cancel delivery|Send again|Resend|Retry|^Send/)]));
     expect(document.body.textContent).not.toMatch(/Cancel delivery|Send again|Resend|Retry/);

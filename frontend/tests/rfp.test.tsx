@@ -12,6 +12,7 @@ import { OutcomeView } from '@/features/rfp/OutcomeView';
 import { WorkItemOverview } from '@/features/work-item/WorkItemOverview';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
+import { optionsOf, pick, setDate, setWhen } from './controls';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-2103/outcome',
@@ -108,6 +109,9 @@ async function addFile(f = file()) {
 }
 const choose = (name: string) => fireEvent.click(screen.getByRole('radio', { name }));
 const type = (label: string | RegExp, value: string): void => {
+  // The date fields are shared DateFields: a date, or a date with a time, is typed the way a person types it.
+  if (/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(value)) return setWhen(String(label), value);
+  if (/^\d{4}-\d\d-\d\d$/.test(value)) return setDate(label, value);
   fireEvent.change(screen.getByLabelText(label), { target: { value } });
 };
 
@@ -217,8 +221,8 @@ describe('team input (FE-M2B-RFP)', () => {
     answers.item = () => json(200, body);
     await openTeam();
     expect(screen.queryByRole('radio', { name: /^Product/ })).toBeNull();
-    const who = screen.getByLabelText('Who gave it') as HTMLSelectElement;
-    expect([...who.options].map((o) => o.text)).toEqual(['Choose…', 'Security lead · Kemi Adeyemi, PSL', 'QA lead · Ola Bakare']);
+    expect(screen.getByRole('combobox', { name: 'Who gave it' }).textContent).toContain('Choose…');
+    expect(optionsOf('Who gave it').map((o) => o.text)).toEqual(['Security lead · Kemi Adeyemi, PSL', 'QA lead · Ola Bakare']);
   });
 
   it('Record input stays off until every entry is there: a neutral hint, then the alert', async () => {
@@ -408,7 +412,7 @@ async function fillOutcome(result: string, extra?: () => void | Promise<void>) {
   type(result === 'Unknown' ? 'Last contact with the client' : 'When you learned it', WHEN);
   await extra?.();
   await addFile(file('tamarind-award-letter.pdf', 310 * 1024));
-  fireEvent.change(screen.getByLabelText('You are recording as'), { target: { value: 'relationship_owner' } });
+  pick('You are recording as', 'relationship_owner');
 }
 const BASE = { expected_revision: 5, case_revision: 4, submission_id: 'SUB-0031', learned_at: '2026-12-04T11:00:00+01:00', record_as: 'relationship_owner', evidence_id: 'EV-C-2103-1' };
 
@@ -421,7 +425,8 @@ describe('outcome form: options and gating', () => {
     const radios = within(screen.getByRole('radiogroup', { name: 'Result' })).getAllByRole('radio');
     expect(radios.map((r) => r.textContent)).toEqual(['Won', 'Lost', 'Pending', 'Unknown']);
     expect(radios.some((r) => r.getAttribute('aria-checked') === 'true')).toBe(false);
-    expect([...(screen.getByLabelText('You are recording as') as HTMLSelectElement).options].map((o) => o.text)).toEqual(['Choose…', 'Relationship owner', 'PM']);
+    expect(screen.getByRole('combobox', { name: 'You are recording as' }).textContent).toContain('Choose…');
+    expect(optionsOf('You are recording as').map((o) => o.text)).toEqual(['Relationship owner', 'PM']);
     expect(button('Record the outcome').disabled).toBe(true);
     expect(screen.queryByLabelText('When you learned it')).toBeNull();
     choose('Won');
@@ -434,7 +439,7 @@ describe('outcome form: options and gating', () => {
     expect(document.querySelectorAll('input[type="file"]')).toHaveLength(0);
     expect(button('Record won').disabled).toBe(true);
     expect(screen.getByRole('alert').textContent).toBe('Choose who you are recording as to record this.');
-    fireEvent.change(screen.getByLabelText('You are recording as'), { target: { value: 'pm' } });
+    pick('You are recording as', 'pm');
     expect(button('Record won').disabled).toBe(false);
     fireEvent.click(button('Record won'));
     await waitFor(() => expect(posts('/rfp-outcome')).toHaveLength(1));
@@ -631,7 +636,8 @@ describe('outcome guards', () => {
     fireEvent.click(button('Save as unknown'));
     await screen.findByText('Check these fields: learned_at.');
     expect(gets()).toBe(before);
-    expect((screen.getByLabelText('Last contact with the client') as HTMLInputElement).value).toBe(WHEN);
+    expect((screen.getByLabelText('Last contact with the client') as HTMLInputElement).value).toBe('4 Dec 2026');
+    expect((screen.getByLabelText('Last contact with the client, time') as HTMLInputElement).value).toBe('11:00');
   });
 
   it('403 reloads and removes the form with the server message', async () => {

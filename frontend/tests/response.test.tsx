@@ -14,6 +14,7 @@ import { WorkItemOverview } from '@/features/work-item/WorkItemOverview';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
+import { optionsOf, pick, setWhen } from './controls';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-1601/respond',
@@ -130,7 +131,7 @@ function choose(label: string) {
   fireEvent.click(screen.getByRole('radio', { name: label }));
 }
 function when(value = '2026-11-11T16:20', label = 'When they responded') {
-  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  setWhen(label, value);
 }
 function tick() {
   fireEvent.click(screen.getByRole('checkbox'));
@@ -173,14 +174,12 @@ describe('default form (A-RESPONSE)', () => {
     expect(screen.getByRole('link', { name: 'QUEUE' }).getAttribute('href')).toBe('/my-work');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Record the client\'s UAT response');
     expect(text()).toContain("Lagoon Health's client contact doesn't log in to PSL Factory");
-    const who = screen.getByLabelText('Who responded') as HTMLSelectElement;
-    expect([...who.options].map((o) => o.text)).toEqual(['Client contact · Dr Amaka Obi, Lagoon Health']);
-    expect(who.value).toBe('P-AO');
-    const radios = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio') as HTMLInputElement[];
+    expect(optionsOf('Who responded').map((o) => o.text)).toEqual(['Client contact · Dr Amaka Obi, Lagoon Health']);
+    expect(screen.getByRole('combobox', { name: 'Who responded' }).textContent).toContain('Client contact · Dr Amaka Obi, Lagoon Health');
+    const radios = within(screen.getByRole('group', { name: 'What they did' })).getAllByRole('radio') as HTMLInputElement[];
     expect(radios.map((r) => r.labels![0].textContent)).toEqual(['Approved', 'Asked for changes', 'Rejected']);
     expect(radios.some((r) => r.checked)).toBe(false);
-    const version = screen.getByLabelText('For which version') as HTMLSelectElement;
-    expect([...version.options].map((o) => o.text)).toEqual(['Patient app · build 2.4.0 (the version sent for UAT)']);
+    expect(optionsOf('For which version').map((o) => o.text)).toEqual(['Patient app · build 2.4.0 (the version sent for UAT)']);
     expect(screen.queryByLabelText('How they responded')).toBeNull();
     expect(text()).toContain("Signed PDF, e-signature record, or the client's email saved as PDF");
     expect(screen.getByRole('checkbox', { name: 'I confirm this response is genuine and came from the client contact named above.' })).toBeTruthy();
@@ -197,12 +196,10 @@ describe('default form (A-RESPONSE)', () => {
 
   it('W-1605 starts the selects on "Choose…" and shows the three channels', async () => {
     await open('W-1605', 'T-1605');
-    const who = screen.getByLabelText('Who responded') as HTMLSelectElement;
-    expect(who.value).toBe('');
-    expect(who.options[0].text).toBe('Choose…');
-    expect((screen.getByLabelText('For which version') as HTMLSelectElement).options[0].text).toBe('Choose…');
-    const how = screen.getByLabelText('How they responded') as HTMLSelectElement;
-    expect([...how.options].map((o) => o.text)).toEqual(['Choose…', 'Email', 'Letter', 'In person']);
+    expect(screen.getByRole('combobox', { name: 'Who responded' }).textContent).toContain('Choose…');
+    expect(screen.getByRole('combobox', { name: 'For which version' }).textContent).toContain('Choose…');
+    expect(screen.getByRole('combobox', { name: 'How they responded' }).textContent).toContain('Choose…');
+    expect(optionsOf('How they responded').map((o) => o.text)).toEqual(['Email', 'Letter', 'In person']);
   });
 
   it('offers an action added to the fixture and drops one removed from it; an action without a label is not offered', async () => {
@@ -210,14 +207,14 @@ describe('default form (A-RESPONSE)', () => {
     added.tasks[0].response!.actions = [...added.tasks[0].response!.actions.slice(1), { value: 'signed', label: 'Signed on paper' }, { value: 'input' }];
     answers.item = () => json(200, added);
     await open();
-    const labels = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio').map((r) => (r as HTMLInputElement).labels![0].textContent);
+    const labels = within(screen.getByRole('group', { name: 'What they did' })).getAllByRole('radio').map((r) => (r as HTMLInputElement).labels![0].textContent);
     expect(labels).toEqual(['Asked for changes', 'Rejected', 'Signed on paper']);
   });
 
   it('never reads /me roles: a persona with other roles sees the same options', async () => {
     answers.me = 'finance_lead';
     await open();
-    expect(within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio')).toHaveLength(3);
+    expect(within(screen.getByRole('group', { name: 'What they did' })).getAllByRole('radio')).toHaveLength(3);
   });
 });
 
@@ -353,9 +350,9 @@ describe('proof and the record body', () => {
 describe('claim, one write at a time', () => {
   it('W-1605 claims first and records with the claim’s revision; a 409 claim records nothing', async () => {
     await open('W-1605', 'T-1605');
-    fireEvent.change(screen.getByLabelText('Who responded'), { target: { value: 'P-SO' } });
-    fireEvent.change(screen.getByLabelText('For which version'), { target: { value: 'V-311' } });
-    fireEvent.change(screen.getByLabelText('How they responded'), { target: { value: 'letter' } });
+    pick('Who responded', 'P-SO');
+    pick('For which version', 'V-311');
+    pick('How they responded', 'letter');
     choose('Asked for changes');
     when();
     await addFile();
@@ -371,9 +368,9 @@ describe('claim, one write at a time', () => {
   it('a claim 409 sends no response and shows the stale warning', async () => {
     answers.claim = () => json(409, STALE);
     await open('W-1605', 'T-1605');
-    fireEvent.change(screen.getByLabelText('Who responded'), { target: { value: 'P-KA' } });
-    fireEvent.change(screen.getByLabelText('For which version'), { target: { value: 'V-310' } });
-    fireEvent.change(screen.getByLabelText('How they responded'), { target: { value: 'email' } });
+    pick('Who responded', 'P-KA');
+    pick('For which version', 'V-310');
+    pick('How they responded', 'email');
     choose('Approved');
     when();
     await addFile();
@@ -386,9 +383,9 @@ describe('claim, one write at a time', () => {
   it('a claim network error warns and leaves the response unsent', async () => {
     answers.claim = () => Promise.reject(new TypeError('Failed to fetch'));
     await open('W-1605', 'T-1605');
-    fireEvent.change(screen.getByLabelText('Who responded'), { target: { value: 'P-KA' } });
-    fireEvent.change(screen.getByLabelText('For which version'), { target: { value: 'V-310' } });
-    fireEvent.change(screen.getByLabelText('How they responded'), { target: { value: 'email' } });
+    pick('Who responded', 'P-KA');
+    pick('For which version', 'V-310');
+    pick('How they responded', 'email');
     choose('Approved');
     when();
     await addFile();
@@ -483,7 +480,7 @@ describe('absent fields are left out (W-1606)', () => {
     expect(document.querySelector('.resp-intro')).toBeNull();
     expect(document.querySelector('.resp-drop .psl-hint')).toBeNull();
     expect(screen.getByLabelText('Who responded')).toBeTruthy();
-    expect(screen.getByRole('radiogroup', { name: 'What they did' })).toBeTruthy();
+    expect(screen.getByRole('group', { name: 'What they did' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Add another file' })).toBeTruthy();
     expect(screen.getByRole('checkbox')).toBeTruthy();
     for (const s of BOARD) expect(text()).not.toContain(s);
@@ -519,7 +516,7 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     expect(text()).toContain('SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30');
     expect(text()).toContain('The version the client received');
     expect(text()).toContain('Ngozi Bello · Head of Lending Operations, Tamarind Loans');
-    const radios = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio') as HTMLInputElement[];
+    const radios = within(screen.getByRole('group', { name: 'What they did' })).getAllByRole('radio') as HTMLInputElement[];
     expect(radios.map((r) => r.labels![0].textContent)).toEqual(['Signed', 'Asked for changes', 'Declined']);
     expect(text()).toContain("What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.");
     expect(recordButton('Record signature')).toBeTruthy();
@@ -761,7 +758,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     const panel = screen.getByRole('complementary', { name: 'Confirm what happened' });
     expect(within(panel).getByRole('heading', { level: 2 }).textContent).toBe('Confirm what happened');
     expect(panel.textContent).toContain('Chidi checked 6 times over 2 hours and found no delivery receipt. The factory won’t resend until a person confirms what happened, so the client is never invoiced twice.');
-    const options = within(within(panel).getByRole('radiogroup', { name: 'Confirm what happened' })).getAllByRole('radio') as HTMLInputElement[];
+    const options = within(within(panel).getByRole('group', { name: 'Confirm what happened' })).getAllByRole('radio') as HTMLInputElement[];
     expect(options.map((o) => o.labels![0].textContent)).toEqual([
       'It arrived. I have proof the client received it (upload it next).',
       'It didn’t arrive. Allow one resend of the same version.',

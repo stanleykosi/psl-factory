@@ -174,6 +174,9 @@ test.describe('desktop', () => {
     await page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: 'Templates' }).focus();
     await page.keyboard.press('Tab');
     await expect(page.getByRole('searchbox', { name: 'Search' })).toBeFocused();
+    // The shared Table's frame takes focus so a keyboard can scroll it sideways.
+    await page.keyboard.press('Tab');
+    await expect(page.locator('.setup-desktop').getByRole('region', { name: 'Document templates' })).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(desktopRow(page, 'Invoice').getByRole('button', { name: UPLOAD })).toBeFocused();
     await page.keyboard.press('Tab');

@@ -12,7 +12,7 @@ Import from `@/components`. Tests are in `frontend/tests/components/` (render, s
 | Component | Spec folder | CMP | Test file |
 |---|---|---|---|
 | `Icon`, `ICON_NAMES` | Icon | (icons) | icon.test.tsx |
-| `Button`, `buttonClass`, `BusySquares` | Button | | button.test.tsx |
+| `Button` (kinds incl. `link` and `bare`), `buttonClass`, `BusySquares` | Button | | button.test.tsx, conformance-options.test.tsx |
 | `IconButton` | IconButton | | button.test.tsx |
 | `Link`, `RestrictedLink` | Link | | link.test.tsx |
 | `Callout` | Callout | CMP-24 | callout.test.tsx |
@@ -23,7 +23,7 @@ Import from `@/components`. Tests are in `frontend/tests/components/` (render, s
 | `TextField` | TextField | | text-field.test.tsx |
 | `TextArea` | TextArea | | text-field.test.tsx |
 | `Select` | Select | | select.test.tsx |
-| `DateField`, `parseDate` | DateField | | date-field.test.tsx |
+| `DateField` (`time` adds a time of day), `parseDate` | DateField | | date-field.test.tsx, conformance-options.test.tsx |
 | `MoneyField` | MoneyField | | money-field.test.tsx |
 | `Checkbox` | Checkbox | | checkbox-radio.test.tsx |
 | `RadioGroup` (radios and choice cards) | Radio | | checkbox-radio.test.tsx |
@@ -33,13 +33,13 @@ Import from `@/components`. Tests are in `frontend/tests/components/` (render, s
 | `SplitButton` | SplitButton | CMP-23 | menu.test.tsx |
 | `SearchField` | SearchField | CMP-22 | search-toolbar.test.tsx |
 | `ListToolbar`, `FilterPanel` | ListToolbar | CMP-22 | search-toolbar.test.tsx |
-| `FileUpload` | FileUpload | CMP-20 (proof) | file-upload.test.tsx |
+| `FileUpload`, `FilePickButton` (a picker button for screens that draw their own file list) | FileUpload | CMP-20 (proof) | file-upload.test.tsx, conformance-options.test.tsx |
 | `Drawer` | Drawer | CMP-23 (drawer) | overlays.test.tsx |
 | `BottomSheet` | BottomSheet | | overlays.test.tsx |
 | `Dialog` | Dialog | | overlays.test.tsx |
 | `Toast` | Toast | | toast-tooltip.test.tsx |
 | `Tooltip` | Tooltip | | toast-tooltip.test.tsx |
-| `Table` | Table | | table.test.tsx |
+| `Table` (`leading`, `fullRow`, `wrapClassName` for screens with their own controls) | Table | | table.test.tsx, conformance-options.test.tsx |
 | `ShowMore` | ShowMore | CMP-07 (50 rows) | lists-and-states.test.tsx |
 | `Loading`, `Skeleton`, `EmptyState`, `ErrorState`, `Progress` | Loading | CMP-07 states | lists-and-states.test.tsx |
 | `Breadcrumb` | Breadcrumb | | lists-and-states.test.tsx |
