@@ -3857,3 +3857,6 @@
 {"at":"2026-11-20T14:57:44Z","feature":"F-53","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"c6706b9675059da4bdcc208481841aedb3526123"}}
 {"at":"2026-11-20T14:57:45Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-20T14:57:45Z","feature":"F-53","round":2,"kind":"transition","head":"65f879aee737","from":"MERGED","to":"DONE"}
+{"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"created","tasks":["FE-PAGING-CONSISTENCY"]}
+{"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
