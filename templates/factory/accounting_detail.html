@@ -17,6 +17,12 @@
 {% endif %}
 <section class="card"><h2>Report receipts</h2>{% for receipt in receipts %}<p>Confirmed for {{ receipt.current_recipient_name }} · {{ receipt.created_at|date:'d M Y H:i:s T' }}</p><details><summary>Exact operation reference</summary><p>{{ receipt.operation_key }}</p></details>{% empty %}<p>No recipient receipt has been verified.</p>{% endfor %}</section></div>
 <aside class="factory-action-panel"><section class="card"><h2>Next permitted action</h2><p>{{ row.next_action }}</p>{% if row.can_advance and not focus %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue eligible accounting work</button></form>{% endif %}{% if row.can_cancel and not focus or row.can_cancel and focus == 'recovery' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Request cancellation</button></form><p>Stopping new work cannot retract a report already delivered.</p>{% endif %}</section>
+{% if held_review_labels %}
+<section class="card"><h2>Finance reviewer needed</h2><p>A current reviewer is needed for {{ held_review_labels|join:', ' }}. Any other available Finance decisions can continue.</p>
+  {% if can_read_review_rules %}<p><a href="{% url 'policy' case.pk %}">Review Finance role settings</a></p>{% endif %}
+  {% if can_recheck_reviewers %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="recheck_reviewers"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Recheck reviewer assignments</button></form>{% endif %}
+</section>
+{% endif %}
 {% if not focus or focus == 'decision' %}
 {% for task in row.tasks %}<section class="card"><h2>{{ task.label }}</h2><p>{{ task.status|readable }} · {% if task.claimed_by %}{{ task.claimed_by.get_full_name|default:task.claimed_by.username }}{% else %}Not claimed{% endif %}</p><p>Review the exact native source, rule or output. This decision cannot waive other required Finance controls.</p><details><summary>Exact subject and authority references</summary><pre>{{ task.context.packet }}</pre></details>
 {% if task.can_claim %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="claim"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><button>Claim Finance review</button></form>{% endif %}

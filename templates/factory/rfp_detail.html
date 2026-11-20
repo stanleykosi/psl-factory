@@ -5,6 +5,14 @@
 {% include 'factory/work_focus.html' with has_response=True %}
 <p><a href="{% url 'factory_rfp_pricing' row.work.pk %}">View bid costing and approvals</a></p>
 <div class="factory-case-layout"><div>
+{% if final_costing %}
+<section class="card"><h2>Final costing decision</h2><p>Costing for response version {{ final_costing.revision }}.</p>
+  {% if final_costing.amounts %}<dl>{% for item in final_costing.amounts %}<dt>{{ item.key|readable }}</dt><dd>{{ item.value|default_if_none:'Unknown' }} {{ item.unit|readable }}</dd>{% endfor %}</dl>{% endif %}
+  <h3>Source information</h3><dl>{% for label, version in final_costing.inputs %}<dt>{{ label }}</dt><dd>{% if version %}Version {{ version }}{% else %}Not provided yet{% endif %}</dd>{% endfor %}</dl>
+  <p>{{ final_costing.costing_note }}</p>
+  <h3>Earlier decisions</h3><ul>{% for label, status, date in final_costing.approvals %}<li>{{ label }} · {{ status }}{% if date %} · {{ date|date:'j M Y H:i T' }}{% endif %}</li>{% endfor %}</ul>
+</section>
+{% endif %}
 {% if can_review_requirement_answers %}<section class="card"><h2>Requirement answers</h2><a href="{% url 'factory_rfp_answers' row.work.pk %}">Review Tola’s suggestions and your answers</a></section>{% endif %}
 {% if not focus or focus == 'decision' %}
 <section class="card"><h2>{% if row.work.status == 'verified' %}Reviewed response{% else %}Response in progress{% endif %}</h2>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}

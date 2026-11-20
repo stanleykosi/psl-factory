@@ -21,6 +21,9 @@ from .models import FactoryActivity,HumanTask
 from .factory_views import ProfileForm, QUEUES
 from .factory_progress_views import StartWithBackground, start_work
 
+REVIEW_LABELS = {'source': 'the trial-balance source', 'mapping': 'the mapping rule', 'allocation': 'the allocation rule',
+                 'formula': 'the formula rule', 'adjustment': 'the reporting adjustment', 'output': 'the prepared accounting report'}
+
 class AccountingProfileForm(ProfileForm):
     allocation_mode=forms.ChoiceField(required=False,label='Preparation scope',choices=[('','Not decided'),('company_only','Company totals'),('company_and_bu','Company and business units')])
     bu_metrics=forms.MultipleChoiceField(required=False,label='Business-unit figures to allocate',choices=[(k,k.replace('_',' ').title()) for k in ['revenue','direct_cost','staff_cost','opex','other']])
@@ -183,8 +186,7 @@ def _presentation(actor,work,*,include_progress=False):
             except (ValidationError,PermissionDenied):finding='Choose how this work will be coordinated before further agent work. Existing Finance decisions remain available to authorised reviewers.'
     for task in tasks:
         task.can_claim=task.can_decide=False;task.verdicts=[]
-        task.label={'source':'Review the trial-balance source','mapping':'Review the mapping rule','allocation':'Review the allocation rule',
-            'formula':'Review the formula rule','adjustment':'Review the reporting adjustment','output':'Review the prepared accounting report'}.get(task.context.get('purpose'),'Review Finance evidence')
+        task.label = 'Review ' + REVIEW_LABELS.get(task.context.get('purpose'), 'Finance evidence')
         if value is None or task.status!='open':continue
         try:
             row=service.review_task(work,task,value,reader=actor)
@@ -270,6 +272,7 @@ def accounting_progress(work, observed, options, jobs):
     return {'label': label, 'watching': True} if label else None
 
 def detail(request,work,focus=None):
+    from .factory_execution import can_control
     from .screen_focus import require_action
 
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
@@ -293,6 +296,7 @@ def detail(request,work,focus=None):
             elif action=='decide':service.decide(request.user,target.pk,int(request.POST['task_revision']),request.POST.get('verdict'),int(request.POST['evidence']),request.POST.get('reason',''))
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')
             elif action=='reconcile':service.reconcile(request.user,work.pk,revision)
+            elif action=='recheck_reviewers':service.recheck_reviewers(request.user,work.pk,revision)
             elif action=='adopt_profile':runtime.adopt_profile(request.user,work.pk,revision,int(request.POST['configuration']),request.POST.get('reason',''))
             elif action=='recheck':
                 source_id=int(request.POST['source']);raw=request.POST.get('adjustments','')
@@ -303,6 +307,10 @@ def detail(request,work,focus=None):
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Complete the requested fields using current records.');return redirect(url)
     row=presentation(request.user,work,include_progress=not focus)
+    routing_hold = service.review_routing_hold(work)
+    held_labels = sorted({REVIEW_LABELS.get(subject['purpose'], 'Finance evidence') for subject in routing_hold})
+    review_controls = set(Grant.objects.filter(case=work.case, user=request.user, active=True,
+                          action__in=['policy.read', 'factory.manage']).values_list('action', flat=True)) if routing_hold else set()
     source_choices=FinanceSource.objects.filter(case=work.case,batch_id=work.request['batch'],entity=work.request['entity']).order_by('-pk')
     current_inputs = {}
     if row['can_reassess'] and focus != 'decision':
@@ -323,6 +331,8 @@ def detail(request,work,focus=None):
         'review_evidence':public_evidence(work.case.evidence.filter(kind='finance_review')).order_by('-pk'),
         'sources':source_choices,'current_source':current_inputs.get('source'),
         'current_adjustments':', '.join(map(str, current_inputs.get('adjustment_ids', []))),
-        'receipts':receipts,'activities':activities,
+        'receipts':receipts,'activities':activities,'held_review_labels':held_labels,
+        'can_read_review_rules':'policy.read' in review_controls,
+        'can_recheck_reviewers':focus!='decision' and 'factory.manage' in review_controls and can_control(request.user, work),
         'intake_provenance':intake.provenance(request.user,work) if not focus else None,'focus':focus})
     response['Cache-Control']='no-store';return response

@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. The final bid costing decision reads the exact response, current approved calculation, pinned team inputs and required earlier decisions. Only amounts supported by the calculation appear. The commercial decision leaves the outward response for a separate review. The tested values and prior approvals belong to an isolated synthetic bid.
+
+20 November 2026. An unassigned native accounting review holds its dependent progression. Other currently eligible people can complete their exact decisions while the work waits. A scoped operator can recheck the review assignments on the same source and budget after a policy change. Original pending or uncertain publications keep priority. Prepared schedule figures can be read under existing report permission, and the reviewed report becomes available once the independent approval is current.
+
 20 November 2026. An income detail duplicate decision applies to every displayed held addition on the exact schedule version. Finance evidence supports the correction. An amount already in the accounts is excluded from the successor calculation and remains in the original held version's history. A separately justified addition retains its exact evidence and existing overlap checks. The successor still requires independent Finance approval before a separate reporting adjustment can be exported.
 
 20 November 2026. Show the native invoice examiner and the preparer's relationship to the exact version in the decision view. A current Finance reader can attach a bounded private comment to the exact open packet assigned to another reviewer. The comment has no business verdict or release effect and is visible only through the existing scoped Finance read. A newer draft for the exact same obligation disables the older claim and identifies the current version when its preparation is readable. Preserve the original review and receipt rules.

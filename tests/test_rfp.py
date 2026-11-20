@@ -20,8 +20,8 @@ from . import test_commercial_changes as commercial_helpers
 DEFINITION={'document_type':'rfp_response','required_fields':['executive_summary','scope','requirements_mapping','commercial_terms'],
     'audience_fields':{'client':['executive_summary', 'scope', 'requirements_mapping', 'commercial_terms', 'timeline', 'risks', 'dependencies', 'status']}}
 
-def fixture(reference='RFP-001', *, record_intake=True, portal=False):
-    a,c,e,_=commercial_helpers.fixture();commercial_helpers.change_roles(a,c,e['policy_decision'])
+def fixture(reference='RFP-001', *, record_intake=True, portal=False, context=None):
+    a,c,e,_=commercial_helpers.fixture(context=context);commercial_helpers.change_roles(a,c,e['policy_decision'])
     for k in ['rfp_commercial_terms','rfp_intake','rfp_deadline','rfp_response','rfp_outcome','rfp_lessons','qa_estimate','product_input']:
         e[k]=add_evidence(a,c.pk,k,'Synthetic '+k+' source','synthetic:rfp')
     artifact(a,c,'D05.decision_action_matrix','schema:psl/decision-actions/v2',{'rfp':{'assignment_roles':['CEO'],'outcome_roles':['Client']},

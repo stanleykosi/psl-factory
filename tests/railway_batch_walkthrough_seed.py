@@ -38,10 +38,13 @@ PREPARATION = {
     'emergency_refused': ('pmo-emergency/v1', 'SAMPLE emergency refusal walkthrough'),
     'escalation': ('pmo-escalation/v1', 'SAMPLE escalation walkthrough'),
     'invoice_release': ('pmo-finance/v1', 'SAMPLE invoice release walkthrough'),
+    'bid_final_costing': ('rfp-response/v1', 'SAMPLE bid final costing review'),
     'leadership': ('pmo-leadership-report/v1', 'SAMPLE leadership report walkthrough'),
     'tuesday': ('pmo-leadership-report/v1', 'SAMPLE Tuesday report walkthrough'),
     'accounts': ('finance-accounts/v1', 'SAMPLE accounts close walkthrough'),
     'accounts_continuation': ('finance-accounts/v1', 'SAMPLE accounts continuation walkthrough'),
+    'accounts_reviewer_needed': ('finance-accounts/v1', 'SAMPLE accounts allocation reviewer needed'),
+    'accounts_uncertain_receipt': ('finance-accounts/v1', 'SAMPLE accounts original delivery receipt'),
     'assets': ('finance-ppe/v1', 'SAMPLE fixed asset walkthrough'),
     'schedules': ('finance-schedules/v1', 'SAMPLE schedules walkthrough'),
     'schedule_duplicates': ('finance-schedules/v1', 'SAMPLE duplicate income detail walkthrough'),
@@ -52,6 +55,10 @@ INVOICE_DECISION_PREPARATION = {
     'invoice_maker': 'SAMPLE invoice waiting for an independent reviewer',
     'invoice_other_reviewer': 'SAMPLE invoice assigned to another reviewer',
     'invoice_replaced': 'SAMPLE invoice replaced while awaiting review',
+}
+INDEPENDENT_FINANCE_PREPARATION = {
+    'asset_review': ('finance-ppe/v1', 'SAMPLE independent asset schedule review'),
+    'income_review': ('finance-schedules/v1', 'SAMPLE independent income schedule review'),
 }
 ORIGINAL_WORK_KEYS = {
     'standard': 'SAMPLE-BATCH-STANDARD',
@@ -202,6 +209,13 @@ def prepare_invoice_release(actor, case):
     return factory_identified(entry)
 
 
+def prepare_final_costing(actor, case):
+    from tests.factory_rfp_helpers import final_costing_wait
+
+    work, _, _ = final_costing_wait(context=(actor, case))
+    return work
+
+
 def prepare_independent_invoice_reviewer(actor, case, work):
     from tests.billing_helpers import policy
     from tests.helpers import activate
@@ -258,12 +272,37 @@ def prepare_leadership(actor, case, *, tuesday=False):
     return entry.start_work()
 
 
-def prepare_accounts(actor, case):
+def prepare_accounts(actor, case, *, independent_allocation=False):
     from tests import factory_accounting_helpers, finance_analysis_helpers as source
 
     with patch.object(source, 'setup_case', return_value=(actor, case)):
-        _, _, evidence, _, _, ledger, template, _ = source.fixture()
+        _, _, evidence, values, _, ledger, template, _ = source.fixture()
+    if independent_allocation:
+        for rule in values['authority']['finance']:
+            if rule['purpose'] == 'allocation':
+                rule['allow_preparer_review'] = False
+        source.policy(actor, case, 'D05.decision_action_matrix', values['authority'], evidence['policy_decision'])
     return factory_accounting_helpers.configured(actor, case, evidence, ledger, template, source.METRICS)['work']
+
+
+def prepare_accounts_uncertain_receipt(actor, case):
+    from adapters.publications import PublicationTimeoutAfterAccept
+    from apps.documents.models import PublicationJob
+    from apps.workflows import factory_accounting
+    from apps.workflows.models import HumanTask
+
+    work = prepare_accounts(actor, case)
+    factory.run_until_wait(work.pk)
+    task = HumanTask.objects.get(case=case, kind='factory_accounting_review', status='open', context__purpose='output')
+    task = factory_accounting.claim(actor, task.pk, task.revision)
+    evidence = case.evidence.get(kind='finance_review', source='synthetic:finance')
+    factory_accounting.decide(actor, task.pk, task.revision, 'approve', evidence.pk,
+                              'The synthetic setup simulates an exact Finance review before the response is lost.')
+    for _ in range(25):
+        factory.run_once(work.pk, adapter=PublicationTimeoutAfterAccept())
+        if PublicationJob.objects.filter(publication__factory_work=work, status='unknown').exists():
+            return work
+    raise RuntimeError('The sample must retain an original accepted report with its response still uncertain')
 
 
 def prepare_assets(actor, case):
@@ -286,6 +325,31 @@ def prepare_schedules(actor, case, *, check_duplicates=False):
             item = schedule_helpers.row(entry.f, label.replace(' ', '-'), amount, 'additive')
             entry.payload['rows'].append(dict(item, duplicate_state='not_assessed'))
     return entry.start()
+
+
+@transaction.atomic
+def prepare_independent_finance_review(actor, key):
+    from tests import finance_analysis_helpers, ppe_helpers, schedule_helpers, test_factory_ppe, test_factory_schedules
+
+    definition, title = INDEPENDENT_FINANCE_PREPARATION[key]
+    case, created = Case.objects.get_or_create(tenant=TENANT, title=title, kind='project', synthetic=True)
+    if created:
+        maker = get_user_model().objects.create_user(f'batch-{key}-maker')
+        Grant.objects.bulk_create([Grant(user=maker, case=case, action=action) for action in dict.fromkeys(ACTIONS)])
+        module, test_class, fixture = ((test_factory_ppe, test_factory_ppe.FactoryPPETests, ppe_helpers.fixture)
+                                       if key == 'asset_review' else
+                                       (test_factory_schedules, test_factory_schedules.FactorySchedulesTests, schedule_helpers.fixture))
+        with (patch.object(finance_analysis_helpers, 'setup_case', return_value=(maker, case)),
+              patch.object(module, 'fixture', side_effect=partial(fixture, reviewer=actor, recipient_username=f'batch-{key}-recipient'))):
+            entry = test_class()
+            entry.setUp()
+        work = entry.start()
+        factory.run_until_wait(work.pk)
+        pause_existing_background(maker, work)
+    else:
+        work = FactoryWork.objects.get(case=case, definition=definition, actor__username=f'batch-{key}-maker')
+    return {'case': str(case.pk), 'work': work.pk, 'path': reverse('factory_invoice_decision', args=[work.pk]),
+            'existing_work_preserved': not created}
 
 
 def prepare_forecast(actor, case):
@@ -311,8 +375,11 @@ def prepare_project(actor, key):
                    'emergency_authorized': partial(prepare_emergency, verified_sources=True),
                    'emergency_refused': partial(prepare_emergency, refusal=True), 'escalation': prepare_escalation,
                    'invoice_release': prepare_invoice_release,
+                   'bid_final_costing': prepare_final_costing,
                    'leadership': prepare_leadership, 'tuesday': prepare_leadership,
-                   'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts, 'assets': prepare_assets,
+                   'accounts': prepare_accounts, 'accounts_continuation': prepare_accounts,
+                   'accounts_reviewer_needed': partial(prepare_accounts, independent_allocation=True),
+                   'accounts_uncertain_receipt': prepare_accounts_uncertain_receipt, 'assets': prepare_assets,
                    'schedules': prepare_schedules,
                    'schedule_duplicates': partial(prepare_schedules, check_duplicates=True),
                    'forecast': prepare_forecast}[key]
@@ -418,6 +485,8 @@ def run():
     sessions = {key: lambda key=key: prepare_project(actor, key) for key in PREPARATION}
     sessions.update({key: lambda key=key: prepare_invoice_decision_variant(actor, key)
                      for key in INVOICE_DECISION_PREPARATION})
+    sessions.update({key: lambda key=key: prepare_independent_finance_review(actor, key)
+                     for key in INDEPENDENT_FINANCE_PREPARATION})
     sessions['rework'] = prepare_rework
     sessions['units'] = lambda: prepare_accounting_intake(actor, missing_units=True)
     sessions['quarantined'] = lambda: prepare_accounting_intake(actor, missing_units=False)

@@ -10,11 +10,58 @@ from apps.pmo.models import ArchiveCopyPlan, ChangeAuthorization, ChangeDecision
 from apps.workflows.models import FactoryProgress, FactoryWork, HumanTask
 from tests.railway_batch_walkthrough_seed import (
     PREPARATION, prepare_accounting_intake, prepare_hr_payroll_correction, prepare_invoice_decision_variant,
-    prepare_project, prepare_unreadable_invoice,
+    prepare_independent_finance_review, prepare_project, prepare_unreadable_invoice,
 )
 
 
 class DesignBatchWalkthroughTests(TestCase):
+    def test_uncertain_accounts_sample_reconciles_only_the_original_delivery(self):
+        from apps.documents.models import PublicationJob, PublicationReceipt
+
+        actor = get_user_model().objects.create_user('synthetic-batch-accounts-recovery-reader')
+        sample = prepare_project(actor, 'accounts_uncertain_receipt')
+        job = PublicationJob.objects.get(publication__factory_work_id=sample['work'])
+        receipts = PublicationReceipt.objects.filter(publication=job.publication)
+        receipt = receipts.get()
+        self.assertEqual((job.status, job.attempts), ('unknown', 1))
+        self.assertEqual(prepare_project(actor, 'accounts_uncertain_receipt')['work'], sample['work'])
+        self.client.force_login(actor)
+        recovery = reverse('factory_invoice_recovery', args=[sample['work']])
+        self.assertContains(self.client.get(recovery), 'Check original delivery receipts')
+        work = FactoryWork.objects.get(pk=sample['work'])
+        response = self.client.post(recovery, {'action': 'reconcile', 'revision': work.revision})
+        self.assertEqual(response.status_code, 302)
+        job.refresh_from_db()
+        self.assertEqual((job.status, job.attempts), ('confirmed', 1))
+        self.assertEqual(receipts.get().pk, receipt.pk)
+        self.assertEqual(PublicationJob.objects.filter(publication__factory_work=work).count(), 1)
+
+    def test_independent_finance_samples_leave_exact_decisions_for_browser_reviewer(self):
+        from apps.workflows import factory_ppe, factory_schedules
+
+        actor = get_user_model().objects.create_user('synthetic-batch-independent-finance-reader')
+        for key, workflow, heading in (
+            ('asset_review', factory_ppe, 'Calculated schedule decision'),
+            ('income_review', factory_schedules, 'Finance schedule decision'),
+        ):
+            with self.subTest(journey=key):
+                sample = prepare_independent_finance_review(actor, key)
+                self.assertEqual(prepare_independent_finance_review(actor, key)['work'], sample['work'])
+                work = FactoryWork.objects.get(pk=sample['work'])
+                self.assertTrue(work.case.synthetic)
+                self.assertNotEqual(work.actor_id, actor.pk)
+                self.assertFalse(work.actor.has_usable_password())
+                schedule = workflow.schedule(work)
+                self.assertIsNotNone(schedule, work.finding)
+                self.assertFalse(schedule.reviews.exists())
+                self.client.force_login(work.actor)
+                self.assertNotContains(self.client.get(sample['path']), 'Approve exact schedule')
+                self.client.force_login(actor)
+                response = self.client.get(sample['path'])
+                self.assertContains(response, heading)
+                self.assertContains(response, 'Approve exact schedule')
+                self.assertNotContains(response, 'Open exact reviewed report')
+
     def test_invoice_decision_samples_keep_their_actual_scope_and_prior_version(self):
         actor = get_user_model().objects.create_user('synthetic-batch-finance-reader')
         self.client.force_login(actor)

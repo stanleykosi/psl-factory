@@ -128,12 +128,16 @@ def detail(request,work,focus=None):
             messages.success(request,'Native schedule work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work,include_progress=not focus);panel=row['schedules'];s=panel['schedule'];reviews=[]
+    preview = None
+    stage = panel['native'].get('stage')
+    can_read_report = (s is not None and permitted(request.user, work, 'schedules.report'))
+    if can_read_report and s.kind == 'income' and stage in ('output_review', 'returned', 'withdrawn', 'complete'):
+        preview = s.result
     latest = s.reviews.select_related('actor').order_by('-pk').first() if s else None
     if s and focus != 'recovery' and not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
         try:schedules.authority(request.user,s)
         except (ValidationError,PermissionDenied):pass
         else:
-            stage = panel['native'].get('stage')
             verdicts = ('revoke',) if latest and latest.verdict=='approve' else ()
             if not verdicts and stage=='output_review' and s.result['status']=='ready':
                 verdicts=('approve','return','reject')
@@ -141,7 +145,9 @@ def detail(request,work,focus=None):
                 verdicts=('approve',)
             if verdicts:reviews.append({'target':s.pk,'verdicts':verdicts})
     return render(request,'factory/schedules_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
-        'inputs_form':form,'duplicate_form':duplicate_form,'reviews':reviews,'latest_review':latest,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),
+        'inputs_form':form,'duplicate_form':duplicate_form,'prepared_figures':preview,
+        'can_open_reviewed_report':can_read_report and stage == 'complete',
+        'reviews':reviews,'latest_review':latest,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),
         'adjustment_evidence':Evidence.objects.filter(case=work.case,kind='finance_adjustment').order_by('-pk'),
         'can_export':focus!='decision' and s is not None and s.kind=='income' and panel['native'].get('stage')=='complete' and permitted(request.user,work,'schedules.adjust') and permitted(request.user,work,'finance.adjust'),
         'activities':work.activities.order_by('pk') if not focus else (),

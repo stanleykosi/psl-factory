@@ -19,7 +19,7 @@ from apps.finance.documents import binding_findings
 from apps.documents.models import Publication,PublicationJob,PublicationReceipt
 from apps.documents.controlled import reserve_publication,current_version
 from adapters.factory_accounting import NativeAccountingAdapter
-from .models import FactoryWork as Work,FactoryActivity as Activity,HumanTask,TaskEvent
+from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt,HumanTask,TaskEvent
 
 DEFINITION='finance-accounts/v1'
 PROCESS_IDS=['F03','F04','F09','F14','F15','F19','F20','F22','F23']
@@ -229,7 +229,9 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         if state['unconfigured']:raise ValidationError('configuration_needed: configure native accounting components '+', '.join(state['unconfigured']))
         if state['mapping'] and (value['allocation_mode'] is None or value['allocation_mode']=='company_and_bu' and value['bu_metrics'] is None):
             raise ValidationError('configuration_needed: explicit company/BU preparation scope is required')
-        current={digest(packet(work,r,value)):r for r in state['reviews']};created=[]
+        packets = [(row, packet(work, row, value)) for row in state['reviews']]
+        current = {digest(bound): row for row, bound in packets}
+        created, unrouted = [], []
         for observed_task in tasks:
             t=HumanTask.objects.select_for_update().get(pk=observed_task.pk)
             if t.kind!='factory_accounting_review' or t.status!='open':continue
@@ -240,10 +242,11 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             elif row is None:
                 t.status='returned';t.revision+=1;t.save(update_fields=['status','revision'])
                 TaskEvent.objects.create(task=t,actor=work.execution_actor,action='factory.packet_superseded',data={'source':source.pk,'reason':'accounting_subject_changed'})
-        for row in state['reviews']:
+        for row, bound in packets:
             if row['review']['valid']:continue
-            bound=packet(work,row,value)
-            if not bound['candidates']:raise ValidationError('owner_needed: current native Finance review authority is unavailable for '+row['purpose'])
+            if not bound['candidates']:
+                unrouted.append({'purpose': row['purpose'], 'subject': row['subject'], 'target': row['id']})
+                continue
             task,_=HumanTask.objects.get_or_create(case=case,factory_key=f'factory:{work.pk}:accounting:{digest(bound)}',defaults={
                 'kind':'factory_accounting_review','created_by':work.execution_actor,'required_role':value['review_role'],
                 'context':{'work':work.pk,'purpose':row['purpose'],'packet':bound}})
@@ -251,7 +254,12 @@ def act(work,choice,value,latest,missing,tasks,jobs):
                 work.status='followup_needed'
                 return {'finding':'An earlier exact Finance decision needs source-owned rework or explicit recheck; it is not automatically retried','approval_granted':False}
             created.append(task.pk)
-        return {'review_tasks':created,'waiting':'finance_review' if created else None,'approval_granted':False}
+        result = {'head': work.source_head_id, 'review_tasks': created,
+                  'waiting': 'finance_review' if created else None, 'approval_granted': False}
+        if unrouted:
+            work.status = 'owner_needed'
+            result.update(owner_needed_for=unrouted, finding='A current Finance reviewer is needed for a dependent decision.')
+        return result
     if kind=='ACT08':
         if value.get('statement_contract_id') is not None and state.get('base_formula') and not state.get('statement'):
             from apps.finance.statements import assemble
@@ -318,6 +326,29 @@ def review_task(work,task,value,reader=None):
     for row in state['reviews']:
         if not row['review']['valid'] and task.context.get('packet')==packet(work,row,value):return row
     raise ValidationError('STALE_VERSION: native accounting subject, policy or review changed')
+
+
+def review_routing_hold(work):
+    if work.status != 'owner_needed':
+        return []
+    return (Attempt.objects.filter(activity__work=work, activity__kind='ACT10', phase='observed',
+                                   result__head=work.source_head_id, result__has_key='owner_needed_for')
+            .order_by('-pk').values_list('result__owner_needed_for', flat=True).first()) or []
+
+
+@transaction.atomic
+def recheck_reviewers(actor, work_id, expected):
+    from . import factory
+    from .factory_progress import set_progress
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case', 'source_head').get(pk=work_id, definition=DEFINITION)
+    factory.access(actor, work.case, 'factory.manage', DEFINITION)
+    if work.revision != expected or not review_routing_hold(work):
+        raise ValidationError('Refresh the work item and select the current reviewer hold.')
+    revised = factory.manage(actor, work.pk, expected, 'resume')
+    set_progress(actor, revised.pk, revised.revision, True)
+    return revised
+
 
 @transaction.atomic
 def decide(actor,task_id,expected,verdict,evidence_id,reason):

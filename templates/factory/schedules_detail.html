@@ -9,7 +9,8 @@
 <p>Selected supplied scope only. No ledger posting, native workbook execution or external source authenticity is asserted.</p></section>
 {% if row.schedules.schedule %}<section class="card"><h2>Native prepared output</h2><p>Schedule {{ row.schedules.schedule.pk }} · version {{ row.schedules.schedule.version }} · {{ row.schedules.schedule.result.status }}</p>
 <p>Exact mapping note {{ row.schedules.schedule.parent_id|default:'Not applicable' }}. Private report values require separate report permission.</p>
-<p><a href="{% url 'schedule_report' case.pk row.schedules.schedule.pk %}">Open exact reviewed report</a></p>
+{% if prepared_figures %}<dl><dt>Amount from the accounts</dt><dd>{{ prepared_figures.converted_parent }} {{ prepared_figures.target_unit|readable }}</dd><dt>Separately supported additions</dt><dd>{{ prepared_figures.additive_total }} {{ prepared_figures.target_unit|readable }}</dd><dt>Prepared total</dt><dd>{{ prepared_figures.adjusted_total }} {{ prepared_figures.target_unit|readable }}</dd></dl>{% endif %}
+{% if can_open_reviewed_report %}<p><a href="{% url 'schedule_report' case.pk row.schedules.schedule.pk %}">Open exact reviewed report</a></p>{% endif %}
 {% for link in row.schedules.links %}<p>Reporting adjustment {{ link.adjustment_id }}. Separate native Finance adjustment approval remains required before downstream mapping. No ledger posting.</p>{% endfor %}</section>{% endif %}
 {% if duplicate_form %}
 <section class="card"><h2>Resolve possible duplicate additions</h2><p>Choose whether each amount is already in the accounts or has separate evidence. The earlier schedule stays in the history.</p>

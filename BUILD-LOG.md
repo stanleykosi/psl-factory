@@ -1,5 +1,9 @@
 # Build progress log
 
+20 November 2026. Promoted 213 after all five commercial checks and both original receipt probes. The browser recorded the final decision on the exact calculated sample bid and verified its phone readback. Recorded the earlier Finance reviewer hold and same-source recheck. Submitted 214 to verify uncertain-delivery recovery and distinct native Finance reviews before their browser walkthrough.
+
+20 November 2026. Promoted 212 after all five Finance checks and both provenance probes passed. Prepared income figures are now visible to a current authorized reader before independent review. Browser work 149 confirmed the exact totals. The new accounting role check keeps other current decisions open when an exact review has no eligible reviewer. Added an exact bid costing decision panel and native synthetic pricing fixture for the next batch.
+
 20 November 2026. Promoted the verified 210 batch. Recorded the exact original Emergency report receipt, Finance comment and review variants, the observed live stability confirmation and matching synthetic archive receipts. The 211 income-detail duplicate-treatment tests passed and matched packages were submitted. The state audit records 248 observed, 55 scoped completions and 14 unseen.
 
 20 November 2026. Verified the Emergency review and deadlines at phone width and the separate Finance preparer views for assets and schedules. The grouped 209 test ran 22 cases with one test setup error after the missing-audience hold assertion. Corrected that test and staged the exact Finance decision comments, replaced-draft protection and ledger source labels as 210. Submitted the combined focused checks. The design state audit records 244 observed and 52 scoped completions.

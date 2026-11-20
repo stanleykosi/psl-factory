@@ -54,3 +54,27 @@ class FactoryRFPPricingTests(TestCase):
         grant.active = False
         grant.save(update_fields=['active'])
         self.assertContains(self.client.get(url), 'Total unknown until the Engineering and Security inputs are recorded.')
+
+
+class FactoryFinalCostingDecisionTests(TestCase):
+    def test_final_costing_shows_exact_figures_and_earlier_decisions_then_records_current_approval(self):
+        from apps.pmo.models import RFPSubmission
+
+        work, response, run = factory_rfp_helpers.final_costing_wait()
+        actor, case = work.actor, work.case
+        self.client.force_login(actor)
+        url = reverse('factory_invoice_decision', args=[work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Final costing decision')
+        self.assertContains(page, 'Project manager · Approved')
+        self.assertContains(page, 'Head of project management · Approved')
+        self.assertContains(page, 'Amounts come from the reviewed calculation for these inputs.')
+        for item in run.result['values']:
+            self.assertContains(page, item['value'])
+        result = self.client.post(url, {'action': 'commercial', 'target': response.commercial_id,
+            'role': 'CEO', 'verdict': 'approve', 'revision': work.revision, 'case_revision': rev(case),
+            'note': 'Reviewed the exact current bid and separately calculated amount.'})
+        self.assertEqual(result.status_code, 302)
+        self.assertTrue(CommercialDecision.objects.filter(revision=response.commercial, role='CEO', verdict='approve').exists())
+        self.assertNotContains(self.client.get(url), 'Final costing decision')
+        self.assertFalse(RFPSubmission.objects.filter(response=response).exists())

@@ -33,6 +33,60 @@ class AccountingRecoveryTests(TestCase):
         self.assertFalse(FinanceRun.objects.filter(case=c,source=source,kind='formula').exists())
         self.assertEqual(work.status,'configuration_needed');self.assertIn('D06.rule_oracle_refs',work.finding)
 
+    def test_missing_independent_reviewer_keeps_other_native_decisions_and_rechecks_same_source(self):
+        from django.contrib.auth import get_user_model
+
+        from apps.identity.models import Grant
+        from apps.policy.services import register_reference
+        from apps.workflows import factory_accounting as accounting
+        from tests.factory_accounting_helpers import configured
+        from tests.finance_analysis_helpers import policy
+        from tests.helpers import activate
+
+        a, c, e, values, _, source, template, _ = fixture(
+            username='sample-nonconflicting-accounting-review', recipient_username='sample-routing-receipt', review=False)
+        for rule in values['authority']['finance']:
+            if rule['purpose'] == 'source':
+                rule['allow_preparer_review'] = False
+        policy(a, c, 'D05.decision_action_matrix', values['authority'], e['policy_decision'])
+        work = configured(a, c, e, source, template, METRICS)['work']
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'owner_needed')
+        self.assertEqual(accounting.review_routing_hold(work), [{'purpose': 'source', 'subject': 'source', 'target': source.pk}])
+        task = HumanTask.objects.get(case=c, kind='factory_accounting_review', status='open')
+        self.assertEqual(task.context['purpose'], 'mapping')
+        self.client.force_login(a)
+        url = reverse('factory_detail', args=[work.pk])
+        self.assertContains(self.client.get(url), 'Finance reviewer needed')
+        self.assertContains(self.client.get(url), 'Claim Finance review')
+        task = accounting.claim(a, task.pk, task.revision)
+        accepted = accounting.decide(a, task.pk, task.revision, 'approve', e['finance_review'].pk,
+                                     'The unaffected synthetic mapping review remains available.')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'owner_needed')
+        head, spent = work.source_head_id, work.budget_used
+        reviewer = get_user_model().objects.create_user('sample-independent-accounting-reviewer')
+        Grant.objects.bulk_create([Grant(case=c, user=reviewer, action=action) for action in
+                                   ('case.read', 'finance.read', 'factory.read', 'finance.review')])
+        reference = register_reference(a, c.pk, 'sample:independent-accounting-reviewer',
+                                       'schema:psl/role-assignment/v1', {'role': 'Finance', 'user_id': reviewer.pk},
+                                       e['policy_decision'].pk)
+        activate(a, c, 'D05.role_principal_assignments', ['finance:human', reference.ref], e['policy_decision'])
+        recovery = reverse('factory_invoice_recovery', args=[work.pk])
+        response = self.client.post(recovery, {'action': 'recheck_reviewers', 'revision': work.revision})
+        self.assertRedirects(response, recovery+'?queue=needs_me&q=', fetch_redirect_response=False)
+        work.refresh_from_db()
+        self.assertEqual((work.source_head_id, work.budget_used), (head, spent))
+        factory.run_until_wait(work.pk)
+        task.refresh_from_db()
+        self.assertEqual(task.status, 'completed')
+        self.assertTrue(FinanceReview.objects.filter(pk=accepted.pk).exists())
+        current = HumanTask.objects.get(case=c, status='open', context__purpose='source')
+        self.assertEqual([candidate['id'] for candidate in current.context['packet']['candidates']], [reviewer.pk])
+        self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=work).exists())
+
     def test_return_requires_explicit_source_owned_recheck_preserving_history_and_allowance(self):
         from apps.documents.models import Publication
         a,c,e,source,work,accounting,task=self.output_wait()

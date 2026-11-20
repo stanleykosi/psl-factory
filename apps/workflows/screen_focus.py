@@ -14,7 +14,7 @@ SCREENS = {
     },
     'finance-accounts/v1': {
         'decision': ('claim', 'decide'),
-        'recovery': ('reconcile', 'recheck', 'cancel'),
+        'recovery': ('reconcile', 'recheck', 'recheck_reviewers', 'cancel'),
     },
     'finance-schedules/v1': {
         'decision': ('review',),

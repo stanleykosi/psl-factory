@@ -522,8 +522,17 @@ def detail(request,work,focus=None):
         can_review_requirement_answers=True
     except (PermissionDenied,ValidationError):
         can_review_requirement_answers=False
+    final_costing = None
+    if focus == 'decision':
+        final_decision = next((item for item in row['rfp']['decisions']
+                               if item['kind'] == 'commercial' and item['role'] == 'CEO'), None)
+        if final_decision:
+            from .factory_rfp_pricing import inspect
+            pricing = inspect(request.user, work)
+            if pricing['current'] and pricing['revision_id'] == final_decision['target']:
+                final_costing = pricing
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
-        'can_review_requirement_answers':can_review_requirement_answers,
+        'can_review_requirement_answers':can_review_requirement_answers, 'final_costing':final_costing,
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
         'followup':followup,
         'followup_routes':followup_routes,'followup_messages':messages_sent,

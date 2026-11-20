@@ -117,7 +117,8 @@ def inspect(actor, work):
     return {'estimate_missing': any(estimates.get(team) not in visible for team in ('Engineering', 'Security')),
             'inputs': inputs, 'amounts': amounts, 'costing_note': note,
             'can_open_calculator': can_open_calculator, 'approvals': approvals,
-            'revision': revision.number if revision else None, 'current': current}
+            'revision': revision.number if revision else None, 'revision_id': revision.pk if revision else None,
+            'current': current}
 
 
 @login_required
