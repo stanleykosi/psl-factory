@@ -7,7 +7,88 @@
       "_parent": "P-0101",
       "_personas": [
         "pm",
-        "ceo"
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0511",
+      "label": "Weekly sync · Kora Logistics · 18 Nov",
+      "sample": true,
+      "_parent": "P-0103",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0512",
+      "label": "Weekly sync · Delta Foods · 18 Nov",
+      "sample": true,
+      "_parent": "P-0104",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0513",
+      "label": "Weekly sync · Harbour Bank · 18 Nov",
+      "sample": true,
+      "_parent": "P-0105",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0514",
+      "label": "Weekly sync · Niger Mills · 18 Nov",
+      "sample": true,
+      "_parent": "P-0106",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0515",
+      "label": "Weekly sync · Eko Transit · 18 Nov",
+      "sample": true,
+      "_parent": "P-0107",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0516",
+      "label": "Weekly sync · Sahel Telecom · 18 Nov",
+      "sample": true,
+      "_parent": "P-0108",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0517",
+      "label": "Weekly sync · Ikoyi Clinics · 18 Nov",
+      "sample": true,
+      "_parent": "P-0109",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "MTG-0518",
+      "label": "Weekly sync · Benue Agro · 18 Nov",
+      "sample": true,
+      "_parent": "P-0110",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
       ]
     }
   ]

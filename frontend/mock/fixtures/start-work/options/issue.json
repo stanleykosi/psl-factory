@@ -7,7 +7,8 @@
       "_parent": "P-0101",
       "_personas": [
         "pm",
-        "ceo"
+        "ceo",
+        "pmo_lead"
       ]
     },
     {
@@ -17,7 +18,88 @@
       "_parent": "P-0101",
       "_personas": [
         "pm",
-        "ceo"
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0311",
+      "label": "ISS-0311 · Design sign-off pending",
+      "sample": true,
+      "_parent": "P-0103",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0312",
+      "label": "ISS-0312 · Third-party API keys not issued",
+      "sample": true,
+      "_parent": "P-0104",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0313",
+      "label": "ISS-0313 · Scope question on reporting",
+      "sample": true,
+      "_parent": "P-0105",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0314",
+      "label": "ISS-0314 · Hosting access not granted",
+      "sample": true,
+      "_parent": "P-0106",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0315",
+      "label": "ISS-0315 · Translations not received",
+      "sample": true,
+      "_parent": "P-0107",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0316",
+      "label": "ISS-0316 · Performance below target on 3G",
+      "sample": true,
+      "_parent": "P-0108",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0317",
+      "label": "ISS-0317 · Support contact not named",
+      "sample": true,
+      "_parent": "P-0109",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "ISS-0318",
+      "label": "ISS-0318 · Client test data late",
+      "sample": true,
+      "_parent": "P-0110",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
       ]
     }
   ]
