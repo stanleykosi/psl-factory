@@ -402,7 +402,7 @@
       "title": "CEO · final costing",
       "w": 1440,
       "x": 1990,
-      "y": 6000
+      "y": 6160
     },
     "SCR-03-desktop-cto-emergency.dc.html": {
       "expand": "fill",
@@ -411,7 +411,7 @@
       "title": "CTO · emergency change",
       "w": 1440,
       "x": 3980,
-      "y": 6000
+      "y": 6160
     },
     "SCR-03-desktop-done.dc.html": {
       "expand": "fill",
@@ -430,7 +430,7 @@
       "title": "Decision · not yours",
       "w": 1440,
       "x": 0,
-      "y": 6000
+      "y": 6160
     },
     "SCR-03-desktop-payment-exception.dc.html": {
       "expand": "fill",
@@ -439,7 +439,7 @@
       "title": "Short payment decision",
       "w": 1440,
       "x": 0,
-      "y": 8640
+      "y": 8800
     },
     "SCR-03-desktop-stale.dc.html": {
       "expand": "fill",
@@ -467,7 +467,7 @@
       "title": "Phone · CEO costing",
       "w": 390,
       "x": 3510,
-      "y": 6000
+      "y": 6160
     },
     "SCR-03-mobile-cto-emergency.dc.html": {
       "h": 844,
@@ -475,10 +475,10 @@
       "title": "Phone · CTO emergency",
       "w": 390,
       "x": 5500,
-      "y": 6000
+      "y": 6160
     },
     "SCR-03-mobile-done.dc.html": {
-      "h": 844,
+      "h": 1080,
       "is_interactive": true,
       "page": "p-item",
       "title": "4 · Approved",
@@ -492,7 +492,7 @@
       "title": "Phone · Decision · not yours",
       "w": 390,
       "x": 1520,
-      "y": 6000
+      "y": 6160
     },
     "SCR-03-mobile-payment-exception.dc.html": {
       "h": 844,
@@ -500,7 +500,7 @@
       "title": "Phone · short payment decision",
       "w": 390,
       "x": 1520,
-      "y": 8640
+      "y": 8800
     },
     "SCR-03-mobile-stale.dc.html": {
       "h": 844,
@@ -1384,7 +1384,7 @@
       "title": "Response · recorded",
       "w": 1440,
       "x": 3980,
-      "y": 7340
+      "y": 7500
     },
     "SCR-16-desktop-team-input.dc.html": {
       "expand": "fill",
@@ -1402,7 +1402,7 @@
       "title": "J-03 · Desktop · proof missing",
       "w": 1440,
       "x": 1990,
-      "y": 7340
+      "y": 7500
     },
     "SCR-16-desktop.dc.html": {
       "expand": "fill",
@@ -1412,7 +1412,7 @@
       "title": "J-03 · Record a client response",
       "w": 1440,
       "x": 0,
-      "y": 7340
+      "y": 7500
     },
     "SCR-16-mobile-rfp-lost.dc.html": {
       "h": 844,
@@ -1492,7 +1492,7 @@
       "title": "Phone · Response · recorded",
       "w": 390,
       "x": 5500,
-      "y": 7340
+      "y": 7500
     },
     "SCR-16-mobile-team-input.dc.html": {
       "h": 844,
@@ -1509,7 +1509,7 @@
       "title": "J-03 · Phone · proof missing",
       "w": 390,
       "x": 3510,
-      "y": 7340
+      "y": 7500
     },
     "SCR-16-mobile.dc.html": {
       "h": 844,
@@ -1518,7 +1518,7 @@
       "title": "J-03 · Phone · record a response",
       "w": 390,
       "x": 1520,
-      "y": 7340
+      "y": 7500
     },
     "SCR-17-desktop-error.dc.html": {
       "expand": "fill",
@@ -3801,7 +3801,7 @@
     },
     "SCR-02-desktop-history.dc.html": {
       "x": 0,
-      "y": 9876,
+      "y": 10036,
       "w": 1440,
       "h": 1040,
       "page": "p-item",
@@ -3810,7 +3810,7 @@
     },
     "SCR-02-mobile-history.dc.html": {
       "x": 1520,
-      "y": 9876,
+      "y": 10036,
       "w": 390,
       "h": 844,
       "page": "p-item",
@@ -4107,7 +4107,7 @@
       "text": "SCR-16 · Record a response",
       "w": 240,
       "x": 0,
-      "y": 7200
+      "y": 7360
     },
     "p-item-SCR-03-desktop-payment-exception": {
       "kind": "title1",
@@ -4116,7 +4116,7 @@
       "text": "SCR-03 · Short payment decision (Finance Lead)",
       "w": 240,
       "x": 0,
-      "y": 8500
+      "y": 8660
     },
     "p-mywork-01-title": {
       "kind": "title1",
@@ -4629,7 +4629,7 @@
       "text": "Work item history (SCR-02): every decision, agent step, evidence and send, read-only",
       "w": 240,
       "x": 0,
-      "y": 9760
+      "y": 9920
     }
   },
   "order": [
