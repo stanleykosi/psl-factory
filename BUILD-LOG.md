@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Added the dedicated staff Admin landing and team-management entry. Reset the Railway test data at the user's request and established the new Admin, PMO Lead and Finance Lead accounts. Verified the three public logins before removing the former database and the private test uploads.
+
 21 November 2026. Replaced access-profile onboarding with required role invitations in the staff application. Added team-owned invitation and renewal, database binding to the actual inviting lead, and visibility for scoped-only staff in the authorised Staff roster. A lead can invite through their own dashboard. Keep already-admitted staff and historical access evidence available under their current permissions.
 
 21 November 2026. Added the reviewed move from existing workspace grants to exact team or standalone scope in Setup and the API. Connected invoice, Accounting, Planning, closure, escalation and supported publication reviews to the role dashboard. Specialist desk links reuse existing grants. Native processing uses exact review receipts and preserves independent release, publication and sign-off controls. Actual staff assignments and decision policies remain deferred.

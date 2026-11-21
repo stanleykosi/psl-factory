@@ -1,4 +1,13 @@
 {
+  "clean_role_preview_20261121": {
+    "status": "hosted_and_verified",
+    "scope": "Railway design-acceptance only. Fresh workspace with delegated Admin and scoped PMO and Finance leads.",
+    "database": "psl_role_preview_20261121",
+    "role_checks": {"deployment":"ac971d74-770c-4f4b-b8da-025c24a9006c","postgresql":5},
+    "preview": {"web":"0a152f54-06bd-449f-b339-5bb171377feb","worker":"7ff05ca3-2278-4371-9e86-fc626488efec"},
+    "verification_and_cleanup": {"deployment":"d9399501-0113-4754-986b-8c0071774f15","live_role_logins":3,"former_database_removed":true,"old_objects_removed":42,"object_versions_removed":42},
+    "hod_decisions_deferred": true
+  },
   "role_scoped_operations": {
     "status": "hosted_role_scopes_verified",
     "reference": "guide/11-FULL-PRODUCT.md#role-based-work-and-supervision",

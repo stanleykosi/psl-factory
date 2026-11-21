@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Clean Railway role testing · 21 November 2026
+
+The [Railway test site](https://psl-design-web-design-acceptance.up.railway.app/) now uses `psl_role_preview_20261121`. The user authorised removal of the previous test accounts, work and uploads. The former application database was dropped, and 42 private test objects and their recorded versions were removed. Earlier walkthrough entries describe the former preview.
+
+The new workspace is **PSL Role Testing**. Its three active starter accounts are `psl-test-admin`, `psl-test-pmo-lead` and `psl-test-finance-lead`. Admin opens staff and team management. The leads open their respective dashboards and can invite their own teammates. The workspace starts with empty work queues and no business decision nominations. The sign-in handoff is private and stays outside Git.
+
+Five focused PostgreSQL checks passed on `ac971d74-770c-4f4b-b8da-025c24a9006c`. The active web and worker are `0a152f54-06bd-449f-b339-5bb171377feb` and `7ff05ca3-2278-4371-9e86-fc626488efec`. Checks deployment `d9399501-0113-4754-986b-8c0071774f15` signed in as all three accounts through the public app before purging the former test store. The checks service’s temporary credential variable was cleared. Live role testing can start from the fresh workspace. HOD decisions remain deferred.
+
 ## Required roles and team-owned staff invitations · 21 November 2026
 
 An authorised Admin uses **Setup → Primary roles → Teams and work assignments** to create a team, then appoints a lead through Staff invitations. This is also where Admin assigns the standalone CEO and CTO roles. A current PMO, Finance, HR or Admin lead uses **Invite a teammate** on their role dashboard to admit members of their own team. The app binds the invitation to its workspace, team, role, actual inviting lead and current delegation. The same checks apply at setup and at acceptance.
