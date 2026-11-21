@@ -1,5 +1,5 @@
 """Workspace navigation and operational access derived from current staff roles."""
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Q
 
 from apps.core.models import Case
 
@@ -22,6 +22,39 @@ LEAD_ACTIONS = {
     'hr': frozenset({'case.read', 'agent.extract', 'evidence.add', 'hrfinance.read'}),
 }
 
+PERSONA_ROLES = {'tola': 'pmo-lead', 'chidi': 'finance-lead', 'zainab': 'hr'}
+DEPARTMENT_READS = {
+    'pmo-lead': frozenset({'case.read', 'factory.read', 'engagement.read', 'planning.read', 'costing.read',
+                           'commercial.read', 'delivery.read', 'meeting.read', 'issue.read', 'change.read',
+                           'report.read', 'emergency.read', 'rfp.read', 'costing.source.read', 'commercial.proof.read',
+                           'client_uat.proof.read', 'delivery.progress.read', 'issue.message.read', 'rfp.estimate.read',
+                           'issue.reference.change.read', 'issue.reference.incident.read', 'issue.reference.risk.read'}),
+    'finance-lead': frozenset({'case.read', 'factory.read', 'finance.read', 'schedules.read', 'ppe.read',
+                               'ledger.read', 'ledger.private.read', 'bu.read', 'bu.report.read', 'payroll.read',
+                               'finance.handoff.read', 'finance.receipt_followup.read', 'finance.reminder.read',
+                               'finance.short_payment.read', 'payment.read', 'recognition.read', 'coverage.read'}),
+    'hr': frozenset({'case.read', 'hrfinance.read', 'hrfinance.snapshot.read'}),
+}
+
+
+def department_memberships(actor, role):
+    return StaffMembership.objects.filter(user=actor, user__is_active=True, active=True, role=role,
+                                          case__kind='project')
+
+
+def department_cases(actor, role, *, heads_only=False):
+    memberships = department_memberships(actor, role)
+    heads = memberships.filter(mode='lead', case__tenant=OuterRef('tenant'), case__synthetic=OuterRef('synthetic'))
+    scope = Q(Exists(heads)) if role in ('pmo-lead', 'finance-lead') else Q(pk__in=[])
+    if not heads_only:
+        scope |= Q(pk__in=memberships.values('case_id'))
+    return Case.objects.filter(scope, kind='project')
+
+
+def role_managed(actor):
+    # Keep a revoked account from falling back to an earlier assistant grant.
+    return StaffMembership.objects.filter(user=actor).exists()
+
 
 def leads(actor):
     return StaffMembership.objects.filter(user=actor, user__is_active=True, active=True,
@@ -35,7 +68,11 @@ def authorized_leads(actor, actions):
 
 
 def role_cases(actor, actions):
-    return Case.objects.filter(pk__in=authorized_leads(actor, actions).values('case_id')).distinct()
+    query = Q(pk__in=authorized_leads(actor, actions).values('case_id'))
+    for role, allowed in DEPARTMENT_READS.items():
+        if actions and set(actions) <= allowed:
+            query |= Q(pk__in=department_cases(actor, role).values('pk'))
+    return Case.objects.filter(query).distinct()
 
 
 def project_cases(actor):
@@ -45,20 +82,16 @@ def project_cases(actor):
 
 
 def project_actions(actor, case):
-    from .services import active_case_grants
+    from .services import active_case_grants, legacy_projects
 
     actions = {action for _, action in active_case_grants(actor, [case.pk])}
+    if actions and not legacy_projects(actor, Case.objects.filter(pk=case.pk)).exists():
+        actions.clear()
+    for role, allowed in DEPARTMENT_READS.items():
+        if department_cases(actor, role).filter(pk=case.pk).exists():
+            actions.update(allowed)
     for role in leads(actor).filter(case=case).values_list('role', flat=True):
         actions.update(LEAD_ACTIONS[role])
         if role == 'pmo-lead':
             actions.add('team.actions.read')
     return actions
-
-
-def team_work_scope(actor, definition, actions):
-    own_team = authorized_leads(actor, actions)
-    creator_team = StaffMembership.objects.filter(
-        case_id=OuterRef('case_id'), user_id=OuterRef('actor_id'), active=True, user__is_active=True,
-        team_id__in=Subquery(own_team.filter(case_id=OuterRef('case_id')).values('team_id')),
-    )
-    return Q(definition=definition) & Q(Exists(creator_team))

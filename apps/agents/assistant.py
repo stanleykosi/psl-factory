@@ -14,6 +14,7 @@ from adapters import openrouter
 from adapters.payroll_questions import TOPICS as PAYROLL_REPORT_TOPICS
 from apps.core.workbench import granted
 from apps.documents.contracts import digest
+from apps.identity.factory_access import PERSONA_ROLES, department_cases, role_managed
 
 from .assistant_models import AssistantConversation, AssistantTurn
 from . import assistant_access
@@ -61,6 +62,8 @@ def totals_reply(conversation):
 
 
 def cases_for(actor, persona):
+    if role_managed(actor):
+        return department_cases(actor, PERSONA_ROLES[persona])
     actions = ['agent.extract', PERSONAS[persona][2]]
     cases = granted(actor, actions)
     if persona == 'chidi':
@@ -84,12 +87,14 @@ def cases_for(actor, persona):
 
 
 def check(actor, conversation):
-    if conversation.actor_id != actor.pk or not cases_for(actor, conversation.persona).filter(pk=conversation.case_id).exists():
+    cases = department_cases(actor, PERSONA_ROLES[conversation.persona], heads_only=True) if (
+        conversation.scope == 'department') else cases_for(actor, conversation.persona)
+    if conversation.actor_id != actor.pk or not cases.filter(pk=conversation.case_id).exists():
         raise PermissionDenied('This conversation is unavailable for your current access.')
 
 
 def payroll_report_only(conversation):
-    return conversation.persona == 'zainab' and not granted(conversation.actor, ['hrfinance.read']).filter(
+    return conversation.persona == 'zainab' and not role_managed(conversation.actor) and not granted(conversation.actor, ['hrfinance.read']).filter(
         pk=conversation.case_id).exists()
 
 
@@ -120,7 +125,7 @@ def work_intent(actor, turn_id, definition, case_id=None, *, lock=False):
     if case_id is not None and str(turn.conversation.case_id) != str(case_id):
         raise ValidationError('This suggestion belongs to a different project.')
     if not turn.started_work_id and not turn.transferred_to_id:
-        sources, permitted = message_context(turn.conversation, turn.selected_sources or turn.focus)
+        sources, permitted = message_context(turn.conversation, turn.selected_sources or turn.focus, question=turn.question)
         if digest(sources) != turn.context_hash or definition not in permitted:
             raise ValidationError('The suggestion needs a fresh answer before you start work.')
     return turn
@@ -148,7 +153,26 @@ def transfer(actor, turn_id, target):
     return conversation
 
 
-def tool_context(conversation):
+def tool_context(conversation, *, question=''):
+    if role_managed(conversation.actor):
+        from .department_context import records
+
+        check(conversation.actor, conversation)
+        if conversation.scope == 'department':
+            return records(conversation, question), []
+        native, next_work = _tool_context(conversation)
+        # Keep source pins needed to start drafts and specialist recipient reports.
+        draft_groups = {'packet': 'planning', 'requirements': 'planning', 'rfp_intake': 'bid', 'handoff': 'handoff'}
+        pinned = []
+        for source in native:
+            field = source.get('record', {}).get('field')
+            if field in draft_groups:
+                pinned.append(dict(source, url=reverse('department_records', args=[conversation.persona, conversation.case_id])
+                                   + '?group=' + draft_groups[field]))
+            elif field in ('bu_report', 'payroll_report') or source['url'].startswith(
+                    reverse('hrfinance', args=[conversation.case_id]) + 'snapshots/'):
+                pinned.append(source)
+        return pinned + records(conversation, question), next_work
     sources, next_work = _tool_context(conversation)
     if (not conversation.case.synthetic and payroll_report_only(conversation)
             and assistant_access.permission(conversation.case, assistant_access.TOTALS)
@@ -313,8 +337,8 @@ def source_focus(sources, focus):
     return selected
 
 
-def message_context(conversation, focus):
-    sources, next_work = tool_context(conversation)
+def message_context(conversation, focus, *, question=''):
+    sources, next_work = tool_context(conversation, question=question if not focus else '')
     return source_focus(sources, focus), next_work
 
 
@@ -327,7 +351,7 @@ def turn_context(turn, *, pending=True):
 
         check(turn.conversation.actor, turn.conversation)
         return context_for(suggestion, pending=pending)
-    return message_context(turn.conversation, turn.selected_sources or turn.focus)
+    return message_context(turn.conversation, turn.selected_sources or turn.focus, question=turn.question)
 
 
 @transaction.atomic
@@ -361,7 +385,7 @@ def reserve(actor, conversation_id, operation_key, question, focus=''):
             status='answered', answer=answer, sources=sources, context_hash=digest(sources), selected_sources=keys)
         conversation.save(update_fields=['updated_at'])
         return turn
-    if not conversation.case.synthetic and not assistant_access.model_rule(conversation.case, conversation.persona):
+    if not conversation.case.synthetic and not role_managed(actor) and not assistant_access.model_rule(conversation.case, conversation.persona):
         raise PermissionDenied('This project requires approval before a question can be sent to the model.')
     if not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('The department assistant needs a configured model.')
@@ -400,7 +424,11 @@ def answer_claim(turn, model):
         return False
     conversation = turn.conversation
     try:
-        if not conversation.case.synthetic:
+        if role_managed(conversation.actor):
+            check(conversation.actor, conversation)
+            if model != os.getenv('OPENROUTER_MODEL'):
+                raise PermissionDenied('Use the configured assistant model.')
+        elif not conversation.case.synthetic:
             rule = assistant_access.model_rule(conversation.case, conversation.persona)
             if not rule or rule.envelope['value']['model'] != model:
                 raise PermissionDenied('The current provider and model need project approval.')

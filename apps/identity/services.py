@@ -4,6 +4,7 @@ from contextvars import ContextVar
 from django.core.exceptions import PermissionDenied
 from apps.core.models import Case
 from .models import Grant
+from django.db.models import Exists, Q
 
 
 _subject_actions = ContextVar('subject_actions', default=None)
@@ -30,15 +31,25 @@ def require(actor, case, action):
     if scope and scope[:2] == (actor.pk, case.pk) and action in scope[2]:
         return
     if Grant.objects.filter(user=actor, case=case, action=action, active=True).exists():
-        return
-    from .factory_access import authorized_leads
+        if legacy_projects(actor, Case.objects.filter(pk=case.pk)).exists():
+            return
+    from .factory_access import role_cases
 
-    if not authorized_leads(actor, [action]).filter(case=case).exists():
+    if not role_cases(actor, [action]).filter(pk=case.pk).exists():
         raise PermissionDenied('This record/action has no active grant')
 
 
 def visible_cases(actor):
-    return Case.objects.filter(grant__user=actor, grant__active=True, grant__action='case.read').distinct()
+    return legacy_projects(actor, Case.objects.filter(grant__user=actor, grant__active=True, grant__action='case.read')).distinct()
+
+
+def legacy_projects(actor, cases):
+    from .factory_access import PERSONA_ROLES
+    from .team_models import StaffMembership
+
+    history = StaffMembership.objects.filter(user=actor)
+    return cases.filter(~Q(kind='project') | ~Q(Exists(history.filter(role__in=PERSONA_ROLES.values()))) |
+                        Q(pk__in=history.filter(active=True, role__in=['admin', 'cto', 'ceo']).values('case_id')))
 
 
 def active_case_grants(actor, case_ids, *, actions=None):

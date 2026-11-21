@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+21 November 2026. Tested Decision 1 against PostgreSQL and in the in-app browser. A signed-in PMO head used Tola on Railway. In isolated local workspaces, Chidi cited a sample invoice and Zainab reported the HR connection status through the real OpenRouter adapter. Browser checks covered the project member's single-project selector and the Finance head's department-wide selector. [Test scope and screenshots](docs/design/department-role-checks-2026-11-21.md)
+
 21 November 2026. The merged handoff and role-navigation regression run passed 37 checks on PostgreSQL. The separate frontend claimed and approved a sample invoice with a valid session, CSRF token and explicitly trusted frontend origin. The final in-app Railway check opened the signed-in PMO Lead Decisions queue on the combined My work release. [Screenshots and scope](docs/design/frontend-handoff-review-2026-11-21.md)
 
 21 November 2026. The broader My work regression run passed all 36 isolated local PostgreSQL tests in 653.733 seconds. It covered the role-scoped work, Factory API and intake suites. Node's syntax check for the connected work client and Django's API screen map export also passed.

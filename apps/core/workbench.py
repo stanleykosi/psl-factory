@@ -41,7 +41,7 @@ def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifec
 
         closures = DeliveryRecord.objects.filter(dossier_id=OuterRef('pk'), kind='closure')
         dossiers = DeliveryDossier.objects.filter(case_id=OuterRef('pk')).annotate(closed=Exists(closures))
-        can_read = Grant.objects.filter(case_id=OuterRef('pk'), user=actor, active=True, action='delivery.read')
+        can_read = granted(actor, ['delivery.read']).filter(pk=OuterRef('pk'))
         query = query.annotate(project_status_visible=Exists(can_read), has_closed_dossier=Exists(dossiers.filter(closed=True)),
                                has_open_dossier=Exists(dossiers.filter(closed=False)))
         closed = Q(has_closed_dossier=True, has_open_dossier=False)

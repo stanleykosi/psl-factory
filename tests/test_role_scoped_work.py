@@ -54,7 +54,8 @@ class RoleScopedWorkTests(TestCase):
         username = username or 'synthetic-' + uuid4().hex[:12]
         actor = self.admin
         if mode=='member':
-            actor = self.admitted(role,'lead',team).user
+            current = StaffMembership.objects.filter(team=team, role=role, mode='lead', active=True).first()
+            actor = (current or self.admitted(role,'lead',team)).user
         return staff.invite_person(actor,self.case.pk,username,username,f'{username}@example.test',rev(self.case),
                                    role=role,mode=mode,team_id=team.pk if team else None)
 
@@ -67,6 +68,81 @@ class RoleScopedWorkTests(TestCase):
     def assign(self, member, title):
         return role_work.assign_action(self.admin, self.case.pk, member.pk, reference=f'TASK-{uuid4()}',
                                       description=title, reason='Reviewed synthetic assignment', expected=rev(self.case))
+
+    @patch.dict(os.environ, {'OPENROUTER_MODEL': 'scope-test-model'})
+    def test_department_heads_members_and_hr_use_their_own_records(self):
+        from apps.agents import assistant
+        from apps.agents.assistant_views import open_conversation
+        from apps.core.models import Case
+
+        lead = self.admitted(mode='lead')
+        member = self.admitted()
+        finance = self.admitted('finance-lead', 'lead', teams.create_team(self.admin, self.case.pk, 'finance-lead', 'Accounts'))
+        hr = self.admitted('hr', 'lead', teams.create_team(self.admin, self.case.pk, 'hr', 'People'))
+        for tenant, sample, title in [('another-organisation', True, 'Outside organisation'),
+                                      (self.case.tenant, False, 'Outside test environment')]:
+            Case.objects.create(tenant=tenant, synthetic=sample, kind='project', title=title)
+        add_evidence(self.admin, self.other.pk, 'requirements', 'North handover needs a review.', 'team review')
+        for viewer, persona, expected in [(lead, 'tola', [self.case, self.other]), (member, 'tola', [self.case]),
+                                           (finance, 'chidi', [self.case, self.other]), (hr, 'zainab', [self.case])]:
+            self.assertSetEqual(set(assistant.cases_for(viewer.user, persona)), set(expected))
+            for other_agent in set(assistant.PERSONAS) - {persona}:
+                self.assertFalse(assistant.cases_for(viewer.user, other_agent).exists())
+        for position, persona in [(member, 'tola'), (hr, 'zainab')]:
+            with self.assertRaises(PermissionDenied):
+                open_conversation(position.user, persona, self.case, uuid4(), 'department')
+        with self.assertRaises(ValidationError):
+            self.admitted(mode='lead', team=self.peer_team)
+        chat = open_conversation(lead.user, 'tola', self.case, uuid4(), 'department')
+        turn = assistant.reserve(lead.user, chat.pk, uuid4(), 'What does Other synthetic project require?')
+        with patch('adapters.openrouter.answer', return_value={'answer':'North handover needs a review.', 'citations':['S2'],
+                                                              'next_work':''}) as provider:
+            assistant.answer_claim(assistant.claim_turn(turn.pk), 'scope-test-model')
+        turn.refresh_from_db()
+        self.assertEqual(turn.status, 'answered')
+        facts = str(provider.call_args.args[3])
+        self.assertIn('North handover', facts)
+        self.assertNotIn('Outside organisation', facts)
+        self.client.force_login(lead.user)
+        self.assertContains(self.client.get(turn.sources[0]['url']), 'North handover')
+        self.client.force_login(member.user)
+        self.assertEqual(self.client.get(turn.sources[0]['url']).status_code, 404)
+        with self.assertRaises(PermissionDenied):
+            require(lead.user, self.other, 'finance.read')
+        finance_chat = open_conversation(finance.user, 'chidi', self.case, uuid4(), 'department')
+        self.assertNotIn('North handover', str(assistant.tool_context(finance_chat)))
+        hr_chat = open_conversation(hr.user, 'zainab', self.case, uuid4())
+        self.assertIn('live HR system is not connected', str(assistant.tool_context(hr_chat)))
+        teams.revoke(self.admin, self.case.pk, lead.pk, 'Administrator changed the PMO head')
+        self.client.force_login(lead.user)
+        self.assertEqual(self.client.get(reverse('assistant_thread', args=[chat.pk])).status_code, 404)
+        self.assertTrue(self.admitted(mode='lead', team=self.peer_team).active)
+
+    @patch.dict(os.environ, {'OPENROUTER_MODEL': 'scope-test-model'})
+    def test_operational_role_can_ask_without_per_project_approval(self):
+        from apps.agents import assistant
+        from apps.agents.assistant_views import open_conversation
+
+        tenant = 'operational-role-fixture'
+        intake.provision(self.root, self.admin, tenant, {**self.delegation_value, 'classification':'operational'},
+                         self.expiry, True, 'Isolated database permission test')
+        case = intake.create_case(self.admin, tenant, 'new-role-home', 'Account workspace', 'project')
+        team = teams.create_team(self.admin, case.pk, 'pmo-lead', 'Operations')
+        _, token = staff.invite_person(self.admin, case.pk, 'operational-test-head', 'Department head',
+            'head@example.test', rev(case), role='pmo-lead', mode='lead', team_id=team.pk)
+        person = staff.accept(token, PASSWORD)
+        project = intake.create_case(self.admin, tenant, 'new-incoming', 'Incoming project', 'project')
+        self.client.force_login(person)
+        url = reverse('assistant_start', args=['tola'])
+        self.assertContains(self.client.get(url), 'All department projects')
+        chat = open_conversation(person, 'tola', project, uuid4(), 'department')
+        turn = assistant.reserve(person, chat.pk, uuid4(), 'Which projects are visible?')
+        with patch('adapters.openrouter.answer', return_value={'answer':'Incoming project and Account workspace',
+                   'citations':['S1'], 'next_work':''}):
+            assistant.answer_claim(assistant.claim_turn(turn.pk), 'scope-test-model')
+        turn.refresh_from_db()
+        self.assertEqual(turn.status, 'answered')
+        self.assertContains(self.client.get(reverse('assistant_thread', args=[chat.pk])), 'Incoming project and Account workspace')
 
     def api(self, path, data=None, *, client=None):
         client = client or self.client
@@ -118,11 +194,11 @@ class RoleScopedWorkTests(TestCase):
         hr_team = teams.create_team(self.admin, self.case.pk, 'hr', 'People')
         positions = [
             (self.admitted(mode='lead'), ['tola'], 'engagement/v1'),
-            (self.admitted('finance-lead', 'lead', finance_team), ['tola', 'chidi'], 'finance-accounts/v1'),
+            (self.admitted('finance-lead', 'lead', finance_team), ['chidi'], 'finance-accounts/v1'),
             (self.admitted('hr', 'lead', hr_team), ['zainab'], None),
             (self.admitted('cto', 'standalone'), [], None),
             (self.admitted('ceo', 'standalone'), [], None),
-            (self.admitted(), [], None),
+            (self.admitted(), ['tola'], None),
         ]
         for position, agents, starter in positions:
             with self.subTest(role=position.role, mode=position.mode):
@@ -150,8 +226,13 @@ class RoleScopedWorkTests(TestCase):
                 self.assertContains(chooser, 'Log an engagement and connect planning')
                 self.assertContains(chooser, 'Prepare management accounts')
                 projects = self.checked(self.api('/projects'), '/projects')['items']
-                self.assertEqual([row['case_id'] for row in projects], [str(self.case.pk)] if agents else [])
-                self.assertEqual(self.client.get(reverse('design_project', args=[self.other.pk])).status_code, 404)
+                department_head = position.mode == 'lead' and position.role in ('pmo-lead', 'finance-lead')
+                expected = {str(self.case.pk)} if agents else set()
+                if department_head:
+                    expected.add(str(self.other.pk))
+                self.assertEqual({row['case_id'] for row in projects}, expected)
+                self.assertEqual(self.client.get(reverse('design_project', args=[self.other.pk])).status_code,
+                                 200 if department_head else 404)
                 self.assertEqual(self.client.get(reverse('case', args=[self.case.pk])).status_code, 404)
                 if starter:
                     self.assertIn(starter, profile['startable_lines'])
@@ -163,8 +244,9 @@ class RoleScopedWorkTests(TestCase):
         from apps.workflows.models import FactoryWork
 
         preparer = self.admitted(mode='lead')
-        teammate = self.admitted(mode='lead')
-        outsider = self.admitted(mode='lead', team=self.peer_team)
+        teammate = self.admitted()
+        finance = teams.create_team(self.admin, self.case.pk, 'finance-lead', 'Accounts')
+        outsider = self.admitted('finance-lead', 'lead', finance)
         member = self.admitted()
         evidence = add_evidence(self.admin, self.case.pk, 'engagement_source', 'Synthetic client request', 'client brief')
         self.client.force_login(preparer.user)
@@ -176,7 +258,7 @@ class RoleScopedWorkTests(TestCase):
         work = FactoryWork.objects.get(case=self.case, actor=preparer.user, definition='engagement/v1')
         self.assertRedirects(response, reverse('factory_detail', args=[work.pk]))
         self.assertContains(self.client.get(reverse('home'), {'queue': 'mine'}), 'TEST-NEW-ENGAGEMENT')
-        for position, available in ((preparer, True), (teammate, True), (outsider, False), (member, False)):
+        for position, available in ((preparer, True), (teammate, True), (outsider, False), (member, True)):
             self.client.force_login(position.user)
             self.assertEqual(self.api(f'/work/{work.pk}').status_code, 200 if available else 404)
         for action in ('factory.execute', 'finance.read', 'document.review', 'delivery.planning_decide'):
@@ -193,7 +275,9 @@ class RoleScopedWorkTests(TestCase):
         from apps.agents.upload_jobs import run_once
         from apps.documents.models import Review
 
-        lead, other = self.admitted(mode='lead'), self.admitted(mode='lead', team=self.peer_team)
+        lead = self.admitted(mode='lead')
+        finance = teams.create_team(self.admin, self.case.pk, 'finance-lead', 'Accounts')
+        other = self.admitted('finance-lead', 'lead', finance)
         source = b'Synthetic confirmed meeting date.'
         self.client.force_login(lead.user)
         with patch('adapters.case_uploads.put'):
@@ -250,7 +334,9 @@ class RoleScopedWorkTests(TestCase):
 
     def test_01_pmo_member_peer_lead_transfer_and_native_action(self):
         first, second = self.admitted(), self.admitted()
-        lead, outsider = self.admitted(mode='lead'), self.admitted(mode='lead', team=self.peer_team)
+        lead = StaffMembership.objects.get(team=self.team, mode='lead', active=True)
+        finance = teams.create_team(self.admin, self.case.pk, 'finance-lead', 'Accounts')
+        outsider = self.admitted('finance-lead', 'lead', finance)
         one, two = self.assign(first, 'Review planning milestones'), self.assign(second, 'Prepare risk follow-up')
         hidden = self.assign(outsider, 'Other team work')
         path = reverse('role_work_detail', args=[one.pk])
@@ -261,7 +347,7 @@ class RoleScopedWorkTests(TestCase):
         self.assertEqual(self.client.get(reverse('role_work_detail', args=[two.pk])).status_code, 404)
         self.assertEqual(self.api(f'/role-work/{two.pk}').status_code, 404)
         self.assertEqual(self.client.get(reverse('case', args=[self.case.pk])).status_code, 404)
-        self.assertEqual(self.api(f'/projects/{self.case.pk}').status_code, 404)
+        self.assertEqual(self.api(f'/projects/{self.case.pk}').status_code, 200)
         with self.assertRaises(PermissionDenied):
             require(first.user, self.case, 'action.work')
         with self.assertRaises(ValidationError):
@@ -463,7 +549,7 @@ class RoleScopedWorkTests(TestCase):
         with self.assertRaises(PermissionDenied):
             hrfinance.read_snapshot(member.user, successor)
 
-    def test_08_reviewed_move_carries_existing_actions_and_keeps_other_workspace_access(self):
+    def test_08_reviewed_move_carries_actions_and_limits_reads_to_assigned_projects(self):
         from apps.pmo.meetings import create_action
 
         person = get_user_model().objects.create_user('existing-synthetic-pmo')
@@ -495,10 +581,11 @@ class RoleScopedWorkTests(TestCase):
         assignment = StaffAssignment.objects.get(membership_id=moved['membership_id'],action=item)
         self.assertFalse(Grant.objects.filter(case=self.case,user=person,active=True).exists())
         self.assertEqual(item.current.owner_id,person.pk)
-        require(person,self.other,'case.read')
+        with self.assertRaises(PermissionDenied):
+            require(person,self.other,'case.read')
         self.client.force_login(person)
-        self.assertEqual(self.api(f'/projects/{self.case.pk}').status_code,404)
-        self.assertEqual(self.api(f'/projects/{self.other.pk}').status_code,200)
+        self.assertEqual(self.api(f'/projects/{self.case.pk}').status_code,200)
+        self.assertEqual(self.api(f'/projects/{self.other.pk}').status_code,404)
         self.assertEqual(self.update(assignment,'complete').json()['state'],'completed')
 
     def test_09_move_holds_while_an_existing_decision_is_claimed(self):
@@ -538,7 +625,15 @@ class RoleScopedWorkTests(TestCase):
         current = factory.manage(a,work.pk,work.revision,'resume')
         factory.run_until_wait(current.pk)
         self.client.force_login(member.user)
-        self.assertEqual(self.api(f'/work/{work.pk}').status_code,404)
+        self.assertEqual(self.api(f'/work/{work.pk}').status_code,200)
+        from apps.agents import assistant
+        from apps.agents.assistant_views import open_conversation
+        chat = open_conversation(member.user, 'chidi', case, uuid4())
+        facts, _ = assistant.tool_context(chat, question=work.invoice.reference)
+        invoice = next(item for item in facts if item.get('record', {}).get('field') == 'invoice')
+        self.assertIn(f'{work.invoice.currency} {work.invoice.amount}', invoice['fact'])
+        self.assertIn('Paid: unknown', invoice['fact'])
+        self.assertContains(self.client.get(invoice['url']), work.invoice.reference)
         result = self.decide(row,'approve')
         self.assertEqual(invoices.reviewed(work.invoice).pk,result['review_id'])
         self.assertFalse(InvoiceJob.objects.filter(invoice=work.invoice).exists())
@@ -719,9 +814,10 @@ class RoleScopedWorkTests(TestCase):
         page = self.client.get(reverse('role_work_detail',args=[row.pk]))
         self.assertContains(page,f.narrative['status'])
         self.assertNotContains(page,'PRIVATE DIAGNOSIS')
-        self.assertEqual(self.api(f'/work/{work.pk}').status_code,404)
+        self.assertEqual(self.api(f'/work/{work.pk}').status_code,200)
+        require(member.user,f.case,'meeting.read')
         with self.assertRaises(PermissionDenied):
-            require(member.user,f.case,'meeting.read')
+            require(member.user,f.case,'finance.read')
         result = self.decide(row,'approve')
         f.advance()
         receipt = PublicationReceipt.objects.get(publication__version=version)

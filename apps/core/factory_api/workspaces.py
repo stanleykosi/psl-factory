@@ -12,7 +12,7 @@ from apps.core.models import ClientContactRevision
 from apps.core.presentation import workspace_name
 from apps.identity.factory_access import project_actions, project_cases
 from apps.finance import hr_workspace, month_end, project_money
-from apps.identity.services import active_case_grants, visible_cases
+from apps.identity.services import active_case_grants
 from apps.policy.delegation_views import assignments
 from apps.workflows.factory_definitions import DEFINITIONS
 from apps.workflows.factory_views import intake_options
@@ -37,7 +37,7 @@ def workspace(case):
 
 
 def project_for(actor, case_id):
-    return get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
+    return get_object_or_404(project_cases(actor), pk=case_id, kind='project')
 
 
 @endpoint(response=obj({
@@ -109,6 +109,8 @@ SECTION = obj({'title': TEXT, 'items': array(SECTION_ITEM, limit=25), 'page': ID
 }))}), summary='Read the permitted HR handoff and follow-up destinations')
 def hr(request, case_id):
     case = project_for(request.user, case_id)
+    from apps.identity.services import require
+    require(request.user, case, 'hrfinance.read')
     return {'case_id': case.pk, 'destinations': hr_workspace.destinations(request.user, case)}
 
 

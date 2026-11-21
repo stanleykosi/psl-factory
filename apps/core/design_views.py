@@ -170,6 +170,9 @@ def project(request, case_id, tab='journey'):
     case = get_object_or_404(project_cases(request.user), pk=case_id)
     actions = project_actions(request.user, case)
     navigation = project_journey.tabs(case, actions)
+    if tab in ('hr', 'templates', 'month-end') and not any(item['key'] == tab for item in navigation):
+        from django.http import Http404
+        raise Http404
     if tab == 'templates':
         from apps.documents.template_catalog import show
 
@@ -213,6 +216,11 @@ def project(request, case_id, tab='journey'):
     finance = project_journey.finance_facts(request.user, case) if 'finance.read' in actions else None
     engagement = project_journey.engagement_facts(request.user, case) if 'engagement.read' in actions else None
     from apps.agents.assistant import cases_for
-    can_ask = {'agent.extract', 'factory.read'}.issubset(actions) and cases_for(request.user, 'tola').filter(pk=case.pk).exists()
+    from apps.identity.factory_access import PERSONA_ROLES, department_cases
+    can_ask = cases_for(request.user, 'tola').filter(pk=case.pk).exists()
+    department_links = [(persona, assistant_name) for persona, assistant_name in (
+        ('tola', 'PMO records'), ('chidi', 'Finance records'), ('zainab', 'HR records'))
+        if department_cases(request.user, PERSONA_ROLES[persona]).filter(pk=case.pk).exists()]
     return render(request, 'design/project.html', {'case': case, 'actions': actions, 'journey': journey, 'finance': finance,
-                                                   'engagement': engagement, 'tab': tab, 'tabs': navigation, 'can_ask_tola': can_ask})
+                                                   'engagement': engagement, 'tab': tab, 'tabs': navigation,
+                                                   'department_links': department_links, 'can_ask_tola': can_ask})

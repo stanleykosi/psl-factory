@@ -122,17 +122,31 @@ def intake(request):
 
 def work_grant_scope(actor):
     """Grant-level discovery scope. Protected native records may narrow it further."""
-    from apps.identity.factory_access import leads, team_work_scope
+    from apps.agents.department_context import work_definitions
+    from apps.identity.factory_access import department_cases
+    from apps.identity.models import Grant
+    from apps.identity.services import visible_cases
 
     active(actor)
     scope=Q(pk__in=[])
-    has_team = leads(actor).exists()
+    for persona, role in [('tola', 'pmo-lead'), ('chidi', 'finance-lead')]:
+        scope |= Q(definition__in=work_definitions(persona), case_id__in=department_cases(actor, role).values('pk'))
+    explicit = visible_cases(actor)
+    if not explicit.exists():
+        return FactoryWork.objects.filter(scope)
+    by_actions = {}
     for name,spec in DEFINITIONS.items():
         actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
-        scope|=Q(definition=name,case_id__in=granted(actor,actions,include_roles=False).values('pk'))
-        if has_team and name != 'commercial/v1':
-            scope |= team_work_scope(actor, name, actions)
-    return FactoryWork.objects.filter(scope)
+        by_actions.setdefault(frozenset(actions) - {'case.read', 'factory.read'}, []).append(name)
+    grants = Grant.objects.filter(user=actor, active=True)
+    legacy = Q(pk__in=[])
+    for actions, names in by_actions.items():
+        eligible = Q(definition__in=names)
+        for action in sorted(actions):
+            eligible &= Q(case_id__in=grants.filter(action=action).values('case_id'))
+        legacy |= eligible
+    return FactoryWork.objects.filter(scope | (legacy & Q(case__in=explicit,
+        case_id__in=grants.filter(action='factory.read').values('case_id'))))
 
 
 def visible(actor, *, work_id=None, case_id=None):

@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Connected department visibility to the staff roles for project lists, work, assignments, assistant conversations and source links. Added a department-wide conversation option for PMO and Finance heads, a readable source list for each department, and a database check for the single PMO head. Verified real OpenRouter answers for all three assistants using test data. [Results](docs/design/department-role-checks-2026-11-21.md)
+
 21 November 2026. Put role headings and team invitation links on My work and moved the scoped assignments and decisions there. Updated sign-in, navigation, back links and the connected work client. The former page address now redirects to My work.
 
 ## 21 November 2026 · Frontend handoff

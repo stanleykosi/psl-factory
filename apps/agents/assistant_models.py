@@ -10,6 +10,8 @@ class AssistantConversation(models.Model):
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     case = models.ForeignKey('core.Case', on_delete=models.PROTECT)
     persona = models.CharField(max_length=12)
+    scope = models.CharField(max_length=12, choices=[('project', 'Project'), ('department', 'Department')],
+                             default='project')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

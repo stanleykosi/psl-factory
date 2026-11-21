@@ -21,7 +21,8 @@ ROLE = choice(*ROLES)
 HASH = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
 STATUS = choice('queued', 'running', 'draft', 'reviewed', 'held', 'interrupted')
 STRING = {'type': 'string'}
-CONVERSATION = obj({'conversation_id': UUID, 'case_id': UUID, 'agent': PERSONA, 'updated_at': DATETIME,
+SCOPE = choice('project', 'department')
+CONVERSATION = obj({'conversation_id': UUID, 'case_id': UUID, 'scope': SCOPE, 'agent': PERSONA, 'updated_at': DATETIME,
                     'django_url': TEXT})
 SOURCE = obj({'label': TEXT, 'django_url': TEXT})
 TURN = obj({
@@ -32,7 +33,7 @@ TURN = obj({
 
 def conversation_data(conversation):
     return {'conversation_id': conversation.pk, 'case_id': conversation.case_id, 'agent': conversation.persona,
-            'updated_at': conversation.updated_at, 'django_url': reverse('assistant_thread', args=[conversation.pk])}
+            'scope': conversation.scope, 'updated_at': conversation.updated_at, 'django_url': reverse('assistant_thread', args=[conversation.pk])}
 
 
 @endpoint(response=obj({'items': array(CONVERSATION, limit=25), 'as_of': DATETIME}),
@@ -42,11 +43,11 @@ def conversations(request):
     return {'items': [conversation_data(row) for row in rows], 'as_of': timezone.now()}
 
 
-@endpoint(method='POST', request=obj({'agent': PERSONA, 'case_id': UUID, 'idempotency_key': UUID}),
+@endpoint(method='POST', request=obj({'agent': PERSONA, 'case_id': UUID, 'idempotency_key': UUID, 'scope': SCOPE}, optional=('scope',)),
           response=CONVERSATION, summary='Open an assistant conversation for this project and user')
 def start_conversation(request, *, body):
     case = get_object_or_404(assistant.cases_for(request.user, body['agent']), pk=body['case_id'])
-    return conversation_data(open_conversation(request.user, body['agent'], case, body['idempotency_key']))
+    return conversation_data(open_conversation(request.user, body['agent'], case, body['idempotency_key'], body.get('scope', 'project')))
 
 
 @endpoint(response=obj({

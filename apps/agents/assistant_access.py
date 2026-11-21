@@ -34,6 +34,12 @@ def admitted(cases, persona):
 
 
 def project_sources(conversation, sources):
+    from apps.identity.factory_access import PERSONA_ROLES, department_cases, role_managed
+
+    if role_managed(conversation.actor):
+        if not department_cases(conversation.actor, PERSONA_ROLES[conversation.persona]).filter(pk=conversation.case_id).exists():
+            raise PermissionDenied('This project is outside your department access.')
+        return sources
     if conversation.case.synthetic:
         return sources
     rule = model_rule(conversation.case, conversation.persona)

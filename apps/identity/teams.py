@@ -116,10 +116,24 @@ def verify_invitation(row):
 def admit(row, user):
     verify_invitation(row)
     pin = row.role_scope
+    check_head_appointment(row.case, pin, user.pk, lock=True)
     membership = StaffMembership.objects.create(case=row.case, user=user, role=pin['role'], mode=pin['mode'],
                                                 team_id=pin['team_id'], invitation=row)
     event(row.actor, row.case, 'staff.membership_admitted', member=membership.pk, person=user.pk, team=membership.team_id)
     return membership
+
+
+def check_head_appointment(case, pin, user_id=None, *, lock=False):
+    if not pin or (pin['role'], pin['mode']) != ('pmo-lead', 'lead'):
+        return
+    if lock:
+        from django.db import connection
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", ['psl-pmo-head:' + case.tenant])
+    if StaffMembership.objects.filter(case__tenant=case.tenant, role='pmo-lead', mode='lead',
+                                      active=True).exclude(user_id=user_id).exists():
+        raise ValidationError('This organisation already has a PMO head. An administrator must end that appointment before naming a new head.')
 
 
 @transaction.atomic
@@ -146,10 +160,13 @@ def revoke(actor, case_id, member_id, reason):
 
 def visible_assignments(actor):
     from .team_models import StaffAssignment
+    from .factory_access import department_cases
 
     own = memberships(actor)
     teams = own.filter(mode='lead').values('team_id')
     return StaffAssignment.objects.filter(membership__active=True, membership__user__is_active=True).filter(
         Q(membership_id__in=Subquery(own.values('pk'))) |
-        Q(membership__team_id__in=Subquery(teams))
+        Q(membership__team_id__in=Subquery(teams)) |
+        Q(membership__role='pmo-lead', case__in=department_cases(actor, 'pmo-lead', heads_only=True)) |
+        Q(membership__role='finance-lead', case__in=department_cases(actor, 'finance-lead', heads_only=True))
     ).filter(Q(action__isnull=True) | Q(action__current__owner_id=F('membership__user_id')))

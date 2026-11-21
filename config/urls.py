@@ -206,6 +206,7 @@ urlpatterns += [path('projects/<uuid:case_id>/milestones/change-link/', change_s
 urlpatterns += [path('overview/', design_views.overview, name='design_overview'),
                 path('assistant/', design_views.agents, name='design_agents'),
                 path('assistant/new/<slug:persona>/', assistant_views.start, name='assistant_start'),
+                path('assistant/records/<slug:persona>/<uuid:case_id>/', assistant_views.department_records, name='department_records'),
                 path('assistant/handoff/<uuid:turn_id>/<slug:persona>/', assistant_views.transfer, name='assistant_transfer'),
                 path('assistant/<uuid:conversation_id>/', assistant_views.thread, name='assistant_thread'),
                 path('getting-started/', design_views.getting_started, name='getting_started'),

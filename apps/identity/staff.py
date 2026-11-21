@@ -141,6 +141,9 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
 
 def _issue_invitation(actor, case, cfg, settings, username, name, email, actions, preceding,
                       *, pin, profile=None, extra=(), inviting_membership=None):
+    from .teams import check_head_appointment
+
+    check_head_appointment(case, pin)
     old = StaffInvitation.objects.filter(case=case, username=username).order_by('-number').first()
     user_model = get_user_model()
     if preceding != (old.pk if old else None) or user_model.objects.filter(username__iexact=username).exists():

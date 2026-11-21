@@ -132,7 +132,15 @@ def _inspect(fn, args, query_limit):
 def summaries(actor, cases):
     if not cases:
         return []
-    grants = active_case_grants(actor, [case.pk for case in cases], actions=READ_ACTIONS)
+    from apps.identity.services import legacy_projects
+    from apps.core.models import Case
+    from apps.identity.factory_access import DEPARTMENT_READS, department_cases
+    case_ids = [case.pk for case in cases]
+    old_scope = legacy_projects(actor, Case.objects.filter(pk__in=case_ids))
+    grants = active_case_grants(actor, list(old_scope.values_list('pk', flat=True)), actions=READ_ACTIONS)
+    for role, allowed in DEPARTMENT_READS.items():
+        projects = department_cases(actor, role).filter(pk__in=case_ids)
+        grants.update((pk, action) for pk in projects.values_list('pk', flat=True) for action in allowed & set(READ_ACTIONS))
     visible_work = [case.pk for case in cases if (case.pk, 'factory.read') in grants]
     closed_dates = _closed_dates(cases)
     station = {}

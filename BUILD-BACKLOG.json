@@ -1,4 +1,14 @@
 {
+  "department_assistant_roles_20261121": {
+    "decision": 1,
+    "status": "implemented_and_browser_checked",
+    "personas": ["tola", "chidi", "zainab"],
+    "head_scope": ["PMO", "Finance"],
+    "pmo_heads_per_organisation": 1,
+    "member_scope": "Department records on assigned projects",
+    "pending_integration": "Live HR source",
+    "evidence": "docs/design/department-role-checks-2026-11-21.md"
+  },
   "my_work_role_heading_20261121": {
     "status": "hosted_postgresql_and_browser_verified",
     "scope": "Consolidate role headings, team invitation links, scoped assignments and approvals into the existing My work entry. Remove the separate navigation destination.",

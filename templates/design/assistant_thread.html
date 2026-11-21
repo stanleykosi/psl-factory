@@ -2,7 +2,7 @@
 {% block title %}{{ persona.0 }} · PSL Factory{% endblock %}
 {% block content %}
 <a class="back-link" href="{% url 'design_agents' %}">← Assistant</a>
-<header class="page-heading"><div><h1>{{ persona.0 }}</h1><p class="lede">{{ persona.1 }} · {{ case|workspace_name }}</p></div></header>
+<header class="page-heading"><div><h1>{{ persona.0 }}</h1><p class="lede">{{ persona.1 }} · {% if conversation.scope == 'department' %}All department projects{% else %}{{ case|workspace_name }}{% endif %}</p>{% if conversation.persona == 'zainab' %}<p>The live HR system is not connected yet.</p>{% endif %}</div></header>
 <div class="factory-case-layout"><section class="card assistant-thread" aria-label="Conversation">
   {% for turn in turns %}
   <article class="assistant-turn">
@@ -33,7 +33,7 @@
       {% elif turn.transfer_action %}<form action="{{ turn.transfer_action }}" method="post">{% csrf_token %}<button type="submit" class="button secondary">Ask {{ turn.transfer_name }} instead</button></form>{% endif %}
     </div>
   </article>
-  {% empty %}<p>Ask about this project. {{ persona.0 }} will check the records you can access.</p>{% endfor %}
+  {% empty %}<p>{% if conversation.scope == 'department' %}Ask about all your department’s projects, or name one project to look at it more closely.{% else %}Ask about this project. {{ persona.0 }} will check its records.{% endif %}</p>{% endfor %}
   {% if waiting %}{{ form.errors }}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
     <script defer src="{% static 'assistant-progress.js' %}"></script>
   {% else %}<form method="post" id="assistant-compose" class="assistant-compose">{% csrf_token %}{{ form.key }}{{ form.non_field_errors }}{{ form.question.as_field_group }}
@@ -46,5 +46,5 @@
   <button class="button primary" type="submit">Send</button></form>{% endif %}
 </section>
 {% if earlier %}<aside class="card" aria-label="Earlier conversations"><h2>Earlier conversations</h2><ul>{% for item in earlier %}
-<li><a href="{% url 'assistant_thread' item.pk %}">{{ item.case|workspace_name }} · {{ item.persona|title }}</a></li>{% endfor %}</ul></aside>{% endif %}</div>
+<li><a href="{% url 'assistant_thread' item.pk %}">{% if item.scope == 'department' %}All department projects{% else %}{{ item.case|workspace_name }}{% endif %} · {{ item.persona|title }}</a></li>{% endfor %}</ul></aside>{% endif %}</div>
 {% endblock %}

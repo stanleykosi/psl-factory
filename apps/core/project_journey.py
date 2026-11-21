@@ -176,12 +176,20 @@ def issue_register_row(issue, as_of, register_url):
 def sections(actor, case, tab, grants, query='', pages=None, selected=None):
     if not any(item['key'] == tab for item in tabs(case, grants)):
         raise Http404
+    from apps.identity.factory_access import department_cases
+    project_reader = department_cases(actor, 'pmo-lead').filter(pk=case.pk).exists()
 
     def section(title, action, route, records, present):
         page_key = route + '-page'
         window = Paginator(records, 25).get_page(pages.get(page_key) if pages else None)
         result={'title': title, 'action': action, 'url': reverse(route, args=[case.pk]), 'page': window, 'page_key': page_key,
                 'items': [present(record) for record in window]}
+        group = {'case': 'milestone', 'issues': 'issue', 'escalations': 'escalation', 'changes': 'change',
+                 'emergencies': 'emergency', 'rfp': 'bid'}.get(route)
+        if project_reader and group:
+            result['url'] = reverse('department_records', args=['tola', case.pk]) + '?group=' + group
+            for item, record in zip(result['items'], window):
+                item['url'] = result['url'] + f'&id={record.pk}'
         if pages is not None:
             for direction in ['previous','next']:
                 if getattr(window,'has_'+direction)():
@@ -222,7 +230,10 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
         actions = apply(ActionItem.objects.filter(case=case, current__isnull=False)).filter(
             Q(reference__icontains=query) | Q(current__description__icontains=query)
         ).select_related('current__owner').order_by('current__due_at', 'pk')
-        if scoped:
+        if project_reader:
+            actions = actions.filter(Q(staffassignment__isnull=True) | Q(staffassignment__membership__role='pmo-lead'),
+                                     current__evidence__in=public_evidence(case.evidence.all()))
+        elif scoped:
             actions = actions.filter(pk__in=assignments.values('action_id')).annotate(
                 role_assignment=Subquery(assignments.filter(action_id=OuterRef('pk')).values('pk')[:1]),
             )
@@ -230,9 +241,12 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
             lambda a: {'title': a.current.description, 'state': a.current.status.replace('_', ' ').capitalize(),
              'detail': (a.current.owner.get_full_name() or a.current.owner.username) if a.current.owner else 'Owner needed',
              'due': a.current.due_at, 'show_due': True,
-             'url': reverse('role_work_detail', args=[a.role_assignment]) if scoped else
+             'url': (reverse('department_records', args=['tola', case.pk]) + f'?group=action&id={a.pk}') if project_reader else
+             reverse('role_work_detail', args=[a.role_assignment]) if scoped else
              reverse('design_project_action', args=[case.pk, a.pk])})
-        if scoped:
+        if project_reader:
+            result.update(action='Project action records', url=reverse('department_records', args=['tola', case.pk]) + '?group=action')
+        elif scoped:
             result.update(action='Open team assignments', url=reverse('home') + '#assignments')
         return [result]
     if tab == 'registers':

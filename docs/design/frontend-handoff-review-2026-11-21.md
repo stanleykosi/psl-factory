@@ -1,5 +1,9 @@
 # What remains from the frontend handoff
 
+## Decision 1 · Department assistants
+
+PSL chose role-based access for Tola, Chidi and Zainab on 21 November. For staff on the new roles, the department and project assignment determine what the assistant reads. The single PMO head can ask Tola across PMO, and the Finance head can ask Chidi across Finance. Project staff see their assigned projects. Zainab is available to HR with the live HR connection pending. The earlier references below to project-by-project assistant approval describe the previous setup. [Current role rules](../../guide/11-FULL-PRODUCT.md#role-based-work-and-supervision)
+
 ## Repairs and new browser checks · 21 November 2026
 
 The original design work is in [d935c921](https://github.com/stanleykosi/psl-factory/commit/d935c921). The frontend developer added the [backend handoff and its 45 questions in 24d53631](https://github.com/stanleykosi/psl-factory/commit/24d53631). The findings below this update describe the build before the repairs.

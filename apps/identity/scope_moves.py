@@ -18,6 +18,7 @@ def prepare(actor, case, person_id, role, mode, team_id):
     source = primary_roles.review(actor, case, person_id)
     person, cfg = source['person'], source['authority']
     pin = teams.scope_pin(case, role, mode, team_id)
+    teams.check_head_appointment(case, pin, person_id)
     grants = list(Grant.objects.filter(case=case, user=person, active=True).order_by('action').values('id', 'action'))
     if {row['action'] for row in grants} - set(cfg.value['allowed_actions']):
         raise PermissionDenied('The complete workspace access needs its authorised administrator.')
@@ -62,6 +63,7 @@ def apply(actor, case_id, person_id, role, mode, team_id, fingerprint, operation
             raise ValidationError('IDEMPOTENCY_CONFLICT: This request already recorded a different move.')
         return recorded
     review = prepare(actor,case,person_id,role,mode,team_id)
+    teams.check_head_appointment(case, review['scope'], person_id, lock=True)
     if fingerprint != review['fingerprint']:
         raise ValidationError('STALE_VERSION: Review current access, work and team before confirming.')
     if review['holds']:

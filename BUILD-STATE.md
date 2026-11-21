@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Department assistants · 21 November 2026
+
+Tola, Chidi and Zainab use the signed-in person's role. PMO and Finance heads can open one conversation for their whole department or choose a project. Project staff see just their assigned projects. Staff using the new roles can read departmental records on incoming projects without an individual project approval. The database enforces one PMO head per organisation. HR's live connection is pending. [Browser checks and test scope](docs/design/department-role-checks-2026-11-21.md)
+
 ## My work and role headings · 21 November 2026
 
 The existing My work page is the signed-in workspace for every staff role. It shows the person's role as its heading. Team invitation and staff administration links sit beside the heading, and scoped assignments and decisions use the workspace's existing work views. The former Role dashboard address redirects to My work. Existing workspace access, decision authority and team invitation rules govern the actions shown.

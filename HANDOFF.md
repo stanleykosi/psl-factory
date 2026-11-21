@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Department roles and assistants · 21 November 2026
+
+Decision 1 is implemented. Open **Assistant** as the PMO or Finance head, choose the named assistant, and keep **All department projects** selected for an organisation-wide departmental answer. A member selects an assigned project. HR can start a conversation with Zainab before connecting its source system. Admin can end a PMO appointment and name the next head. The account cleanup remains a separate task. [Release and browser checks](docs/design/department-role-checks-2026-11-21.md)
+
 ## Single My work entry · 21 November 2026
 
 Use the existing My work link. The header shows the person's current role, with team invitations for leads and team management for delegated Admins. The same page carries scoped assignments and decisions. The former `/my-role/` page redirects to My work. The connected work client reads the existing assignments API and offers the same scoped controls.
