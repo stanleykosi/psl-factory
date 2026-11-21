@@ -276,9 +276,11 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if document_hold(version):return [],'Final document review returned, rejected or withdrew this version; record a corrected source instruction'
     publication=Publication.objects.filter(version=version).first()
     if not publication and not document_observed(work,version):return ['ACT09'],'Link the exact existing native response document and its review'
+    binding=RFPDocumentBinding.objects.get(version=version)
+    if 'submission_pack' in binding.snapshot and not HumanTask.objects.filter(case=work.case,version=version).exists():
+        return [],'Send the current client pack for independent review.'
     try:validate_review(work.case,version)
     except (ValidationError,PermissionDenied):return [],'Waiting for final review of this exact client response'
-    binding=RFPDocumentBinding.objects.get(version=version)
     if binding.snapshot['route']['method']=='manual_client_portal':
         return [],'Record the original receipt from the configured client portal'
     if not publication:
@@ -331,11 +333,14 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             try:validate_review(case,version);task=None
             except (ValidationError,PermissionDenied):
                 task=HumanTask.objects.filter(case=case,version=version,status='open').first()
-                if not task:task=request_review(actor,case.pk,version.pk,case.revision)
+                if not task and 'submission_pack' not in version.rfpdocumentbinding.snapshot:
+                    task=request_review(actor,case.pk,version.pk,case.revision)
             return {'head':work.source_head_id,'document_version':version.pk,'native_review_task':task.pk if task else None,'reused_native_document':True}
         version=adapter.draft(work,row,value);case.refresh_from_db()
-        task=request_review(actor,case.pk,version.pk,case.revision)
-        return {'head':work.source_head_id,'document_version':version.pk,'native_review_task':task.pk,'approved':False}
+        task=None
+        if 'submission_pack' not in version.rfpdocumentbinding.snapshot:
+            task=request_review(actor,case.pk,version.pk,case.revision)
+        return {'head':work.source_head_id,'document_version':version.pk,'native_review_task':task.pk if task else None,'approved':False}
     if kind=='ACT11':
         version=document_for(work,value)
         if not version:raise ValidationError('Exact current reviewed client response required')

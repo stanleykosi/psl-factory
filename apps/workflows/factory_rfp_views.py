@@ -421,6 +421,9 @@ def detail(request,work,focus=None):
                     raise ValidationError('Check the highlighted cover note and client file fields.')
                 submission_pack.record(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),
                                        pack_form.cleaned_data)
+            elif action=='submission_pack_review':
+                submission_pack.send_for_review(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),
+                                                int(request.POST.get('pack','0')),int(request.POST.get('version','0')))
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')
             elif action=='adopt_profile':runtime.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             elif action=='portal_receipt':
@@ -513,7 +516,8 @@ def detail(request,work,focus=None):
         source=SourceForm(work.case,initial=initial)
         mappings=Mappings(initial=value.get('matrix',[]),prefix='requirements',form_kwargs={'case':work.case})
     document=row['rfp']['document']
-    pack_context=submission_pack.panel(request.user,work,row['rfp']['response'],pack_form) if focus in (None,'decision') else {}
+    pack_context=submission_pack.panel(request.user,work,row['rfp']['response'],pack_form,
+                                       document=document) if focus in (None,'decision') else {}
     from apps.pmo.rfp_submission_artifacts import panel as submission_pdf_panel
     submission_pdf = submission_pdf_panel(request.user, work.case, document) if focus in (None,'decision') else None
     receipts=PublicationReceipt.objects.filter(publication__version__document__case=work.case).filter(

@@ -71,6 +71,8 @@ class RFPReviewedPDFPortalTests(TestCase):
         self.assertIsNotNone(version, work.finding)
         binding = RFPDocumentBinding.objects.get(version=version)
         artifact = RFPSubmissionArtifact.objects.get(binding=binding)
+        self.assertEqual(command(decision_url, 'submission_pack_review', pack=binding.snapshot['submission_pack'],
+                                 version=version.pk).status_code, 302)
         self.assertLess(artifact.size, 20_000_000)
         self.assertNotContains(self.client.get(response_url), '<button>Record portal receipt</button>', html=True)
         review = review_version(reviewer, case.pk, version.pk, 'approve', 'Reviewed exact PDF and declarations.', rev(case))

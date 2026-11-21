@@ -5,6 +5,7 @@
 {% if invitation_link %}<section class="card onboarding-card">
   <h2>Invitation is ready</h2><p>Share this one-use link with the named recipient through an approved channel.</p>
   <label for="staff-invitation-link">Invitation link</label><input id="staff-invitation-link" readonly value="{{ invitation_link }}">
+  <p><a class="button secondary" href="{{ invitation_link }}" rel="noopener noreferrer" target="_blank">Preview invitation</a></p>
 </section>{% endif %}
 <section class="card onboarding-card"><h2>{% if renewing %}Renew invitation{% else %}Invite a person{% endif %}</h2>
   <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.project_review }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}{{ form.profile.as_field_group }}

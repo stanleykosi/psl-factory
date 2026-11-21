@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. An invitation preview can show two reviewed workspace roles before account setup. Optional alerts open preferences after ordinary sign-in and depend on a verified destination. Existing basic sign-in and independent role boundaries apply to the exact requested work. Saving a typed bid pack creates its current draft. The source owner separately sends it to independent review before any submission.
+
 21 November 2026. Staff departure can preserve a started work item by binding a reviewed replacement with current scope before deactivation. The prior worker decisions remain theirs. Forecast actuals keep independent source verification and per-match reversal. The Planning station displays the exact design approval hold and scoped Setup link while preserving the requirements and Engineering estimate for authorized readers.
 
 21 November 2026. Emergency incident intake records its source, plan and reported Unknown classifications before checking authority. Normal Change assessment retains its exact private proof and role. The escalation clock informs urgency while a scoped human decision controls communication. An empty optional QuickBooks attachment permits the same typed observation and exact evidence check as a submission with a file. Keep the old and current held observations visible.

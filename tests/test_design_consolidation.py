@@ -41,6 +41,40 @@ class DesignConsolidationTests(TestCase):
         self.assertNotContains(response, '2 open')
         self.assertIn('no-store', response.headers['Cache-Control'])
 
+    def test_sign_in_can_switch_to_exact_scoped_destination_with_work_email(self):
+        user = get_user_model().objects.create_user('sample-other-session', email='preparer@example.invalid',
+                                                     password='synthetic-other-session-only')
+        Grant.objects.create(case=self.case, user=user, action='case.read')
+        self.client.force_login(self.actor)
+        target = reverse('design_project', args=[self.case.pk])
+        login = reverse('login', query={'next': target})
+        page = self.client.get(login)
+        self.assertContains(page, 'continue to the work you opened')
+        self.assertContains(page, 'Keep me signed in')
+        self.assertNotContains(page, self.case.title)
+        result = self.client.post(login, {'username': 'PREPARER@example.invalid',
+                                         'password': 'synthetic-other-session-only', 'next': target})
+        self.assertRedirects(result, target, fetch_redirect_response=False)
+        self.assertEqual(int(self.client.session['_auth_user_id']), user.pk)
+        self.assertTrue(self.client.session.get_expire_at_browser_close())
+
+        kept = self.client.post(login, {'username': user.username, 'password': 'synthetic-other-session-only',
+                                       'next': target, 'remember': 'on'})
+        self.assertRedirects(kept, target, fetch_redirect_response=False)
+        self.assertFalse(self.client.session.get_expire_at_browser_close())
+
+    def test_sign_in_rejects_ambiguous_email_and_unsafe_destination(self):
+        users = get_user_model().objects
+        for name in ('sample-email-first', 'sample-email-second'):
+            users.create_user(name, email='shared@example.invalid', password='synthetic-shared-email-only')
+        login = reverse('login')
+        bad = self.client.post(login, {'username': 'shared@example.invalid', 'password': 'synthetic-shared-email-only'})
+        self.assertIsNotNone(bad.context['form'].errors.get('__all__'))
+        self.assertFalse(self.client.session.get('_auth_user_id'))
+        good = self.client.post(login, {'username': 'sample-email-first', 'password': 'synthetic-shared-email-only',
+                                       'next': 'https://example.invalid/private/'})
+        self.assertRedirects(good, reverse('getting_started'), fetch_redirect_response=False)
+
     def test_project_links_are_limited_by_case_and_action(self):
         self.client.force_login(self.actor)
         url = reverse('design_project', args=[self.case.pk])

@@ -29,4 +29,16 @@
       </form>
     </details>
   {% endif %}
+  {% if submission_pack_review_version %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="submission_pack_review">
+      <input type="hidden" name="revision" value="{{ row.work.revision }}">
+      <input type="hidden" name="case_revision" value="{{ case.revision }}">
+      <input type="hidden" name="pack" value="{{ submission_pack.pk }}">
+      <input type="hidden" name="version" value="{{ submission_pack_review_version.pk }}">
+      <p>Send pack draft {{ submission_pack.number }} and its exact document for an independent review.</p>
+      <button type="submit">Send for review</button>
+    </form>
+  {% endif %}
 </section>

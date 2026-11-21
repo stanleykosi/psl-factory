@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Hosted the verified sign-in, invitation and bid request subset. Trial verified the two workspace roles in the ordinary invitation preview at phone width. The ledger is 246. The remaining native Payroll read error was traced to the receipt command guard being used for a read-only view. Keep the protected receipt action unchanged in the next test gate.
+
+21 November 2026. Pushed the verified 245-state checkpoint `a4f4f035`. The next Railway batch passed the bid queue and continued sign-in checks and the existing Accounting report-to-receipt path. Corrected the staff, Accounting and Payroll fixture issues. Replaced the unfinished broad Finance run with the focused exact cases grouped on four isolated PostgreSQL databases. Trial remains signed in.
+
 21 November 2026. Trial observed the directed weekly report actively assemble and settle to one report at the independent review boundary. The ledger reached 245. Candidate 291 brings the remaining role-dependent controls together, including restricted Payroll intake, corrected accounting extracts, email sign-in and private asset date proof.
 
 21 November 2026. Trial completed three more hosted walks for the Design Lead setup hold, independent Forecast actual verification/match/reversal and staff departure with original work continued under a reviewed replacement. The verified ledger is 244. Guarded 290 setup and both preservation probes succeeded, and the browser account stayed Trial.

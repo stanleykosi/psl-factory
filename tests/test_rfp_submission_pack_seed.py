@@ -65,6 +65,13 @@ class RFPSubmissionPackFixtureTests(TestCase):
 
         factory.run_until_wait(work.pk)
         binding = RFPDocumentBinding.objects.get(response_id=sample['response'])
+        self.assertFalse(HumanTask.objects.filter(version=binding.version).exists())
+        work.refresh_from_db()
+        self.assertContains(self.client.get(route), 'Send for review')
+        self.assertEqual(self.client.post(route, {
+            'action': 'submission_pack_review', 'revision': work.revision, 'case_revision': rev(case),
+            'pack': binding.snapshot['submission_pack'], 'version': binding.version_id,
+        }).status_code, 302)
         self.assertTrue(HumanTask.objects.filter(version=binding.version, status='open').exists())
         self.assertNotContains(self.client.get(route), 'Final client response review')
         self.client.force_login(trial)

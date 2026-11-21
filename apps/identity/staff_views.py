@@ -78,6 +78,8 @@ class PasswordForm(forms.Form):
     token = forms.CharField(min_length=43, max_length=43, label='Invitation code', widget=forms.PasswordInput)
     password = forms.CharField(max_length=128, label='Choose a password', widget=forms.PasswordInput)
     confirm = forms.CharField(max_length=128, label='Confirm password', widget=forms.PasswordInput)
+    review_alerts = forms.BooleanField(required=False, label='Review optional WhatsApp alerts after signing in',
+                                      help_text='Alerts are sent only to a verified number.')
 
     def clean(self):
         values = super().clean()
@@ -207,6 +209,8 @@ def accept(request):
             form.add_error('password', exc)
         else:
             messages.success(request, 'Your workspace account is ready. Sign in to continue.')
+            if form.cleaned_data['review_alerts']:
+                return redirect(reverse('login', query={'next': reverse('design_alert_preferences')}))
             return redirect('login')
     response = render(request, 'identity/staff_accept.html', {'form':form,'preview':preview,'problem':problem})
     response['Referrer-Policy'] = 'same-origin'

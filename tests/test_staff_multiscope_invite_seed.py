@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.db import connection
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from apps.core.alert_models import AccountDelivery
@@ -53,3 +54,46 @@ class MultiWorkspaceInvitationSeedTests(TestCase):
         self.assertEqual({key for key, _ in form.fields[seeded['additional_field']].choices if key}, keys)
         self.assertTrue(page.context['show_all_projects'])
         self.assertContains(page, 'No staff invitation recorded.')
+
+        invite = self.client.post(seeded['form'], {
+            **RECIPIENT,
+            'profile': PROFILES[1]['key'],
+            seeded['additional_field']: PROFILES[0]['key'],
+            'revision': form.initial['revision'],
+            'project_review': form.initial['project_review'],
+        })
+        self.assertContains(invite, 'Preview invitation')
+        self.assertContains(invite, 'rel="noopener noreferrer"')
+        self.assertTrue(invite.context['invitation_link'].startswith('http://testserver/staff/join/#'))
+        self.assertFalse(users.filter(username=RECIPIENT['username']).exists())
+
+    def test_two_workspace_preview_and_optional_alert_handoff_require_sign_in(self):
+        trial = get_user_model().objects.create_user('psl-agent-trial')
+        seeded = prepare(trial)
+        first = Case.objects.get(pk=seeded['first'])
+        second = Case.objects.get(pk=seeded['second'])
+        contributor, reader = PROFILES
+        invitation, token = staff.invite(trial, first.pk, RECIPIENT['username'], RECIPIENT['name'],
+            RECIPIENT['email'], reader['actions'], first.revision, profile_key=reader['key'],
+            expected_authority=seeded['authority'],
+            workspace_choices={second.pk: (second.revision, contributor['key'])})
+        join = reverse('staff_accept_invite')
+        preview = self.client.post(join, {'action': 'preview', 'token': token})
+        self.assertContains(preview, first.title)
+        self.assertContains(preview, second.title)
+        self.assertContains(preview, 'Review optional WhatsApp alerts after signing in')
+        self.assertFalse(StaffAdmission.objects.filter(invitation=invitation).exists())
+        password = 'Synthetic-Workbench-Setup-763'
+        settings_path = reverse('design_alert_preferences')
+        login = reverse('login', query={'next': settings_path})
+        response = self.client.post(join, {'action': 'accept', 'token': token, 'password': password,
+                                         'confirm': password, 'review_alerts': 'on'})
+        self.assertRedirects(response, login, fetch_redirect_response=False)
+        self.assertFalse(self.client.session.get('_auth_user_id'))
+        admission = StaffAdmission.objects.get(invitation=invitation)
+        self.assertEqual(set(Grant.objects.filter(user=admission.user).values_list('case_id', flat=True)),
+                         {first.pk, second.pk})
+        signed_in = self.client.post(login, {'username': RECIPIENT['username'], 'password': password, 'next': settings_path})
+        self.assertRedirects(signed_in, settings_path, fetch_redirect_response=False)
+        self.assertContains(self.client.get(settings_path), 'Waiting for a verified WhatsApp number')
+        self.assertFalse(AccountDelivery.objects.filter(actor=admission.user).exists())

@@ -114,7 +114,8 @@
 .factory-login-agents { display: flex; gap: 8px; }
 .factory-login-agents img { width: min(30%, 128px); height: auto; object-fit: contain; }
 .factory-login-form form { max-width: 420px; }
-.factory-login-form input, .factory-login-form button { width: 100%; min-height: 48px; }
+.factory-login-form input:not([type='checkbox']), .factory-login-form button { width: 100%; min-height: 48px; }
+.factory-login-remember { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
 .factory-login-form .button.primary { background: #2459d6; border-color: #2459d6; }
 .factory-login-form .button.primary:hover { background: #1c47b0; }
 .onboarding-card { max-width: 640px; }

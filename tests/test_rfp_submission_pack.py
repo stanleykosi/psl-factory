@@ -19,6 +19,7 @@ from apps.pmo.models import RFPDocumentBinding, RFPSubmission, RFPSubmissionArti
 from apps.pmo.rfp_submission_artifacts import materialize, requirement_findings
 from apps.policy.services import register_reference
 from apps.workflows import factory, factory_rfp
+from apps.workflows.models import HumanTask
 from tests import factory_rfp_helpers as fixture
 from tests.helpers import activate, rev
 
@@ -96,6 +97,18 @@ class RFPSubmissionPackTests(TestCase):
         self.assertEqual(binding.snapshot['costing_decisions'], original['costing_decisions'])
         self.assertEqual(binding.snapshot['reviews'], original['reviews'])
         artifact = RFPSubmissionArtifact.objects.get(binding=binding)
+        self.assertFalse(HumanTask.objects.filter(version=first_version).exists())
+        self.assertContains(self.client.get(decision_url), 'Send for review')
+        self.assertContains(command('submission_pack_review', pack=pack.pk, version=legacy.pk),
+                            'Choose the exact current prepared pack')
+        self.assertFalse(HumanTask.objects.filter(version=first_version).exists())
+        self.assertEqual(command('submission_pack_review', pack=pack.pk, version=first_version.pk).status_code, 302)
+        task = HumanTask.objects.get(version=first_version)
+        self.assertEqual((task.status, task.created_by_id), ('open', maker.pk))
+        self.assertEqual(command('submission_pack_review', pack=pack.pk, version=first_version.pk).status_code, 302)
+        self.assertEqual(HumanTask.objects.get(version=first_version).pk, task.pk)
+        self.assertNotContains(self.client.get(decision_url), '<button type="submit">Send for review</button>', html=True)
+        self.assertFalse(Publication.objects.exists())
         self.assertEqual(materialize(binding).pk, artifact.pk)
         self.assertEqual(artifact.payload_sha256, first_version.payload_sha256)
         self.assertGreater(artifact.size, 100)
@@ -131,6 +144,7 @@ class RFPSubmissionPackTests(TestCase):
                        'Final client response review', 'Open the full pack PDF', 'exceeds the requested file size']:
             self.assertContains(page, phrase)
         self.assertNotContains(page, 'Save pack draft')
+        self.assertEqual(command('submission_pack_review', pack=pack.pk, version=first_version.pk).status_code, 403)
         with self.assertRaisesMessage(ValidationError, 'exceeds the requested file size'):
             review_version(self.reviewer, case.pk, first_version.pk, 'approve', 'File too large.', rev(case))
         self.assertEqual(command('submission_pack', **declared, **{'pack-file_size_rule': 'less_than',
@@ -163,6 +177,8 @@ class RFPSubmissionPackTests(TestCase):
         successor_pdf = RFPSubmissionArtifact.objects.get(binding__version=exact)
         self.assertNotEqual(successor_pdf.sha256, artifact.sha256)
         self.assertEqual(requirement_findings(successor, successor_pdf), [])
+        self.assertFalse(HumanTask.objects.filter(version=exact).exists())
+        self.assertEqual(command('submission_pack_review', pack=successor.pk, version=exact.pk).status_code, 302)
         self.client.force_login(self.reviewer)
         self.assertContains(self.client.get(decision_url), 'Revised cover note.')
         self.assertContains(self.client.get(decision_url), 'Matches the recorded file requirements.')

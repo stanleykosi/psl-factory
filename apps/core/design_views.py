@@ -2,7 +2,9 @@
 import os
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
 from django.db.models import Count
@@ -32,7 +34,35 @@ def discoverable_work(actor, *, case_id=None):
     return visible(actor,case_id=case_id).exclude(definition__in=['finance-payroll/v1', 'finance-bu/v1'])
 
 
+class FactorySignInForm(AuthenticationForm):
+    username = UsernameField(max_length=254, label='Work email or sign-in name',
+                             widget=forms.TextInput(attrs={'autofocus': True, 'autocomplete': 'username'}))
+    remember = forms.BooleanField(required=False, label='Keep me signed in')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].max_length = 254
+        self.fields['username'].widget.attrs['maxlength'] = 254
+
+    def clean(self):
+        identifier = self.cleaned_data.get('username', '')
+        if '@' in identifier:
+            users = get_user_model()._default_manager
+            if not users.filter(username=identifier).exists():
+                names = list(users.filter(email__iexact=identifier).order_by('pk').values_list('username', flat=True)[:2])
+                if len(names) == 1:
+                    self.cleaned_data['username'] = names[0]
+        return super().clean()
+
+
 class FactoryLogin(LoginView):
+    authentication_form = FactorySignInForm
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.request.session.set_expiry(None if form.cleaned_data['remember'] else 0)
+        return response
+
     def get_default_redirect_url(self):
         if not visible_cases(self.request.user).exists():
             return reverse('getting_started')
