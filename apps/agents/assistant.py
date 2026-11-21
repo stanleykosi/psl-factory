@@ -28,7 +28,8 @@ PAYROLL_REPORT_QUESTIONS = tuple(PAYROLL_REPORT_TOPICS.values())
 
 
 def cases_for(actor, persona):
-    cases = granted(actor, ['agent.extract', PERSONAS[persona][2]])
+    actions = ['agent.extract', PERSONAS[persona][2]]
+    cases = granted(actor, actions)
     if persona == 'chidi':
         from apps.finance.bu_models import BUReceipt
 
@@ -122,7 +123,7 @@ def tool_context(conversation):
             item['record'] = record
         sources.append(item)
 
-    source('Workspace', case.title, 'case', case.pk)
+    source('Workspace', case.title, 'design_project', case.pk)
     next_work = []
     if persona == 'tola':
         from apps.workflows.factory_definitions import DEFINITIONS

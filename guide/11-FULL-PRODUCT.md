@@ -22,6 +22,8 @@ Outputs are complete only with the source-required validation, review/acceptance
 
 ### Role-based work and supervision
 
+All signed-in staff use the same factory navigation and Start work catalogue. Each entry checks the person's current workspace and record access. The catalogue stays available when a person has no eligible project, and the form only offers projects they can use.
+
 The six base roles guide dashboards, access, decision routing and invitations. PMO Lead, Finance Lead, HR and Admin are the bases for teams. Team members use their department’s functions on work currently assigned to them. A team lead can oversee work assigned to their team within their recorded remit. For example, a PMO team member sees their own planning, delivery and reporting assignments. Their PMO Lead sees the team's assignments, progress, overdue work and decisions waiting for action. CTO and CEO are standalone roles with individually scoped access.
 
 | Base role | Dashboard focus |

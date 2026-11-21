@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Role navigation and workspace scope · 21 November 2026
+
+All staff roles use the same menu and complete Start work catalogue. A person can select their permitted workspace, see appropriate native work, and use their own assignments. Team leads can oversee the current team in that workspace. Approval and restricted evidence checks still run on the native subject. The role dashboard remains the staff entry point, with the shared factory pages available from it.
+
+Railway web `5f5e4ecc-5152-4fea-a87b-c5f6ca3675c8` and worker `1402770e-9d1c-4249-b729-a18fc7710cac` preserve the handoff deployment and use the existing role preview database. The Codex browser verified the live PMO Lead menu, Projects, Overview, Assistant, My work queue and Start work with 26 lines. No account reset or new owner policy was applied. The checks service runs the isolated suite in `1a547f9e-fbbb-4354-b7ec-6553c61f0081`. See [BUILD-TESTS.md](BUILD-TESTS.md) for the outcome.
+
 ## Clean Railway role testing · 21 November 2026
 
 The [Railway test site](https://psl-design-web-design-acceptance.up.railway.app/) now uses `psl_role_preview_20261121`. The user authorised removal of the previous test accounts, work and uploads. The former application database was dropped, and 42 private test objects and their recorded versions were removed. Earlier walkthrough entries describe the former preview.

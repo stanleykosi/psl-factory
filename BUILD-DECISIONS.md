@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. The user confirmed a common interface for all staff roles. Keep the complete factory menu and Start work catalogue visible. Resolve workspaces from current access, keep staff on their own work and leads on their team, and check action and source authority at the native record. Avoid creating new role-based menus or business approval rights.
+
 21 November 2026. The user authorised a clean start for the Railway test site, including removal of the former test accounts and their work. Prepare and verify a replacement database before changing the test services, then remove the former database and the dedicated test upload objects. Start with a delegated Admin and scoped PMO and Finance leads. The Admin dashboard reads current staff authority. Business approvals follow the native workflow authority. Actual HOD role appointments and policies remain deferred.
 
 21 November 2026. The user confirmed that role scope is required for company staff and that PMO, Finance and HR leads invite only their own team members. Use the same team rule for Admin members. Delegated Admins establish teams and appoint leads and the standalone CTO and CEO roles. A team invitation records the inviting lead’s exact current membership and staff administration delegation. Recheck both at acceptance. Former profile-only invitations are retained in history and need a role invitation for new account setup. Actual people and business decision authority remain deferred.

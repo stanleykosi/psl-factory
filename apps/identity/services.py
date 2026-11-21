@@ -29,7 +29,11 @@ def require(actor, case, action):
     scope = _subject_actions.get()
     if scope and scope[:2] == (actor.pk, case.pk) and action in scope[2]:
         return
-    if not Grant.objects.filter(user=actor, case=case, action=action, active=True).exists():
+    if Grant.objects.filter(user=actor, case=case, action=action, active=True).exists():
+        return
+    from .factory_access import authorized_leads
+
+    if not authorized_leads(actor, [action]).filter(case=case).exists():
         raise PermissionDenied('This record/action has no active grant')
 
 

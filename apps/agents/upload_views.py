@@ -9,12 +9,17 @@ from django.db import transaction
 from django.views.decorators.http import require_http_methods, require_safe
 
 from adapters import case_uploads
-from apps.core.views import accessible_case
-from apps.identity.services import active_case_grants, require
+from apps.core.workbench import granted
+from apps.identity.factory_access import project_actions
+from apps.identity.services import require, visible_cases
 from .models import AgentJob, CaseUpload
 from .upload_jobs import FOLLOW_UP, ROLES, authorize
 from . import file_draft_reviews, workflow_handoffs
 from . import upload_recovery
+
+
+def file_workspaces(actor):
+    return visible_cases(actor) | granted(actor, ['agent.extract', 'evidence.add']).filter(synthetic=True)
 
 
 def upload_file(actor, case, file):
@@ -52,7 +57,7 @@ def queue_draft(actor, upload, role):
 @login_required
 @require_http_methods(['GET', 'POST'])
 def workbench(request, case_id):
-    case = accessible_case(request.user, case_id)
+    case = get_object_or_404(file_workspaces(request.user), pk=case_id)
     uploads = CaseUpload.objects.filter(case=case, actor=request.user)
     error = None
     attempted_review = None
@@ -79,9 +84,9 @@ def workbench(request, case_id):
             error = exc.messages[0]
         except (OSError, ValueError):
             error = 'The request could not be completed.'
-    permissions = active_case_grants(request.user, [case.pk], actions=['agent.extract', 'document.review', 'evidence.add'])
-    can_use_agent = case.synthetic and (case.pk, 'agent.extract') in permissions
-    can_review = all((case.pk, permission) in permissions for permission in ('document.review', 'evidence.add'))
+    permissions = project_actions(request.user, case)
+    can_use_agent = case.synthetic and 'agent.extract' in permissions
+    can_review = file_draft_reviews.can_retain(request.user, case)
     jobs = list(AgentJob.objects.filter(upload__in=uploads, actor=request.user)
                 .select_related('upload', 'file_review').order_by('-pk')[:50]) if can_use_agent else []
     histories = upload_recovery.histories(request.user, case, jobs)
@@ -119,7 +124,7 @@ def workbench(request, case_id):
 def download(request, case_id, upload_id):
     from io import BytesIO
 
-    case = accessible_case(request.user, case_id)
+    case = get_object_or_404(file_workspaces(request.user), pk=case_id)
     upload = get_object_or_404(CaseUpload, case=case, actor=request.user, pk=upload_id)
     response = FileResponse(BytesIO(case_uploads.read(upload)), as_attachment=True,
                             filename=upload.name, content_type='application/octet-stream')

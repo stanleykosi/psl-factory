@@ -18,6 +18,7 @@ from django.views.decorators.http import require_http_methods, require_safe
 from apps.agents.models import AgentJob
 from apps.agents.upload_jobs import ROLES
 from apps.agents.upload_views import queue_draft, upload_file
+from apps.identity.factory_access import project_actions, project_cases
 from apps.identity.intake import options as intake_authority
 from apps.identity.services import active_case_grants, require, visible_cases
 from apps.workflows.factory_definitions import DEFINITIONS
@@ -166,8 +167,8 @@ def agents(request):
 @require_safe
 @never_cache
 def project(request, case_id, tab='journey'):
-    case = get_object_or_404(visible_cases(request.user), kind='project', pk=case_id)
-    actions = {action for _, action in active_case_grants(request.user, [case.pk])}
+    case = get_object_or_404(project_cases(request.user), pk=case_id)
+    actions = project_actions(request.user, case)
     navigation = project_journey.tabs(case, actions)
     if tab == 'templates':
         from apps.documents.template_catalog import show

@@ -214,13 +214,27 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
                         evidence, lambda e: {'title': e.kind.replace('_', ' ').capitalize(),
                             'state': f'Version {e.version}', 'at': e.created_at})]
     if tab == 'actions':
+        from apps.identity.services import active_case_grants
+        from apps.identity.teams import visible_assignments
+
+        scoped = not active_case_grants(actor, [case.pk], actions=['meeting.read'])
+        assignments = visible_assignments(actor).filter(case=case, action__isnull=False)
         actions = apply(ActionItem.objects.filter(case=case, current__isnull=False)).filter(
             Q(reference__icontains=query) | Q(current__description__icontains=query)
         ).select_related('current__owner').order_by('current__due_at', 'pk')
-        return [section('Project actions', 'Manage actions and minutes', 'meetings', actions,
+        if scoped:
+            actions = actions.filter(pk__in=assignments.values('action_id')).annotate(
+                role_assignment=Subquery(assignments.filter(action_id=OuterRef('pk')).values('pk')[:1]),
+            )
+        result = section('Project actions', 'Manage actions and minutes', 'meetings', actions,
             lambda a: {'title': a.current.description, 'state': a.current.status.replace('_', ' ').capitalize(),
              'detail': (a.current.owner.get_full_name() or a.current.owner.username) if a.current.owner else 'Owner needed',
-             'due': a.current.due_at, 'show_due': True, 'url': reverse('design_project_action', args=[case.pk, a.pk])})]
+             'due': a.current.due_at, 'show_due': True,
+             'url': reverse('role_work_detail', args=[a.role_assignment]) if scoped else
+             reverse('design_project_action', args=[case.pk, a.pk])})
+        if scoped:
+            result.update(action='Open team assignments', url=reverse('role_dashboard'))
+        return [result]
     if tab == 'registers':
         result = []
         if 'issue.read' in grants:

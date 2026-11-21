@@ -73,28 +73,24 @@ INTAKES=(
     ('pmo-finance/v1','Prepare an invoice','Continue an exact Finance preparation or PMO completion through review, issuance and delivery.',('finance.read','factory.start')),
 )
 
+def intake_catalogue():
+    bid = {'definition': rfp_fresh_intake.LINE, 'title': 'Log a received bid',
+           'description': 'Start a workspace and keep the original document.'}
+    return [bid, *({'definition': name, 'title': title, 'description': description}
+                   for name, title, description, _ in INTAKES)]
+
+
 def intake_options(actor):
     available={}
-    for _,_,_,actions in INTAKES:
-        if actions not in available:available[actions]=granted(actor,list(actions)).filter(kind='project').exists()
-    options = [{'definition':name,'title':title,'description':description} for name,title,description,actions in INTAKES if available[actions]]
+    allowed = set()
+    for name, _, _, actions in INTAKES:
+        if actions not in available:
+            available[actions] = granted(actor, actions).filter(kind='project').exists()
+        if available[actions]:
+            allowed.add(name)
     if rfp_fresh_intake.available(actor).exists():
-        options.insert(0, {'definition': rfp_fresh_intake.LINE, 'title': 'Log a received bid',
-            'description': 'Start a workspace and keep the original document.'})
-    return options
-
-
-def intake_available(actor):
-    # Every entry requires factory.start. The remaining grants must all hold on one project.
-    eligible = Q(pk__in=[])
-    action_groups = {frozenset(actions) - {'factory.start'} for _, _, _, actions in INTAKES}
-    for actions in action_groups:
-        match = Q()
-        for action in sorted(actions):
-            match &= Q(pk__in=Grant.objects.filter(user=actor, active=True, action=action).values('case_id'))
-        eligible |= match
-    return (granted(actor, ['factory.start']).filter(kind='project').filter(eligible).exists()
-            or rfp_fresh_intake.available(actor).exists())
+        allowed.add(rfp_fresh_intake.LINE)
+    return [option for option in intake_catalogue() if option['definition'] in allowed]
 
 
 @login_required
@@ -112,25 +108,31 @@ def intake(request):
         response['Cache-Control'] = 'no-store'
         return response
     groups = {'Project work': [], 'Finance': [], 'Delivery and closure': []}
-    for option in options:
+    available = {option['definition'] for option in options}
+    for option in intake_catalogue():
         key = option['definition']
         title = 'Project work'
         if key.startswith(('finance-', 'pmo-finance/')):
             title = 'Finance'
         elif key.startswith('delivery-'):
             title = 'Delivery and closure'
-        groups[title].append(option)
+        groups[title].append({**option, 'available': key in available})
     response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
         'can_ask_tola': cases_for(request.user, 'tola').exists()})
     response['Cache-Control']='no-store';return response
 
 def work_grant_scope(actor):
     """Grant-level discovery scope. Protected native records may narrow it further."""
+    from apps.identity.factory_access import leads, team_work_scope
+
     active(actor)
     scope=Q(pk__in=[])
+    has_team = leads(actor).exists()
     for name,spec in DEFINITIONS.items():
         actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
-        scope|=Q(definition=name,case_id__in=granted(actor,actions).values('pk'))
+        scope|=Q(definition=name,case_id__in=granted(actor,actions,include_roles=False).values('pk'))
+        if has_team and name != 'commercial/v1':
+            scope |= team_work_scope(actor, name, actions)
     return FactoryWork.objects.filter(scope)
 
 
@@ -690,12 +692,13 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
 def index(request):
     from apps.identity.teams import memberships
 
-    if not visible_cases(request.user).exists() and memberships(request.user).exists():
-        return redirect('role_dashboard')
     # Retain legacy filtered workspace links while making the root a work-first surface.
     if any(k in request.GET for k in ['kind','area','tenant']):
         from apps.core.workbench_views import home
         return home(request)
+    if (not visible_cases(request.user).exists() and memberships(request.user).exists()
+            and not granted(request.user, ['factory.read']).exists()):
+        return redirect('role_dashboard')
     response=render(request,'factory/queue.html',queue_context(request.user,request.GET))
     response['Cache-Control']='no-store';return response
 

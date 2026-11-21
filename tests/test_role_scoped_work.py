@@ -1,8 +1,11 @@
 from datetime import timedelta
+import os
+from unittest.mock import patch
 from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import DatabaseError, connection, transaction
 from django.http import Http404
 from django.test import Client, TestCase
@@ -87,6 +90,8 @@ class RoleScopedWorkTests(TestCase):
         page = self.client.get(reverse('role_dashboard'))
         self.assertContains(page,'<h1>Admin</h1>',html=True)
         self.assertContains(page,'Manage teams and assignments')
+        for label in ('Projects', 'Overview', 'Assistant', 'Start work', 'Menu'):
+            self.assertContains(page, label)
         self.assertNotContains(page,self.case.title)
         dashboard = self.checked(self.api('/role-dashboard'),'/role-dashboard')
         self.assertEqual([(item['role'],item['mode']) for item in dashboard['positions']],[('admin','administrator')])
@@ -107,6 +112,102 @@ class RoleScopedWorkTests(TestCase):
             self.assertContains(lead_page,f'<h1>{label}</h1>',html=True)
             self.assertContains(lead_page,'Invite a teammate')
             self.assertNotContains(lead_page,'Manage teams and assignments')
+
+    def test_role_accounts_keep_the_full_factory_shell_and_scoped_destinations(self):
+        finance_team = teams.create_team(self.admin, self.case.pk, 'finance-lead', 'Finance')
+        hr_team = teams.create_team(self.admin, self.case.pk, 'hr', 'People')
+        positions = [
+            (self.admitted(mode='lead'), ['tola'], 'engagement/v1'),
+            (self.admitted('finance-lead', 'lead', finance_team), ['tola', 'chidi'], 'finance-accounts/v1'),
+            (self.admitted('hr', 'lead', hr_team), ['zainab'], None),
+            (self.admitted('cto', 'standalone'), [], None),
+            (self.admitted('ceo', 'standalone'), [], None),
+            (self.admitted(), [], None),
+        ]
+        for position, agents, starter in positions:
+            with self.subTest(role=position.role, mode=position.mode):
+                self.client.force_login(position.user)
+                page = self.client.get(reverse('role_dashboard'))
+                for label in ('My work', 'Projects', 'Overview', 'Assistant', 'Start work', 'Menu'):
+                    self.assertContains(page, label)
+                profile = self.checked(self.api('/me'), '/me')
+                self.assertTrue({'role_dashboard', 'my_work', 'projects', 'overview', 'assistant', 'setup'}
+                                <= {entry['key'] for entry in profile['destinations']})
+                self.assertEqual(profile['assistant_agents'], agents)
+                self.assertFalse(Grant.objects.filter(user=position.user, case=self.case, active=True).exists())
+                for route in ('workspace_overview', 'design_overview', 'design_agents', 'factory_intake', 'design_setup'):
+                    self.assertEqual(self.client.get(reverse(route)).status_code, 200)
+                chooser = self.client.get(reverse('factory_intake'))
+                self.assertContains(chooser, 'Log an engagement and connect planning')
+                self.assertContains(chooser, 'Prepare management accounts')
+                projects = self.checked(self.api('/projects'), '/projects')['items']
+                self.assertEqual([row['case_id'] for row in projects], [str(self.case.pk)] if agents else [])
+                self.assertEqual(self.client.get(reverse('design_project', args=[self.other.pk])).status_code, 404)
+                self.assertEqual(self.client.get(reverse('case', args=[self.case.pk])).status_code, 404)
+                if starter:
+                    self.assertIn(starter, profile['startable_lines'])
+                    self.assertContains(self.client.get(reverse('factory_create'), {'definition': starter}), self.case.pk)
+                else:
+                    self.assertEqual(profile['startable_lines'], [])
+
+    def test_pmo_lead_can_start_native_work_and_team_scope_survives_navigation(self):
+        from apps.workflows.models import FactoryWork
+
+        preparer = self.admitted(mode='lead')
+        teammate = self.admitted(mode='lead')
+        outsider = self.admitted(mode='lead', team=self.peer_team)
+        member = self.admitted()
+        evidence = add_evidence(self.admin, self.case.pk, 'engagement_source', 'Synthetic client request', 'client brief')
+        self.client.force_login(preparer.user)
+        response = self.client.post(reverse('factory_create'), {
+            'definition': 'engagement/v1', 'case': self.case.pk, 'key': 'role-navigation-engagement',
+            'route': 'B', 'evidence': evidence.pk, 'reference': 'TEST-NEW-ENGAGEMENT', 'revision': rev(self.case),
+        })
+        self.assertEqual(response.status_code, 302, response.content[:1000])
+        work = FactoryWork.objects.get(case=self.case, actor=preparer.user, definition='engagement/v1')
+        self.assertRedirects(response, reverse('factory_detail', args=[work.pk]))
+        self.assertContains(self.client.get(reverse('home'), {'queue': 'mine'}), 'TEST-NEW-ENGAGEMENT')
+        for position, available in ((preparer, True), (teammate, True), (outsider, False), (member, False)):
+            self.client.force_login(position.user)
+            self.assertEqual(self.api(f'/work/{work.pk}').status_code, 200 if available else 404)
+        for action in ('factory.execute', 'finance.read', 'document.review', 'delivery.planning_decide'):
+            with self.assertRaises(PermissionDenied):
+                require(preparer.user, self.case, action)
+        teams.revoke(self.admin, self.case.pk, teammate.pk, 'Synthetic membership ended')
+        self.client.force_login(teammate.user)
+        self.assertEqual(self.api(f'/work/{work.pk}').status_code, 404)
+        self.assertEqual(self.checked(self.api('/me'), '/me')['assistant_agents'], [])
+
+    @patch.dict(os.environ, {'OPENROUTER_MODEL': 'synthetic', 'OPENROUTER_API_KEY': 'synthetic'})
+    def test_lead_can_review_own_file_draft_without_case_wide_document_review(self):
+        from apps.agents.models import AgentJob
+        from apps.agents.upload_jobs import run_once
+        from apps.documents.models import Review
+
+        lead, other = self.admitted(mode='lead'), self.admitted(mode='lead', team=self.peer_team)
+        source = b'Synthetic confirmed meeting date.'
+        self.client.force_login(lead.user)
+        with patch('adapters.case_uploads.put'):
+            response = self.client.post(reverse('design_agents'), {
+                'workspace': self.case.pk, 'role': 'A01',
+                'file': SimpleUploadedFile('brief.txt', source, content_type='text/plain'),
+            })
+        self.assertEqual(response.status_code, 302, response.content[:500])
+        job = AgentJob.objects.get(actor=lead.user)
+        files = reverse('case_uploads', args=[self.case.pk])
+        download = reverse('case_upload_download', args=[self.case.pk, job.upload_id])
+        with patch('adapters.case_uploads.read', return_value=source), patch('adapters.openrouter.review',
+                return_value={'summary': 'Synthetic meeting', 'quotes': ['1'], 'gaps': []}):
+            self.assertTrue(run_once())
+        self.assertContains(self.client.get(files), 'Synthetic meeting')
+        self.client.force_login(other.user)
+        self.assertEqual(self.client.get(download).status_code, 404)
+        self.assertEqual(self.client.post(files, {'action': 'review', 'job': job.pk, 'note': 'Other lead'}).status_code, 404)
+        self.client.force_login(lead.user)
+        self.assertEqual(self.client.post(files, {'action': 'review', 'job': job.pk, 'note': 'Read original'}).status_code, 302)
+        self.assertTrue(Review.objects.filter(actor=lead.user, evidence__kind='agent_review_note').exists())
+        with self.assertRaises(PermissionDenied):
+            require(lead.user, self.case, 'document.review')
 
     def update(self, row, operation):
         path = f'/role-work/{row.pk}'

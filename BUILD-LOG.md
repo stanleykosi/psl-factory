@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Restored the shared factory shell and the Start work catalogue for staff whose access comes from a team. Connected project discovery, the native work queue, Assistant and private file drafts to the applicable workspace and team scope. Preserved the separate frontend handoff changes in the latest Railway release.
+
 21 November 2026. Added the dedicated staff Admin landing and team-management entry. Reset the Railway test data at the user's request and established the new Admin, PMO Lead and Finance Lead accounts. Verified the three public logins before removing the former database and the private test uploads.
 
 21 November 2026. Replaced access-profile onboarding with required role invitations in the staff application. Added team-owned invitation and renewal, database binding to the actual inviting lead, and visibility for scoped-only staff in the authorised Staff roster. A lead can invite through their own dashboard. Keep already-admitted staff and historical access evidence available under their current permissions.

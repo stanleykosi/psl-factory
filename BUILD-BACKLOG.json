@@ -1,4 +1,14 @@
 {
+  "shared_role_navigation_20261121": {
+    "status": "deployed_and_browser_verified",
+    "scope": "Shared factory navigation and complete Start work catalogue for signed-in staff. Workspace and exact team scope control available records and native actions.",
+    "web": "5f5e4ecc-5152-4fea-a87b-c5f6ca3675c8",
+    "worker": "1402770e-9d1c-4249-b729-a18fc7710cac",
+    "checks": "1a547f9e-fbbb-4354-b7ec-6553c61f0081",
+    "browser": ["pmo_lead_full_menu", "native_work_queue", "authorised_project", "overview", "eight_file_agents", "26_start_choices", "engagement_workspace_choice"],
+    "database_schema_changed": false,
+    "hod_decisions_deferred": true
+  },
   "clean_role_preview_20261121": {
     "status": "hosted_and_verified",
     "scope": "Railway design-acceptance only. Fresh workspace with delegated Admin and scoped PMO and Finance leads.",

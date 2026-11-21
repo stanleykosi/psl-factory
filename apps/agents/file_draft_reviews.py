@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from apps.core.services import add_evidence, lock_case
 from apps.documents.contracts import digest
 from apps.documents.services import review_document
+from apps.identity.factory_access import authorized_leads
+from apps.identity.services import active_case_grants, require, subject_actions
 
 from .models import AgentJob, FileDraftReview
 from .upload_jobs import authorize
@@ -49,9 +51,18 @@ def review_form(job, data=None):
                                'gaps': values.get('gaps', '\n'.join(job.result['gaps'])), 'note': values.get('note', '')})
 
 
+def can_retain(actor, case):
+    grants = active_case_grants(actor, [case.pk], actions=['document.review', 'evidence.add'])
+    return len(grants) == 2 or (
+        case.synthetic and authorized_leads(actor, ['agent.extract', 'evidence.add']).filter(case=case).exists()
+    )
+
+
 @transaction.atomic
 def retain(actor, case, job_id, data):
-    case = lock_case(actor, case.pk, 'document.review')
+    case = lock_case(actor, case.pk, 'evidence.add')
+    if not can_retain(actor, case):
+        require(actor, case, 'document.review')
     job = get_object_or_404(AgentJob.objects.select_for_update(), upload__case=case,
                             actor=actor, pk=job_id, status='draft')
     authorize(actor, job.upload)
@@ -73,7 +84,10 @@ def retain(actor, case, job_id, data):
                             evidence_body(values['summary'], job.result['quotes'], values['gaps']),
                             f'agent-draft:{job.pk}:sha256:{job.upload.sha256}')
     case.refresh_from_db()
-    review_document(actor, case.pk, evidence.pk, 'accepted', values['note'], case.revision)
+    # The only document accepted through this path is the note just created
+    # from the actor's exact owned upload and pinned draft.
+    with subject_actions(actor, case, ['document.review']):
+        review_document(actor, case.pk, evidence.pk, 'accepted', values['note'], case.revision)
     FileDraftReview.objects.create(job=job, evidence=evidence, draft_sha256=token,
                                    summary=values['summary'], gaps=values['gaps'])
     job.status = 'reviewed'

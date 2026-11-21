@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from . import workbench
 
 class SearchForm(forms.Form):
@@ -22,5 +22,10 @@ def home(request):
 
 @login_required
 def inbox(request):
+    from apps.identity.services import visible_cases
+    from apps.identity.teams import memberships
+
+    if memberships(request.user).exists() and not visible_cases(request.user).exists():
+        return redirect('role_dashboard')
     result=workbench.work(request.user)
     response=render(request,'workbench_inbox.html',{'sample_mode':bool(result['rows']) and all(row['synthetic'] for row in result['rows']),**result});response['Cache-Control']='no-store';return response
