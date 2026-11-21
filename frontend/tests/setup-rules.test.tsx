@@ -812,7 +812,7 @@ describe('the frame stays across Setup tabs (D-170)', () => {
     expect(within(nav).getByRole('tab', { name: 'Delegation' }).getAttribute('aria-selected')).toBe('true');
     expect(within(nav).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 8');
     expect(document.querySelector('.shell-loading')).toBeTruthy();
-    expect(delegations()).toHaveLength(1);
+    await waitFor(() => expect(delegations()).toHaveLength(1));
     expect(reads()).toHaveLength(1);
     release!(json(200, read('fixtures/delegations/default.json')));
     await waitFor(() => expect(document.querySelector('.shell-loading')).toBeNull());
