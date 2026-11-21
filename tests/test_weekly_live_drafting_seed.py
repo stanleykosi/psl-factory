@@ -101,6 +101,24 @@ class WeeklyLiveDraftingSeedTests(TransactionTestCase):
         self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=work).exists())
         with self.assertRaisesMessage(RuntimeError, 'fresh weekly specimen'):
             seed.observe(work.pk)
+        original = (work.revision, work.fence, report.pk, review.pk)
+        directed = seed.prepare('directed')
+        self.assertEqual(directed['case'], str(seed.specimen('directed').case_id))
+        self.assertNotEqual(directed['case'], sample['case'])
+        self.assertNotEqual(directed['source'], sample['source'])
+        self.assertEqual(seed.prepare('directed'), directed | {'preserved': True})
+        with self.assertRaises(FactoryWork.DoesNotExist):
+            seed.observe(work.pk, 'directed')
+        with self.assertRaises(FactoryWork.DoesNotExist):
+            seed.observe(directed['work'])
+        self.client.force_login(trial)
+        with patch.object(seed, 'sleep', side_effect=lambda _: self.assertContains(self.client.get(directed['path']), label)):
+            directed_result = seed.observe(directed['work'], 'directed')
+        self.assertNotEqual(directed_result['report'], report.pk)
+        self.assertFalse(Publication.objects.filter(factory_work_id=directed['work']).exists())
+        work.refresh_from_db()
+        self.assertEqual((work.revision, work.fence, weekly.document(work).pk,
+                          HumanTask.objects.get(version=report, status='open').pk), original)
         self.assertEqual(rev(prior), original_revision)
         self.assertEqual(list(Grant.objects.filter(case=prior).values_list('pk', flat=True)), [original_grant.pk])
         self.assertFalse(Audit.objects.filter(case=prior).exists())

@@ -220,7 +220,9 @@ urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'foc
                 path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery'),
                 path('work/<int:work_id>/response/', factory_views.detail, {'focus': 'response'}, name='factory_work_response')]
 urlpatterns += [path('work/<int:work_id>/opening-proof/<int:register_id>/', factory_ppe_views.opening_proof,
-                    name='factory_ppe_opening_proof')]
+                    name='factory_ppe_opening_proof'),
+                path('work/<int:work_id>/date-explanation/<int:fact_id>/proof/', factory_ppe_views.date_proof,
+                    name='factory_ppe_date_proof')]
 from apps.workflows import factory_ledger_views
 urlpatterns += [path('work/<int:work_id>/observation-proof/<int:check_id>/', factory_ledger_views.download_observation_proof,
                     name='factory_ledger_observation_proof')]

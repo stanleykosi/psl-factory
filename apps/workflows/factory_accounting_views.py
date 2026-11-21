@@ -16,7 +16,7 @@ from apps.core.workbench import active, granted
 from apps.finance.models import FinanceSource,FinanceAdjustment,FinanceRun,FinanceReview
 from apps.policy.models import Configuration
 from apps.core.models import Evidence, Audit
-from . import factory_accounting_intake as intake
+from . import factory_accounting_intake as intake, factory_accounting_corrections as corrections
 from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
 from .models import FactoryActivity,HumanTask
@@ -82,11 +82,31 @@ class SuppliedIntakeForm(forms.Form):
     inventory_confirmed=forms.BooleanField(label='Start with no supplemental reporting adjustments; later changes require explicit rework')
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
 
-    def __init__(self,case,*args,**kwargs):
+    def __init__(self,case,*args,correction=None,**kwargs):
         super().__init__(*args,**kwargs)
-        self.fields['evidence'].queryset=Evidence.objects.filter(case=case,kind='financial_input')
-        self.fields['source_evidence'].queryset=Evidence.objects.filter(case=case,kind='finance_source')
+        self.fields['evidence'].queryset=Evidence.objects.filter(case=case,kind='financial_input').defer('body')
+        self.fields['source_evidence'].queryset=Evidence.objects.filter(case=case,kind='finance_source').defer('body')
         self.initial.update(key='supplied:'+str(uuid4()),revision=case.revision)
+        if correction:
+            for name in ('evidence', 'source_evidence'):
+                self.fields[name].queryset = public_evidence(self.fields[name].queryset)
+            self.fields['evidence'].required = False
+            self.fields['evidence'].label = 'Or select an already recorded corrected extract'
+            self.fields['upload'] = forms.FileField(required=False, label='Corrected trial-balance CSV')
+            for name in ('head', 'decision'):
+                field = 'correction_' + name
+                self.fields[field] = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+                self.initial[field] = correction[name]
+            for field in ('entity', 'period', 'currency', 'accounting_basis'):
+                self.fields[field].disabled = True
+                self.initial[field] = correction[field]
+
+    def clean(self):
+        data = super().clean()
+        if 'upload' in self.fields and not {'evidence', 'upload'}.intersection(self.errors):
+            if bool(data.get('evidence')) == bool(data.get('upload')):
+                self.add_error('upload', 'Upload the corrected export or select one already recorded extract.')
+        return data
 
 
 class ConfirmUnitsForm(forms.Form):
@@ -115,11 +135,33 @@ def create(request):
     except (ValueError,TypeError,AttributeError):raise Http404 from None
     case=get_object_or_404(cases,pk=selected)
     action=request.POST.get('action','existing') if request.method=='POST' else None
+    correction = None
+    correction_work = None
+    correction_id = request.GET.get('correction')
+    if correction_id is not None:
+        if not correction_id.isascii() or not correction_id.isdecimal() or len(correction_id) > 18:
+            raise Http404
+        correction_work = get_object_or_404(service.Work, case=case, definition=service.DEFINITION, pk=int(correction_id))
+        if correction_work.actor_id != request.user.pk:
+            raise PermissionDenied('The original accounting preparer must submit this corrected source.')
+        runtime.access(request.user, case, 'factory.read', service.DEFINITION)
+        if linked := corrections.successor(correction_work):
+            return redirect('factory_detail', work_id=linked.data['work'])
+        try:
+            correction = corrections.selection(request.user, correction_work)
+        except ValidationError as exc:
+            messages.error(request, exc.messages[0])
+            return redirect('factory_invoice_recovery', work_id=correction_work.pk)
+        if action not in (None, 'supplied', 'resume'):
+            raise Http404
     form=StartForm(case,request.POST if action=='existing' else None)
-    supplied=SuppliedIntakeForm(case,request.POST if action=='supplied' else None,prefix='supplied')
+    supplied=SuppliedIntakeForm(case,request.POST if action=='supplied' else None,
+                                request.FILES if action=='supplied' else None, prefix='supplied', correction=correction)
     unit_receipt = None
     confirm_units = None
     intake_view = request.path + '?' + urlencode({'definition': service.DEFINITION, 'case': str(case.pk)})
+    if correction_work:
+        intake_view = corrections.url(correction_work)
     unit_selection = request.GET.get('units')
     if unit_selection is not None:
         if not unit_selection.isascii() or not unit_selection.isdecimal() or len(unit_selection) > 18:
@@ -141,7 +183,14 @@ def create(request):
                 v=supplied.cleaned_data
                 context={k:v[k] for k in ['entity','period','currency','accounting_basis','extracted_at','completeness']}
                 context.update(control_total=v['control_total'] or None,source_evidence_id=v['source_evidence'].pk,unit_declaration=v['unit_declaration'])
-                result=intake.submit(request.user,case.pk,v['key'],v['evidence'].pk,context,v['reference'],v['revision'])
+                pin = ({'work': correction_work.pk, 'head': v['correction_head'], 'decision': v['correction_decision']}
+                       if correction else None)
+                if correction and v.get('upload'):
+                    result = intake.submit_corrected_file(request.user, case.pk, v['key'], v['upload'], context,
+                                                          v['reference'], v['revision'], pin)
+                else:
+                    result=intake.submit(request.user,case.pk,v['key'],v['evidence'].pk,context,v['reference'],v['revision'],
+                                         correction=pin)
             elif action=='resume':
                 try:receipt_id=int(request.POST.get('receipt',''));revision=int(request.POST.get('revision',''))
                 except (ValueError,TypeError):raise ValidationError('Exact receipt and current revision required')
@@ -161,7 +210,10 @@ def create(request):
             target = confirm_units if action == 'confirm_units' else supplied if action == 'supplied' else form
             target.add_error(None, exc)
     case.refresh_from_db()
-    receipts=[{'receipt':r,'result':intake.latest(r)} for r in Audit.objects.filter(case=case,actor=request.user,action=intake.RECEIPT).order_by('-pk')[:30]]
+    submitted = Audit.objects.filter(case=case,actor=request.user,action=intake.RECEIPT)
+    if correction_work:
+        submitted = submitted.filter(data__correction__work=correction_work.pk)
+    receipts=[{'receipt':r,'result':intake.latest(r)} for r in submitted.order_by('-pk')[:30]]
     superseded = set(Audit.objects.filter(case=case, actor=request.user, action=intake.UNITS_CONFIRMED,
                                          data__previous__in=[item['receipt'].pk for item in receipts])
                      .values_list('data__previous', flat=True))
@@ -172,9 +224,10 @@ def create(request):
         if units.get('status') == 'unsupported':
             item['held_unit_label'] = unit_labels.get(units['declaration']['declarations'][0]['unit'])
         if item['missing_units'] and item['receipt'].pk not in superseded:
-            item['confirm_url'] = f"{intake_view}&units={item['receipt'].pk}"
+            item['confirm_url'] = f"{request.path}?{urlencode({'definition': service.DEFINITION, 'case': str(case.pk), 'units': item['receipt'].pk})}"
     response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'supplied_form':supplied,'receipts':receipts,
-        'definition':service.DEFINITION,'unit_form':confirm_units,'unit_receipt':unit_receipt,'intake_view':intake_view});response['Cache-Control']='no-store';return response
+        'definition':service.DEFINITION,'unit_form':confirm_units,'unit_receipt':unit_receipt,'intake_view':intake_view,
+        'correction':correction});response['Cache-Control']='no-store';return response
 
 @read_observation
 def presentation(actor,work,*,include_progress=False):
@@ -386,6 +439,18 @@ def detail(request,work,focus=None):
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Complete the requested fields using current records.');return redirect(url)
     row=presentation(request.user,work,include_progress=not focus)
+    correction_url = None
+    earlier = corrections.predecessor(work)
+    replacement = corrections.successor(work)
+    if replacement:
+        row['can_reassess'] = False
+    elif focus != 'decision' and row['can_reassess'] and work.status == 'followup_needed' and work.actor_id == request.user.pk:
+        try:
+            corrections.selection(request.user, work)
+        except (ValidationError, PermissionDenied):
+            pass
+        else:
+            correction_url = corrections.url(work)
     routing_hold = service.review_routing_hold(work)
     held_labels = sorted({REVIEW_LABELS.get(subject['purpose'], 'Finance evidence') for subject in routing_hold})
     review_controls = set(Grant.objects.filter(case=work.case, user=request.user, active=True,
@@ -414,5 +479,7 @@ def detail(request,work,focus=None):
         'receipts':receipts,'activities':activities,'held_review_labels':held_labels,'review_stations':stations,
         'can_read_review_rules':'policy.read' in review_controls,
         'can_recheck_reviewers':focus!='decision' and 'factory.manage' in review_controls and can_control(request.user, work),
-        'intake_provenance':intake.provenance(request.user,work) if not focus else None,'focus':focus})
+        'intake_provenance':intake.provenance(request.user,work) if not focus else None,'focus':focus,
+        'correction_url':correction_url,'earlier_work':earlier.data['previous_work'] if earlier else None,
+        'replacement_work':replacement.data['work'] if replacement else None})
     response['Cache-Control']='no-store';return response

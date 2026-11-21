@@ -18,7 +18,7 @@
   </details>{% empty %}<p>No asset snapshots captured. You can record sources before setting a calculation rule.</p>{% endfor %}
 </section>
 <section id="asset-source-actions"><h2>Available actions</h2>
-  {% for c in commands %}<details><summary>{{ c.title }}</summary><form method="post">{% csrf_token %}{{ c.form.as_p }}<button>{{ c.title }}</button></form></details>{% empty %}<p>Read-only access.</p>{% endfor %}
+  {% for c in commands %}<details><summary>{{ c.title }}</summary><form method="post"{% if c.form.is_multipart %} enctype="multipart/form-data"{% endif %}>{% csrf_token %}{{ c.form.as_p }}<button>{{ c.title }}</button></form></details>{% empty %}<p>Read-only access.</p>{% endfor %}
 </section>
 <section><h2>Assistant reviews</h2>{% for a in agents %}<details><summary>Agent #{{ a.pk }} / record-based review / numerical amounts not selected</summary><pre>{{ a.result }}</pre></details>{% endfor %}</section>
 {% endblock %}

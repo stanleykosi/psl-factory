@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.db import transaction
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.utils import timezone
-from apps.core.models import Audit
+from apps.core.models import Audit, Case
 from apps.core.services import lock_case,event,bump
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -344,9 +344,7 @@ def publish(actor,case_id,run_id,operation_key,expected):
  p=PayrollPublication.objects.create(request=r.request,run=r,review=decision,version=version,operation_key=operation_key,payload=payload,policy_ids={**auth,REPORT:policy.pk},actor=actor)
  event(actor,c,'payroll.aggregate_published',publication=p.pk,version=version,destination=rules['destination']);bump(c);return p
 
-@transaction.atomic
-def read_publication(actor,publication_id):
- p=PayrollPublication.objects.defer('payload').select_related('request__case').get(pk=publication_id);c=locked(actor,p.request.case_id,'payroll.report.read')
+def _publication_payload(actor,p,c):
  policy=active_component(REPORT,c);rules=reference_values(policy)[0]
  if actor.pk not in rules['recipient_ids']:raise PermissionDenied('Not a configured aggregate report recipient')
  source=exact(c,PayrollRun,p.run_id);run_current(source)
@@ -354,6 +352,24 @@ def read_publication(actor,publication_id):
  if current_review(source).pk!=p.review_id or policy.pk!=p.policy_ids[REPORT] or authority(p.actor,p.request,'publish')!={k:v for k,v in p.policy_ids.items() if k!=REPORT}:raise ValidationError('BU staff-cost report stale; prepare a reviewed versioned replacement')
  if PayrollPublication.objects.filter(request=p.request,version__gt=p.version).exists():raise ValidationError('BU report version replaced')
  return p.payload
+
+
+@transaction.atomic
+def observe_publication(actor,publication_id):
+ """Read an exact current aggregate without reserving or acknowledging a receipt."""
+ p=PayrollPublication.objects.defer('payload','request__metadata').select_related('request').get(pk=publication_id)
+ # Keep authority and the native source stable without entering a command scope.
+ c=Case.objects.select_for_update().get(pk=p.request.case_id)
+ list(Grant.objects.select_for_update().filter(case=c).order_by('pk').values_list('pk',flat=True))
+ for action in ('case.read','payroll.read','payroll.report.read'):require(actor,c,action)
+ return _publication_payload(actor,p,c)
+
+
+@transaction.atomic
+def read_publication(actor,publication_id):
+ p=PayrollPublication.objects.defer('payload').select_related('request__case').get(pk=publication_id);c=locked(actor,p.request.case_id,'payroll.report.read')
+ return _publication_payload(actor,p,c)
+
 
 @transaction.atomic
 def receive_report(actor,case_id,publication_id,expected):

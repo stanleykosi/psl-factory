@@ -4,6 +4,7 @@ Append-only Audit receipts are serialized by the native case lock. Submission
 identity is distinct from content identity: a repeat submission gets a receipt,
 not a second import. These are local intake receipts, not QuickBooks receipts.
 """
+import hashlib
 import json
 import re
 from datetime import datetime
@@ -52,7 +53,36 @@ def record(actor, case, receipt, status, findings, **extra):
 
 
 @transaction.atomic
-def submit(actor, case_id, key, evidence_id, context, reference, expected):
+def submit_corrected_file(actor, case_id, key, file, context, reference, expected, correction):
+    from . import factory_accounting_corrections as corrections
+
+    case = lock_case(actor, case_id, 'factory.start', expected)
+    authority(actor, case)
+    if (not file or not file.name.lower().endswith('.csv') or file.size > 400000
+            or not isinstance(key, str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,100}', key)):
+        raise ValidationError('Choose the corrected CSV export within the accounting import size limit.')
+    try:
+        body = file.read(400001).decode('utf-8-sig')
+    except UnicodeError:
+        raise ValidationError('Upload the corrected CSV as UTF-8 text.') from None
+    if not body.strip() or len(body) > 100000:
+        raise ValidationError('Use a nonempty CSV with at most 100,000 characters.')
+    location = f'psl:accounting-correction/{actor.pk}/{key}'
+    sha = hashlib.sha256(body.encode()).hexdigest()
+    evidence = case.evidence.filter(kind='financial_input', source=location, sha256=sha,
+                                    created_by=actor).defer('body').first()
+    previous = Audit.objects.filter(case=case, action=RECEIPT, data__key=key).first()
+    if previous is None:
+        pin = corrections.locked_selection(actor, case, correction)
+        corrections.check_file(pin, context, sha)
+    if evidence is None:
+        evidence = add_evidence(actor, case.pk, 'financial_input', body, location, case.revision)
+        case.refresh_from_db(fields=['revision'])
+    return submit(actor, case.pk, key, evidence.pk, context, reference, case.revision, correction=correction)
+
+
+@transaction.atomic
+def submit(actor, case_id, key, evidence_id, context, reference, expected, *, correction=None):
     case = lock_case(actor, case_id, 'factory.start', expected)
     authority(actor, case)
     if not isinstance(key, str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,100}', key):
@@ -82,9 +112,16 @@ def submit(actor, case_id, key, evidence_id, context, reference, expected):
                'evidence_id': evidence.pk, 'sha256': evidence.sha256, 'reference': reference}
     old = Audit.objects.filter(case=case, action=RECEIPT, data__key=key).first()
     if old:
-        if old.actor_id != actor.pk or old.data['request'] != payload:
+        if old.actor_id != actor.pk or old.data['request'] != payload or old.data.get('correction') != correction:
             raise ValidationError('IDEMPOTENCY_CONFLICT: intake identity already has different inputs or initiator')
         return resume(actor, case.pk, old.pk, case.revision)
+    if correction is not None:
+        from . import factory_accounting_corrections as corrections
+
+        if restricted(evidence) or restricted(source_evidence):
+            raise PermissionDenied('Use available Finance intake evidence for the correction.')
+        pin = corrections.locked_selection(actor, case, correction)
+        corrections.check_file(pin, payload, evidence.sha256)
     batch = FinancialImport.objects.filter(case=case, source_sha256=evidence.sha256).first()
     findings = []
     if not batch:
@@ -94,7 +131,8 @@ def submit(actor, case_id, key, evidence_id, context, reference, expected):
             findings = exc.messages
         case.refresh_from_db()
     receipt = event(actor, case, RECEIPT, schema='factory-accounting-intake-receipt/v1', key=key,
-                    request=payload, batch=batch.pk if batch else None, parser_findings=findings)
+                    request=payload, batch=batch.pk if batch else None, parser_findings=findings,
+                    **({'correction': correction} if correction is not None else {}))
     bump(case)
     return resume(actor, case.pk, receipt.pk, case.revision)
 
@@ -108,13 +146,22 @@ def resume(actor, case_id, receipt_id, expected):
         raise PermissionDenied('Resume only your exact intake receipt in this workspace')
     payload = receipt.data['request']
     evidence = subject(case, payload['evidence_id'], 'financial_input')
-    subject(case, payload['source_evidence_id'], 'finance_source')
+    source_evidence = subject(case, payload['source_evidence_id'], 'finance_source')
     if evidence.sha256 != payload['sha256']:
         raise ValidationError('Intake source hash changed')
     prior = latest(receipt)
     if prior['status'] in ['started', 'source_units_needed']:
         # Observation only. Never promote a held receipt or reset completed work on retry.
         return prior
+    pin = None
+    correction = receipt.data.get('correction')
+    if correction is not None:
+        from . import factory_accounting_corrections as corrections
+
+        if restricted(evidence) or restricted(source_evidence):
+            raise PermissionDenied('Use available Finance intake evidence for the correction.')
+        pin = corrections.locked_selection(actor, case, correction)
+        corrections.check_file(pin, payload, evidence.sha256)
     if receipt.data['parser_findings']:
         return record(actor, case, receipt, 'quarantined', receipt.data['parser_findings'])
     batch = FinancialImport.objects.get(case=case, pk=receipt.data['batch'], source_sha256=payload['sha256'])
@@ -151,6 +198,16 @@ def resume(actor, case_id, receipt_id, expected):
     except ValidationError as exc:
         return record(actor, case, receipt, 'source_units_needed', exc.messages, batch=batch.pk,
                       validation=validation.pk, source=source.pk, source_units=source.unit_state)
+    if pin:
+        from apps.finance.models import FinanceReview
+        from .models import FactoryWork
+
+        if (FinanceReview.objects.filter(case=case, purpose='source', source=source).exists()
+                or FactoryWork.objects.filter(case=case, definition=accounting.DEFINITION,
+                    request__batch=batch.pk, request__entity=source.entity).exists()):
+            return record(actor, case, receipt, 'followup_needed',
+                          ['This extract already has accounting work or a source decision. Choose a fresh corrected extract.'],
+                          batch=batch.pk, validation=validation.pk, source=source.pk)
     try:
         work = accounting.start(actor, case.pk, 'intake:' + str(receipt.pk), source.pk, [], payload['reference'], case.revision)
     except ValidationError as exc:
@@ -158,6 +215,8 @@ def resume(actor, case_id, receipt_id, expected):
         case.refresh_from_db()
         return record(actor, case, receipt, 'followup_needed', exc.messages, batch=batch.pk, source=source.pk, validation=validation.pk)
     case.refresh_from_db()
+    if pin:
+        corrections.link(actor, case, pin, receipt, work, source)
     return record(actor, case, receipt, 'started', [], batch=batch.pk, validation=validation.pk, source=source.pk, work=work.pk)
 
 
@@ -207,7 +266,8 @@ def confirm_units(actor, case_id, receipt_id, unit, proof_id, note, expected):
         'declarations': [{'feed': feed, 'unit': unit,
                           'evidence': {'id': evidence.pk, 'version': evidence.version, 'sha256': evidence.sha256}}],
     })
-    result = submit(actor, case.pk, input_key, payload['evidence_id'], context, payload['reference'], case.revision)
+    result = submit(actor, case.pk, input_key, payload['evidence_id'], context, payload['reference'], case.revision,
+                    correction=receipt.data.get('correction'))
     event(actor, case, UNITS_CONFIRMED, previous=receipt.pk, successor=result['receipt'],
           unit_evidence=evidence.pk, **confirmation)
     return result

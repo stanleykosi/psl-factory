@@ -55,6 +55,14 @@
 {% if task.can_decide %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="decide"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><label for="accounting-proof-{{ task.pk }}">Review evidence</label><select id="accounting-proof-{{ task.pk }}" name="evidence" required>{% for evidence in review_evidence %}<option value="{{ evidence.pk }}">{{ evidence.source }} · version {{ evidence.version }}</option>{% endfor %}</select><label for="accounting-reason-{{ task.pk }}">Decision reason</label><textarea id="accounting-reason-{{ task.pk }}" name="reason" required maxlength="4000"></textarea>{% for verdict in task.verdicts %}<button name="verdict" value="{{ verdict }}">{{ verdict|capfirst }} exact Finance subject</button>{% endfor %}</form>{% endif %}</section>{% endfor %}
 {% endif %}
 {% if not focus or focus == 'recovery' %}
+{% if correction_url or replacement_work or earlier_work %}
+<section class="card">
+  <h2>{% if earlier_work %}Corrected trial-balance source{% else %}Trial-balance source returned{% endif %}</h2>
+  {% if correction_url %}<p>Submit the corrected extract for this same accounting period. It starts a fresh review.</p><a class="button" href="{{ correction_url }}">Correct and resubmit</a>{% endif %}
+  {% if replacement_work %}<p>The original source and its decisions remain here.</p><a href="{% url 'factory_detail' replacement_work %}">Open corrected accounting work</a>{% endif %}
+  {% if earlier_work %}<p>The returned extract and its decisions are recorded separately.</p><a href="{% url 'factory_invoice_recovery' earlier_work %}">Review the original returned work</a>{% endif %}
+</section>
+{% endif %}
 {% if row.can_reassess %}<details class="card"{% if row.work.status == 'followup_needed' %} open{% endif %}><summary>Recheck corrected accounting inputs</summary><p>Review the source and adjustment records. The same work and its previous decisions will be retained.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="recheck"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label for="accounting-source">Current source</label><select id="accounting-source" name="source" required><option value="">Choose the reviewed source</option>{% for source in sources %}<option value="{{ source.pk }}"{% if source.pk == current_source %} selected{% endif %}>{{ source }}</option>{% endfor %}</select><label for="accounting-adjustments">Adjustment record numbers, separated by commas. Leave blank if there are none.</label><input id="accounting-adjustments" name="adjustments" value="{{ current_adjustments }}"><label for="accounting-recheck-reason">Reason</label><textarea id="accounting-recheck-reason" name="reason" required maxlength="2000"></textarea><button>Record reviewed inputs</button></form></details>{% endif %}
 {% endif %}
 {% if not focus %}

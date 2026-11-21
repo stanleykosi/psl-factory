@@ -3,6 +3,7 @@ from uuid import uuid4
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.db.models import Exists, OuterRef
 from django.shortcuts import render,redirect
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -41,6 +42,62 @@ class InputsForm(forms.Form):
         self.fields['hr_snapshot_id']=forms.ModelChoiceField(queryset=HRReadSnapshot.objects.defer('payload').filter(contract__need__case=case),required=False,label='Exact minimal HR snapshot')
     def inputs(self):return {'input_ids':sorted(i.pk for i in self.cleaned_data['input_ids']),'hr_snapshot_id':self.cleaned_data['hr_snapshot_id'].pk if self.cleaned_data['hr_snapshot_id'] else None}
 
+
+class StartInputsForm(InputsForm):
+    def __init__(self, actor, case, data=None):
+        super().__init__(case, data)
+        for field in self.fields.values():
+            field.queryset = field.queryset.none()
+        try:
+            config = payroll.active_component(payroll.ACCESS, case)
+        except ValidationError:
+            return
+        rules = payroll.reference_values(config)[0]
+        if actor.pk not in rules['reader_ids']:
+            raise PermissionDenied('This action requires the current restricted payroll source reader.')
+
+        providers = {source['provider'] for source in rules['providers']}
+        newer = PayrollRequest.objects.filter(case=case, reference=OuterRef('reference'), version__gt=OuterRef('version'))
+        requests = PayrollRequest.objects.filter(case=case, metadata__entity=rules['entity'],
+            metadata__currency=rules['currency'], metadata__period__gte=rules['from_period'],
+            metadata__period__lte=rules['to_period']).filter(~Exists(newer)).order_by('-pk')
+        scoped = [item for item in requests if set(item.metadata['providers']) == providers]
+        request_ids = [item.pk for item in scoped]
+        periods = {item.metadata['period'] for item in scoped}
+        self.fields['request_id'].queryset = requests.filter(pk__in=request_ids)
+
+        now = timezone.now()
+        replacements = PayrollInput.objects.filter(request_id=OuterRef('request_id'), provider=OuterRef('provider'),
+            metadata__accepted=True, version__gt=OuterRef('version'))
+        candidates = PayrollInput.objects.defer('payload').filter(request_id__in=request_ids,
+            metadata__accepted=True, metadata__access_policy_id=config.pk, provider__in=providers,
+            retain_until__gt=now).filter(~Exists(replacements)).select_related('request__case').order_by('-pk')
+        current = []
+        for item in candidates:
+            try:
+                payroll.native.check_input(item, item.request, config, rules)
+            except (PermissionDenied, ValidationError):
+                continue
+            current.append(item.pk)
+        self.fields['input_ids'].queryset = candidates.filter(pk__in=current)
+
+        successors = HRReadSnapshot.objects.filter(contract_id=OuterRef('contract_id'), status='accepted', pk__gt=OuterRef('pk'))
+        snapshots = HRReadSnapshot.objects.defer('payload').filter(contract__need__case=case, status='accepted',
+            retain_until__gt=now, contract__payload__recipient_ids__contains=[actor.pk],
+            contract__payload__purpose='payroll_matching', contract__payload__entity=rules['entity'],
+            contract__payload__period__in=periods).filter(~Exists(successors)).select_related('contract__need__case').order_by('-pk')
+        allowed = []
+        for snapshot in snapshots:
+            if set(snapshot.contract.payload['fields']) != set(payroll.native.REQUIRED):
+                continue
+            try:
+                payroll.hr.snapshot_access(actor, snapshot)
+            except (PermissionDenied, ValidationError):
+                continue
+            allowed.append(snapshot.pk)
+        self.fields['hr_snapshot_id'].queryset = snapshots.filter(pk__in=allowed)
+
+
 class StartForm(StartWithBackground):
     definition=forms.CharField(initial=payroll.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
@@ -57,7 +114,7 @@ class StartForm(StartWithBackground):
 def create(request):
     case_id=request.POST.get('case') if request.method=='POST' else request.GET.get('case')
     form=StartForm(request.user,request.POST if request.method=='POST' else None,case_id=case_id)
-    inputs=InputsForm(form.selected,request.POST if request.method=='POST' else None) if form.selected else None
+    inputs=StartInputsForm(request.user,form.selected,request.POST if request.method=='POST' else None) if form.selected else None
     if request.method=='POST' and form.is_valid() and inputs and inputs.is_valid():
         try:
             d=form.cleaned_data
@@ -66,6 +123,25 @@ def create(request):
                               inputs.cleaned_data['request_id'].pk, inputs.inputs(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,payroll.finding(exc))
     response=render(request,'factory/payroll_start.html',{'form':form,'inputs_form':inputs,'case':form.selected});response['Cache-Control']='no-store';return response
+
+def recipient_withdrawal(actor, work, current=None):
+    notice = payroll.withdrawal(work)
+    if not notice:
+        return None
+    try:
+        require(actor, work.case, 'payroll.report.read')
+    except PermissionDenied:
+        return None
+    candidates = payroll.publication_history(work).only('pk', 'version', 'policy_ids').filter(pk=notice.data['publication'])
+    if current is not None:
+        candidates = candidates.filter(pk__lt=current.pk)
+    original = candidates.first()
+    if original is None or actor.pk not in (publication_audience(original, payroll.REPORT) or []):
+        return None
+    receipt = payroll.PayrollReportReceipt.objects.filter(publication=original, actor=actor).values_list('pk', 'created_at').first()
+    return {'publication': original.pk, 'version': original.version, 'withdrawn_at': notice.created_at,
+            'receipt_id': receipt[0] if receipt else None, 'received_at': receipt[1] if receipt else None}
+
 
 def presentation(actor,work):
     from .factory_views import permitted
@@ -76,23 +152,21 @@ def presentation(actor,work):
         p=payroll.publication(work)
         value=None
         if p:
-            try:value=payroll.native.read_publication(actor,p.pk)
+            try:value=payroll.native.observe_publication(actor,p.pk)
             except (PermissionDenied,ValidationError):pass
         if value is not None:
             receipt=payroll.PayrollReportReceipt.objects.filter(publication=p,actor=actor).first()
             row.update(state='Receipt acknowledged' if receipt else 'Aggregate available',next_action='Your receipt is recorded. You can inspect the aggregate report.' if receipt else 'Inspect the aggregate and acknowledge receipt as yourself',needs_me=not bool(receipt))
             row['payroll']={'publication':p.pk,'recipient_only':True,'receipt':receipt,
+                            'withdrawal_history':recipient_withdrawal(actor,work,current=p),
                             'totals':value['by_bu'],'currency':value['currency'],'period':value['period'],
                             'verified_at':work.updated_at if receipt and work.status=='verified' else None};return row
-        notice=payroll.withdrawal(work)
-        if notice and permitted(actor,work,'payroll.report.read'):
-            original=payroll.publication_history(work).defer('payload').filter(pk=notice.data['publication']).first()
-            if original and actor.pk in (publication_audience(original,payroll.REPORT) or []):
-                receipt=payroll.PayrollReportReceipt.objects.filter(publication=original,actor=actor).first()
-                row.update(state='Published payroll withdrawn',next_action='Wait for a newly reviewed report from Finance')
-                row['payroll']={'publication':original.pk,'recipient_only':True,'withdrawn':True,
-                                'receipt':receipt,'notice':notice}
-                return row
+        history=recipient_withdrawal(actor,work)
+        if history:
+            row.update(state='Published payroll withdrawn',next_action='Wait for a newly reviewed report from Finance')
+            row['payroll']={'publication':history['publication'],'recipient_only':True,'withdrawn':True,
+                            'withdrawal_history':history}
+            return row
         row.update(state='Restricted payroll work',next_action='A current nominated source reader or report recipient is required')
         row['payroll']={'restricted':True};return row
     try:state=payroll.report(work,actor)

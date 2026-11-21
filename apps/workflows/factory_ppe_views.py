@@ -14,7 +14,7 @@ from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
 from apps.finance import ppe, ppe_dates
 from apps.finance.models import ScheduleWork,FinanceRun
-from . import factory,factory_ppe as domain, factory_ppe_opening
+from . import factory,factory_ppe as domain, factory_ppe_date_proof, factory_ppe_opening
 from .factory_progress import set_progress
 from .factory_progress_views import StartWithBackground, start_work
 
@@ -125,6 +125,10 @@ def detail(request,work,focus=None):
         opening_attachment = factory_ppe_opening.attachment_for(request.user, work, row['ppe']['register'])
     except PermissionDenied:
         opening_attachment = None
+    try:
+        date_attachments = factory_ppe_date_proof.attachments_for(request.user, work, row['ppe']['register'])
+    except (PermissionDenied, ValidationError):
+        date_attachments = {}
     candidates=[(r,['register','basis'] if ppe_dates.needs_review(r) else ['register']),(s,['schedule'])]
     date_returned = False
     for target,purposes in candidates:
@@ -154,6 +158,7 @@ def detail(request,work,focus=None):
     return render(request,'factory/ppe_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
         'inputs_form':form,'reviews':reviews,'decisions':decisions,'activities':work.activities.order_by('pk') if not focus else (),
         'proof_form': proof_form, 'opening_attachment': opening_attachment, 'date_returned': date_returned,
+        'date_attachments': date_attachments,
         'has_asset_dates': ppe.date_facts_visible(r),
         'can_open_reviewed_report': row['ppe']['native'].get('stage') == 'complete' and permitted(request.user, work, 'ppe.report'),
         'can_correct':focus!='decision' and permitted(request.user,work,'factory.manage') and not work.cancel_requested,
@@ -177,3 +182,21 @@ def opening_proof(request, work_id, register_id):
     except (OSError, ValidationError) as exc:
         raise Http404('Opening proof unavailable.') from exc
     return FileResponse(BytesIO(data), as_attachment=True, filename=attachment.name, content_type='application/octet-stream')
+
+
+@login_required
+@never_cache
+@require_safe
+def date_proof(request, work_id, fact_id):
+    from .factory_views import visible
+
+    work = get_object_or_404(visible(request.user, work_id=work_id), definition=domain.DEFINITION)
+    try:
+        register, _ = domain.source(work, request.user, current=False)
+        attachment = factory_ppe_date_proof.attachments_for(request.user, work, register).get(fact_id)
+        if attachment is None:
+            raise Http404('Date explanation proof unavailable.')
+        data = case_uploads.read(attachment)
+    except (OSError, ValidationError) as exc:
+        raise Http404('Date explanation proof unavailable.') from exc
+    return FileResponse(BytesIO(data), as_attachment=True, filename=attachment.name, content_type='application/pdf')

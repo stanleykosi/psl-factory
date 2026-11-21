@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Exact 291c passed eight targeted PostgreSQL tests and both original preservation probes. The Payroll replacement now opens for its exact current recipient and shows that person’s prior withdrawn receipt without exposing old values or private review notes. The checked Accounting and asset corrections are in the matching submitted preview runtime.
+
+21 November 2026. Completed the grouped Trial decisions on exact escalation, Payroll combine, HR approval and Accounting source. The ledger reached 247 by completing the independent escalation variant. The remaining three link into the admitted preparer’s single grouped session. The sign-in, onboarding and bid source is pushed at `bcd7029f`.
+
 21 November 2026. Hosted the verified sign-in, invitation and bid request subset. Trial verified the two workspace roles in the ordinary invitation preview at phone width. The ledger is 246. The remaining native Payroll read error was traced to the receipt command guard being used for a read-only view. Keep the protected receipt action unchanged in the next test gate.
 
 21 November 2026. Pushed the verified 245-state checkpoint `a4f4f035`. The next Railway batch passed the bid queue and continued sign-in checks and the existing Accounting report-to-receipt path. Corrected the staff, Accounting and Payroll fixture issues. Replaced the unfinished broad Finance run with the focused exact cases grouped on four isolated PostgreSQL databases. Trial remains signed in.

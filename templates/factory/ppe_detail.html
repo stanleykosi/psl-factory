@@ -10,6 +10,9 @@
 <p><a href="{% url 'ppe' case.pk %}">Inspect native asset evidence and configured rules</a></p>
 {% if opening_attachment %}<p><a href="{% url 'factory_ppe_opening_proof' row.work.pk row.ppe.register.pk %}">Open private opening proof · {{ opening_attachment.name }}</a></p>{% endif %}
 {% include 'finance/ppe_source.html' with payload=row.ppe.register.payload has_asset_dates=has_asset_dates %}
+{% if date_attachments %}<h3>Date explanation proof</h3><ul>{% for fact, attachment in date_attachments.items %}
+<li><a href="{% url 'factory_ppe_date_proof' row.work.pk fact %}">{{ attachment.name }}</a> · {{ attachment.size|filesizeformat }}</li>
+{% endfor %}</ul>{% endif %}
 <p>Selected supplied population only. No ledger posting or external source verification. Full owner-oracle acceptance remains unresolved.</p></section>
 {% if row.ppe.schedule %}<section class="card"><h2>Native calculation</h2><p>Schedule {{ row.ppe.schedule.pk }} · version {{ row.ppe.schedule.version }} · {{ row.ppe.schedule.result.status }}</p>
 {% include 'finance/ppe_result.html' with result=row.ppe.schedule.result %}

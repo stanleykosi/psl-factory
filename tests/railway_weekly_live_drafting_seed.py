@@ -1,6 +1,7 @@
 """Observe an isolated, source-cited weekly drafting claim through native settlement."""
 import json
 import os
+from dataclasses import dataclass
 from datetime import timedelta
 from time import sleep
 from uuid import NAMESPACE_URL, uuid5
@@ -43,6 +44,29 @@ STEP = 'ACT09'
 WINDOW = 50
 
 
+@dataclass(frozen=True)
+class Specimen:
+    tenant: str
+    title: str
+    suffix: str = ''
+
+    @property
+    def case_id(self):
+        return uuid5(NAMESPACE_URL, f'psl-factory:{self.tenant}')
+
+
+SPECIMENS = {
+    'original': Specimen(TENANT, TITLE),
+    'directed': Specimen(TENANT + '-directed', 'SAMPLE weekly report for directed live assembly', '-directed'),
+}
+
+
+def specimen(scenario):
+    if scenario not in SPECIMENS:
+        raise RuntimeError('Choose one of the named isolated weekly drafting samples.')
+    return SPECIMENS[scenario]
+
+
 def trial_reader():
     actual = os.getenv('RAILWAY_PROJECT_ID'), os.getenv('RAILWAY_ENVIRONMENT_NAME'), os.getenv(GUARD)
     database = os.getenv('PGDATABASE', '')
@@ -51,10 +75,12 @@ def trial_reader():
     return get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
 
 
-def pinned(reader, *, work_id=None, lock=False):
+def pinned(reader, *, work_id=None, lock=False, scenario='original'):
+    sample = specimen(scenario)
     candidates = FactoryWork.objects.select_related('case', 'actor', 'source_head').filter(
-        case_id=CASE_ID, case__tenant=TENANT, case__title=TITLE, case__kind='project', case__synthetic=True,
-        actor__username=MAKER, actor__is_active=True, source_head__case_id=CASE_ID, key=KEY, definition=weekly.DEFINITION,
+        case_id=sample.case_id, case__tenant=sample.tenant, case__title=sample.title, case__kind='project', case__synthetic=True,
+        actor__username=MAKER + sample.suffix, actor__is_active=True, source_head__case_id=sample.case_id,
+        key=KEY, definition=weekly.DEFINITION,
     )
     if lock:
         candidates = candidates.select_for_update(of=('self',))
@@ -73,16 +99,19 @@ def pinned(reader, *, work_id=None, lock=False):
 
 
 @transaction.atomic
-def prepare():
+def prepare(scenario='original'):
     reader = trial_reader()
-    case, created = Case.objects.get_or_create(pk=CASE_ID, defaults={'tenant': TENANT, 'title': TITLE, 'kind': 'project', 'synthetic': True})
-    if (case.tenant, case.title, case.kind, case.synthetic) != (TENANT, TITLE, 'project', True):
+    sample = specimen(scenario)
+    case, created = Case.objects.get_or_create(pk=sample.case_id, defaults={
+        'tenant': sample.tenant, 'title': sample.title, 'kind': 'project', 'synthetic': True,
+    })
+    if (case.tenant, case.title, case.kind, case.synthetic) != (sample.tenant, sample.title, 'project', True):
         raise RuntimeError('Preserve the unrelated workspace occupying the weekly drafting specimen.')
     if created:
         users = get_user_model().objects
-        sponsor = users.create_user(SPONSOR)
-        maker = users.create_user(MAKER)
-        reviewer = users.create_user(REVIEWER)
+        sponsor = users.create_user(SPONSOR + sample.suffix)
+        maker = users.create_user(MAKER + sample.suffix)
+        reviewer = users.create_user(REVIEWER + sample.suffix)
         Grant.objects.bulk_create([Grant(case=case, user=user, action=action) for user, actions in (
             (sponsor, prior.SPONSOR), (maker, prior.MAKER), (reviewer, prior.REVIEWER), (reader, prior.READ),
         ) for action in actions])
@@ -112,12 +141,12 @@ def prepare():
             json.dumps({'protocol': 'pmo-weekly-client-content/v1', 'sections': sections}, sort_keys=True),
             'synthetic:weekly-live-drafting-human-narrative')
         inputs = {'start_at': start.isoformat(), 'end_at': end.isoformat(), 'template_id': template.pk, 'content_id': content.pk}
-        work = weekly.start(maker, case.pk, KEY, inputs, TITLE, rev(case))
+        work = weekly.start(maker, case.pk, KEY, inputs, sample.title, rev(case))
         if not factory.run_once(work.pk) or not work.activities.filter(kind='ACT04', status='succeeded').exists():
             raise RuntimeError('Stop after the current native source investigation, before drafting.')
         event(maker, case, PREPARED, work=work.pk, source=work.source_head_id, sha256=work.source_head.sha256,
               reader=reader.pk, reviewer=reviewer.pk, inputs=inputs, sections=sections)
-    work, marker = pinned(reader)
+    work, marker = pinned(reader, scenario=scenario)
     return {**marker.data, 'case': str(case.pk), 'path': reverse('factory_detail', args=[work.pk]), 'preserved': not created}
 
 
@@ -133,12 +162,12 @@ class ObserveAssembly(SyntheticFactoryCoordinator):
         return super().choose(context)
 
 
-def observe(work_id):
+def observe(work_id, scenario='original'):
     reader = trial_reader()
     if type(work_id) is not int or not 0 < work_id <= 9223372036854775807:
         raise RuntimeError('Supply the exact weekly drafting work ID.')
     with transaction.atomic():
-        work, marker = pinned(reader, work_id=work_id, lock=True)
+        work, marker = pinned(reader, work_id=work_id, lock=True, scenario=scenario)
         if (work.cancel_requested or work.lease_until or (work.plan_revision, work.fence) != (1, 1)
                 or weekly.document(work) or FactoryProgress.objects.filter(work=work).exists()
                 or FactoryAttempt.objects.filter(activity__work=work, activity__kind=STEP).exists()
@@ -166,9 +195,9 @@ def observe(work_id):
     return {'work': work.pk, 'step': STEP, 'attempt': attempt.pk, 'report': report.pk, 'review': review.pk}
 
 
-def run():
-    print(GUARD + '=' + json.dumps(prepare(), sort_keys=True), flush=True)
+def run(scenario='original'):
+    print(GUARD + '=' + json.dumps(prepare(scenario), sort_keys=True), flush=True)
 
 
-def run_observation(work_id):
-    print(GUARD + '_SETTLED=' + json.dumps(observe(work_id), sort_keys=True), flush=True)
+def run_observation(work_id, scenario='original'):
+    print(GUARD + '_SETTLED=' + json.dumps(observe(work_id, scenario), sort_keys=True), flush=True)

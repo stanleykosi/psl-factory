@@ -417,9 +417,12 @@ def reconcile(actor,work_id,expected):
 @transaction.atomic
 def recheck(actor,work_id,expected,source_id,adjustment_ids,reason):
     from .factory import access,profile
+    from .factory_accounting_corrections import successor
     work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
     access(actor,work.case,'factory.execute',DEFINITION);case=lock_case(actor,work.case_id,'finance.source')
     if work.revision!=expected:raise ValidationError('STALE_VERSION: accounting work changed')
+    if successor(work):
+        raise ValidationError('Open the corrected accounting work. The returned source and its decisions are retained here.')
     if work.cancel_requested or work.status in ['cancelled','waiting_effect'] or work.lease_until and work.lease_until>timezone.now():raise ValidationError('Stopped or currently owned accounting work cannot be reconstituted')
     if PublicationJob.objects.filter(publication__factory_work=work,status__in=['pending','unknown','leased','held']).exists():raise ValidationError('Resolve original native report work before changing inputs')
     source=analysis.source_for(case,source_id)

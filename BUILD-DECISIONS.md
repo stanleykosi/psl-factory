@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. Payroll recipient readback and receipt recording share the same scoped exact checks. The read uses a read-only native path and shows the current aggregate and the recipient’s own earlier withdrawal metadata. The separate receipt command still requires current authority. A corrected trial balance keeps the original Return and opens one new same-period review. An optional private asset-date file binds to the exact recorded dates and leaves the later Finance decision separate.
+
 21 November 2026. An invitation preview can show two reviewed workspace roles before account setup. Optional alerts open preferences after ordinary sign-in and depend on a verified destination. Existing basic sign-in and independent role boundaries apply to the exact requested work. Saving a typed bid pack creates its current draft. The source owner separately sends it to independent review before any submission.
 
 21 November 2026. Staff departure can preserve a started work item by binding a reviewed replacement with current scope before deactivation. The prior worker decisions remain theirs. Forecast actuals keep independent source verification and per-match reversal. The Planning station displays the exact design approval hold and scoped Setup link while preserving the requirements and Engineering estimate for authorized readers.

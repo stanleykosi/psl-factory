@@ -5,15 +5,19 @@
 <section class="card"><h2>Next action</h2><p role="status">{{ row.next_action }}</p>
 {% if row.can_advance %}{% if not focus or focus == 'recovery' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue permitted agent work</button></form>{% endif %}{% endif %}</section>
 {% if row.payroll.recipient_only %}
-{% if row.payroll.withdrawn %}
-<section class="card"><h2>Your published payroll report was withdrawn</h2><p>Finance will provide a freshly reviewed replacement. Any earlier receipt stays in your history.</p></section>
-{% else %}
+{% if not row.payroll.withdrawn %}
 {% if row.payroll.verified_at %}<p role="status">Finance verification recorded {{ row.payroll.verified_at|date:'d M Y, H:i T' }}.</p>{% endif %}
 {% include 'factory/aggregate_totals.html' with totals_heading='Your published payroll totals' totals=row.payroll.totals currency=row.payroll.currency period=row.payroll.period %}
 <p><a href="{% url 'payroll_inspect' case.pk 'report' row.payroll.publication %}">Inspect your aggregate report</a></p>
 {% if row.payroll.receipt %}<section class="card"><h2>Your receipt is recorded</h2><p>Receipt #{{ row.payroll.receipt.pk }} · Aggregate report #{{ row.payroll.publication }} · <time datetime="{{ row.payroll.receipt.created_at|date:'c' }}">{{ row.payroll.receipt.created_at|date:'j M Y, H:i:s T' }}</time></p><p>You acknowledged this report. No further acknowledgement is needed.</p></section>
 {% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="receive"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="publication_id" value="{{ row.payroll.publication }}"><button>Acknowledge receipt as myself</button></form>{% endif %}
 {% endif %}
+{% if row.payroll.withdrawal_history %}{% with history=row.payroll.withdrawal_history %}
+<section class="card"><h2>Your published payroll report was withdrawn</h2>
+  <p>Version {{ history.version }} · Aggregate report #{{ history.publication }} · {{ history.withdrawn_at|recorded_time }}</p>
+  {% if history.receipt_id %}<p>Your earlier receipt #{{ history.receipt_id }} · {{ history.received_at|recorded_time }}</p>{% endif %}
+  {% if row.payroll.withdrawn %}<p>Finance will provide a freshly reviewed replacement.</p>{% endif %}
+</section>{% endwith %}{% endif %}
 {% else %}
 <p><a href="{% url 'payroll' case.pk %}">Payroll sources, reviews and staff corrections</a></p>
 {% include 'finance/payroll_working_rows.html' %}
