@@ -101,9 +101,11 @@ def reviewed(invoice):
     for_invoice(invoice,r.actor,delegated=delegated)
     if r.publication_packet!=review_packet(invoice):raise ValidationError('Publication target, destination, policy or evidence changed; fresh exact-packet review required')
     from .fixed_charge import preparation_access
-    preparation_access(r.actor,invoice.preparation)
-    require(r.actor,invoice.case,'finance.invoice.review')
-    authority=review_authority(r.actor,invoice.case,'invoice',r.role,r.verdict,invoice.actor_id,delegated=delegated,invoice=invoice)
+    from apps.identity.role_factory_decisions import invoice_scope
+    with invoice_scope(invoice,r.actor):
+        preparation_access(r.actor,invoice.preparation)
+        require(r.actor,invoice.case,'finance.invoice.review')
+        authority=review_authority(r.actor,invoice.case,'invoice',r.role,r.verdict,invoice.actor_id,delegated=delegated,invoice=invoice)
     strip=lambda v:{k:x for k,x in v.items() if k!='D05.decision_action_matrix'}
     if strip(authority)!=strip(r.authority):raise ValidationError('Invoice review authority changed')
     return r

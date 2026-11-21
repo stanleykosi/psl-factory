@@ -1,7 +1,8 @@
 """Record-scoped action work and exact native decisions for role dashboards."""
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import Exists, F, Func, JSONField, OuterRef, Q
+from django.db.models import Count, Exists, F, Func, JSONField, OuterRef, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -19,7 +20,7 @@ from apps.pmo import leadership_reporting, meetings
 from apps.pmo.models import ActionItem
 from apps.policy.services import decision_authority
 from apps.workflows.factory_definitions import DEFINITIONS
-from apps.workflows.models import HumanTask
+from apps.workflows.models import FactoryWork, HumanTask
 
 from . import intake, teams
 from .services import require, subject_actions
@@ -45,6 +46,16 @@ FACTORY_LINKS = {
     'ceo': {'pmo-leadership-report/v1'},
     'admin': set(),
 }
+APPROVAL_DESKS = (
+    ('payment_controls', 'Payment exceptions', ('payment.read','finance.read','delivery.read','payment.exception.decide')),
+    ('emergencies', 'Emergency approvals', ('emergency.read','emergency.decide')),
+    ('emergencies', 'Emergency retrospective', ('emergency.read','emergency.retrospective_decide')),
+    ('finance_forecast', 'Forecast review', ('finance.read','finance.forecast.review')),
+    ('payroll', 'Payroll review', ('payroll.read','payroll.private.read','payroll.review')),
+    ('rfp', 'Bid review', ('rfp.read','rfp.review')),
+    ('approvals', 'Department approvals', ('approval.read','approval.receive')),
+)
+DESK_PAGE_SIZE = 8
 
 
 def actor_name(user):
@@ -136,11 +147,27 @@ def review_options(actor, row):
     """Resolve the native decision and disclose only its exact audience projection."""
     if row.membership.user_id != actor.pk:
         return None
+    if row.factory_kind:
+        from .role_factory_decisions import options
+
+        return options(actor,row)
     if row.schedule_id or row.hr_request_id:
         from .role_native_decisions import options
 
         return options(actor, row)
-    task = review_task(row.case, row.review_task_id)
+    return document_options(actor,row)
+
+
+def permitted_document_projection(actor, case, version):
+    source_ids = {item['id'] for item in version.source_manifest}
+    if source_ids != set(public_evidence(case.evidence.filter(pk__in=source_ids)).values_list('pk',flat=True)):
+        return False
+    leadership_reporting.binding_access(actor,version)
+    return True
+
+
+def document_options(actor,row,*,exact_factory=False):
+    task = row.review_task if exact_factory else review_task(row.case,row.review_task_id)
     if task.status != 'open' or actor.pk in (task.created_by_id, task.version.created_by_id) or (
             task.claimed_by_id not in (None, actor.pk)):
         return None
@@ -149,11 +176,14 @@ def review_options(actor, row):
         role, _ = leadership_reporting.review_context(version)
         if role != task.required_role:
             return None
-        source_ids = {item['id'] for item in version.source_manifest}
-        if source_ids != set(public_evidence(row.case.evidence.filter(pk__in=source_ids)).values_list('pk', flat=True)):
+        if exact_factory:
+            from .role_factory_decisions import document_projection
+
+            accessible = document_projection(actor,row,version)
+        else:
+            accessible = permitted_document_projection(actor,row.case,version)
+        if not accessible:
             return None
-        # Cross-project and protected leadership evidence still needs native reader authority.
-        leadership_reporting.binding_access(actor, version)
         from apps.pmo.rfp_submission_pack import require_independent_review
 
         allowed = {}
@@ -181,6 +211,10 @@ def card(row, actor):
     mine = row.membership.user_id == actor.pk
     if item:
         title, state = item.current.description, item.current.status
+    elif row.factory_kind:
+        from .role_factory_decisions import LABELS
+
+        title, state = LABELS[row.factory_kind], 'open'
     elif row.schedule_id:
         title, state = 'Finance schedule review', 'open'
     elif row.hr_request_id:
@@ -193,6 +227,51 @@ def card(row, actor):
             'due': item.current.due_at if item else None, 'state': STATE.get(state, state),
             'url': reverse('role_work_detail', args=[row.pk]),
             'line': DEFINITIONS[row.work.definition]['title'] if row.work and row.work.definition in DEFINITIONS else None}
+
+
+def workspace_decisions(actor, page):
+    """Reuse the current native decision queue for independently granted workspaces."""
+    from apps.core.workbench import granted
+    from apps.workflows.factory_views import queue_context
+    from apps.workflows.screen_focus import SCREENS
+
+    if not granted(actor, ['factory.read']).exists():
+        return [], False, False
+    try:
+        queue = queue_context(actor, {'queue':'decisions','page':str(page)})
+    except (Http404,PermissionDenied,ValidationError):
+        return [], False, True
+    if queue['candidates'].number != page:
+        return [], False, False
+    rows = []
+    for item in queue['rows']:
+        if not item.get('needs_me'):
+            continue
+        work = item['work']
+        focused = 'decision' in SCREENS.get(work.definition,{})
+        url = reverse('factory_invoice_decision' if focused else 'factory_detail',args=[work.pk])
+        rows.append({'work_id':work.pk,'title':item.get('title') or DEFINITIONS[work.definition]['title'],
+                     'workspace':workspace_name(work.case),'state':item['state'],'url':url})
+    return rows, queue['candidates'].has_next(), queue['limited']
+
+
+def approval_desks(actor, page):
+    """Link to specialist desks where the reader has the native entry permissions."""
+    allowed, eligible = {}, Q()
+    for index, (_, _, actions) in enumerate(APPROVAL_DESKS):
+        key = f'permissions_{index}'
+        required = ('case.read',*actions)
+        allowed[key] = Count('grant__action',filter=Q(grant__user=actor,grant__active=True,grant__action__in=required),distinct=True)
+        eligible |= Q(**{key:len(required)})
+    offset = (page-1)*DESK_PAGE_SIZE
+    granted_cases = Case.objects.filter(grant__user=actor,grant__user__is_active=True,grant__active=True)
+    cases = list(granted_cases.annotate(**allowed).filter(eligible).order_by('title','pk')[offset:offset+DESK_PAGE_SIZE+1])
+    desks = []
+    for case in cases[:DESK_PAGE_SIZE]:
+        for index, (route, title, actions) in enumerate(APPROVAL_DESKS):
+            if getattr(case,f'permissions_{index}') == len(actions)+1:
+                desks.append({'title':title,'workspace':workspace_name(case),'url':reverse(route,args=[case.pk])})
+    return desks,len(cases)>DESK_PAGE_SIZE
 
 
 def dashboard(actor, page):
@@ -211,7 +290,9 @@ def dashboard(actor, page):
         payload__request_id=Func(OuterRef('hr_request_id'),function='to_jsonb',output_field=JSONField()))
     pending = query.filter(Q(review_task__status='open') |
         Q(schedule__isnull=False, schedule__reviews__isnull=True) |
-        (Q(hr_request__isnull=False) & ~Exists(correction_closed))).order_by('-pk')
+        (Q(hr_request__isnull=False) & ~Exists(correction_closed)) |
+        (~Q(factory_kind='') & Q(stafffactoryreviewuse__isnull=True,work__cancel_requested=False) &
+         ~Q(work__status__in=['verified','cancelled','followup_needed']))).order_by('-pk')
     decision_rows = list(pending.filter(membership__user=actor)[offset:offset+SIZE+1])
     team_decisions = list(pending.exclude(membership__user=actor)[offset:offset+SIZE+1])
     decisions = []
@@ -224,10 +305,13 @@ def dashboard(actor, page):
                     decisions.append(card(row, actor))
     except ReadLimit:
         limited = True
+    native_rows, native_next, native_limited = workspace_decisions(actor,page)
+    desks, desks_next = approval_desks(actor,page)
     return {'positions': positions[:50], 'actions': [card(row, actor) for row in rows[:SIZE]], 'decisions': decisions,
-            'team_decisions': [card(row, actor) for row in team_decisions[:SIZE]], 'limited': limited,
+            'team_decisions': [card(row, actor) for row in team_decisions[:SIZE]], 'limited': limited or native_limited,
+            'workspace_decisions':native_rows, 'approval_desks':desks,
             'has_teams': any(item['mode'] == 'lead' for item in positions), 'page': page,
-            'has_next': max(len(rows),len(decision_rows),len(team_decisions)) > SIZE, 'as_of': timezone.now()}
+            'has_next': native_next or desks_next or max(len(rows),len(decision_rows),len(team_decisions)) > SIZE, 'as_of': timezone.now()}
 
 
 def detail(actor, row):
@@ -238,7 +322,11 @@ def detail(actor, row):
         if packet:
             value['review'] = {key: packet[key] for key in ('title','version','role','sections','verdicts','token')}
         elif row.membership.user_id == actor.pk:
-            if row.schedule_id:
+            if row.factory_kind:
+                from .team_models import StaffFactoryReviewUse
+
+                value['conclusion'] = StaffFactoryReviewUse.objects.filter(assignment=row).values_list('verdict',flat=True).first()
+            elif row.schedule_id:
                 value['conclusion'] = row.schedule.reviews.filter(actor=actor).values_list('verdict',flat=True).order_by('-pk').first()
             elif row.hr_request_id:
                 kind = hrfinance.correction_disposition(row.hr_request).filter(actor=actor).values_list('kind',flat=True).first()
@@ -258,6 +346,8 @@ def detail(actor, row):
 
 def locked_entry(actor, assignment_id, expected, case_expected):
     current = entry_for(actor, assignment_id)
+    if current.factory_kind:
+        FactoryWork.objects.select_for_update().only('pk').get(pk=current.work_id)
     Case.objects.select_for_update().get(pk=current.case_id)
     intake.lock_users([actor.pk])
     row = entry_for(actor, assignment_id)
@@ -292,6 +382,10 @@ def decide(actor, assignment_id, verdict, note, expected, case_expected, token):
     if token != packet['token']:
         raise ValidationError('STALE_VERSION: The decision packet changed. Review the current version.')
     intake.text(note, 1000)
+    if row.factory_kind:
+        from .role_factory_decisions import perform
+
+        return perform(actor,row,packet,verdict,note,case_expected)
     if row.schedule_id or row.hr_request_id:
         from .role_native_decisions import perform
 

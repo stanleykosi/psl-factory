@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Added the reviewed move from existing workspace grants to exact team or standalone scope in Setup and the API. Connected invoice, Accounting, Planning, closure, escalation and supported publication reviews to the role dashboard. Specialist desk links reuse existing grants. Native processing uses exact review receipts and preserves independent release, publication and sign-off controls. Actual staff assignments and decision policies remain deferred.
+
 21 November 2026. Built the PMO role-team path using native action ownership, recorded work updates and independently authorised document review. Applied the same dashboard and invitation scope to all six roles. Connected Finance schedule reviews and HR correction decisions to native approval and readback services. The role desk and API enforce own-work and team scope, and the database blocks accidental workspace-wide grants to scoped accounts.
 
 21 November 2026. Recorded the user-confirmed six-role operating model and traced it to the dashboard, record-access, approval and invitation paths. Current project-wide role grants and profile-based invitations establish the starting point. Added the team scope, standalone roles, first-login behavior and verification requirements to the product blueprint and backlog.

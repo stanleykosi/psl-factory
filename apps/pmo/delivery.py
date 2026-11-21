@@ -264,7 +264,9 @@ def planning_remedy(d, prior, inputs, *, actor=None):
 
 
 def approved_plan(d):
-    r=latest(d,'planning_decision');require(r.actor,d.case,'delivery.planning_decide')
+    from apps.identity.role_factory_decisions import recorded_access
+
+    r=latest(d,'planning_decision');recorded_access(d.case,r.actor,'planning',r.pk,'delivery.planning_decide')
     if r.data['verdict']!='approve' or r.data['authority']!=decision_authority(r.actor,d.case,'PMO Lead') or r.snapshot!=planning_inputs(d):
         raise ValidationError('Current exact Planning exit approval required')
     remedy = r.data.get('issue_remedy')

@@ -31,6 +31,10 @@
  <details{% if scope_forms.hr.errors %} open{% endif %}><summary>Assign an HR correction review</summary><form method="post">{% csrf_token %}{{ scope_forms.hr.as_p }}
  <button type="submit" name="operation" value="hr" class="button primary">Assign HR review</button></form></details>
 </section>{% endif %}
+{% if scope_forms.factory %}<section class="card">
+ <details{% if scope_forms.factory.errors %} open{% endif %}><summary>Assign a factory decision</summary>
+ <form method="post">{% csrf_token %}{{ scope_forms.factory.as_p }}<button type="submit" name="operation" value="factory" class="button primary">Assign decision</button></form></details>
+</section>{% endif %}
 {% if scope_forms.transfer %}<section class="card">
  <details{% if scope_forms.transfer.errors %} open{% endif %}><summary>Reassign work</summary><form method="post">{% csrf_token %}{{ scope_forms.transfer.as_p }}
  <button type="submit" name="operation" value="transfer" class="button primary">Confirm reassignment</button></form></details>

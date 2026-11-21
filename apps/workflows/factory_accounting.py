@@ -116,15 +116,20 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
 
 def route(work,row,value):
     from .factory import access
+    from contextlib import nullcontext
+    from apps.identity.role_factory_decisions import permissions,review_candidates
+    from apps.identity.services import subject_actions
     result=[]
-    for actor in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__active=True,grant__action='finance.review').distinct().order_by('pk'):
+    candidates,scoped=review_candidates(work,'accounting',row['id'],row)
+    for actor in candidates:
         try:
-            access(actor,work.case,envelope=DEFINITION)
-            if row['subject']=='configuration':
-                app=ScopeApplication.objects.select_related('source__configuration__case').filter(configuration_id=row['id']).first()
-                if app:
-                    from apps.policy.scopes import authorized
-                    authorized(actor,app.source.configuration.case,'policy.read')
+            with subject_actions(actor,work.case,permissions(work,'accounting')) if actor.pk in scoped else nullcontext():
+                access(actor,work.case,envelope=DEFINITION)
+                if row['subject']=='configuration':
+                    app=ScopeApplication.objects.select_related('source__configuration__case').filter(configuration_id=row['id']).first()
+                    if app:
+                        from apps.policy.scopes import authorized
+                        authorized(actor,app.source.configuration.case,'policy.read')
         except PermissionDenied:continue
         actions={}
         for verdict in ['approve','return','reject']:

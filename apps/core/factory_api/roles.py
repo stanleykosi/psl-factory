@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from apps.identity import primary_roles as domain
+from apps.identity import scope_moves, teams
 from apps.identity.services import visible_cases
 
 from .http import BOOLEAN, ID, TEXT, UUID, array, choice, endpoint, nullable, obj
@@ -97,3 +98,33 @@ def apply(request, case_id, person_id, *, body):
     row = domain.apply(request.user, case.pk, person_id, body['role_key'], body['fingerprint'],
                        body['reason'], body['operation'])
     return {'change_id': row.pk, 'role_key': row.role_key or None, 'added': row.added, 'removed': row.removed}
+
+
+MOVE_QUERY = {'role': choice(*domain.BUILT_INS), 'mode': choice(*teams.MODE_LABELS), 'team_id': nullable(ID)}
+MOVE_PIN = {'type':'string', 'pattern':'^[a-f0-9]{64}$'}
+
+
+@endpoint(query=MOVE_QUERY, response=obj({'person_id':ID, 'scope':TEXT, 'fingerprint':MOVE_PIN,
+    'removed':array(TEXT), 'carried_actions':array(obj({'id':ID, 'title':TEXT, 'revision':ID})), 'holds':array(TEXT), 'django_url':TEXT}),
+    summary='Review the exact access removal and carried actions for an existing staff member')
+def preview_scope(request, case_id, person_id):
+    case = workspace(request.user, case_id)
+    value = request.GET.get('team_id', '')
+    if value and (not value.isascii() or not value.isdecimal() or len(value)>19 or int(value)>ID['maximum']):
+        from django.core.exceptions import ValidationError
+
+        raise ValidationError('Choose a valid team in this workspace.')
+    review = scope_moves.prepare(request.user,case,person_id,request.GET.get('role',''),request.GET.get('mode',''),int(value) if value else None)
+    return {'person_id':person_id, 'scope':teams.describe_pin(review['scope']), 'fingerprint':review['fingerprint'],
+            'removed':[row['action'] for row in review['grants']], 'holds':review['holds'],
+            'carried_actions':[{'id':item.pk,'title':item.current.description,'revision':item.current.number} for item in review['items']],
+            'django_url':reverse('staff_scope_move',args=[case.pk,person_id])}
+
+
+@endpoint(method='POST', request=obj({**MOVE_QUERY,'fingerprint':MOVE_PIN,'operation':UUID,'reason':REASON,
+    'confirmed':{'const':True}}), response=obj({'move_id':ID,'membership_id':ID}),
+    summary='Commit a reviewed move from workspace grants to exact role assignments')
+def apply_scope(request, case_id, person_id, *, body):
+    case = workspace(request.user,case_id)
+    row = scope_moves.apply(request.user,case.pk,person_id,**{key:value for key,value in body.items() if key!='confirmed'})
+    return {'move_id':row.pk,'membership_id':row.staffmembership.pk}

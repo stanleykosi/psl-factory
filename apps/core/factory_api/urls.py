@@ -41,6 +41,8 @@ ROUTES = (
     ('setup/primary-roles', roles.built_ins),
     ('setup/<uuid:case_id>/primary-roles', roles.catalogue, roles.create),
     ('setup/<uuid:case_id>/people/<int:person_id>/primary-role', roles.review, roles.apply),
+    ('setup/<uuid:case_id>/people/<int:person_id>/team-scope', roles.preview_scope, roles.apply_scope),
+    ('setup/<uuid:case_id>/team-decisions', role_work.assign_factory_review),
     ('me/workspaces/<uuid:case_id>/primary-role', roles.own),
     ('role-dashboard', role_work.dashboard),
     ('role-work/<int:assignment_id>', role_work.detail),

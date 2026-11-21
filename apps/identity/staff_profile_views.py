@@ -22,6 +22,8 @@ from .staff_models import StaffPrimaryRoleChange
 @require_safe
 @never_cache
 def person(request,person_id):
+    from .teams import memberships, scope_label
+
     user=staff_accounts.account(request.user,person_id)
     cases=staff_accounts.manageable_cases(request.user).filter(pk__in=Grant.objects.filter(
         user=user).values('case_id')).order_by('title','pk')
@@ -32,6 +34,7 @@ def person(request,person_id):
                         .values_list('case_id', flat=True))
     primary = dict(StaffPrimaryRoleChange.objects.filter(user=user, case__in=page.object_list)
                    .order_by('case_id', '-pk').distinct('case_id').values_list('case_id', 'role_name'))
+    scoped = {row.case_id:row for row in memberships(user).filter(case__in=page.object_list).select_related('team')}
     delegated = {cfg.tenant: cfg.value for cfg in intake.options(user, 'manage_access')} if user.is_active else {}
     protected = user.is_staff or user.is_superuser or staff_accounts._technical_authority(user)
     for case in page:
@@ -45,6 +48,11 @@ def person(request,person_id):
                     and case.synthetic == (target_delegation.get('classification') == 'synthetic'))
         case.primary_role = ('Admin' if is_admin else primary.get(case.pk)) if user.is_active and case.pk in current_reads else None
         case.can_assign_primary_role = (case.can_edit_profile and not protected and case.pk in current_reads and case.kind == 'project')
+        if case.pk in scoped:
+            member = scoped[case.pk]
+            case.primary_role = scope_label(member.role, member.mode)
+            case.account_access_label = member.team.name if member.team else 'Standalone role scope'
+            case.can_edit_profile = False
     return render(request,'identity/staff_person.html',{'person':user,'workspaces':page})
 
 

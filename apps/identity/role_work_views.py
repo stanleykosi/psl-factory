@@ -11,7 +11,7 @@ from apps.identity.services import active_case_grants, visible_cases
 from apps.pmo.models import ActionItem
 from apps.workflows.models import HumanTask
 
-from . import role_native_decisions, role_work, teams
+from . import role_factory_decisions, role_native_decisions, role_work, teams
 from .team_models import TEAM_ROLES, StaffAssignment, StaffMembership, StaffTeam
 
 
@@ -145,6 +145,30 @@ class NativeReviewForm(forms.Form):
                 queryset=HRReadSnapshot.objects.filter(contract__need__case=case,status='accepted').defer('payload').order_by('-pk'))
 
 
+class FactoryReviewForm(forms.Form):
+    member = forms.ModelChoiceField(queryset=StaffMembership.objects.none(),label='Reviewer')
+    work = forms.ModelChoiceField(queryset=None,label='Current factory work')
+    kind = forms.ChoiceField(label='Decision',choices=role_factory_decisions.LABELS.items())
+    target = forms.IntegerField(min_value=1,required=False,label='Exact record number when there is more than one')
+    evidence = forms.ModelChoiceField(queryset=None,label='Decision evidence for Planning or closure',required=False)
+    expected = forms.IntegerField(min_value=1,widget=forms.HiddenInput)
+
+    def __init__(self, actor, case, members, data=None):
+        from apps.core.evidence_access import public_evidence
+        from apps.workflows.factory_definitions import DEFINITIONS
+        from apps.workflows.factory_views import visible
+
+        super().__init__(data,initial={'expected':case.revision})
+        sources,_ = role_factory_decisions.document_handlers()
+        work = visible(actor,case_id=case.pk).filter(definition__in={*sources,*role_factory_decisions.LINES.values()})
+        work = work.exclude(status__in=['cancelled','verified','followup_needed']).filter(cancel_requested=False)
+        self.fields['member'].queryset = members
+        self.fields['member'].label_from_instance = lambda item: role_work.actor_name(item.user)
+        self.fields['work'].queryset = work.order_by('-updated_at','-pk')
+        self.fields['work'].label_from_instance = lambda item: f"{DEFINITIONS[item.definition]['title']} · {item.request.get('reference') or item.pk}"
+        self.fields['evidence'].queryset = public_evidence(case.evidence.all()).defer('body').order_by('-pk')
+
+
 class RevokeForm(forms.Form):
     member = forms.ModelChoiceField(queryset=StaffMembership.objects.none(), label='Role assignment to remove')
     reason = forms.CharField(max_length=1000, label='Reason for removing access')
@@ -176,6 +200,8 @@ def manage(request, case_id):
         forms_by_mode['schedule'] = NativeReviewForm(case, members, 'schedule', data if mode == 'schedule' else None)
     if 'hrfinance.read' in grants and role_native_decisions.HR_ACTIONS <= delegate:
         forms_by_mode['hr'] = NativeReviewForm(case, members, 'hr', data if mode == 'hr' else None)
+    if 'factory.read' in grants:
+        forms_by_mode['factory'] = FactoryReviewForm(request.user,case,members,data if mode=='factory' else None)
     if data is not None and mode not in forms_by_mode:
         raise PermissionDenied('Choose a staff action that your delegation permits.')
     if mode and forms_by_mode[mode].is_valid():
@@ -195,6 +221,10 @@ def manage(request, case_id):
                 successor = values.get('successor')
                 role_native_decisions.assign(request.user,case.pk,values['member'].pk,mode,values['target'].pk,
                                              values['expected'],successor.pk if successor else None)
+            elif mode=='factory':
+                evidence = values['evidence']
+                role_factory_decisions.assign(request.user,case.pk,values['member'].pk,values['work'].pk,values['kind'],
+                                              values['target'],evidence.pk if evidence else None,values['expected'])
             else:
                 role_work.transfer(request.user, case.pk, values['assignment'].pk, values['member'].pk,
                                    values['reason'], values['expected'])

@@ -13,7 +13,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 from apps.core.factory_api.urls import contract
 from apps.core.services import add_evidence
 from apps.documents import controlled
-from apps.identity import intake, role_native_decisions, role_work, staff, teams
+from apps.identity import intake, role_factory_decisions, role_native_decisions, role_work, scope_moves, staff, teams
 from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.identity.team_models import StaffAssignment, StaffMembership, StaffReviewUse
@@ -96,6 +96,12 @@ class RoleScopedWorkTests(TestCase):
         body = {'verdict':verdict,'note':'Reviewed exact synthetic native decision','expected':detail['revision'],
                 'case_expected':detail['case_revision'],'token':detail['review']['token']}
         return self.checked(self.api(path+'/decision',body), '/role-work/{assignment_id}/decision', 'post')
+
+    def add_nomination(self, actor, case, evidence, member, role):
+        ref = register_reference(actor,case.pk,f'factory-review-scope:{member.pk}','schema:psl/role-assignment/v1',
+                                 {'role':role,'user_id':member.user_id},evidence.pk)
+        previous = active_component('D05.role_principal_assignments',case)
+        return activate(actor,case,'D05.role_principal_assignments',[*previous.envelope['value'],ref.ref],evidence)
 
     def test_01_pmo_member_peer_lead_transfer_and_native_action(self):
         first, second = self.admitted(), self.admitted()
@@ -298,3 +304,268 @@ class RoleScopedWorkTests(TestCase):
         self.assertEqual(self.api('/role-dashboard').json()['decisions'],[])
         with self.assertRaises(PermissionDenied):
             hrfinance.read_snapshot(member.user, successor)
+
+    def test_08_reviewed_move_carries_existing_actions_and_keeps_other_workspace_access(self):
+        from apps.pmo.meetings import create_action
+
+        person = get_user_model().objects.create_user('existing-synthetic-pmo')
+        accesses = ('case.read','action.own','action.work','report.read')
+        for action in accesses:
+            intake.change_access(self.admin,self.case.pk,person.pk,action,True,'Synthetic original project access')
+        intake.change_access(self.admin,self.other.pk,person.pk,'case.read',True,'Independent project access')
+        proof = add_evidence(self.admin,self.case.pk,'project_note','Synthetic action ownership proof','synthetic:role-move')
+        item = create_action(self.admin,self.case.pk,'CURRENT-PMO-ACTION','Carry my PMO work',person.pk,None,
+                             proof.pk,'Original action commitment',rev(self.case))
+        query = {'role':'pmo-lead','mode':'member','team_id':self.team.pk}
+        url = f'/setup/{self.case.pk}/people/{person.pk}/team-scope'
+        self.client.force_login(self.admin)
+        page = self.client.get(reverse('staff_scope_move',args=[self.case.pk,person.pk]),query)
+        self.assertContains(page,'Carry my PMO work')
+        self.assertContains(page,'View the workspace')
+        preview = self.checked(self.api(url+'?role=pmo-lead&mode=member&team_id='+str(self.team.pk)),
+                               '/setup/{case_id}/people/{person_id}/team-scope')
+        self.assertCountEqual(preview['removed'],accesses)
+        self.assertEqual(preview['carried_actions'][0]['id'],item.pk)
+        pin = {'fingerprint':preview['fingerprint'],'operation':str(uuid4()),'reason':'Reviewed synthetic team transition','confirmed':True}
+        intake.change_access(self.admin,self.case.pk,person.pk,'report.read',True,'Changed the current access record')
+        self.assertEqual(self.api(url,{**query,**pin}).status_code,409)
+        preview = self.api(url+'?role=pmo-lead&mode=member&team_id='+str(self.team.pk)).json()
+        body = {**query,**pin,'fingerprint':preview['fingerprint']}
+        moved = self.checked(self.api(url,body),'/setup/{case_id}/people/{person_id}/team-scope','post')
+        self.assertEqual(self.api(url,body).json(),moved)
+        self.assertEqual(self.api(url,{**body,'reason':'Different request'}).status_code,409)
+        assignment = StaffAssignment.objects.get(membership_id=moved['membership_id'],action=item)
+        self.assertFalse(Grant.objects.filter(case=self.case,user=person,active=True).exists())
+        self.assertEqual(item.current.owner_id,person.pk)
+        require(person,self.other,'case.read')
+        self.client.force_login(person)
+        self.assertEqual(self.api(f'/projects/{self.case.pk}').status_code,404)
+        self.assertEqual(self.api(f'/projects/{self.other.pk}').status_code,200)
+        self.assertEqual(self.update(assignment,'complete').json()['state'],'completed')
+
+    def test_09_move_holds_while_an_existing_decision_is_claimed(self):
+        from apps.workflows.models import HumanTask
+
+        person = get_user_model().objects.create_user('existing-synthetic-reviewer')
+        intake.change_access(self.admin,self.case.pk,person.pk,'case.read',True,'Original reviewer access')
+        HumanTask.objects.create(case=self.case,kind='factory_review',factory_key='synthetic-move-held-decision',
+                                 created_by=self.admin,claimed_by=person)
+        query = (self.admin,self.case,person.pk,'pmo-lead','member',self.team.pk)
+        preview = scope_moves.prepare(*query)
+        self.assertIn('Release this person’s open decision claims first.',preview['holds'])
+        with self.assertRaises(ValidationError):
+            scope_moves.apply(self.admin,self.case.pk,*query[2:],preview['fingerprint'],uuid4(),'Reviewed scope move')
+        require(person,self.case,'case.read')
+        self.assertFalse(StaffMembership.objects.filter(user=person).exists())
+
+    def test_10_scoped_invoice_decision_reaches_native_review_without_issuing(self):
+        from apps.finance import invoices
+        from apps.finance.models import InvoiceIssue, InvoiceJob
+        from apps.workflows import factory
+        from tests.factory_helpers import fixture
+        from tests.obligation_helpers import factory_identified
+
+        f = fixture(username='scope-invoice-preparer')
+        a,case,work = f['actor'],f['case'],f['work']
+        member = self.admission_in(a,case,'finance-lead',role_factory_decisions.permissions(work,'invoice'))
+        self.add_nomination(a,case,f['evidence']['policy_decision'],member,'Finance')
+        factory.run_until_wait(work.pk)
+        work = factory_identified(f)
+        self.client.force_login(a)
+        native = self.checked(self.api('/role-dashboard'),'/role-dashboard')
+        self.assertTrue(any(item['work_id']==work.pk for item in native['workspace_decisions']))
+        result = self.checked(self.api(f'/setup/{case.pk}/team-decisions',{'membership_id':member.pk,
+            'work_id':work.pk,'kind':'invoice','expected':rev(case)}),'/setup/{case_id}/team-decisions','post')
+        row = StaffAssignment.objects.get(pk=result['assignment_id'],work=work)
+        current = factory.manage(a,work.pk,work.revision,'resume')
+        factory.run_until_wait(current.pk)
+        self.client.force_login(member.user)
+        self.assertEqual(self.api(f'/work/{work.pk}').status_code,404)
+        result = self.decide(row,'approve')
+        self.assertEqual(invoices.reviewed(work.invoice).pk,result['review_id'])
+        self.assertFalse(InvoiceJob.objects.filter(invoice=work.invoice).exists())
+        self.assertFalse(InvoiceIssue.objects.filter(invoice=work.invoice).exists())
+        self.assertFalse(Grant.objects.filter(user_id=member.user_id,case=case,active=True).exists())
+        teams.revoke(a,case.pk,member.pk,'Synthetic reviewer left the role')
+        with self.assertRaises((ValidationError,PermissionDenied)):
+            invoices.reviewed(work.invoice)
+
+    def test_11_scoped_planning_approval_reaches_current_native_gate(self):
+        from django.db import connection
+
+        from apps.pmo import delivery
+        from tests.test_factory_delivery import setup
+
+        f = setup()
+        for kind in delivery.PLANNING:
+            f.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})
+        member = self.admission_in(f.actor,f.case,'pmo-lead',role_factory_decisions.permissions(f.work,'planning'))
+        self.add_nomination(f.actor,f.case,f.e['policy_decision'],member,'PMO Lead')
+        row = role_factory_decisions.assign(f.actor,f.case.pk,member.pk,f.work.pk,'planning',f.d.pk,f.e['plan'].pk,rev(f.case))
+        self.client.force_login(member.user)
+        result = self.decide(row,'approve')
+        self.assertEqual(delivery.approved_plan(f.d).pk,result['review_id'])
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_progress_plan(%s)',[result['review_id']])
+            self.assertTrue(cursor.fetchone()[0])
+        self.assertFalse(Grant.objects.filter(user_id=member.user_id,case=f.case,active=True).exists())
+        teams.revoke(f.actor,f.case.pk,member.pk,'Synthetic Planning reviewer left')
+        with self.assertRaises(PermissionDenied):
+            delivery.approved_plan(f.d)
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_progress_plan(%s)',[result['review_id']])
+            self.assertFalse(cursor.fetchone()[0])
+
+    def test_12_scoped_accounting_subject_review_uses_native_routing(self):
+        from django.db import connection
+
+        from apps.finance import analysis
+        from apps.workflows import factory
+        from apps.workflows.models import HumanTask
+        from tests.factory_accounting_helpers import configured
+        from tests.finance_analysis_helpers import fixture, METRICS
+
+        a,case,proof,_,_,source,template,_ = fixture(username='scoped-accounting-preparer',recipient_username='scoped-accounting-recipient')
+        work = configured(a,case,proof,source,template,METRICS)['work']
+        member = self.admission_in(a,case,'finance-lead',role_factory_decisions.permissions(work,'accounting'))
+        self.add_nomination(a,case,proof['policy_decision'],member,'Finance')
+        factory.run_until_wait(work.pk)
+        task = HumanTask.objects.filter(case=case,kind='factory_accounting_review',status='open').order_by('pk').first()
+        self.assertIsNotNone(task)
+        packet = task.context['packet']
+        row = role_factory_decisions.assign(a,case.pk,member.pk,work.pk,'accounting',task.pk,None,rev(case))
+        work.refresh_from_db()
+        factory.manage(a,work.pk,work.revision,'resume')
+        factory.run_until_wait(work.pk)
+        self.client.force_login(member.user)
+        result = self.decide(row,'approve')
+        approved = analysis.current_review(case,packet['purpose'],**{packet['subject']+'_id':packet['target']})
+        self.assertEqual(approved['id'],result['review_id'])
+        self.assertTrue(approved['valid'])
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_schedules_finance_review_current(%s)',[result['review_id']])
+            self.assertTrue(cursor.fetchone()[0])
+
+    def test_13_scoped_head_closure_decision_allows_native_finalisation(self):
+        from apps.pmo.models import DeliveryRecord
+        from apps.workflows import factory, factory_closure
+        from tests.signature_helpers import reaffirm_for
+        from tests.test_delivery import DeliveryFixture
+        from tests.test_factory_closure import setup
+
+        f = DeliveryFixture()
+        f.setup_delivery()
+        member = self.admission_in(f.actor,f.case,'pmo-lead',{'case.read','delivery.read','factory.read','delivery.closure_decide'})
+        self.add_nomination(f.actor,f.case,f.e['policy_decision'],member,'Head of PMO')
+        reaffirm_for(f.actor,f.case)
+        f.closure_selected = f.closing()
+        f = setup(base=f)
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        version = factory_closure.document(f.work)
+        row = role_factory_decisions.assign(f.actor,f.case.pk,member.pk,f.work.pk,'closure',version.pk,f.e['requirements'].pk,rev(f.case))
+        self.client.force_login(member.user)
+        result = self.decide(row,'approve')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').exists())
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        self.assertEqual(factory_closure.verify(f.work)['decision'],result['review_id'])
+
+    def test_14_scoped_go_live_document_review_keeps_signoff_separate(self):
+        from apps.documents.controlled import validate_review
+        from apps.documents.models import PublicationReceipt
+        from apps.pmo.models import DeliveryRecord
+        from apps.workflows import factory, factory_go_live
+        from tests.signature_helpers import reaffirm_for
+        from tests.test_delivery import DeliveryFixture
+        from tests.test_factory_go_live import setup
+
+        f = DeliveryFixture()
+        f.setup_delivery()
+        member = self.admission_in(f.actor,f.case,'pmo-lead',{'case.read','delivery.read','factory.read',
+                                                            'document.read','document.review_controlled'})
+        self.add_nomination(f.actor,f.case,f.e['policy_decision'],member,'PMO Lead')
+        reaffirm_for(f.actor,f.case)
+        f.release()
+        f = setup(base=f)
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        version = factory_go_live.document(f.work)
+        row = role_factory_decisions.assign(f.actor,f.case.pk,member.pk,f.work.pk,'document',version.pk,None,rev(f.case))
+        self.client.force_login(member.user)
+        result = self.decide(row,'approve')
+        self.assertEqual(validate_review(f.case,version).pk,result['review_id'])
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        receipt = PublicationReceipt.objects.get(publication__version=version)
+        self.assertEqual(receipt.publication.review_id,result['review_id'])
+        self.assertEqual(receipt.publication.actor_id,f.publisher.pk)
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
+
+    def test_15_scoped_client_escalation_requires_a_separate_communication_review(self):
+        from apps.documents.models import Publication
+        from apps.pmo import escalations
+        from apps.workflows import factory_escalation
+        from tests.test_factory_escalation import FactoryEscalationTests
+
+        f = FactoryEscalationTests()
+        f.setUp()
+        member = self.admission_in(f.a,f.c,'pmo-lead',{'case.read','issue.read','factory.read','issue.escalation_decide'})
+        self.add_nomination(f.a,f.c,f.owner,member,'Head of PMO')
+        work = f.start()
+        f.advance()
+        row = role_factory_decisions.assign(f.a,f.c.pk,member.pk,work.pk,'escalation',f.r.pk,None,rev(f.c))
+        self.client.force_login(member.user)
+        result = self.decide(row,'approve')
+        self.assertEqual(escalations.approved_request(f.c,f.r).pk,result['review_id'])
+        f.advance()
+        self.assertIsNotNone(factory_escalation.document(f.w),f.w.finding)
+        self.assertFalse(Publication.objects.filter(factory_work=f.w).exists())
+        f.review()
+        self.assertEqual(f.finish()['decision'],result['review_id'])
+
+    def test_16_role_dashboard_links_only_current_specialist_desks_in_that_workspace(self):
+        reviewer = get_user_model().objects.create_user(username='synthetic-specialist-desk-reviewer')
+        Grant.objects.bulk_create([
+            Grant(user=reviewer,case=self.case,action=action)
+            for action in ('case.read','payment.read','finance.read','delivery.read','payment.exception.decide','rfp.read')
+        ] + [
+            Grant(user=reviewer,case=self.other,action=action)
+            for action in ('case.read','rfp.review','finance.forecast.review')
+        ])
+        self.client.force_login(reviewer)
+        url = reverse('payment_controls',args=[self.case.pk])
+        response = self.checked(self.api('/role-dashboard'),'/role-dashboard')
+        self.assertEqual([desk['url'] for desk in response['approval_desks']],[url])
+        self.assertContains(self.client.get(reverse('role_dashboard')),url)
+        self.assertEqual(self.client.get(url).status_code,200)
+        Grant.objects.filter(user=reviewer,case=self.case,action='payment.exception.decide').update(active=False)
+        self.assertEqual(self.checked(self.api('/role-dashboard'),'/role-dashboard')['approval_desks'],[])
+
+    def test_17_scoped_weekly_report_review_uses_outward_projection_only(self):
+        from apps.documents.models import PublicationReceipt
+        from apps.workflows import factory_reporting
+        from tests.test_factory_reporting import FactoryReportingTests
+
+        f = FactoryReportingTests()
+        f.setUp()
+        member = self.admission_in(f.actor,f.case,'pmo-lead',{'case.read','report.read','factory.read',
+                                                            'document.read','document.review_controlled'})
+        self.add_nomination(f.actor,f.case,f.owner,member,'PMO Lead')
+        work = f.start_work()
+        f.advance()
+        version = factory_reporting.document(f.work)
+        self.assertIsNotNone(version,f.work.finding)
+        row = role_factory_decisions.assign(f.actor,f.case.pk,member.pk,work.pk,'document',version.pk,None,rev(f.case))
+        self.client.force_login(member.user)
+        page = self.client.get(reverse('role_work_detail',args=[row.pk]))
+        self.assertContains(page,f.narrative['status'])
+        self.assertNotContains(page,'PRIVATE DIAGNOSIS')
+        self.assertEqual(self.api(f'/work/{work.pk}').status_code,404)
+        with self.assertRaises(PermissionDenied):
+            require(member.user,f.case,'meeting.read')
+        result = self.decide(row,'approve')
+        f.advance()
+        receipt = PublicationReceipt.objects.get(publication__version=version)
+        self.assertEqual(receipt.publication.review_id,result['review_id'])
+        self.assertEqual(factory_reporting.verify(f.work)['receipt_ids'],[receipt.pk])

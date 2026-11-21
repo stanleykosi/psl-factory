@@ -38,14 +38,19 @@ The HR role opens the **HR** project tab with handoff metadata and staff-cost fo
 
 The [role-based operating model](../../guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) also supports role-scoped staff invitations. An authorised Admin can use **Primary roles → Teams and work assignments** to create a team and assign existing or new actions and eligible native reviews. The invitee reviews the base role, team, workspace and member, lead or standalone scope. Sign-in opens the role dashboard. Existing workspace-profile invitations follow their existing access model.
 
+For an existing account, choose **Setup → People → Move to team scope** beside the affected workspace. Preview the broad permissions that will be removed and the open actions that will keep their current owner. Resolve any listed handover or decision claim first. The confirmation uses the reviewed fingerprint, a stable operation UUID and a reason. The same account can keep its separately authorised workspaces.
+
 | API operation | Use |
 | --- | --- |
-| `GET /api/v1/role-dashboard` | Read current role positions, exact assignments, eligible decisions and team review status |
+| `GET /api/v1/setup/{case_id}/people/{person_id}/team-scope` | Preview the selected role, mode and team, access removals, retained actions and holds |
+| `POST /api/v1/setup/{case_id}/people/{person_id}/team-scope` | Confirm the reviewed move with its current fingerprint and operation UUID |
+| `POST /api/v1/setup/{case_id}/team-decisions` | Assign a supported current decision to a scoped member under Admin delegation |
+| `GET /api/v1/role-dashboard` | Read current role positions, exact assignments, eligible decisions, native workspace decision links and team review status |
 | `GET /api/v1/role-work/{assignment_id}` | Read one authorised action or the exact available review packet |
 | `POST /api/v1/role-work/{assignment_id}/actions` | Start or complete the native action as its current assignee |
-| `POST /api/v1/role-work/{assignment_id}/decision` | Record a current native document, Finance schedule or HR correction decision using the reviewed version token |
+| `POST /api/v1/role-work/{assignment_id}/decision` | Record a native decision using the reviewed version token |
 
-The Django role desk and JSON endpoints share the same checks. Team leads see members’ assignment and decision status. Only the eligible assignee receives a decision packet or can submit a verdict. Role-scoped accounts receive record access through these assignments. Broader native workspace commands remain governed by their existing domain permissions. Invitation creation and acceptance use the established Django forms.
+The Django role desk and JSON endpoints share the same checks. Team leads see members’ assignment and decision status. Only the eligible assignee receives a decision packet or can submit a verdict. The scoped desk handles Finance invoice and Accounting reviews, Finance schedules, HR corrections, Planning exit, closure, client escalation and supported controlled-document reviews. Use `workspace_decisions` for native factory decisions and `approval_desks` for specialist workspace links. Payment exceptions, Emergency authorisation and retrospectives, restricted payroll, bids, forecasts and department-owned approvals retain their native permissions and exact source rules. Issuance, publication and technical or customer sign-off each have their own authority checks. Invitation creation and acceptance use the established Django forms.
 
 ## Workflow coverage
 

@@ -311,11 +311,19 @@ def correct(actor,work_id,expected,case_expected,inputs,reason):
     return w
 
 @transaction.atomic
-def review(actor,work_id,expected,case_expected,version_id,verdict,note):
+def review(actor,work_id,expected,case_expected,version_id,verdict,note,*,scoped=False):
     from .factory import access
     from apps.documents.controlled import review_version
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
-    access(actor,w.case,'factory.read',DEFINITION);_,v,_=bound_document(w,actor)
+    access(actor,w.case,'factory.read',DEFINITION)
+    reader = actor
+    if scoped:
+        from apps.identity.role_factory_decisions import assigned_reviewers
+
+        if not w.source_head_id or actor.pk not in assigned_reviewers(w,'document',version_id):
+            raise PermissionDenied('This report requires its exact assigned reviewer.')
+        reader = w.source_head.created_by
+    _,v,_=bound_document(w,reader)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now() or v.pk!=version_id:raise ValidationError('STALE_VERSION: select exact current weekly report')
     return review_version(actor,w.case_id,version_id,verdict,note,case_expected)
 

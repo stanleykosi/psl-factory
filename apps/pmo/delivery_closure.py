@@ -487,7 +487,9 @@ def decide_closure(actor,case_id,version_id,verdict,evidence_id,note,expected):
 
 
 def current_closure_approval(d,version_id=None):
-    decision=latest(d,'closure_decision');require(decision.actor,d.case,'delivery.closure_decide')
+    from apps.identity.role_factory_decisions import recorded_access
+
+    decision=latest(d,'closure_decision');recorded_access(d.case,decision.actor,'closure',decision.pk,'delivery.closure_decide')
     binding=DeliveryDocumentBinding.objects.filter(version_id=decision.data['version_id'],dossier=d,purpose='closure').first()
     if not binding or version_id is not None and binding.version_id!=version_id:
         raise ValidationError('Exact current closure report and prescribed decision required')

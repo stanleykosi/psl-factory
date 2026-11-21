@@ -47,6 +47,10 @@ def invitation_scope(actor, case, role, mode, team_id):
     cfg = manageable(actor, case, ['case.read'])
     if not cfg.value.get('staff_lifecycle', {}).get('allow_invite'):
         raise PermissionDenied('A current staff invitation delegation is required.')
+    return scope_pin(case, role, mode, team_id)
+
+
+def scope_pin(case, role, mode, team_id):
     if role in STANDALONE_ROLES and mode == 'standalone' and team_id is None:
         return {'format': 'psl.staff-role-scope/v1', 'role': role, 'mode': mode, 'team_id': None, 'team_name': ''}
     if role not in TEAM_ROLES or mode not in ('member', 'lead') or type(team_id) is not int:

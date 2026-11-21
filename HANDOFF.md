@@ -1,5 +1,17 @@
 # PSL Operations Factory handoff
 
+## Reviewed staff moves and role approvals · 21 November 2026
+
+Use **Setup → People → Move to team scope** in the affected workspace. The preview shows each permission removed, the member's current open actions that carry forward and any handover holds. Resolve executing work and claimed decisions through their connected native controls before confirming the reviewed move. The same account keeps its independent access in other workspaces. Exact request replay is safe. Staff who need another scoped workspace can be reviewed there when they already hold workspace access. Native continuations recheck current reviewer authority. Work relying on a removed grant can need a new review.
+
+Use **Setup → Primary roles → Teams and work assignments → Assign a factory decision** to pick current work and the reviewer. Invoice and Accounting reviews, Planning exit, closure, client escalation and supported controlled-document reviews use their native decision services. The role dashboard shows eligible assignments and native workspace decision links. Specialist desks for payments, Emergency, payroll, forecast, bids and department approvals retain their existing workspace permissions and source rules. Scope membership preserves separation of approval, publication, issuance and sign-off. The [frontend API](docs/design/frontend-api.md#primary-roles) covers workspace move preview and confirmation, assignment, case-linked approval desks and decision commands.
+
+The next engineering work is adding direct, protected-source assignments for specialist decisions where current dashboards use native desk links. Actual staff moves, named owners, approval and release rules and disclosure boundaries remain deferred to the HOD meeting. Keep work in Railway `design-acceptance` and GitHub `build/design-consolidation`. Preserve the existing synthetic walkthrough evidence.
+
+Railway PostgreSQL recorded 21 distinct passing checks across `23d28b29-e459-4365-b140-f11f234ae8c7` and `033a303f-6233-4b94-9b4d-4e41307bfb68`. The final seven-test retest passed the specialist visibility fix, Django, migration drift, the full screen map and both preservation probes. The initial 19-check native gate applied identity 0016 through 0018 to fresh PostgreSQL. See [test details](BUILD-TESTS.md). Review the 32 matched source files with `.runtime/design-scope-native-e-overlays.sha256`. The API has 61 operations across 52 paths.
+
+Preview web `7d1dce10-85c6-4956-87cb-22cd3bf8b19d` applied all three identity migrations. Worker `3f9af071-4bf4-4410-9e1d-7f8ed19d6aed` is active with the same source. The Codex browser checked the live role dashboard, the authorised Payment exceptions desk, Staff, the API and health without making changes. The dashboard API completed after the browser's initial navigation timeout in the broad trial session.
+
 ## Scoped role dashboards and work · 21 November 2026
 
 An authorised Admin creates teams and assigns work under **Setup → Primary roles → Teams and work assignments**. Invites now bind the base role, member or lead scope or standalone role, and workspace. The recipient previews this scope before creating an account and lands on the role dashboard after sign-in. PMO, Finance, HR and Admin use teams. CEO and CTO use standalone assignments. Existing profile invitations and previously assigned workspace grants keep their current behavior until a reviewed access change.
@@ -8,7 +20,7 @@ The role dashboard and `/api/v1/role-dashboard` share exact work access. Members
 
 Same-source Railway evidence spans `b6f7bfe2-b1ee-4144-8d44-24d81aaf9403` with 8 role and API checks and 36 document and role regressions, then `735abdf8-4019-4d4c-b3b8-24749aa4df62` with 45 staff regressions on fresh PostgreSQL and exit 0. Both preservation probes passed. The required migrations are `identity.0014_staff_role_work_scope` and `identity.0015_scoped_finance_hr_decisions`. Exact reviewed overlays are in `.runtime/design-role-work-c-overlays.sha256`. The contract has 58 operations across 50 paths.
 
-The web deployment `314ab6ab-1508-4c64-a688-11fc1959545d` applied both migrations. Worker `19245f6a-f66d-44f9-b012-6159275b0f55` is active. Codex verified health and the live role dashboard and API with the existing trial session. The next scoped access work is adding source-specific decision packets beyond the three connected review types and providing a reviewed migration path for existing staff or additional workspaces. Use the existing native decision screens for those workflows until their exact scoped adapters are available.
+The web deployment `314ab6ab-1508-4c64-a688-11fc1959545d` applied both migrations. Worker `19245f6a-f66d-44f9-b012-6159275b0f55` passed startup. Codex verified health and the live role dashboard and API with the existing trial session.
 
 ## Role-based operations requirement · 21 November 2026
 

@@ -8,7 +8,7 @@
   <td data-label="Primary role">{{ case.primary_role|default:"Unassigned" }}</td>
   <td data-label="Applied access">{{ case.account_access_label }}</td>
   <td data-label="Action">
-    {% if case.can_assign_primary_role %}<a href="{% url 'staff_primary_role' case.pk person.pk %}">Review primary role</a> · {% endif %}
+    {% if case.can_assign_primary_role %}<a href="{% url 'staff_primary_role' case.pk person.pk %}">Review primary role</a> · <a href="{% url 'staff_scope_move' case.pk person.pk %}">Move to a team scope</a> · {% endif %}
     {% if case.can_edit_profile %}<a href="{% url 'staff_profile_access' case.pk person.pk %}">Review access</a> · {% endif %}
     <a href="{% url 'workspace_settings' case.pk %}">Project decision rules</a>
   </td></tr>{% empty %}<tr><td colspan="4">No workspaces available within your current access.</td></tr>{% endfor %}</tbody></table></div>

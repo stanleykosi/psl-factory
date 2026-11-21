@@ -71,7 +71,10 @@ def current_review(case,purpose,**target):
     if not r:return {'id':None,'verdict':'missing','valid':False}
     valid=False;finding=''
     try:
-        require(r.actor,case,'finance.review')
+        from apps.identity.role_factory_decisions import recorded_access
+
+        subject = next(key for key in ('source','configuration','adjustment','run') if getattr(r,key+'_id') is not None)
+        recorded_access(case,r.actor,'accounting',r.pk,'finance.review',accounting={'purpose':r.purpose,'subject':subject})
         item=r.source or r.configuration or r.adjustment or r.run
         if r.run_id:
             from .statement_ppe import recipient_access
