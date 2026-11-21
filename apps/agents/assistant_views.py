@@ -163,7 +163,7 @@ def thread(request, conversation_id):
     return render(request, 'design/assistant_thread.html', {
         'case': conversation.case if conversation.scope == 'project' else None, 'conversation': conversation,
         'persona': assistant.PERSONAS[conversation.persona],
-        'turns': turns, 'form': form,
+        'turns': turns, 'form': form, 'payroll_only': payroll_only,
         'earlier': owned_conversations(request.user).exclude(pk=conversation.pk).order_by('-updated_at', '-pk')[:12],
         'waiting': any(turn.status in {'queued', 'running'} for turn in turns),
     })

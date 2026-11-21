@@ -1,5 +1,9 @@
 # What remains from the frontend handoff
 
+## Decision 3 · Payroll totals
+
+An acknowledged recipient can ask Zainab for the total staff cost and the breakdown by business unit from that exact reviewed report. An employee’s pay stays private. The answer comes directly from the published report inside PSL. [Checks and screenshots](payroll-chat-checks-2026-11-21.md)
+
 ## Decision 2 · Bid sharing
 
 PSL chose privacy at the level of the original bid. The owner can keep it private or make it available to other PMO teams, including its recorded client conversation. Tola can cite the original from a receiving team's own workspace. The owner can withdraw that access. This replaces the earlier proposal below to pick one answer and receiving project. [Decision and browser evidence](bid-sharing-checks-2026-11-21.md)
@@ -24,7 +28,7 @@ The final in-app check used the newer combined My work release. In the live PMO 
 
 The screen checklist now points SCR-25 to weekly reporting and SCR-42 to Planning. Tests also exercised a standalone report approval, retrieval of the recipient-facing preview and replay of a replacement template upload. The checked API has 64 operations across 54 paths. Specialist source selections and several detailed workflows still open their existing factory forms.
 
-**Remaining decisions for PSL.** The payroll owner chooses which aggregate figures an acknowledged recipient may see. Finance identifies the feed, entity, month, currency and permitted file scale. Additional HR data for name and employment checks needs an approved source. Microphone input and actual email or WhatsApp destinations remain open. The browser examples used sample data.
+**Remaining decisions for PSL.** Finance identifies the feed, entity, month, currency and permitted file scale. Additional HR data for name and employment checks needs an approved source. Microphone input and actual email or WhatsApp destinations remain open. The browser examples used sample data.
 
 Web release `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker release `c0e9a5d3-7151-4c90-bde6-912db6eb6b65` both succeeded on the Railway design-acceptance instance. Its health page returned `ok`. The previously recorded 262 walkthroughs used the former preview database. The current clean workspace received no business transactions from these tests.
 

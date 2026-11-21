@@ -1,4 +1,5 @@
 from django.contrib import messages
+from uuid import uuid4
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
@@ -132,7 +133,7 @@ def workbench(request,case_id,focus=None):
 
 @login_required
 def data(request,case_id,kind,pk):
- case=accessible_case(request.user,case_id)
+ case=get_object_or_404(domain.recipient_workspaces(request.user),pk=case_id) if kind=='report' else accessible_case(request.user,case_id)
  model={'input':PayrollInput,'run':PayrollRun,'report':PayrollPublication}.get(kind)
  if not model:return JsonResponse({'status':'unknown record type'},status=404)
  q=model.objects.defer('result' if model==PayrollRun else 'payload');get_object_or_404(q,request__case=case,pk=pk)
@@ -146,7 +147,8 @@ def inspect(request,case_id,kind,pk):
  response=data(request,case_id,kind,pk)
  if response.status_code!=200:return response
  import json
- value=json.loads(response.content)['data'];case=accessible_case(request.user,case_id);working=None
+ value=json.loads(response.content)['data'];working=None
+ case=get_object_or_404(domain.recipient_workspaces(request.user),pk=case_id) if kind=='report' else accessible_case(request.user,case_id)
  if kind!='report':
   from .payroll_working import rows
   model=PayrollInput if kind=='input' else PayrollRun
@@ -156,7 +158,17 @@ def inspect(request,case_id,kind,pk):
   except ValidationError:return JsonResponse({'status':'held','reason':'Choose a bounded payroll row view.'},status=400)
   working.update(record_id=pk,currency=subject['request__metadata']['currency'],period=subject['request__metadata']['period'])
  controls={key:item for key,item in value.items() if key not in ['rows','issues']}
+ acknowledged=False;can_acknowledge=False;can_ask=False
+ if kind=='report':
+  from apps.agents.assistant_access import payroll_disclosure
+  from .payroll_models import PayrollReportReceipt
+  acknowledged=PayrollReportReceipt.objects.filter(actor=request.user,publication_id=pk).exists()
+  if acknowledged:can_ask=bool(payroll_disclosure(case))
+  else:
+   try:domain.recipient_access(request.user,case,acknowledge=True);can_acknowledge=True
+   except PermissionDenied:pass
  response=render(request,'finance/payroll_inspect.html',{'case':case,'kind':kind,'record_id':pk,'value':value,
-                 'working':working,'working_controls':controls})
+                 'working':working,'working_controls':controls,'acknowledged':acknowledged,'can_ask':can_ask,
+                 'can_acknowledge':can_acknowledge,'operation':uuid4()})
  response['Cache-Control']='no-store'
  return response

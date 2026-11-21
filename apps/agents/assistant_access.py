@@ -17,6 +17,19 @@ def permission(case, component):
     return resolution.configuration if resolution.status == 'ACTIVE' else None
 
 
+def payroll_disclosure(case):
+    from apps.policy.registry import components
+
+    rule = components()[TOTALS]
+    resolution = resolve(TOTALS, case)
+    if resolution.status == 'ACTIVE':
+        return rule['decision_version'], resolution.configuration.pk
+    if resolution.status == 'MISSING' and not Configuration.objects.filter(
+            case=case, component=TOTALS, states__state__in=('active', 'revoked', 'superseded')).exists():
+        return rule['decision_version'], None
+    return None
+
+
 def model_rule(case, persona):
     config = permission(case, CHAT)
     if config:

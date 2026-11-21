@@ -180,6 +180,13 @@ from apps.workflows import factory_rfp_pricing
 from apps.workflows import factory_rfp_estimate_views
 from apps.pmo import rfp_answer_views
 from apps.pmo import bid_sharing_views
+from apps.agents import payroll_recipient_views
+
+urlpatterns += [
+    path('assistant/payroll/received/', payroll_recipient_views.reports, name='payroll_received_reports'),
+    path('cases/<uuid:case_id>/finance/payroll/received/<int:pk>/', payroll_recipient_views.report_action,
+         name='payroll_recipient_action'),
+]
 
 urlpatterns += [
     path('projects/<uuid:case_id>/bid-library/', bid_sharing_views.library, name='bid_library'),

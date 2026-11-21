@@ -344,6 +344,20 @@ def publish(actor,case_id,run_id,operation_key,expected):
  p=PayrollPublication.objects.create(request=r.request,run=r,review=decision,version=version,operation_key=operation_key,payload=payload,policy_ids={**auth,REPORT:policy.pk},actor=actor)
  event(actor,c,'payroll.aggregate_published',publication=p.pk,version=version,destination=rules['destination']);bump(c);return p
 
+def recipient_workspaces(actor):
+ from apps.core.workbench import granted
+ from apps.identity.factory_access import role_cases
+ return granted(actor,['case.read','payroll.read','payroll.report.read']) | role_cases(actor,['case.read'])
+
+
+def recipient_access(actor,case,*,acknowledge=False):
+ from apps.identity.factory_access import role_cases
+ require(actor,case,'case.read')
+ if role_cases(actor,['case.read']).filter(pk=case.pk).exists():return
+ require(actor,case,'payroll.read');require(actor,case,'payroll.report.read')
+ if acknowledge:require(actor,case,'payroll.report.receive')
+
+
 def _publication_payload(actor,p,c):
  policy=active_component(REPORT,c);rules=reference_values(policy)[0]
  if actor.pk not in rules['recipient_ids']:raise PermissionDenied('Not a configured aggregate report recipient')
@@ -361,19 +375,19 @@ def observe_publication(actor,publication_id):
  # Keep authority and the native source stable without entering a command scope.
  c=Case.objects.select_for_update().get(pk=p.request.case_id)
  list(Grant.objects.select_for_update().filter(case=c).order_by('pk').values_list('pk',flat=True))
- for action in ('case.read','payroll.read','payroll.report.read'):require(actor,c,action)
+ recipient_access(actor,c)
  return _publication_payload(actor,p,c)
 
 
 @transaction.atomic
 def read_publication(actor,publication_id):
- p=PayrollPublication.objects.defer('payload').select_related('request__case').get(pk=publication_id);c=locked(actor,p.request.case_id,'payroll.report.read')
- return _publication_payload(actor,p,c)
+ return observe_publication(actor,publication_id)
 
 
 @transaction.atomic
 def receive_report(actor,case_id,publication_id,expected):
- c=locked(actor,case_id,'payroll.report.receive',expected);p=exact(c,PayrollPublication,publication_id);read_publication(actor,p.pk)
+ c=lock_case(actor,case_id,'case.read',expected);p=exact(c,PayrollPublication,publication_id)
+ recipient_access(actor,c,acknowledge=True);read_publication(actor,p.pk)
  r,created=PayrollReportReceipt.objects.get_or_create(publication=p,actor=actor)
  if created:event(actor,c,'payroll.report_receipt',publication=p.pk,receipt=r.pk);bump(c)
  return r

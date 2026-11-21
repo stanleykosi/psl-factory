@@ -35,7 +35,7 @@
     {
       "id":"OPS.payroll_chat_totals","parent_decision_id":"OPS",
       "schema_ref":"schema:psl/payroll-chat-totals/v1","subject_scope":"Current acknowledged aggregate reports in this project.",
-      "current_value":null,"status":"UNCONFIGURED",
+      "current_value":{"audience":"current_acknowledged_recipient","fields":["eligible_total","by_bu"],"delivery":"local_reply_only"},"status":"PSL_APPROVED","decision_version":"psl-payroll-chat/2",
       "value_schema":{"type":"object","additionalProperties":false,"required":["audience","fields","delivery"],"properties":{
         "audience":{"const":"current_acknowledged_recipient"},
         "fields":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["eligible_total","by_bu"]}},

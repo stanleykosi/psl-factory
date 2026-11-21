@@ -15,11 +15,67 @@ from apps.documents.contracts import digest
 from apps.finance import payroll
 from apps.identity.models import Grant
 from tests.helpers import rev
-from tests.payroll_helpers import fixture, pipeline
+from tests.payroll_helpers import capture, fixture, pipeline
 
 
 @patch.dict('os.environ', {'OPENROUTER_MODEL': 'synthetic', 'OPENROUTER_API_KEY': 'synthetic'})
 class AssistantPayrollAggregateTests(TestCase):
+    def test_report_link_and_saved_answer_keep_the_selected_publication(self):
+        data = fixture()
+        actor, case = data['manager'], data['case']
+        *_, first = pipeline(data, 'original-report')
+        payroll.receive_report(actor, case.pk, first.pk, rev(case))
+        data['request'] = payroll.request(data['preparer'], case.pk, 'another-report', data['config']['request'],
+                                         data['e']['payroll_need'].pk, rev(case))
+        data['inputs'] = [capture(data, i) for i in (0, 1)]
+        *_, second = pipeline(data, 'later-report')
+        payroll.receive_report(actor, case.pk, second.pk, rev(case))
+        self.client.force_login(actor)
+        key = uuid4()
+        url = reverse('payroll_recipient_action', args=[case.pk, first.pk])
+        self.client.post(url, {'action':'ask','operation':key})
+        chat = AssistantConversation.objects.get(pk=key)
+        turn = AssistantTurn.objects.get(pk=key)
+        self.assertEqual(assistant.turn_context(turn)[0][0]['record']['pk'], first.pk)
+        again = assistant.reserve(actor, key, uuid4(), assistant.TOTALS_QUESTION)
+        self.assertEqual(again.sources[0]['record']['pk'], first.pk)
+        newer = assistant.reserve(actor, key, uuid4(), assistant.TOTALS_QUESTION, publication_id=second.pk)
+        self.assertEqual(newer.sources[0]['record']['pk'], second.pk)
+        # Replacing the original publication withdraws only the superseded answer.
+        payroll.publish(data['preparer'], case.pk, first.run_id, 'reissued', rev(case))
+        with self.assertRaises(ValidationError):
+            assistant.turn_context(turn)
+        page = self.client.get(reverse('assistant_thread', args=[chat.pk]))
+        self.assertContains(page, 'This answer needs a fresh check')
+        self.assertContains(page, f'Reviewed staff-cost report {second.pk}')
+
+    def test_acknowledged_report_shows_both_totals_without_private_rows_or_a_model(self):
+        data = fixture(second_unit=True)
+        actor, case = data['manager'], data['case']
+        *_, report = pipeline(data, 'two-unit-chat')
+        action = reverse('payroll_recipient_action', args=[case.pk, report.pk])
+        index = reverse('payroll_received_reports')
+        self.client.force_login(actor)
+        self.assertContains(self.client.get(index), 'No current acknowledged payroll reports')
+        self.assertEqual(self.client.post(action, {'action':'ask', 'operation':uuid4()}).status_code, 404)
+        self.client.post(action, {'action':'acknowledge', 'revision':rev(case)})
+        self.assertContains(self.client.get(index), 'synthetic-company')
+        key = uuid4()
+        with patch('adapters.openrouter.answer') as model, CaptureQueriesContext(connection) as queries:
+            page = self.client.post(action, {'action':'ask', 'operation':key}, follow=True)
+            model.assert_not_called()
+        self.assertContains(page, 'Total staff cost: TEST 410.00')
+        self.assertContains(page, 'BU-A: TEST 250.00')
+        self.assertContains(page, 'BU-B: TEST 160.00')
+        for private in ('E001','E002','E003','E004','TEST 70.00','TEST 90.00'):
+            self.assertNotContains(page, private)
+        self.assertFalse(any('"finance_payrollinput"."payload"' in q['sql'] for q in queries))
+        self.assertFalse(any('"finance_payrollrun"."result"' in q['sql'] for q in queries))
+        self.assertEqual(AssistantTurn.objects.get(pk=key).sources[0]['record']['pk'], report.pk)
+        self.client.force_login(data['reviewer'])
+        self.assertEqual(self.client.post(action, {'action':'ask','operation':uuid4()}).status_code, 404)
+        self.assertEqual(self.client.get(reverse('assistant_thread', args=[key])).status_code, 404)
+
     def test_approved_total_comes_from_current_receipt_and_stays_inside_the_factory(self):
         from tests.helpers import activate
         from apps.policy.services import transition
@@ -40,9 +96,11 @@ class AssistantPayrollAggregateTests(TestCase):
         self.assertIn(report.payload['eligible_total'], turn.answer)
         self.client.force_login(actor)
         url = reverse('assistant_thread', args=[chat.pk])
-        self.assertContains(self.client.get(url), turn.answer)
+        page = self.client.get(url)
+        for line in turn.answer.splitlines():
+            self.assertContains(page, line)
         transition(data['owner'], config.pk, 'revoked')
-        self.assertNotContains(self.client.get(url), turn.answer)
+        self.assertNotContains(self.client.get(url), 'Total staff cost:')
 
     def test_received_payroll_metadata_connects_zainab_without_private_sources_or_prior_hr_chat(self):
         data = fixture()

@@ -61,7 +61,9 @@ class ProjectUseForm(forms.Form):
                     synthetic=case.synthetic).exclude(pk=case.pk).order_by('title').values_list('pk', 'title')])
         else:
             for key, spec in schema['properties'].items():
-                if 'const' in spec:
+                if component == 'OPS.payroll_chat_totals' and key == 'fields':
+                    self.fixed[key] = components()[component]['current_value']['fields']
+                elif 'const' in spec:
                     self.fixed[key] = spec['const']
                 elif spec['type'] == 'array':
                     self.fields[key] = forms.MultipleChoiceField(label=LABELS.get(key, key),

@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from apps.core.services import add_evidence
 from apps.identity.models import Grant
+from apps.identity.factory_access import role_managed
 from apps.core.management.commands.seed_demo import ACTIONS
 from apps.policy.services import register_reference,transition
 from apps.policy.payroll_drafts import draft_payroll_policy
@@ -17,11 +18,12 @@ from .hrfinance_helpers import policy as hr_policy
 def policy(f,key,value):
  r=draft_payroll_policy(f['owner'],f['case'].pk,key,value,f['e']['policy_decision'].pk,timezone.now()-timedelta(seconds=1));transition(f['owner'],r.pk,'validated');transition(f['owner'],r.pk,'active');return r
 
-def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer_receipt=True,context=None):
+def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer_receipt=True,context=None, second_unit=False):
  owner,c=context if context is not None else setup_case(username='payroll-owner');people={}
  for name in ['preparer','reviewer','manager']:
   u=principal(name) if principal else get_user_model().objects.create_user(username='payroll-'+name,password='test-only')
   actions=ACTIONS if name!='manager' else ['case.read','payroll.read','payroll.report.read','payroll.report.receive']
+  if name=='manager' and role_managed(u):actions=[]
   for action in actions:Grant.objects.get_or_create(user=u,case=c,action=action)
   people[name]=u
  e={}
@@ -36,6 +38,11 @@ def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer
    provider['spreadsheet_layouts']=payroll_layouts
  if employee_ids:
   for export,emp in zip(cfg['exports'],employee_ids):export['rows'][0]['employee_id']=emp
+ if second_unit:
+  for export, employee, amount in zip(cfg['exports'], ('E003','E004'), (70,90)):
+   original=export['rows'][0]
+   export['rows'].append(dict(original, employee_id=employee, row_ref=original['row_ref']+'B', amount=str(amount)))
+   export['control_total']=str(int(export['control_total'])+amount)
  cfg['access']['providers'][0]['owner_id']=owner.pk;cfg['access']['providers'][1]['owner_id']=owner.pk;cfg['access']['reader_ids']=[people['preparer'].pk,people['reviewer'].pk];cfg['access']['source_contract_evidence_id']=e['payroll_source_contract'].pk
  cfg['authority']['assignments'][0]['user_id']=people['reviewer'].pk;cfg['authority']['assignments'][1]['user_id']=people['preparer'].pk;cfg['report']['recipient_ids']=[people['manager'].pk]
  f={'owner':owner,'case':c,'e':e,**people,'config':cfg}
@@ -47,6 +54,8 @@ def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer
  hr_policy(owner,c,HR_AUTH,h['authority'],e['policy_decision']);hr_policy(owner,c,HR_DATA,h['disclosure'],e['policy_decision'])
  n=hr.need(people['preparer'],c.pk,'payroll-hr-view',h['need'],e['hr_finance_need'].pk,rev(c));d=hr.contract(people['preparer'],c.pk,n.pk,'hr-contract',e['hr_contract_source'].pk,rev(c));hr.decide(owner,c.pk,d.pk,'approve','hr-approve',e['hr_disclosure_decision'].pk,rev(c))
  h['export'].update(period='2026-09',as_of='2026-09-30',extracted_at=(timezone.now()-timedelta(seconds=1)).isoformat(),rows=[{'employee_id':emp,'bu':'BU-A','effective_from':'2026-01-01','effective_until':None} for emp in (employee_ids or ['E001','E002'])])
+ if second_unit:
+  h['export']['rows'].extend(dict(h['export']['rows'][0],employee_id=employee,bu='BU-B') for employee in ('E003','E004'))
  s=hr.capture(owner,c.pk,d.pk,'hr-source',json.dumps(h['export']),rev(c))
  for u in [people['preparer'],people['reviewer']] if preparer_receipt else [people['reviewer']]:
   hr.receive(u,c.pk,s.pk,'hr-receipt:'+str(u.pk),e['hr_disclosure_decision'].pk,rev(c))

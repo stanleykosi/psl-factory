@@ -1,4 +1,12 @@
 {
+  "payroll_recipient_totals_20261121": {
+    "decision": 3,
+    "status": "implemented_and_browser_checked",
+    "audience": "Current named recipient with a personal acknowledgement of the exact report",
+    "fields": ["eligible_total", "by_bu"],
+    "delivery": "Inside the factory",
+    "evidence": "docs/design/payroll-chat-checks-2026-11-21.md"
+  },
   "original_bid_sharing_20261121": {
     "decision": 2,
     "status": "implemented_and_browser_checked",

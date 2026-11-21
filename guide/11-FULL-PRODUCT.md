@@ -28,6 +28,8 @@ The six base roles guide dashboards, access, decision routing and invitations. E
 
 The current bid owner may share an original bid and its recorded client conversation with other PMO teams in the same organisation. New bids are private. Choosing Public gives those teams read access to the bid from their own workspace and lets Tola cite it. Returning to Private closes that access. The receiving project manager reviews any winning answer proposed for a new bid.
 
+A current named payroll report recipient can ask Zainab for the total staff cost and the amounts by business unit after personally acknowledging the reviewed report. The answer links to the exact report and uses only published totals. Individual pay stays private. The report’s existing review and small-group rules apply before publication.
+
 Zainab is available to HR staff in their assigned workspaces. The live HR system still needs to be connected. Admin manages changes to the PMO appointment. Work and decisions remain assigned to the people responsible for them. CTO and CEO have standalone scopes. Cross-department sharing is a future decision.
 
 | Base role | Dashboard focus |

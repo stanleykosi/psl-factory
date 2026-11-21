@@ -31,37 +31,46 @@ TOTALS_QUESTION = 'What are the approved totals in my received staff-cost report
 
 
 def payroll_questions_for(conversation):
-    if assistant_access.permission(conversation.case, assistant_access.TOTALS):
-        if not conversation.case.synthetic and not assistant_access.model_rule(conversation.case, 'zainab'):
-            return (TOTALS_QUESTION,)
-        return (*PAYROLL_REPORT_QUESTIONS, TOTALS_QUESTION)
-    return PAYROLL_REPORT_QUESTIONS
+    can_send_metadata = granted(conversation.actor, ['agent.extract']).filter(pk=conversation.case_id).exists()
+    if can_send_metadata and not conversation.case.synthetic:
+        rule = assistant_access.model_rule(conversation.case, 'zainab')
+        can_send_metadata = rule is not None and 'payroll_report' in rule.envelope['value']['sources']
+    questions = PAYROLL_REPORT_QUESTIONS if can_send_metadata else ()
+    if assistant_access.payroll_disclosure(conversation.case):
+        return (*questions, TOTALS_QUESTION)
+    return questions
 
 
-def totals_reply(conversation):
+@transaction.atomic
+def totals_reply(conversation, publication_id=None):
     from apps.finance.payroll import observe_publication
 
-    config = assistant_access.permission(conversation.case, assistant_access.TOTALS)
-    sources = payroll_report_sources(conversation)
-    if not config or not sources:
+    sources = payroll_report_sources(conversation, publication_id)
+    disclosure = assistant_access.payroll_disclosure(conversation.case)
+    if conversation.persona != 'zainab' or not disclosure or not sources:
         raise ValidationError('An approved disclosure and a current received payroll report are required.')
     publication = sources[0]['record']['pk']
     report = observe_publication(conversation.actor, publication)
-    fields = config.envelope['value']['fields']
-    parts = [f"Reviewed staff costs for {report['period']} ({report['currency']})."]
-    if 'eligible_total' in fields:
-        value = report.get('eligible_total')
-        parts.append('Eligible total: ' + (str(value) if value is not None else 'Unknown') + '.')
-    if 'by_bu' in fields:
-        for unit, value in sorted(report['by_bu'].items()):
-            parts.append(f"{unit}: {value if value is not None else 'Unknown'}.")
-    answer = ' '.join(parts)
-    if len(answer) > 4000:
-        raise ValidationError('Open the report to see all approved business units.')
-    return answer, [dict(sources[0], disclosure=config.pk, figures_digest=digest(answer))]
+    def amount(value):
+        return f"{report['currency']} {value}" if value is not None else 'Unknown'
+    parts = [f"Reviewed staff costs for {report['period']}", f"Total staff cost: {amount(report['eligible_total'])}",
+             "By business unit"]
+    parts.extend(f"{unit}: {amount(value)}" for unit, value in sorted(report['by_bu'].items()))
+    answer = '\n'.join(parts)
+    return answer, [dict(sources[0], disclosure=list(disclosure), figures_digest=digest(answer))]
 
 
 def cases_for(actor, persona):
+    if persona == 'zainab':
+        from apps.finance.payroll import recipient_workspaces
+        from apps.finance.payroll_models import PayrollReportReceipt
+
+        received = PayrollReportReceipt.objects.filter(actor=actor).values('publication__request__case_id')
+        report_cases = recipient_workspaces(actor).filter(pk__in=received)
+        if role_managed(actor):
+            return department_cases(actor, PERSONA_ROLES[persona]).distinct() | report_cases
+        hr_cases = granted(actor, ['agent.extract', 'hrfinance.read'])
+        return assistant_access.admitted(hr_cases, persona) | report_cases
     if role_managed(actor):
         return department_cases(actor, PERSONA_ROLES[persona])
     actions = ['agent.extract', PERSONAS[persona][2]]
@@ -72,17 +81,6 @@ def cases_for(actor, persona):
         received = BUReceipt.objects.filter(actor=actor).values('report__work__case_id')
         aggregate_cases = granted(actor, ['agent.extract', 'bu.read', 'bu.report.read']).filter(pk__in=received)
         cases = cases | aggregate_cases
-    elif persona == 'zainab':
-        from apps.finance.payroll_models import PayrollReportReceipt
-
-        received = PayrollReportReceipt.objects.filter(actor=actor).values('publication__request__case_id')
-        report_cases = granted(actor, ['agent.extract', 'payroll.read', 'payroll.report.read']).filter(pk__in=received)
-        cases = cases | report_cases
-        allowed = assistant_access.admitted(cases, persona)
-        local_only = report_cases.filter(kind='project', synthetic=False).exclude(
-            pk__in=granted(actor, ['hrfinance.read']).values('pk'))
-        ids = [case.pk for case in local_only.iterator() if assistant_access.permission(case, assistant_access.TOTALS)]
-        return allowed | report_cases.filter(pk__in=ids)
     return assistant_access.admitted(cases, persona)
 
 
@@ -94,14 +92,18 @@ def check(actor, conversation):
 
 
 def payroll_report_only(conversation):
-    return conversation.persona == 'zainab' and not role_managed(conversation.actor) and not granted(conversation.actor, ['hrfinance.read']).filter(
-        pk=conversation.case_id).exists()
+    if conversation.persona != 'zainab':
+        return False
+    actor = conversation.actor
+    hr = department_cases(actor, 'hr') if role_managed(actor) else assistant_access.admitted(
+        granted(actor, ['agent.extract', 'hrfinance.read']), 'zainab')
+    return not hr.filter(pk=conversation.case_id).exists()
 
 
-def payroll_report_sources(conversation):
+def payroll_report_sources(conversation, publication_id=None):
     from .payroll import received_report_context
 
-    packet = received_report_context(conversation.actor, conversation.case)
+    packet = received_report_context(conversation.actor, conversation.case, publication_id)
     if packet is None:
         return []
     publication = packet['publication_id']
@@ -156,6 +158,9 @@ def transfer(actor, turn_id, target):
 def tool_context(conversation, *, question=''):
     from apps.pmo.bid_sharing import chat_sources
 
+    if payroll_report_only(conversation):
+        check(conversation.actor, conversation)
+        return payroll_report_sources(conversation), []
     if role_managed(conversation.actor):
         from .department_context import records
 
@@ -176,10 +181,6 @@ def tool_context(conversation, *, question=''):
                 pinned.append(source)
         return pinned + records(conversation, question) + chat_sources(conversation, question), next_work
     sources, next_work = _tool_context(conversation)
-    if (not conversation.case.synthetic and payroll_report_only(conversation)
-            and assistant_access.permission(conversation.case, assistant_access.TOTALS)
-            and not assistant_access.model_rule(conversation.case, conversation.persona)):
-        return sources, []
     sources = assistant_access.project_sources(conversation, sources + chat_sources(conversation, question))
     return sources, next_work if sources else []
 
@@ -187,8 +188,6 @@ def tool_context(conversation, *, question=''):
 def _tool_context(conversation):
     actor, case, persona = conversation.actor, conversation.case, conversation.persona
     check(actor, conversation)
-    if payroll_report_only(conversation):
-        return payroll_report_sources(conversation), []
     sources = []
 
     def source(label, fact, route, *args, record=None):
@@ -346,7 +345,10 @@ def message_context(conversation, focus, *, question=''):
 
 def turn_context(turn, *, pending=True):
     if turn.question == TOTALS_QUESTION:
-        return totals_reply(turn.conversation)[1], []
+        publication = cited_record(turn, 'payroll_report')
+        if not publication:
+            raise ValidationError('The original report is unavailable.')
+        return totals_reply(turn.conversation, publication)[1], []
     suggestion = getattr(turn, 'rfp_answer', None)
     if suggestion is not None:
         from apps.pmo.rfp_answers import context_for
@@ -357,7 +359,7 @@ def turn_context(turn, *, pending=True):
 
 
 @transaction.atomic
-def reserve(actor, conversation_id, operation_key, question, focus=''):
+def reserve(actor, conversation_id, operation_key, question, focus='', *, publication_id=None):
     keys = [focus] if isinstance(focus, str) and focus else [] if focus == '' else focus
     if not isinstance(keys, list) or len(keys) > 5 or any(
             not isinstance(key, str) or not re.fullmatch('[0-9a-f]{64}', key) for key in keys):
@@ -370,19 +372,24 @@ def reserve(actor, conversation_id, operation_key, question, focus=''):
     previous = AssistantTurn.objects.filter(pk=operation_key).first()
     if previous is not None:
         if (previous.conversation_id != conversation.pk or previous.question != question
+                or (publication_id is not None and cited_record(previous, 'payroll_report') != publication_id)
                 or (previous.selected_sources or ([previous.focus] if previous.focus else [])) != keys):
             raise ValidationError('This request key has already been used. Reload and try again.')
+        if question == TOTALS_QUESTION and previous.context_hash != digest(turn_context(previous)[0]):
+            raise ValidationError('This report has changed. Open the current report.')
         return previous
     if conversation.turns.filter(status__in=['queued', 'running']).exists():
         raise ValidationError('Wait for the current answer before sending another question.')
     if question == TOTALS_QUESTION:
-        if conversation.persona != 'zainab' or not payroll_report_only(conversation):
+        if conversation.persona != 'zainab':
             raise PermissionDenied('Use the recipient view for your received payroll report.')
-        visible_sources, _ = tool_context(conversation)
-        selected = source_focus(visible_sources, keys)
-        answer, sources = totals_reply(conversation)
-        if not any(row.get('record') == sources[0]['record'] for row in selected):
-            raise ValidationError('Select your current received report.')
+        if publication_id is None and not keys:
+            prior = conversation.turns.filter(question=TOTALS_QUESTION, status='answered').order_by('-created_at').first()
+            if prior:
+                publication_id = cited_record(prior, 'payroll_report')
+        answer, sources = totals_reply(conversation, publication_id)
+        if keys:
+            source_focus(payroll_report_sources(conversation, publication_id), keys)
         turn = AssistantTurn.objects.create(pk=operation_key, conversation=conversation, question=question,
             status='answered', answer=answer, sources=sources, context_hash=digest(sources), selected_sources=keys)
         conversation.save(update_fields=['updated_at'])
@@ -437,7 +444,8 @@ def answer_claim(turn, model):
         sources, next_work = turn_context(turn)
         report_only = payroll_report_only(conversation) or any(
             source.get('record', {}).get('field') == 'payroll_report' for source in sources)
-        if report_only and turn.question not in PAYROLL_REPORT_QUESTIONS:
+        if report_only and (turn.question not in PAYROLL_REPORT_QUESTIONS or
+                            turn.question not in payroll_questions_for(conversation)):
             raise ValidationError('A received-report conversation uses the listed payroll questions.')
         context_hash = digest(sources)
         if not sources:

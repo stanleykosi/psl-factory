@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Connected report acknowledgement, the recipient’s report list and Zainab’s answer to the exact reviewed publication. The same report now supplies the total and business-unit breakdown in chat, with checks when a saved answer is reopened. The in-app browser walkthrough used two Finance team members and a report naming only one of them. [Evidence](docs/design/payroll-chat-checks-2026-11-21.md)
+
 21 November 2026. Added owner-controlled bid sharing, client conversation notes, a PMO bid library, and citations back to the original bid. Connected the same sharing choice to winning-answer review and Tola’s saved replies. Tested with separate PMO workspaces and real OpenRouter answers. [Browser evidence](docs/design/bid-sharing-checks-2026-11-21.md)
 
 21 November 2026. Connected department visibility to the staff roles for project lists, work, assignments, assistant conversations and source links. Added a department-wide conversation option for PMO and Finance heads, a readable source list for each department, and a database check for the single PMO head. Verified real OpenRouter answers for all three assistants using test data. [Results](docs/design/department-role-checks-2026-11-21.md)

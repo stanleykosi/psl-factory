@@ -120,7 +120,7 @@ def verify(work,actor=None):
     receipts=list(PayrollReportReceipt.objects.filter(publication=p).order_by('pk'))
     if {r.actor_id for r in receipts}!=set(rules['recipient_ids']):raise ValidationError('Await each configured recipient’s own aggregate receipt')
     for receipt in receipts:
-        for action in ['case.read','payroll.read','payroll.report.read','payroll.report.receive']:require(receipt.actor,work.case,action)
+        native.recipient_access(receipt.actor,work.case,acknowledge=True)
     return {'verified':True,'head':work.source_head_id,'request':q.pk,'run':a.pk,'publication':p.pk,'payload_sha256':digest(expected),'receipt_ids':[r.pk for r in receipts],'private_payloads_in_result':False,'hr_written':False,'ledger_posted':False,'external_authenticity_verified':False}
 
 def report(work,actor=None):

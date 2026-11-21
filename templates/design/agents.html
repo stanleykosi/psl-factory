@@ -8,6 +8,7 @@
     {% empty %}<p>No conversations yet.</p>{% endfor %}
   </aside>
   <section class="card" aria-labelledby="ask-a-department"><h2 id="ask-a-department">Talk to an agent</h2>
+    <p><a href="{% url 'payroll_received_reports' %}">My acknowledged payroll reports</a></p>
     {% for key, name, department in departments %}<a class="floor-line" href="{% url 'assistant_start' key %}"><strong>{{ name }}</strong><span>{{ department }} →</span></a>
     {% empty %}<p>Your current role has no department assistant.</p>{% endfor %}
   </section>

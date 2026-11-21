@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Payroll totals in Zainab · 21 November 2026
+
+A named recipient who acknowledges a current report can ask Zainab for both the overall staff cost and every published business-unit amount. The answer links to that exact report. A person on the same Finance team who did not receive it cannot open the link. [Browser checks](docs/design/payroll-chat-checks-2026-11-21.md)
+
 ## Original bids and client conversations · 21 November 2026
 
 The bid owner can record a client conversation and choose who can use the original bid. Other PMO teams can open a public bid and ask Tola about it from their own workspace. Switching back to Private closes the shared link and hides earlier replies that relied on it. [Browser checks](docs/design/bid-sharing-checks-2026-11-21.md)
@@ -16,7 +20,7 @@ The existing My work page is the signed-in workspace for every staff role. It sh
 
 The separate frontend now opens the signed-in work desk, pages through authorised records and displays Finance decisions with their evidence. The two clients share the same desk. Source selection, specialist reviews and complex intakes open their existing factory forms. The screen map correctly assigns the weekly update to SCR-25 and Planning to SCR-42. The new document review and replacement template operations call the existing document services.
 
-Four versioned project settings now govern department assistant use on real projects, reuse of approved winning answers, payroll totals in recipient chat and scaled Finance files. A person with configuration authority can prepare a draft under **Business rule settings → Project data permissions and Finance units**. Each setting needs a recorded decision and separate validation and activation. The clean Railway preview has no new business rules or sample transactions from this work. [Checks and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
+The original handoff added four project settings under **Business rule settings → Project data permissions and Finance units**. PSL has since decided how department assistants, bid sharing and payroll totals work, as recorded above. Scaled Finance files still require a recorded decision, validation and activation. [Checks and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
 
 ## Shared factory navigation for role accounts · 21 November 2026
 

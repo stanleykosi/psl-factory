@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+21 November 2026. Verified Zainab’s recipient-only totals in PostgreSQL and the in-app browser. The sample report showed a total of 410.00, with 250.00 and 160.00 by business unit. A second Finance member could see neither the report nor the figures. [Browser evidence and test scope](docs/design/payroll-chat-checks-2026-11-21.md)
+
 21 November 2026. Checked the owner’s private bid, the other team’s read-only public bid, Tola’s cited answer, and the withdrawn link and reply after the owner restored privacy. Both the receiving member and returning owner received answers through OpenRouter using a sample client conversation. The hosted check opened the library from the PMO bid register. [Screenshots and PostgreSQL checks](docs/design/bid-sharing-checks-2026-11-21.md)
 
 21 November 2026. Tested Decision 1 against PostgreSQL and in the in-app browser. A signed-in PMO head used Tola on Railway. In isolated local workspaces, Chidi cited a sample invoice and Zainab reported the HR connection status through the real OpenRouter adapter. Browser checks covered the project member's single-project selector and the Finance head's department-wide selector. [Test scope and screenshots](docs/design/department-role-checks-2026-11-21.md)

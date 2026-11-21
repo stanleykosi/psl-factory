@@ -4,7 +4,7 @@
 <ul>{% for key, label in choices %}<li><a href="?rule={{ key }}">{{ label }}</a></li>{% endfor %}</ul>
 {% if form %}<h2>{{ title }}</h2>
 {% if component == 'OPS.department_assistant_use' %}<p>The selected records and the staff member’s question may be sent to the approved model through OpenRouter.</p>
-{% elif component == 'OPS.payroll_chat_totals' %}<p>Figures appear inside the factory for the person who acknowledged the current report.</p>
+{% elif component == 'OPS.payroll_chat_totals' %}<p>Zainab shows the total staff cost and the amounts by business unit to the person who acknowledged the reviewed report. The figures stay inside PSL.</p>
 {% elif component == 'D06.import_unit_conversion' %}<p>The control total uses the file’s units. Reporting adjustments use individual currency units.</p>
 {% else %}<p>This version releases the selected answer to the named project. Activating it replaces the previous release list. Multiple answers can be entered in the versioned configuration form.</p>{% endif %}
 <form method="post">{% csrf_token %}{{ form.as_p }}<button>Save draft for review</button></form>
