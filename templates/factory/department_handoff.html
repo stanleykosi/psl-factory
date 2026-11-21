@@ -5,7 +5,6 @@
 <section class="card"><h2>Source evidence</h2><ul>{% for line in lines %}<li>{{ line }}</li>{% endfor %}</ul></section>
 <section class="card"><h2>Department handoff</h2>
 {% if received %}<p>The receiving record was verified on {{ recorded_at }}.</p>
-{% elif recorded_at %}<p>The earlier receipt needs rechecking against the current department record.</p>
 {% elif work.finding %}<p>{{ work.finding }}</p>{% else %}<p>Checking the source evidence.</p>{% endif %}
 </section>
 {% factory_background_status work %}

@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.test import TransactionTestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from adapters.finance import TimeoutAfterAccept
@@ -103,6 +104,89 @@ class FinanceHandoffStations(TransactionTestCase):
                          f["e"]["hr_disclosure_decision"].pk, rev(f["case"]))
         with self.assertRaises(ValidationError):
             private_disclosure(f["contract"], f["finance"])
+
+    def test_f35_return_and_revocation_hide_pre_capture_period_and_assistant_sources(self):
+        from apps.agents.specialist_memory import outcome_sources, sources_for
+        from apps.policy.hrfinance_validators import AUTHORITY, DISCLOSURE
+
+        f = disclosures.fixture(configure=False)
+        hr, reader, case, proof = f["hr"], f["finance"], f["case"], f["e"]
+        disclosures.policy(hr, case, AUTHORITY, f["config"]["authority"], proof["owner"])
+        disclosures.policy(hr, case, DISCLOSURE, f["config"]["disclosure"], proof["owner"])
+        contract = hrfinance.contract(reader, case.pk, f["need"].pk, "pending-disclosure",
+                                      proof["hr_contract_source"].pk, rev(case))
+        work = start_station(self, "F35", contract)
+        assert_waiting(self, work)
+        self.client.force_login(reader)
+        project = reverse("project_handoffs", args=[case.pk])
+        detail = reverse("factory_detail", args=[work.pk])
+        period = f["need"].payload["period"]
+        definitions = ["finance-accounts/v1"]
+        self.assertContains(self.client.get(project), f'href="{detail}"')
+        self.assertContains(self.client.get(detail), period)
+        self.assertTrue(sources_for(reader, [case.pk], definitions, work_id=work.pk))
+        self.assertFalse(contract.snapshots.exists())
+
+        for verdict in ("return", "revoke"):
+            hrfinance.decide(hr, case.pk, contract.pk, "approve", "grant-before-" + verdict,
+                             proof["hr_disclosure_decision"].pk, rev(case))
+            hrfinance.decide(hr, case.pk, contract.pk, verdict, verdict + "-before-capture",
+                             proof["hr_disclosure_decision"].pk, rev(case))
+            with self.subTest(verdict=verdict):
+                self.assertNotContains(self.client.get(project), f'href="{detail}"')
+                self.assertIn(self.client.get(detail).status_code, (403, 404))
+                self.assertFalse(sources_for(reader, [case.pk], definitions, work_id=work.pk))
+                self.assertFalse(outcome_sources(reader, [case.pk], definitions))
+
+    def test_f35_other_nominated_recipient_cannot_read_a_completed_receipt(self):
+        from django.contrib.auth import get_user_model
+        from apps.agents.specialist_memory import outcome_sources
+        from apps.identity.models import Grant
+        from apps.policy.hrfinance_validators import AUTHORITY, DISCLOSURE
+        from apps.policy.services import register_reference
+        from .helpers import activate
+
+        f = disclosures.fixture(configure=False)
+        hr, first, case, proof = f["hr"], f["finance"], f["case"], f["e"]
+        second = get_user_model().objects.create_user(username="second-F35-recipient")
+        for action in ("case.read", "hrfinance.read", "hrfinance.snapshot.read", "hrfinance.receive",
+                       "factory.read", "agent.extract"):
+            Grant.objects.create(case=case, user=second, action=action)
+        principals = []
+        for user, role in ((hr, "HR"), (first, "Finance"), (second, "Finance")):
+            principals.append(register_reference(
+                hr, case.pk, f"test-f35-role-{user.pk}", "schema:psl/role-assignment/v1",
+                {"role": role, "user_id": user.pk}, proof["owner"].pk,
+            ).ref)
+        activate(hr, case, "D05.role_principal_assignments", principals, proof["owner"])
+        cfg = f["config"]
+        cfg["authority"]["assignments"].append({"user_id": second.pk, "role": "Finance", "purpose": "receive"})
+        cfg["disclosure"]["recipient_ids"] = [first.pk, second.pk]
+        cfg["need"]["recipient_ids"] = [first.pk, second.pk]
+        disclosures.policy(hr, case, AUTHORITY, cfg["authority"], proof["owner"])
+        disclosures.policy(hr, case, DISCLOSURE, cfg["disclosure"], proof["owner"])
+        need = hrfinance.need(first, case.pk, "two-authorised-recipients", cfg["need"],
+                              proof["hr_finance_need"].pk, rev(case))
+        contract = hrfinance.contract(first, case.pk, need.pk, "two-party-contract", proof["hr_contract_source"].pk, rev(case))
+        f["contract"] = contract
+        hrfinance.decide(hr, case.pk, contract.pk, "approve", "approve-both", proof["hr_disclosure_decision"].pk, rev(case))
+        work = start_station(self, "F35", contract)
+        assert_waiting(self, work)
+        self.client.force_login(second)
+        project = reverse("project_handoffs", args=[case.pk])
+        detail = reverse("factory_detail", args=[work.pk])
+        self.assertContains(self.client.get(project), f'href="{detail}"')
+        snapshot = disclosures.capture(f)
+        received = disclosures.receive(f, snapshot)
+        finish_station(self, work, received, first)
+        # The second nominee still has current native read authority for this
+        # snapshot. The completed receipt belongs exclusively to the first.
+        self.assertEqual(hrfinance.snapshot_access(second, snapshot).pk, snapshot.pk)
+        self.assertFalse(contract.records.filter(kind="receipt", actor=second).exists())
+        self.assertNotContains(self.client.get(project), f'href="{detail}"')
+        self.assertIn(self.client.get(detail).status_code, (403, 404))
+        self.assertFalse(outcome_sources(second, [case.pk], ["finance-accounts/v1"]))
+        self.assertTrue(outcome_sources(first, [case.pk], ["finance-accounts/v1"]))
 
 
 class CoverageStations(ContractCoverageFixture, TransactionTestCase):

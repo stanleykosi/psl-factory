@@ -42,7 +42,7 @@ def _providers(test):
     test.enterContext(patch.object(openrouter, "completion", side_effect=interpret))
 
 
-def start_station(test, process, subject):
+def configure_station(test, process, subject):
     _providers(test)
     # The actual source command must have created the intake durably. Don't
     # manufacture an event if a signal or bulk-insert path is missing.
@@ -65,6 +65,11 @@ def start_station(test, process, subject):
             Grant.objects.update_or_create(user=actor, case=case, action="factory.information", defaults={"active":True})
             profile["information_resolver_id"] = actor.pk
         activate(admin, case, native_stations.COMPONENT, profile, proof)
+    return station
+
+
+def start_station(test, process, subject):
+    station = configure_station(test, process, subject)
     return native_stations.enroll(station.pk)
 
 

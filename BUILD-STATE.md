@@ -6,7 +6,7 @@ The remaining 34 PMO and 29 Finance processes now enter O01 from their own depar
 
 The first isolated Railway run reached all 63 actual downstream records with simulated specialist responses. The build subsequently added explicit receipt of the findings inside native commands and a database guard on completion. The test ledger distinguishes these stages.
 
-## Embedded specialist coordination · 21 November 2026
+## Earlier checkpoint — embedded specialist coordination · 21 November 2026
 
 The routing book defines the trigger, inputs, specialist responsibilities, domain controls, owner decisions and expected outputs for all 122 source processes. Within the release, 25 native Start work types bind 45 distinct process IDs directly or through an exact native investigation. The other 63 release IDs have documented assignments. Their individual O01 bindings still need engineering and acceptance. The 14 BaaS IDs remain deferred. [Per-process routing](docs/design/specialist-process-routes.md)
 

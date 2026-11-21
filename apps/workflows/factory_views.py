@@ -123,12 +123,15 @@ def intake(request):
 def work_grant_scope(actor, *, include_native=False):
     """Grant-level discovery scope. Protected native records may narrow it further."""
     from apps.agents.department_context import work_definitions
-    from apps.identity.factory_access import department_cases
+    from apps.identity.factory_access import department_cases, role_cases
     from apps.identity.models import Grant
     from apps.identity.services import visible_cases
 
     active(actor)
     scope=Q(pk__in=[])
+    if include_native:
+        scope |= Q(definition='process-handoff/v1', case_id__in=role_cases(
+            actor, ['case.read','factory.read','agent.extract']).values('pk'))
     for persona, role in [('tola', 'pmo-lead'), ('chidi', 'finance-lead')]:
         scope |= Q(definition__in=work_definitions(persona), case_id__in=department_cases(actor, role).values('pk'))
     explicit = visible_cases(actor)

@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Added native source events for the remaining 63 PMO and Finance processes, specialist handoffs checked inside their consuming commands, scoped project review and downstream receipt verification. The first three isolated Railway suites reached all 63 receiving records. The separate consumption, provider and deployment checks are recorded in BUILD-TESTS.md.
+
 21 November 2026. Generated the 122-process routing book before changing the coordinator. Connected multi-specialist source review to native work, business review and assistant retrieval. Removed the staff-facing specialist launcher and kept historic file decisions accessible. Added a private, source-checked reporting projection and a four-specialist follow-up for an exact native delivery-progress investigation. Recorded provider tests separately from PostgreSQL tests with simulated model responses.
 
 21 November 2026. Recorded PSL’s choice to keep staff alerts in the app. The live Alerts page showed two Tola replies for the signed-in PMO lead. Both external channels were unchecked on that account.

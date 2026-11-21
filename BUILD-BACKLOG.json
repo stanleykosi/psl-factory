@@ -9,6 +9,7 @@
     "owner_decisions": "Operational data and model selection, reviewer appointments, domain policy values and outside destinations."
   },
   "embedded_specialist_coordination_20261121": {
+    "superseded_by": "native_department_handoffs_20261121",
     "status": "connected_native_stations",
     "source_process_contracts": 122,
     "release_processes": 108,

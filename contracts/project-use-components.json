@@ -2,7 +2,7 @@
   "components": [
     {
       "id":"OPS.specialist_source_reading","parent_decision_id":"OPS",
-      "schema_ref":"schema:psl/specialist-source-reading/v1","subject_scope":"A project's selected process, specialist, nonrestricted source kind and exact model.",
+      "schema_ref":"schema:psl/specialist-source-reading/v1","subject_scope":"A project's selected process, specialist team, permitted source fields and exact model. Native handoffs use the domain reader's bounded projection.",
       "current_value":null,"status":"UNCONFIGURED",
       "value_schema":{"type":"object","additionalProperties":false,"required":["model","roles","processes","source_kinds"],"properties":{
         "model":{"type":"string","minLength":1,"maxLength":160},

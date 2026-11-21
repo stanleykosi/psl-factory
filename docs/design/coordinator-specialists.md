@@ -20,11 +20,15 @@ At a join, O01 records every member, source digest, cited line and private file 
 
 For private weekly reporting, the domain reader checks the selected inventory, its signed intake and all client citations before projecting the four human-supplied client sections. Other native private envelopes keep their own readers. The public source reader accepts only explicitly bound, bounded text. Release scope and live provider acceptance for each route are separate entries in the build records.
 
-### Proposed connections for the remaining release processes
+### Native department handoffs
 
-These are engineering destinations. The routing book supplies each specialist's job and the underlying business constraints. Connect each event at the owning native service, bind the named subject and version, then test source correction and independent review before counting it as active.
+The following 63 processes have individual domain adapters. Saving a matching source creates a durable event keyed by process, native model and source record. Once a project has selected execution and disclosure rules, the background worker enrolls that original event with O01. A second save cannot start duplicate work. Historical or bulk-loaded records can be reconciled by exact identity with `manage.py work_native_stations --process PROCESS --subject ID --actor USER`. The command checks current native visibility and project recovery authority.
 
-| Source processes | Proposed native event and evidence boundary |
+The source adapter returns only the approved projection, original evidence version and any matching downstream receipt. O01 fans out to the process's assigned specialists. Findings return to the project in a reviewed handoff. Internal consuming commands recheck the current source and packet inside their own transaction. PostgreSQL records which actor used the packet and requires an observed downstream record before completion. Independent project-view acknowledgements and incoming customer replies can be recorded as they arrive. PMO consults the customer reply's reviewed findings during signed-baseline adoption. Protected HR fields stay behind the original HR reader.
+
+The case page links to Department handoffs. A current reader can inspect the source, findings and receipt there. Department assistants reuse current, permission-checked excerpts and receipt metadata. Operational reviewers, models and disclosure scope require recorded project decisions. For synthetic deployment checks, run `python scripts/railway-native-stations.py` on the isolated checks service. The three suites use separate databases and require receipts for every process listed below. [Per-process routes](specialist-process-routes.md)
+
+| Source processes | Domain event and evidence boundary |
 | --- | --- |
 | P01, P02, P08, P09, P19, P20 | Commercial submission, costing revision and signature events. Bind the exact document version, department decision sequence, client response and signed handoff. |
 | P04, P05, P13, P15 | Reporting, shared visibility and operational validation. Bind the reporting period, approved procedure or owner-validated evidence packet. Preserve audience and record access. |

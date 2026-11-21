@@ -144,6 +144,33 @@ class PMONativeStations(TransactionTestCase):
         self.assertEqual(shared_submission(binding,a).receipt,published)
         self.assertEqual(client_response(published,a).receipt,response)
 
+    def test_template_owner_resolves_competing_unconfirmed_claims_after_specialist_handoff(self):
+        from django.core.exceptions import ValidationError
+        from apps.documents import template_current
+        from tests import test_commercial_changes as h, test_template_current as templates
+
+        owner, case, evidence, original = h.fixture()
+        proof = evidence["policy_decision"]
+        competitor = controlled.register_template(owner,case.pk,original.name,h.DEFINITION,proof.pk,rev(case))
+        scope = templates.scope(owner,case,proof)
+        templates.configure(owner,case,proof,[original,competitor],[(scope,owner)])
+        chosen = templates.claim(owner,case,scope,original,proof,False)
+        competing = templates.claim(owner,case,scope,competitor,proof,False)
+        claims = [chosen.pk,competing.pk]
+        work = start_station(self,"P11",original)
+
+        def resolve():
+            return template_current.resolve_claims(owner,case.pk,scope.pk,chosen.pk,claims,proof.pk,
+                                                   "Owner checked both sources and chose the original",rev(case))
+
+        with self.assertRaises(ValidationError):
+            resolve()
+        self.assertFalse(scope.resolutions.exists())
+        assert_waiting(self,work)
+        resolution = resolve()
+        finish_station(self,work,resolution)
+        self.assertEqual(template_current.status(scope)["manifest"]["template_id"],original.pk)
+
     def test_milestone_received_by_finance(self):
         from tests.helpers import setup_case, signed
         from apps.pmo.services import complete_milestone

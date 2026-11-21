@@ -193,6 +193,10 @@ def private_disclosure(contract, actor):
         raise PermissionDenied("The named Finance recipient is required.")
     hrfinance.authority(actor, case, "receive")
     hrfinance.current_contract(contract)
+    # Finance may track its own pending request. Once HR decides, every read
+    # must honour the current decision, even before the very first capture.
+    if contract.records.filter(kind__in=("approve", "return", "revoke")).exists():
+        hrfinance.authorized(contract)
     # Fetch only snapshot identity. The native currentness check projects two metadata fields.
     snapshot = contract.snapshots.defer("payload").filter(status="accepted").order_by("-pk").first()
     receipt = None

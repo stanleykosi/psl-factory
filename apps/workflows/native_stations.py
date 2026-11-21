@@ -91,7 +91,9 @@ def readable(actor, work):
     from .factory import access
     try:
         access(actor, work.case, "factory.read", DEFINITION)
-        checked_work(work, actor)
+        current = checked_work(work, actor)
+        if work.status == "verified" and not current_receipt(work, current):
+            return False
     except (ObjectDoesNotExist, PermissionDenied, ValidationError):
         return False
     return True
@@ -104,11 +106,9 @@ def enabled_for(case, process):
     execution = resolve(COMPONENT, case)
     if execution.status != "ACTIVE" or not reference_values(execution.configuration)[0]["enabled"]:
         return False
-    if case.synthetic:
-        return True
     permission = resolve(SOURCE_POLICY, case)
     if permission.status != "ACTIVE":
-        return False
+        return case.synthetic
     value = permission.configuration.envelope["value"]
     return process in value["processes"] and PROJECTION in value["source_kinds"]
 
@@ -168,6 +168,16 @@ def receiver_identity(observation):
     return [receiver._meta.label_lower, str(receiver.pk)] if receiver is not None else None
 
 
+def current_receipt(work, observation):
+    receiver = receiver_identity(observation)
+    if receiver is None:
+        return None
+    return NativeStationReceipt.objects.filter(
+        handoff__station=work.native_station, handoff__projection_sha256=projection_pin(observation),
+        receiver_model=receiver[0], receiver_pk=receiver[1]
+    ).order_by("-pk").first()
+
+
 @transaction.atomic
 def receive_advice(process, subject, actor, *, case=None):
     """Recheck an exact internal handoff in the transaction that consumes it."""
@@ -181,16 +191,23 @@ def receive_advice(process, subject, actor, *, case=None):
     station = NativeStation.objects.select_related("work__case").filter(
         process=process, subject_model=route.model.lower(), subject_pk=str(subject.pk)
     ).first()
-    if not station:
-        return None
-    if not station.work_id:
+    if station is None or not station.work_id:
         # Source recording and downstream action may predate activation. Only
         # an explicitly authorised operational process can introduce a wait.
         case = case or getattr(subject, "case", None)
         if case is None:
             return None
-        if case.synthetic or not enabled_for(case, process):
+        if not enabled_for(case, process):
             return None
+        if case.synthetic:
+            from apps.agents.specialist_memory import COMPONENT as SOURCE_POLICY
+            from apps.policy.services import resolve
+            if resolve(SOURCE_POLICY, case).status != "ACTIVE":
+                # Synthetic demonstrations without an explicit disclosure
+                # selection only enforce handoffs already enrolled by O01.
+                return None
+        if station is None:
+            raise ValidationError("Reconcile the original department source before consuming its findings.")
         raise ValidationError("The department source is queued for specialist review.")
     work = station.work
     if work.cancel_requested or work.status == "cancelled":

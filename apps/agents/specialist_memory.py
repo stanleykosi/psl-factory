@@ -122,7 +122,7 @@ def read_context(work, actor, process):
     from apps.workflows.factory_views import visible
     if work.definition == "process-handoff/v1":
         from apps.workflows.factory_views import work_grant_scope
-        from apps.workflows.native_stations import PROJECTION, checked_work
+        from apps.workflows.native_stations import PROJECTION, checked_work, current_receipt
 
         if (work.cancel_requested or work.status == "cancelled" or work.native_station.process != process
                 or not work_grant_scope(actor, include_native=True).filter(pk=work.pk).exists()):
@@ -132,6 +132,8 @@ def read_context(work, actor, process):
         for person in {actor, work.execution_actor}:
             factory.access(person, work.case, "factory.read", work.definition)
             current_source = checked_work(work, person)
+            if work.status == "verified" and not current_receipt(work, current_source):
+                raise PermissionDenied("The receiving record is unavailable to this reader.")
             if current_source.source.created_at < timezone.now() - timedelta(seconds=profile["max_age_seconds"]):
                 raise PermissionDenied("The department source is no longer current.")
             allowed = {current_source.source.pk: (PROJECTION, current_source.lines)}

@@ -153,6 +153,8 @@ def resolve_claims(actor, case_id, scope_id, selected_claim_id, claim_ids, evide
     chosen = next((c for c in claims if c.pk == selected_claim_id), None)
     if not chosen or chosen.template_id not in reference_values(policy)[0]['template_ids']:
         raise ValidationError('Select one active claim whose template is enabled by current policy')
+    from apps.pmo.coordinator_intake import accept
+    accept(actor, case, chosen.template, "P11")
     result = TemplateResolution.objects.create(scope=scope, selected_claim=chosen, claim_ids=claim_ids,
         evidence=source(case, evidence_id, actor), note=text(note, 'Owner decision rationale'), actor=actor, owner_policy=policy)
     event(actor, case, 'document.template_current.resolved', resolution=result.pk)

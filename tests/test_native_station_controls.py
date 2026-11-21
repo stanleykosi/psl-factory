@@ -9,10 +9,34 @@ from apps.pmo.models import ApprovalRouteReceipt
 from apps.workflows import native_stations as stations
 from apps.workflows.models import FactoryWork, NativeStation, NativeStationReceipt
 from tests import approval_helpers
-from tests.native_station_helpers import start_station, assert_waiting, finish_station
+from tests.native_station_helpers import configure_station, start_station, assert_waiting, finish_station
 
 
 class NativeStationControls(TransactionTestCase):
+    def test_configured_source_waits_even_before_the_intake_worker_claims_it(self):
+        from apps.agents.specialists import routes
+        from apps.agents.specialist_memory import COMPONENT
+        from apps.policy.project_use import ProjectUseForm
+        from apps.policy.services import transition
+        from django.utils import timezone
+
+        f = approval_helpers.fixture()
+        actor, case, request = f["actor"], f["case"], f["request"]
+        station = configure_station(self, "P02", request)
+        proof = case.evidence.filter(kind="policy_decision").first()
+        form = ProjectUseForm(actor, case, COMPONENT, {
+            "roles": [role["id"] for role in routes()["P02"]["specialist_roles"]], "processes": ["P02"],
+            "source_kinds": ["native_station_projection"], "model": "station-test",
+            "effective": timezone.now().isoformat(), "proof": proof.pk,
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+        policy = form.save(actor)
+        transition(actor, policy.pk, "validated")
+        transition(actor, policy.pk, "active")
+        self.assertIsNone(station.work_id)
+        with self.assertRaises(ValidationError):
+            stations.receive_advice("P02", request, actor, case=case)
+        self.assertFalse(ApprovalRouteReceipt.objects.filter(job__request=request).exists())
     def test_disclosure_rule_requires_each_member_for_a_native_source(self):
         from apps.agents.specialists import routes, validate_selection
         roles = [role["id"] for role in routes()["P02"]["specialist_roles"]]
