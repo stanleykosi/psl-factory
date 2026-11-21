@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components';
 
-import { FloorScene } from './scene';
+import { FloorScene, type StationRef } from './scene';
+import { StationStrip } from './StationStrip';
+import { useStationWork } from './stationWork';
 import { floorLabel, type FloorProps } from './support';
 import './floor.css';
 
@@ -14,13 +16,15 @@ const cssVar = (name: string) => getComputedStyle(document.documentElement).getP
 
 /** The 3D factory floor (concept 1, the isometric conveyor): the same lines, stations and counts as the flat view. */
 export default function Floor3D({ lines, onFailure }: FloorProps) {
+  const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const floor = useRef<FloorScene | null>(null);
   const canvas = useRef<HTMLCanvasElement | null>(null);
   const failed = useRef(onFailure);
   const latest = useRef(lines);
-  const [readout, setReadout] = useState<{ text: string | null; person: boolean }>({ text: null, person: false });
+  const [preview, setPreview] = useState<StationRef | null>(null);
+  const [pinned, setPinned] = useState<StationRef | null>(null);
 
   useEffect(() => {
     failed.current = onFailure;
@@ -72,7 +76,7 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
           muted: cssVar('--nav-muted'),
           focus: cssVar('--focus'),
         },
-        { onReadout: (text, person) => setReadout({ text, person }) },
+        { onPreview: setPreview, onPin: setPinned },
       );
     } catch {
       el.removeEventListener('webglcontextlost', onLost);
@@ -100,15 +104,47 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
     floor.current?.update(lines);
   }, [lines]);
 
+  useEffect(() => {
+    floor.current?.setPinned(pinned);
+  }, [pinned]);
+
+  // The strip follows the pinned station, else the one under the pointer or focus; a station that left the floor lets go.
+  const shown = pinned ?? preview;
+  const found = shown ? lines.find((l) => l.line === shown.line)?.stations.find((s) => s.name === shown.name) : undefined;
+  const { state, retry, showAll } = useStationWork(shown && found ? { line: shown.line, station: shown.name, count: found.count, needsPerson: found.needs_person } : null);
+  if (pinned && !lines.some((l) => l.line === pinned.line && l.stations.some((s) => s.name === pinned.name))) setPinned(null);
+
+  // Esc from the floor or the strip lets go of a pinned station.
+  useEffect(() => {
+    if (!pinned) return;
+    const el = root.current!;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPinned(null);
+    };
+    el.addEventListener('keydown', onKey);
+    return () => el.removeEventListener('keydown', onKey);
+  }, [pinned]);
+
   return (
-    <div className="floor">
+    <div ref={root} className="floor">
       <div ref={stage} className="floor__stage" role="group" aria-label="3D floor view. Arrow keys turn and tilt, R resets.">
         <div ref={overlay} className="floor__labels" />
       </div>
       <div className="floor__bar">
-        <p className={`floor__readout${readout.person ? ' floor__readout--person' : ''}`} aria-live="polite">
-          {readout.text ?? HINT}
-        </p>
+        {shown && found && state ? (
+          <StationStrip
+            line={shown.line}
+            station={shown.name}
+            count={found.count}
+            state={state}
+            pinned={pinned !== null}
+            onUnpin={() => setPinned(null)}
+            onRetry={retry}
+            onShowAll={() => void showAll()}
+          />
+        ) : (
+          <p className="floor__readout">{HINT}</p>
+        )}
         <Button kind="secondary" onClick={() => floor.current?.reset()}>
           Reset view
         </Button>

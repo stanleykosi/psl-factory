@@ -25,6 +25,7 @@ vi.mock('@/features/floor/scene', () => ({
     reset() {
       scene.calls.push(['reset']);
     }
+    setPinned() {}
     dispose() {}
   },
 }));

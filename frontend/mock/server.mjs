@@ -37,6 +37,7 @@ import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { invoices } from './invoices.mjs';
 import { overview } from './overview.mjs';
+import { STATION_ITEMS_PATH, stationItems, withDemoRuns } from './station-items.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
@@ -303,6 +304,13 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         res.writeHead(200, { 'Content-Type': file.type, 'Cache-Control': 'no-store' });
         return res.end(file.bytes);
       }
+      // D-162 (proposal G-OVERVIEW-STATION, not in v7): the work at one station of the factory floor.
+      if (method === 'get' && url.pathname === STATION_ITEMS_PATH) {
+        const cookies = parseCookies(req.headers.cookie);
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -371,7 +379,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const reply = startWork.handle(route.operationId, { url, raw, persona, cookies });
         return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona, startWork.clientLabel) : reply));
       }
-      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, demo ? withDemoRuns(r.body, runs.floor()) : r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
       // F-23: the one document the minutes fixtures name (D-2304 v1); any other document stays unmocked, as before.

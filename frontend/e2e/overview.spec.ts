@@ -249,7 +249,9 @@ test.describe('desktop 1440', () => {
     const approve = page.getByRole('button', { name: '1 Approve PERSON. Invoices · Approve · 1 item · needs a person' });
     await expect(approve).toHaveText('1 Approve PERSON');
     await approve.hover();
-    await expect(readout).toHaveText('Invoices · Approve · 1 item · needs a person');
+    const headline = page.locator('.floor__headline');
+    await expect(headline).toContainText('Invoices · Approve');
+    await expect(headline).toContainText('1 here · 1 needs a person');
     // The stage is a tab stop: arrows turn and tilt, R resets.
     const stage = page.getByRole('group', { name: /^3D floor view/ });
     await stage.focus();
@@ -261,13 +263,52 @@ test.describe('desktop 1440', () => {
     await page.getByRole('button', { name: 'Reset view' }).click();
     await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the floor; arrow keys turn and tilt, R resets.');
     await page.getByRole('button', { name: '1 Brief. Pre-sale · Brief · 1 item · no person needed' }).focus();
-    await expect(readout).toHaveText('Pre-sale · Brief · 1 item · no person needed');
+    await expect(headline).toContainText('Pre-sale · Brief');
+    await expect(headline).toContainText('1 here');
     await shot(page, 'overview-3d-conveyor-1440', false);
     await expectNoAxeViolations(page);
 
     await page.getByRole('radio', { name: 'Flat' }).click();
     await expect(page.locator('canvas')).toHaveCount(0);
     await expect(chips).toHaveCount(0);
+  });
+});
+
+test.describe('3D floor strip (D-162)', () => {
+  test.use({ viewport: DESKTOP });
+
+  test('CEO points at a station, reads its work, pins it, and a row opens the work item', async ({ page, context }) => {
+    test.setTimeout(60_000);
+    await setCookies(context, { psl_mock_persona: 'ceo' });
+    await page.goto('/overview');
+    await loaded(page);
+    await page.getByRole('radio', { name: '3D floor' }).click();
+    await expect(page.getByRole('img', { name: /^3D factory floor: 8 lines/ })).toBeVisible();
+
+    const approve = page.getByRole('button', { name: '1 Approve PERSON. Invoices · Approve · 1 item · needs a person' });
+    await approve.hover();
+    const strip = page.locator('.floor__strip');
+    await expect(strip.locator('.floor__headline')).toContainText('Invoices · Approve');
+    await expect(strip.locator('.floor__headline')).toContainText('1 here · 1 needs a person');
+    await expect(strip.locator('.floor__row').first()).toContainText('needs a person');
+    await expect(strip.getByText('Pinned')).toHaveCount(0);
+
+    // a click pins it: the pointer can leave and the strip stays; Esc lets go
+    await approve.click();
+    await expect(strip.getByText('Pinned')).toBeVisible();
+    await page.getByRole('button', { name: '1 Brief. Pre-sale · Brief · 1 item · no person needed' }).hover();
+    await expect(strip.locator('.floor__headline')).toContainText('Invoices · Approve');
+    await page.keyboard.press('Escape');
+    await expect(strip.getByText('Pinned')).toHaveCount(0);
+
+    await approve.click();
+    await expect(strip.getByText('Pinned')).toBeVisible();
+    await expectNoAxeViolations(page);
+    const link = strip.locator('.floor__row a').first();
+    const href = await link.getAttribute('href');
+    expect(href).toMatch(/^\/work\/W-\d+$/);
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
   });
 });
 

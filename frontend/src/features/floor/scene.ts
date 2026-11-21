@@ -83,7 +83,10 @@ const clampView = (v: { yaw: number; pitch: number }) => ({
   pitch: Math.max(VIEW.pitchMin, Math.min(VIEW.pitchMax, v.pitch)),
 });
 
-export type FloorCallbacks = { onReadout: (text: string | null, needsPerson: boolean) => void };
+/** A station on the floor, by line and station name. */
+export type StationRef = { line: string; name: string };
+/** `onPreview`: the station under the pointer or keyboard focus (null when none). `onPin`: a click, tap, Enter or Space on a station. */
+export type FloorCallbacks = { onPreview: (station: StationRef | null) => void; onPin: (station: StationRef) => void };
 
 export class FloorScene {
   private readonly renderer: WebGLRenderer;
@@ -111,6 +114,7 @@ export class FloorScene {
   private size = { width: 1, height: 1 };
   private hover: Machine | null = null;
   private focus: Machine | null = null;
+  private pinnedKey: string | null = null;
   private drag: { x: number; y: number; moved: boolean } | null = null;
   private time = 0;
   private frame = 0;
@@ -191,10 +195,12 @@ export class FloorScene {
     return o;
   }
 
-  private chipFor(card: Pick<Machine, 'line' | 'value'>, chip = document.createElement('button')) {
+  private chipFor(card: Pick<Machine, 'key' | 'line' | 'value'>, chip = document.createElement('button')) {
     const s = card.value;
     chip.type = 'button';
-    chip.className = `floor__chip${s.needs_person ? ' floor__chip--person' : s.count > 0 ? '' : ' floor__chip--empty'}`;
+    const pinned = card.key === this.pinnedKey;
+    chip.className = `floor__chip${s.needs_person ? ' floor__chip--person' : s.count > 0 ? '' : ' floor__chip--empty'}${pinned ? ' floor__chip--pinned' : ''}`;
+    chip.setAttribute('aria-pressed', String(pinned));
     // The name starts with the visible words, then reads the station in full.
     const shown = `${s.count} ${s.name}${s.needs_person ? ' PERSON' : ''}`;
     chip.setAttribute('aria-label', `${shown}. ${describeStation(card.line, s)}`);
@@ -316,6 +322,7 @@ export class FloorScene {
         m.chip.addEventListener('pointerleave', () => this.setHover(null));
         m.chip.addEventListener('focus', () => this.setFocus(m));
         m.chip.addEventListener('blur', () => this.setFocus(null));
+        m.chip.addEventListener('click', () => this.callbacks.onPin({ line: m.line, name: m.value.name }));
         this.machines.set(m.key, m);
         row.push(m);
         this.addLabel(m.chip, m.anchor, 'bottom');
@@ -453,7 +460,22 @@ export class FloorScene {
 
   private readout() {
     const m = this.focus ?? this.hover;
-    this.callbacks.onReadout(m ? describeStation(m.line, m.value) : null, Boolean(m?.value.needs_person));
+    this.callbacks.onPreview(m ? { line: m.line, name: m.value.name } : null);
+  }
+
+  /** The station the strip is pinned to: its chip is pressed and its machine stays lifted (null unpins). */
+  setPinned(station: StationRef | null) {
+    this.pinnedKey = station ? stationKey(station.line, station.name) : null;
+    this.markPinned();
+    this.showing();
+  }
+
+  private markPinned() {
+    for (const m of this.machines.values()) {
+      const on = m.key === this.pinnedKey;
+      m.chip.classList.toggle('floor__chip--pinned', on);
+      m.chip.setAttribute('aria-pressed', String(on));
+    }
   }
 
   private showing() {
@@ -509,7 +531,11 @@ export class FloorScene {
       } else if (e.pointerType === 'mouse') this.setHover(this.pick(e));
     };
     const up = (e: PointerEvent) => {
-      if (this.drag && !this.drag.moved) this.setHover(this.pick(e));
+      if (this.drag && !this.drag.moved) {
+        const machine = this.pick(e);
+        this.setHover(machine);
+        if (machine) this.callbacks.onPin({ line: machine.line, name: machine.value.name });
+      }
       this.drag = null;
     };
     const leave = (e: PointerEvent) => {
@@ -567,7 +593,7 @@ export class FloorScene {
     // outline is drawn. Its label is fixed to the floor, so the lift never moves it from under the pointer.
     const f = still ? 1 : 1 - Math.exp(-dt * 10);
     for (const m of this.machines.values()) {
-      const up = m === this.hover || m === this.focus ? LIFT : 0;
+      const up = m === this.hover || m === this.focus || m.key === this.pinnedKey ? LIFT : 0;
       const y = m.parts.position.y;
       m.parts.position.y = Math.abs(up - y) < 0.002 ? up : y + (up - y) * f;
     }

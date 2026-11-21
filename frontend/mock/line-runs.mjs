@@ -283,6 +283,13 @@ export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, 
     tick,
     decide,
     owns: (workId) => runs.has(workId),
+    /** The runs still going, for the factory floor (station-items.mjs): where each stands, and who holds it. */
+    floor() {
+      tick();
+      return [...runs.values()]
+        .filter((run) => run.state === 'running' || run.state === 'waiting')
+        .map((run) => ({ id: run.id, lineKey: run.lineKey, title: run.title, reference: run.reference, progress: run.idx / run.stations.length, waiting: run.state === 'waiting', since: run.stationStartedAt, role: roleOf(run), agent: agentOf(run).name }));
+    },
     item(workId, persona) {
       const run = runs.get(workId);
       if (!run) return undefined;

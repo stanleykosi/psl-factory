@@ -1,0 +1,38 @@
+{
+  "$comment": "G-OVERVIEW-STATION PROPOSAL overlay (mock only, D-162): GET /api/v1/overview/stations/items?line=<line>&station=<station>&limit=<1-50, default 10>&cursor=<opaque> reads the work at one station of the factory floor, for the 3D floor's readout strip. Not in v7. Visible to whoever may read E-OVERVIEW, and only the records that person may see (restricted records are left out of items but kept in total, so the count matches the floor). Order: needs a person first, then the longest waiting. 404 not_found for a line or station that is not on the floor; 404 invalid_query for a bad limit or cursor. The mock is mock/station-items.mjs.",
+  "response": {
+    "type": "object",
+    "required": ["items", "total", "as_of"],
+    "additionalProperties": false,
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["work_id", "title", "reference", "state", "needs_person", "held_by"],
+          "additionalProperties": false,
+          "properties": {
+            "work_id": { "type": "string", "minLength": 1 },
+            "title": { "type": "string", "minLength": 1 },
+            "project_title": { "type": "string", "minLength": 1 },
+            "client": { "type": "string", "minLength": 1 },
+            "reference": { "type": "string", "minLength": 1 },
+            "state": { "type": "string", "minLength": 1 },
+            "waiting_since": { "type": "string", "format": "date-time" },
+            "needs_person": { "type": "boolean" },
+            "held_by": {
+              "type": "object",
+              "required": ["kind", "name"],
+              "additionalProperties": false,
+              "properties": { "kind": { "enum": ["role", "agent"] }, "name": { "type": "string", "minLength": 1 } }
+            }
+          }
+        }
+      },
+      "total": { "type": "integer", "minimum": 0 },
+      "needs_person_count": { "type": "integer", "minimum": 0 },
+      "next_cursor": { "type": "string", "minLength": 1 },
+      "as_of": { "type": "string", "format": "date-time" }
+    }
+  }
+}
