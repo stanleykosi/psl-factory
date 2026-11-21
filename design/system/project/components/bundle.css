@@ -346,6 +346,8 @@
 .psl-fact b { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; }
 .psl-fact strong { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .psl-fact--earned { background: var(--ink); color: var(--on-strong); }
+/* D-163: two earned facts side by side keep a visible divider: the line between them turns white */
+.psl-fact--earned:has(+ .psl-fact--earned) { border-right-color: var(--on-strong); }
 .psl-fact--current { background: var(--signal-tint); color: var(--signal-ink); }
 .psl-fact--verified { background: var(--verified); color: var(--on-strong); }
 .psl-fact--unknown { background: var(--waiting-tint); color: var(--waiting-ink); }
