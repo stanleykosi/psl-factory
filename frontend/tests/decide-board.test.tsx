@@ -245,7 +245,7 @@ describe('done board, concept B (criterion 17)', () => {
     expect(record[0]).toContain('work-facts');
     expect(record[1]).toBe('decide-sum');
     expect(record.at(-1)).toContain('decide-paid');
-    expect([...cols.children[1].children].map((c) => c.className)).toEqual(['decide-panel', 'decide-still']);
+    expect([...cols.children[1].children].map((c) => c.className)).toEqual(['decide-donepanel', 'decide-still']);
   });
 
   it('moves focus to the done heading and announces the result', async () => {

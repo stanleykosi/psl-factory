@@ -498,8 +498,8 @@ export function DoneView({ id, item, result, label, note, reloaded, refreshFaile
             {approved && <p className="decide-plain decide-paid">Paid is tracked separately by Finance and is not part of this decision.</p>}
           </div>
           <div className="decide-done__side">
-            <section className="decide-panel" aria-labelledby="decide-next-head">
-              <h2 id="decide-next-head" className="decide-panel__head">
+            <section className="decide-donepanel" aria-labelledby="decide-next-head">
+              <h2 id="decide-next-head" className="decide-donepanel__head">
                 WHAT HAPPENS NEXT
               </h2>
               {reloaded && !uncertain && (
