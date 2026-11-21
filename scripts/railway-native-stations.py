@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from uuid import uuid4
 
 import psycopg
 from psycopg import sql
@@ -24,9 +25,9 @@ LIVE_CASES = {
 }
 
 
-def run(group):
+def run(group, token):
     module, required = SUITES[group]
-    environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance", PSL_STATION_SUITE=group, PYTHONUNBUFFERED="1")
+    environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance", PSL_STATION_SUITE=group, PSL_STATION_RUN=token, PYTHONUNBUFFERED="1")
     modules = [module]
     if group == "pmo":
         modules += ["tests.test_native_station_controls", "tests.test_specialist_loop.SpecialistLoopTests"]
@@ -86,14 +87,26 @@ def main():
     params.pop("cursor_factory", None)
     params.pop("context", None)
     params["dbname"] = "postgres"
-    with psycopg.connect(**params, autocommit=True) as admin:
-        for group in groups:
-            name = "test_psl_stations_" + group
-            if not admin.execute("SELECT 1 FROM pg_database WHERE datname=%s", (name,)).fetchone():
-                admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(sql.Identifier(name), sql.Identifier(template)))
     selected_passed = live(params, template, [options.live_case]) if options.live_case else True
-    with ThreadPoolExecutor(max_workers=len(groups)) as pool:
-        passed = all(list(pool.map(run, groups)))
+    # A previous container may have stopped in the middle of a transactional
+    # fixture. Never reuse its data, even when Railway restarts a deployment.
+    with psycopg.connect(**{**params, "dbname": template}) as check:
+        if check.execute("SELECT EXISTS(SELECT 1 FROM auth_user)").fetchone()[0]:
+            raise RuntimeError("The synthetic template contains accounts. A clean migrated template is required.")
+    token = uuid4().hex
+    owned = []
+    with psycopg.connect(**params, autocommit=True) as admin:
+        try:
+            for group in groups:
+                name = f"test_psl_stations_{group}_{token}"
+                admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(sql.Identifier(name), sql.Identifier(template)))
+                owned.append(name)
+            with ThreadPoolExecutor(max_workers=len(groups)) as pool:
+                results = [pool.submit(run, group, token) for group in groups]
+                passed = all([result.result() for result in results])
+        finally:
+            for name in owned:
+                admin.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(name)))
     if passed and options.live:
         passed = live(params, template, LIVE_CASES)
     return passed and selected_passed
