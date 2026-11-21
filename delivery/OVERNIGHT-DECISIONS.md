@@ -292,3 +292,94 @@ F-51 Start work proof field for fixed assets, plus the forecast start: the 4 flo
 
 ## D-136 · F-53 signed (20 Nov 2026, design engineer: "Sign F-53")
 F-53 design-system conformance part 2 is signed: 58 raw controls and tables replaced with shared components, and an ESLint ban on raw ones. The three visible changes are accepted: stacked response radios, date and time as two fields, counters under their boxes. The phone tap areas and mention-picker keys are accepted. Merge into dlv-00 approved.
+
+## D-137 (20 Nov): paging starts at 10, grows in place, and inactive options
+The design engineer, on My work: "it should start from 10 and when a user increases, the entire table doesnt need to load just add the amount the person wants to the table. also if list isnt up to 10 other numbers should be inactive." Applied to F-54 on every list: default 10 rows (was 20 under D-PAGING r2); a larger rows-per-page choice appends only the extra rows; a smaller one trims without a fetch; an option is disabled when the total is at or below the next smaller option.
+
+## D-138 (20 Nov): the assistant's conversation list scrolls infinitely
+The design engineer, on the assistant's side list: "remove this, we dont need it here, let the list be infinite scroll". In F-54 the conversation list has no paging footer; the next conversations load as the user scrolls (or tabs) to the end. Every other list keeps the shared footer (D-137).
+
+## D-139 (20 Nov): the assistant's message box is centred
+The design engineer: "if the text area isnt full width then, center it cos aligning to the left looks weird". In F-54 the assistant composer and conversation thread (max 880px) are centred in their column, under the centred heading. Phones keep the full-width bar.
+
+## D-140 (20 Nov): on the Assistant only the chat scrolls
+The design engineer: "only the chat should be scrollable. both side bar should be fised except the content in them cos i need the info on the footer of noth to be visible at all times". In F-54 (desktop and tablet) the Assistant fills the window under the top bar; the conversation list and agent panel stay fixed, each scrolling only its own content with its footer note always visible; in the middle the Talk-to bar and the composer stay put and only the thread scrolls. Phones keep page scrolling with the sticky composer.
+
+## D-141 (20 Nov): the chat area's space is even on both sides
+The design engineer: "in the chat area, the padding on the left is more than that of the right which makes the area look weird". Measured: the agent's cards sat 80px in from the composer's left edge but 28px from its right, because of the avatar column. In F-54 the thread's right padding matches the left plus the avatar column, so the agent cards and the person's bubble sit equally in from the composer's edges (720px and up).
+
+## D-142 (20 Nov): an HR stand-in persona in the mock
+The design engineer asked to view the app as HR (not HR Lead). No HR persona existed. Added mock persona `hr` (Amaka Obi, role HR): My work and Assistant, Zainab only, no startable lines, empty queues and alerts. This is a stand-in for viewing only; what HR staff may see is PSL's to define (D-PAYROLL-VISIBILITY open). Committed with F-54.
+
+## D-143 (20 Nov): text fields show focus by their own border
+The design engineer, on the assistant composer: "i hate the focus on this. it is too bogus and confusing", then chose "Every text field". Every text field shows focus by turning its own border to the focus blue in place: no outer ring, no gap. On the composer only typing focus changes the box; its buttons keep their own keyboard-only ring. Checkboxes, radios, buttons, links and segmented options keep the keyboard-only ring. Added to F-54 as criterion 9.
+
+## D-144 (20 Nov): focus everywhere is the border turning blue
+The design engineer: "for the focus anywhere, let the border just change to blue color from black not any extra outline". Widens D-143 from text fields to every focusable control: buttons, segmented options, tabs, chips, checkboxes, radios, icon buttons, rows and cards: the control's own border turns var(--focus) in place, with no outline or offset. Controls without a border get a border of the same width in their resting colour (transparent or the surface) so focus only changes its colour and nothing moves. Links in running text, which have no box, show focus as a blue underline. Buttons keep the keyboard-only rule (:focus-visible); text fields show it on any focus.
+
+## D-145 (20 Nov): one change at a time, in one worktree
+The design engineer: "lets make all this changes one by one so we use the same worktree rather than working in parallel". From now on design changes run one after another on one branch and one worktree (the F-54 worktree, live on port 4952), not as parallel features. F-55's HR sample data (pushed on fe-hr-mock-data-sample-hr) is folded into the F-54 branch after F-54 round 2 lands, and finished and checked there; the F-55 worktree and its 4953/4954 server are removed.
+
+## D-146 (20 Nov): live design changes skip the review panel
+The design engineer: "no need for all this many reviews we are doing during this bug changes. it is taking so much time". For live design and bug changes the design engineer is watching (F-54 and what is folded into it), the gate (checks.sh plus e2e) and the design engineer's own sign-off on the live server replace the technical, UI, UX and QA review agents. Round-1 findings are verified by the coordinator from the builder's test evidence. Reviews stay for new features, money or security work, and anything going to main still needs the user's approval.
+
+## D-147 (20 Nov): an HR Lead stand-in persona; F-55 folded into F-54
+The design engineer: "lets switch to hr lead now". The F-55 HR sample data was merged into the F-54 branch (D-145) and an `hr_lead` stand-in persona is being added there: the HR Lead decides HR items (payroll corrections, staff record changes, business-unit moves before payroll matching). Stand-in only; PSL defines the real HR Lead authority (D-PAYROLL-VISIBILITY open). No amounts shown.
+
+## D-148 (20 Nov): white focus edge on filled dark or blue controls
+The builder kept a white edge (--focus-on-strong) instead of blue on filled dark or blue controls (primary, dark and confirm buttons, selected tabs and options, the dark top bar, the send button), because blue on those fills cannot be seen. The design engineer: "thats good". Accepted as the one exception to D-144.
+
+## D-149 (20 Nov): phone work-item tabs get their own row
+The design engineer, on /work/W-1713/history at phone width: "no idea why the overview and history tab are so tight in this resolution". The tabs were squeezed onto the tag line with negative margins that pulled them into the title and the filter. On phones they now sit on their own full-width row under the tag line, two equal halves, 44px tall, with normal spacing. Same on Overview and History.
+
+## D-150 (20 Nov): CEO sample data
+The design engineer, viewing as CEO: "add data for ceo so i can see how it looks". The ceo persona had no work rows, projects or conversations. Added to the F-54 branch (D-145) as sample data: CEO decisions where the source puts the CEO in the chain (SOW and plan approval after PMO and PMO Lead, change requests, emergency changes, escalations, leadership reports), the projects list, the business overview, alerts and Assistant conversations. Sample only; no new authority or money rule.
+
+## D-151 (20 Nov): action results are toasts, app-wide
+The design engineer, on the My work "TL-RFP-2026-014 is now with Ife Okoro." notice: "things like this should be a toast notification instead ... build our system in app toast notif for actions like this all around the platform end to end". The design system already has Toast (success, success with Undo, problem, dismissible) and a Toast component exists in code, but nothing uses it and there is no app-wide host. F-54 criterion 10: one toast host and hook; every action-result notice becomes a toast; Callouts stay for errors needing action and persistent record state. Queued after the CEO data (D-145, one change at a time).
+
+## D-152 (20 Nov): the 3D floor uses concept 1, the Isometric conveyor floor
+The design engineer: "for 3d floor line lets use Isometric conveyor floor from the concept designs we had". Reverts D-01 (concept 3, the tilted swimlane board). The Overview's 3D floor becomes concept 1 from design/concepts/floor-3d-concepts.html: lines as conveyor belts, stations as machines, waiting items as stacks, orange machines with lamps where a person is needed, a fixed orthographic camera. Fallbacks to Flat stay. F-54 criterion 11, queued after the toasts (D-145).
+
+## D-153 (20 Nov): test data matches who may see the Overview
+The design engineer asked who sees the floor, then "lets fix the test data that is missing". The v7 contract says E-OVERVIEW is for "Leads, CEO, CTO". The mock now gives the Overview to PMO Lead and HR Lead (they were missing it), and PMO Lead sees the projects list (it had none). Admin keeps the Overview in the mock for now although the contract does not list Admin; no CTO persona was added. Both are open for the design engineer.
+
+## D-154 (20 Nov): "Response recorded" and "Outcome recorded" are toasts too
+The toast builder kept ResponseView's "Response recorded" and OutcomeView's "Outcome recorded" as success callouts because each was the whole page after the form. The design engineer: "Make them toasts". After the submit the toast shows and the page shows the recorded result read-only (what was recorded, by whom, when, what happens next) without a success callout; DecideStates stays on the allowlist only if it is not an action result. Queued after the conveyor floor (D-145).
+
+## D-155 (20 Nov): a live demo mode in the mock
+The design engineer: "is it possible for us to make the platform interactable at least so i can see all the loading time, thing of ai and how the answers look doesnt need to make sense just want to see the flows also for each line". F-54 criterion 12: mock-only demo mode with realistic latency, assistant replies that show agent steps then the answer, every startable line running through its stations over time with human hand-offs, decisions and rework, and a dev-only demo bar (switch role, speed, reset). Never in production. Queued after the conveyor floor and D-154.
+
+## D-156 (21 Nov 2026): no blue ring on the active dropdown row
+The design engineer: "remove the blue highlight from the dropdown active option, the background and making the text bold is enough". The keyboard-active option (.psl-option.is-active) and menu item (.psl-menuitem.is-active) now show the grey fill only; the selected option keeps bold text and the tick. Applied to menu items too so every dropdown matches. F-54 branch.
+
+## D-157 (21 Nov 2026): no paging footer inside a picker dropdown
+The design engineer: "this shouldnt be here at all, the search is enough for this kind of dropdown". Start-work record pickers (client, project, milestone) lose the "rows per page" footer. Search finds a record; when a list has more than one page, the next page loads as the end of the list scrolls into view or the keyboard reaches the last option. Tables keep D-PAGING. F-54 branch.
+
+## D-158 (21 Nov 2026): the date-and-time field is a pick-only dropdown
+The design engineer rejected typed and native time entry: "i want it to be a dropdown so its easily pickable not typed", then "i like how it is and the dropdown but it overlaps and input should follow our input same border and all". DateField with `time` is now one select box (psl-input psl-select, the same border, focus and arrow as every dropdown) reading "17 Nov 2026, 14:30" or "Choose date and time". It opens a panel in the page's flow (it pushes the fields below down, as the record pickers do) with the shared calendar beside Hour (00-23) and Minute (00-59) lists. A chosen hour or minute is filled ink like the chosen day. "Use now" fills both and closes; "Done", Esc or a click outside close. The value stays '' until date, hour and minute are all picked; closing with only part picked says "Choose the time too." (or the date). On a phone the lists sit side by side under the calendar. Start-work `datetime` fields (Received, When, Discussed at, Released on) and every DateField-with-time use it; the browser's own datetime-local box is gone. No zone suffix is drawn: the backend has not said which zone a received time is in (BACKEND-HANDOFF G-23 "Received"). Research behind it: React Aria, GOV.UK dates, Material 24-hour study, Carbon, Atlassian/Jira 30-minute complaint. F-54 branch.
+
+## D-159 (21 Nov 2026): mid-width fixes, floor hover and who assigns the PM in the demo
+The design engineer, at a 736px window: the project tabs wrapped into a broken second row, and the fact strip's values sat at different heights; the calendar button's hover fill covered the field border; the conveyor floor's blue hover outline should go back to the old hover. Fixes: project tabs never wrap (tighter padding 720-1023px, sideways scroll below); every fact's value sits at its foot; the input button's hover fill is clipped inside the border (the 44px target is unchanged); a hovered or focused machine lifts (0.4 units, eased; snaps under reduced motion) with its label fixed, and no outline. Demo mode: the CEO took a decision whenever its own decider started the line (a guard so nobody approves what they started); that wrongly sent "Assign PM" to the CEO when the PMO Lead logged an RFP. Assignments (`own: true`: Assign PM, Find the owner) now stay with the PMO Lead. Who may assign an RFP's PM is a Setup rule the backend supplies (D-RFP-INTAKE r1); the demo is sample data only.
+
+## D-162 (21 Nov 2026): 3D floor stations list their work in the readout strip (concept B)
+The design engineer chose concept B of four (A hover card, B readout strip, C side panel, D boxes are the work). Pointing at, focusing or tapping a station previews that station's work in the strip under the floor (line · station, count, who it waits on; up to 5 rows, each opening /work/<id>; "Show all N" grows the list inside the strip). Click, tap or Enter pins it; Esc or × unpins. E-OVERVIEW carries counts only, so the rows come from a proposed station read (mock overlay first, a backend question recorded with the same visibility as E-OVERVIEW). Queued behind the chat change (D-145, one change at a time in the F-54 worktree).
+
+## D-163 (21 Nov 2026): earned facts side by side keep a divider
+"when steps are black it looks weird, we need to still be able to see the border. maybe change the color to white if we have 2 black side by side?" The divider between two earned (ink) facts is now white (`.psl-fact--earned:has(+ .psl-fact--earned)`), in the design system, so every fact strip shows it.
+
+## D-164 (21 Nov 2026): a won demo RFP creates a project
+"how can i start a line if we dont have projects to pick from?" then "Yes, add that". In demo mode, when a demo RFP run reaches Done (won), a new project for that RFP's client appears: in every project picker the starter's role can see (E-LINE-OPTIONS project), in the Projects list, and with a basic project page, so project lines can be started on it. Sample data only, reset by Reset demo; the real effect (registering the engagement creates the project) is the backend's. Queued with D-162 behind the chat change (D-145).
+
+## D-165 (21 Nov 2026): the flat floor lists a station's work too
+"Yes, flat view too". In the flat view each station square is a button (44px press area, drawn size unchanged). Click, tap or Enter opens that station's work under its line, using the 3D strip (D-162): head line, up to 5 rows linking to the work, Show all. The same press, Close (×) or Esc shuts it. Pointing only highlights the square (no preview), so rows never jump while the pointer crosses squares. Works on phones. The text copy behind the 3D floor stays plain.
+
+## 21 Nov 2026: sample records for the pickers; after-you-decide concepts
+- "any reason why we dont have any incident option to pick from?" The mock had one incident in all (Harmattan Bank), and issues, meetings and milestones only on two projects. Ten projects now have a sample of each, and the PMO Lead sees the project pickers (9e5127a7). Sample data only.
+- "this entire approval page is weird and so all over the place. lets have concepts for this as well ... in the concept board": four concepts for SCR-03 after-you-decide (A Receipt, B Summary and next panel, C Where it is in the line, D Straight to the next decision) on the main canvas, Open concepts page (board SCR-03-done-concepts). Awaiting the design engineer's pick.
+
+## D-166 (21 Nov 2026): after-you-decide is concept B
+The design engineer chose concept B ("Summary and next panel") from the four on the main canvas (SCR-03-done-concepts). Result banner on top; left: facts and a summary box (work, project, what you decided, when and by whom, paid note); right: a "What happens next" panel (agent next step, Next decision · 1 of N, Open the work item) and "Still waiting on you · N" (or "You're all caught up"). Phones: one column, next panel first. Honesty rules for uncertain effects are unchanged. Builder started on the F-54 branch; the SCR-03 done boards get updated to B once it lands.
+
+## D-167 (21 Nov 2026): popovers always stay in view
+"the calender shouldnt make the page overlap. any modal in general shoul always stay in view and not create extra space". A shared useKeepInView (src/components/internal.ts) measures each floating popover against the window and any scrolling box it sits in (a drawer body): too far right or left, it slides back inside (8px margin); no room below but more above, it opens upward, and the reverse. Applied to the date calendar, menus, filter panels, selects and the assistant's mention list. The in-flow pickers (record pickers, the date-and-time panel) keep pushing the fields below down. Re-placed on window resize.

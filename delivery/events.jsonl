@@ -3860,3 +3860,49 @@
 {"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"created","tasks":["FE-PAGING-CONSISTENCY"]}
 {"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-20T15:36:50Z","feature":"F-54","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-20T15:37:26Z","feature":"F-54","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-20T17:33:07Z","feature":"F-54","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":321.5,"commit":"b73aff3f69fb"}
+{"at":"2026-11-20T17:33:22Z","feature":"F-54","round":1,"kind":"transition","head":"b73aff3f69fb","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-20T17:37:36Z","feature":"F-54","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"ui-reviewer","commit":"b73aff3f69fb","written_at":"2026-11-20T17:37:04Z"}
+{"at":"2026-11-20T17:39:38Z","feature":"F-54","round":1,"kind":"review","role":"technical","verdict":"CHANGES","reviewer":"technical-reviewer (lead)","commit":"b73aff3f69fb","findings":{"TECH-1-1":"medium","TECH-1-2":"medium","TECH-1-3":"medium","TECH-1-4":"low","TECH-1-5":"low","TECH-1-6":"low","TECH-1-7":"low"},"written_at":"2026-11-20T17:39:05Z"}
+{"at":"2026-11-20T17:41:35Z","feature":"F-54","round":1,"kind":"review","role":"ux","verdict":"CHANGES","reviewer":"ux-reviewer","commit":"b73aff3f69fb","findings":{"UX-1-1":"medium"},"written_at":"2026-11-20T17:40:45Z"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"qa","commit":"b73aff3f69fb","findings":{"QA-1-1":"medium","QA-1-2":"low","QA-1-3":"low"},"written_at":"2026-11-20T18:00:57Z"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-1","by":"technical-reviewer (lead)","severity":"medium","owner":"frontend","blocking":true,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-2","by":"technical-reviewer (lead)","severity":"medium","owner":"frontend","blocking":true,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-3","by":"technical-reviewer (lead)","severity":"medium","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-4","by":"technical-reviewer (lead)","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-5","by":"technical-reviewer (lead)","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-6","by":"technical-reviewer (lead)","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"TECH-1-7","by":"technical-reviewer (lead)","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"QA-1-1","by":"qa","severity":"medium","owner":"frontend","blocking":true,"role":"integrated_qa"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"QA-1-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"QA-1-3","by":"qa","severity":"low","owner":"backend (mock)","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-20T18:01:08Z","feature":"F-54","round":1,"kind":"finding","action":"add","finding":"UX-1-1","by":"ux-reviewer","severity":"medium","owner":"frontend","blocking":true,"role":"ux"}
+{"at":"2026-11-20T18:01:12Z","feature":"F-54","round":1,"kind":"transition","head":"b73aff3f69fb","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-20T18:01:12Z","feature":"F-54","round":2,"kind":"transition","head":"b73aff3f69fb","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-20T18:17:24Z","feature":"F-55","round":0,"kind":"created","tasks":["FE-HR-MOCK-DATA"]}
+{"at":"2026-11-20T18:17:24Z","feature":"F-55","round":0,"kind":"planned","risk":"low","surfaces":["ui"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-20T18:17:25Z","feature":"F-55","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-20T18:18:02Z","feature":"F-55","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-20T18:50:13Z","feature":"F-55","round":1,"kind":"transition","head":"af3e8affead3","reason":"D-145: paused at af3e8aff; folded into the F-54 branch after F-54 round 2 (e2e hr.spec.ts has 3 failing checks to finish there)","from":"IMPLEMENTING","to":"BLOCKED"}
+{"at":"2026-11-20T19:07:03Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"TECH-1-1","by":"builder"}
+{"at":"2026-11-20T19:07:03Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"TECH-1-1","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:03Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"TECH-1-2","by":"builder"}
+{"at":"2026-11-20T19:07:03Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"TECH-1-2","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"TECH-1-3","by":"builder"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"TECH-1-3","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"TECH-1-5","by":"builder"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"TECH-1-5","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"TECH-1-6","by":"builder"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"TECH-1-6","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:04Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"TECH-1-7","by":"builder"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"TECH-1-7","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"QA-1-1","by":"builder"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"QA-1-1","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"QA-1-2","by":"builder"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"QA-1-2","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"QA-1-3","by":"builder"}
+{"at":"2026-11-20T19:07:05Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"QA-1-3","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:06Z","feature":"F-54","round":2,"kind":"finding","action":"fix","finding":"UX-1-1","by":"builder"}
+{"at":"2026-11-20T19:07:06Z","feature":"F-54","round":2,"kind":"finding","action":"verify","finding":"UX-1-1","by":"coordinator (D-146: from builder test evidence)"}
+{"at":"2026-11-20T19:07:06Z","feature":"F-54","round":2,"kind":"finding","action":"accept-risk","finding":"TECH-1-4","by":"coordinator"}

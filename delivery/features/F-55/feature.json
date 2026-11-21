@@ -1,0 +1,262 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-55",
+  "outcome": "F-55 HR stand-in sample data: work, detail, assistant and a line to start",
+  "state": "BLOCKED",
+  "task_ids": [
+    "FE-HR-MOCK-DATA"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "My work for `hr` shows sample rows in all three queues: Needs me (at least 3, e.g. confirm November staff list for payroll matching, resolve 2 staff with no business unit, answer Finance's question on a leaver), Waiting on others (at least 3, e.g. Finance matching the staff list, HR Lead deciding a payroll correction), Done (at least 2). Counts, filters and search work. \u2014 verify: e2e as hr.",
+    "Each HR row opens a work item page (/work/[id]) with header, facts, station track, agent card and the next step, plus a History tab with at least 5 entries (person, agent, evidence, one Restricted entry). \u2014 verify: e2e opens two HR items and their history.",
+    "Alerts: the bell and Notifications show at least 3 HR alerts linking to those items. \u2014 verify: e2e.",
+    "Assistant: the hr conversation list has at least 4 conversations with Zainab, each opening a full thread (person message, agent steps, answer, sources, and a draft or result card where it fits). One conversation asks for a salary and Zainab declines to show amounts, explaining payroll visibility is not set up yet and who can see it. Sending a new message to Zainab as hr returns a sensible mock reply. \u2014 verify: e2e opens two conversations and sends one message.",
+    "Start work: `hr` can start the stand-in line \"Send the staff list for payroll\" (line_key `hr_staff_list`), marked as a stand-in in its description, through the existing start flow (choose month, attach the staff list file, start), landing on a new work item. The startable list in me.hr.json includes it. \u2014 verify: e2e start as hr.",
+    "hr still cannot open Projects, Exceptions or Setup (refused as today). Other personas' data is unchanged. \u2014 verify: existing e2e plus one hr refusal check.",
+    "checks.sh and the full e2e pass."
+  ],
+  "risk": {
+    "level": "low",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "coordinator (the design engineer asked on 20 Nov: \"i need mock data for hr as well down to the necessary details page and chat with assistant as well. also dont hr have lines to start as well?\")",
+    "rationale": "Low. Mock fixtures and stand-in data. The risk is presenting invented HR policy as real; every HR row and line is flagged sample and the stand-in line says so."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-55/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-55/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-HR-MOCK-DATA",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "1ecc4797e256274435105547f89ff36f5c8e18a6",
+    "task_branch": "fe-hr-mock-data-sample-hr",
+    "head_sha": "af3e8affead32290818f6a9e7ec54bf52209a984",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-55",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "frontend/e2e/hr.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/assistant.mjs",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/alerts/notifications.hr.json",
+      "frontend/mock/fixtures/assistant/CV-2421.json",
+      "frontend/mock/fixtures/assistant/CV-2422.json",
+      "frontend/mock/fixtures/assistant/CV-2423.json",
+      "frontend/mock/fixtures/assistant/CV-2424.json",
+      "frontend/mock/fixtures/assistant/CV-2425.json",
+      "frontend/mock/fixtures/assistant/index.json",
+      "frontend/mock/fixtures/me.hr.json",
+      "frontend/mock/fixtures/start-work/lines.hr.json",
+      "frontend/mock/fixtures/work/W-4601.history.json",
+      "frontend/mock/fixtures/work/W-4601.json",
+      "frontend/mock/fixtures/work/W-4602.history.json",
+      "frontend/mock/fixtures/work/W-4602.json",
+      "frontend/mock/fixtures/work/W-4603.history.json",
+      "frontend/mock/fixtures/work/W-4603.json",
+      "frontend/mock/fixtures/work/W-4604.history.json",
+      "frontend/mock/fixtures/work/W-4604.json",
+      "frontend/mock/fixtures/work/W-4605.history.json",
+      "frontend/mock/fixtures/work/W-4605.json",
+      "frontend/mock/fixtures/work/W-4606.history.json",
+      "frontend/mock/fixtures/work/W-4606.json",
+      "frontend/mock/fixtures/work/W-4607.history.json",
+      "frontend/mock/fixtures/work/W-4607.json",
+      "frontend/mock/fixtures/work/W-4608.history.json",
+      "frontend/mock/fixtures/work/W-4608.json",
+      "frontend/mock/fixtures/work/W-4609.history.json",
+      "frontend/mock/fixtures/work/W-4609.json",
+      "frontend/mock/fixtures/work/W-4610.history.json",
+      "frontend/mock/fixtures/work/W-4610.json",
+      "frontend/mock/fixtures/work/W-4611.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/tests/assistant-mock.test.ts",
+      "frontend/tests/hr-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-work-list.test.ts"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-20T18:17:24Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-20T18:17:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T18:18:02Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "BLOCKED",
+      "at": "2026-11-20T18:50:13Z",
+      "round": 1,
+      "head": "af3e8affead32290818f6a9e7ec54bf52209a984",
+      "reason": "D-145: paused at af3e8aff; folded into the F-54 branch after F-54 round 2 (e2e hr.spec.ts has 3 failing checks to finish there)"
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "haiku",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-55/readiness.md",
+      "delivery/features/F-55/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": {
+    "from": "IMPLEMENTING",
+    "reason": "D-145: paused at af3e8aff; folded into the F-54 branch after F-54 round 2 (e2e hr.spec.ts has 3 failing checks to finish there)",
+    "at": "2026-11-20T18:50:13Z"
+  }
+}
