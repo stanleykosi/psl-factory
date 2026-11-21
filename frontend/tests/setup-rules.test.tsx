@@ -10,12 +10,14 @@ import addFormats from 'ajv-formats';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { RulesPage, RuleRow } from '@/features/setup/contract-proposal';
+import { DelegationPageView } from '@/features/setup/DelegationView';
 import { DeliveryPageView } from '@/features/setup/DeliveryRulesView';
 import { FinancePageView } from '@/features/setup/FinanceRulesView';
 import { fieldsFromMessage, groupButtonLabel, isEditable, versionText } from '@/features/setup/format';
 import { ReservedTab } from '@/features/setup/ReservedTab';
 import { RulesPageView } from '@/features/setup/RulesView';
 import { EDITOR_GONE, NOT_SAVED } from '@/features/setup/SetRulePanel';
+import { SetupLayoutFrame } from '@/features/setup/SetupFrame';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
 
@@ -87,7 +89,11 @@ afterEach(() => {
 });
 
 async function open(view: React.ReactNode = <RulesPageView />) {
-  render(<AppShell>{view}</AppShell>);
+  render(
+    <AppShell>
+      <SetupLayoutFrame>{view}</SetupLayoutFrame>
+    </AppShell>,
+  );
   await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
 const desktop = () => within(document.querySelector('.setup-desktop') as HTMLElement);
@@ -774,5 +780,71 @@ describe('reserved tabs (AC 20)', () => {
     answers.me = 'pm';
     await open(<ReservedTab tab="templates" />);
     expect(screen.getByText('This section isn’t open to your role.')).toBeTruthy();
+  });
+});
+
+describe('the frame stays across Setup tabs (D-170)', () => {
+  const Pane = () => (pathname.value === '/setup/delegation' ? <DelegationPageView /> : pathname.value === '/setup/roles' ? <ReservedTab tab="roles" /> : <RulesPageView />);
+  const tree = () => (
+    <AppShell>
+      <SetupLayoutFrame>
+        <Pane />
+      </SetupLayoutFrame>
+    </AppShell>
+  );
+  const tabsNav = () => screen.getByRole('tablist', { name: 'Setup' });
+  const frameTitle = () => document.querySelector('.setup-frame h1') as HTMLElement;
+  const delegations = () => calls.filter((c) => c.path === '/api/v1/setup/delegations');
+
+  it('moving to another tab keeps the title and tab bar and the known counts; only the body loads', async () => {
+    let release: ((r: Response) => void) | undefined;
+    answers.rules = (_n, c) => (c.path === '/api/v1/setup/delegations' ? new Promise<Response>((r) => (release = r)) : json(200, fixture('rules.desktop')));
+    const view = render(tree());
+    await waitFor(() => expect(frameTitle()).toBeTruthy());
+    const title = frameTitle();
+    const nav = tabsNav();
+    expect(within(nav).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 8');
+
+    pathname.value = '/setup/delegation';
+    view.rerender(tree());
+    expect(frameTitle()).toBe(title);
+    expect(tabsNav()).toBe(nav);
+    expect(within(nav).getByRole('tab', { name: 'Delegation' }).getAttribute('aria-selected')).toBe('true');
+    expect(within(nav).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 8');
+    expect(document.querySelector('.shell-loading')).toBeTruthy();
+    expect(delegations()).toHaveLength(1);
+    expect(reads()).toHaveLength(1);
+    release!(json(200, read('fixtures/delegations/default.json')));
+    await waitFor(() => expect(document.querySelector('.shell-loading')).toBeNull());
+    expect(frameTitle()).toBe(title);
+  });
+
+  it('a tab without a read yet draws its empty pattern in the frame at once; counts not read are blank, never 0', async () => {
+    pathname.value = '/setup/roles';
+    render(tree());
+    await waitFor(() => expect(screen.getByRole('heading', { level: 2, name: 'Roles comes next.' })).toBeTruthy());
+    expect(frameTitle().textContent).toBe('Roles, rules and delegation');
+    expect(tabsNav().querySelectorAll('.psl-badge')).toHaveLength(0);
+  });
+
+  it.each([
+    ['no access', 403],
+    ['a failed read', 500],
+  ])('the first tab read is %s: no frame shows', async (_name, status) => {
+    answers.rules = () => json(status, FORBIDDEN);
+    render(tree());
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
+    expect(screen.queryByRole('tablist', { name: 'Setup' })).toBeNull();
+    expect(document.querySelector('.setup-frame')).toBeNull();
+  });
+
+  it('a later tab that loses access removes the frame instead of keeping it', async () => {
+    answers.rules = (_n, c) => (c.path === '/api/v1/setup/delegations' ? json(403, FORBIDDEN) : json(200, fixture('rules.desktop')));
+    const view = render(tree());
+    await waitFor(() => expect(frameTitle()).toBeTruthy());
+    pathname.value = '/setup/delegation';
+    view.rerender(tree());
+    await waitFor(() => expect(document.querySelector('.setup-frame')).toBeNull());
+    expect(screen.queryByRole('tablist', { name: 'Setup' })).toBeNull();
   });
 });
