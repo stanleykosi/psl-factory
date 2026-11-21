@@ -92,6 +92,7 @@ def prepare(actor,person_id):
     manifest={'format':'psl.staff-account-departure/v1','person':person.pk,'active':True,
               'scopes':[{'case':str(s['case'].pk),'revision':s['case'].revision,'authority':s['authority'].pk,
                          'grants':s['grants'],'role_policy':s['role_policy'],
+                         'handover_pending':s['handover_pending'],
                          'actions':{str(i.pk):i.current_id for i in s['items']}} for s in scopes]}
     return {'actor':actor,'person':person,'scopes':scopes,'manifest':manifest,'fingerprint':digest(manifest),
             'blocked':sorted(set(blocked))}

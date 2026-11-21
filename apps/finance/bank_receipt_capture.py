@@ -20,7 +20,7 @@ from apps.core.services import add_evidence, event, lock_case
 from apps.identity.services import require
 from apps.policy.services import active_component, reference_values
 from apps.workflows.factory_ppe_opening import pdf_bytes
-from . import cash
+from . import cash, cash_reported_amount
 from .fixed_charge import preparation_access
 from .models import CashReceipt, CashVerification, InvoiceIssue
 
@@ -71,14 +71,17 @@ def roles_for(actor, case, component, action):
     return roles
 
 
-def exact_proof(receipt, lot=None):
-    row=lot or receipt
+def exact_proof(receipt, lot=None, *, supplement=None):
+    row=lot or supplement or receipt
     evidence=row.evidence
     if not evidence.source.startswith(CASH_BANK_SOURCE_PREFIX):
         return None
-    pin=Audit.objects.filter(case=receipt.case,action=PROOF,actor_id=row.actor_id,data__receipt=receipt.pk,
+    matches=Audit.objects.filter(case=receipt.case,action=PROOF,actor_id=row.actor_id,data__receipt=receipt.pk,
         data__lot=lot.pk if lot else None,data__evidence=evidence.pk,data__evidence_sha256=evidence.sha256
-    ).values_list('data',flat=True).first()
+    )
+    if supplement:
+        matches=matches.filter(data__supplement=supplement.pk)
+    pin=matches.values_list('data',flat=True).first()
     if not pin:
         return None
     key=pin.get('key')
@@ -113,11 +116,12 @@ def capture_transaction():
         raise
 
 
-def record_pdf(actor, case, receipt, evidence, locator, name, data, staged, lot=None):
+def record_pdf(actor, case, receipt, evidence, locator, name, data, staged, lot=None, *, supplement=None):
     digest=hashlib.sha256(data).hexdigest()
     key=f'bank-proof-{receipt.pk}-'+secrets.token_hex(24)
     event(actor,case,PROOF,receipt=receipt.pk,lot=lot.pk if lot else None,evidence=evidence.pk,
-          evidence_sha256=evidence.sha256,key=key,sha256=digest,size=len(data),name=name,locator=locator)
+          evidence_sha256=evidence.sha256,key=key,sha256=digest,size=len(data),name=name,locator=locator,
+          supplement=supplement.pk if supplement else None)
     staged.append(key)
     case_uploads.put(key,data)
 
@@ -158,7 +162,20 @@ def proof_policy(case):
     return reference_values(active_component(SOURCE_POLICY,case))[0]
 
 
-def verify(actor, case_id, issue_id, receipt_id, revision, role, locator, file):
+def supply_amount(actor, case_id, issue_id, receipt_id, revision, amount, locator, reason, file):
+    with capture_transaction() as staged:
+        case=lock_case(actor,case_id,'finance.cash.record',revision)
+        issue=issue_for(actor,case,issue_id)
+        receipt=read_receipt(case,issue,receipt_id)
+        cash_reported_amount.authorize(actor,receipt)
+        name,data=pdf_bytes(file)
+        evidence=supplied_evidence(actor,case,'cash_report',{**receipt.payload,'amount':amount},locator)
+        supplement=cash_reported_amount.record(actor,case.pk,receipt.pk,evidence.pk,reason,case.revision)
+        record_pdf(actor,case,receipt,evidence,locator,name,data,staged,supplement=supplement)
+        return supplement
+
+
+def verify(actor, case_id, issue_id, receipt_id, revision, role, locator, file, *, reported_amount_id=None):
     with capture_transaction() as staged:
         case=lock_case(actor,case_id,'finance.cash.verify',revision)
         issue=issue_for(actor,case,issue_id)
@@ -166,8 +183,18 @@ def verify(actor, case_id, issue_id, receipt_id, revision, role, locator, file):
         require(actor,case,'evidence.add')
         require(receipt.actor,case,'finance.cash.record')
         require(receipt.actor,case,'evidence.add')
-        original=exact_proof(receipt)
-        if original is None or receipt.payload['amount'] is None:
+        if reported_amount_id is not None:
+            if role not in roles_for(actor,case,VERIFIER_POLICY,'finance.cash.verify'):
+                raise PermissionDenied('Current Finance verification authority is required.')
+            recorder=reference_values(active_component(VERIFIER_POLICY,case))[0]
+            if actor.pk==receipt.actor_id and not recorder['allow_reporter_verify']:
+                raise PermissionDenied('Configured cash verifier must differ from reporter.')
+        supplied=cash_reported_amount.current(receipt)
+        if (supplied.pk if supplied else None)!=reported_amount_id:
+            raise ValidationError('Review the current reported amount and proof before verifying this receipt.')
+        original=exact_proof(receipt,supplement=supplied)
+        report=supplied or receipt
+        if original is None or report.payload['amount'] is None:
             raise ValidationError('An exact report with a known bank amount is needed before verification.')
         if CashVerification.objects.filter(receipt=receipt,successor__isnull=True).exists():
             raise ValidationError('The original receipt already has a verification.')
@@ -182,7 +209,7 @@ def verify(actor, case_id, issue_id, receipt_id, revision, role, locator, file):
         else:
             locator=original.locator
             name,data=original.name,case_uploads.read(original)
-        evidence=supplied_evidence(actor,case,'cash_verification',receipt.payload,locator)
+        evidence=supplied_evidence(actor,case,'cash_verification',report.payload,locator)
         lot=cash.verify(actor,case.pk,receipt.pk,role,evidence.pk,case.revision)
         record_pdf(actor,case,receipt,evidence,locator,name,data,staged,lot=lot)
         return lot

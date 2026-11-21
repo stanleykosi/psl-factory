@@ -1,5 +1,11 @@
 # Build progress log
 
+21 November 2026. Trial observed the directed weekly report actively assemble and settle to one report at the independent review boundary. The ledger reached 245. Candidate 291 brings the remaining role-dependent controls together, including restricted Payroll intake, corrected accounting extracts, email sign-in and private asset date proof.
+
+21 November 2026. Trial completed three more hosted walks for the Design Lead setup hold, independent Forecast actual verification/match/reversal and staff departure with original work continued under a reviewed replacement. The verified ledger is 244. Guarded 290 setup and both preservation probes succeeded, and the browser account stayed Trial.
+
+21 November 2026. Exact 290 passed all 131 PostgreSQL tests, including the staff and legacy cash fixtures corrected after 289. The matching acceptance web and worker were rolled out. Deferred actual Design Lead and project approval routing while retaining the evidenced planning station and its scoped Setup destination.
+
 21 November 2026. Kept the same Trial session and verified five more journeys. The 289 subset connected incident intake, exact private Change proof and the optional QuickBooks file correction. The timed escalation was visible in the Codex browser and retained an authorized refusal. Costing activation used its separate guarded synthetic owners and the prior Trial confirmation. The ledger reached 241. Candidate 290 groups both fixture corrections, weekly drafting, the design sign-off hold and Forecast actuals for the next isolated PostgreSQL run.
 
 21 November 2026. Trial verified the dedicated emergency refusal and the exact bank reporting, verification and allocation path, bringing the ledger to 236. The costing proposal comparison and human confirmation are recorded; complete its separate activation readback. Candidate 289 is running the next grouped gate.

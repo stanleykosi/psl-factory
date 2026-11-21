@@ -246,6 +246,9 @@ urlpatterns += [
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
                      reminder_views.download, name='design_reminder_download')]
 urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]
+from apps.finance import forecast_actuals_views
+urlpatterns += [path('cases/<uuid:case_id>/finance/forecast/<int:scenario_id>/actuals/',
+                     forecast_actuals_views.workspace, name='finance_forecast_actuals')]
 urlpatterns += [path(f'cases/<uuid:case_id>/finance/payroll/{key}/', payroll_views.workbench, {'focus': key},
                      name=f'design_payroll_{key}') for key in payroll_views.SECTIONS]
 urlpatterns += [path('cases/<uuid:case_id>/hr/payroll-corrections/', payroll_correction_views.desk, name='design_hr_payroll_corrections'),

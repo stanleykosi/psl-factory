@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
 <a href="{% url 'home' %}">Back to work</a><h1>{{ row.work.request.reference }}</h1><p>{{ row.state }} · {{ row.owner }}</p>
 {% include 'factory/work_focus.html' %}
-{% include 'factory/current_step.html' with progress=row.reporting.progress %}
+{% include 'factory/weekly_assembly.html' with progress=row.reporting.progress %}
 {% if row.reporting.return_review %}<section class="card" aria-label="Report decision"><h2>{% if row.reporting.return_review.verdict == 'return' %}Returned for changes{% else %}Report rejected{% endif %}</h2>
 <p>{{ row.reporting.return_review.note|linebreaksbr }}</p>
 <p>{{ row.reporting.return_review.actor.get_full_name|default:row.reporting.return_review.actor.username }} · {{ row.reporting.return_review.created_at|date:'d M Y, H:i T' }}</p>

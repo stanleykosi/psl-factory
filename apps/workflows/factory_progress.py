@@ -23,8 +23,8 @@ WAIT_INTERVAL = timedelta(seconds=45)
 LEASE = timedelta(minutes=6)
 
 
-def current_plan_step(work, observation_hash, options):
-    """Read the one permitted step of a matching unsettled planning claim."""
+def current_plan_started_at(work, observation_hash, options):
+    """Read the start of a matching unsettled claim with one permitted step."""
     if (len(options) != 1 or work.cancel_requested or work.status in factory.TERMINAL or
             not work.lease_until or work.lease_until <= timezone.now()):
         return None
@@ -32,7 +32,12 @@ def current_plan_step(work, observation_hash, options):
                                              phase__in=('observed', 'failed'))
     active = FactoryAttempt.objects.filter(activity__work=work, activity__kind='ACT03', phase='started',
                                             fence=work.fence, observation__hash=observation_hash).filter(~Exists(settled))
-    return options[0] if active.exists() else None
+    return active.order_by('-pk').values_list('created_at', flat=True).first()
+
+
+def current_plan_step(work, observation_hash, options):
+    """Read the one permitted step of a matching unsettled planning claim."""
+    return options[0] if current_plan_started_at(work, observation_hash, options) is not None else None
 
 
 def wake_waiting(work_id):

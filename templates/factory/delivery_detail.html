@@ -1,11 +1,21 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
 <a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
-<div class="page-heading"><div><p class="eyebrow">DELIVERY AND RELEASE EVIDENCE</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></div>
+<div class="page-heading"><div><p class="eyebrow">DELIVERY AND RELEASE EVIDENCE</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{% if row.delivery.design_signoff_hold %}Setup needed{% else %}{{ row.state }}{% endif %} · {{ case|workspace_name }}</p></div></div>
 {% include 'factory/intake_instruction_link.html' with source_panel=row.delivery %}
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</time></div></div>
 {% include 'factory/work_focus.html' %}
 <div class="factory-case-layout"><div><section class="card"><h2>Delivery candidate</h2><p>{{ row.delivery.dossier.candidate.reference }}</p>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}{% if row.work.finding %}<details><summary>Current prerequisite</summary><p>{{ row.work.finding }}</p></details>{% endif %}
 <p><a href="{% url 'delivery' case.pk %}">Delivery source records and gates →</a></p>{% if row.delivery.ready %}<p>Release readiness record {{ row.delivery.ready.pk }} is retained.</p>{% endif %}{% if row.work.status == 'verified' and not row.readiness_changed %}<p>The current source approvals and release readiness record match. Deployment and financial release retain their separate controls.</p>{% elif row.readiness_changed %}<p>Earlier readiness remains in history. Current source approvals need review.</p>{% endif %}</section>
+{% if row.delivery.design_signoff_hold %}{% with held=row.delivery.design_signoff_hold %}
+<section class="card" aria-labelledby="planning-design-signoff"><h2 id="planning-design-signoff">Design sign-off needed</h2>
+  <p>Product/Design confirmed this work needs a UI design. Planning exit is held until the Design Lead’s sign-off for its exact design version is verified.</p>
+  <dl><dt>Requirements</dt><dd>Recorded · revision {{ held.requirements.version }}</dd>
+      <dt>Engineering estimate</dt><dd>{% if held.estimate %}Recorded · revision {{ held.estimate.version }}{% else %}Current estimate reference unavailable{% endif %}</dd>
+      <dt>Design sign-off</dt><dd>Held · awaiting the Design Lead’s sign-off</dd></dl>
+  <div class="actions">{% if held.can_read_setup %}<a class="button secondary" href="{% url 'workspace_settings' case.pk %}?area=roles#ui-design-signoff">Open Setup</a>{% endif %}</div>
+  {% if row.delivery.planning_owner_names %}<p>Raise this with the PMO Lead · {{ row.delivery.planning_owner_names|join:', ' }}</p>{% endif %}
+</section>
+{% endwith %}{% endif %}
 {% if row.delivery.last_decision %}
 <section class="card">
   <h2>Planning decision history</h2>

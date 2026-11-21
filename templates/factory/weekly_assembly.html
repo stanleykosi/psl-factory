@@ -1,0 +1,14 @@
+{% if progress %}
+<section class="card" data-work-watch>
+  <h2>{{ progress.label }}</h2>
+  <p role="status">Tola is preparing the selected report for review.</p>
+  <p>Selected week {{ progress.period_start|date:'d M Y H:i T' }} to {{ progress.period_end|date:'d M Y H:i T' }}.</p>
+  <ol>
+    <li>Checked the selected records. {% for label,count in progress.counts %}{{ count }} {{ label }}{% if not forloop.last %}, {% endif %}{% endfor %}.</li>
+    {% if progress.cited %}<li>Using the four supplied sections with their cited records. Status, risks, timeline and next steps.</li>{% endif %}
+    <li>Preparing the report in {{ progress.template.name }} · Version {{ progress.template.version }}.</li>
+    <li>Next, the project management lead reviews the draft.</li>
+  </ol>
+  <p>Started {{ progress.started_at|date:'d M Y H:i:s T' }}.</p>
+</section>
+{% endif %}

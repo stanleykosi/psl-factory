@@ -16,11 +16,19 @@
     <dl class="decision-facts">
       <dt>Received from</dt><dd>{{ receipt.payload.customer }}</dd>
       <dt>Reported amount</dt><dd>{% if receipt.payload.amount is None %}Unknown{% else %}{{ receipt.payload.currency }} {{ receipt.payload.amount|decimal_display }}{% endif %}</dd>
+      {% if supplement %}<dt>Amount supplied from bank proof</dt><dd>{{ supplement.payload.currency }} {{ supplement.payload.amount|decimal_display }}</dd>{% endif %}
       <dt>Bank date and time</dt><dd>{{ received_at|recorded_time }}</dd>
       <dt>Bank reference</dt><dd>{{ receipt.transaction_ref }}</dd>
     </dl>
     {% if report_proof %}<p><a href="{% url 'finance_bank_proof' case.pk issue.pk receipt.pk 'report' %}">{{ report_proof.name }}</a></p>{% endif %}
+    {% if supplied_proof %}<p><a href="{% url 'finance_bank_proof' case.pk issue.pk receipt.pk 'reported-amount' %}">Open new bank proof · {{ supplied_proof.name }}</a></p>{% endif %}
   </section>
+  {% if supplied_form %}<section class="card"><h2>Supply the confirmed bank amount</h2>
+    <p>The original report stays on record. Finance must verify the new statement before any payment can be applied.</p>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="supply_amount">
+      {{ supplied_form.as_p }}<button>Record confirmed amount</button>
+    </form>
+  </section>{% endif %}
   <section class="card"><h2>Verify the payment</h2>
     {% if lot %}<p>{% if reversed_lot %}Earlier verification · cash reversed{% else %}Verified{% endif %} · {{ lot.amount|decimal_display }} {{ receipt.payload.currency }}</p>
       {% if verification_proof %}<p><a href="{% url 'finance_bank_proof' case.pk issue.pk receipt.pk 'verification' %}">Open verification proof · {{ verification_proof.name }}</a></p>{% endif %}

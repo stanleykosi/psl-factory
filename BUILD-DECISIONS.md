@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. Staff departure can preserve a started work item by binding a reviewed replacement with current scope before deactivation. The prior worker decisions remain theirs. Forecast actuals keep independent source verification and per-match reversal. The Planning station displays the exact design approval hold and scoped Setup link while preserving the requirements and Engineering estimate for authorized readers.
+
 21 November 2026. Emergency incident intake records its source, plan and reported Unknown classifications before checking authority. Normal Change assessment retains its exact private proof and role. The escalation clock informs urgency while a scoped human decision controls communication. An empty optional QuickBooks attachment permits the same typed observation and exact evidence check as a submission with a file. Keep the old and current held observations visible.
 
 21 November 2026. Reviewed Hypercare issue criteria may consider exact current project issues. Missing or withheld provenance remains Unknown. A separate evidenced issue change creates fresh qualification inputs while preserving the earlier assessment. The controlled Statement of Work review compares the actual previous and current sections, reuses their recorded costing evidence and uses the native reviewer and separate publication gates.

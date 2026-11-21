@@ -32,6 +32,10 @@ APPROVAL = {'type':'object', 'properties':{
     'additionalProperties':False}
 
 
+class MissingDesignSignoff(ValidationError):
+    """An applicable, exact UI target has no recorded Design Lead receipt."""
+
+
 def identity(payload):
     return {k:payload[k] for k in IDENTITY['required']}
 
@@ -110,6 +114,9 @@ def planning_binding(d, pins, client_required):
     pins['ui_target'] = [target.pk, verification.pk]
     for kind in ['ui_design'] + (['ui_client'] if client_required else []):
         source = d.sources.filter(kind=kind).select_related('evidence').order_by('-pk').first()
+        if source is None and kind == 'ui_design':
+            raise MissingDesignSignoff('Current source-verified evidence required: ui_design',
+                                       params={'scope_source_id': pins['scope_baseline'][0]})
         if source is not None:
             match_approval(d, source)
         s, v = verified_source(d, kind)

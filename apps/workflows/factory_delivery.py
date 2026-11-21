@@ -13,6 +13,7 @@ from apps.identity.services import require
 from apps.policy.services import decision_authority
 from apps.documents.contracts import digest,validate
 from apps.pmo import delivery, delivery_workarounds
+from apps.pmo.delivery_ui import MissingDesignSignoff
 from apps.pmo.models import DeliveryDossier,DeliveryRecord
 from adapters.delivery import LocalDeliveryAdapter
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
@@ -113,8 +114,38 @@ def checks(d):
     def plan(x):return {'planning_id':delivery.approved_plan(x).pk}
     for name,fn in [('planning_sources',delivery.planning_inputs),('planning_decision',plan),('kickoff_and_upstream',delivery.upstream),('release_evidence',delivery.readiness_inputs)]:
         try:result[name]={'status':'ready','title':STATIONS[name][0],'inputs':fn(d)}
+        except MissingDesignSignoff as exc:
+            result[name]=held(name,exc)
+            if name=='planning_sources':
+                result[name].update(code='design_signoff_unrecorded', scope_source_id=exc.params['scope_source_id'],
+                    summary='Obtain the Design Lead’s sign-off for the current UI design before Planning exit.')
         except (ValidationError,PermissionDenied) as exc:result[name]=held(name,exc)
     return result
+
+def design_signoff_hold(actor, dossier, observed):
+    station = observed['planning_sources']
+    if station.get('code') != 'design_signoff_unrecorded':
+        return None
+    from apps.pmo import planning
+
+    requirements = planning.proof(dossier.case, dossier.candidate.requirements_id, ('requirements',), metadata_only=True)
+    estimate = None
+    grants = set(Grant.objects.filter(user=actor, case=dossier.case, active=True,
+                                      action__in=('policy.read', 'planning.read')).values_list('action', flat=True))
+    if 'planning.read' in grants:
+        # Use the same source that passed the Planning gate. Never show a private packet body.
+        source = dossier.sources.filter(pk=station['scope_source_id'], kind='scope_baseline',
+                                        evidence__kind='planning_readiness').select_related('evidence').first()
+        if source:
+            prepared = planning.read(dossier.case, source.evidence, 'ready', 'prepare')
+            _, packet = planning.packet(dossier.case, prepared['packet_id'])
+            if prepared['inputs']['candidate_id'] == dossier.candidate_id:
+                payload = packet['payload']
+                requirements = planning.proof(dossier.case, payload['prd_id'], ('requirements', 'prd'), metadata_only=True)
+                estimate = planning.proof(dossier.case, payload['engineering_estimate_id'],
+                                          ('engineering_estimate',), metadata_only=True)
+    return {'requirements': requirements, 'estimate': estimate, 'can_read_setup': 'policy.read' in grants}
+
 
 def planning_owners(case):
     from django.contrib.auth import get_user_model
@@ -293,7 +324,11 @@ def projection(actor,work):
         sources=list(public_evidence(Evidence.objects.filter(case=work.case,pk__in=ids)).order_by('kind','pk'))
     except (ValidationError,PermissionDenied) as exc:
         sources=[];observed['source_coverage']=held('source_coverage',exc)
-    owner_ids=planning_owners(work.case) if current and observed['planning_sources']['status']=='ready' and observed['planning_decision']['status']=='held' else []
+    try:
+        design_hold = design_signoff_hold(actor, d, observed) if current else None
+    except (ValidationError, PermissionDenied):
+        design_hold = None
+    owner_ids=planning_owners(work.case) if current and (design_hold or observed['planning_sources']['status']=='ready') and observed['planning_decision']['status']=='held' else []
     from django.contrib.auth import get_user_model
     owner_names=[u.get_full_name() or u.username for u in get_user_model().objects.filter(pk__in=owner_ids).order_by('pk')]
     instruction_packet=None
@@ -306,7 +341,7 @@ def projection(actor,work):
     from apps.pmo.phase_evidence import projection as phase_projection
     return {'dossier':d,'checks':observed,'can_decide':can_decide,'ready':prepared(work),'readiness_changed':changed,
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
-        'planning_owner_names':owner_names,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
+        'planning_owner_names':owner_names,'design_signoff_hold':design_hold,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
         'last_decision':prior,'returned':returned,'remedy_finding':remedy_finding,'return_issue':return_issue,'return_issues':return_issues,
         'workaround_option':workaround_option,'reviewed_workaround':bool(workaround),'workaround_statement':workaround_statement,
         'progress_tracking':optional_report(actor,d),'phase_evidence':phase_projection(actor,work.case_id,d.pk),

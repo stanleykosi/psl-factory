@@ -12,7 +12,13 @@
 </tbody></table></div>
 {% else %}<p>Choose the people and roles through the versioned rule configuration.</p>{% endif %}
 <p class="coverage-note">Checked {{ observed_at|date:'d M Y H:i:s T' }}.</p>
+</section>
+{% if case.kind == 'project' %}<section class="card" id="ui-design-signoff"><h2>UI design sign-off</h2>
+<p>Product/Design owns this approval. Planning checks the Design Lead’s sign-off for the exact UI design and any client sign-off that Product/Design says applies.</p>
+<p><strong>Design Lead source route</strong> · Setting needed</p>
+<p>Ask Product/Design who may sign off and where the approved evidence can be verified.</p>
 </section>{% endif %}
+{% endif %}
 {% if area == 'payroll' %}
 <section class="card"><h2>HR handoff fields</h2>
 {% if disclosure %}

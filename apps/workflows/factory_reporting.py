@@ -386,7 +386,7 @@ def restart(actor,work_id,expected,case_expected,reason):
 
 def projection(actor,work,*,include_progress=False,execution_profile=None):
     from .factory import access,profile
-    from .factory_progress import current_plan_step
+    from .factory_progress import current_plan_started_at
     from apps.documents.delivery_readback import recipient_rows
     from apps.policy.services import assigned_decision_options
     access(actor,work.case,'factory.read',DEFINITION);data, action=_source_binding(work,actor);v=document(work)
@@ -410,9 +410,21 @@ def projection(actor,work,*,include_progress=False,execution_profile=None):
     try:
         _,value=execution_profile or profile(work)
         state,*args=_snapshot(work,value,data,current_inventory,issue,v,jobs);options,next_action=eligible(work,value,state,*args)
-        if (include_progress and not state['document'] and data['inputs']['template_id'] and data['inputs']['content_id']
-                and current_plan_step(work, state['hash'], options) == 'ACT09'):
-            progress = {'label': 'Assembling the weekly report', 'watching': True}
+        if (include_progress and options == ['ACT09'] and not state['document']
+                and data['inputs']['template_id'] and data['inputs']['content_id']):
+            started_at = current_plan_started_at(work, state['hash'], options)
+            if started_at:
+                template = Template.objects.only('name','version').get(case=work.case, pk=data['inputs']['template_id'])
+                cited = Attempt.objects.filter(activity__work=work, activity__kind='ACT04',
+                    activity__key=investigation_key(work,state), phase='observed', result__head=work.source_head_id,
+                    result__investigation__selected_inventory_current=True,
+                    result__investigation__narrative__status='cited').exists()
+                progress = {
+                    'label': 'Assembling the weekly report', 'watching': True, 'started_at': started_at,
+                    'template': template, 'cited': cited,
+                    'period_start': aware(data['inputs']['start_at']), 'period_end': aware(data['inputs']['end_at']),
+                    'counts': [(name, len(current_inventory[name])) for name in ('meetings', 'actions', 'milestones', 'issues', 'changes')],
+                }
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
     if template_required and not options:
         next_action = template_required

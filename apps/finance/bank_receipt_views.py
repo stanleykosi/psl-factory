@@ -18,7 +18,7 @@ from adapters import case_uploads
 from adapters.billing_usage import KEY
 from apps.core.views import accessible_case
 from apps.identity.services import active_case_grants, require
-from . import bank_receipt_capture as domain, cash, corrections, short_payments
+from . import bank_receipt_capture as domain, cash, cash_reported_amount, corrections, short_payments
 from .models import CashReceipt, CashReversal, CashVerification
 
 
@@ -48,10 +48,20 @@ class ReportForm(RevisionForm):
 
 
 class VerifyForm(RevisionForm):
+    reported_amount_id=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     role=forms.ChoiceField(label='Your verification role')
     confirmed=forms.BooleanField(label='I checked the exact reported facts against the bank statement')
     locator=forms.RegexField(KEY,max_length=100,required=False,label='Verification statement reference')
     file=forms.FileField(label='Independent bank statement (PDF)',required=False,
+                         widget=forms.ClearableFileInput(attrs={'accept':'.pdf,application/pdf'}))
+
+
+class SupplyAmountForm(RevisionForm):
+    amount=forms.DecimalField(label='Amount confirmed by the bank',min_value=Decimal('0.00000001'),
+                              max_digits=32,decimal_places=8)
+    locator=forms.RegexField(KEY,max_length=100,label='New statement reference')
+    reason=forms.CharField(max_length=2000,label='How did the amount become known?',widget=forms.Textarea(attrs={'rows':2}))
+    file=forms.FileField(label='New private bank statement (PDF)',
                          widget=forms.ClearableFileInput(attrs={'accept':'.pdf,application/pdf'}))
 
 
@@ -74,9 +84,12 @@ def permitted_roles(actor,case,policy,action):
     except (ValidationError,PermissionDenied):return []
 
 
-def proof_access(actor,case,receipt,lot=None):
-    for action in ('evidence.add','finance.cash.record'):
-        require(receipt.actor,case,action)
+def proof_access(actor,case,receipt,lot=None,*,supplement=None):
+    if supplement:
+        cash_reported_amount.authorize(supplement.actor,receipt)
+    else:
+        for action in ('evidence.add','finance.cash.record'):
+            require(receipt.actor,case,action)
     if lot:
         for action in ('evidence.add','finance.cash.verify'):
             require(lot.actor,case,action)
@@ -98,6 +111,9 @@ def payment(request,case_id,issue_id,receipt_id=None):
     action=request.POST.get('action') if request.method=='POST' else None
     form=None
     verification=None
+    supplement=None
+    supplied_form=None
+    supplied_proof=None
     verification_hold=''
     allocation_hold=''
     report_proof=None
@@ -121,12 +137,21 @@ def payment(request,case_id,issue_id,receipt_id=None):
                     'source':rule.get('source'),'amount_basis':issue.invoice.amount_basis})
     elif receipt:
         lot=CashVerification.objects.filter(receipt=receipt).select_related('actor','evidence','successor').order_by('-pk').first()
-        report_proof=domain.exact_proof(receipt)
         try:
-            if report_proof:
-                proof_access(actor,case,receipt)
-                can_read_proof=True
+            proof_access(actor,case,receipt)
+            report_proof=domain.exact_proof(receipt)
+            can_read_proof=bool(report_proof)
         except PermissionDenied:pass
+        supplement=cash_reported_amount.latest(receipt)
+        if supplement:
+            try:
+                proof_access(actor,case,receipt,supplement=supplement)
+                supplied_proof=domain.exact_proof(receipt,supplement=supplement)
+            except PermissionDenied:pass
+        elif not lot and receipt.payload['amount'] is None and receipt.actor_id==actor.pk:
+            if {'evidence.add','finance.cash.record'}<=actions:
+                supplied_form=SupplyAmountForm(request.POST if action=='supply_amount' else None,
+                       request.FILES if action=='supply_amount' else None,initial=init)
         if lot:
             verification_proof=domain.exact_proof(receipt,lot)
             try:
@@ -135,12 +160,14 @@ def payment(request,case_id,issue_id,receipt_id=None):
                     can_read_verification=True
             except PermissionDenied:pass
         else:
-            if not report_proof:
-                verification_hold='The supplied report is available through the original Finance receipt record.'
-            elif receipt.payload['amount'] is None:
+            report=supplement or receipt
+            current_proof=supplied_proof if supplement else report_proof
+            if report.payload['amount'] is None:
                 verification_hold='The reported amount is unknown. Verified cash needs a known amount.'
-            elif receipt.payload['amount_basis']=='unknown':
+            elif report.payload['amount_basis']=='unknown':
                 verification_hold='The reported amount basis is unknown. Verified cash needs its exact basis.'
+            elif not current_proof:
+                verification_hold='An authorised Finance verifier with access to the current bank proof is needed.'
             else:
                 try:
                     rule=domain.proof_policy(case)
@@ -148,9 +175,10 @@ def payment(request,case_id,issue_id,receipt_id=None):
                     recorder=domain.reference_values(domain.active_component(domain.VERIFIER_POLICY,case))[0]
                     if actor.pk==receipt.actor_id and not recorder['allow_reporter_verify']:
                         roles=[]
-                    if not roles or not can_read_proof:raise PermissionDenied
+                    if not roles:raise PermissionDenied
                     verification=VerifyForm(request.POST if action=='verify' else None,
-                         request.FILES if action=='verify' else None,initial=init)
+                         request.FILES if action=='verify' else None,
+                         initial={**init,'reported_amount_id':supplement.pk if supplement else None})
                     verification.fields['role'].choices=[(role,role) for role in roles]
                     verification.fields['file'].required=verification.fields['locator'].required=rule['require_independent_evidence']
                 except ValidationError:
@@ -181,7 +209,7 @@ def payment(request,case_id,issue_id,receipt_id=None):
                     form.fields['role'].choices=[(role,role) for role in roles]
     if action is not None:
         chosen={'report':form if receipt is None else None,
-                'verify':verification,'allocate':form if lot else None}.get(action)
+                'supply_amount':supplied_form,'verify':verification,'allocate':form if lot else None}.get(action)
         if chosen is None:
             raise PermissionDenied('This payment step is not available to the current account.')
         if chosen.is_valid():
@@ -190,8 +218,13 @@ def payment(request,case_id,issue_id,receipt_id=None):
                 if action=='report':
                     receipt=domain.report(actor,case_id,issue_id,values['revision'],chosen.facts(),values['locator'],values['file'])
                     messages.success(request,'Reported bank receipt recorded. Verification is separate.')
+                elif action=='supply_amount':
+                    domain.supply_amount(actor,case_id,issue_id,receipt.pk,values['revision'],
+                         format(values['amount'],'f'),values['locator'],values['reason'],values['file'])
+                    messages.success(request,'Amount recorded on the same receipt. Verification is separate.')
                 elif action=='verify':
-                    domain.verify(actor,case_id,issue_id,receipt.pk,values['revision'],values['role'],values['locator'],values['file'])
+                    domain.verify(actor,case_id,issue_id,receipt.pk,values['revision'],values['role'],values['locator'],
+                                  values['file'],reported_amount_id=values['reported_amount_id'])
                     messages.success(request,'The exact receipt has been verified. Any allocation is separate.')
                 else:
                     domain.allocate(actor,case_id,issue_id,receipt.pk,values['revision'],values['role'],
@@ -206,6 +239,7 @@ def payment(request,case_id,issue_id,receipt_id=None):
         'timezone_name':timezone.get_current_timezone_name(),'report':form if receipt is None else None,
         'verification':verification,'verification_hold':verification_hold,'lot':lot,'remaining':remaining,
         'reversed_lot':reversed_lot,
+        'supplement':supplement,'supplied_form':supplied_form,'supplied_proof':supplied_proof,
         'allocation':form if lot else None,'allocation_hold':allocation_hold,
         'report_proof':report_proof if can_read_proof else None,
         'verification_proof':verification_proof if can_read_verification else None,
@@ -224,10 +258,12 @@ def download(request,case_id,issue_id,receipt_id,kind):
     issue=domain.issue_for(actor,case,issue_id)
     receipt=domain.read_receipt(case,issue,receipt_id)
     lot=CashVerification.objects.filter(receipt=receipt,successor__isnull=True).first() if kind=='verification' else None
-    if kind not in ('report','verification') or kind=='verification' and not lot:
+    supplement=cash_reported_amount.latest(receipt) if kind=='reported-amount' else None
+    if (kind not in ('report','verification','reported-amount') or kind=='verification' and not lot
+            or kind=='reported-amount' and not supplement):
         raise Http404('Bank proof unavailable.')
-    proof_access(actor,case,receipt,lot)
-    proof=domain.exact_proof(receipt,lot)
+    proof_access(actor,case,receipt,lot,supplement=supplement)
+    proof=domain.exact_proof(receipt,lot,supplement=supplement)
     if not proof:raise Http404('Bank proof unavailable.')
     try:contents=case_uploads.read(proof)
     except (ValidationError,OSError) as exc:raise Http404('Bank proof unavailable.') from exc
