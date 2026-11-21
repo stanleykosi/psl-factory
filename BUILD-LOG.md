@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Trial completed seven scoped browser journeys in one session, bringing the ledger to 261. Read back both invoice reviews, corrected Accounting source, Payroll replacement receipt and staff match Return, corrected closure, and both verified asset schedules. Found that the bid work page omitted the exact controlled pack Return rationale. Prepared the authorized readback and isolated PostgreSQL gate for the last row.
+
 21 November 2026. The admitted preparer verified seven more scoped browser journeys, bringing the ledger to 254. Separately queued the corrected invoice and Accounting reviews, approved the corrected closure document as Quality and published only the reviewed synthetic Payroll replacement. The original decisions and receipts stayed in history.
 
 21 November 2026. Finished the available Trial session checks without a sign-in change. Restricted Payroll Start withheld the exact private inputs, and its separate publication recipient saw their own prior withdrawal. The checked runtime and linked build records were backed up at `75d087d9`. Next is one grouped preparer sign-in linked to the first returned invoice.
