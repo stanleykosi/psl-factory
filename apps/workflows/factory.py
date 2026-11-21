@@ -7,7 +7,7 @@ from django.db.models import Q,Max
 from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.evidence_access import public_evidence
-from apps.core.services import lock_case,event
+from apps.core.services import lock_case,event,bump
 from apps.identity.services import require,visible_cases
 from apps.policy.services import active_component,reference_values
 from apps.policy.factory_validators import COMPONENT
@@ -811,15 +811,21 @@ def decide(actor,task_id,expected,verdict,evidence_id,reason):
     work.status='ready' if verdict=='approve' else 'blocked';work.finding='' if verdict=='approve' else 'Finance returned or rejected this exact packet';work.revision+=1;work.save();return review
 
 @transaction.atomic
-def manage(actor,work_id,expected,operation):
+def manage(actor,work_id,expected,operation,*,draft_stop=None):
     work=Work.objects.select_for_update().select_related('case').get(pk=work_id);access(actor,work.case,'factory.manage',work.definition)
     if work.revision!=expected:raise ValidationError('STALE_VERSION: work changed')
     if work.status in ['verified','cancelled','followup_needed']:raise ValidationError('Completed or stopped work requires its native follow-up or correction workflow')
+    audit_data={}
     if operation=='cancel':
         if work.status in ['verified','cancelled']:raise ValidationError('Completed outcomes need an authorised correction; cancellation cannot undo them')
-        work.cancel_requested=True
+        if draft_stop is not None:
+            from .factory_invoice_cancellation import validate
+            case,audit_data=validate(actor,work,draft_stop)
+            work.status='cancelled';work.finding='';work.lease_until=None
+            bump(case)
         # Held work cannot be claimed by a worker to acknowledge a stop.
-        if work.status in TERMINAL and not (work.lease_until and work.lease_until>timezone.now()):work.status=cancellation_status(work)
+        elif work.status in TERMINAL and not (work.lease_until and work.lease_until>timezone.now()):work.status=cancellation_status(work)
+        work.cancel_requested=True
         for task in HumanTask.objects.select_for_update().filter(case=work.case,status='open',factory_key__startswith=f'factory:{work.pk}:'):
             TaskEvent.objects.create(task=task,actor=actor,action='factory.wait_cancelled',data={'work':work.pk})
             task.status='returned';task.revision+=1;task.save(update_fields=['status','revision'])
@@ -833,7 +839,7 @@ def manage(actor,work_id,expected,operation):
                 raise ValidationError('Check the original forecast delivery before continuing.')
         profile(work);work.status='ready';work.finding=''
     else:raise ValidationError('Unknown operator action')
-    work.revision+=1;work.save();event(actor,work.case,'factory.'+operation,work=work.pk)
+    work.revision+=1;work.save();event(actor,work.case,'factory.'+operation,work=work.pk,**audit_data)
     return work
 
 @transaction.atomic

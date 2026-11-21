@@ -8,6 +8,24 @@
  <a href="{% url 'factory_invoice_decision' row.work.pk %}{{ work_query }}"{% if focus == 'decision' %} aria-current="page"{% endif %}>Decisions</a>
  <a href="{% url 'factory_invoice_recovery' row.work.pk %}{{ work_query }}"{% if focus == 'recovery' %} aria-current="page"{% endif %}>Receipts and recovery</a>
 </nav>
+{% if row.invoice_draft_stop %}
+{% with stopped=row.invoice_draft_stop %}
+<section class="card" aria-label="Cancelled invoice draft">
+  <h2>Invoice draft cancelled</h2>
+  <p>Cancelled by {{ stopped.actor.get_full_name|default:stopped.actor.username }} on <time datetime="{{ stopped.at|date:'c' }}">{{ stopped.at|recorded_time }}</time>.</p>
+  <dl class="decision-facts"><dt>Reason</dt><dd>{{ stopped.reason|linebreaksbr }}</dd><dt>Sent</dt><dd>Never sent</dd></dl>
+  <p>The draft and its history are retained.</p>
+  {% if stopped.existing_invoice %}<a class="button secondary" href="{% url 'factory_detail' row.work.pk %}{{ work_query }}&amp;existing_invoice={{ stopped.existing_invoice.pk }}#existing-invoice">Open {{ stopped.existing_invoice.reference }}</a>{% endif %}
+</section>
+{% if row.show_existing_invoice %}
+<section class="card" id="existing-invoice" aria-label="Existing issued invoice">
+  <h2>{{ stopped.existing_invoice.reference }}</h2>
+  <p>Recorded issued invoice for this billing obligation.</p>
+  <dl class="decision-facts"><dt>Version</dt><dd>{{ stopped.existing_invoice.version }}</dd><dt>Amount</dt><dd>{{ stopped.existing_invoice.currency }} {{ stopped.existing_invoice.amount }}</dd><dt>Issued</dt><dd>{{ stopped.issued_at|recorded_time }}</dd></dl>
+</section>
+{% endif %}
+{% endwith %}
+{% endif %}
 {% if row.invoice_context.successor %}
 <section class="card" aria-label="Newer invoice draft">
   <h2>A newer invoice draft is available</h2>
@@ -51,8 +69,23 @@
 {% if focus != 'decision' %}<section class="card"><h2>{% if focus %}Recover the original operation{% else %}Next permitted action{% endif %}</h2>{% if row.can_advance and not focus %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="{{ row.advance_action|default:'advance' }}"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>{{ row.advance_label|default:'Continue eligible work' }}</button></form>{% if row.advance_action == 'release_invoice' %}<p>Check the issuance and delivery receipts after the background work completes.</p>{% else %}<p>The coordinator stops for missing information, required decisions, budget limits or a verified output.</p>{% endif %}{% else %}<p>{{ row.next_action }}</p>{% endif %}
 {% if row.can_reconcile %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="reconcile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>{% if row.recorded_invoice_receipt %}Check recorded invoice receipt{% else %}Reconcile original operation{% endif %}</button></form>{% if row.recorded_invoice_receipt %}<p>The worker has recorded the receipt. Check the original invoice and current authority before continuing.</p>{% else %}<p>This checks the original identity. An unresolved lookup does not authorise another publication.</p>{% endif %}{% endif %}
 {% if row.preparation_selection %}<section class="card"><h2>Exact Finance preparation</h2><p>Preparation #{{ row.preparation_selection.preparation.id }} · {{ row.preparation_selection.preparation.kind }}. Original preparer #{{ row.preparation_selection.preparation.actor }}. No PMO completion is inferred.</p>{% for binding in row.preparation_history %}<p>Explicit successor {{ binding.sequence }}: preparation #{{ binding.preparation_id }}, selected by {{ binding.actor }}. {{ binding.reason }}</p>{% endfor %}
-{% if row.can_manage %}<details><summary>Select a corrected preparation for this obligation</summary><p>Only an exact native successor is accepted. Issued or uncertain effects must use their native reconciliation/correction workflow. History and budget are retained.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="replace_preparation"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label>Exact successor preparation ID<input type="number" min="1" name="preparation" required></label><label>Invoice reference<input name="reference" maxlength="100" required></label><label>Exact due date<input name="due_date" type="date"></label><label>Source correction reason<textarea name="reason" maxlength="2000" required></textarea></label><button>Select explicit successor</button></form></details>{% endif %}</section>{% endif %}
-{% if row.can_manage %}{% if row.work.status == 'blocked' or row.work.status == 'owner_needed' or row.work.status == 'configuration_needed' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Recheck corrected prerequisites</button></form>{% endif %}{% if row.can_cancel %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Request cancellation</button></form><p>Cancellation stops new work; it cannot undo a sent invoice.</p>{% endif %}{% endif %}</section>
+{% if row.can_manage and not row.invoice_draft_stop %}<details><summary>Select a corrected preparation for this obligation</summary><p>Only an exact native successor is accepted. Issued or uncertain effects must use their native reconciliation/correction workflow. History and budget are retained.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="replace_preparation"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label>Exact successor preparation ID<input type="number" min="1" name="preparation" required></label><label>Invoice reference<input name="reference" maxlength="100" required></label><label>Exact due date<input name="due_date" type="date"></label><label>Source correction reason<textarea name="reason" maxlength="2000" required></textarea></label><button>Select explicit successor</button></form></details>{% endif %}</section>{% endif %}
+{% if row.can_manage %}{% if row.work.status == 'blocked' or row.work.status == 'owner_needed' or row.work.status == 'configuration_needed' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Recheck corrected prerequisites</button></form>{% endif %}
+{% if row.can_stop_invoice_draft %}
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="stop_invoice_draft">
+  <input type="hidden" name="revision" value="{{ row.work.revision }}">
+  <input type="hidden" name="case_revision" value="{{ case.revision }}">
+  <label for="invoice-stop-reason">Reason for stopping the draft</label>
+  <textarea id="invoice-stop-reason" name="reason" maxlength="2000" required>{% if request.POST.action == 'stop_invoice_draft' %}{{ request.POST.reason }}{% endif %}</textarea>
+  {% if row.invoice_stop_alternative %}
+  <label for="existing-invoice-choice">Existing issued invoice (optional)</label>
+  <select id="existing-invoice-choice" name="existing_invoice"><option value="">Leave unlinked</option><option value="{{ row.invoice_stop_alternative.pk }}">{{ row.invoice_stop_alternative.reference }} · version {{ row.invoice_stop_alternative.version }}</option></select>
+  {% endif %}
+  <button class="button secondary">Stop this invoice draft</button>
+</form>
+{% elif row.can_cancel %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Request cancellation</button></form><p>Cancellation stops new work; it cannot undo a sent invoice.</p>{% endif %}{% endif %}</section>
 {% if row.adoption %}<section class="card"><h2>Review changed execution rules</h2><p>Active profile revision {{ row.adoption.revision }} differs from this work. Adopting it does not erase history or reset spent allowance. Any changed review packet needs a fresh decision.</p><p>Effective allowance: {{ row.adoption.effective_allowance }}; already reserved: {{ row.work.budget_used }}.</p><details><summary>Review the exact active profile values</summary><pre>{{ row.adoption.value }}</pre></details><form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt_profile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="configuration" value="{{ row.adoption.id }}"><label for="profile-adoption-reason">Reason for adopting this version</label><textarea id="profile-adoption-reason" name="reason" maxlength="2000" required></textarea><button>Adopt reviewed profile version</button></form></section>{% endif %}
 {% endif %}
 {% if focus != 'recovery' %}

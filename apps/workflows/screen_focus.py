@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 SCREENS = {
     'pmo-finance/v1': {
         'decision': ('claim', 'release_claim', 'decide', 'invoice_comment', 'information', 'invoice_milestone_proof', 'responsibility_recheck'),
-        'recovery': ('reconcile', 'replace_preparation', 'resume', 'cancel', 'adopt_profile'),
+        'recovery': ('reconcile', 'replace_preparation', 'resume', 'cancel', 'stop_invoice_draft', 'adopt_profile'),
     },
     'rfp-response/v1': {
         'decision': ('response', 'commercial', 'document', 'submission_pack'),

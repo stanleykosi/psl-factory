@@ -1088,7 +1088,8 @@ def _detail(request,work_id,focus=None):
                     data={'readiness':int(request.POST['readiness']) if request.POST.get('readiness') else None,
                         'released_at':request.POST.get('released_at',''),'reference':request.POST.get('reference',''),
                         'evidence':int(request.POST.get('evidence','0')),'note':request.POST.get('note',''),
-                        'deployment_environment':request.POST.get('deployment_environment')}
+                        'deployment_environment':request.POST.get('deployment_environment'),
+                        'private_log':int(request.POST['private_log']) if request.POST.get('private_log') else None}
                 elif kind=='acceptance':data={'receipt':int(request.POST.get('receipt','0')),'pm_signature':int(request.POST.get('pm_signature','0')),
                     'client_signature':int(request.POST.get('client_signature','0')),'attestation':parse_attestation(request.POST.get('attestation','')),'packet':request.POST.get('packet',''),'note':request.POST.get('note','')}
                 else:raise ValidationError('Choose an actual release or go-live acceptance observation')
@@ -1098,6 +1099,11 @@ def _detail(request,work_id,focus=None):
                 from .factory_hypercare import record_stability
                 record_stability(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),request.POST)
             elif operation=='reconcile':d.reconcile(request.user,work.pk,revision)
+            elif operation=='stop_invoice_draft':
+                from .factory_invoice_cancellation import DraftStop, DraftStopForm
+                form = DraftStopForm(request.POST)
+                if not form.is_valid():raise ValidationError('Enter a reason of up to 2,000 characters and review the recorded invoice selection.')
+                d.manage(request.user, work.pk, revision, 'cancel', draft_stop=DraftStop(**form.cleaned_data))
             elif operation in ['resume','cancel']:d.manage(request.user,work.pk,revision,operation)
             elif operation=='adopt_profile':d.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             elif operation=='release_claim':
@@ -1123,10 +1129,25 @@ def _detail(request,work_id,focus=None):
             messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
+    if work.definition == 'pmo-finance/v1' and work.invoice_id:
+        from .factory_invoice_cancellation import eligible, existing_issue, readback
+        row['invoice_draft_stop'] = readback(request.user, work)
+        if row['invoice_draft_stop']:
+            row['next_action'] = 'Inspect the cancelled draft and recorded reason'
+            selected = row['invoice_draft_stop']['existing_invoice']
+            if selected and request.GET.get('existing_invoice') == str(selected.pk):
+                row['show_existing_invoice'] = True
+        elif row['can_cancel'] and focus != 'decision' and eligible(request.user, work, jobs=row['jobs']):
+            row['can_stop_invoice_draft'] = True
+            try:
+                issue = existing_issue(request.user, work)
+                row['invoice_stop_alternative'] = issue.invoice if issue else None
+            except (PermissionDenied, ValidationError):
+                pass
     if work.definition == 'pmo-finance/v1' and focus in (None, 'decision'):
         from .factory_invoice_review import annotate_comments, context
         from .factory_invoice_information_views import decorate
-        row['invoice_context'] = context(request.user, row)
+        row['invoice_context'] = None if row.get('invoice_draft_stop') else context(request.user, row)
         decorate(request.user,row)
         if focus == 'decision' and row['invoice_context']:
             annotate_comments(row)
@@ -1203,7 +1224,7 @@ def _detail(request,work_id,focus=None):
     if work.definition == 'delivery-hypercare/v1':
         from apps.pmo.delivery import release_observations
         dossier_id = row['hypercare']['dossier'].pk
-        row['hypercare']['release_observation'] = release_observations(work.case, [dossier_id]).get(dossier_id)
+        row['hypercare']['release_observation'] = release_observations(work.case, [dossier_id], request.user).get(dossier_id)
     template='factory/hypercare_detail.html' if work.definition=='delivery-hypercare/v1' else 'factory/delivery_detail.html' if work.definition=='delivery-release/v1' else 'factory/commercial_detail.html' if work.definition=='commercial/v1' else 'factory/planning_detail.html' if work.definition=='planning/v1' else 'factory/detail.html'
     response=render(request,template,{'case':work.case,'row':row,'activities':activities,'review_evidence':proofs,'effect_history':history,'can_configure':permitted(request.user,work,'policy.configure'),'queue':return_queue,'q':q,'as_of':timezone.now(),'focus':focus})
     response['Cache-Control']='no-store';return response

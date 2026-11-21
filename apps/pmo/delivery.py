@@ -356,7 +356,8 @@ def release_environment(value):
 
 
 @transaction.atomic
-def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_ref,evidence_id,note,expected,*,deployment_environment=None):
+def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_ref,evidence_id,note,expected,*,
+                    deployment_environment=None,private_log_id=None):
     case=lock_case(actor,case_id,'delivery.release_record',expected);d=dossier_for(case,dossier_id,current=False);note_required(note)
     instant=aware(released_at)
     if instant>timezone.now() or not external_ref.strip() or len(external_ref)>240:raise ValidationError('Actual past release instant and source reference required')
@@ -367,16 +368,22 @@ def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_r
     data = {'released_at': instant.isoformat(), 'external_ref': external_ref, 'note': note}
     if environment is not None:
         data['deployment_environment'] = environment
+    if private_log_id is not None:
+        from .release_proofs import capture
+        data['private_log'] = capture(actor, case, private_log_id)
     return record(actor,case,d,'release_outcome',subject(case,evidence_id),data,
         {'readiness_preceded':bool(parent and parent.created_at<=instant),'deployment_dispatched':False},parent)
 
 
-def release_observations(case, dossier_ids):
+def release_observations(case, dossier_ids, actor=None):
     """Read only the named release facts whose exact proof is available in a delivery view."""
     proof = public_evidence(case.evidence.all()).values('pk')
-    rows = DeliveryRecord.objects.filter(dossier__case=case, dossier_id__in=dossier_ids,
+    rows = list(DeliveryRecord.objects.filter(dossier__case=case, dossier_id__in=dossier_ids,
         kind='release_outcome', evidence_id__in=proof).values('dossier_id', 'dossier__candidate__reference',
-        'evidence_id', 'evidence__version', 'data__released_at', 'data__external_ref', 'data__deployment_environment')
+        'evidence_id', 'evidence__version', 'data__released_at', 'data__external_ref', 'data__deployment_environment',
+        'data__private_log'))
+    from .release_proofs import accessible_logs
+    files = accessible_logs(case, rows, actor) if actor is not None else {}
     return {row['dossier_id']: {
         'candidate': row['dossier__candidate__reference'],
         'released_at': parse_datetime(row['data__released_at']),
@@ -384,6 +391,7 @@ def release_observations(case, dossier_ids):
         'environment': row['data__deployment_environment'],
         'evidence_id': row['evidence_id'],
         'evidence_version': row['evidence__version'],
+        'private_log': files.get(row['dossier_id']),
     } for row in rows}
 
 

@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from apps.core.models import Audit
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority,resolve
@@ -10,6 +11,16 @@ from apps.pmo.services import subject
 from .analysis import note,review_authority
 from .billing import exact,digest,ensure_current
 from .models import BillingPreparation,Invoice,InvoiceReview,InvoiceJob,InvoiceIssue
+
+
+DRAFT_STOP_SCHEMA = 'invoice-draft-stop/v1'
+
+
+def draft_stop_history(invoice):
+    return Audit.objects.filter(
+        case_id=invoice.case_id, action='factory.cancel', data__schema=DRAFT_STOP_SCHEMA,
+        data__invoice=invoice.pk, data__invoice_sha256=invoice.sha256,
+    )
 
 
 def obligation(prep):
@@ -28,7 +39,9 @@ def successor_drafts(invoice):
     return Invoice.objects.filter(case_id=invoice.case_id, obligation_key=invoice.obligation_key, pk__gt=invoice.pk)
 
 def current(invoice):
-    require(invoice.actor,invoice.case,'finance.invoice.draft');ensure_current(invoice.preparation)
+    require(invoice.actor,invoice.case,'finance.invoice.draft')
+    if draft_stop_history(invoice).exists():raise ValidationError('This exact invoice draft was cancelled before issuance')
+    ensure_current(invoice.preparation)
     if successor_drafts(invoice).exists():raise ValidationError('A newer invoice draft exists for this obligation')
     if invoice.sha256!=digest(invoice.payload):raise ValidationError('Invoice artifact hash mismatch')
 

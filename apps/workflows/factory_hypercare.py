@@ -153,7 +153,16 @@ def projection(actor,work):
     from apps.pmo.go_live_attestations import declaration_draft
     for receipt in current_receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
     from .stability_forms import observation_forms
+    logs = None
+    if can_release:
+        try:
+            require(actor, work.case, 'evidence.add')
+            from apps.pmo.release_proofs import own_pdfs
+            logs = list(own_pdfs(actor, work.case).order_by('-pk')[:50])
+        except PermissionDenied:
+            pass
     return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
+        'private_release_logs': logs, 'can_attach_release_log': logs is not None,
         'observation_forms':observation_forms(actor,work),
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,
         'can_accept_go_live':can_accept,'acceptance_packet':packet,'go_live_receipts':current_receipts,'readiness_changed':changed,
@@ -175,7 +184,7 @@ def observe(actor,work_id,expected,case_expected,kind,data):
         if not panel['can_record_release']:raise PermissionDenied('Current actual-release recording authority required')
         if not public_evidence(Evidence.objects.filter(case=case,pk=data['evidence'])).exists():raise ValidationError('Available public event evidence required')
         result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],
-            case.revision,deployment_environment=data.get('deployment_environment'))
+            case.revision,deployment_environment=data.get('deployment_environment'),private_log_id=data.get('private_log'))
     elif kind=='acceptance':
         if not panel['can_accept_go_live'] or data['packet']!=panel['acceptance_packet']:raise ValidationError('STALE_VERSION: exact current go-live receipt and authority required')
         if data['receipt'] not in [r.pk for r in panel['go_live_receipts']]:raise ValidationError('Select an available current go-live receipt')

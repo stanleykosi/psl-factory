@@ -1,5 +1,9 @@
 # Build decisions
 
+21 November 2026. Stopping an invoice draft requires a reason and the exact current pre-effect Work. The optional original-invoice link must have current scope and a confirmed issue for the same obligation. PostgreSQL serializes the stop against a reservation or receipt. Actual release evidence can select the operator's own already uploaded private PDF with a stored size and fingerprint. The release log stays behind existing private-file access and does not grant deployment or Go-live permission.
+
+21 November 2026. A signed milestone keeps its original amount, invoice and verified payment after an exact recorded change is linked. Added price remains Unknown without a signed amendment. A reviewed association groups case-visible projects under the same client record and leaves each project's billing and permissions separate. Eligible Payroll rows can move to private draft matching while held rows and totals remain excluded from publication.
+
 21 November 2026. Show a leadership return or rejection on the exact selected report. Disclose its rationale to the decision actor, report author and authorised source corrector. Other authorised readers can see the decision status. A release observation and an uploaded source file are tracked separately until both have browser evidence for the release recording board.
 
 21 November 2026. Retain a typed release environment only when it is recorded against the exact release. Existing evidence keeps Unknown for the unrecorded environment. Escalation preparation stops at a human Send for review. Current native reviews and original receipts remain readable. File-required bid packs retain private PDF bytes and a verified hash, with outward transmission held when the configured carrier cannot transport the file. Amounts labelled Millions stay unconverted until an exact reviewed source conversion exists.

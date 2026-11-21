@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Candidate 284 passed nineteen PostgreSQL checks and both original preservation probes. The paired preview web and worker were submitted from 17 verified paths. Candidate 285 is running the next grouped Statement of Work, Hypercare issue and Payroll return changes.
+
+21 November 2026. Verified and pushed candidate 283 application source at `c8aa7ebd`. Its preview migrated and the paired worker processed normally. Trial grouped the leadership, Planning, register, Money, linked milestone, client and escalation walkthroughs and recorded the independent draft-only Payroll review. The ledger reached 214. Candidate 284 checks the exact invoice stop and private release log.
+
 21 November 2026. Trial rechecked work 79’s original Go-live change request and the reviewed signed successor. The mobile work chooser reached the scoped weekly intake, bringing the ledger to 206. Candidate 282 passed six Finance and seven Project tests. Its two Commercial Milestones access failures are in the 283 rerun with the leadership return readback.
 
 21 November 2026. Trial saw the actual leadership worker claim on work 242 and the independent review handoff, bringing the ledger to 204 complete. Trial returned that exact report and observed the missing rationale readback. Work 241 now has an exact recorded release and its original source note. The private file evidence remains open. The 282 Project cohort passed all seven tests. Two Commercial milestone-reader assertions exposed an earlier section-access gate.

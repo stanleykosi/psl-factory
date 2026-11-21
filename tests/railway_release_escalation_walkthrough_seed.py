@@ -2,10 +2,12 @@
 
 import json
 import os
+from io import BytesIO
 from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -35,12 +37,14 @@ GUARD = 'PSL_RELEASE_ESCALATION_WALKTHROUGH'
 TENANT = 'design-release-escalation-walkthrough'
 TITLES = {
     'release': 'SAMPLE observed release with deployment environment',
+    'release_file': 'SAMPLE observed release with private PDF deployment log',
     'escalation': 'SAMPLE escalation draft awaiting submission',
 }
 CASE_IDS = {name: uuid5(NAMESPACE_URL, f'psl-factory:{TENANT}/{name}') for name in TITLES}
 MARKER = 'sample.release_escalation_walkthrough_prepared'
 RELEASE_REFERENCE = 'SAMPLE-PREVIEW-RELEASE-LOG-01'
 ENVIRONMENT = 'Preview · Sample delivery workspace'
+FILE_NAME = 'SAMPLE-PREVIEW-RELEASE-LOG-01.pdf'
 START = ('case.read', 'factory.read', 'factory.start', 'evidence.add')
 
 
@@ -48,7 +52,7 @@ def grant(case, actor, actions):
     Grant.objects.bulk_create([Grant(case=case, user=actor, action=action) for action in dict.fromkeys(actions)])
 
 
-def prepare_release(case, operator):
+def prepare_release(case, operator, *, private_file=False):
     maker = get_user_model().objects.create_user(f'sample-release-environment-source-{case.pk.hex[:8]}')
     grant(case, maker, ACTIONS)
     grant(case, operator, (*START, 'delivery.read', 'delivery.release_record'))
@@ -59,6 +63,16 @@ def prepare_release(case, operator):
     proof = add_evidence(maker, case.pk, 'release_log',
         f'Fictional release of {sample.candidate.reference} in {ENVIRONMENT} at {occurred}. Reference {RELEASE_REFERENCE}.',
         'synthetic:release-environment-walkthrough-log')
+    upload = None
+    if private_file:
+        from pypdf import PdfWriter
+        from apps.agents.upload_views import upload_file
+        buffer = BytesIO()
+        writer = PdfWriter()
+        writer.add_blank_page(width=612, height=792)
+        writer.add_metadata({'/Title': f'{RELEASE_REFERENCE} · {sample.candidate.reference} · {occurred}'})
+        writer.write(buffer)
+        upload = upload_file(operator, case, SimpleUploadedFile(FILE_NAME, buffer.getvalue(), content_type='application/pdf'))
     work = factory_hypercare.start(operator, case.pk, 'SAMPLE-RELEASE-ENVIRONMENT', sample.d.pk, case.title, rev(case))
     panel = factory_hypercare.projection(operator, work)
     if (not panel['can_record_release'] or proof.pk not in {row.pk for row in panel['decision_evidence']}
@@ -68,7 +82,8 @@ def prepare_release(case, operator):
     return event(maker, case, MARKER, operator=operator.pk, work=work.pk, dossier=sample.d.pk,
         candidate=sample.candidate.pk, version=sample.candidate.reference, readiness=readiness.pk, evidence=proof.pk,
         evidence_version=proof.version, released_at=occurred, environment=ENVIRONMENT, reference=RELEASE_REFERENCE,
-        note='Observed sample release as recorded in the selected release log.').data
+        note='Observed sample release as recorded in the selected release log.',
+        **({'private_log': upload.pk, 'file_name': upload.name, 'file_sha256': upload.sha256} if upload else {})).data
 
 
 def prepare_escalation(case, operator, reviewer, admission):
@@ -137,17 +152,17 @@ def prepare_case(operator, scenario, *, reviewer=None, admission=None):
         raise RuntimeError('Preserve the unrelated workspace occupying this sample identifier.')
     if not created:
         data = Audit.objects.get(case=case, action=MARKER).data
-    elif scenario == 'release':
-        data = prepare_release(case, operator)
+    elif scenario in ('release', 'release_file'):
+        data = prepare_release(case, operator, private_file=scenario == 'release_file')
     else:
         data = prepare_escalation(case, operator, reviewer, admission)
     if data['operator'] != operator.pk:
         raise RuntimeError('Preserve the original sample operator.')
-    definition = factory_hypercare.DEFINITION if scenario == 'release' else factory_escalation.DEFINITION
+    definition = factory_escalation.DEFINITION if scenario == 'escalation' else factory_hypercare.DEFINITION
     work = FactoryWork.objects.get(pk=data['work'], case=case, actor=operator, definition=definition)
     if created and FactoryProgress.objects.filter(work=work).exists():
         raise RuntimeError('The sample must leave later progression to the browser.')
-    if scenario == 'release':
+    if scenario != 'escalation':
         dossier = delivery.dossier_for(case, work.request['dossier'], current=False)
         if (dossier.pk, dossier.candidate_id) != (data['dossier'], data['candidate']):
             raise RuntimeError('Preserve the original release candidate and proof.')
@@ -179,6 +194,8 @@ def run(scenario='both'):
     result = {}
     if scenario in ('both', 'release'):
         result['release'] = prepare_case(operator, 'release')
+    if scenario == 'release_file':
+        result['release_file'] = prepare_case(operator, 'release_file')
     if scenario in ('both', 'escalation'):
         result['escalation'] = prepare_admitted_escalation(operator)
     print(GUARD + '=' + json.dumps(result), flush=True)

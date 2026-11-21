@@ -4,4 +4,5 @@
   <dt>Environment</dt><dd>{{ release.environment|default:'Not recorded' }}</dd>
   <dt>Deployment reference</dt><dd>{{ release.reference }}</dd>
   <dt>Proof</dt><dd>Evidence {{ release.evidence_id }} · version {{ release.evidence_version }}</dd>
+  {% if release.private_log %}<dt>Private deployment log</dt><dd><a href="{% url 'case_upload_download' release.private_log.case_id release.private_log.pk %}">{{ release.private_log.name }}</a> · {{ release.private_log.size|filesizeformat }}</dd>{% endif %}
 </dl>
