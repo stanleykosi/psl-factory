@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. The admitted preparer verified seven more scoped browser journeys, bringing the ledger to 254. Separately queued the corrected invoice and Accounting reviews, approved the corrected closure document as Quality and published only the reviewed synthetic Payroll replacement. The original decisions and receipts stayed in history.
+
 21 November 2026. Finished the available Trial session checks without a sign-in change. Restricted Payroll Start withheld the exact private inputs, and its separate publication recipient saw their own prior withdrawal. The checked runtime and linked build records were backed up at `75d087d9`. Next is one grouped preparer sign-in linked to the first returned invoice.
 
 21 November 2026. Exact 291c passed eight targeted PostgreSQL tests and both original preservation probes. The Payroll replacement now opens for its exact current recipient and shows that person’s prior withdrawn receipt without exposing old values or private review notes. The checked Accounting and asset corrections are in the matching submitted preview runtime.
