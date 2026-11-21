@@ -83,7 +83,8 @@ def detail(request,work,focus=None):
                 if action=='capture_outcome':
                     if not actual_form.is_valid():raise ValidationError('Provide the actual implementation timestamp in the displayed time zone')
                     values['implemented_at']=actual_form.cleaned_data['implemented_at']
-                emergency.human_action(request.user,work.pk,revision,case_revision,int(d.get('profile','0')),action,values)
+                emergency.human_action(request.user,work.pk,revision,case_revision,int(d.get('profile','0')),action,values,
+                                       pending_only=focus == 'decision')
             elif action=='cancel':emergency.cancel(request.user,work.pk,revision)
             elif action=='restart':emergency.restart(request.user,work.pk,revision,case_revision,d.get('reason',''))
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')
@@ -94,4 +95,14 @@ def detail(request,work,focus=None):
             messages.success(request,'Emergency evidence action recorded. Select newly recorded native references explicitly when needed.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/emergency_detail.html',{'row':row,'case':work.case,'inputs_form':form,'outcome_form':actual_form,'time_zone':timezone.get_current_timezone_name(),'evidence':public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk'),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk'),'focus':focus})
+    evidence = public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
+    choices, history, decision_evidence = [], [], []
+    if focus == 'decision' and not data['inputs']['outcome_id'] and row['emergency']['status']['stage'] != 'source':
+        choices, history = emergency.preauthorization_decisions(request.user, work.case, row['emergency']['profile'])
+        if not row['emergency']['human']['preauthorization_decision']:
+            choices = []
+        if choices:
+            decision_evidence = evidence.filter(kind='emergency_decision')[:30]
+    return render(request,'factory/emergency_detail.html',{'row':row,'case':work.case,'inputs_form':form,'outcome_form':actual_form,'time_zone':timezone.get_current_timezone_name(),'evidence':evidence,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk'),'focus':focus,
+                  'preauthorization_options': choices, 'preauthorization_history': history,
+                  'preauthorization_evidence': decision_evidence})

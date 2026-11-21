@@ -237,6 +237,12 @@ urlpatterns += [path('finance/payments/', payments_overview.show, name='design_p
 urlpatterns += [path('finance/month-end/<uuid:case_id>/receivables/capture/', month_end.capture, name='design_capture_month_end_receivables')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/short-payments/<int:issue_id>/', short_payment_views.detail, name='invoice_short_payment')]
+from apps.finance import bank_receipt_views
+urlpatterns += [
+    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/new/',bank_receipt_views.payment,name='finance_record_payment'),
+    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/<int:receipt_id>/',bank_receipt_views.payment,name='finance_bank_receipt'),
+    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/<int:receipt_id>/proof/<str:kind>/',bank_receipt_views.download,name='finance_bank_proof'),
+]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
                      reminder_views.download, name='design_reminder_download')]
 urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]

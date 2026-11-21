@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Trial verified the dedicated emergency refusal and the exact bank reporting, verification and allocation path, bringing the ledger to 236. The costing proposal comparison and human confirmation are recorded; complete its separate activation readback. Candidate 289 is running the next grouped gate.
+
+21 November 2026. Verified six more workflows in the same trial session across Project Directory, Setup, Finance reviews and client details. The ledger reached 234. The live QuickBooks upload exposed an empty multipart file edge case, now fixed in the next test package. Work 255 is ready for its separately assigned Payroll preparer. Verified 287b application source was pushed at `655e9aef`.
+
 21 November 2026. Trial verified the hosted Payments index and followed the exact retained overdue balance into native follow-up, bringing the ledger to 228. All thirteen tests for the next bank, emergency and costing batch passed. Guarded current-role samples are starting from the 287b preview.
 
 21 November 2026. Work 249 reached verified Hypercare after the retained issue correction, bringing the browser ledger to 227. Candidate 287b passed 25 exact PostgreSQL tests. Its 74-path reviewed preview and the isolated 288 bank, costing and emergency checks were submitted.

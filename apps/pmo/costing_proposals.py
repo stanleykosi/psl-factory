@@ -1,7 +1,10 @@
 """Reviewed preparation of a native P14 source successor."""
+from hashlib import sha256
+
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from apps.core.read_budget import ReadBudget, ReadLimit
 from apps.core.services import bump, event
 from apps.documents.contracts import digest, validate
 from apps.identity.services import require
@@ -168,16 +171,60 @@ def compare_examples(actor, proposal, oracle_id):
     if (oracle.sha256 != digest(oracle.payload) or proposal.sha256 != digest(proposal.payload)
             or proposal.base.sha256 != digest(proposal.base.payload)):
         raise ValidationError('The example or proposed source needs reassessment.')
+    return {'oracle': oracle, 'examples': example_rows(proposal, oracle.payload),
+            'source_locator': oracle.payload['source_locator']}
+
+
+def example_rows(proposal, value):
     examples = []
-    for scenario in oracle.payload['scenarios']:
-        before = calculate(proposal.base.payload, scenario['inputs'])
-        after = None
+    for scenario in value['scenarios']:
+        results = {}
+        for key, rule in (('before', proposal.base.payload), ('after', proposal.payload)):
+            try:
+                actual = calculate(rule, scenario['inputs'])
+            except ValidationError:
+                actual = None
+            results[key] = actual
+            results[key + '_matches'] = compare(actual, scenario['expected']) if actual is not None else False
+        examples.append({**scenario, **results})
+    return examples
+
+
+def proposed_example_sources(actor, proposal):
+    """Preview owner-authored evidence for the proposal without creating a native oracle or approval."""
+    case = proposal.base.case
+    native.readable(actor, case, True)
+    owner = get_user_model().objects.filter(is_active=True, pk=proposal.payload['oracle_owner_id']).first()
+    if owner is None or proposal.sha256 != digest(proposal.payload) or proposal.base.sha256 != digest(proposal.base.payload):
+        return []
+    try:
+        native.oracle_owner_authority(owner, case, proposal.payload, proposal.actor_id)
+        require(owner, case, 'costing.oracle.capture')
+        proofs = list(case.evidence.filter(kind='p14_oracle', created_by=owner).defer('body').order_by('-pk')[:8])
+        ReadBudget().load_many(proofs, 'body', ceiling=128 * 1024)
+    except (PermissionDenied, ValidationError, ReadLimit):
+        return []
+    matches = []
+    for proof in proofs:
+        if sha256(proof.body.encode()).hexdigest() != proof.sha256:
+            continue
         try:
-            after = calculate(proposal.payload, scenario['inputs'])
+            value = native.oracle_evidence(case, proposal.payload, proposal.sha256, proof)
         except ValidationError:
-            pass
-        examples.append({'key': scenario['key'], 'scenario': scenario['scenario'],
-            'inputs': scenario['inputs'], 'expected': scenario['expected'],
-            'before': before, 'after': after, 'before_matches': compare(before, scenario['expected']),
-            'after_matches': compare(after, scenario['expected']) if after else False})
-    return {'oracle': oracle, 'examples': examples}
+            continue
+        matches.append({'proof': proof, 'value': value, 'owner': owner})
+    return matches
+
+
+def active_successor(actor, proposal):
+    decision = getattr(proposal, 'decision', None)
+    if decision is None or decision.rule_id is None:
+        return False
+    try:
+        _, rule, oracle, _ = native.configured(proposal.base.case, actor)
+        if rule.pk != decision.rule_id:
+            return False
+        native.confirmed(rule, oracle)
+    except (PermissionDenied, ValidationError):
+        return False
+    return True

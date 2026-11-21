@@ -62,7 +62,8 @@ def case_scope(actor, case, budget):
     for preparation in fixed:
         preparation_access(actor, preparation)
     actions = {action for _, action in active_case_grants(actor, [case.pk], actions={
-        'case.read', 'finance.read', 'finance.reminder.read', 'finance.cash.record',
+        'case.read', 'finance.read', 'finance.reminder.read', 'finance.cash.record', 'evidence.add',
+        'finance.cash.verify','finance.cash.allocate',
     })}
     if not {'case.read', 'finance.read'}.issubset(actions):
         raise PermissionDenied
@@ -70,7 +71,8 @@ def case_scope(actor, case, budget):
     ageing = method.status == 'ACTIVE' and reference_values(method.configuration, budget=budget)[0]['overdue_definition'] == 'due_date_before_as_of'
     settlement = reverse('finance_settlement', args=[case.pk])
     return {'reminders': 'finance.reminder.read' in actions, 'ageing': ageing, 'settlement': settlement,
-            'record_payment': settlement + '#record-payment' if 'finance.cash.record' in actions else None}
+            'record_payment': {'finance.cash.record','evidence.add'}<=actions,
+            'review_payment': bool({'finance.cash.verify','finance.cash.allocate'}.intersection(actions))}
 
 
 def observation(invoice, scope, as_of, budget):
@@ -78,10 +80,14 @@ def observation(invoice, scope, as_of, budget):
     coverage = invoice.preparation.coverage
     row = {'reference': invoice.reference, 'workspace': invoice.case.title, 'customer': coverage.customer,
            'contract': coverage.contract, 'currency': invoice.currency, 'basis': invoice.amount_basis,
-           'records': scope['settlement'] + f'#invoice-{invoice.pk}', 'record_payment': scope['record_payment'],
+           'records': scope['settlement'] + f'#invoice-{invoice.pk}', 'record_payment': None,
            'age_days': None, 'paid': None, 'owed': None, 'face': None}
     if not issue:
         return {**row, 'key': 'unknown', 'reason': 'The invoice issue is still being verified.'}
+    if scope['record_payment']:
+        row['record_payment']=reverse('finance_record_payment',args=[invoice.case_id,issue.pk])
+    elif scope['review_payment']:
+        row['review_payment']=reverse('finance_record_payment',args=[invoice.case_id,issue.pk])
     try:
         paid, owed, applied_changes, _ = balance(invoice, budget, include_sources=False)
     except ReadLimit:

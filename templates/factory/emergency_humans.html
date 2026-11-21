@@ -1,5 +1,7 @@
 {% if not row.emergency.data.inputs.outcome_id %}
-{% if not focus or focus == 'decision' %}
+{% if focus == 'decision' %}
+{% include 'factory/emergency_preauthorization_decision.html' %}
+{% elif not focus %}
 {% if row.emergency.human.preauthorization_decision %}<section class="card"><h2>Record actual preauthorization decision</h2><form method="post"><input type="hidden" name="action" value="preauthorization_decision">{% include 'factory/emergency_human_fields.html' %}<label>Prescribed role<input name="role" required list="emergency-roles"></label><datalist id="emergency-roles"><option value="Incident Lead"><option value="Engineering Lead"><option value="CTO"><option value="GLPI exception:CEO"></datalist><label>Incident Lead authority role<select name="authority_role"><option>Engineering Lead</option><option>Security Lead</option></select></label><p>Configured role applicability and authority are checked. Critical does not imply P1. Exception roles must already be explicitly configured.</p><button name="verdict" value="approve">Approve exact preauthorization</button><button name="verdict" value="return">Return exact preauthorization</button><button name="verdict" value="reject">Reject exact preauthorization</button></form></section>{% endif %}
 {% endif %}
 {% if not focus or focus == 'decision' %}

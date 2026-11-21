@@ -58,23 +58,45 @@ def capture_rule(a,case_id,reference,evidence_id,expected=None,predecessor=None)
 
 @transaction.atomic
 def capture_oracle(a,case_id,rule_id,reference,evidence_id,expected=None,predecessor=None):
-    c=locked(a,case_id,'costing.oracle.capture',expected);readable(a,c,True);r=rule_for(c,rule_id);current_source(r);validate(KEY,reference);e=subject(c,evidence_id,'p14_oracle');v=SuppliedCostingContractAdapter().read_oracle(e)
-    if any(v[k]!=r.payload[k] for k in ['calculator_ref','calculator_version']) or v['rule_sha256']!=r.sha256:raise ValidationError('Oracle must pin exact calculator/rule version')
-    if not c.synthetic and v['source_class']=='synthetic_fixture':raise ValidationError('Synthetic examples cannot enter operational scope')
-    if len({x['key'] for x in v['scenarios']})!=len(v['scenarios']) or {x['scenario'] for x in v['scenarios']}!={'normal','exception'}:raise ValidationError('Distinct independent normal and exception examples required')
-    # Capture mismatches now; only dependent confirmation/activation holds.
-    for row in v['scenarios']:calculate(r.payload,row['inputs'])
+    c=locked(a,case_id,'costing.oracle.capture',expected);readable(a,c,True);r=rule_for(c,rule_id);current_source(r);validate(KEY,reference);e=subject(c,evidence_id,'p14_oracle');v=oracle_evidence(c,r.payload,r.sha256,e)
     old=CostingOracle.objects.filter(rule=r,reference=reference).order_by('-version').first()
     if old and old.sha256==digest(v):return old
     if (old.pk if old else None)!=predecessor:raise ValidationError('Explicit current oracle predecessor required')
     o=CostingOracle.objects.create(rule=r,reference=reference,version=old.version+1 if old else 1,payload=v,sha256=digest(v),evidence=e,actor=a);event(a,c,'costing.oracle_captured',oracle=o.pk);bump(c);return o
 
+def oracle_evidence(case, rule, rule_hash, proof):
+    value = SuppliedCostingContractAdapter().read_oracle(proof)
+    if any(value[key] != rule[key] for key in ('calculator_ref', 'calculator_version')) or value['rule_sha256'] != rule_hash:
+        raise ValidationError('Oracle must pin exact calculator/rule version')
+    if not case.synthetic and value['source_class'] == 'synthetic_fixture':
+        raise ValidationError('Synthetic examples cannot enter operational scope')
+    examples = value['scenarios']
+    if len({row['key'] for row in examples}) != len(examples) or {row['scenario'] for row in examples} != {'normal', 'exception'}:
+        raise ValidationError('Distinct independent normal and exception examples required')
+    for row in examples:
+        calculate(rule, row['inputs'])
+    return value
+
+
+def oracle_owner_authority(actor, case, rule, preparer_id):
+    readable(actor, case, True)
+    require(actor, case, 'costing.oracle.review')
+    if rule['oracle_owner_id'] is None or rule['oracle_role'] is None:
+        raise ValidationError('Configure the relevant actual costing evidence owner and role before confirmation')
+    if actor.pk != rule['oracle_owner_id']:
+        raise PermissionDenied('Exact configured costing evidence owner required; case approval grants do not appoint model owners')
+    if actor.pk in [preparer_id, rule['owner_id']]:
+        raise PermissionDenied('Oracle reviewer must be independent of rule preparer and owner')
+    return decision_authority(actor, case, rule['oracle_role'])
+
+
 def authority(a,r,o=None):
-    readable(a,r.case,True);require(a,r.case,'costing.oracle.review' if o else 'costing.rule.review');v=r.payload
-    if v['oracle_owner_id' if o else 'owner_id'] is None or v['oracle_role' if o else 'owner_role'] is None:raise ValidationError('Configure the relevant actual costing evidence owner and role before confirmation')
-    if a.pk!=v['oracle_owner_id' if o else 'owner_id']:raise PermissionDenied('Exact configured costing evidence owner required; case approval grants do not appoint model owners')
-    if o and a.pk in [r.actor_id,v['owner_id']]:raise PermissionDenied('Oracle reviewer must be independent of rule preparer and owner')
-    return decision_authority(a,r.case,v['oracle_role' if o else 'owner_role'])
+    if o:
+        return oracle_owner_authority(a,r.case,r.payload,r.actor_id)
+    readable(a,r.case,True);require(a,r.case,'costing.rule.review');v=r.payload
+    if v['owner_id'] is None or v['owner_role'] is None:raise ValidationError('Configure the relevant actual costing evidence owner and role before confirmation')
+    if a.pk!=v['owner_id']:raise PermissionDenied('Exact configured costing evidence owner required; case approval grants do not appoint model owners')
+    return decision_authority(a,r.case,v['owner_role'])
 
 def oracle_results(r,o,require_match=False):
     rows=[];known=held=False

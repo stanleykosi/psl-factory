@@ -272,14 +272,73 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now() or not v or v.pk!=version_id:raise ValidationError('STALE_VERSION: select exact current retrospective report')
     return review_version(actor,w.case_id,version_id,verdict,note,case_expected)
 
+def preauthorization_decisions(actor, case, profile):
+    """Observe only the prescribed decisions for the current incident profile."""
+    from apps.policy.services import assigned_decision_options, decision_authority
+
+    if profile.critical_production is not True or profile.p1 is None:
+        return [], []
+    try:
+        policy, pins = native.emergency_policy(case)
+    except (ValidationError, PermissionDenied):
+        return [], []
+    required = native.required_decision_roles(profile, policy)
+    recorded = {row.role: row for row in profile.decisions.filter(role__in=required).select_related('actor')
+                .order_by('role', '-pk').distinct('role')}
+    current = []
+    for role in required:
+        previous = recorded.get(role)
+        authority_role = policy['incident_lead_role'] if role == 'Incident Lead' else role.removeprefix('GLPI exception:')
+        if not previous or previous.authority_role != authority_role or (previous.policies and previous.policies != pins):
+            continue
+        try:
+            require(previous.actor, case, 'emergency.decide')
+            if decision_authority(previous.actor, case, authority_role, previous.verdict) == previous.authority:
+                current.append(previous)
+        except (ValidationError, PermissionDenied):
+            continue
+    try:
+        require(actor, case, 'emergency.decide')
+    except PermissionDenied:
+        return [], current
+    if any(item.verdict != 'approve' for item in current) or profile.version.emergency_profiles.filter(
+            outcomes__isnull=False).exists() or EmergencyAuthorization.objects.filter(profile=profile).exists():
+        return [], current
+    settled = {item.role for item in current}
+    options = []
+    for role in required:
+        if role in settled:
+            continue
+        authority_role = policy['incident_lead_role'] if role == 'Incident Lead' else role.removeprefix('GLPI exception:')
+        try:
+            verdicts = assigned_decision_options(actor, case, authority_role, ('approve', 'return', 'reject'))
+        except (ValidationError, PermissionDenied):
+            continue
+        if verdicts:
+            options.append({'role': role, 'authority_role': authority_role, 'verdicts': verdicts})
+    return options, current
+
+
 @transaction.atomic
-def human_action(actor,work_id,expected,case_expected,profile_id,action,values):
+def human_action(actor,work_id,expected,case_expected,profile_id,action,values,*,pending_only=False):
     """Explicit native human actions; not registered for agent dispatch."""
     from .factory import access
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);p,data=source(w,actor)
     if type(expected) is not int or w.revision!=expected or p.pk!=profile_id or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh exact Emergency work')
-    if action=='preauthorization_decision':result=native.decide_emergency(actor,w.case_id,p.pk,values['role'],values['authority_role'],values['verdict'],values['evidence'],values['note'],case_expected)
+    if action=='preauthorization_decision':
+        if pending_only:
+            w.case = lock_case(actor, w.case_id, 'emergency.decide', case_expected)
+            list(Grant.objects.select_for_update(of=('self',)).filter(case=w.case).order_by('pk'))
+            p, _ = source(w, actor)
+            options, _ = preauthorization_decisions(actor, w.case, p)
+            if not any(item['role'] == values['role'] and item['authority_role'] == values['authority_role']
+                       and values['verdict'] in item['verdicts'] for item in options):
+                raise ValidationError('Choose a currently available emergency decision for this exact request.')
+            if not public_evidence(Evidence.objects.filter(
+                    case=w.case, pk=values['evidence'], kind='emergency_decision')).exists():
+                raise ValidationError('Select the available emergency decision evidence.')
+        result=native.decide_emergency(actor,w.case_id,p.pk,values['role'],values['authority_role'],values['verdict'],values['evidence'],values['note'],case_expected)
     elif action=='authorize':result=native.authorize_emergency(actor,w.case_id,p.pk,case_expected)
     elif action=='capture_outcome':result=native.capture_outcome(actor,w.case_id,p.pk,data['inputs']['authorization_id'],values['implemented_at'],values['evidence'],values['note'],case_expected)
     elif action=='record_review':result=native.record_review(actor,w.case_id,outcome(w,data).pk,values['evidence'],values['note'],case_expected)

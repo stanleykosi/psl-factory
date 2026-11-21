@@ -37,13 +37,26 @@ def detail(request, case_id, pk):
     proposal = get_object_or_404(CostingProposal.objects.select_related(
         'base__case', 'actor', 'decision__actor', 'decision__rule'), base__case=case, pk=pk)
     context = costing_proposals.presentation(request.user, proposal)
-    example_sets = list(CostingOracle.objects.filter(rule=proposal.base).order_by('pk')[:25])
+    example_sets = list(CostingOracle.objects.filter(rule=proposal.base).only('reference', 'version').order_by('pk')[:25])
+    proposed_sets = costing_proposals.proposed_example_sources(request.user, proposal)
+    proposed_key = request.GET.get('proposed_examples')
+    proposed_set = next((item for item in proposed_sets if str(item['proof'].pk) == proposed_key), None)
     selected_set = next((row for row in example_sets if str(row.pk) == request.GET.get('examples')), None)
-    if request.GET.get('examples') and selected_set is None:
+    if (request.GET.get('examples') and selected_set is None) or (proposed_key and proposed_set is None):
         raise Http404
-    if selected_set is None and len(example_sets) == 1:
+    if proposed_set is None and not request.GET.get('examples') and len(proposed_sets) == 1:
+        proposed_set = proposed_sets[0]
+    if selected_set is None and proposed_set is None and len(example_sets) == 1:
         selected_set = example_sets[0]
-    comparison = costing_proposals.compare_examples(request.user, proposal, selected_set.pk) if selected_set else None
+    selection = {}
+    comparison = None
+    if proposed_set is not None:
+        comparison = {'examples': costing_proposals.example_rows(proposal, proposed_set['value']),
+                      'source_locator': proposed_set['value']['source_locator']}
+        selection = {'proposed_examples': proposed_set['proof'].pk}
+    elif selected_set is not None:
+        comparison = costing_proposals.compare_examples(request.user, proposal, selected_set.pk)
+        selection = {'examples': selected_set.pk}
     selected_example = None
     if comparison:
         example_rows = comparison['examples']
@@ -52,7 +65,7 @@ def detail(request, case_id, pk):
         selected_example = example_rows[selected_index]
         page_url = reverse('costing_proposal', args=[case.pk, proposal.pk])
         for row in example_rows:
-            row['url'] = page_url + '?' + urlencode({'examples': selected_set.pk, 'example': row['key']})
+            row['url'] = page_url + '?' + urlencode({**selection, 'example': row['key']})
         context.update(previous_example=example_rows[selected_index - 1] if selected_index > 0 else None,
                        next_example=example_rows[selected_index + 1] if selected_index + 1 < len(example_rows) else None)
     form = DecisionForm(case, request.POST if request.method == 'POST' else None,
@@ -69,5 +82,7 @@ def detail(request, case_id, pk):
         except ValidationError as exc:
             form.add_error(None, ' '.join(exc.messages))
     context.update(case=case, form=form, example_sets=example_sets, comparison=comparison,
-                   selected_example=selected_example, selected_set=selected_set)
+                   selected_example=selected_example, selected_set=selected_set,
+                   proposed_sets=proposed_sets, proposed_set=proposed_set,
+                   active_successor=costing_proposals.active_successor(request.user, proposal))
     return render(request, 'pmo/costing_proposal.html', context)

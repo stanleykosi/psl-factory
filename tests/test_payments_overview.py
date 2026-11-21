@@ -28,7 +28,7 @@ class PaymentsOverviewTests(TestCase):
         invoice = Invoice.objects.get(pk=prepared['invoice'])
         owner = get_user_model().objects.get(pk=prepared['preparer'])
         Grant.objects.bulk_create([Grant(case=invoice.case, user=trial, action=action)
-                                   for action in ('finance.reminder.read', 'finance.cash.record')])
+                                   for action in ('finance.reminder.read', 'finance.cash.record', 'evidence.add')])
         self.client.force_login(trial)
         url = reverse('design_payments')
         query = {'q': REFERENCE, 'state': 'part-paid'}
@@ -45,6 +45,7 @@ class PaymentsOverviewTests(TestCase):
         self.assertEqual((row['face'], row['paid'], row['owed']), (SIGNED_AMOUNT, PART_PAYMENT, Decimal('22.50')))
         self.assertEqual(row['state'], 'Part paid')
         self.assertEqual(row['reminder'], reverse('design_payment_reminder', args=[invoice.case_id, prepared['issue']]))
+        self.assertEqual(row['record_payment'], reverse('finance_record_payment', args=[invoice.case_id, prepared['issue']]))
         self.assertTrue(row['records'].endswith(f'#invoice-{invoice.pk}'))
         table = self.client.get(reverse('finance_settlement', args=[invoice.case_id]))
         self.assertContains(table, f'id="invoice-{invoice.pk}"')
