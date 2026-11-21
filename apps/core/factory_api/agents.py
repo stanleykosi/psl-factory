@@ -10,7 +10,7 @@ from apps.agents.models import AgentJob, CaseUpload
 from apps.agents.upload_jobs import ROLES, authorize
 from apps.agents.upload_views import queue_draft, upload_file
 from apps.documents.contracts import digest
-from apps.identity.services import require, visible_cases
+from apps.identity.services import require
 from apps.pmo.gates import GATE_OWNERS
 
 from .http import BOOLEAN, DATETIME, ID, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
@@ -136,7 +136,9 @@ def owned_job(actor, case_id, job_id):
                         'agents': array(obj({'key': ROLE, 'title': TEXT}))}),
           summary='List your private uploads and authorised file-agent work')
 def uploads(request, case_id):
-    case = get_object_or_404(visible_cases(request.user), pk=case_id)
+    from apps.agents.upload_views import file_workspaces
+
+    case = get_object_or_404(file_workspaces(request.user), pk=case_id)
     files = CaseUpload.objects.filter(case=case, actor=request.user).order_by('-pk')[:50]
     jobs, roles = [], []
     if case.synthetic:
@@ -157,7 +159,9 @@ def uploads(request, case_id):
 def upload(request, case_id):
     if request.content_type != 'multipart/form-data':
         raise Problem(415, 'unsupported_media_type', 'Send a multipart file upload.')
-    case = get_object_or_404(visible_cases(request.user), pk=case_id)
+    from apps.agents.upload_views import file_workspaces
+
+    case = get_object_or_404(file_workspaces(request.user), pk=case_id)
     if set(request.FILES) != {'file'} or len(request.FILES.getlist('file')) != 1:
         raise Problem(422, 'invalid_input', 'Select one file.')
     return file_data(upload_file(request.user, case, request.FILES['file']))
@@ -166,8 +170,10 @@ def upload(request, case_id):
 @endpoint(method='POST', request=obj({'role': ROLE}), response=JOB, status=202,
           summary='Queue one of the eight file agents on an exact private upload')
 def queue(request, case_id, upload_id, *, body):
+    from apps.agents.upload_views import file_workspaces
+
     source = get_object_or_404(CaseUpload.objects.select_related('case'), pk=upload_id,
-                               case_id=case_id, actor=request.user, case__in=visible_cases(request.user))
+                               case_id=case_id, actor=request.user, case__in=file_workspaces(request.user))
     return job_data(request.user, queue_draft(request.user, source, body['role']))
 
 

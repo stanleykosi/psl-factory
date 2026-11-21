@@ -16,6 +16,17 @@
     ],
     "evidence": "docs/design/frontend-handoff-review-2026-11-21.md"
   },
+  "shared_role_navigation_20261121": {
+    "status": "hosted_postgresql_and_browser_verified",
+    "scope": "Shared factory navigation and complete Start work catalogue for signed-in staff. Workspace and exact team scope control available records and native actions.",
+    "web": "1ed0b570-6b80-49d6-8e3b-29c3efedef7a",
+    "worker": "ca03c20c-c755-436a-8827-b9271972b640",
+    "checks": {"initial":"1a547f9e-fbbb-4354-b7ec-6553c61f0081","initial_passed":48,"initial_failed":2,
+               "retest":"759befac-6ebf-4cc6-a83d-f53caf5f817c","retest_passed":4,"distinct_verified":50,"local_retest_passed":5},
+    "browser": ["pmo_lead_full_menu", "native_work_queue", "authorised_project", "overview", "eight_file_agents", "26_start_choices", "engagement_workspace_choice", "setup"],
+    "database_schema_changed": false,
+    "hod_decisions_deferred": true
+  },
   "clean_role_preview_20261121": {
     "status": "hosted_and_verified",
     "scope": "Railway design-acceptance only. Fresh workspace with delegated Admin and scoped PMO and Finance leads.",

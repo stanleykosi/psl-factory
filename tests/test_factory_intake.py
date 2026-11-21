@@ -53,8 +53,9 @@ class FactoryIntakeTests(TestCase):
         Grant.objects.create(user=actor,case=other,action='finance.read')
         Grant.objects.create(user=actor,case=other,action='case.read')
         self.assertEqual(intake_options(actor),[])
-        page=self.client.get(reverse('factory_intake'));self.assertContains(page,'No new work is available')
-        self.assertNotContains(page,'data-start-work="default"')
+        page=self.client.get(reverse('factory_intake'));self.assertContains(page,'You have no projects available to start work in yet.')
+        self.assertContains(page,'data-start-work="default"')
+        self.assertContains(page,'Prepare an invoice')
         self.assertNotContains(page,'Private other project');self.assertEqual(page['Cache-Control'],'no-store')
         Grant.objects.update_or_create(user=actor,case=case,action='finance.read',defaults={'active':True})
         self.assertEqual([o['definition'] for o in intake_options(actor)],['pmo-finance/v1'])
@@ -84,7 +85,15 @@ class FactoryIntakeTests(TestCase):
                     selected = self.client.get(reverse('factory_create'), {
                         'definition': option['definition'], 'case': case.pk,
                     })
-                    self.assertContains(selected, 'name="background"')
+                    if option['definition'] == 'pmo-emergency/v1':
+                        self.assertContains(selected, 'The current project manager must submit this incident plan.')
+                        self.assertNotContains(selected, 'name="background"')
+                        existing = self.client.get(reverse('factory_create'), {
+                            'definition': option['definition'], 'case': case.pk, 'mode': 'existing',
+                        })
+                        self.assertContains(existing, 'name="background"')
+                    else:
+                        self.assertContains(selected, 'name="background"')
         self.assertEqual(FactoryWork.objects.count(),0)
 
     def test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved(self):

@@ -6,6 +6,14 @@ The clean role preview runs web `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worke
 
 See the [frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md) before enabling real project use. PSL needs to name the approved model and records, decide which winning answers can be shared, confirm what report totals recipients may see, and approve each applicable Finance file convention. Additional HR records, microphone use and external delivery destinations still require owner decisions.
 
+## Role navigation and workspace scope · 21 November 2026
+
+All staff roles use the same menu and complete Start work catalogue. A person can select their permitted workspace, see appropriate native work, and use their own assignments. Team leads can oversee the current team in that workspace. Approval and restricted evidence checks still run on the native subject. The role dashboard remains the staff entry point, with the shared factory pages available from it.
+
+Railway web `1ed0b570-6b80-49d6-8e3b-29c3efedef7a` and worker `ca03c20c-c755-436a-8827-b9271972b640` preserve the handoff deployment and use the existing role preview database. The Codex browser verified the live PMO Lead menu, Projects, Overview, Assistant, My work queue, Setup and Start work with 26 lines. Report review uses the outward packet. Reading internal meeting records requires separate source authority. No account reset or new owner policy was applied. See [BUILD-TESTS.md](BUILD-TESTS.md) for the PostgreSQL run and retest.
+
+The Railway batch and targeted retest verified 50 distinct PostgreSQL cases. The additional local retest verified the private file-draft review on the staged release. The source checkpoint is on `codex/restore-role-navigation` so parallel handoff work in the main checkout remains available for reconciliation.
+
 ## Clean Railway role testing · 21 November 2026
 
 The [Railway test site](https://psl-design-web-design-acceptance.up.railway.app/) now uses `psl_role_preview_20261121`. The user authorised removal of the previous test accounts, work and uploads. The former application database was dropped, and 42 private test objects and their recorded versions were removed. Earlier walkthrough entries describe the former preview.

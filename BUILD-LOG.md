@@ -4,6 +4,8 @@
 
 Corrected the weekly-report and Planning checklist entries and added a regression check. Connected both work desks to the existing session, page numbers, review evidence and decision history. Added the document review and replacement-template operations and four owner-controlled project settings. Deployed the changes over the clean Railway role release and verified the PMO Lead flow in the in-app browser. [Outcomes and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
 
+21 November 2026. Restored the shared factory shell and the Start work catalogue for staff whose access comes from a team. Connected project discovery, the native work queue, Assistant and private file drafts to the applicable workspace and team scope. Preserved the separate frontend handoff changes in the latest Railway release.
+
 21 November 2026. Added the dedicated staff Admin landing and team-management entry. Reset the Railway test data at the user's request and established the new Admin, PMO Lead and Finance Lead accounts. Verified the three public logins before removing the former database and the private test uploads.
 
 21 November 2026. Replaced access-profile onboarding with required role invitations in the staff application. Added team-owned invitation and renewal, database binding to the actual inviting lead, and visibility for scoped-only staff in the authorised Staff roster. A lead can invite through their own dashboard. Keep already-admitted staff and historical access evidence available under their current permissions.

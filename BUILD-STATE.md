@@ -6,6 +6,12 @@ The separate frontend now opens the signed-in work desk, pages through authorise
 
 Four versioned project settings now govern department assistant use on real projects, reuse of approved winning answers, payroll totals in recipient chat and scaled Finance files. A person with configuration authority can prepare a draft under **Business rule settings → Project data permissions and Finance units**. Each setting needs a recorded decision and separate validation and activation. The clean Railway preview has no new business rules or sample transactions from this work. [Checks and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
 
+## Shared factory navigation for role accounts · 21 November 2026
+
+All signed-in staff use the standard factory shell and see the complete Start work catalogue. Workspace and record checks determine which projects and actions they can actually use. Staff keep their own assignments, and leads see the native work started by current people in their exact team and workspace. Django and the API use the same scope. Lead access to private file drafts is limited to the actor's own uploads and human review of the pinned output. Native decision and external effect permissions still govern approvals and release.
+
+This change uses the existing test workspace and accounts. No policy values or nominations were added. The current Railway check is recorded in the test ledger and handoff.
+
 Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 BaaS IDs/behaviour. HOD people/policies deferred. No main merge.
 
 ## Current implementation and verification

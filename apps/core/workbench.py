@@ -16,15 +16,22 @@ CURSOR_SALT='psl.workbench.cases.v1'
 def active(actor):
     if not actor.is_authenticated or not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current authenticated principal required')
 
-def granted(actor,actions):
+def granted(actor,actions,*,include_roles=True):
     query=visible_cases(actor)
     for action in actions:query=query.filter(pk__in=Grant.objects.filter(user=actor,active=True,action=action).values('case_id'))
+    if include_roles:
+        from apps.identity.factory_access import role_cases
+
+        query = query | role_cases(actor, actions)
     return query
 
 def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifecycle=''):
     active(actor)
     if not all(isinstance(x,str) for x in [q,tenant,kind,area]) or len(q)>120 or len(tenant)>100 or kind not in ['', 'project','support'] or area not in ['', 'finance'] or type(page_size) is not int or not 1<=page_size<=50:raise ValidationError('Valid workspace search, organization, type, area and page size required')
-    filters={'q':q.strip(),'tenant':tenant.strip(),'kind':kind,'area':area};query=granted(actor,['finance.read']) if area=='finance' else visible_cases(actor)
+    from apps.identity.factory_access import project_cases
+
+    filters={'q':q.strip(),'tenant':tenant.strip(),'kind':kind,'area':area}
+    query=granted(actor,['finance.read']) if area=='finance' else visible_cases(actor) | project_cases(actor)
     if lifecycle not in ['', 'active', 'closed'] or lifecycle and kind != 'project':
         raise ValidationError('Choose a lifecycle filter for projects')
     if filters['tenant']:query=query.filter(tenant=filters['tenant'])

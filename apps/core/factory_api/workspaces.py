@@ -10,6 +10,7 @@ from apps.core import client_contacts, project_journey, workbench
 from apps.core.design_views import discoverable_work
 from apps.core.models import ClientContactRevision
 from apps.core.presentation import workspace_name
+from apps.identity.factory_access import project_actions, project_cases
 from apps.finance import hr_workspace, month_end, project_money
 from apps.identity.services import active_case_grants, visible_cases
 from apps.policy.delegation_views import assignments
@@ -50,13 +51,11 @@ def me(request):
     actor = request.user
     destinations = [('my_work', 'My work', 'home'), ('projects', 'Projects', 'workspace_overview'),
                     ('overview', 'Overview', 'design_overview'), ('setup', 'Setup', 'design_setup'),
-                    ('clients', 'Clients', 'design_clients')]
+                    ('clients', 'Clients', 'design_clients'), ('assistant', 'Assistant', 'design_agents')]
     personas = [name for name in PERSONAS if cases_for(actor, name).exists()]
-    if personas:
-        destinations.append(('assistant', 'Assistant', 'design_agents'))
     if memberships(actor).exists() or administered_projects(actor).exists():
         role_dashboard = ('role_dashboard', 'Role assignments', 'role_dashboard')
-        destinations = [role_dashboard, *destinations] if visible_cases(actor).exists() else [role_dashboard]
+        destinations.insert(0, role_dashboard)
     return {
         'name': actor.get_full_name() or actor.get_username(),
         'work_desk_url': reverse('connected_factory_work'),
@@ -94,8 +93,8 @@ JOURNEY_ROW = obj({'id': ID, 'line': TEXT, 'reference': nullable({'type': 'strin
     'next_page': nullable(ID), 'as_of': DATETIME,
 }), query={'page': PAGE}, summary='Read the project journey and its available tabs')
 def project(request, case_id):
-    case = project_for(request.user, case_id)
-    grants = {action for _, action in active_case_grants(request.user, [case.pk])}
+    case = get_object_or_404(project_cases(request.user), pk=case_id)
+    grants = project_actions(request.user, case)
     journey = project_journey.work_timeline(discoverable_work(request.user, case_id=case_id), page_number(request))
     page = journey['page']
     return {**workspace(case), 'tabs': [
@@ -125,8 +124,8 @@ def hr(request, case_id):
 def project_tab(request, case_id, tab):
     if tab not in {'milestones', 'documents', 'registers', 'actions'}:
         raise Http404
-    case = project_for(request.user, case_id)
-    grants = {action for _, action in active_case_grants(request.user, [case.pk])}
+    case = get_object_or_404(project_cases(request.user), pk=case_id)
+    grants = project_actions(request.user, case)
     form = project_journey.filters(case, tab, grants, request.GET)
     query = request.GET.get('q', '').strip()
     if not form.is_valid() or len(query) > 120:
@@ -161,7 +160,7 @@ FIGURE = obj({
 @endpoint(response=obj({'items': array(FIGURE), 'limited': BOOLEAN, 'as_of': DATETIME, 'finance_url': TEXT}),
           query={'figure': {**TEXT, 'maxLength': 80}}, summary='Read contract and invoice figures with native provenance')
 def money(request, case_id):
-    case = project_for(request.user, case_id)
+    case = get_object_or_404(workbench.granted(request.user, ['finance.read']), pk=case_id, kind='project')
     key = request.GET.get('figure', '')
     if len(key) > 80:
         raise Problem(422, 'invalid_filter', 'Choose an available figure.')
