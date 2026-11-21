@@ -20,7 +20,7 @@ from adapters.payroll import SuppliedPayrollAdapter,PayrollExportError,sum_value
 from adapters.payroll_spreadsheet import rows as spreadsheet_rows
 from .rules import decimal
 from . import hrfinance as hr,payroll_draft_matching as draft_matching,payroll_math as maths
-from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollReview,PayrollPublication,PayrollReportReceipt,PayrollHRFollowup
+from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollReview,PayrollReviewNote,PayrollPublication,PayrollReportReceipt,PayrollHRFollowup
 from .hrfinance_models import HRReadSnapshot
 REQUEST=obj({'entity':KEY,'period':{'type':'string','pattern':r'^\d{4}-(0[1-9]|1[0-2])$'},'currency':KEY,'providers':{'type':'array','minItems':2,'maxItems':2,'uniqueItems':True,'items':KEY},'purpose':{'const':'bu_staff_cost'}})
 STAGE_POLICY={'combine':MERGE,'match':MATCH,'aggregate':REPORT}
@@ -277,14 +277,35 @@ def current_review(item):
   if authority(decision.actor,q,purpose,subject_row.actor_id)!=decision.authority:raise ValidationError('Payroll review authority changed')
  return first
 
+def review_note(actor,item,decision):
+ if decision is None or decision.subject_sha256!=item.sha256 or decision.request_id!=item.request_id:return None
+ is_input=isinstance(item,PayrollInput)
+ if (decision.input_id if is_input else decision.run_id)!=item.pk:return None
+ q=item.request
+ if is_input:
+  access(q,actor,True);input_current(item)
+ else:run_access(actor,item)
+ require(decision.actor,q.case,'payroll.review')
+ access(q,decision.actor,True)
+ if not is_input:run_reader(decision.actor,item)
+ current=authority(decision.actor,q,'input' if is_input else item.kind,item.actor_id)
+ if any(decision.authority.get(k)!=v for k,v in current.items()):return None
+ return PayrollReviewNote.objects.filter(review=decision).values_list('note',flat=True).first()
+
+
 @transaction.atomic
-def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expected):
+def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expected,*,note=None):
  c=locked(actor,case_id,'payroll.review',expected)
  if kind not in ['input','run'] or verdict not in ['approve','return','revoke',draft_matching.VERDICT]:raise ValidationError('Select an exact payroll review decision')
- item=exact(c,PayrollInput if kind=='input' else PayrollRun,subject_id);q=item.request;validate(KEY,operation_key);e=subject(c,evidence_id,'payroll_review')
+ if note is not None:
+  if not isinstance(note,str) or len(note)>2000:raise ValidationError('Use a review note of at most 2,000 characters.')
+  note=note.strip()
+  if verdict in ['return','revoke'] and not note:raise ValidationError('Enter a note for this payroll decision.')
+ item=exact(c,PayrollInput if kind=='input' else PayrollRun,subject_id);q=item.request;validate(KEY,operation_key);e=subject(c,evidence_id,'payroll_review',metadata_only=True)
  old=PayrollReview.objects.filter(request=q,operation_key=operation_key).first()
  if old:
   if old.actor_id!=actor.pk or old.verdict!=verdict or old.input_id!=(item.pk if kind=='input' else None) or old.run_id!=(item.pk if kind=='run' else None) or old.evidence_id!=e.pk:raise ValidationError('Review operation intent changed')
+  if note is not None and note!=(review_note(actor,item,old) or ''):raise ValidationError('Review operation note changed')
   return old
  access(q,actor,True);purpose='input' if kind=='input' else item.kind;a=authority(actor,q,purpose,item.actor_id)
  if verdict!='revoke':
@@ -305,6 +326,7 @@ def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expec
    else:
     for pk in item.metadata['input_ids']:current_review(exact(c,PayrollInput,pk))
  r=PayrollReview.objects.create(request=q,input=item if kind=='input' else None,run=item if kind=='run' else None,operation_key=operation_key,verdict=verdict,authority=a,subject_sha256=item.sha256,evidence=e,actor=actor)
+ if note:PayrollReviewNote.objects.create(review=r,note=note)
  event(actor,c,'payroll.review',review=r.pk,verdict=verdict);bump(c);return r
 
 @transaction.atomic

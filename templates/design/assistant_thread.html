@@ -11,6 +11,7 @@
       <strong>{{ persona.0 }}</strong>
       {% if turn.status == 'queued' %}<p role="status">Question queued. You can leave and check Alerts when the answer is ready.</p>
       {% elif turn.status == 'running' %}<p role="status">Checking your project records for this answer.</p>
+        {% if turn.started_at %}<p><small>Started <time datetime="{{ turn.started_at|date:'c' }}">{{ turn.started_at|date:'H:i:s T' }}</time></small></p>{% endif %}
       {% elif turn.status == 'held' %}<p role="status">An answer could not be completed. Check your access or <a href="#assistant-compose">ask again</a>.</p>
       {% elif turn.stale %}<p role="status">This answer needs a fresh check because a source changed or is no longer available.</p>
       {% else %}<p>{{ turn.answer|linebreaksbr }}</p>

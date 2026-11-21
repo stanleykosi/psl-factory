@@ -1461,6 +1461,9 @@ def configuration(request,case_id):
         if envelope=='finance-accounts/v1':
             value['template_id']=value['template_id'].pk if value['template_id'] else None
             for name in ['allocation_mode','audience','bu_metrics']:value[name]=value[name] or None
+            statement_contract=value.pop('statement_contract_id')
+            if 'statement_contract_id' in request.POST:
+                value['statement_contract_id']=statement_contract.pk if statement_contract else None
         if envelope=='rfp-response/v1':
             value['template_id']=value['template_id'].pk if value['template_id'] else None
             value['route_key']=value['route_key'] or None

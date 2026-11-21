@@ -221,6 +221,9 @@ urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'foc
                 path('work/<int:work_id>/response/', factory_views.detail, {'focus': 'response'}, name='factory_work_response')]
 urlpatterns += [path('work/<int:work_id>/opening-proof/<int:register_id>/', factory_ppe_views.opening_proof,
                     name='factory_ppe_opening_proof')]
+from apps.workflows import factory_ledger_views
+urlpatterns += [path('work/<int:work_id>/observation-proof/<int:check_id>/', factory_ledger_views.download_observation_proof,
+                    name='factory_ledger_observation_proof')]
 urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catalog.upload, name='design_template_upload'),
                 path('projects/<uuid:case_id>/templates/<int:template_id>/file/', template_catalog.download, name='design_template_download')]
 urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
@@ -229,6 +232,8 @@ from apps.core import client_workspace_link_views
 urlpatterns += [path('clients/<uuid:case_id>/client-link/', client_workspace_link_views.detail,
                      name='design_client_workspace_link')]
 urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
+from apps.finance import payments_overview
+urlpatterns += [path('finance/payments/', payments_overview.show, name='design_payments')]
 urlpatterns += [path('finance/month-end/<uuid:case_id>/receivables/capture/', month_end.capture, name='design_capture_month_end_receivables')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/short-payments/<int:issue_id>/', short_payment_views.detail, name='invoice_short_payment')]

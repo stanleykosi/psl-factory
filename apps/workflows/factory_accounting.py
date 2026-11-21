@@ -85,7 +85,9 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
     if mapping and (value['allocation_mode']=='company_only' or allocation):selected.add('D06.rule_oracle_refs')
     rows=[{'purpose':'source','subject':'source','id':source.pk,'preparer':source.actor_id}];missing=[];policies={}
     for component in sorted(selected):
-        resolution=resolve(component,work.case);policies[component]={'status':resolution.status,'id':resolution.configuration.pk if resolution.configuration else None}
+        resolution=resolve(component,work.case);config=resolution.configuration
+        policies[component]={'status':resolution.status,'id':config.pk if config else None,
+                             'revision':config.revision if config else None}
         if resolution.status!='ACTIVE':missing.append(component);continue
         if component in analysis.PURPOSE:
             rows.append({'purpose':analysis.PURPOSE[component],'subject':'configuration','id':resolution.configuration.pk,'preparer':resolution.configuration.created_by_id})
@@ -173,7 +175,7 @@ def snapshot(work,value,reader=None):
             formula=statement
             if not analysis.certification_findings(statement):
                 reviews.append({'purpose':'output','subject':'run','id':statement.pk,'preparer':statement.actor_id,'review':analysis.current_review(work.case,'output',run=statement)})
-    document=document_for(work,formula,value) if not value.get('statement_contract_id') or statement else None
+    document=document_for(work,formula,value) if 'statement_contract_id' not in value or statement else None
     publications=Publication.objects.filter(Q(factory_work=work)|Q(version=document.version if document else None))
     jobs=list(PublicationJob.objects.filter(publication__in=publications).select_related('publication__version').order_by('pk'))
     tasks=list(HumanTask.objects.filter(case=work.case,factory_key__startswith=f'factory:{work.pk}:').order_by('pk'))
@@ -183,10 +185,23 @@ def snapshot(work,value,reader=None):
         'document':document.pk if document else None,'jobs':[(j.pk,j.status,j.fence) for j in jobs],
         'tasks':[(t.pk,t.status,t.revision) for t in tasks],
         'receipts':list(PublicationReceipt.objects.filter(publication__in=publications).values_list('pk','operation_key'))}
-    if value.get('statement_contract_id') is not None:
+    if 'statement_contract_id' in value:
         state.update(base_formula=base_formula.pk if base_formula else None,statement=statement.pk if statement else None)
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,tasks,jobs
+
+def setup_blocker(state, value):
+    if state['unconfigured']:
+        return 'Configure required native accounting rules: ' + ', '.join(state['unconfigured'])
+    if state['mapping']:
+        if value['allocation_mode'] is None:
+            return 'Choose the preparation scope before further calculation.'
+        if value['allocation_mode'] == 'company_and_bu' and value['bu_metrics'] is None:
+            return 'Choose the business-unit metrics before allocating the mapped accounts.'
+    if state.get('base_formula') and 'statement_contract_id' in value and value['statement_contract_id'] is None:
+        return 'Link the exact statement contract before assembling or drafting the report.'
+    return None
+
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if any(j.status=='unknown' or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now() for j in jobs):return ['ACT12'],'Reconcile the original report operation before any new preparation'
@@ -195,7 +210,6 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if any(j.status=='pending' for j in jobs):return ['ACT11'],'Continue the original native report operation'
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate current accounting evidence and calculation lineage'
     if missing or stale:return [],'Current source evidence is incomplete or stale'
-    if state['unconfigured']:return ['ACT10'],'Configure required native accounting rules'
     current_packets={digest(packet(work,r,value)):r for r in state['reviews']}
     if any(t.status=='open' and t.kind=='factory_accounting_review' and
         (digest(t.context.get('packet')) not in current_packets or current_packets[digest(t.context.get('packet'))]['review']['valid']) for t in tasks):
@@ -205,8 +219,8 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
         if all(any(t.status=='open' and t.kind=='factory_accounting_review' and t.context.get('packet')==packet(work,r,value) for t in tasks) for r in pending):return [],'Required Finance decisions are waiting on current eligible reviewers'
         return ['ACT10'],'Assemble the required exact Finance decision packets'
     if any(t.status=='open' for t in tasks):return ['ACT10'],'Observe current source-owned Finance decisions'
+    if blocker:=setup_blocker(state,value):return ['ACT10'],blocker
     if not state['mapping']:return ['ACT08'],'Prepare the native account alignment and control-total preview'
-    if value['allocation_mode'] is None or value['allocation_mode']=='company_and_bu' and value['bu_metrics'] is None:return ['ACT10'],'Configure the accounting allocation scope'
     if value['allocation_mode']=='company_and_bu' and not state['allocation']:return ['ACT08'],'Prepare the configured native BU allocation'
     if not state['formula']:return ['ACT08'],'Prepare the configured native formula output'
     if value.get('statement_contract_id') is not None and not state.get('statement'):return ['ACT08'],'Bind the exact reviewed statement input inventory'
@@ -226,9 +240,6 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         pk=state['formula'] or state['allocation'] or state['mapping']
         return adapter.investigate(work,source,FinanceRun.objects.get(pk=pk) if pk else None)
     if kind=='ACT10':
-        if state['unconfigured']:raise ValidationError('configuration_needed: configure native accounting components '+', '.join(state['unconfigured']))
-        if state['mapping'] and (value['allocation_mode'] is None or value['allocation_mode']=='company_and_bu' and value['bu_metrics'] is None):
-            raise ValidationError('configuration_needed: explicit company/BU preparation scope is required')
         packets = [(row, packet(work, row, value)) for row in state['reviews']]
         current = {digest(bound): row for row, bound in packets}
         created, unrouted = [], []
@@ -256,7 +267,10 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             created.append(task.pk)
         result = {'head': work.source_head_id, 'review_tasks': created,
                   'waiting': 'finance_review' if created else None, 'approval_granted': False}
-        if unrouted:
+        if not created and (blocker:=setup_blocker(state,value)):
+            work.status = 'configuration_needed'
+            result['finding'] = blocker
+        elif unrouted:
             work.status = 'owner_needed'
             result.update(owner_needed_for=unrouted, finding='A current Finance reviewer is needed for a dependent decision.')
         return result
@@ -270,6 +284,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         run=adapter.prepare(work,source,stage,FinanceRun.objects.get(pk=parent_id) if parent_id else None,value['bu_metrics'],inputs(work)['adjustment_ids'])
         return {'finance_run':run.pk,'kind':run.kind,'result_status':run.result['status'],'ledger_posted':False}
     if kind=='ACT09':
+        if 'statement_contract_id' in value and not state.get('statement'):
+            raise ValidationError('configuration_needed: complete the exact statement before drafting this report')
         if value['template_id'] is None or value['audience'] is None:raise ValidationError('configuration_needed: report template and aggregate audience are required')
         version=adapter.draft(work,FinanceRun.objects.get(pk=state['formula']),value['template_id'],value['audience'])
         return {'document_version':version.pk,'finance_run':state['formula']}

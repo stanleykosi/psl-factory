@@ -33,8 +33,12 @@ class DesignDelegationTests(TestCase):
         data = {'principal': actor.pk, 'delegate': delegate.pk, 'role': 'PM', 'revision': rev(case),
                 'starts': now.isoformat(), 'ends': (now + timedelta(days=1)).isoformat(), 'effective': now.isoformat(),
                 'evidence': proof.pk}
-        self.assertNotContains(self.client.get(url, {'role': 'PM'}), other.username)
-        self.assertContains(self.client.post(url, {**data, 'delegate': other.pk}), 'Select a valid choice')
+        self.assertContains(self.client.get(url, {'role': 'PM'}), f'{other.username} (Chief executive)')
+        invalid = self.client.post(url, {**data, 'delegate': other.pk, 'ends': now.isoformat()})
+        self.assertContains(invalid, 'Choose someone with a current project manager assignment.')
+        self.assertContains(invalid, 'Enter a time after the start.')
+        self.assertEqual(invalid.context['form']['delegate'].value(), str(other.pk))
+        self.assertFalse(Configuration.objects.filter(case=case, component='D05.delegation_rules').exists())
         self.assertContains(self.client.post(url, {**data, 'delegate': actor.pk}), 'Choose a different person')
         self.assertContains(self.client.post(url, {**data, 'ends': now.isoformat()}), 'Enter a time after the start')
         self.assertRedirects(self.client.post(url, data), url)

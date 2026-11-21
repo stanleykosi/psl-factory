@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Trial verified the hosted Payments index and followed the exact retained overdue balance into native follow-up, bringing the ledger to 228. All thirteen tests for the next bank, emergency and costing batch passed. Guarded current-role samples are starting from the 287b preview.
+
+21 November 2026. Work 249 reached verified Hypercare after the retained issue correction, bringing the browser ledger to 227. Candidate 287b passed 25 exact PostgreSQL tests. Its 74-path reviewed preview and the isolated 288 bank, costing and emergency checks were submitted.
+
 21 November 2026. Trial completed the exact Normal change approvals and native authorization without a dispatch, bringing the ledger to 226. The corrected 287b package passed Django checks and was submitted for PostgreSQL. Candidate 288 retains the next exact costing, CTO and bank receipt implementation.
 
 21 November 2026. Trial verified exact Statement of Work approval and return, and the retained Hypercare issue hold and source correction. Reconciled the recovery request’s earlier browser evidence. The ledger reached 225. Candidate 287 failed before collecting tests because the URL overlay included the next bank receipt route. Its exact subset is being corrected and rerun.

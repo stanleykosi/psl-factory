@@ -69,7 +69,7 @@ def commands(actor,case,data=None,files=None):
  'combine':('Prepare restricted source combination',{'request_record':select(PayrollRequest),'inputs':select(PayrollInput,True),'operation_key':key()}),
  'match':('Match to the HR-authorised effective-period view',{'parent':select(PayrollRun,kind='combine'),'hr_snapshot':select(HRReadSnapshot),'operation_key':key()}),
  'aggregate':('Prepare permitted BU staff-cost totals',{'parent':select(PayrollRun,kind='match'),'operation_key':key()}),
- 'review':('Finance review exact input or working version',{'subject_kind':forms.ChoiceField(choices=[('input','input'),('run','run')]),'subject_id':forms.IntegerField(min_value=1),'verdict':forms.ChoiceField(choices=[(v,v) for v in ['approve','return','revoke']]),'operation_key':key(),'evidence':evidence('payroll_review')}),
+ 'review':('Finance review exact input or working version',{'subject_kind':forms.ChoiceField(choices=[('input','input'),('run','run')]),'subject_id':forms.IntegerField(min_value=1),'verdict':forms.ChoiceField(choices=[(v,v) for v in ['approve','return','revoke']]),'operation_key':key(),'evidence':evidence('payroll_review'),'note':forms.CharField(max_length=2000,required=False,widget=forms.Textarea(attrs={'rows':3}),label='Note for a return or withdrawal')}),
  'publish':('Publish reviewed aggregate to local BU report',{'run':select(PayrollRun,kind='aggregate'),'operation_key':key()}),
  'receive':('Acknowledge exact BU report version',{'publication':select(PayrollPublication)}),
  'hr_correction':('Route an HR matching correction by reference',{'run':select(PayrollRun,kind='match'),'operation_key':key(),'evidence':evidence('hr_correction_request')}),

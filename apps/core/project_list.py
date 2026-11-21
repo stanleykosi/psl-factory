@@ -28,7 +28,7 @@ STATIONS = {
     'delivery-handover/v1': 'Handover',
     'delivery-closure/v1': 'Closure',
 }
-READ_ACTIONS = ('engagement.read', 'finance.read', 'factory.read')
+READ_ACTIONS = ('engagement.read', 'finance.read', 'factory.read', 'delivery.planning_decide')
 WORK_LIMIT = 8
 PAGE_QUERIES = 540
 PAGE_SECONDS = 8
@@ -94,13 +94,24 @@ def _work_rows(scope):
     return by_project
 
 
-def _counts(actor, rows):
+def _counts(actor, rows, can_decide_release):
+    from apps.workflows.factory_delivery import subject as release_subject
     from apps.workflows.factory_views import decision_inbox_row, exception_inbox_row, presentation
+    from apps.workflows.models import HumanTask
 
     if len(rows) > WORK_LIMIT:
         return None, None
     reviews, exceptions = 0, 0
     for work in rows:
+        if (work.definition == 'delivery-release/v1' and work.status == 'configuration_needed'
+                and not can_decide_release and not work.invoice_id
+                and not HumanTask.objects.filter(case_id=work.case_id, factory_key__startswith=f'factory:{work.pk}:',
+                                                 kind='factory_review', status='open').exists()):
+            # The Exceptions queue includes this exact setup hold. Without
+            # Planning authority or an open review, no decision row can apply.
+            release_subject(work, actor)
+            exceptions += 1
+            continue
         with observation_scope():
             row = presentation(actor, work)
         if work.status not in ('verified', 'cancelled') and decision_inbox_row(row):
@@ -146,7 +157,8 @@ def summaries(actor, cases):
                 state = 'Outcome recorded' if status == 'verified' else WORK_STATUS.get(status)
             manager = _inspect(engagement_facts, (actor, case), 64) if (case.pk, 'engagement.read') in grants else None
             milestone = _inspect(next_milestone, (case,), 64) if not closed and (case.pk, 'finance.read') in grants else None
-            counts = _inspect(_counts, (actor, work.get(case.pk, ())), 190) if case.pk in visible_work else None
+            counts = _inspect(_counts, (actor, work.get(case.pk, ()),
+                                        (case.pk, 'delivery.planning_decide') in grants), 190) if case.pk in visible_work else None
             reviews, exceptions = counts or (None, None)
             rows.append({
                 'case': case, 'manager': manager.get('manager') if manager else None,

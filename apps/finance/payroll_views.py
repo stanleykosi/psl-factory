@@ -49,6 +49,14 @@ def workbench(request,case_id,focus=None):
  if focus:
   title, actions, kinds=SECTIONS[focus]
   forms=[entry for entry in forms if entry['action'] in actions]
+ if focus=='corrections' and 'match' in request.GET:
+  selected_match=request.GET['match']
+  for entry in forms:
+   if entry['action']!='hr_correction':continue
+   form=entry['form']
+   bounded=selected_match.isascii() and selected_match.isdecimal() and len(selected_match)<=18
+   form.fields['run'].queryset=form.fields['run'].queryset.filter(pk=int(selected_match)) if bounded else PayrollRun.objects.none()
+   if bounded:form.initial['run']=int(selected_match)
  if request.method=='POST':
   try:
    f=next((x['form'] for x in forms if x['action']==request.POST.get('action')),None)
@@ -69,7 +77,7 @@ def workbench(request,case_id,focus=None):
    elif k=='combine':domain.combine(a,c,d['request_record'].pk,[i.pk for i in d['inputs']],d['operation_key'],v)
    elif k=='match':domain.match(a,c,d['parent'].pk,d['hr_snapshot'].pk,d['operation_key'],v)
    elif k=='aggregate':domain.aggregate(a,c,d['parent'].pk,d['operation_key'],v)
-   elif k=='review':domain.review(a,c,d['subject_kind'],d['subject_id'],d['verdict'],d['operation_key'],e,v)
+   elif k=='review':domain.review(a,c,d['subject_kind'],d['subject_id'],d['verdict'],d['operation_key'],e,v,note=d['note'])
    elif k=='publish':domain.publish(a,c,d['run'].pk,d['operation_key'],v)
    elif k=='receive':domain.receive_report(a,c,d['publication'].pk,v)
    elif k=='hr_correction':domain.hr_correction(a,c,d['run'].pk,d['operation_key'],e,v)
@@ -86,6 +94,9 @@ def workbench(request,case_id,focus=None):
  for i in inputs:
   try:domain.access(i.request,request.user,True);i.can_read_private=True
   except (ValidationError,PermissionDenied):i.can_read_private=False
+  if i.can_read_private and not i.metadata['accepted']:
+   from .payroll_working import rejection_notice
+   i.rejection_notice=rejection_notice(i.metadata['codes'])
   try:domain.input_current(i);i.current=True
   except (ValidationError,PermissionDenied):i.current=False
  for r in runs:

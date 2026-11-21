@@ -16,7 +16,7 @@
   {% if form %}<p><a href="{% url 'factory_configuration' case.pk %}?definition=pmo-finance%2Fv1">Set invoice decision limits</a></p>{% endif %}
 </section>
 {% if can_edit %}<aside class="card"><h2>Add a delegation draft</h2>
-  {% if roles %}<form method="get"><label for="delegation-role">Decision role</label><select name="role" id="delegation-role">{% for available in roles %}<option{% if available == role %} selected{% endif %}>{{ available }}</option>{% endfor %}</select><button>Show eligible people</button></form>
+  {% if roles %}<form method="get"><label for="delegation-role">Decision role</label><select name="role" id="delegation-role">{% for available in roles %}<option value="{{ available }}"{% if available == role %} selected{% endif %}>{{ available|role_name }}</option>{% endfor %}</select><button>Choose role</button></form>
   <p>Choose two people already assigned to this role. Supply the recorded decision for separate review.</p>
   {% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Save for review</button></form>{% endif %}
   {% else %}<p>Record the workspace’s role assignments before creating a delegation draft.</p>{% endif %}

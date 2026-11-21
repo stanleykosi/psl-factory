@@ -3,7 +3,7 @@ from decimal import Decimal, localcontext
 from urllib.parse import urlencode
 
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Sum
 from django.http import Http404
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
@@ -69,16 +69,19 @@ def invoice_rows(actor, case, budget):
     return result
 
 
-def balance(invoice, budget):
+def balance(invoice, budget, *, include_sources=True):
     issue = getattr(invoice, 'invoiceissue', None)
     if not issue:
         return None, None, [], []
-    entries = budget.take(corrections.accepted(issue), 75)
-    allocations = budget.take(cash.allocations(issue=issue).select_related('lot__receipt').order_by('pk'), 150)
+    accepted = corrections.accepted(issue)
+    recorded = cash.allocations(issue=issue)
+    entries = budget.take(accepted if include_sources else accepted.only('payload', 'correction__kind'), 75)
+    allocations = budget.take(recorded.select_related('lot__receipt').order_by('pk'), 150) if include_sources else []
     with localcontext() as context:
         context.prec = 512
         face = invoice.amount + sum((Decimal(item.payload['signed_delta']) for item in entries), Decimal(0))
-        paid = sum((item.amount for item in allocations), Decimal(0))
+        paid = (sum((item.amount for item in allocations), Decimal(0)) if include_sources
+                else recorded.aggregate(total=Sum('amount'))['total'] or Decimal(0))
         return paid, face - paid if face >= paid else None, entries, allocations
 
 

@@ -299,7 +299,8 @@ def human_action(actor,work_id,expected,case_expected,action,values):
             combined=checked_run(w,'combine',q,data)
             if values['kind']!='run' or not combined or values['subject_id']!=combined.pk:
                 raise ValidationError('Review the exact current held combination for this work.')
-        decision=native.review(actor,w.case_id,values['kind'],values['subject_id'],values['verdict'],values['operation_key'],values['evidence_id'],case_expected)
+        decision=native.review(actor,w.case_id,values['kind'],values['subject_id'],values['verdict'],
+                               values['operation_key'],values['evidence_id'],case_expected,note=values.get('note'))
         wake_waiting(w.pk);return decision
     if action=='publish':
         a=run(w,'aggregate')

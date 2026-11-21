@@ -43,6 +43,7 @@ AREAS = {
         ('P02.owner_routes', 'Department approval routes'),
         ('P02.evidence_contracts', 'Department approval evidence'),
     )),
+    'rules': ('Rules', ()),
     'finance': ('Finance rules', (
         ('D12.contract_version_ref', 'Signed agreement'),
         ('D12.stage_terms', 'Stage billing terms'),
@@ -207,14 +208,19 @@ def overview(request, case_id):
             saved = resolved.configuration if resolved.status=='ACTIVE' else None
             items.append({'label':label,'status':resolved.status,'revision':saved.revision if saved else None})
     observed_at = timezone.now()
-    finance_groups = []
-    if area == 'finance':
-        from .setup_finance import groups
-
+    finance_groups, rule_rows = [], []
+    if area in {'finance', 'rules'}:
         permissions = set(Grant.objects.filter(case=case, user=request.user, user__is_active=True,
                                                active=True).values_list('action', flat=True))
         can_configure = 'policy.configure' in permissions
-        finance_groups = groups(request.user, case, permissions, observed_at)
+        if area == 'finance':
+            from .setup_finance import groups
+
+            finance_groups = groups(request.user, case, permissions, observed_at)
+        else:
+            from .setup_rules import rows
+
+            rule_rows = rows(request.user, case, permissions, observed_at)
     else:
         can_configure = Grant.objects.filter(case=case,user=request.user,active=True,action='policy.configure').exists()
     disclosure = None
@@ -293,7 +299,7 @@ def overview(request, case_id):
                   'disclosure_hold':disclosure_hold,
                   'field_rows':field_rows,
                   'role_rows':role_rows, 'role_hold':role_hold, 'observed_at':observed_at,
-                  'finance_groups':finance_groups})
+                  'finance_groups':finance_groups, 'rule_rows':rule_rows})
 
 
 @login_required

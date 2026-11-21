@@ -164,6 +164,17 @@ def working_panel(actor,work,request,draft_match=None):
     except (PermissionDenied,ValidationError):return None
 
 
+def match_summary(actor, item):
+    payroll.native.run_access(actor, item)
+    rows = item.result.get('rows', [])
+    if not rows:
+        return None
+    matched = {row['employee_id'] for row in rows if row.get('match_status') == 'matched'}
+    unresolved = {row['employee_id'] for row in rows if row.get('match_status') != 'matched'}
+    return {'matched': len(matched - unresolved), 'unmatched': len(unresolved),
+            'held_pay_items': sum(row['amount'] is None or bool(row.get('quarantine_codes')) for row in rows)}
+
+
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work,focus=None):
     from .factory_views import permitted
@@ -185,7 +196,7 @@ def detail(request,work,focus=None):
                 payroll.correct(request.user,work.pk,revision,case_revision,form.cleaned_data['request_id'].pk,form.inputs(),p.get('reason',''))
             elif action in ['review','publish','receive','receive_hr','working']:
                 values={}
-                if action=='review':values={'kind':p.get('kind'),'subject_id':int(p.get('subject_id','0')),'verdict':p.get('verdict'),'operation_key':p.get('operation_key',''),'evidence_id':int(p.get('evidence_id','0'))}
+                if action=='review':values={'kind':p.get('kind'),'subject_id':int(p.get('subject_id','0')),'verdict':p.get('verdict'),'operation_key':p.get('operation_key',''),'evidence_id':int(p.get('evidence_id','0')),'note':p.get('note','')}
                 elif action=='receive':values={'publication_id':int(p.get('publication_id','0'))}
                 elif action=='receive_hr':values={'snapshot_id':int(p.get('snapshot_id','0')),'evidence_id':int(p.get('evidence_id','0'))}
                 elif action=='working':
@@ -196,6 +207,8 @@ def detail(request,work,focus=None):
                 if action=='receive':notice=f'Your receipt #{result.pk} for aggregate report #{result.publication_id} is recorded.'
                 elif action=='receive_hr':notice='HR snapshot receipt recorded. Recalculate the selected payroll sources.'
                 elif action=='working':notice='Working draft prepared. Held rows and final review requirements are unchanged.'
+                elif action=='review' and result.verdict=='return':
+                    notice='Returned for correction. The reason is recorded on this version.'
                 elif action=='review' and result.verdict==payroll.native.draft_matching.VERDICT:
                     notice='Approved for private staff matching. Held pay still needs correction before reporting.'
             elif action=='restart':
@@ -218,8 +231,8 @@ def detail(request,work,focus=None):
             messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
             row=presentation(request.user,work);panel=row['payroll']
     review_targets=[];publication=None;receipt_rows=None;totals={};hr_snapshot=None;hr_received=False;hr_evidence=[]
-    withdrawal=None;withdrawal_evidence=[];can_start_successor=False
-    if not recipient and panel['can_review'] and focus in (None,'decision'):
+    withdrawal=None;withdrawal_evidence=[];can_start_successor=False;recorded_notes=[]
+    if not recipient and focus in (None,'decision'):
         q=panel['request']
         inputs=PayrollInput.objects.defer('payload').filter(request=q,pk__in=panel['inputs']['input_ids']).order_by('provider')
         run_ids=[run['id'] for run in panel['runs'].values()]
@@ -230,10 +243,25 @@ def detail(request,work,focus=None):
         for kind, items in (('input',inputs), ('run',runs)):
             for item in items:
                 purpose='input' if kind=='input' else item.kind
+                current=item.reviews.select_related('actor').order_by('-pk').first()
+                if current and current.verdict in ['return','revoke']:
+                    try:note=payroll.native.review_note(request.user,item,current)
+                    except (ValidationError,PermissionDenied):note=None
+                    if note:
+                        recorded_notes.append({'item':item,'decision':current,'note':note})
+                        if focus=='decision' and current.verdict=='return' and panel['stage']==purpose+'_review':
+                            row.update(state='Staff match returned' if purpose=='match' else 'Payroll review returned',
+                                       next_action='Read the recorded reason and correct this version.')
+                if not panel['can_review']:continue
                 try:payroll.native.authority(request.user,q,purpose,item.actor_id)
                 except (ValidationError,PermissionDenied):continue
-                target={'kind':kind,'item':item,'title':REVIEW_HEADINGS[purpose],
-                        'current':item.reviews.order_by('-pk').first()}
+                target={'kind':kind,'item':item,'title':REVIEW_HEADINGS[purpose],'current':current}
+                if purpose=='match' and panel['stage']=='match_review':
+                    try:
+                        target['match_summary']=match_summary(request.user,item)
+                        target['can_ask_hr']=permitted(request.user,work,'payroll.hr_correction') and permitted(
+                            request.user,work,'hrfinance.correction')
+                    except (ValidationError,PermissionDenied):pass
                 if purpose=='combine' and item.metadata['status']=='held':
                     try:_,eligible=payroll.native.draft_matching.scope(request.user,item)
                     except (ValidationError,PermissionDenied):pass
@@ -273,7 +301,7 @@ def detail(request,work,focus=None):
     response=render(request,'factory/payroll_detail.html',{'row':row,'case':work.case,'focus':focus,
         'queue':request.GET.get('queue','needs_me'),'q':request.GET.get('q','')[:120],
         'inputs_form':form,'review_key':'review-'+uuid4().hex,'restart_key':'restart-'+uuid4().hex,
-        'restart_profiles':profiles,'review_targets':review_targets,
+        'restart_profiles':profiles,'review_targets':review_targets,'recorded_notes':recorded_notes,
         'review_evidence':Evidence.objects.filter(case=work.case,kind='payroll_review') if review_targets else [],
         'publication':publication,'receipt_rows':receipt_rows,'totals':totals,
         'withdrawal':withdrawal,'withdrawal_evidence':withdrawal_evidence,'can_start_successor':can_start_successor,

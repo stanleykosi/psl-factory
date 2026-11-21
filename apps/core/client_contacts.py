@@ -19,6 +19,7 @@ from apps.identity.services import active_case_grants, require, visible_cases
 from .evidence_access import public_evidence
 from . import client_billing_identity
 from . import client_directory
+from . import client_project_people
 from .models import ClientContactRevision, Evidence
 from .read_budget import ReadLimit
 from .services import bump, event, lock_case
@@ -128,16 +129,17 @@ def project(request, case_id):
             return_work=FactoryWork.objects.filter(pk=selected_work,case=case,definition='engagement/v1').values_list('pk',flat=True).first()
     except (ValueError,PermissionDenied,ValidationError):pass
     selected = request.POST.get('purpose') if request.method == 'POST' else None
+    targets = {client_billing_identity.PURPOSE: 'billing', client_project_people.PURPOSE: 'project'}
+    target = targets.get(selected, selected)
     if request.method == 'POST':
-        purpose = 'billing' if selected == client_billing_identity.PURPOSE else selected
-        if purpose not in WRITE or WRITE[purpose] not in actions:
+        if target not in WRITE or WRITE[target] not in actions:
             raise PermissionDenied
     sections = []
     for purpose in READ:
         try:
             authorize(request.user, case, purpose)
         except (PermissionDenied, ValidationError):
-            if selected == purpose or (purpose == 'billing' and selected == client_billing_identity.PURPOSE):
+            if target == purpose:
                 raise PermissionDenied
             continue
         records = ClientContactRevision.objects.filter(case=case, purpose=purpose).order_by('customer', '-number').distinct('customer')[:100]
@@ -159,6 +161,21 @@ def project(request, case_id):
                          'entries': entries, 'form': form})
     if not sections:
         raise PermissionDenied
+    people = None
+    if any(section['purpose'] == 'project' for section in sections):
+        selected_person = selected == client_project_people.PURPOSE
+        people = client_project_people.panel(case, can_edit=WRITE['project'] in actions,
+            data=request.POST if selected_person else None, selection=request.GET.get('project_contact', ''),
+            number=request.GET.get('people_page'))
+        person_form = people['form']
+        if selected_person and person_form.is_valid():
+            try:
+                client_project_people.save(request.user, case, person_form.cleaned_data)
+            except ValidationError as exc:
+                person_form.add_error(None, exc)
+            else:
+                messages.success(request, 'Project contact recorded.')
+                return redirect(request.path+'?work='+str(return_work)) if return_work else redirect('design_client_project', case.pk)
     billing = None
     billing_limited = False
     identity = None
@@ -191,4 +208,4 @@ def project(request, case_id):
                 cover.contact_recorded = cover.customer in contacts
     return render(request, 'design/client_project.html', {'case': case, 'sections': sections, 'billing': billing,
                                                          'billing_limited': billing_limited, 'return_work': return_work,
-                                                         'billing_identity': identity})
+                                                         'billing_identity': identity, 'project_people': people})

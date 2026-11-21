@@ -312,18 +312,27 @@ def reserve(actor, conversation_id, operation_key, question, focus=''):
     return turn
 
 
-def worker_once():
-    model = os.getenv('OPENROUTER_MODEL')
-    if not model or not os.getenv('OPENROUTER_API_KEY'):
-        return False
-    with transaction.atomic():
-        AssistantTurn.objects.filter(status='running', started_at__lt=timezone.now() - timedelta(minutes=5)).update(status='held')
-        turn = AssistantTurn.objects.select_for_update(skip_locked=True).filter(status='queued').order_by('created_at', 'pk').first()
-        if turn is None:
-            return False
+@transaction.atomic
+def claim_turn(turn_id=None):
+    turns = AssistantTurn.objects.all()
+    if turn_id is not None:
+        turns = turns.filter(pk=turn_id)
+    now = timezone.now()
+    turns.filter(status='running', started_at__lt=now - timedelta(minutes=5)).update(status='held')
+    turn = turns.select_for_update(skip_locked=True).filter(status='queued').order_by('created_at', 'pk').first()
+    if turn is not None:
         turn.status = 'running'
         turn.started_at = timezone.now()
         turn.save(update_fields=['status', 'started_at'])
+    return turn
+
+
+def answer_claim(turn, model):
+    if turn.status != 'running' or turn.started_at is None:
+        raise ValidationError('A current Assistant claim is required.')
+    claim = AssistantTurn.objects.filter(pk=turn.pk, status='running', started_at=turn.started_at)
+    if not claim.exists():
+        return False
     conversation = turn.conversation
     try:
         sources, next_work = turn_context(turn)
@@ -333,7 +342,7 @@ def worker_once():
             raise ValidationError('A received-report conversation uses the listed payroll questions.')
         context_hash = digest(sources)
         if not sources:
-            AssistantTurn.objects.filter(pk=turn.pk, status='running').update(
+            claim.update(
                 status='answered', answer=INSUFFICIENT_EVIDENCE, sources=[], context_hash=context_hash, next_work='',
             )
             return True
@@ -358,12 +367,20 @@ def worker_once():
             raise ValidationError('Source access or records changed while the assistant was working.')
         # Without a source, show only a fixed insufficient-evidence message.
         answer = raw['answer'].strip() if cited else INSUFFICIENT_EVIDENCE
-        AssistantTurn.objects.filter(pk=turn.pk, status='running').update(
+        claim.update(
             status='answered', answer=answer, sources=cited, context_hash=context_hash, next_work=raw['next_work'] if cited else '',
         )
     except Exception as exc:
         import logging
 
         logging.getLogger(__name__).warning('Assistant turn %s held: %s', turn.pk, type(exc).__name__)
-        AssistantTurn.objects.filter(pk=turn.pk, status='running').update(status='held')
+        claim.update(status='held')
     return True
+
+
+def worker_once():
+    model = os.getenv('OPENROUTER_MODEL')
+    if not model or not os.getenv('OPENROUTER_API_KEY'):
+        return False
+    turn = claim_turn()
+    return answer_claim(turn, model) if turn is not None else False

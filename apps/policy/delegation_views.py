@@ -17,13 +17,14 @@ from django.views.decorators.http import require_http_methods
 
 from apps.core.evidence_access import public_evidence
 from apps.core.services import bump, event, lock_case
+from apps.core.templatetags.studio_ui import role_name
 from apps.core.workbench import granted
 from apps.identity.models import Grant
 from apps.pmo.forms import OffsetTimestamp
 
 from .impact import configuration
 from .models import Configuration, PolicyState
-from .role_assignments import COMPONENT, assert_assigned, authorize_header, draft_delegations, instant, invoice_delegation_source
+from .role_assignments import COMPONENT, assert_assigned, authorize_header, draft_delegations, eligibility, instant, invoice_delegation_source
 from .services import reference_values, resolve
 
 SUBMISSION_ACTION = 'delegation.draft_submitted'
@@ -54,17 +55,34 @@ class DelegationDraftForm(forms.Form):
                                        'revision': case.revision, 'submission_key': uuid4()})
         self.fields['role'].widget = forms.HiddenInput()
         self.fields['role'].choices = [(role, role)]
+        self.case, self.members, self.role = case, members, role
+        roles_by_person = {}
+        for item in members:
+            roles_by_person.setdefault(item['user_id'], set()).add(item['role'])
         people = get_user_model().objects.filter(is_active=True, grant__case=case, grant__active=True,
-            grant__action='case.read', pk__in=[item['user_id'] for item in members if item['role'] == role]).order_by('username', 'pk')
+            grant__action='case.read', pk__in=roles_by_person).order_by('username', 'pk')
+        self.fields['principal'].queryset = people.filter(
+            pk__in=[person for person, assigned in roles_by_person.items() if role in assigned])
+        self.fields['delegate'].queryset = people
+
+        def person_label(user):
+            name = user.get_full_name() or user.get_username()
+            assigned = ', '.join(role_name(item) for item in sorted(roles_by_person[user.pk]))
+            return f'{name} ({assigned})'
+
         for key in ('principal', 'delegate'):
-            self.fields[key].queryset = people
-            self.fields[key].label_from_instance = lambda user: user.get_full_name() or user.get_username()
+            self.fields[key].label_from_instance = person_label
         self.fields['evidence'].queryset = public_evidence(case.evidence.filter(kind='policy_decision')).order_by('-pk')
 
     def clean(self):
         data = super().clean()
         if data.get('principal') and data.get('principal') == data.get('delegate'):
             self.add_error('delegate', 'Choose a different person.')
+        for key in ('principal', 'delegate'):
+            if person := data.get(key):
+                assigned = eligibility(self.case, self.members, person.pk, active=person.is_active)
+                if self.role not in assigned['roles'] or not assigned['eligible_role_bundle']:
+                    self.add_error(key, f'Choose someone with a current {role_name(self.role).lower()} assignment.')
         if data.get('starts') and data.get('ends') and data['ends'] <= data['starts']:
             self.add_error('ends', 'Enter a time after the start.')
         return data

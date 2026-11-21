@@ -31,6 +31,7 @@
     <div>
       <a href="{% url 'work_inbox' %}">My assignments</a>
       <a href="{% url 'workspace_overview' %}?area=finance">Finance workspaces</a>
+      <a href="{% url 'design_payments' %}"{% if request.resolver_match.url_name == 'design_payments' %} aria-current="page"{% endif %}>Payments and follow-up</a>
       <a href="{% url 'design_company_month_end' %}">Month-end</a>
       <a href="{% url 'document_inbox' %}">Documents</a>
       <a href="{% url 'project_views' %}">Project reports</a>

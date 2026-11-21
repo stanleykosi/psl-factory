@@ -1,18 +1,24 @@
 """Typed primary F01 console. Human observations and decisions stay native."""
+from io import BytesIO
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError,PermissionDenied
-from django.shortcuts import render,redirect
+from django.http import FileResponse,Http404
+from django.shortcuts import get_object_or_404,render,redirect
 from django.utils import timezone
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods,require_safe
 from django.views.decorators.cache import never_cache
+from adapters import case_uploads
 from apps.core.models import Audit,Case,Evidence
 from apps.core.workbench import granted
 from apps.finance import ledger
-from apps.finance.models import LedgerLineage
+from apps.finance.models import LedgerCheck,LedgerLineage
 from . import factory,factory_ledger as domain
+from . import factory_ledger_observation_proof as observation_proof
 from .factory_progress_views import StartWithBackground, start_work
+from .models import FactoryWork
 from .quickbooks_mcp import factory_read_status
 from .screen_focus import require_action
 
@@ -70,6 +76,8 @@ def detail(request,work,focus=None):
             require_action(work,focus,a)
             allowed={'advance':set(),'recheck':{'reason'},'restart':{'reason'},'resume':set(),'cancel':set(),'correct':{'evidence_id','predecessor_id','reason'},'observe':{'target','evidence','outcome'},'review':{'target','evidence','verdict','reason'},'adopt_profile':{'configuration','reason'}}
             if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed incumbent command')
+            if request.FILES and (a!='observe' or set(request.FILES)!={'file'} or len(request.FILES.getlist('file'))!=1):
+                raise ValidationError('Attach one private proof only when recording an observation.')
             if a=='advance':
                 from .factory_progress import set_progress
                 set_progress(request.user,work.pk,revision,True)
@@ -79,6 +87,9 @@ def detail(request,work,focus=None):
             elif a=='correct':
                 if not form or not form.is_valid():raise ValidationError('Choose exact native sources')
                 domain.correct(request.user,work.pk,revision,case_revision,*form.ids(),p.get('reason',''))
+            elif a=='observe' and request.FILES:
+                observation_proof.record(request.user,work.pk,revision,case_revision,int(p.get('target','0')),
+                                         int(p.get('evidence','0')),p.get('outcome'),request.FILES['file'])
             elif a in ['observe','review']:
                 domain.command(request.user,work.pk,revision,case_revision,a,int(p.get('target','0')),
                                int(p.get('evidence','0')),p.get('verdict'),outcome=p.get('outcome'),reason=p.get('reason',''))
@@ -107,12 +118,35 @@ def detail(request,work,focus=None):
     elif row['state']=='Verified':
         row['next_action']='Inspect the approved reference and its observation'
     can_observe=active and w is not None and not conflict and focus in (None,'response') and permitted(request.user,work,'ledger.verify')
+    attachment=None
+    if x and not conflict and focus in (None,'response','decision'):
+        try:attachment=observation_proof.attachment_for(request.user,work,x)
+        except (ValidationError,PermissionDenied):pass
     return render(request,'factory/ledger_detail.html',{'row':row,'case':work.case,'focus':focus,
         'queue':request.GET.get('queue','needs_me'),'q':request.GET.get('q','')[:120],
         'source':body,'source_evidence':e,'conflict':conflict,'rejected':rejected,'rejection':rejection,'inputs_form':form,'check':x,
         'can_review':active and can_review,'can_approve':can_approve,'can_observe':can_observe,
+        'observation_proof':attachment,'can_attach_proof':can_observe and permitted(request.user,work,'evidence.add'),
         'observations':Evidence.objects.filter(case=work.case,kind='quickbooks_verification').order_by('-pk') if can_observe else [],
         'review_evidence':Evidence.objects.filter(case=work.case,kind__in=['finance_review','policy_decision']).order_by('-pk') if can_review else [],
         'decisions':x.decisions.order_by('-pk') if x else [],'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else [],
         'can_restart':work.status=='cancelled' and form is not None,'can_correct':active and form is not None,
         'can_configure':permitted(request.user,work,'policy.configure'),'mcp_read':factory_read_status(request.user,work)})
+
+
+@login_required
+@require_safe
+@never_cache
+def download_observation_proof(request,work_id,check_id):
+    work=get_object_or_404(FactoryWork.objects.select_related('case','source_head'),pk=work_id,definition=domain.DEFINITION)
+    factory.access(request.user,work.case,'factory.read',domain.DEFINITION)
+    check=get_object_or_404(LedgerCheck,pk=check_id,lineage__case=work.case)
+    try:
+        proof=observation_proof.attachment_for(request.user,work,check)
+        if not proof:raise Http404('Observation proof unavailable.')
+        contents=case_uploads.read(proof)
+    except (ValidationError,OSError) as exc:
+        raise Http404('Observation proof unavailable.') from exc
+    response=FileResponse(BytesIO(contents),as_attachment=True,filename=proof.name,content_type='application/octet-stream')
+    response['Cache-Control']='no-store'
+    return response

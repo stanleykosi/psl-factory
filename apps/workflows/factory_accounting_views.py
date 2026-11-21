@@ -13,7 +13,8 @@ from apps.core.evidence_access import public_evidence
 from apps.core.presentation import workspace_name
 from apps.core.read_observation import read_observation
 from apps.core.workbench import active, granted
-from apps.finance.models import FinanceSource,FinanceAdjustment,FinanceRun
+from apps.finance.models import FinanceSource,FinanceAdjustment,FinanceRun,FinanceReview
+from apps.policy.models import Configuration
 from apps.core.models import Evidence, Audit
 from . import factory_accounting_intake as intake
 from apps.documents.models import Template,PublicationReceipt
@@ -24,15 +25,28 @@ from .factory_progress_views import StartWithBackground, start_work
 
 REVIEW_LABELS = {'source': 'the trial-balance source', 'mapping': 'the mapping rule', 'allocation': 'the allocation rule',
                  'formula': 'the formula rule', 'adjustment': 'the reporting adjustment', 'output': 'the prepared accounting report'}
+REVIEW_STATIONS = (
+    ('source', 'Trial-balance source'), ('mapping', 'Mapping rules'), ('allocation', 'Allocation rules'),
+    ('formula', 'Formula rules'), ('adjustment', 'Reporting adjustments'), ('output', 'Prepared output'),
+)
 
 class AccountingProfileForm(ProfileForm):
     allocation_mode=forms.ChoiceField(required=False,label='Preparation scope',choices=[('','Not decided'),('company_only','Company totals'),('company_and_bu','Company and business units')])
     bu_metrics=forms.MultipleChoiceField(required=False,label='Business-unit figures to allocate',choices=[(k,k.replace('_',' ').title()) for k in ['revenue','direct_cost','staff_cost','opex','other']])
     template_id=forms.ModelChoiceField(queryset=Template.objects.none(),required=False,label='Reviewed aggregate report template')
     audience=forms.ChoiceField(required=False,label='Report audience',choices=[('','Not decided'),('internal','Internal'),('group','Group')])
+    statement_contract_id=forms.ModelChoiceField(queryset=Configuration.objects.none(),required=False,
+                                                 label='Current statement contract',empty_label='Not set')
     def __init__(self,case,*args,**kwargs):
         super().__init__(case,*args,**kwargs)
         self.fields['template_id'].queryset=Template.objects.filter(case=case,definition__document_type='finance_report').order_by('name','version')
+        from apps.finance.statements import COMPONENT
+        from apps.policy.services import resolve
+        statement=resolve(COMPONENT,case)
+        if statement.status=='ACTIVE':
+            self.fields['statement_contract_id'].queryset=Configuration.objects.filter(
+                case=case,component=COMPONENT,pk=statement.configuration.pk).only('revision')
+        self.fields['statement_contract_id'].label_from_instance=lambda c:f'Statement contract · version {c.revision}'
         self.fields['executor_id'].label='Report publisher'
         for action in ['finance.read','finance.publish','document.publish']:
             self.fields['executor_id'].queryset=self.fields['executor_id'].queryset.filter(grant__case=case,grant__active=True,grant__action=action).distinct()
@@ -187,11 +201,12 @@ def _presentation(actor,work,*,include_progress=False):
             try:runtime.profile(work);planning_ready=True
             except (ValidationError,PermissionDenied):finding='Choose how this work will be coordinated before further agent work. Existing Finance decisions remain available to authorised reviewers.'
     for task in tasks:
-        task.can_claim=task.can_decide=False;task.verdicts=[]
+        task.exact_review=task.can_claim=task.can_decide=False;task.verdicts=[]
         task.label = 'Review ' + REVIEW_LABELS.get(task.context.get('purpose'), 'Finance evidence')
         if value is None or task.status!='open':continue
         try:
             row=service.review_task(work,task,value,reader=actor)
+            task.exact_review=True
             candidate=next((c for c in service.route(work,row,value) if c['id']==actor.pk),None)
         except (ValidationError,PermissionDenied):continue
         if candidate:
@@ -251,6 +266,9 @@ def _presentation(actor,work,*,include_progress=False):
         can_advance = False
         next_action = ('Check the original report receipts' if can_reconcile
                        else 'Wait for an authorised person to check the original report receipts')
+    setup = accounting_setup(work, observed, value, permitted('policy.read')) if current else None
+    if setup and work.status=='configuration_needed' and not waiting:
+        status='Setup needed';next_action='Check the missing Finance settings.'
     progress = accounting_progress(work, observed, options, jobs) if include_progress and current else None
     return {'work':work,'state':status,'next_action':next_action,'owner':owner,'needs_me':bool(actionable) or can_advance or can_reconcile or (source_followup and can_reassess),
         'department_wait':bool(actionable),'tasks':tasks,'jobs':[],'can_advance':can_advance,'can_cancel':permitted('factory.manage') and work.status not in ['verified','cancelled','followup_needed'],
@@ -258,7 +276,56 @@ def _presentation(actor,work,*,include_progress=False):
         'can_reassess':can_reassess,
         'readiness_changed':changed,'blocker':blocker,'profile_available':value is not None,'adoption':adoption,
         'coordination_needed':current and not planning_ready and execution_owner is not None,'execution_owner_needed':current and execution_owner is None,'can_configure_coordination':permitted('policy.configure'),
-        'accounting':{'state':observed,'formula':formula,'value':value,'progress':progress},'evidence_as_of':work.updated_at}
+        'accounting':{'state':observed,'formula':formula,'value':value,'progress':progress,'setup':setup},'evidence_as_of':work.updated_at}
+
+
+def accounting_setup(work, state, value, can_read_rules):
+    if not state['mapping']:
+        return None
+    missing = []
+    if 'statement_contract_id' in value and value['statement_contract_id'] is None:
+        missing.append('Statement contract')
+    if value['allocation_mode'] == 'company_and_bu' and value['bu_metrics'] is None:
+        missing.append('Business-unit metrics')
+    if not missing:
+        return None
+    account_map = state['policies'].get('D06.account_bu_maps',{})
+    return {'missing':missing,'mapping_revision':account_map['revision'] if account_map.get('status')=='ACTIVE' else None,
+            'hold': work.status=='configuration_needed',
+            'rules_url':reverse('workspace_settings',args=[work.case_id])+'?area=finance' if can_read_rules else None}
+
+
+def review_stations(work, state, tasks):
+    exact = state.get('reviews', [])
+    current_ids = [item['review']['id'] for item in exact if item['review']['id']]
+    decisions = FinanceReview.objects.filter(case=work.case,pk__in=current_ids).select_related('actor').only(
+        'actor__first_name','actor__last_name','actor__username','created_at','evidence_id')
+    decision_by_id = {row.pk:row for row in decisions}
+    open_targets = {(task.context.get('purpose'),task.context.get('packet',{}).get('target')):task
+                    for task in tasks if task.exact_review}
+    stations = []
+    for purpose, label in REVIEW_STATIONS:
+        subjects = []
+        for item in exact:
+            if item['purpose'] != purpose:
+                continue
+            review = item['review']
+            task = open_targets.get((purpose,item['id']))
+            if review['valid']:
+                status='Approved'
+            elif task and (task.can_claim or task.can_decide):
+                status='Needs your review'
+            elif task:
+                status='Waiting for a reviewer'
+            elif review['verdict'] in {'return','reject','revoke'}:
+                status={'return':'Returned','reject':'Rejected','revoke':'Withdrawn'}[review['verdict']]
+            elif review['id']:
+                status='Decision needs recheck'
+            else:
+                status='Review not yet open'
+            subjects.append({'status':status,'subject':item['id'],'decision':decision_by_id.get(review['id'])})
+        stations.append({'label':label,'subjects':subjects,'unavailable':'After calculation' if purpose=='output' else 'Not yet due'})
+    return stations
 
 
 def accounting_progress(work, observed, options, jobs):
@@ -331,6 +398,7 @@ def detail(request,work,focus=None):
         except ValidationError:
             row['can_reassess'] = False
     observed=row['accounting']['state'] or {}
+    stations=review_stations(work,observed,row['tasks']) if observed and focus in (None,'decision') else []
     receipt_ids=[pk for pk,_ in observed.get('receipts',[])]
     receipts=PublicationReceipt.objects.filter(publication__version__document__case=work.case).filter(
         service.Q(publication__factory_work=work)|service.Q(pk__in=receipt_ids)).select_related('recipient').order_by('pk')
@@ -343,7 +411,7 @@ def detail(request,work,focus=None):
         'review_evidence':public_evidence(work.case.evidence.filter(kind='finance_review')).order_by('-pk'),
         'sources':source_choices,'current_source':current_inputs.get('source'),
         'current_adjustments':', '.join(map(str, current_inputs.get('adjustment_ids', []))),
-        'receipts':receipts,'activities':activities,'held_review_labels':held_labels,
+        'receipts':receipts,'activities':activities,'held_review_labels':held_labels,'review_stations':stations,
         'can_read_review_rules':'policy.read' in review_controls,
         'can_recheck_reviewers':focus!='decision' and 'factory.manage' in review_controls and can_control(request.user, work),
         'intake_provenance':intake.provenance(request.user,work) if not focus else None,'focus':focus})

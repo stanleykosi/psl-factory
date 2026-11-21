@@ -110,7 +110,7 @@ def page_name(value):
         'finance_settlement':'Invoices and receipts','finance_billing':'Billing','meetings':'Meetings and actions','policy':'Workspace settings',
         'integration_readiness':'Connections','operations':'Business continuity','case_create':'New workspace','coverage':'Process directory','closure_preparation':'Prepare for closure',
         'design_overview':'Factory overview','design_agents':'Assistant','design_project':'Project journey','design_setup':'Setup',
-        'design_project_tab':'Project journey','design_company_month_end':'Month-end','design_project_action':'Project action',
+        'design_project_tab':'Project journey','design_company_month_end':'Month-end','design_payments':'Payments and follow-up','design_project_action':'Project action',
         'design_clients':'Clients','design_client_project':'Client details','design_document_review':'Document review',
         'design_template_upload':'Upload a template','design_alerts':'Alerts','design_alert_preferences':'Alert preferences',
         'design_payroll_inputs':'Payroll inputs','design_payroll_matching':'Payroll matching','design_payroll_corrections':'Payroll corrections'}
