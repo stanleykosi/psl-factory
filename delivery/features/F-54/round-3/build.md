@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 469281c2
+COMMIT: 801bb659
 BUILDER: builder
 LANE: full
 
@@ -191,3 +191,14 @@ Commit 2255dd24.
 - Not followed: the board's "Next step" blue band uses 64px art; I used the existing public/agents poses scaled to 64px (no new art).
 - Tests: tsc, eslint --quiet, full vitest 149 files / 3606 tests pass (before the final rename; decide.test.tsx and decide-board.test.tsx, 71 tests, rerun after it). e2e on private ports 4961/4962 from a scratch copy (deleted): decide.spec.ts "approve done view", and the new desktop and phone "summary and next panel" tests, 3 of 3 pass; screenshots at 1440 and 390 looked at. checks.sh, npm ci and a build in the worktree were not run.
 - Mock: no mock change, no restart needed (the Next dev server hot-reloads).
+
+## e2e fixes before merge
+Head 801bb659 (specs only; no app code changed). Full e2e on a production build: 1152 passed, 0 failed, 0 flaky, 3 skipped (41 min). tsc, eslint (0 warnings) and vitest pass.
+- delivery-hypercare:72 (desktop and phone), :104, :132 | test out of date (D-158) | "Released on" is a pick-only dropdown, not an input; the specs now use `fillWhen`.
+- rfp-intake:124, :173, :222, :234 (both widths) | test out of date (D-158) | Received and Deadline use `fillWhen` in the dialog.
+- overview:146 | test out of date (D-165) | station squares are buttons named by aria-label; `stationTexts` reads the button label (or the hidden text on the 3D list).
+- exceptions:55 | test race | Enter on Show more grows the list in place to 20 at once (the mock answers without delay, D-155); the spec asserted 10 and only passed on a slow answer. It now expects 20, then 25 after the click.
+- projects:428 (phone back link) | test out of date (D-143) | the back link sits on the dark phone bar, so its ring is a 2px white underline; the spec asserts that (focus, underline, white, 2px).
+- engagement-planning:63 (phone) | test; open design question | the "PM confirmed" toast (D-151) lies over the drawer's Register button on a phone for 6 seconds and blocked the click (timeout). The spec waits for the toast to fade on phones. A reader may want the toast lifted above an open drawer's last button; that is a design call, not changed.
+- start-work-proof:160 (desktop) | test flake | axe read the "Check again" button mid fade (120ms background transition) and reported color-contrast on .sw-primary; the helper now waits for CSS transitions to finish before running axe. Contrast of the settled colours was fine.
+- payments:127 (phone W-3801 draft) | infrastructure flake | the log shows ECONNRESET on the proxy to the mock just before; it passes alone and in the full rerun. No change.
