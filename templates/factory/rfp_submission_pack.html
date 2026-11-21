@@ -15,6 +15,11 @@
       <p>No file requirements recorded.</p>
     {% endif %}
   {% endif %}
+  {% if can_read_client_document and submission_pack_decision %}
+    <h3>Final pack decision</h3>
+    <p>{{ submission_pack_decision.label }} · Pack draft {{ submission_pack.number }} · Document version {{ submission_pack_decision.document_number }} · {{ submission_pack_decision.created_at|date:'j M Y H:i T' }}</p>
+    {% if submission_pack_decision.note %}<p>{{ submission_pack_decision.note|linebreaksbr }}</p>{% endif %}
+  {% endif %}
   {% if submission_pack_form %}
     <details{% if not submission_pack or submission_pack_form.errors %} open{% endif %}>
       <summary>{% if submission_pack %}Edit cover note and file requirements{% else %}Draft cover note and file requirements{% endif %}</summary>

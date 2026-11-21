@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. A controlled bid pack displays the recorded decision only when it binds to the current response, exact pack draft, current document version and matching document digest. Current controlled-document readers can see the status. The pack author and the recorded reviewer can also see the reason while their read access is current. A successor draft starts its own review. The readback uses the existing decision and leaves submission and receipt controls independent.
+
 21 November 2026. Payroll recipient readback and receipt recording share the same scoped exact checks. The read uses a read-only native path and shows the current aggregate and the recipient’s own earlier withdrawal metadata. The separate receipt command still requires current authority. A corrected trial balance keeps the original Return and opens one new same-period review. An optional private asset-date file binds to the exact recorded dates and leaves the later Finance decision separate.
 
 21 November 2026. An invitation preview can show two reviewed workspace roles before account setup. Optional alerts open preferences after ordinary sign-in and depend on a verified destination. Existing basic sign-in and independent role boundaries apply to the exact requested work. Saving a typed bid pack creates its current draft. The source owner separately sends it to independent review before any submission.

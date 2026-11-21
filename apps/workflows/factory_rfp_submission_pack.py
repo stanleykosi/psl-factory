@@ -40,6 +40,20 @@ def active(work):
             and not (work.lease_until and work.lease_until > timezone.now()))
 
 
+def recorded_decision(actor, pack, document):
+    review = document.reviews.order_by('-pk').values('pk', 'actor_id', 'verdict', 'created_at', 'payload_sha256').first()
+    if not review or review['payload_sha256'] != document.payload_sha256:
+        return None
+    labels = {'approve': 'Approved', 'return': 'Returned for changes', 'reject': 'Rejected'}
+    if review['verdict'] not in labels:
+        return None
+    note = None
+    if actor.pk in (pack.actor_id, review['actor_id']):
+        note = document.reviews.filter(pk=review['pk']).values_list('note', flat=True).get()
+    return {'label': labels[review['verdict']], 'created_at': review['created_at'],
+            'document_number': document.number, 'note': note}
+
+
 def panel(actor, work, response, form=None, *, document=None):
     if response is None:
         return {}
@@ -55,10 +69,11 @@ def panel(actor, work, response, form=None, *, document=None):
         if pack:
             initial.update({key: getattr(pack, key) for key in packs.FIELDS})
         form = SubmissionPackForm(initial=initial, prefix='pack')
+    exact_document = (pack and document and document.document.current_id == document.pk
+                      and (document.rfpdocumentbinding.response_id, document.rfpdocumentbinding.snapshot.get('submission_pack'))
+                          == (response.pk, pack.pk))
     review_version = None
-    if (can_edit and pack and document and factory_rfp.instruction_current(work)
-            and (document.rfpdocumentbinding.response_id, document.rfpdocumentbinding.snapshot.get('submission_pack'))
-                == (response.pk, pack.pk)
+    if (can_edit and exact_document and factory_rfp.instruction_current(work)
             and Grant.objects.filter(user=actor, case=work.case, action='document.request_review', active=True).exists()
             and not HumanTask.objects.filter(case=work.case, version=document).exists()):
         review_version = document
@@ -68,6 +83,7 @@ def panel(actor, work, response, form=None, *, document=None):
         'submission_pack_form': form if can_edit else None,
         'submission_pack_requirements': packs.requirements(pack) if pack else [],
         'submission_pack_review_version': review_version,
+        'submission_pack_decision': recorded_decision(actor, pack, document) if exact_document else None,
     }
 
 

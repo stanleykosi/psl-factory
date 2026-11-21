@@ -149,11 +149,27 @@ class RFPSubmissionPackTests(TestCase):
             review_version(self.reviewer, case.pk, first_version.pk, 'approve', 'File too large.', rev(case))
         self.assertEqual(command('submission_pack', **declared, **{'pack-file_size_rule': 'less_than',
                                                                   'pack-cover_note': 'Reviewer edit.'}).status_code, 403)
-        returned = command('document', target=first_version.pk, role='PMO Lead', verdict='return',
-                           note='Revise the cover note before final review.')
+        return_note = 'Revise the cover note before final review.'
+        returned = command('document', target=first_version.pk, role='PMO Lead', verdict='return', note=return_note)
         self.assertEqual(returned.status_code, 302)
+        returned_page = self.client.get(decision_url)
+        self.assertContains(returned_page, 'Returned for changes · Pack draft 1 · Document version 2')
+        self.assertContains(returned_page, return_note)
+        read_grant.update(active=False)
+        self.assertNotContains(self.client.get(decision_url), return_note)
+        read_grant.update(active=True)
+        other_reader = get_user_model().objects.create_user('sample-pack-document-reader')
+        Grant.objects.bulk_create(Grant(user=other_reader, case=case, action=action)
+                                  for action in ('case.read', 'factory.read', 'rfp.read', 'document.read'))
+        self.client.force_login(other_reader)
+        other_page = self.client.get(decision_url)
+        self.assertContains(other_page, 'Returned for changes · Pack draft 1 · Document version 2')
+        self.assertNotContains(other_page, return_note)
+        self.assertFalse(Publication.objects.exists())
 
         self.client.force_login(maker)
+        self.assertContains(self.client.get(decision_url), return_note)
+        self.assertContains(self.client.get(reverse('factory_detail', args=[work.pk])), return_note)
         revised = dict(declared, **{'pack-base': pack.pk, 'pack-file_size_rule': 'less_than', 'pack-file_size_bytes': 20_000_000,
                                     'pack-cover_note': 'Revised cover note.'})
         self.assertEqual(command('submission_pack', **revised).status_code, 302)
@@ -174,6 +190,7 @@ class RFPSubmissionPackTests(TestCase):
         self.assertEqual((exact.document_id, exact.number), (legacy.document_id, 3))
         self.assertNotEqual(exact.payload_sha256, first_version.payload_sha256)
         self.assertEqual(first_version.reviews.get().verdict, 'return')
+        self.assertNotContains(self.client.get(decision_url), return_note)
         successor_pdf = RFPSubmissionArtifact.objects.get(binding__version=exact)
         self.assertNotEqual(successor_pdf.sha256, artifact.sha256)
         self.assertEqual(requirement_findings(successor, successor_pdf), [])
