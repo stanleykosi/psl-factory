@@ -134,7 +134,15 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
         extra.append(workspace_pin(project, selected(cfg, key)))
     if extra and len(actions) + sum(len(pin['actions']) for pin in extra) > MAX_COMBINED_INVITATION_ACTIONS:
         raise ValidationError('A combined invitation can include up to 150 workspace access functions. Review a smaller selection.')
+    row, token = _issue_invitation(actor,case,cfg,settings,username,name,email,actions,preceding,
+                                   pin=pin,profile=profile,extra=extra)
+    return row, token
+
+
+def _issue_invitation(actor, case, cfg, settings, username, name, email, actions, preceding,
+                      *, pin, profile=None, extra=(), inviting_membership=None):
     old = StaffInvitation.objects.filter(case=case, username=username).order_by('-number').first()
+    user_model = get_user_model()
     if preceding != (old.pk if old else None) or user_model.objects.filter(username__iexact=username).exists():
         raise ValidationError('Use the current pending invitation or choose a new account name.')
     token = secrets.token_urlsafe(32)
@@ -144,11 +152,36 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
                                          expires_at=expires, authority=cfg, actor=actor,
                                          profile_key=profile['key'] if profile else '',
                                          profile_label=profile['label'] if profile else '',
-                                         profile_sha256=digest(profile) if profile else '', workspace_profiles=extra,
-                                         role_scope=pin)
+                                         profile_sha256=digest(profile) if profile else '', workspace_profiles=list(extra),
+                                         role_scope=pin, inviting_membership=inviting_membership)
     event(actor, case, 'staff.invitation_created', invitation=row.pk)
     bump(case)
     return row, token
+
+
+@transaction.atomic
+def invite_person(actor, case_id, username, name, email, expected, *, role, mode, team_id, preceding=None):
+    from .teams import invitation_authority, scope_pin
+
+    case = Case.objects.select_for_update().get(pk=case_id,kind='project')
+    intake.lock_users([actor.pk])
+    cfg, lead = invitation_authority(actor,case,mode,team_id=team_id)
+    if lead and role!=lead.role:
+        raise PermissionDenied('A lead can invite members only into their own role and team.')
+    pin = scope_pin(case,role,mode,team_id)
+    _revision(case,expected)
+    username = get_user_model()._meta.get_field('username').clean(username.strip().lower(),None)
+    validate_email(email)
+    intake.text(name,150)
+    prior = StaffInvitation.objects.filter(pk=preceding,case=case,username=username).first() if preceding else None
+    if prior and prior.role_scope:
+        previous = prior.role_scope
+        if lead and (previous['role'],previous['mode'],previous['team_id'])!=(role,'member',team_id):
+            raise PermissionDenied('Send invitations only for your own team.')
+        if not lead and previous['mode']=='member':
+            raise PermissionDenied('The current team lead must renew this invitation.')
+    return _issue_invitation(actor,case,cfg,cfg.value['staff_lifecycle'],username,name,email,[],preceding,
+                             pin=pin,inviting_membership=lead)
 
 
 def additional_access(invitation, cfg, cases=None):
@@ -174,13 +207,20 @@ def additional_access(invitation, cfg, cases=None):
     return verified
 
 
-def pending(token):
+def pending(token, *, role_required=False):
     if len(token) != 43:
         raise ValidationError('This invitation is unavailable.')
     row = StaffInvitation.objects.select_related('case', 'actor').filter(token_hash=sha256(token.encode()).hexdigest()).first()
     if (row is None or timezone.now() >= row.expires_at or hasattr(row, 'admission') or
             StaffInvitation.objects.filter(case=row.case, username=row.username, number__gt=row.number).exists()):
         raise ValidationError('This invitation is unavailable.')
+    if role_required and (not row.role_scope or row.role_scope.get('mode')=='member' and not row.inviting_membership_id):
+        raise ValidationError('Ask the current role owner for a new staff invitation.')
+    if row.inviting_membership_id:
+        from .teams import verify_invitation
+
+        verify_invitation(row)
+        return row
     cfg, _ = authority(row.actor, row.case, 'allow_invite')
     if cfg.pk != row.authority_id:
         raise ValidationError('This invitation needs to be renewed under current access rules.')
@@ -199,13 +239,13 @@ def pending(token):
 
 
 @transaction.atomic
-def accept(token, password):
-    row = pending(token)
+def accept(token, password, *, role_required=False):
+    row = pending(token,role_required=role_required)
     case_ids = [str(row.case_id), *(pin['case'] for pin in row.workspace_profiles)]
     cases = {str(case.pk): case for case in Case.objects.select_for_update().filter(pk__in=case_ids).order_by('pk')}
     case = cases[str(row.case_id)]
-    intake.lock_users([row.actor_id])
-    row = pending(token)
+    intake.lock_users([row.actor_id,row.authority.user_id])
+    row = pending(token,role_required=role_required)
     others = additional_access(row, row.authority, cases)
     user_model = get_user_model()
     if user_model.objects.filter(username__iexact=row.username).exists():

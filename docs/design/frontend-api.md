@@ -36,7 +36,7 @@ An account has the Admin role in a workspace when its existing staff administrat
 
 The HR role opens the **HR** project tab with handoff metadata and staff-cost follow-up. Correction reviews, disclosures, private exports and Zainab still use their existing, separate permissions. Native HR-to-Finance and payroll services own the workflow and its commands. Staff accounts and access stay under Admin delegation.
 
-The [role-based operating model](../../guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) also supports role-scoped staff invitations. An authorised Admin can use **Primary roles → Teams and work assignments** to create a team and assign existing or new actions and eligible native reviews. The invitee reviews the base role, team, workspace and member, lead or standalone scope. Sign-in opens the role dashboard. Existing workspace-profile invitations follow their existing access model.
+The [role-based operating model](../../guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) requires a reviewed role for new staff. In **Primary roles → Teams and work assignments**, an authorised Admin creates teams and appoints their leads or the standalone CEO and CTO. A current PMO, Finance, HR or Admin team lead uses **Invite a teammate** from their role dashboard to invite members of their own team. The invitee sees the exact workspace, role and scope before account setup. A change to the lead’s authority stops acceptance until a current invitation is issued. Existing admitted accounts keep their reviewed access until it changes.
 
 For an existing account, choose **Setup → People → Move to team scope** beside the affected workspace. Preview the broad permissions that will be removed and the open actions that will keep their current owner. Resolve any listed handover or decision claim first. The confirmation uses the reviewed fingerprint, a stable operation UUID and a reason. The same account can keep its separately authorised workspaces.
 
@@ -51,6 +51,8 @@ For an existing account, choose **Setup → People → Move to team scope** besi
 | `POST /api/v1/role-work/{assignment_id}/decision` | Record a native decision using the reviewed version token |
 
 The Django role desk and JSON endpoints share the same checks. Team leads see members’ assignment and decision status. Only the eligible assignee receives a decision packet or can submit a verdict. The scoped desk handles Finance invoice and Accounting reviews, Finance schedules, HR corrections, Planning exit, closure, client escalation and supported controlled-document reviews. Use `workspace_decisions` for native factory decisions and `approval_desks` for specialist workspace links. Payment exceptions, Emergency authorisation and retrospectives, restricted payroll, bids, forecasts and department-owned approvals retain their native permissions and exact source rules. Issuance, publication and technical or customer sign-off each have their own authority checks. Invitation creation and acceptance use the established Django forms.
+
+The role dashboard supplies an `invite_url` for a team lead’s own position. It opens the authorised Django invitation form. A new invitation covers one workspace and one role. Pending links based solely on access profiles or individual functions require a new role invitation.
 
 ## Workflow coverage
 

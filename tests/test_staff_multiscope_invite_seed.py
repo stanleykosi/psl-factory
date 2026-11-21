@@ -15,7 +15,7 @@ from tests.railway_staff_multiscope_invite_seed import BOOTSTRAP, PROFILES, RECI
 
 
 class MultiWorkspaceInvitationSeedTests(TestCase):
-    def test_isolated_preview_prepares_two_exact_profile_choices_and_no_invitation(self):
+    def test_isolated_preview_exposes_a_base_role_and_preserves_previous_invitation_history(self):
         self.assertEqual(connection.vendor, 'postgresql')
         users = get_user_model().objects
         trial = users.create_user('psl-agent-trial')
@@ -46,19 +46,17 @@ class MultiWorkspaceInvitationSeedTests(TestCase):
         page = self.client.get(seeded['form'])
         self.assertContains(page, 'Invite a person')
         self.assertContains(page, Case.objects.get(pk=seeded['first']).title)
-        self.assertContains(page, Case.objects.get(pk=seeded['second']).title)
+        self.assertNotContains(page, Case.objects.get(pk=seeded['second']).title)
         self.assertNotContains(page, prior.title)
         form = page.context['form']
-        keys = {profile['key'] for profile in PROFILES}
-        self.assertEqual({key for key, _ in form.fields['profile'].choices if key}, keys)
-        self.assertEqual({key for key, _ in form.fields[seeded['additional_field']].choices if key}, keys)
-        self.assertTrue(page.context['show_all_projects'])
+        self.assertEqual({key for key,_ in form.fields['base_role'].choices if key},
+                         {'pmo-lead','finance-lead','ceo','cto','hr','admin'})
+        self.assertNotIn('profile',form.fields)
         self.assertContains(page, 'No staff invitation recorded.')
 
         invite = self.client.post(seeded['form'], {
             **RECIPIENT,
-            'profile': PROFILES[1]['key'],
-            seeded['additional_field']: PROFILES[0]['key'],
+            'base_role':'ceo','role_mode':'standalone',
             'revision': form.initial['revision'],
             'project_review': form.initial['project_review'],
         })
@@ -67,20 +65,16 @@ class MultiWorkspaceInvitationSeedTests(TestCase):
         self.assertTrue(invite.context['invitation_link'].startswith('http://testserver/staff/join/#'))
         self.assertFalse(users.filter(username=RECIPIENT['username']).exists())
 
-    def test_two_workspace_preview_and_optional_alert_handoff_require_sign_in(self):
+    def test_role_preview_and_optional_alert_handoff_require_sign_in(self):
         trial = get_user_model().objects.create_user('psl-agent-trial')
         seeded = prepare(trial)
         first = Case.objects.get(pk=seeded['first'])
-        second = Case.objects.get(pk=seeded['second'])
-        contributor, reader = PROFILES
-        invitation, token = staff.invite(trial, first.pk, RECIPIENT['username'], RECIPIENT['name'],
-            RECIPIENT['email'], reader['actions'], first.revision, profile_key=reader['key'],
-            expected_authority=seeded['authority'],
-            workspace_choices={second.pk: (second.revision, contributor['key'])})
+        invitation, token = staff.invite_person(trial,first.pk,RECIPIENT['username'],RECIPIENT['name'],
+            RECIPIENT['email'],first.revision,role='ceo',mode='standalone',team_id=None)
         join = reverse('staff_accept_invite')
         preview = self.client.post(join, {'action': 'preview', 'token': token})
         self.assertContains(preview, first.title)
-        self.assertContains(preview, second.title)
+        self.assertContains(preview, 'CEO')
         self.assertContains(preview, 'Review optional WhatsApp alerts after signing in')
         self.assertFalse(StaffAdmission.objects.filter(invitation=invitation).exists())
         password = 'Synthetic-Workbench-Setup-763'
@@ -91,8 +85,8 @@ class MultiWorkspaceInvitationSeedTests(TestCase):
         self.assertRedirects(response, login, fetch_redirect_response=False)
         self.assertFalse(self.client.session.get('_auth_user_id'))
         admission = StaffAdmission.objects.get(invitation=invitation)
-        self.assertEqual(set(Grant.objects.filter(user=admission.user).values_list('case_id', flat=True)),
-                         {first.pk, second.pk})
+        self.assertFalse(Grant.objects.filter(user=admission.user).exists())
+        self.assertEqual(admission.invitation.staffmembership.role,'ceo')
         signed_in = self.client.post(login, {'username': RECIPIENT['username'], 'password': password, 'next': settings_path})
         self.assertRedirects(signed_in, settings_path, fetch_redirect_response=False)
         self.assertContains(self.client.get(settings_path), 'Waiting for a verified WhatsApp number')

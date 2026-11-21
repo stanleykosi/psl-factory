@@ -5,7 +5,6 @@ from hashlib import sha256
 from io import BytesIO
 import json
 from unittest.mock import patch
-from urllib.parse import urlsplit
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -21,7 +20,7 @@ from apps.core.services import add_evidence
 from apps.finance import reminders
 from apps.finance.models import PaymentReminderDispatch, PaymentReminderMailboxMessage, PaymentReminderReceipt
 from apps.identity import intake, staff
-from apps.identity.models import Grant, StaffInvitation
+from apps.identity.models import Grant
 from apps.pmo.meetings import create_action
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.reminder_validators import COMPONENT
@@ -167,36 +166,24 @@ class StaffLifecycleTests(TestCase):
         cls.operator = users.objects.create_user('staff-delegate')
         cls.successor = users.objects.create_user('staff-successor')
         actions = ['case.read','evidence.add','policy.read','policy.configure','policy.activate','action.manage','action.own']
-        cls.scope = {'format':'psl.tenant-access/v1','create_cases':True,'manage_access':True,'kinds':['project'],
+        cls.scope = {'format':'psl.tenant-access/v3','create_cases':True,'manage_access':True,'kinds':['project'],
                      'allowed_actions':actions,'initial_actions':actions,'classification':'synthetic',
-                     'staff_lifecycle':{'invite_minutes':30,'allow_invite':True,'allow_deactivation':True}}
+                     'staff_lifecycle':{'invite_minutes':30,'allow_invite':True,'allow_deactivation':True,
+                                        'allow_roster':True,'allow_profile_edit':True}}
         intake.provision(cls.root,cls.operator,'staff-test',cls.scope,timezone.now()+timedelta(hours=2),True,'Synthetic delegated staff access')
         cls.case = intake.create_case(cls.operator,'staff-test','psl-staff','Staff lifecycle test','project')
         for action in ['case.read','action.own']:
             intake.change_access(cls.operator, cls.case.pk, cls.successor.pk, action, True, 'Exact synthetic successor grant')
 
-    def test_invitation_renewal_acceptance_and_deactivation_reassigns_action(self):
+    def test_historical_account_deactivation_reassigns_action(self):
         c,a = self.case,self.operator
         self.client.force_login(a)
-        url = reverse('staff_invites', args=[c.pk])
-        post = {'name':'Synthetic Staff','username':'synthetic-join','email':'join@example.invalid',
-                'actions':['case.read','action.own'],'revision':rev(c)}
-        invited = self.client.post(url,post)
-        self.assertContains(invited,'Invitation is ready')
-        old_token = urlsplit(invited.context['invitation_link']).fragment
-        first = StaffInvitation.objects.get(username=post['username'])
-        renewed = self.client.post(reverse('staff_renew_invite',args=[c.pk,first.pk]),{**post,'revision':rev(c)})
-        token = urlsplit(renewed.context['invitation_link']).fragment
-        self.assertNotEqual(old_token,token)
+        _,token = staff.invite(a,c.pk,'synthetic-join','Synthetic Staff','join@example.invalid',
+                             ['case.read','action.own'],rev(c))
         password = 'Synthetic staff acceptance 8537'
         visitor = Client()
-        join = reverse('staff_accept_invite')
-        self.assertContains(visitor.post(join,{'token':old_token,'password':password,'confirm':password}), 'invitation is unavailable')
-        self.assertEqual(visitor.post(join,{'token':token,'password':password,'confirm':password}).status_code,302)
-        user = get_user_model().objects.get(username=post['username'])
+        user = staff.accept(token,password)
         self.assertTrue(visitor.login(username=user.username,password=password))
-        self.assertContains(visitor.post(join,{'token':token,'password':password,'confirm':password}), 'invitation is unavailable')
-        self.assertNotIn(token,StaffInvitation.objects.get(username=user.username,number=2).token_hash)
 
         proof = add_evidence(a,c.pk,'policy_decision','Synthetic role examples','synthetic:test')
         activate(a,draft_roles(a,c.pk,[{'role':'PMO Lead','user_id':u.pk} for u in [user,self.successor]],
@@ -222,8 +209,8 @@ class StaffLifecycleTests(TestCase):
         path = reverse('staff_invites', args=[case.pk])
         page = browser.get(path, secure=True)
         self.assertEqual(page['Referrer-Policy'], 'same-origin')
-        values = {'name':'HTTPS staff','username':'https-staff','email':'https-staff@example.invalid',
-                  'actions':['case.read'],'revision':rev(case),'csrfmiddlewaretoken':browser.cookies['csrftoken'].value}
+        values = {**page.context['form'].initial,'name':'HTTPS staff','username':'https-staff','email':'https-staff@example.invalid',
+                  'base_role':'ceo','role_mode':'standalone','csrfmiddlewaretoken':browser.cookies['csrftoken'].value}
         self.assertEqual(browser.post(path, values, secure=True, headers={'Origin':'https://other.example'}).status_code,403)
         self.assertContains(browser.post(path, values, secure=True, headers={'Referer':'https://testserver'+path}), 'Invitation is ready')
         self.assertEqual(browser.get(reverse('staff_accept_invite'), secure=True)['Referrer-Policy'], 'same-origin')

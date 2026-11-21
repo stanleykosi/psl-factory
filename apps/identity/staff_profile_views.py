@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.forms import formset_factory
 from django.shortcuts import get_object_or_404,redirect,render
 from django.views.decorators.cache import never_cache
@@ -16,6 +17,7 @@ from . import intake,staff_accounts,staff_profiles
 from .intake_models import TenantAuthority
 from .models import Grant
 from .staff_models import StaffPrimaryRoleChange
+from .team_models import StaffMembership
 
 
 @login_required
@@ -25,8 +27,9 @@ def person(request,person_id):
     from .teams import memberships, scope_label
 
     user=staff_accounts.account(request.user,person_id)
-    cases=staff_accounts.manageable_cases(request.user).filter(pk__in=Grant.objects.filter(
-        user=user).values('case_id')).order_by('title','pk')
+    cases=staff_accounts.manageable_cases(request.user).filter(
+        Q(pk__in=Grant.objects.filter(user=user).values('case_id')) |
+        Q(pk__in=StaffMembership.objects.filter(user=user).values('case_id'))).order_by('title','pk')
     page=Paginator(cases,20).get_page(request.GET.get('page'))
     labels=staff_profiles.labels([c.pk for c in page],user.pk)
     cfgs={c.tenant:c for c in intake.options(request.user,'manage_access')}
@@ -53,6 +56,7 @@ def person(request,person_id):
             case.primary_role = scope_label(member.role, member.mode)
             case.account_access_label = member.team.name if member.team else 'Standalone role scope'
             case.can_edit_profile = False
+            case.can_assign_primary_role = False
     return render(request,'identity/staff_person.html',{'person':user,'workspaces':page})
 
 

@@ -268,6 +268,8 @@ urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/questions/',payroll_q
                 path('cases/<uuid:case_id>/finance/payroll/question-routing/',payroll_question_views.routing,name='payroll_question_routing')]
 urlpatterns += [path('cases/<uuid:case_id>/staff/invitations/', staff_views.invites, name='staff_invites'),
                 path('cases/<uuid:case_id>/staff/invitations/<int:invitation_id>/renew/', staff_views.invites, name='staff_renew_invite'),
+                path('my-role/<uuid:case_id>/teams/<int:team_id>/invite/',staff_views.invites,name='staff_team_invite'),
+                path('my-role/<uuid:case_id>/teams/<int:team_id>/invite/<int:invitation_id>/renew/',staff_views.invites,name='staff_team_renew'),
                 path('cases/<uuid:case_id>/staff/<int:person_id>/remove-access/', staff_views.departure, name='staff_departure'),
                 path('staff/join/', staff_views.accept, name='staff_accept_invite')]
 urlpatterns += [path('staff/',staff_account_views.roster,name='staff_roster'),

@@ -178,7 +178,8 @@ def index(request):
     for case in page:
         authority = management.get((case.tenant, case.synthetic))
         case.can_manage_accounts = authority is not None
-        case.can_invite_staff = bool(authority and authority.value.get('staff_lifecycle'))
+        lifecycle = authority.value.get('staff_lifecycle',{}) if authority else {}
+        case.can_invite_staff = case.kind=='project' and lifecycle.get('allow_invite') and lifecycle.get('allow_profile_edit')
     return render(request, 'design/setup_index.html', {
         'workspaces': page, 'search': search, 'observed_at': timezone.now(), 'primary_roles': built_ins(),
     })

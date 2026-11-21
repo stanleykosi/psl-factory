@@ -20,6 +20,7 @@ class StaffInvitation(AppendOnly):
     expires_at = models.DateTimeField()
     authority = models.ForeignKey('identity.TenantAuthority', on_delete=models.PROTECT)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    inviting_membership = models.ForeignKey('identity.StaffMembership', null=True, blank=True, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

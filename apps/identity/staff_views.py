@@ -14,82 +14,31 @@ from django.views.decorators.http import require_http_methods
 
 from apps.core.evidence_access import public_evidence
 from apps.core.views import accessible_case
-from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
 
-from . import staff
+from . import primary_roles, staff, teams
 from .staff_models import StaffInvitation
+from .team_models import StaffTeam
 
 
 class InviteForm(forms.Form):
     name = forms.CharField(max_length=150)
-    username = forms.CharField(max_length=150, label='Sign-in name')
+    username = forms.CharField(max_length=150,label='Sign-in name')
     email = forms.EmailField()
-    profile = forms.ChoiceField(label='Account access profile',required=False,choices=[])
-    actions = forms.MultipleChoiceField(label='Individual workspace functions',required=False, widget=forms.CheckboxSelectMultiple)
-    revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    revision = forms.IntegerField(min_value=1,widget=forms.HiddenInput)
+    project_review = forms.CharField(widget=forms.HiddenInput,max_length=1024)
 
-    all_projects = forms.BooleanField(required=False, label='Apply this profile to all currently managed projects')
-    project_review = forms.CharField(required=False, widget=forms.HiddenInput, max_length=10000)
-
-    def __init__(self,configuration,*args,projects=(),allow_all=False,role_teams=None,**kwargs):
+    def __init__(self,*args,case,lead,**kwargs):
         super().__init__(*args,**kwargs)
-        from .staff_profiles import choices
-        self.profiles={p['key']:p for p in choices(configuration)}
-        self.fields['profile'].choices=[('', 'Choose a configured profile')]+[(k,p['label']) for k,p in self.profiles.items()]
-        self.fields['actions'].choices=[(a,a.replace('.', ' · ').replace('_',' ').capitalize())
-            for a in sorted(set(configuration.value['allowed_actions'])&set(ACTIONS))]
-        self.projects = projects
-        self.allow_all = allow_all
-        if role_teams is not None:
-            from .primary_roles import built_ins
-            from .teams import MODE_LABELS
-
-            self.fields['base_role'] = forms.ChoiceField(label='Base role', required=False,
-                choices=[('', 'Choose a base role'), *((role['key'], role['name']) for role in built_ins())])
-            self.fields['role_mode'] = forms.ChoiceField(label='Work scope', required=False,
-                choices=[('', 'Choose a work scope'), *MODE_LABELS.items()])
-            self.fields['team'] = forms.ModelChoiceField(label='Team', required=False, queryset=role_teams)
-        for project in projects:
-            field = f'profile_{project.pk.hex}'
-            self.fields[field] = forms.ChoiceField(label=project.title, required=False,
-                choices=[('', 'No access in this invitation'), *[(key, profile['label']) for key, profile in self.profiles.items()]])
-
-    def project_fields(self):
-        return [self[f'profile_{project.pk.hex}'] for project in self.projects]
-
-    def clean(self):
-        values=super().clean();key=values.get('profile');actions=values.get('actions',[])
-        base_role, mode, team = (values.get(field) for field in ('base_role','role_mode','team'))
-        if base_role or mode or team:
-            if not base_role or not mode:
-                self.add_error('base_role', 'Choose the base role and its work scope.')
-            if (key or actions or values.get('all_projects') or
-                    any(name.startswith('profile_') and self.data.get(name) for name in self.data)):
-                self.add_error(None, 'Choose either the reviewed role assignment or workspace access functions.')
-            values['role_scope'] = {'role':base_role,'mode':mode,'team_id':team.pk if team else None}
-        if key:
-            supplied=self.profiles[key]['actions']
-            if actions and set(actions)!=set(supplied):self.add_error('actions','Use the selected profile or choose individual functions, not both.')
-            values['actions']=list(supplied)
-        elif not actions and 'role_scope' not in values:
-            self.add_error('profile','Choose a role or a configured access profile, or review individual workspace functions.')
-        current_fields = {f'profile_{project.pk.hex}' for project in self.projects}
-        if any(key.startswith('profile_') and key not in current_fields and self.data.get(key) for key in self.data):
-            self.add_error(None, 'Project access changed. Reload and review the current workspaces.')
-        chosen = {project.pk: (project.revision, values[f'profile_{project.pk.hex}']) for project in self.projects
-                  if values.get(f'profile_{project.pk.hex}')}
-        if values.get('all_projects'):
-            if not self.allow_all:
-                self.add_error('all_projects', 'Review a bounded list of managed projects before applying a profile to all.')
-            elif chosen:
-                self.add_error('all_projects', 'Choose each project’s profile or apply the starting profile to all projects.')
-            elif key:
-                chosen = {project.pk: (project.revision, key) for project in self.projects}
-        if (chosen or values.get('all_projects')) and not key:
-            self.add_error('profile', 'Choose a named profile for the starting workspace first.')
-        values['workspace_choices'] = chosen
-        return values
+        if lead:
+            return
+        self.fields['base_role'] = forms.ChoiceField(label='Base role',choices=[
+            ('','Choose a base role'),*((role['key'],role['name']) for role in primary_roles.built_ins())])
+        self.fields['role_mode'] = forms.ChoiceField(label='Work scope',choices=[
+            ('','Choose a work scope'),*((mode,teams.MODE_LABELS[mode]) for mode in ('lead','standalone'))])
+        self.fields['team'] = forms.ModelChoiceField(label='Team',required=False,
+            queryset=StaffTeam.objects.filter(case=case).order_by('name','pk'))
+        self.fields['team'].label_from_instance = lambda team: team.name
 
 
 class PasswordForm(forms.Form):
@@ -141,66 +90,54 @@ class DepartureForm(forms.Form):
 @login_required
 @require_http_methods(['GET','HEAD','POST'])
 @never_cache
-def invites(request, case_id, invitation_id=None):
-    case = accessible_case(request.user, case_id)
-    cfg, _ = staff.authority(request.user, case, 'allow_invite')
-    old = get_object_or_404(StaffInvitation, case=case, pk=invitation_id) if invitation_id is not None else None
-    initial = {'revision': case.revision}
-    from .staff_profiles import choices
-    from .primary_roles import is_admin
-    from .team_models import StaffTeam
-
-    role_teams = StaffTeam.objects.filter(case=case).order_by('name','pk') if is_admin(request.user, case) else None
-
-    projects = list(staff.invitation_projects(request.user, case).order_by('title', 'pk')[:staff.MAX_INVITED_WORKSPACES]) if (
-        choices(cfg) and 'project' in cfg.value['kinds']) else []
-    allow_all = 0 < len(projects) < staff.MAX_INVITED_WORKSPACES
-    projects = projects[:staff.MAX_INVITED_WORKSPACES - 1]
-    reviewed_projects = {'actor': request.user.pk, 'case': str(case.pk), 'authority': cfg.pk,
-                         'projects': {str(project.pk): project.revision for project in projects}}
-    initial['project_review'] = signing.dumps(reviewed_projects, salt='staff.invitation.project-review')
+def invites(request, case_id, invitation_id=None, team_id=None):
+    lead = None
+    if team_id is None:
+        case = accessible_case(request.user,case_id)
+        cfg,_ = teams.invitation_authority(request.user,case,'lead')
+    else:
+        lead = get_object_or_404(teams.memberships(request.user).select_related('case','team'),
+                                 case_id=case_id,team_id=team_id,mode='lead')
+        case = lead.case
+        cfg,_ = teams.invitation_authority(request.user,case,'member',team_id=team_id,membership_id=lead.pk)
+    rows = StaffInvitation.objects.filter(case=case)
+    if lead:
+        rows = rows.filter(role_scope__team_id=team_id,role_scope__mode='member')
+    old = get_object_or_404(rows,pk=invitation_id) if invitation_id is not None else None
+    review = {'actor':request.user.pk,'case':str(case.pk),'authority':cfg.pk,'lead':lead.pk if lead else None}
+    initial = {'revision':case.revision,'project_review':signing.dumps(review,salt='staff.role-invitation')}
     if old:
-        initial.update({key: getattr(old, key) for key in ('name','username','email','actions')})
-        current={p['key']:p for p in choices(cfg)}
-        if old.profile_key in current:
-            initial.update(profile=old.profile_key,actions=[])
-        if old.role_scope:
-            initial.update(base_role=old.role_scope['role'], role_mode=old.role_scope['mode'], team=old.role_scope['team_id'])
-        earlier = {pin['case']: pin['profile_key'] for pin in old.workspace_profiles}
-        initial.update({f'profile_{project.pk.hex}': earlier[str(project.pk)] for project in projects
-                        if earlier.get(str(project.pk)) in current})
-    form = InviteForm(cfg,request.POST if request.method == 'POST' else None, initial=initial,
-                      projects=projects, allow_all=allow_all, role_teams=role_teams)
+        initial.update({key:getattr(old,key) for key in ('name','username','email')})
+        if old.role_scope and not lead:
+            initial.update(base_role=old.role_scope['role'],role_mode=old.role_scope['mode'],team=old.role_scope['team_id'])
+    form = InviteForm(request.POST if request.method=='POST' else None,case=case,lead=lead,initial=initial)
     invitation_link = None
-    if request.method == 'POST' and form.is_valid():
+    if request.method=='POST' and form.is_valid():
         values = form.cleaned_data
-        if old and values['username'].strip().lower() != old.username:
-            form.add_error('username', 'Use the original sign-in name when renewing this invitation.')
-        elif old and old.role_scope and not values.get('role_scope'):
-            form.add_error('base_role', 'Review the role and work scope before renewing this invitation.')
-        else:
-            try:
-                if values['workspace_choices'] or values['all_projects'] or values.get('role_scope') or (old and old.workspace_profiles):
-                    try:
-                        review = signing.loads(values['project_review'], salt='staff.invitation.project-review', max_age=900)
-                    except signing.BadSignature:
-                        raise ValidationError('Reload and review the current project access before inviting anyone.') from None
-                    if review != reviewed_projects:
-                        raise ValidationError('Project access changed. Reload and review the current workspaces.')
-                _, token = staff.invite(request.user, case.pk, values['username'], values['name'], values['email'],
-                                        values['actions'], values['revision'], preceding=invitation_id,
-                                        profile_key=values.get('profile',''), workspace_choices=values['workspace_choices'],
-                                        all_current_projects=values['all_projects'], expected_authority=cfg.pk,
-                                        role_scope=values.get('role_scope'))
-            except (PermissionDenied, ValidationError) as exc:
-                form.add_error(None, exc)
+        try:
+            if set(request.POST)-set(form.fields)-{'csrfmiddlewaretoken'}:
+                raise ValidationError('Review the current role invitation form before submitting.')
+            if signing.loads(values['project_review'],salt='staff.role-invitation',max_age=900)!=review:
+                raise ValidationError('Invitation authority changed. Review the current role and team.')
+            if old and values['username'].strip().lower()!=old.username:
+                raise ValidationError('Use the original sign-in name when renewing an invitation.')
+            if lead:
+                role, mode, target_team = lead.role, 'member', lead.team_id
             else:
-                invitation_link = request.build_absolute_uri(reverse('staff_accept_invite'))+'#'+token
-    later = StaffInvitation.objects.filter(case=case, username=OuterRef('username'), number__gt=OuterRef('number'))
-    rows = StaffInvitation.objects.filter(case=case).annotate(superseded=Exists(later)).select_related('admission').order_by('-pk')[:40]
-    response = render(request, 'identity/staff_invites.html', {'case':case,'form':form,'rows':rows,
-                      'renewing':old,'invitation_link':invitation_link,'as_of':timezone.now(),
-                      'show_all_projects':allow_all,'has_extra_projects':bool(projects)})
+                role, mode = values['base_role'], values['role_mode']
+                target_team = values['team'].pk if values['team'] else None
+            _,token = staff.invite_person(request.user,case.pk,values['username'],values['name'],values['email'],
+                values['revision'],role=role,mode=mode,team_id=target_team,preceding=invitation_id)
+        except signing.BadSignature:
+            form.add_error(None,'Reload and review the invitation before submitting.')
+        except (PermissionDenied,ValidationError) as error:
+            form.add_error(None,error)
+        else:
+            invitation_link = request.build_absolute_uri(reverse('staff_accept_invite'))+'#'+token
+    later = StaffInvitation.objects.filter(case=case,username=OuterRef('username'),number__gt=OuterRef('number'))
+    rows = rows.annotate(superseded=Exists(later)).select_related('admission').order_by('-pk')[:40]
+    response = render(request,'identity/staff_invites.html',{'case':case,'form':form,'rows':rows,'lead':lead,
+        'renewing':old,'invitation_link':invitation_link,'as_of':timezone.now()})
     response['Referrer-Policy'] = 'same-origin'
     return response
 
@@ -219,7 +156,7 @@ def accept(request):
             if not code_form.is_valid():
                 raise ValidationError('This invitation is unavailable.')
             token = code_form.cleaned_data['token']
-            row = staff.pending(token)
+            row = staff.pending(token,role_required=True)
             from .teams import describe_pin
 
             label = describe_pin(row.role_scope) if row.role_scope else row.profile_label or 'Individual workspace access'
@@ -232,7 +169,7 @@ def accept(request):
             problem = 'This invitation is unavailable. Ask the inviter to review your current link.'
     elif request.method == 'POST' and form.is_valid():
         try:
-            staff.accept(form.cleaned_data['token'], form.cleaned_data['password'])
+            staff.accept(form.cleaned_data['token'],form.cleaned_data['password'],role_required=True)
         except PermissionDenied:
             form.add_error('token', 'This invitation is unavailable.')
         except ValidationError as exc:

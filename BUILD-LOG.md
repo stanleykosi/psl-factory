@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Replaced access-profile onboarding with required role invitations in the staff application. Added team-owned invitation and renewal, database binding to the actual inviting lead, and visibility for scoped-only staff in the authorised Staff roster. A lead can invite through their own dashboard. Keep already-admitted staff and historical access evidence available under their current permissions.
+
 21 November 2026. Added the reviewed move from existing workspace grants to exact team or standalone scope in Setup and the API. Connected invoice, Accounting, Planning, closure, escalation and supported publication reviews to the role dashboard. Specialist desk links reuse existing grants. Native processing uses exact review receipts and preserves independent release, publication and sign-off controls. Actual staff assignments and decision policies remain deferred.
 
 21 November 2026. Built the PMO role-team path using native action ownership, recorded work updates and independently authorised document review. Applied the same dashboard and invitation scope to all six roles. Connected Finance schedule reviews and HR correction decisions to native approval and readback services. The role desk and API enforce own-work and team scope, and the database blocks accidental workspace-wide grants to scoped accounts.

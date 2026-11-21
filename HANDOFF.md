@@ -1,5 +1,15 @@
 # PSL Operations Factory handoff
 
+## Required roles and team-owned staff invitations · 21 November 2026
+
+An authorised Admin uses **Setup → Primary roles → Teams and work assignments** to create a team, then appoints a lead through Staff invitations. This is also where Admin assigns the standalone CEO and CTO roles. A current PMO, Finance, HR or Admin lead uses **Invite a teammate** on their role dashboard to admit members of their own team. The app binds the invitation to its workspace, team, role, actual inviting lead and current delegation. The same checks apply at setup and at acceptance.
+
+New accounts require a scoped role in the staff application. Older profile-only links and pending member links from the earlier Admin flow need current role invitations. Already-admitted people keep their reviewed access. Scoped-only people appear in the authorised Staff roster. Reassign open actions and resolve decision claims before removing membership. Whole-account departure holds while active team or standalone memberships still need review.
+
+A new invitation covers one workspace. Reviewed role admission to additional workspaces for an existing account is the next staffing gap. Keep team and specialist business decisions tied to native controls. HOD decisions still cover actual rosters, named approvers, release policies and private data boundaries. Use the [role and API notes](docs/design/frontend-api.md#primary-roles) and the [test ledger](BUILD-TESTS.md).
+
+Railway verified 60 distinct PostgreSQL cases across `d08470de-0450-472b-8f49-f8757f605e9f` and `a57bd103-2f93-42fc-909a-cb6980387f34`, with both read-only preservation probes passing in the retest. Web `2a4b305d-dbb3-4b48-9cd8-08f6ddf7f33a` applied identity 0019 and worker `cf9cdd36-e282-4052-b333-3ab9b325530b` is active. Codex read the live Staff page, invitation setup, API contract and health. Staff mutations were exercised only with synthetic test records in isolated PostgreSQL.
+
 ## Reviewed staff moves and role approvals · 21 November 2026
 
 Use **Setup → People → Move to team scope** in the affected workspace. The preview shows each permission removed, the member's current open actions that carry forward and any handover holds. Resolve executing work and claimed decisions through their connected native controls before confirming the reviewed move. The same account keeps its independent access in other workspaces. Exact request replay is safe. Staff who need another scoped workspace can be reviewed there when they already hold workspace access. Native continuations recheck current reviewer authority. Work relying on a removed grant can need a new review.

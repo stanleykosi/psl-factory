@@ -47,7 +47,7 @@ class StaffProfileTests(TestCase):
     @classmethod
     def setUpTestData(cls):cls.data=configured()
 
-    def test_one_use_invitation_previews_and_applies_different_profiles_in_two_workspaces(self):
+    def test_historical_profiles_keep_their_history_but_cannot_admit_staff_in_the_app(self):
         data = self.data
         starting, additional = [scope['case'] for scope in data['scopes']]
         actor = data['actor']
@@ -59,15 +59,15 @@ class StaffProfileTests(TestCase):
             'profile': 'sample-reader', 'revision': rev(starting), 'project_review': form.initial['project_review'],
             f'profile_{additional.pk.hex}': 'sample-contributor',
         })
-        self.assertContains(response, 'Invitation is ready')
-        token = response.context['invitation_link'].split('#')[1]
-        invitation = StaffInvitation.objects.get(username='sample-cross-workspace-invite')
+        self.assertNotContains(response,'Invitation is ready')
+        invitation, token = staff.invite(actor,starting.pk,'sample-cross-workspace-invite','Sample invited staff',
+            'cross-sample@example.invalid',['case.read'],rev(starting),profile_key='sample-reader',
+            expected_authority=data['authority'].pk,workspace_choices={additional.pk:(rev(additional),'sample-contributor')})
         self.assertEqual(invitation.workspace_profiles, [staff.workspace_pin(additional, PROFILES[0])])
         self.client.logout()
         accept_path = reverse('staff_accept_invite')
         preview = self.client.post(accept_path, {'action': 'preview', 'token': token})
-        for text in (starting.title, additional.title, PROFILES[0]['label'], PROFILES[1]['label']):
-            self.assertContains(preview, text)
+        self.assertContains(preview,'invitation is unavailable')
         self.assertFalse(StaffAdmission.objects.filter(invitation=invitation).exists())
         person = staff.accept(token, 'Synthetic!access.acceptance.204')
         grants = set(Grant.objects.filter(user=person, active=True).values_list('case_id', 'action'))
@@ -403,15 +403,15 @@ class StaffProfileTests(TestCase):
         self.assertContains(self.client.post(url,post),'Review every existing profile')
         self.assertEqual(TenantAuthority.objects.filter(user=d['actor'],tenant='staff-accounts').latest('version').pk,d['authority'].pk)
 
-    def test_legacy_invitation_form_remains_supported_without_profiles(self):
+    def test_legacy_delegation_cannot_invite_without_role_administration(self):
         d=self.data;value=deepcopy(d['value']);value['format']='psl.tenant-access/v1'
         value['staff_lifecycle']={'invite_minutes':30,'allow_invite':True,'allow_deactivation':True}
         intake.provision(d['root'],d['actor'],'staff-accounts',value,d['authority'].expires_at,True,'Legacy exact access remains supported')
         case=d['scopes'][0]['case'];case.refresh_from_db();self.client.force_login(d['actor'])
         response=self.client.post(reverse('staff_invites',args=[case.pk]),{'name':'SAMPLE legacy colleague',
             'username':'legacy-profile-free','email':'legacy@example.invalid','actions':['case.read'],'revision':case.revision})
-        self.assertContains(response,'Invitation is ready');row=StaffInvitation.objects.get(username='legacy-profile-free')
-        self.assertEqual(row.profile_key,'');self.assertFalse(StaffProfileChange.objects.exists())
+        self.assertEqual(response.status_code,403)
+        self.assertFalse(StaffInvitation.objects.filter(username='legacy-profile-free').exists())
 
     def test_typed_and_sql_controls_reject_invalid_profiles_and_unknown_extra_fields(self):
         d=self.data

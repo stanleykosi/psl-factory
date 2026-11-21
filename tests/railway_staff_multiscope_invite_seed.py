@@ -32,6 +32,7 @@ def authority_value(create_cases):
             'classification': 'synthetic', 'kinds': ['project'], 'initial_actions': ['case.read'],
             'allowed_actions': sorted({action for profile in PROFILES for action in profile['actions']}),
             'staff_lifecycle': {'invite_minutes': 30, 'allow_invite': True, 'allow_deactivation': False,
+                                'allow_roster':True,'allow_profile_edit':True,
                                 'profiles': deepcopy(PROFILES)}}
 
 

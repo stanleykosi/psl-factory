@@ -5,22 +5,28 @@
     "team_bases": ["PMO Lead","Finance Lead","HR","Admin"],
     "standalone_roles": ["CTO","CEO"],
     "implemented": [
+      "New staff accounts require a role. PMO, Finance, HR and Admin team leads invite only their own team members. Delegated Admins appoint leads and standalone executives. The Staff roster includes people with scoped-only access.",
       "Reviewed scoped invitations, six role dashboards, current member and team visibility, reassignment and revocation.",
       "Native action start and completion, independent document decisions, Finance schedule review and HR correction reply.",
       "Shared Django and API scope, with PostgreSQL preventing workspace-wide grants on scoped accounts.",
       "Reviewed existing-staff moves by workspace with exact grant removal, retained action ownership, stale preview and handover holds.",
       "Exact factory review assignments for invoice, Accounting, Planning, closure, client escalation and supported controlled documents. Existing authorised specialist desks are linked from the dashboard."
     ],
-    "migrations": ["identity.0014_staff_role_work_scope", "identity.0015_scoped_finance_hr_decisions", "identity.0016_reviewed_staff_scope_move", "identity.0017_scoped_factory_approvals", "identity.0018_reuse_scoped_factory_approvals"],
+    "migrations": ["identity.0014_staff_role_work_scope", "identity.0015_scoped_finance_hr_decisions", "identity.0016_reviewed_staff_scope_move", "identity.0017_scoped_factory_approvals", "identity.0018_reuse_scoped_factory_approvals", "identity.0019_team_invitation_authority"],
     "role_checks": {"deployment":"b6f7bfe2-b1ee-4144-8d44-24d81aaf9403","role_work_and_contract":8,"controlled_documents_and_primary_roles":36,"preservation_probes":2},
     "staff_regression": {"deployment":"735abdf8-4019-4d4c-b3b8-24749aa4df62","staff_accounts_and_profiles":45,"fresh_database":true,"preservation_probes":2,"exit":0},
     "scope_move_checks": {"deployment":"77e2d6a7-426e-4eda-a236-fbfb13e3056a","postgresql":10,"preservation_probes":2,"exit":0},
     "scoped_native_checks": {"deployment":"3c8873d2-a41e-40ec-acfa-2cd450815725","postgresql":19,"fresh_database":true,"preservation_probes":2,"exit":0},
     "expanded_role_checks": {"deployment":"23d28b29-e459-4365-b140-f11f234ae8c7","postgresql_passed":20,"postgresql_failed":1,"exit":1},
     "role_desk_retest": {"deployment":"033a303f-6233-4b94-9b4d-4e41307bfb68","postgresql":7,"distinct_checks_passing":21,"preservation_probes":2,"exit":0,"matched_source_paths":32},
+    "team_admission_checks": {"deployment":"ec5ab257-d87a-4824-bbea-f1bb451d2fd4","postgresql":10,"preservation_probes":2,"exit":0},
+    "team_admission_regression": {"deployment":"d08470de-0450-472b-8f49-f8757f605e9f","discovered":60,"passed":56,"fixture_errors":3,"exit":1},
+    "team_admission_retest": {"deployment":"a57bd103-2f93-42fc-909a-cb6980387f34","postgresql":5,"distinct_checks_passing":60,"preservation_probes":2,"exit":0},
+    "team_admission_preview": {"web":"2a4b305d-dbb3-4b48-9cd8-08f6ddf7f33a","worker":"cf9cdd36-e282-4052-b333-3ab9b325530b","browser":["health","staff_roster","invite_acceptance_page","role_invitation_api_contract"]},
     "previous_preview": {"web":"314ab6ab-1508-4c64-a688-11fc1959545d","worker":"19245f6a-f66d-44f9-b012-6159275b0f55","contract_paths":50,"contract_operations":58,"browser":["live_role_dashboard","authenticated_role_api","live_contract","health"]},
     "preview": {"web":"7d1dce10-85c6-4956-87cb-22cd3bf8b19d","worker":"3f9af071-4bf4-4410-9e1d-7f8ed19d6aed","contract_paths":52,"contract_operations":61,"browser":["live_role_dashboard","authenticated_role_api","live_contract","health","payment_exception_desk_link","staff_roster"],"browser_mutations":false},
     "remaining_engineering": [
+      "Connect additional role-scoped workspace admissions for a person who already has an account. Each new invitation currently covers one workspace.",
       "Add direct, protected-source assignments for specialist decisions that currently open the existing authorised native approval desks."
     ],
     "acceptance": [

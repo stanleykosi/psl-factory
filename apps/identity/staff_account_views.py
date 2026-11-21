@@ -20,6 +20,7 @@ from . import staff
 from . import staff_accounts as domain
 from .intake_models import TenantAuthority
 from .staff_models import StaffInvitation
+from .team_models import StaffMembership
 
 
 @login_required
@@ -30,7 +31,7 @@ def roster(request):
     search=request.GET.get('q','').strip()[:120]
     status=request.GET.get('status','all')
     if status not in ['all','active','inactive']:status='all'
-    people=get_user_model().objects.filter(grant__case__in=cases).distinct()
+    people=get_user_model().objects.filter(Q(grant__case__in=cases)|Q(staffmembership__case__in=cases)).distinct()
     if search:people=people.filter(Q(username__icontains=search)|Q(first_name__icontains=search)|
                                     Q(last_name__icontains=search)|Q(email__icontains=search))
     if status!='all':people=people.filter(is_active=status=='active')
@@ -41,18 +42,27 @@ def roster(request):
     counts=dict(Grant.objects.filter(case__in=cases,user_id__in=[u.pk for u in page],active=True).values(
         'user_id').annotate(count=Count('case_id',distinct=True)).values_list('user_id','count'))
     from .staff_profiles import binding_labels
+    from .teams import scope_label
+
     labels=binding_labels([(u.first_profile_case,u.pk) for u in page if u.first_profile_case])
+    roles = {}
+    for membership in StaffMembership.objects.filter(case__in=cases,user_id__in=[u.pk for u in page],active=True).select_related(
+            'team').order_by('case__title','pk'):
+        roles.setdefault(membership.user_id,[]).append(membership)
     for user in page:
-        user.managed_workspace_count=counts.get(user.pk,0)
-        user.first_profile_label=labels.get((user.first_profile_case,user.pk),'No current access')
-        user.departure_available=user.is_active and user.pk!=request.user.pk and not(user.is_staff or user.is_superuser)
+        scoped = roles.get(user.pk,[])
+        user.managed_workspace_count=counts.get(user.pk,0)+len(scoped)
+        user.first_profile_label=(scope_label(scoped[0].role,scoped[0].mode) if scoped
+                                  else labels.get((user.first_profile_case,user.pk),'No current access'))
+        user.departure_available=(user.is_active and not scoped and user.pk!=request.user.pk
+                                  and not(user.is_staff or user.is_superuser))
         user.reactivation_available=not user.is_active and not(user.is_staff or user.is_superuser)
     later=StaffInvitation.objects.filter(case_id=OuterRef('case_id'),username=OuterRef('username'),number__gt=OuterRef('number'))
     pending=StaffInvitation.objects.filter(case__in=cases,admission__isnull=True).annotate(
         superseded=Exists(later)).filter(superseded=False)
     if search:pending=pending.filter(Q(name__icontains=search)|Q(username__icontains=search)|Q(email__icontains=search))
     invitations=Paginator(pending.select_related('case').only('id','case_id','case__title','name','username','email',
-        'profile_label','expires_at','number').order_by('-pk'),25).get_page(request.GET.get('invitations_page'))
+        'profile_label','role_scope','expires_at','number').order_by('-pk'),25).get_page(request.GET.get('invitations_page'))
     return render(request,'identity/staff_roster.html',{'people':page,'search':search,'status':status,
         'invitations':invitations,'observed_at':timezone.now(),'available':cases.exists()})
 

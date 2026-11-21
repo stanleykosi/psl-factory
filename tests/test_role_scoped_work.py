@@ -16,6 +16,7 @@ from apps.documents import controlled
 from apps.identity import intake, role_factory_decisions, role_native_decisions, role_work, scope_moves, staff, teams
 from apps.identity.models import Grant
 from apps.identity.services import require
+from apps.identity.staff_models import StaffInvitation
 from apps.identity.team_models import StaffAssignment, StaffMembership, StaffReviewUse
 from apps.policy.services import active_component, register_reference, transition
 from tests.document_helpers import DEFINITION, drafted
@@ -48,9 +49,11 @@ class RoleScopedWorkTests(TestCase):
 
     def invitation(self, role, mode, team=None, *, username=None):
         username = username or 'synthetic-' + uuid4().hex[:12]
-        return staff.invite(self.admin, self.case.pk, username, username, f'{username}@example.test', [], rev(self.case),
-                            expected_authority=self.delegation.pk,
-                            role_scope={'role':role, 'mode':mode, 'team_id':team.pk if team else None})
+        actor = self.admin
+        if mode=='member':
+            actor = self.admitted(role,'lead',team).user
+        return staff.invite_person(actor,self.case.pk,username,username,f'{username}@example.test',rev(self.case),
+                                   role=role,mode=mode,team_id=team.pk if team else None)
 
     def admitted(self, role='pmo-lead', mode='member', team=None):
         if role == 'pmo-lead' and team is None:
@@ -236,9 +239,12 @@ class RoleScopedWorkTests(TestCase):
 
     def test_05_bad_scope_and_cross_project_assignment_are_rejected(self):
         other = teams.create_team(self.admin, self.other.pk, 'pmo-lead', 'Outside team')
+        lead = self.admitted(mode='lead')
         for args in [('ceo','lead',self.team),('hr','standalone',None),('pmo-lead','member',other),('hr','member',self.team)]:
-            with self.subTest(args=args), self.assertRaises(ValidationError):
-                self.invitation(*args)
+            with self.subTest(args=args), self.assertRaises((PermissionDenied,ValidationError)):
+                role,mode,team = args
+                staff.invite_person(lead.user if mode=='member' else self.admin,self.case.pk,'invalid-role',
+                    'Invalid role','invalid@example.test',rev(self.case),role=role,mode=mode,team_id=team.pk if team else None)
         member = self.admitted()
         with self.assertRaises(StaffMembership.DoesNotExist):
             role_work.assign_action(self.admin, self.other.pk, member.pk, reference='FOREIGN', description='A foreign project',
@@ -569,3 +575,68 @@ class RoleScopedWorkTests(TestCase):
         receipt = PublicationReceipt.objects.get(publication__version=version)
         self.assertEqual(receipt.publication.review_id,result['review_id'])
         self.assertEqual(factory_reporting.verify(f.work)['receipt_ids'],[receipt.pk])
+
+    def test_18_pmo_finance_and_hr_leads_invite_only_their_team_members(self):
+        for role, label in (('pmo-lead','PMO'),('finance-lead','Finance'),('hr','HR')):
+            team = teams.create_team(self.admin,self.case.pk,role,label)
+            lead = self.admitted(role,'lead',team)
+            self.client.force_login(lead.user)
+            url = reverse('staff_team_invite',args=[self.case.pk,team.pk])
+            dashboard = self.checked(self.api('/role-dashboard'),'/role-dashboard')
+            self.assertEqual(dashboard['positions'][0]['invite_url'],url)
+            other_team = self.peer_team if role=='pmo-lead' else self.team
+            self.assertEqual(self.client.get(reverse('staff_team_invite',args=[self.case.pk,other_team.pk])).status_code,404)
+            self.assertEqual(self.client.get(reverse('staff_invites',args=[self.case.pk])).status_code,404)
+            page = self.client.get(url)
+            post = {**page.context['form'].initial,'username':f'synthetic-managed-{role}','name':label+' Test Member',
+                    'email':f'{role}-member@example.test'}
+            self.assertNotContains(self.client.post(url,{**post,'base_role':'ceo'}),'Invitation is ready')
+            with self.assertRaises(PermissionDenied):
+                staff.invite_person(lead.user,self.case.pk,post['username'],post['name'],post['email'],rev(self.case),
+                                    role='finance-lead' if role!='finance-lead' else 'hr',mode='member',team_id=team.pk)
+            response = self.client.post(url,post)
+            self.assertContains(response,'Invitation is ready')
+            token = response.context['invitation_link'].split('#')[1]
+            join = reverse('staff_accept_invite')
+            recipient = Client()
+            self.assertContains(recipient.post(join,{'action':'preview','token':token}),team.name)
+            self.assertEqual(recipient.post(join,{'token':token,'password':PASSWORD,'confirm':PASSWORD}).status_code,302)
+            member = StaffMembership.objects.get(user__username=post['username'])
+            self.assertEqual((member.role,member.mode,member.team_id),(role,'member',team.pk))
+            self.assertEqual(member.invitation.inviting_membership_id,lead.pk)
+            self.assertFalse(Grant.objects.filter(user=member.user,case=self.case).exists())
+            self.client.force_login(member.user)
+            self.assertEqual(self.client.get(url).status_code,404)
+            self.client.force_login(self.admin)
+            self.assertContains(self.client.get(reverse('staff_roster'),{'q':post['username']}),post['name'])
+            self.assertContains(self.client.get(reverse('staff_person',args=[member.user_id])),team.name)
+
+    def test_19_unscoped_links_and_revoked_lead_links_cannot_create_accounts(self):
+        join = reverse('staff_accept_invite')
+        _,old_token = staff.invite(self.admin,self.case.pk,'earlier-pending','Earlier colleague',
+                                    'legacy@example.test',['case.read'],rev(self.case))
+        lead = self.admitted(mode='lead')
+        pending,token = staff.invite_person(lead.user,self.case.pk,'pending-member','Pending colleague','pending@example.test',
+                                           rev(self.case),role='pmo-lead',mode='member',team_id=self.team.pk)
+        teams.revoke(self.admin,self.case.pk,lead.pk,'Synthetic lead handover')
+        for code in (old_token, token):
+            self.assertContains(self.client.post(join,{'action':'preview','token':code}),'invitation is unavailable')
+            response = self.client.post(join,{'token':code,'password':PASSWORD,'confirm':PASSWORD})
+            self.assertContains(response,'invitation',status_code=200)
+        self.assertFalse(get_user_model().objects.filter(username__in=['earlier-pending','pending-member']).exists())
+        with self.assertRaises(PermissionDenied):
+            staff.invite_person(self.admin,self.case.pk,'blocked-admin','Blocked Admin','blocked@example.test',
+                rev(self.case),role='pmo-lead',mode='member',team_id=self.team.pk)
+        with self.assertRaises(DatabaseError), transaction.atomic():
+            StaffInvitation.objects.create(case=self.case,username='unreviewed-role',name='Unreviewed role',
+                email='unreviewed@example.test',actions=[],role_scope=teams.scope_pin(self.case,'pmo-lead','member',self.team.pk),
+                number=1,token_hash=uuid4().hex*2,expires_at=timezone.now()+timedelta(minutes=15),
+                actor=lead.user,authority=self.delegation,inviting_membership=lead)
+        next_lead = self.admitted(mode='lead')
+        self.client.force_login(next_lead.user)
+        path = reverse('staff_team_renew',args=[self.case.pk,self.team.pk,pending.pk])
+        form = self.client.get(path).context['form']
+        response = self.client.post(path,form.initial)
+        self.assertContains(response,'Invitation is ready')
+        current = StaffInvitation.objects.get(case=self.case,username=pending.username,number=2)
+        self.assertEqual(current.inviting_membership_id,next_lead.pk)

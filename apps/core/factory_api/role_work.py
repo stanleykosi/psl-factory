@@ -19,7 +19,7 @@ PINS = {'expected': REVISION, 'case_expected': REVISION}
 
 @endpoint(response=obj({
     'positions': array(obj({'role': ROLE, 'mode': choice(*MODE_LABELS), 'name': TEXT, 'area': TEXT,
-                           'focus': TEXT, 'workspace': TEXT, 'team': nullable(TEXT)}), limit=50),
+                           'focus': TEXT, 'workspace': TEXT, 'team': nullable(TEXT), 'invite_url':nullable(TEXT)}), limit=50),
     'actions': array(CARD, limit=domain.SIZE), 'decisions': array(CARD, limit=domain.SIZE),
     'team_decisions': array(CARD, limit=domain.SIZE), 'limited': BOOLEAN,
     'workspace_decisions':array(obj({'work_id':ID,'title':TEXT,'workspace':TEXT,'state':TEXT,'url':TEXT}),limit=8),

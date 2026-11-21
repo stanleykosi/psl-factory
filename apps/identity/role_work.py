@@ -280,7 +280,8 @@ def dashboard(actor, page):
     memberships = teams.memberships(actor).select_related('case', 'team').order_by('role', 'case__title', 'pk')
     positions = [{'role': item.role, 'mode': item.mode, 'name': teams.scope_label(item.role, item.mode),
                   'area': teams.FOCUS[item.role][0], 'focus': teams.FOCUS[item.role][1],
-                  'workspace': workspace_name(item.case), 'team': item.team.name if item.team else None}
+                  'workspace': workspace_name(item.case), 'team': item.team.name if item.team else None,
+                  'invite_url': reverse('staff_team_invite',args=[item.case_id,item.team_id]) if item.mode=='lead' else None}
                  for item in memberships[:51]]
     offset = (page - 1) * SIZE
     query = scoped_rows(actor)

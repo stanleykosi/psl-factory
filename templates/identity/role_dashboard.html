@@ -11,6 +11,7 @@
   <section class="area-card"><h2>{{ position.workspace }}</h2>
     {% if positions|length > 1 %}<p>{{ position.name }} · {{ position.focus }}</p>{% endif %}
     {% if position.team %}<p>{{ position.team }}{% if position.mode == 'lead' %} · Team lead{% endif %}</p>{% endif %}
+    {% if position.invite_url %}<a class="button secondary" href="{{ position.invite_url }}">Invite a teammate</a>{% endif %}
   </section>
   {% endfor %}
 </div>

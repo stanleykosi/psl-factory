@@ -17,6 +17,7 @@ from . import intake, staff
 from .intake_models import TenantAuthority
 from .models import Grant
 from .staff_models import StaffAccountChange
+from .team_models import StaffMembership
 
 MAX_CASES = 100
 CONTROL_KEYS = ('allow_roster','allow_account_deactivation','allow_unassigned_departure','allow_profile_edit','allow_reactivation')
@@ -48,8 +49,11 @@ def manageable_cases(actor):
 
 
 def account(actor,person_id):
-    admitted=Grant.objects.filter(case__in=manageable_cases(actor),user_id=person_id)
-    if not admitted.exists():raise PermissionDenied('This staff account is unavailable in your managed workspaces.')
+    cases = manageable_cases(actor)
+    admitted = Grant.objects.filter(case__in=cases,user_id=person_id)
+    scoped = StaffMembership.objects.filter(case__in=cases,user_id=person_id)
+    if not admitted.exists() and not scoped.exists():
+        raise PermissionDenied('This staff account is unavailable in your managed workspaces.')
     return get_user_model().objects.get(pk=person_id)
 
 
@@ -64,6 +68,8 @@ def prepare(actor,person_id):
     if person.pk==actor.pk or person.is_staff or person.is_superuser or _technical_authority(person):
         raise PermissionDenied('This account needs its technical administrator; it cannot be disabled here.')
     if not person.is_active:raise ValidationError('This account is already inactive.')
+    if StaffMembership.objects.filter(user=person,active=True).exists():
+        raise ValidationError('Review handovers and remove team or standalone access before deactivating this account.')
     ids=list(Grant.objects.filter(user=person,active=True).order_by('case_id').values_list('case_id',flat=True).distinct()[:MAX_CASES+1])
     if not ids or len(ids)>MAX_CASES:raise ValidationError('The complete account scope needs administrator review.')
     cases=list(Case.objects.filter(pk__in=ids).order_by('pk'))

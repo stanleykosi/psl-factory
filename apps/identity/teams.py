@@ -50,6 +50,28 @@ def invitation_scope(actor, case, role, mode, team_id):
     return scope_pin(case, role, mode, team_id)
 
 
+def invitation_authority(actor, case, mode, *, team_id=None, membership_id=None):
+    """Manage lead appointments separately from invitations to join a lead's team."""
+    if mode != 'member':
+        cfg = manageable(actor, case, ['case.read'])
+        if not cfg.value.get('staff_lifecycle', {}).get('allow_invite'):
+            raise PermissionDenied('Current staff invitation delegation required.')
+        return cfg, None
+    from .staff import authority
+
+    lead = memberships(actor).filter(case=case, mode='lead', team_id=team_id)
+    if membership_id is not None:
+        lead = lead.filter(pk=membership_id)
+    lead = lead.select_related('invitation__authority__user','scope_move__authority__user').first()
+    if not lead:
+        raise PermissionDenied('Only the current lead of this team can invite its members.')
+    source = lead.invitation or lead.scope_move
+    cfg, _ = authority(source.authority.user,case,'allow_invite')
+    if not cfg.value['staff_lifecycle'].get('allow_profile_edit') or 'case.read' not in cfg.value['allowed_actions']:
+        raise PermissionDenied('This team needs current staff administration delegation.')
+    return cfg, lead
+
+
 def scope_pin(case, role, mode, team_id):
     if role in STANDALONE_ROLES and mode == 'standalone' and team_id is None:
         return {'format': 'psl.staff-role-scope/v1', 'role': role, 'mode': mode, 'team_id': None, 'team_name': ''}
@@ -79,6 +101,13 @@ def create_team(actor, case_id, role, name):
 
 def verify_invitation(row):
     pin = row.role_scope
+    if row.inviting_membership_id:
+        cfg, lead = invitation_authority(row.actor,row.case,'member',team_id=pin.get('team_id'),
+                                         membership_id=row.inviting_membership_id)
+        if (row.actions or row.profile_key or row.workspace_profiles or pin.get('role')!=lead.role or
+                cfg.pk!=row.authority_id or pin!=scope_pin(row.case,lead.role,'member',lead.team_id)):
+            raise ValidationError('The reviewed team or invitation authority changed. Ask for a new invitation.')
+        return
     if (not isinstance(pin, dict) or row.actions or row.profile_key or row.workspace_profiles or
             pin != invitation_scope(row.actor, row.case, pin.get('role'), pin.get('mode'), pin.get('team_id'))):
         raise ValidationError('The approved role or scope changed. Ask for a new invitation.')
@@ -100,6 +129,15 @@ def revoke(actor, case_id, member_id, reason):
     intake.lock_users([actor.pk, member.user_id])
     manageable(actor, case)
     intake.text(reason, 1000)
+    from .staff import work_handover_findings
+    from .team_models import StaffAssignment
+
+    holds = work_handover_findings(case,member.user)
+    if StaffAssignment.objects.filter(membership=member,action__current__owner_id=member.user_id).exclude(
+            action__current__status__in=['completed','cancelled']).exclude(action__isnull=True).exists():
+        holds.append('Reassign this person’s open actions before removing their role access.')
+    if holds:
+        raise ValidationError(holds)
     member.active = False
     member.save(update_fields=['active'])
     event(actor, case, 'staff.membership_revoked', member=member.pk, person=member.user_id, reason=reason)
