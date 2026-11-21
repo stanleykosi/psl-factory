@@ -1,0 +1,42 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Teams and work assignments · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'staff_primary_roles' case.pk %}">← Primary roles</a>
+  <h1>Teams and work assignments</h1><p>{{ case|workspace_name }}</p>
+</div>{% if can_invite %}<a class="button primary" href="{% url 'staff_invites' case.pk %}">Invite a person</a>{% endif %}</header>
+<section class="card"><h2>Teams</h2>
+  <ul>{% for team in teams %}<li>{{ team.name }}</li>{% empty %}<li>No teams in this workspace.</li>{% endfor %}</ul>
+  <details{% if scope_forms.team.errors %} open{% endif %}><summary>Create a team</summary>
+    <form method="post">{% csrf_token %}{{ scope_forms.team.as_p }}<button type="submit" name="operation" value="team" class="button primary">Create team</button></form>
+  </details>
+</section>
+<section class="card"><h2>Current role assignments</h2>
+  <ul>{% for person in members %}<li>{{ person.user.get_full_name|default:person.user.username }}{% if person.team %} · {{ person.team.name }}{% endif %} · {{ person.mode|capfirst }}</li>
+  {% empty %}<li>Invite someone with a base role to start assigning work.</li>{% endfor %}</ul>
+</section>
+{% if scope_forms.action %}<section class="card">
+ <details{% if scope_forms.action.errors %} open{% endif %}><summary>Assign work</summary><form method="post">{% csrf_token %}{{ scope_forms.action.as_p }}
+ <button type="submit" name="operation" value="action" class="button primary">Assign work</button></form></details>
+</section>{% endif %}
+{% if scope_forms.review %}<section class="card">
+ <details{% if scope_forms.review.errors %} open{% endif %}><summary>Send a document for review</summary><form method="post">{% csrf_token %}{{ scope_forms.review.as_p }}
+ <p>The reviewer still needs current authority to decide on this document.</p>
+ <button type="submit" name="operation" value="review" class="button primary">Assign review</button></form></details>
+</section>{% endif %}
+{% if scope_forms.schedule %}<section class="card">
+ <details{% if scope_forms.schedule.errors %} open{% endif %}><summary>Assign a Finance schedule review</summary><form method="post">{% csrf_token %}{{ scope_forms.schedule.as_p }}
+ <button type="submit" name="operation" value="schedule" class="button primary">Assign Finance review</button></form></details>
+</section>{% endif %}
+{% if scope_forms.hr %}<section class="card">
+ <details{% if scope_forms.hr.errors %} open{% endif %}><summary>Assign an HR correction review</summary><form method="post">{% csrf_token %}{{ scope_forms.hr.as_p }}
+ <button type="submit" name="operation" value="hr" class="button primary">Assign HR review</button></form></details>
+</section>{% endif %}
+{% if scope_forms.transfer %}<section class="card">
+ <details{% if scope_forms.transfer.errors %} open{% endif %}><summary>Reassign work</summary><form method="post">{% csrf_token %}{{ scope_forms.transfer.as_p }}
+ <button type="submit" name="operation" value="transfer" class="button primary">Confirm reassignment</button></form></details>
+</section>{% endif %}
+<section class="card">
+ <details{% if scope_forms.revoke.errors %} open{% endif %}><summary>Remove role access</summary><form method="post">{% csrf_token %}{{ scope_forms.revoke.as_p }}
+ <button type="submit" name="operation" value="revoke" class="button secondary">Remove access</button></form></details>
+</section>
+{% endblock %}

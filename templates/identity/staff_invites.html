@@ -8,7 +8,14 @@
   <p><a class="button secondary" href="{{ invitation_link }}" rel="noopener noreferrer" target="_blank">Preview invitation</a></p>
 </section>{% endif %}
 <section class="card onboarding-card"><h2>{% if renewing %}Renew invitation{% else %}Invite a person{% endif %}</h2>
-  <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.project_review }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}{{ form.profile.as_field_group }}
+  <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.project_review }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}
+    {% if form.base_role %}
+    <fieldset><legend>Role and work scope</legend>{{ form.base_role.as_field_group }}{{ form.role_mode.as_field_group }}{{ form.team.as_field_group }}
+      <p>Team members see their own assignments. Leads can also see their team’s work. Choose standalone for CEO or CTO.</p>
+      <p><a href="{% url 'staff_teams' case.pk %}">Manage teams</a></p>
+    </fieldset>
+    {% endif %}
+    <details{% if form.profile.errors or renewing.profile_key %} open{% endif %}><summary>Use a workspace access profile</summary>{{ form.profile.as_field_group }}</details>
     <details><summary>Review individual workspace functions</summary><p>Use this only when a named access profile has not been configured. The invitation must include workspace read access.</p>{{ form.actions.as_field_group }}</details>
     {% if has_extra_projects %}<details{% if renewing.workspace_profiles or form.errors %} open{% endif %}><summary>Include more projects</summary>
       <p>Choose a profile for each project you want to include. The link admits the person to the projects reviewed here.</p>

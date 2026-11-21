@@ -1,15 +1,21 @@
 {
   "role_scoped_operations": {
-    "status": "requirements_confirmed_engineering_open",
+    "status": "hosted_role_scopes_verified",
     "reference": "guide/11-FULL-PRODUCT.md#role-based-work-and-supervision",
     "team_bases": ["PMO Lead","Finance Lead","HR","Admin"],
     "standalone_roles": ["CTO","CEO"],
-    "engineering": [
-      "Bind staff to reviewed role, team, workspace and current assignment scope. Preserve historical grants and review any existing broad access before claiming member isolation.",
-      "Enforce exact work scope on server-side lists, records, actions, related evidence, search, exports and agent reads. Check lead authority against the current managed team.",
-      "Build role dashboards and decision queues from authorized work. Keep action eligibility, independent review, private data and source-required approvals in the native services.",
-      "Connect Admin invitation creation, recipient preview, acceptance and the first signed-in landing to the same reviewed role and scope. Revalidate changed authority and team membership before access is activated.",
-      "Prove a PMO member-to-lead workflow on PostgreSQL and in the Railway preview, then exercise the same scope through Finance, HR, Admin, CTO and CEO paths in Django and the API."
+    "implemented": [
+      "Reviewed scoped invitations, six role dashboards, current member and team visibility, reassignment and revocation.",
+      "Native action start and completion, independent document decisions, Finance schedule review and HR correction reply.",
+      "Shared Django and API scope, with PostgreSQL preventing workspace-wide grants on scoped accounts."
+    ],
+    "migrations": ["identity.0014_staff_role_work_scope", "identity.0015_scoped_finance_hr_decisions"],
+    "role_checks": {"deployment":"b6f7bfe2-b1ee-4144-8d44-24d81aaf9403","role_work_and_contract":8,"controlled_documents_and_primary_roles":36,"preservation_probes":2},
+    "staff_regression": {"deployment":"735abdf8-4019-4d4c-b3b8-24749aa4df62","staff_accounts_and_profiles":45,"fresh_database":true,"preservation_probes":2,"exit":0},
+    "preview": {"web":"314ab6ab-1508-4c64-a688-11fc1959545d","worker":"19245f6a-f66d-44f9-b012-6159275b0f55","contract_paths":50,"contract_operations":58,"browser":["live_role_dashboard","authenticated_role_api","live_contract","health"]},
+    "remaining_engineering": [
+      "Extend exact role-desk permissions and packets to additional source-specific workflow commands. Use the native workspace for decisions outside the three connected review types.",
+      "Provide a reviewed transition of existing workspace grants to scoped membership and support additional scoped workspaces for an already admitted account."
     ],
     "acceptance": [
       "Two members in the same workspace see and act on their respective assigned work. A member cannot open a peer record by direct link, API, search, or evidence link.",

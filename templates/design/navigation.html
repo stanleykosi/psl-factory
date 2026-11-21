@@ -3,9 +3,13 @@
   {% if control_plane %}
   <nav aria-label="Main navigation"><a href="{% url 'home' %}">Recovery work</a></nav>
   <form class="factory-menu" action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sign out</button></form>
+  {% elif role_only_navigation %}
+  <nav aria-label="Main navigation"><a href="{% url 'role_dashboard' %}">My work</a></nav>
+  <form class="factory-menu" action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sign out</button></form>
   {% else %}
   <nav aria-label="Main navigation">
     <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>My work</a>
+    {% if role_dashboard_available %}<a href="{% url 'role_dashboard' %}">Role assignments</a>{% endif %}
     <a href="{% url 'workspace_overview' %}?kind=project" {% if request.resolver_match.url_name == 'workspace_overview' %}aria-current="page"{% endif %}>Projects</a>
     <a href="{% url 'design_overview' %}" {% if request.resolver_match.url_name == 'design_overview' %}aria-current="page"{% endif %}>Overview</a>
     <a href="{% url 'design_agents' %}" {% if request.resolver_match.url_name == 'design_agents' %}aria-current="page"{% endif %}>Assistant</a>

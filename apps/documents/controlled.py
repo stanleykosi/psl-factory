@@ -293,7 +293,13 @@ def validate_review(case,version):
         raise ValidationError('A PMO Lead approval of this exact outward projection is required')
     from apps.pmo.rfp_submission_pack import require_independent_review
     require_independent_review(review.actor, version, verdict=review.verdict)
-    require(review.actor,case,'document.review_controlled')
+    try:
+        require(review.actor,case,'document.review_controlled')
+    except PermissionDenied:
+        from apps.identity.role_work import recorded_review_access
+
+        if not recorded_review_access(case, version, review):
+            raise
     if dict(decision_authority(review.actor,case,role,'approve',review.delegated),**pins)!=review.authority:
         raise ValidationError('Review authority changed; create a fresh version and review')
     return review

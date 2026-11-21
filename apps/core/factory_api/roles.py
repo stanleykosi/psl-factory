@@ -10,7 +10,8 @@ from .http import BOOLEAN, ID, TEXT, UUID, array, choice, endpoint, nullable, ob
 ROLE_KEY = {'type': 'string', 'maxLength': 50, 'pattern': '^[a-z0-9]+(?:-[a-z0-9]+)*$'}
 REASON = {**TEXT, 'maxLength': 1000}
 FUNCTION = choice(*domain.FUNCTIONS)
-CURRENT = obj({'key': ROLE_KEY, 'name': TEXT, 'state': choice('active', 'review_needed')})
+CURRENT = obj({'key': ROLE_KEY, 'name': TEXT, 'state': choice('active', 'review_needed'),
+               'mode': choice('member', 'lead', 'standalone'), 'team': nullable(TEXT)}, optional=('mode', 'team'))
 ROLE = obj({
     'key': ROLE_KEY, 'name': TEXT, 'description': {'type': 'string'},
     'functions': array(FUNCTION), 'definition_id': nullable(ID),
@@ -61,6 +62,12 @@ def create(request, case_id, *, body):
 
 @endpoint(response=obj({'case_id': UUID, 'role': nullable(CURRENT)}), summary='Read your own current workspace role')
 def own(request, case_id):
+    from apps.identity.teams import memberships, scope_label
+
+    scope = memberships(request.user).filter(case_id=case_id).select_related('team').first()
+    if scope:
+        return {'case_id': case_id, 'role': {**domain.description(scope.role, scope_label(scope.role, scope.mode)),
+                'mode': scope.mode, 'team': scope.team.name if scope.team else None}}
     case = workspace(request.user, case_id)
     return {'case_id': case.pk, 'role': domain.own_role(request.user, case)}
 

@@ -14,6 +14,7 @@ class StaffInvitation(AppendOnly):
     profile_label = models.CharField(max_length=80,blank=True,default='')
     profile_sha256 = models.CharField(max_length=64,blank=True,default='')
     workspace_profiles = models.JSONField(default=list, blank=True)
+    role_scope = models.JSONField(default=dict, blank=True)
     number = models.PositiveIntegerField()
     token_hash = models.CharField(max_length=64, unique=True)
     expires_at = models.DateTimeField()

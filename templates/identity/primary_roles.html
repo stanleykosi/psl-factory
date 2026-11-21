@@ -3,6 +3,7 @@
 {% block content %}
 <header class="page-heading">
   <div><h1>Primary roles</h1><p>{{ case|workspace_name }}</p></div>
+  {% if form %}<a class="button secondary" href="{% url 'staff_teams' case.pk %}">Teams and work assignments</a>{% endif %}
   <a class="button secondary" href="{% url 'staff_roster' %}">People</a>
 </header>
 <section class="card">

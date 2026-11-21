@@ -9,8 +9,14 @@ def interface(request):
     nav = {'control_plane': control_plane}
     if control_plane or not request.user.is_authenticated:
         return nav
+    from apps.identity.teams import memberships
+    from apps.identity.services import visible_cases
     from apps.workflows.factory_views import QUEUES, intake_available
 
+    nav['role_dashboard_available'] = memberships(request.user).exists()
+    if nav['role_dashboard_available'] and not visible_cases(request.user).exists():
+        nav['role_only_navigation'] = True
+        return nav
     if intake_available(request.user):
         url = reverse('factory_intake')
         context = {}

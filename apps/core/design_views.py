@@ -64,6 +64,10 @@ class FactoryLogin(LoginView):
         return response
 
     def get_default_redirect_url(self):
+        from apps.identity.teams import memberships
+
+        if memberships(self.request.user).exists():
+            return reverse('role_dashboard')
         if not visible_cases(self.request.user).exists():
             return reverse('getting_started')
         return super().get_default_redirect_url()
@@ -73,6 +77,10 @@ class FactoryLogin(LoginView):
 @require_safe
 @never_cache
 def getting_started(request):
+    from apps.identity.teams import memberships
+
+    if memberships(request.user).exists():
+        return redirect('role_dashboard')
     if visible_cases(request.user).exists():
         return redirect('home')
     return render(request, 'design/getting_started.html', {

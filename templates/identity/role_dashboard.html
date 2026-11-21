@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}My work · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div>
+  <h1>{% if positions|length == 1 %}{{ positions.0.name }}{% else %}My work{% endif %}</h1>
+  {% if positions|length == 1 %}<p class="lede">{{ positions.0.focus }}</p>{% endif %}
+</div></header>
+{% if positions %}
+<div class="area-grid">
+  {% for position in positions %}
+  <section class="area-card"><h2>{{ position.workspace }}</h2>
+    {% if positions|length > 1 %}<p>{{ position.name }} · {{ position.focus }}</p>{% endif %}
+    {% if position.team %}<p>{{ position.team }}{% if position.mode == 'lead' %} · Team lead{% endif %}</p>{% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endif %}
+<section class="card factory-floor" aria-labelledby="assigned-work">
+ <header><h2 id="assigned-work">{% if has_teams %}My work and team work{% else %}My assigned work{% endif %}</h2></header>
+ {% for item in actions %}
+ <a class="floor-line" href="{{ item.url }}"><span><strong>{{ item.title }}</strong><br>{{ item.workspace }}{% if not item.mine %} · {{ item.owner }}{% endif %}{% if item.line %}<br>{{ item.line }}{% endif %}</span><span>{{ item.state }}{% if item.due %}<br>Due {{ item.due|date:'j M, H:i' }}{% endif %}</span></a>
+ {% empty %}<p>No work is assigned here.</p>{% endfor %}
+</section>
+<section class="card factory-floor" aria-labelledby="my-decisions">
+ <header><h2 id="my-decisions">Decisions for me</h2></header>
+ {% for item in decisions %}<a class="floor-line" href="{{ item.url }}"><span>{{ item.title }}</span><span>{{ item.workspace }}</span></a>
+ {% empty %}<p>No decision is ready for you on this page.</p>{% endfor %}
+ {% if limited %}<p>Some decisions need a fresh access check. Reload the page to try again.</p>{% endif %}
+</section>
+{% if team_decisions %}<section class="card factory-floor" aria-labelledby="team-decisions">
+ <header><h2 id="team-decisions">Waiting on my team</h2></header>
+ {% for item in team_decisions %}<a class="floor-line" href="{{ item.url }}"><span>{{ item.title }}</span><span>{{ item.owner }} · {{ item.state }}</span></a>{% endfor %}
+</section>{% endif %}
+{% if page > 1 or has_next %}<nav aria-label="Work pages" class="factory-queues">
+  {% if page > 1 %}<a href="?page={{ page|add:'-1' }}">Previous</a>{% endif %}
+  {% if has_next %}<a href="?page={{ page|add:'1' }}">Next</a>{% endif %}
+</nav>{% endif %}
+<p class="coverage-note">Checked {{ as_of|date:'j M Y, H:i T' }}.</p>
+{% endblock %}

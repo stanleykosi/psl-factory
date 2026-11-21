@@ -25,7 +25,7 @@
         {% elif case %}<a href="{% url 'workspace_overview' %}">Workspaces</a><span>/</span><a href="{% url 'case' case.pk %}">{{ case|workspace_name }}</a>
         {% else %}<strong>{{ request.resolver_match.url_name|page_name }}</strong>{% endif %}
       </div>
-      {% if not control_plane %}<a class="topbar-search" href="{% url 'workspace_overview' %}#workspace-search">{% include 'ui/icon.html' with icon='search' %}<span>Find a workspace</span></a>{% endif %}
+      {% if not control_plane and not role_only_navigation %}<a class="topbar-search" href="{% url 'workspace_overview' %}#workspace-search">{% include 'ui/icon.html' with icon='search' %}<span>Find a workspace</span></a>{% endif %}
     </header>
     {% endif %}
     <main id="main-content" class="page-content"{% if request.resolver_match.url_name == 'factory_intake' or request.resolver_match.url_name == 'factory_create' %} data-start-work-page{% endif %}>

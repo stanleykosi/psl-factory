@@ -5,13 +5,14 @@ PLANNING_PRIVATE=['planning_packet','planning_prd_alignment','planning_scope_ali
 INVOICE_MILESTONE_PROOF = 'invoice_milestone_proof'
 CLIENT_WORKSPACE_LINK_PROOF = 'client_workspace_link'
 PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source','issue_message_receipt','rfp_estimate_receipt',INVOICE_MILESTONE_PROOF]+PLANNING_PRIVATE
-PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_')
+PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_','role_work_')
 PRIVATE.append(CLIENT_WORKSPACE_LINK_PROOF)
 CONFIRMED_CHANGE_SOURCE='psl:p56-confirmed-request/v1'
 PPE_OPENING_SOURCE = 'psl:ppe-private-opening-proof/v1'
 PPE_ASSET_DATES_SOURCE = 'psl:ppe-private-asset-dates/v1'
 CASH_BANK_SOURCE_PREFIX = 'psl:cash-bank-proof/v1:'
 PRIVATE_SOURCES = (CONFIRMED_CHANGE_SOURCE, PPE_OPENING_SOURCE, PPE_ASSET_DATES_SOURCE)
+ROLE_WORK_SOURCE_PREFIX = 'role-work:'
 def forecast_private(e):
  if e.kind.startswith('forecast_') or e.kind=='finance_group_snapshot' or e.kind=='finance_report_snapshot' and getattr(e,'source','').startswith('derived:forecast:'):return True
  if not getattr(e,'pk',None) or not getattr(e,'case_id',None):return False
@@ -45,10 +46,10 @@ def ppe_statement_private_query():
  from apps.finance.models import FinanceStatementPPEProjection
  return Q(Exists(FinanceStatementPPEProjection.objects.filter(evidence_id=OuterRef('pk'))))|Q(kind='finance_report_snapshot',source__startswith='derived:ppe-statement:')
 
-def restricted(e):return ppe_statement_private(e) or getattr(e,'source','') in PRIVATE_SOURCES or getattr(e,'source','').startswith(CASH_BANK_SOURCE_PREFIX) or forecast_private(e) or e.kind in PRIVATE or e.kind.startswith(PRIVATE_PREFIXES)
+def restricted(e):return ppe_statement_private(e) or getattr(e,'source','') in PRIVATE_SOURCES or getattr(e,'source','').startswith((CASH_BANK_SOURCE_PREFIX,ROLE_WORK_SOURCE_PREFIX)) or forecast_private(e) or e.kind in PRIVATE or e.kind.startswith(PRIVATE_PREFIXES)
 
 def other_private_query():
- flags = ppe_statement_private_query() | Q(source__in=PRIVATE_SOURCES) | Q(source__startswith=CASH_BANK_SOURCE_PREFIX) | Q(kind__in=PRIVATE)
+ flags = ppe_statement_private_query() | Q(source__in=PRIVATE_SOURCES) | Q(source__startswith=CASH_BANK_SOURCE_PREFIX) | Q(source__startswith=ROLE_WORK_SOURCE_PREFIX) | Q(kind__in=PRIVATE)
  for prefix in PRIVATE_PREFIXES:
     flags |= Q(kind__startswith=prefix)
  return flags

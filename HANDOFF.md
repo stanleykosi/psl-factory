@@ -1,5 +1,15 @@
 # PSL Operations Factory handoff
 
+## Scoped role dashboards and work · 21 November 2026
+
+An authorised Admin creates teams and assigns work under **Setup → Primary roles → Teams and work assignments**. Invites now bind the base role, member or lead scope or standalone role, and workspace. The recipient previews this scope before creating an account and lands on the role dashboard after sign-in. PMO, Finance, HR and Admin use teams. CEO and CTO use standalone assignments. Existing profile invitations and previously assigned workspace grants keep their current behavior until a reviewed access change.
+
+The role dashboard and `/api/v1/role-dashboard` share exact work access. Members start and complete their own native actions. Leads see their team's actions and pending decision status. A reviewer receives the document, Finance schedule or HR correction packet through their own assignment and current native authority. The three review paths preserve the native decision, source checks and downstream validation. Owner nominations, data permissions and approval rules remain deferred. The [API notes](docs/design/frontend-api.md#primary-roles) list the active role endpoints and remaining native paths.
+
+Same-source Railway evidence spans `b6f7bfe2-b1ee-4144-8d44-24d81aaf9403` with 8 role and API checks and 36 document and role regressions, then `735abdf8-4019-4d4c-b3b8-24749aa4df62` with 45 staff regressions on fresh PostgreSQL and exit 0. Both preservation probes passed. The required migrations are `identity.0014_staff_role_work_scope` and `identity.0015_scoped_finance_hr_decisions`. Exact reviewed overlays are in `.runtime/design-role-work-c-overlays.sha256`. The contract has 58 operations across 50 paths.
+
+The web deployment `314ab6ab-1508-4c64-a688-11fc1959545d` applied both migrations. Worker `19245f6a-f66d-44f9-b012-6159275b0f55` is active. Codex verified health and the live role dashboard and API with the existing trial session. The next scoped access work is adding source-specific decision packets beyond the three connected review types and providing a reviewed migration path for existing staff or additional workspaces. Use the existing native decision screens for those workflows until their exact scoped adapters are available.
+
 ## Role-based operations requirement · 21 November 2026
 
 The user confirmed that PMO Lead, Finance Lead, HR and Admin are team bases. Members work within their department’s functions on their own assignments. Leads see the work of their configured teams within their remit. CTO and CEO hold standalone scopes. Dashboards, permission checks, decision queues, invitation preview, account activation and the first signed-in page must follow that model. See [role-based work and supervision](guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) and `role_scoped_operations` in [BUILD-BACKLOG.json](BUILD-BACKLOG.json).

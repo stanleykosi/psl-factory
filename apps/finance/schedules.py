@@ -209,7 +209,13 @@ def approved(w):
  current(w);r=w.reviews.order_by('-pk').first()
  if not r or r.verdict!='approve':raise ValidationError('Current exact human approval required')
  r.actor.refresh_from_db(fields=['is_active'])
- if authority(r.actor,w)!=r.authority or r.snapshot!=w.snapshot:raise ValidationError('Human authority or review context changed')
+ try:current_authority=authority(r.actor,w)
+ except PermissionDenied:
+  from apps.identity.role_native_decisions import SCHEDULE_ACTIONS,schedule_review_access
+  from apps.identity.services import subject_actions
+  if not schedule_review_access(w,r):raise
+  with subject_actions(r.actor,w.case,SCHEDULE_ACTIONS):current_authority=authority(r.actor,w)
+ if current_authority!=r.authority or r.snapshot!=w.snapshot:raise ValidationError('Human authority or review context changed')
  return r
 
 @transaction.atomic

@@ -688,6 +688,10 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
 
 @login_required
 def index(request):
+    from apps.identity.teams import memberships
+
+    if not visible_cases(request.user).exists() and memberships(request.user).exists():
+        return redirect('role_dashboard')
     # Retain legacy filtered workspace links while making the root a work-first surface.
     if any(k in request.GET for k in ['kind','area','tenant']):
         from apps.core.workbench_views import home

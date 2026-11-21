@@ -122,6 +122,11 @@ def change_access(actor,case_id,subject_id,action,enabled,reason):
     if action not in cfg.value['allowed_actions'] or not isinstance(enabled,bool):raise PermissionDenied('Explicit delegated record action required')
     subject=get_user_model().objects.get(pk=subject_id)
     if enabled and not subject.is_active:raise ValidationError('Granting requires an active account; inactive accounts can still have grants revoked')
+    if enabled:
+        from .team_models import StaffMembership
+
+        if StaffMembership.objects.filter(case=c,user_id=subject_id).exists():
+            raise ValidationError('Manage this person through their reviewed workspace role and exact assignments.')
     if c.synthetic!=(cfg.value['classification']=='synthetic'):raise PermissionDenied('Exact technical classification required')
     system=source_system(action)
     if enabled and system:

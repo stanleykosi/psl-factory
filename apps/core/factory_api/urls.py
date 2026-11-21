@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
-from . import agents, assistant_drafts, commands, intake, notifications, reviews, roles, work, workspaces
+from . import agents, assistant_drafts, commands, intake, notifications, reviews, role_work, roles, work, workspaces
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
 
@@ -42,6 +42,10 @@ ROUTES = (
     ('setup/<uuid:case_id>/primary-roles', roles.catalogue, roles.create),
     ('setup/<uuid:case_id>/people/<int:person_id>/primary-role', roles.review, roles.apply),
     ('me/workspaces/<uuid:case_id>/primary-role', roles.own),
+    ('role-dashboard', role_work.dashboard),
+    ('role-work/<int:assignment_id>', role_work.detail),
+    ('role-work/<int:assignment_id>/actions', role_work.action),
+    ('role-work/<int:assignment_id>/decision', role_work.decide),
     ('assistant/conversations', agents.conversations, agents.start_conversation),
     ('assistant/conversations/<uuid:conversation_id>', agents.conversation),
     ('assistant/conversations/<uuid:conversation_id>/messages', agents.message),

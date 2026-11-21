@@ -67,7 +67,7 @@ def check_extra_project(base, target, cfg, readable_case_ids):
 
 @transaction.atomic
 def invite(actor, case_id, username, name, email, actions, expected, preceding=None, *, profile_key='',
-           workspace_choices=None, all_current_projects=False, expected_authority=None):
+           workspace_choices=None, all_current_projects=False, expected_authority=None, role_scope=None):
     if workspace_choices is None:
         workspace_choices = {}
     if type(workspace_choices) is not dict or len(workspace_choices) >= MAX_INVITED_WORKSPACES:
@@ -100,7 +100,15 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
     validate_email(email)
     intake.text(name, 150)
     from .actions import ACTIONS
-    if ('case.read' not in actions or len(actions) != len(set(actions)) or
+    pin = {}
+    if role_scope is not None:
+        from .teams import invitation_scope
+
+        if (type(role_scope) is not dict or set(role_scope) != {'role', 'mode', 'team_id'} or
+                actions or profile_key or choices or all_current_projects or expected_authority != cfg.pk):
+            raise ValidationError('Review a single workspace role invitation under the current delegation.')
+        pin = invitation_scope(actor, case, **role_scope)
+    elif ('case.read' not in actions or len(actions) != len(set(actions)) or
             not set(actions) <= set(cfg.value['allowed_actions']) or not profile_key and not set(actions)<=set(ACTIONS)):
         raise PermissionDenied('Select the exact record access you can delegate.')
     profile=None
@@ -136,7 +144,8 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
                                          expires_at=expires, authority=cfg, actor=actor,
                                          profile_key=profile['key'] if profile else '',
                                          profile_label=profile['label'] if profile else '',
-                                         profile_sha256=digest(profile) if profile else '', workspace_profiles=extra)
+                                         profile_sha256=digest(profile) if profile else '', workspace_profiles=extra,
+                                         role_scope=pin)
     event(actor, case, 'staff.invitation_created', invitation=row.pk)
     bump(case)
     return row, token
@@ -181,6 +190,10 @@ def pending(token):
         if (row.profile_sha256!=digest(profile) or row.profile_label!=profile['label'] or
                 set(row.actions)!=set(profile['actions'])):
             raise ValidationError('This invitation and its reviewed access profile differ.')
+    if row.role_scope:
+        from .teams import verify_invitation
+
+        verify_invitation(row)
     additional_access(row, cfg)
     return row
 
@@ -208,6 +221,10 @@ def accept(token, password):
     except IntegrityError:
         raise ValidationError('This invitation is unavailable.') from None
     StaffAdmission.objects.create(invitation=row, user=user)
+    if row.role_scope:
+        from .teams import admit
+
+        admit(row, user)
     for action in row.actions:
         intake.change_access(row.actor,case.pk,user.pk,action,True,'Accepted exact staff invitation')
     from .staff_profiles import record_invitation

@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, event, bump
-from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.documents.contracts import validate
 from apps.policy.services import active_component, reference_values
@@ -18,7 +17,11 @@ def scoped_person(case,user_id,action):
     if user_id is None:return None
     if type(user_id) is not int:raise ValidationError('Use an authenticated internal person reference')
     person=get_user_model().objects.filter(pk=user_id,is_active=True).first()
-    if not person or not Grant.objects.filter(case=case,user=person,action=action,active=True).exists():
+    try:
+        if person is None:
+            raise PermissionDenied
+        require(person,case,action)
+    except PermissionDenied:
         raise ValidationError('Person lacks this case participation/ownership grant')
     return person
 

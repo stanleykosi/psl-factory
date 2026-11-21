@@ -32,7 +32,7 @@ from apps.documents import validation_views
 from apps.finance import payroll_views, payroll_correction_views, payroll_row_controls, reminder_views
 from apps.identity import staff_views
 from apps.identity import staff_account_views
-from apps.identity import staff_profile_views, primary_role_views
+from apps.identity import staff_profile_views, primary_role_views, role_work_views
 from apps.finance import hrfinance_views
 from apps.finance import recognition_views
 from apps.finance import payment_views
@@ -274,6 +274,9 @@ urlpatterns += [path('staff/',staff_account_views.roster,name='staff_roster'),
                 path('staff/<int:person_id>/',staff_profile_views.person,name='staff_person'),
                 path('cases/<uuid:case_id>/staff/<int:person_id>/access/',staff_profile_views.access,name='staff_profile_access'),
                 path('setup/<uuid:case_id>/roles/',primary_role_views.catalogue,name='staff_primary_roles'),
+                path('setup/<uuid:case_id>/teams/',role_work_views.manage,name='staff_teams'),
+                path('my-role/',role_work_views.dashboard,name='role_dashboard'),
+                path('my-role/work/<int:assignment_id>/',role_work_views.detail,name='role_work_detail'),
                 path('setup/<uuid:case_id>/people/<int:person_id>/primary-role/',primary_role_views.assignment,name='staff_primary_role'),
                 path('staff/delegation/<int:authority_id>/profiles/',staff_profile_views.configure,name='staff_profile_configuration'),
                 path('staff/<int:person_id>/deactivate/',staff_account_views.departure,name='staff_account_departure'),
