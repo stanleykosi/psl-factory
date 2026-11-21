@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Kept the same Trial session and verified five more journeys. The 289 subset connected incident intake, exact private Change proof and the optional QuickBooks file correction. The timed escalation was visible in the Codex browser and retained an authorized refusal. Costing activation used its separate guarded synthetic owners and the prior Trial confirmation. The ledger reached 241. Candidate 290 groups both fixture corrections, weekly drafting, the design sign-off hold and Forecast actuals for the next isolated PostgreSQL run.
+
 21 November 2026. Trial verified the dedicated emergency refusal and the exact bank reporting, verification and allocation path, bringing the ledger to 236. The costing proposal comparison and human confirmation are recorded; complete its separate activation readback. Candidate 289 is running the next grouped gate.
 
 21 November 2026. Verified six more workflows in the same trial session across Project Directory, Setup, Finance reviews and client details. The ledger reached 234. The live QuickBooks upload exposed an empty multipart file edge case, now fixed in the next test package. Work 255 is ready for its separately assigned Payroll preparer. Verified 287b application source was pushed at `655e9aef`.

@@ -17,6 +17,22 @@ from tests.helpers import rev
 
 
 class LedgerObservationProofTests(TestCase):
+    def test_optional_empty_multipart_file_is_treated_as_no_attachment(self):
+        trial = get_user_model().objects.create_user(sample.TRIAL)
+        with patch.dict('os.environ', {sample.GUARD: '1'}):
+            data = sample.prepare()
+        work = FactoryWork.objects.select_related('case').get(pk=data['work'])
+        self.client.force_login(trial)
+        payload = {'action': 'observe', 'revision': work.revision, 'case_revision': rev(work.case),
+            'target': data['lineage'], 'outcome': 'multiple', 'evidence': data['observations']['multiple']}
+        self.assertContains(self.client.post(data['observation_path'], payload | {'file': 'false.pdf'}),
+                            'Choose an exact typed incumbent command')
+        self.assertFalse(LedgerCheck.objects.filter(lineage_id=data['lineage']).exists())
+        self.assertRedirects(self.client.post(data['observation_path'], payload | {'file': ''}), data['observation_path'])
+        check = LedgerCheck.objects.get(lineage_id=data['lineage'])
+        self.assertEqual((check.status, check.payload['state']), ('held', 'multiple'))
+        self.assertFalse(Audit.objects.filter(case=work.case, action=ATTACHED).exists())
+
     def test_unknown_and_multiple_hold_with_exact_private_attachment_and_original_proof(self):
         trial=get_user_model().objects.create_user(sample.TRIAL)
         with patch.dict('os.environ',{sample.GUARD:'1'}):

@@ -3,6 +3,7 @@ from uuid import uuid4
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import render,redirect
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
@@ -27,7 +28,8 @@ class InputsForm(forms.Form):
         self.fields['outcome_id']=forms.ModelChoiceField(queryset=EmergencyOutcome.objects.filter(profile__in=profiles).select_related('profile__version__change').order_by('-pk'),required=False,label='Actual recorded implementation',empty_label='Not recorded or not selected')
         self.fields['outcome_id'].label_from_instance=lambda o:f'{o.profile.version.change.reference} · outcome {o.pk} · actual {o.implemented_at.isoformat()}'
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['project_artifact','status_report']),required=False,label='Controlled retrospective template')
-        self.fields['audience']=forms.ChoiceField(choices=[('client','Client'),('internal','Internal')],label='Explicit report audience')
+        self.fields['audience']=forms.TypedChoiceField(choices=[('', 'Choose when preparing the report'),
+            ('client','Client'),('internal','Internal')], required=False, empty_value=None, label='Report audience')
     def inputs(self):return {**{k:self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['template_id','authorization_id','outcome_id']},'audience':self.cleaned_data['audience']}
 
 class StartForm(StartWithBackground):
@@ -48,7 +50,17 @@ class OutcomeForm(forms.Form):
 
 @require_http_methods(['GET','HEAD','POST'])
 def create(request):
-    case_id=request.POST.get('case') if request.method=='POST' else request.GET.get('case')
+    data = request.POST if request.method == 'POST' else request.GET
+    mode = data.get('mode')
+    if mode == 'classify':
+        from .factory_emergency_intake import classification
+        return classification(request)
+    if mode == 'incident' or mode is None and request.method != 'POST':
+        from .factory_emergency_intake import create as create_incident
+        return create_incident(request)
+    if mode not in (None, 'existing'):
+        raise Http404('Choose an available Emergency intake.')
+    case_id=data.get('case')
     try:form=StartForm(request.user,request.POST if request.method=='POST' else None,case_id=case_id)
     except (ValidationError,ValueError):form=StartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available project')
     inputs=InputsForm(form.selected,request.POST if request.method=='POST' else None) if form.selected else None

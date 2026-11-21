@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Classify the Emergency request · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><h1>Classify the Emergency request</h1></header>
+<section class="card">
+  {% if version %}
+    <p role="status">Preauthorisation requested. The incident plan is recorded.</p>
+    {% if incident %}<p><strong>Incident</strong> {{ incident.summary }}</p>{% endif %}
+    <p><strong>Affected service</strong> {{ version.module }}</p>
+    <p><strong>Plan</strong> {{ version.description|linebreaksbr }}</p>
+  {% endif %}
+  {% if problem %}<p role="status">{{ problem }}</p>{% endif %}
+  {% if profile %}
+    <p><strong>Critical production</strong> {{ profile.critical_production|yesno:'Yes,No,Unknown' }}</p>
+    <p><strong>Priority one</strong> {{ profile.p1|yesno:'Yes,No,Unknown' }}</p>
+  {% endif %}
+  {% if form %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="definition" value="pmo-emergency/v1">
+    <input type="hidden" name="mode" value="classify">
+    <input type="hidden" name="case" value="{{ case.pk }}">
+    <input type="hidden" name="version" value="{{ version.pk }}">
+    {{ form.non_field_errors }}{{ form.revision }}{{ form.revision.errors }}{{ form.profile }}{{ form.profile.errors }}
+    {% if not profile %}
+      {{ form.candidate.as_field_group }}{{ form.evidence.as_field_group }}
+      {{ form.critical_production.as_field_group }}{{ form.p1.as_field_group }}{{ form.note.as_field_group }}
+    {% endif %}
+    {{ form.background.as_field_group }}
+    <button type="submit">{% if profile %}Continue with recorded classification{% else %}Record classification and start work{% endif %}</button>
+  </form>
+  {% endif %}
+  {% if work %}<p><a href="{% url 'factory_detail' work.pk %}">Open the Emergency work item</a></p>{% endif %}
+</section>
+{% endblock %}

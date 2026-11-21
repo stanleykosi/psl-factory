@@ -132,6 +132,15 @@ def detail(request,work):
                        next_action='Review the recorded rejection before starting further change work')
             human_permissions['change.authorize'] = False
     evidence=public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
+    impact_rows = impact_pdfs = ()
+    can_upload_impact_proof = False
+    if v.category == 'Normal':
+        from apps.pmo.change_impacts import impact_rows as observed_impacts
+        from apps.pmo.release_proofs import own_pdfs
+        impact_rows = observed_impacts(request.user, work.case, v)
+        can_upload_impact_proof = bool(assessors) and permitted(request.user, work, 'evidence.add')
+        if can_upload_impact_proof:
+            impact_pdfs = own_pdfs(request.user, work.case).order_by('-pk')[:30]
     for doc in panel.get('documents',[]):
         for receipt in doc['receipts']:
             binding=receipt.publication.version.changedocumentbinding
@@ -140,4 +149,6 @@ def detail(request,work):
                 from apps.pmo.change_applicability import presentation as applicability_presentation
                 receipt.applicability=applicability_presentation(binding.authorization,receipt,request.user)
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk') if panel['can_close'] else []
-    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES,'normal_decisions':decisions,'normal_decision_actions':actions})
+    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES,'normal_decisions':decisions,'normal_decision_actions':actions,
+                  'impact_rows':impact_rows,'impact_pdfs':impact_pdfs,
+                  'can_upload_impact_proof':can_upload_impact_proof})

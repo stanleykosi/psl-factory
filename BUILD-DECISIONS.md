@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. Emergency incident intake records its source, plan and reported Unknown classifications before checking authority. Normal Change assessment retains its exact private proof and role. The escalation clock informs urgency while a scoped human decision controls communication. An empty optional QuickBooks attachment permits the same typed observation and exact evidence check as a submission with a file. Keep the old and current held observations visible.
+
 21 November 2026. Reviewed Hypercare issue criteria may consider exact current project issues. Missing or withheld provenance remains Unknown. A separate evidenced issue change creates fresh qualification inputs while preserving the earlier assessment. The controlled Statement of Work review compares the actual previous and current sections, reuses their recorded costing evidence and uses the native reviewer and separate publication gates.
 
 21 November 2026. Stopping an invoice draft requires a reason and the exact current pre-effect Work. The optional original-invoice link must have current scope and a confirmed issue for the same obligation. PostgreSQL serializes the stop against a reservation or receipt. Actual release evidence can select the operator's own already uploaded private PDF with a stored size and fingerprint. The release log stays behind existing private-file access and does not grant deployment or Go-live permission.

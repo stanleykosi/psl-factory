@@ -75,7 +75,11 @@ def detail(request,work,focus=None):
             p=request.POST;a=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
             require_action(work,focus,a)
             allowed={'advance':set(),'recheck':{'reason'},'restart':{'reason'},'resume':set(),'cancel':set(),'correct':{'evidence_id','predecessor_id','reason'},'observe':{'target','evidence','outcome'},'review':{'target','evidence','verdict','reason'},'adopt_profile':{'configuration','reason'}}
-            if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed incumbent command')
+            common = {'action', 'revision', 'case_revision', 'csrfmiddlewaretoken'}
+            # A browser can encode an unselected multipart file as an empty form field.
+            if a == 'observe' and not request.FILES and p.getlist('file') == ['']:
+                common.add('file')
+            if a not in allowed or set(p)-allowed[a]-common:raise ValidationError('Choose an exact typed incumbent command')
             if request.FILES and (a!='observe' or set(request.FILES)!={'file'} or len(request.FILES.getlist('file'))!=1):
                 raise ValidationError('Attach one private proof only when recording an observation.')
             if a=='advance':

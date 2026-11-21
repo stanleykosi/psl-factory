@@ -45,7 +45,7 @@ def log_change(actor, case_id, reference, category, module, description, reason,
 
 
 @transaction.atomic
-def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline_impact, client_facing, evidence_id, note, expected, *, outputs=None, production_impact=None, scope_items=None):
+def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline_impact, client_facing, evidence_id, note, expected, *, outputs=None, production_impact=None, scope_items=None, effort_person_days=None, proof_upload=None):
     from .commercial import note_required
     case = lock_case(actor, case_id, 'change.assess:'+contributor, expected)
     version = current_change(case, version_id)
@@ -54,21 +54,34 @@ def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline
         raise ValidationError('Use an explicit contributor and true/false/unknown impact values')
     note_required(note)
     from .change_impacts import assessment_details
-    details = assessment_details(version, contributor, outputs, production_impact, scope_items)
+    typed_proof = effort_person_days is not None or proof_upload is not None
+    if typed_proof and version.category != 'Normal':
+        raise ValidationError('Effort and private assessment proof apply to a Normal change.')
+    evidence = subject(case, evidence_id, metadata_only=True)
+    if typed_proof:
+        from apps.core.evidence_access import restricted
+        if restricted(evidence):
+            raise ValidationError('Choose available assessment evidence for this project.')
+    details = assessment_details(version, contributor, outputs, production_impact, scope_items, effort_person_days)
+    if proof_upload is not None:
+        if type(proof_upload) is not int or proof_upload < 1 or not details:
+            raise ValidationError('Choose exact supporting assessment proof with the owner impact outputs.')
+        from .release_proofs import capture
+        details['private_proof'] = capture(actor, case, proof_upload, purpose='assessment proof')
     result = ChangeAssessment.objects.create(impact_details=details, version=version, contributor=contributor, cost_impact=cost_impact,
-        timeline_impact=timeline_impact, client_facing=client_facing, evidence=subject(case,evidence_id), note=note, actor=actor)
+        timeline_impact=timeline_impact, client_facing=client_facing, evidence=evidence, note=note, actor=actor)
     event(actor, case, 'change.assessed', assessment=result.pk, version=version.pk, contributor=contributor)
     bump(case)
     return result
 
 
 def impact(version):
-    latest = {}
-    for a in version.assessments.order_by('pk'): latest[a.contributor] = a
+    from .change_impacts import latest_assessments, validate_assessments
+
+    latest = {row.contributor: row for row in latest_assessments(version)}
     if set(latest) != set(CONTRIBUTORS): raise ValidationError('Engineering, QA, Infra and Security assessments required')
     values = [latest[r] for r in CONTRIBUTORS]
     if version.category == 'Normal':
-        from .change_impacts import validate_assessments
         validate_assessments(version, latest)
     if any(getattr(a, k) is None for a in values for k in ['cost_impact', 'timeline_impact', 'client_facing']):
         raise ValidationError('Impact remains unknown; obtain the contributing owner clarification')

@@ -28,7 +28,7 @@ DEFINITION='pmo-emergency/v1'
 KIND='agent_private_emergency_intake'
 PROTOCOL='factory-emergency-intake/v1'
 ID={'anyOf':[{'type':'integer','minimum':1,'maximum':9223372036854775807},{'type':'null'}]}
-INPUT={'type':'object','properties':{'template_id':ID,'authorization_id':ID,'outcome_id':ID,'audience':{'enum':['internal','client']}},'required':['template_id','authorization_id','outcome_id','audience'],'additionalProperties':False}
+INPUT={'type':'object','properties':{'template_id':ID,'authorization_id':ID,'outcome_id':ID,'audience':{'enum':['internal','client',None]}},'required':['template_id','authorization_id','outcome_id','audience'],'additionalProperties':False}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'profile_id':{'type':'integer','minimum':1},'inputs':INPUT},'required':['protocol','profile_id','inputs'],'additionalProperties':False}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
@@ -144,6 +144,8 @@ def report(work,actor=None):
     evidence=LocalEmergencyEvidenceAdapter().read(work.case,actual);result['manifest']=evidence['manifest'];result['source_evidence_ids']=evidence['source_evidence_ids']
     try:
         _,record,current=completed(work,data);result.update(stage='report',retrospective_record=record.pk,retrospective_status=record.snapshot['status'],authority_recovery_id=current.get('authority_recovery_id'))
+        if not data['inputs']['template_id'] or not data['inputs']['audience']:
+            result['report_setup_needed'] = True
         published(work,actor);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
@@ -182,7 +184,10 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if missing or stale:return [],'Required current Emergency evidence is missing or stale: '+', '.join(missing+stale)
     if state['native']['stage']=='complete':return ['ACT13'],'Verify native retrospective status and exact report receipts'
     if state['native']['stage']!='report':return [],state['native']['finding']
-    if not state['document']:return ['ACT09'],'Prepare the controlled completed-retrospective report'
+    if not state['document']:
+        if state['native'].get('report_setup_needed'):
+            return [], 'Choose the retrospective report template and audience before preparing it.'
+        return ['ACT09'],'Prepare the controlled completed-retrospective report'
     if not HumanTask.objects.filter(version_id=state['document']).exists():return ['ACT09'],'Request native review of the retained report'
     if state['review']['status']!='ready':return [],'Await exact outward review or source-owned report rework'
     if state.get('delivery_hold'):return [],state['delivery_hold']
@@ -199,7 +204,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT09':
         from apps.documents.controlled import request_review
         actual,_,_=completed(work,data);u=principal(work,value,'preparer_id');v=document(work)
-        if not data['inputs']['template_id']:raise ValidationError('Select the controlled retrospective template')
+        if not data['inputs']['template_id'] or not data['inputs']['audience']:
+            raise ValidationError('Choose the retrospective report template and audience before preparing it.')
         if not v:v=draft_retrospective(u,case.pk,actual.pk,data['inputs']['template_id'],data['inputs']['audience'],case.revision)
         task=None;waiting=None
         if not HumanTask.objects.filter(version=v).exists():

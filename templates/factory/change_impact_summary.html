@@ -1,0 +1,22 @@
+{% load studio_ui %}
+<section class="card">
+  <h2>Impact assessments</h2>
+  <div class="table-wrap detail-table">
+    <table>
+      <thead><tr><th scope="col">Team</th><th scope="col">Assessment</th><th scope="col">Effort</th><th scope="col">Proof</th></tr></thead>
+      <tbody>
+      {% for row in impact_rows %}
+        <tr>
+          <th scope="row">{% if row.team == 'Infra' %}Infrastructure{% else %}{{ row.team|role_name }}{% endif %}</th>
+          <td data-label="Assessment">{{ row.status }}{% if row.summary %}<div>{{ row.summary }}</div>{% endif %}</td>
+          <td data-label="Effort">{% if row.effort %}{{ row.effort }} person-days{% else %}Unknown{% endif %}</td>
+          <td data-label="Proof">
+            {% if row.record %}<div>Recorded evidence · Version {{ row.record.evidence.version }}</div>{% else %}—{% endif %}
+            {% if row.proof %}<a href="{% url 'case_upload_download' case.pk row.proof.pk %}">{{ row.proof.name }}</a> · {{ row.proof.size|filesizeformat }}{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -161,6 +161,9 @@ def changes(request,case_id):
     for auth in authorizations:
         receipt=next((r for r in change_receipts if r.publication.version.changedocumentbinding.authorization_id==auth.pk and r.publication.version.changedocumentbinding.purpose=='go_live'),None)
         auth.applicability=applicability_presentation(auth,receipt,request.user)
+    from .release_proofs import own_pdfs
+    can_upload_impact_proof = request.user.grant_set.filter(case=case, action='evidence.add', active=True).exists()
+    impact_pdfs = own_pdfs(request.user, case).order_by('-pk')[:30] if can_upload_impact_proof else ()
     return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.exclude(kind__startswith='agent_private_').order_by('-pk'),
         'standard_entries':entries,'standard_gates':gates,'standard_policies':policies,'standard_error':catalogue_error,
         'standard_policy_form':policy_form,'preapprovals':StandardPreapproval.objects.filter(case=case).order_by('-pk')[:100],
@@ -169,4 +172,4 @@ def changes(request,case_id):
         'contributors':CONTRIBUTORS,'roles':DECISION_ROLES,'commercial':CommercialRevision.objects.filter(dossier__case=case),
         'authorizations':authorizations,'applicability_question':OWNER_QUESTION,'applicability_draft':json.dumps(unresolved_draft(case),indent=2),
         'templates':Template.objects.filter(case=case,definition__document_type__in=['status_report','project_artifact']),
-        'change_receipts':change_receipts})
+        'change_receipts':change_receipts, 'impact_pdfs':impact_pdfs, 'can_upload_impact_proof':can_upload_impact_proof})
