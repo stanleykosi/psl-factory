@@ -24,6 +24,8 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
+import { demoProjects, optionRow as demoOptionRow, resetDemoProjects } from './demo-projects.mjs';
+
 export const START_OPERATIONS = ['E-LINES', 'E-LINE-OPTIONS', 'E-WORK-START'];
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'start-work');
@@ -159,7 +161,9 @@ export function createStartWorkMock(openapi) {
 
   /** Options this persona is served for a field, narrowed by parent; with the mock-only keys still on. */
   function served(persona, field, parent) {
-    return optionRows(field.name).filter(
+    // D-164: the projects won demo RFPs created join every project picker, newest first
+    const won = field.name === 'project' ? demoProjects().map(demoOptionRow).reverse() : [];
+    return [...won, ...optionRows(field.name)].filter(
       (row) => row._personas.includes(persona) && (!field.depends_on || row._parent === parent),
     );
   }
@@ -390,11 +394,17 @@ export function createStartWorkMock(openapi) {
     return response;
   }
 
+  /** The client an RFP start names, as its label (a new client by its name); undefined for another line. */
+  const clientLabel = (intake, persona) =>
+    isNewClient(intake?.client) ? String(intake.client.new.name).trim() : served(persona, { name: 'client' }).find((row) => row.value === intake?.client)?.label;
+
   return {
     started,
     issued,
     ownsUpload,
+    clientLabel,
     reset: () => {
+      resetDemoProjects();
       started.clear();
       revisions.clear();
       issued.clear();

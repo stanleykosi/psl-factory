@@ -47,7 +47,7 @@ const STATE = { running: 'processing', waiting: 'waiting', done: 'verified', can
 const pad = (n, width) => String(n).padStart(width, '0');
 const iso = (ms) => new Date(ms).toISOString();
 
-export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, work, me, raise = () => {} }) {
+export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, work, me, raise = () => {}, onVerified = () => {} }) {
   const runs = new Map();
   const byKey = new Map();
   let counter = 0;
@@ -107,13 +107,14 @@ export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, 
         run.state = 'done';
         note(run, iso(end), 'factory', 'Factory', 'Verified', { detail: 'Every station is done.' });
         alert(run.starter, run, `${run.title} is verified`);
+        onVerified(run);
       }
     }
   }
 
   const tick = () => runs.forEach(advance);
 
-  function start({ key, lineKey, persona }) {
+  function start({ key, lineKey, persona, client }) {
     if (byKey.has(key)) return byKey.get(key);
     const def = LINES[lineKey] ?? GENERIC;
     const fixture = work[WORK_IDS[lineKey]];
@@ -129,6 +130,7 @@ export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, 
       agent: def.agent,
       decider: def.decider === persona && !def.own ? 'ceo' : def.decider,
       starter: persona,
+      client,
       stations,
       humanAt,
       startedAt: at,

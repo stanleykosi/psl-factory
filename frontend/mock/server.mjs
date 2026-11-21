@@ -27,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { delayMs, delayReply, demoOn } from './demo.mjs';
+import { addDemoProject } from './demo-projects.mjs';
 import { caseVisible, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
 import { documentRead } from './documents.mjs';
@@ -193,10 +194,10 @@ function taskResponse(operationId, url, raw, ctx) {
 }
 
 /** D-155: a start made with the demo on creates a line run, and the 201 names its work item; any other reply stands. */
-function demoStart(runs, reply, raw, persona) {
+function demoStart(runs, reply, raw, persona, client) {
   if (reply[0] !== 201) return reply;
   const body = JSON.parse(raw);
-  const run = runs.start({ key: body.idempotency_key, lineKey: body.line, persona });
+  const run = runs.start({ key: body.idempotency_key, lineKey: body.line, persona, client: body.line === 'rfp_intake' ? client(body.intake, persona) : undefined });
   return [201, { work_id: run.id, state: 'processing' }];
 }
 
@@ -250,7 +251,17 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const alerts = createAlertsMock({ openapi });
   const assistant = createAssistantMock({ openapi });
   // D-155: the live demo's line runs; they exist only after a start made with the demo on.
-  const runs = createLineRuns({ work, me, raise: (persona, alert) => alerts.raise(persona, alert) });
+  // D-164: a demo RFP that is verified (won) creates the client's project and tells whoever started it.
+  const runs = createLineRuns({
+    work,
+    me,
+    raise: (persona, alert) => alerts.raise(persona, alert),
+    onVerified: (run) => {
+      if (run.lineKey !== 'rfp_intake' || !run.client) return;
+      const project = addDemoProject({ client: run.client, run });
+      alerts.raise(run.starter, { id: `N-P${project.case_id.slice(2)}`, work_id: run.id, case_id: project.case_id, agent: run.agent, text: `${project.title} is ready to plan`, at: new Date().toISOString(), read: false, reference: run.reference, delivered_via: ['in_app'] });
+    },
+  });
 
   return http.createServer((req, res) => {
     const chunks = [];
@@ -358,7 +369,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (START_OPERATIONS.includes(route.operationId)) {
         const reply = startWork.handle(route.operationId, { url, raw, persona, cookies });
-        return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona) : reply));
+        return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona, startWork.clientLabel) : reply));
       }
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.

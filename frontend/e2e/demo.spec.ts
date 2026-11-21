@@ -58,6 +58,40 @@ test('a line run: pm starts an invoice, the steps tick, the Finance Lead decides
   await expect(page.getByText('Done. Every step is in the history.').first()).toBeVisible();
 });
 
+test('a won RFP creates a project: it shows in the Projects list, its page and the Start work picker', async ({ page, request, context, baseURL }) => {
+  await context.addCookies([{ name: 'psl_mock_persona', value: 'pmo_lead', url: baseURL! }]);
+  const cookie = 'psl_mock_persona=pmo_lead; psl_mock_demo=on; psl_mock_speed=fast';
+  const send = async (method: 'get' | 'post', path: string, data?: object) => {
+    const response = await request[method](`${MOCK}${path}`, { headers: { Cookie: cookie, 'X-CSRFToken': 'mock-csrf-pmo_lead' }, ...(data ? { data } : {}) });
+    return response.json();
+  };
+  // log an RFP as the PMO Lead through the mock, as the page's form would
+  const revision = (await send('get', '/api/v1/lines')).items.find((l: { key: string }) => l.key === 'rfp_intake').case_revision;
+  const proof = await send('post', '/api/v1/cases/C-RFP-INTAKE/evidence', { kind: 'rfp_document', filename: 'rfp.pdf', content_base64: Buffer.from('rfp').toString('base64'), case_revision: revision });
+  const { work_id: id } = await send('post', '/api/v1/work', {
+    line: 'rfp_intake', case_id: 'C-RFP-INTAKE', case_revision: proof.case_revision, idempotency_key: 'e2e-rfp',
+    intake: { client: 'CL-3506', rfp_reference: 'E2E-RFP-1', rfp_document: proof.evidence_id, received_at: '2026-11-12T08:40:00.000Z', submission_method: 'email', deadline_status: 'unknown' },
+  });
+
+  // the PMO Lead assigns a PM when the run waits, then the run verifies
+  await expect.poll(async () => (await send('get', `/api/v1/work/${id}`)).tasks?.length ?? 0, { timeout: 60_000 }).toBe(1);
+  const task = (await send('get', `/api/v1/work/${id}`)).tasks[0];
+  await send('post', `/api/v1/tasks/${task.id}/decision`, { expected_revision: task.revision, verdict: 'approve' });
+  await expect.poll(async () => (await send('get', `/api/v1/work/${id}`)).state, { timeout: 60_000 }).toBe('verified');
+
+  await page.goto('/projects');
+  const link = page.getByRole('link', { name: /Tamarind Loans Ltd · new engagement/ });
+  await expect(link).toBeVisible();
+  await link.click();
+  await expect(page).toHaveURL(/\/projects\/P-9001$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Tamarind Loans Ltd · new engagement' })).toBeVisible();
+
+  await page.goto('/my-work');
+  await page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' }).click();
+  await page.getByRole('dialog').getByRole('combobox', { name: 'Project' }).click();
+  await expect(page.getByRole('option', { name: 'Tamarind Loans Ltd · new engagement' })).toBeVisible();
+});
+
 test('an assistant run: the steps appear one at a time, then the answer, its sources and the card', async ({ page }) => {
   await page.goto('/assistant');
   await page.getByRole('textbox', { name: 'Message Tola' }).fill('How are my projects doing?');

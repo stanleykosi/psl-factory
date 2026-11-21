@@ -10,6 +10,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { demoProject, demoProjects, demoVisible, journey as demoJourney, listItem as demoListItem } from './demo-projects.mjs';
+
 const here = dirname(fileURLToPath(import.meta.url));
 const dir = join(here, 'fixtures', 'projects');
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
@@ -52,7 +54,9 @@ function projectList(url, persona) {
   }
 
   const needle = q?.toLowerCase();
-  const visible = list.rows.filter((row) => row.personas.includes(persona));
+  // D-164: the projects won RFPs created in the live demo come first, newest first
+  const demo = demoProjects().filter(() => demoVisible(persona)).map((p) => ({ personas: [persona], status: 'active', item: demoListItem(p) })).reverse();
+  const visible = [...demo, ...list.rows.filter((row) => row.personas.includes(persona))];
   const items = visible
     .filter((row) => status === 'all' || row.status === status)
     .map((row) => row.item)
@@ -70,6 +74,8 @@ function projectList(url, persona) {
 function journey(url, persona) {
   const caseId = decodeId(url.pathname.split('/')[4] ?? '');
   if (caseId === NO_ACCESS_CASE_ID) return { status: 404, body: NOT_FOUND };
+  const won = demoProject(caseId);
+  if (won) return demoVisible(persona) ? { status: 200, body: demoJourney(won) } : { status: 404, body: NOT_FOUND };
   const row = list.rows.find((r) => r.item.case_id === caseId);
   if (!row) return { status: 200, body: fallback };
   if (!row.personas.includes(persona)) return { status: 404, body: NOT_FOUND };
@@ -79,6 +85,7 @@ function journey(url, persona) {
 /** Whether the persona may see the case in the mock: not the no-access id, nor a listed case outside their rows (F-26). */
 export function caseVisible(caseId, persona) {
   if (caseId === NO_ACCESS_CASE_ID) return false;
+  if (demoProject(caseId)) return demoVisible(persona);
   const row = list.rows.find((r) => r.item.case_id === caseId);
   return !row || row.personas.includes(persona);
 }

@@ -46,8 +46,9 @@ export function countLine(total: number | undefined): string | undefined {
   return `${total} ${total === 1 ? 'ALERT' : 'ALERTS'}`;
 }
 
-/** The work an alert points to: /work/<work_id>. */
-export const workHref = (alert: Alert) => `/work/${encodeURIComponent(alert.work_id)}`;
+/** The work an alert points to: /work/<work_id>, or the project it names (proposed `case_id`): /projects/<case_id>. */
+export const workHref = (alert: Alert & { case_id?: string }) =>
+  alert.case_id ? `/projects/${encodeURIComponent(alert.case_id)}` : `/work/${encodeURIComponent(alert.work_id)}`;
 
 /** Only `needs_you === true` waits on the person; false, absent or any other value is for information. */
 export const needsYou = (alert: AlertWithNeed) => alert.needs_you === true;

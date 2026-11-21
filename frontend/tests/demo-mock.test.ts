@@ -313,3 +313,105 @@ describe('D-159: who decides a demo line the PMO Lead started', () => {
     expect(raised.map(([persona]) => persona)).toEqual(['pmo_lead', 'ceo']);
   });
 });
+
+/** D-164: a won demo RFP creates a project for its client. */
+describe('D-164: a won demo RFP creates a project', () => {
+  const HOUR = 60 * 60 * 1000;
+  const PERSONAS_WITH = ['ceo', 'pmo_lead', 'pm', 'finance_lead'];
+  const noAlertExtras = (alerts: any[]) => alerts.map(({ case_id: _case, ...rest }: any) => rest);
+
+  /** Logs an RFP as the PMO Lead in the demo: one proof upload, then the start. */
+  async function startRfp(intake: Record<string, unknown> = {}, cookie = 'psl_mock_demo=on; psl_mock_speed=fast') {
+    const revision = (await call('GET', '/api/v1/lines', 'pmo_lead', undefined, cookie)).body.items.find((l: any) => l.key === 'rfp_intake').case_revision;
+    const proof = await call('POST', '/api/v1/cases/C-RFP-INTAKE/evidence', 'pmo_lead', { kind: 'rfp_document', filename: 'rfp.pdf', content_base64: Buffer.from('rfp').toString('base64'), case_revision: revision }, cookie);
+    const started = await call('POST', '/api/v1/work', 'pmo_lead', {
+      line: 'rfp_intake', case_id: 'C-RFP-INTAKE', case_revision: proof.body.case_revision, idempotency_key: `rfp-${Math.random()}`,
+      intake: { client: 'CL-3506', rfp_reference: `RFP-${Math.random()}`, rfp_document: proof.body.evidence_id, received_at: '2026-11-12T08:40:00.000Z', submission_method: 'email', deadline_status: 'unknown', ...intake },
+    }, cookie);
+    expect(started.status).toBe(201);
+    return started.body.work_id as string;
+  }
+  async function decideRfp(id: string, verdict: string, note?: string) {
+    pass(HOUR);
+    const task = (await get(`/api/v1/work/${id}`, 'pmo_lead')).body.tasks[0];
+    return decide(task.id, task.revision, verdict, note);
+  }
+  const projectOptions = async (persona: string) => (await get(`/api/v1/lines/${persona === 'finance_lead' ? 'invoice' : 'weekly_report'}/fields/project/options`, persona)).body.items;
+
+  it('creates one project when the RFP is verified, and not before', async () => {
+    const id = await startRfp();
+    expect((await get('/api/v1/projects', 'pmo_lead')).body.items.some((p: any) => p.case_id === 'P-9001')).toBe(false);
+    await decideRfp(id, 'approve');
+    pass(HOUR);
+    const list = await get('/api/v1/projects', 'pmo_lead');
+    check('E-PROJECTS', 200, list.body);
+    expect(list.body.items[0]).toMatchObject({ case_id: 'P-9001', title: 'Tamarind Loans Ltd · new engagement', pm: 'Not assigned yet', sample: true });
+    expect(list.body.items.filter((p: any) => p.case_id.startsWith('P-9'))).toHaveLength(1);
+    expect(list.body.counts.active).toBe(list.body.counts.all - list.body.counts.closed);
+  });
+
+  it('names a new client by the name given', async () => {
+    const id = await startRfp({ client: { new: { name: 'Zenith Mills' } } }, 'psl_mock_demo=on; psl_mock_speed=fast; psl_mock_rfp=new_client');
+    await decideRfp(id, 'approve');
+    pass(HOUR);
+    expect((await get('/api/v1/projects', 'ceo')).body.items[0].title).toBe('Zenith Mills · new engagement');
+  });
+
+  it('shows in the project pickers, the list and the page for the people who see projects, and for nobody else', async () => {
+    await decideRfp(await startRfp(), 'approve');
+    pass(HOUR);
+    for (const persona of PERSONAS_WITH) {
+      expect((await projectOptions(persona))[0], persona).toMatchObject({ value: 'P-9001', label: 'Tamarind Loans Ltd · new engagement', case_id: 'C-9001', case_revision: 1 });
+      expect((await get('/api/v1/projects?status=all', persona)).body.items[0].case_id, persona).toBe('P-9001');
+      const page = await get('/api/v1/projects/P-9001', persona);
+      check('E-PROJECT', 200, page.body);
+      expect(page.body.lines).toEqual([expect.objectContaining({ state: 'verified', work_id: 'W-9001' })]);
+      expect(page.body.pm).toBeUndefined();
+      for (const tab of ['milestones', 'documents', 'registers', 'actions', 'money']) {
+        const read = await get(`/api/v1/projects/P-9001/${tab}`, persona);
+        check('E-PROJECT-TAB', 200, read.body);
+        expect(read.body.items, `${persona} ${tab}`).toEqual([]);
+      }
+    }
+    expect((await get('/api/v1/projects/P-9001', 'hr')).status).toBe(404);
+    expect((await get('/api/v1/projects/P-9001/milestones', 'hr')).status).toBe(404);
+    expect((await get('/api/v1/projects?status=all', 'hr')).body.items.some((p: any) => p.case_id === 'P-9001')).toBe(false);
+  });
+
+  it('lets a project line start on the new project, with empty dependent pickers', async () => {
+    await decideRfp(await startRfp(), 'approve');
+    pass(HOUR);
+    const option = (await projectOptions('pm'))[0];
+    expect((await get('/api/v1/lines/invoice/fields/milestone/options?parent=P-9001', 'pm')).body.items).toEqual([]);
+    const started = await call('POST', '/api/v1/work', 'pm', {
+      line: 'weekly_report', case_id: option.case_id, case_revision: option.case_revision, idempotency_key: 'on-new-project',
+      intake: { project: option.value, week: { from: '2026-11-09', to: '2026-11-13' } },
+    });
+    expect(started.status).toBe(201);
+    expect(started.body.work_id).toMatch(/^W-9\d{3}$/);
+  });
+
+  it('tells whoever started the RFP, with a link to the project', async () => {
+    await decideRfp(await startRfp(), 'approve');
+    pass(HOUR);
+    const alerts = (await get('/api/v1/notifications', 'pmo_lead')).body;
+    const ready = alerts.items.find((a: any) => a.text === 'Tamarind Loans Ltd · new engagement is ready to plan');
+    expect(ready).toMatchObject({ work_id: 'W-9001', case_id: 'P-9001' });
+    check('E-NOTIFICATIONS', 200, { ...alerts, items: noAlertExtras(alerts.items) });
+  });
+
+  it('creates nothing when the RFP is rejected, with the demo off, or after Reset demo', async () => {
+    await decideRfp(await startRfp(), 'reject', 'Not bidding');
+    pass(HOUR);
+    expect((await get('/api/v1/projects?status=all', 'pmo_lead')).body.items.some((p: any) => p.case_id.startsWith('P-9'))).toBe(false);
+    expect((await projectOptions('pmo_lead')).some((o: any) => o.value.startsWith('P-9'))).toBe(false);
+
+    await decideRfp(await startRfp(), 'approve');
+    pass(HOUR);
+    expect((await get('/api/v1/projects/P-9001', 'pmo_lead')).body.title).toBe('Tamarind Loans Ltd · new engagement');
+    await fetch(`${base}/__mock/reset`, { method: 'POST' });
+    expect((await get('/api/v1/projects?status=all', 'pmo_lead')).body.items.some((p: any) => p.case_id.startsWith('P-9'))).toBe(false);
+    expect((await projectOptions('pmo_lead')).some((o: any) => o.value.startsWith('P-9'))).toBe(false);
+    expect((await get('/api/v1/projects/P-9001/milestones', 'ceo')).body.items).toEqual([]);
+  });
+});
