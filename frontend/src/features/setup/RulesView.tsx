@@ -10,16 +10,8 @@ import { Callout, Link, PageTitle, Table, Tag, ShowMore } from '@/components';
 import type { RuleRow } from './contract-proposal';
 import { areaHref, isEditable, linkHref, valueText, versionText } from './format';
 import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
-import { RulesEmpty, RulesReadState, SetupFrame, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
+import { RulesEmpty, RulesReadState, PagingNotes, useSetupPaging, useSetupPhoneBack, useSetupRead } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
-
-export function RulesPageView() {
-  return (
-    <SetupGate>
-      <RulesView />
-    </SetupGate>
-  );
-}
 
 export function notSetBanner(n: number) {
   return n === 1
@@ -46,10 +38,11 @@ function VersionCell({ row }: { row: RuleRow }) {
   return text ? <span className="setup-version">{text}</span> : null;
 }
 
-function RulesView() {
+export function RulesPageView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules();
   const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'rules');
   useSetupPhoneBack();
+  useSetupRead(state.status, { rolesMissing: state.status === 'ready' ? state.page.roles_missing_count : undefined, notSet: state.status === 'ready' ? state.page.not_set_count : undefined });
   // A save outcome whose panel closed because the re-read left no editable rule (QA-1-1); shown only while the panel
   // stays closed, so a later Show more that brings the panel back never keeps a stale "has closed" (TECH-2-1).
   const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
@@ -66,7 +59,6 @@ function RulesView() {
   return (
     <>
       <div className="setup-page setup-desktop">
-        <SetupFrame current="rules" rolesMissing={page.roles_missing_count} notSet={notSet} />
         {empty ? (
           <RulesEmpty />
         ) : (

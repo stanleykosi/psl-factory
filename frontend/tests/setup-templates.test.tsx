@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TemplatesPage, TemplateRow } from '@/features/setup/api';
 import { boardDay, boardStamp } from '@/features/setup/format';
 import { TemplatesPageView } from '@/features/setup/TemplatesView';
+import { SetupLayoutFrame } from '@/features/setup/SetupFrame';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
 
@@ -87,12 +88,16 @@ afterEach(() => {
 async function open() {
   render(
     <AppShell>
-      <TemplatesPageView />
+      <SetupLayoutFrame>
+        <TemplatesPageView />
+      </SetupLayoutFrame>
     </AppShell>,
   );
   await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
 const desktop = () => within(document.querySelector('.setup-desktop') as HTMLElement);
+// the frame the Setup layout draws on desktop, beside the page's own desktop body
+const frame = () => within(document.querySelector('.setup-frame--desktop') as HTMLElement);
 const phone = () => within(document.querySelector('.setup-phone') as HTMLElement);
 const phoneBar = () => document.querySelector('header.psl-phonebar') as HTMLElement;
 const rowOf = (name: string) => within(desktop().getByRole('table')).getByText(name).closest('tr') as HTMLTableRowElement;
@@ -300,7 +305,9 @@ describe('upload gating (AC 6, 14)', () => {
     answers.me = 'pm';
     render(
       <AppShell>
-        <TemplatesPageView />
+        <SetupLayoutFrame>
+          <TemplatesPageView />
+        </SetupLayoutFrame>
       </AppShell>,
     );
     await screen.findByText('This section isn’t open to your role.');
@@ -312,7 +319,9 @@ describe('upload gating (AC 6, 14)', () => {
       answers.list = () => json(status, FORBIDDEN);
       const view = render(
         <AppShell>
-          <TemplatesPageView />
+          <SetupLayoutFrame>
+            <TemplatesPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await screen.findByText('This section isn’t open to your role.');
@@ -323,7 +332,9 @@ describe('upload gating (AC 6, 14)', () => {
     answers.list = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     const signedOut = render(
       <AppShell>
-        <TemplatesPageView />
+        <SetupLayoutFrame>
+          <TemplatesPageView />
+        </SetupLayoutFrame>
       </AppShell>,
     );
     await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Ftemplates'));
@@ -343,7 +354,7 @@ describe('upload gating (AC 6, 14)', () => {
     expect(phone().getByText('No templates to show.')).toBeTruthy();
     expect(document.querySelector('table')).toBeNull();
     expect(document.body.textContent).not.toMatch(/TEMPLATES ·|test template|All \d+ are/);
-    expect(desktop().getByRole('tablist', { name: 'Setup' })).toBeTruthy();
+    expect(frame().getByRole('tablist', { name: 'Setup' })).toBeTruthy();
   });
 });
 
@@ -425,7 +436,9 @@ describe('success (AC 8)', () => {
       };
       const view = render(
         <AppShell>
-          <TemplatesPageView />
+          <SetupLayoutFrame>
+            <TemplatesPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
@@ -581,7 +594,9 @@ describe('other failures (AC 11)', () => {
       answers.upload = () => json(status, FORBIDDEN);
       const view = render(
         <AppShell>
-          <TemplatesPageView />
+          <SetupLayoutFrame>
+            <TemplatesPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
@@ -754,8 +769,8 @@ describe('paging (AC 13)', () => {
 describe('titles, phone bar and tabs (AC 15, 16)', () => {
   it('one h1 per width: the frame title on desktop, "Templates" on the phone, with the bar link named Setup', async () => {
     await open();
-    expect(desktop().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Roles, rules and delegation']);
-    expect(desktop().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--34');
+    expect(frame().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Roles, rules and delegation']);
+    expect(frame().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--34');
     expect(phone().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Templates']);
     expect(phone().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--p22');
     const back = await within(phoneBar()).findByRole('link', { name: 'Back to Setup' });

@@ -3,16 +3,18 @@
 // SCR-02 work item: header and tabs shared by Overview (/work/[id]) and History (/work/[id]/history).
 // Data comes only from E-WORK-ITEM and E-WORK-HISTORY; the backend decides access (INV-ACCESS).
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
+import { createContext, useContext, type ReactNode } from 'react';
 
 import { Breadcrumb, Callout, formatDayTime, Tabs, Tag, useIsPhone } from '@/components';
 import { PROJECT_TABS } from '@/features/projects/model';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
-import { useWorkspacePage } from '@/features/workspace/usePageReload';
+import { useWorkspacePage, type WorkspacePage } from '@/features/workspace/usePageReload';
 
 import { RfpFrame } from '@/features/rfp/RfpFrame';
+import { rememberedRfpFrame } from '@/features/rfp/frameMemory';
 import { statusTone } from '@/features/rfp/labels';
 import { SEVERITY_WORDS, tagTone } from '@/features/workspace/labels';
 import { screenHeading } from '@/features/workspace/Workspace';
@@ -239,7 +241,33 @@ function WorkItemTabs({ base, tab, count }: { base: string; tab: WorkItemTab; co
   );
 }
 
-export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
+type WorkItemContextValue = { id: string; item: WorkItem; workspace: WorkspacePage; counts?: Parameters<typeof WorkItemHistory>[0]['counts'] };
+const WorkItemContext = createContext<WorkItemContextValue | null>(null);
+function useWorkItemContext() {
+  const ctx = useContext(WorkItemContext);
+  if (!ctx) throw new Error('A work item tab needs the work item frame');
+  return ctx;
+}
+
+/** The Overview tab's content, drawn under the frame's header. */
+export function WorkItemOverviewPane() {
+  const { id, item, workspace } = useWorkItemContext();
+  return <WorkItemOverview id={id} item={item} workspace={workspace} />;
+}
+
+/** The History tab's content; it reads its own list, so only this area shows a skeleton while that loads. */
+export function WorkItemHistoryPane() {
+  const { id, item, counts } = useWorkItemContext();
+  const phone = useIsPhone();
+  return <WorkItemHistory id={id} revision={item.revision} counts={counts} phone={phone} />;
+}
+
+/**
+ * The work item's frame: the header (with the tabs) and the refresh notice, around the tab's content. It is the layout
+ * of Overview and History, so changing tab keeps it and reads the item once. An RFP item that follows another item of
+ * the same RFP keeps that RFP's frame on screen while it loads (the item's own read still decides what it shows).
+ */
+export function WorkItemFrame({ id, tab, children }: { id: string; tab: WorkItemTab; children: ReactNode }) {
   const { state, retry } = useWorkItem(id);
   // F-17: the line workspace's quiet re-read after a step; the newer of the two reads is drawn.
   const workspace = useWorkspacePage(id);
@@ -257,7 +285,20 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const deliveryId = item?.workspace?.line_key === 'delivery_handover' ? item.workspace.context?.project?.case_id : undefined;
   usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : deliveryId ? { label: 'Delivery', href: `/projects/${encodeURIComponent(deliveryId)}/delivery` } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : rfpBack?.work_id ? { label: 'RFP', href: `/work/${encodeURIComponent(rfpBack.work_id)}` } : { label: 'Queue', href: '/my-work' });
 
-  if (state.status === 'loading') return <LoadingState />;
+  if (state.status === 'loading') {
+    const kept = !phone && tab === 'overview' ? rememberedRfpFrame(id) : undefined;
+    if (!kept) return <LoadingState />;
+    return (
+      <>
+        <RfpFrame id={id} item={kept.item} rfp={kept.rfp} fallback={kept.fallback} current={kept.current} end={
+            <Link className="psl-link rfp-history" href={`${base}/history`}>
+              History
+            </Link>
+          } />
+        <LoadingState />
+      </>
+    );
+  }
   if (state.status === 'error') {
     const { error } = state;
     if (error.kind === 'unauthenticated') return <SignedOutState pathname={tab === 'history' ? `${base}/history` : base} />;
@@ -303,11 +344,22 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
       {refreshFailed && (
         <Callout kind="warning">We couldn&rsquo;t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>
       )}
-      {tab === 'overview' ? (
-        <WorkItemOverview id={id} item={shown} workspace={workspace.page} />
-      ) : (
-        <WorkItemHistory id={id} revision={shown.revision} counts={view?.history_counts} phone={phone} />
-      )}
+      <WorkItemContext.Provider value={{ id, item: shown, workspace: workspace.page, counts: view?.history_counts }}>{children}</WorkItemContext.Provider>
     </>
   );
+}
+
+/** The tab is the path under /work/<id>/: History, else the Overview. */
+export function WorkItemLayoutFrame({ id, children }: { id: string; children: ReactNode }) {
+  const tab = usePathname().split('/')[3] === 'history' ? 'history' : 'overview';
+  return (
+    <WorkItemFrame id={id} tab={tab}>
+      {children}
+    </WorkItemFrame>
+  );
+}
+
+/** One work item tab as a single page: the frame and its content (the route files split them across layout and page). */
+export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
+  return <WorkItemFrame id={id} tab={tab}>{tab === 'overview' ? <WorkItemOverviewPane /> : <WorkItemHistoryPane />}</WorkItemFrame>;
 }

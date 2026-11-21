@@ -13,7 +13,7 @@ import { Button, Callout, EmptyState, PageTitle, SampleLabel, SearchField, Table
 import type { TemplateRow } from './api';
 import { boardDay, boardStamp } from './format';
 import { OutcomeNotice, type Notice } from './SetRulePanel';
-import { RulesReadState, SetupFrame, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
+import { RulesReadState, PagingNotes, useSetupPaging, useSetupPhoneBack, useSetupRead } from './SetupFrame';
 import { TemplateUploadPanel, type Invalid } from './TemplateUploadPanel';
 import { useTemplateUpload } from './useTemplateUpload';
 import { useTemplates } from './useTemplates';
@@ -48,18 +48,11 @@ function metaParts(row: TemplateRow): { first: string; second: string } {
 }
 
 export function TemplatesPageView() {
-  return (
-    <SetupGate>
-      <TemplatesView />
-    </SetupGate>
-  );
-}
-
-function TemplatesView() {
   const { state, retry, refresh, loadMore, signOut } = useTemplates();
   const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'templates');
   const { busy, upload } = useTemplateUpload(refresh);
   useSetupPhoneBack();
+  useSetupRead(state.status);
   const [open, setOpen] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const toast = useToast();
@@ -224,7 +217,6 @@ function TemplatesView() {
   return (
     <>
       <div className="setup-page setup-desktop">
-        <SetupFrame current="templates" />
         {empty ? (
           <EmptyState title="No templates to show.">Document templates your role may read will appear here.</EmptyState>
         ) : (

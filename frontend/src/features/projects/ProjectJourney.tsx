@@ -4,6 +4,8 @@
 // facts strip, every line's work in the order returned, what is next and Tola's summary. Data comes only from
 // E-PROJECT (v7 optional fields, see model.ts); the backend decides access (INV-ACCESS).
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { createContext, useContext, type ReactNode } from 'react';
 
 import { AgentAvatar, agentKey, Breadcrumb, EmptyState, PageTitle, Panel, STATE_TAGS, Tag, VisuallyHidden, type FactoryState, type TagTone } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
@@ -171,34 +173,46 @@ function JourneyTab({ journey }: { journey: JourneyView }) {
   );
 }
 
-function ProjectView({ journey, base, tab }: { journey: JourneyView; base: string; tab: ProjectTab }) {
-  return (
-    <div className="projects__page">
-      <header className="projects__header">
-        <div className="projects__crumb">
-          <Breadcrumb items={[{ label: 'Projects', href: '/projects' }]} current={clientOf(journey)} />
-        </div>
-        <PageTitle size={36} phoneSize={22}>
-          {journey.title}
-        </PageTitle>
-      </header>
-      <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
-      <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">
-        {tab === 'journey' ? (
-          <JourneyTab journey={journey} />
-        ) : tab === 'delivery' ? (
-          <DeliveryTab journey={journey} />
-        ) : hasTabContent(tab) ? (
-          <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
-        ) : (
-          <MoneyTab caseId={journey.case_id} base={base} />
-        )}
-      </div>
-    </div>
+const ProjectContext = createContext<{ journey: JourneyView; base: string; tab: ProjectTab } | null>(null);
+
+/** The tab's content, drawn inside the frame's tabpanel; the frame has already read the project. */
+export function ProjectTabBody() {
+  const ctx = useContext(ProjectContext);
+  if (!ctx) throw new Error('ProjectTabBody needs the project frame');
+  const { journey, base, tab } = ctx;
+  return tab === 'journey' ? (
+    <JourneyTab journey={journey} />
+  ) : tab === 'delivery' ? (
+    <DeliveryTab journey={journey} />
+  ) : hasTabContent(tab) ? (
+    <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
+  ) : (
+    <MoneyTab caseId={journey.case_id} base={base} />
   );
 }
 
-function ProjectPage({ caseId, tab }: { caseId: string; tab: ProjectTab }) {
+function ProjectView({ journey, base, tab, children }: { journey: JourneyView; base: string; tab: ProjectTab; children: ReactNode }) {
+  return (
+    <ProjectContext.Provider value={{ journey, base, tab }}>
+      <div className="projects__page">
+        <header className="projects__header">
+          <div className="projects__crumb">
+            <Breadcrumb items={[{ label: 'Projects', href: '/projects' }]} current={clientOf(journey)} />
+          </div>
+          <PageTitle size={36} phoneSize={22}>
+            {journey.title}
+          </PageTitle>
+        </header>
+        <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
+        <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">
+          {children}
+        </div>
+      </div>
+    </ProjectContext.Provider>
+  );
+}
+
+function ProjectPage({ caseId, tab, children }: { caseId: string; tab: ProjectTab; children: ReactNode }) {
   const { state, retry } = useProject(caseId);
   const base = `/projects/${encodeURIComponent(caseId)}`;
 
@@ -215,15 +229,43 @@ function ProjectPage({ caseId, tab }: { caseId: string; tab: ProjectTab }) {
       />
     );
   }
-  return <ProjectView journey={state.journey} base={base} tab={tab} />;
+  return (
+    <ProjectView journey={state.journey} base={base} tab={tab}>
+      {children}
+    </ProjectView>
+  );
 }
 
-/** /projects/<case_id>[/<tab>]: one project, for anyone whose /me lists Projects. Without it no request is made. */
-export function ProjectJourneyPage({ caseId, tab = 'journey' }: { caseId: string; tab?: ProjectTab }) {
+/** The project's frame (breadcrumb, title, tab bar), read once for the project. It is the layout of every tab, so a tab change keeps it and only the panel changes. */
+export function ProjectFrame({ caseId, tab, children }: { caseId: string; tab: ProjectTab; children: ReactNode }) {
   const me = useMe();
   usePhoneBack({ label: 'Projects', href: '/projects' });
   if (!me.destinations.includes('projects')) {
     return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   }
-  return <ProjectPage caseId={caseId} tab={tab} />;
+  return (
+    <ProjectPage caseId={caseId} tab={tab}>
+      {children}
+    </ProjectPage>
+  );
+}
+
+/** The tab is the path under /projects/<case_id>/; anything else is the Journey. */
+export function ProjectLayoutFrame({ caseId, children }: { caseId: string; children: ReactNode }) {
+  const segment = usePathname().split('/')[3] ?? '';
+  const tab = PROJECT_TABS.find((t) => t.path === (segment ? `/${segment}` : ''))?.key ?? 'journey';
+  return (
+    <ProjectFrame caseId={caseId} tab={tab}>
+      {children}
+    </ProjectFrame>
+  );
+}
+
+/** One project tab as a single page: the frame and its content (the route files split them across layout and page). */
+export function ProjectJourneyPage({ caseId, tab = 'journey' }: { caseId: string; tab?: ProjectTab }) {
+  return (
+    <ProjectFrame caseId={caseId} tab={tab}>
+      <ProjectTabBody />
+    </ProjectFrame>
+  );
 }
