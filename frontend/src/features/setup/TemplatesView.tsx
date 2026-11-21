@@ -8,12 +8,12 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { Button, Callout, EmptyState, PageTitle, SampleLabel, SearchField, Table, VisuallyHidden } from '@/components';
+import { Button, Callout, EmptyState, PageTitle, SampleLabel, SearchField, Table, VisuallyHidden, ShowMore, useToast } from '@/components';
 
 import type { TemplateRow } from './api';
 import { boardDay, boardStamp } from './format';
 import { OutcomeNotice, type Notice } from './SetRulePanel';
-import { RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
+import { RulesReadState, SetupFrame, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
 import { TemplateUploadPanel, type Invalid } from './TemplateUploadPanel';
 import { useTemplateUpload } from './useTemplateUpload';
 import { useTemplates } from './useTemplates';
@@ -57,11 +57,12 @@ export function TemplatesPageView() {
 
 function TemplatesView() {
   const { state, retry, refresh, loadMore, signOut } = useTemplates();
+  const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'templates');
   const { busy, upload } = useTemplateUpload(refresh);
   useSetupPhoneBack();
   const [open, setOpen] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
-  const [announcement, setAnnouncement] = useState('');
+  const toast = useToast();
   // The list could not be re-read after an unconfirmed upload: nothing more is sent until a read works.
   const [locked, setLocked] = useState(false);
   // The 200 body's version and badge, shown only for a row while the re-read after it has failed.
@@ -94,7 +95,7 @@ function TemplatesView() {
     );
   }
 
-  const rows = state.items.map((row) => {
+  const rows = pagedItems.map((row) => {
     const override = row.template_id ? shown[row.template_id] : undefined;
     return override ? { ...row, ...override } : row;
   });
@@ -124,7 +125,7 @@ function TemplatesView() {
           setShown({});
           setNotice(null);
         }
-        setAnnouncement(`Version ${result.version} uploaded for ${row.name}`);
+        toast.show(`Version ${result.version} uploaded for ${row.name}`);
         close(row.template_id, 'name');
         return null;
       }
@@ -140,7 +141,8 @@ function TemplatesView() {
       case 'unconfirmed': {
         const fresh = outcome.page.items.find((r) => r.template_id === row.template_id);
         if (fresh && (fresh.version !== row.version || fresh.revision !== row.revision)) {
-          setNotice({ tone: 'success', text: 'The upload went through.' });
+          setNotice(null);
+          toast.show('The upload went through.');
           close(row.template_id, 'name');
         } else {
           setNotice({ tone: 'warning', text: 'We couldn’t confirm the upload. Nothing new is shown for this template, so you can upload again.' });
@@ -265,9 +267,10 @@ function TemplatesView() {
               rows={matching}
               rowKey={(row) => row.template_id ?? `${row.name}-${matching.indexOf(row)}`}
               empty="No templates match your search."
+              paging={paging}
               expanded={(row) => panelFor(row)}
             />
-            <ShowMore state={state} onMore={() => void loadMore()} noun="templates" />
+            <PagingNotes notes={notes} />
           </>
         )}
       </div>
@@ -295,13 +298,10 @@ function TemplatesView() {
                 </li>
               ))}
             </ul>
-            <ShowMore state={state} onMore={() => void loadMore()} noun="templates" />
+            <ShowMore solo {...paging} />
+            <PagingNotes notes={notes} />
           </>
         )}
-      </div>
-
-      <div role="status" aria-live="polite">
-        <VisuallyHidden>{announcement}</VisuallyHidden>
       </div>
     </>
   );

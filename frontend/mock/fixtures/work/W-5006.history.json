@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "at": "2026-11-07T09:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Asked the PMO Lead to review",
+      "restricted": false,
+      "detail": "Plan v2",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-07T07:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 1 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-07T04:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted plan v2",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-06T18:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added scope notes",
+      "restricted": false,
+      "detail": "Scope v2",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-06T08:42:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Returned plan v1",
+      "restricted": false,
+      "detail": "Phase 2 needs a date",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-05T17:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Started the plan",
+      "restricted": false,
+      "_kind": "decision"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

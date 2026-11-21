@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "at": "2026-11-17T15:30:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Sent the list to Finance",
+      "restricted": false,
+      "detail": "Pay columns left out",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-17T15:20:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Confirmed the staff list",
+      "restricted": false,
+      "detail": "Note: \"Two joiners start on 3 November.\"",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-17T14:10:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Checked business units",
+      "restricted": false,
+      "detail": "All staff have a unit",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-17T14:02:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-17T14:00:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the staff list",
+      "restricted": false,
+      "detail": "hr_staff_oct_final.xlsx",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-17T13:55:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "Send the staff list for payroll · stand-in line"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

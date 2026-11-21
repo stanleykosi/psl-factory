@@ -1,17 +1,18 @@
 // SCR-03 states other than the default board: not open here, cannot act (read-only), stale and done.
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
+import { api, call } from '@/api/client';
 import type { DecideResult, TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { Button, buttonClass, Callout, EmptyState, formatClock, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
+import { Button, buttonClass, Callout, EmptyState, formatClock, formatWeekdayDayTime, Panel, Tag, TextArea, Unknown, useIsPhone, useToastWhen } from '@/components';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
 import { FACTS } from '@/features/work-item/labels';
 import { presentationOf } from '@/features/work-item/presentation';
 
 import { AmountValue, ApprovalChain, DecideHeader, When } from './DecisionContent';
 import { AGENT_NAMES, channelWords, formatAmount, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
-import { nextDecision, type DecidePresentation } from './presentation';
+import type { DecidePresentation } from './presentation';
 
 const workHref = (id: string) => `/work/${encodeURIComponent(id)}`;
 
@@ -399,6 +400,7 @@ type DoneProps = {
   item: WorkItem;
   result: DecideResult;
   label: string;
+  note?: string;
   reloaded: WorkItem | null;
   refreshFailed: boolean;
   view?: DecidePresentation;
@@ -407,24 +409,59 @@ type DoneProps = {
 /** An echo other than the three verdicts gets neutral words: the page never claims a decision it wasn't told. */
 const RECORDED = { eyebrow: 'DECISION RECORDED', heading: (label: string) => `Decision recorded on ${label}` };
 
-// The next-step card is the callout's markup written out: the boards draw Chidi's pose where the callout has its icon.
-export function DoneView({ id, item, result, label, reloaded, refreshFailed, view }: DoneProps) {
+/** The person's other waiting decisions: the same read My work uses for Needs me. Null until read, and when the read fails (nothing is claimed then). */
+type Waiting = { id: string; title: string }[] | null;
+const SHOWN = 3;
+
+function useWaitingDecisions(currentId: string): Waiting {
+  const [waiting, setWaiting] = useState<Waiting>(null);
+  useEffect(() => {
+    let live = true;
+    call(api.GET('/api/v1/work', { params: { query: { queue: 'needs_me', limit: 50 } } }))
+      .then((data) => {
+        if (!live || !Array.isArray(data.items)) return;
+        setWaiting(data.items.filter((w) => w.kind === 'decide' && w.id !== currentId).map(({ id, title }) => ({ id, title })));
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [currentId]);
+  return waiting;
+}
+
+/** "Sat 21 Nov, 12:20 WAT": the summary box's day and time. */
+const decidedAt = (at: string) => formatWeekdayDayTime(at).replace(/ (\d\d:\d\d)$/, ', $1 WAT');
+
+function Row({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="decide-sum__row">
+      <dt>{label}</dt>
+      <dd>{children}</dd>
+    </div>
+  );
+}
+
+// SCR-03-done-concepts, concept B: the banner, then the record (facts and summary) beside the "what happens next" panel.
+// The DOM runs record then panel; on phones decide.css orders it banner, panel, facts, summary, still waiting.
+export function DoneView({ id, item, result, label, note, reloaded, refreshFailed, view }: DoneProps) {
   const known = Object.hasOwn(VERDICT_WORDS, result.verdict);
   const words = known ? VERDICT_WORDS[result.verdict as Verdict] : RECORDED;
   // An effect that could not be confirmed (the decide answered effect_uncertain, or the reloaded item awaits a reconcile) is never shown
   // as an outcome: no approved banner and no next-step claim, whatever the line.
   const uncertain = (result as { work_state?: string }).work_state === 'effect_uncertain' || reloaded?.state === 'effect_uncertain' || Boolean(reloaded?.reconcile);
   const approved = known && result.verdict === 'approve' && !uncertain;
-  const next = nextDecision(view);
+  useToastWhen(uncertain ? null : 'Your decision was recorded.');
   const facts = presentationOf(reloaded ?? item);
-  // the done boards draw Chidi's thumbs-up pose (public/agents/chidi-done.png); other agents keep their avatar
-  const agentName = (reloaded ?? item).agent.name;
-  const image = agentName?.toLowerCase() === 'chidi' ? '/agents/chidi-done.png' : undefined;
-  // desktop draws Paid once, inside the next-step card; the phone board draws it as its own line
-  const phone = useIsPhone();
-  const showPaid = approved && (phone || !reloaded?.next_step.includes('Paid is tracked separately'));
-  // on the phone the sentence is the separate line, so the card text stops before it
-  const nextStep = phone && approved && reloaded ? reloaded.next_step.replace(/\s*Paid is tracked separately[^.]*\.?/, '') : reloaded?.next_step;
+  const waiting = useWaitingDecisions(id);
+  // the agent's working pose beside the next step (public/agents/<agent>-working.png)
+  const agent = (reloaded ?? item).agent.name?.toLowerCase();
+  const image = agent && ['tola', 'chidi', 'zainab'].includes(agent) ? `/agents/${agent}-working.png` : undefined;
+  // Paid is its own hint under the summary, never inside the next step
+  const nextStep = reloaded?.next_step.replace(/\s*Paid is tracked separately[^.]*\.?/, '');
+  const decision = known ? (result.verdict === 'approve' ? 'Approve' : result.verdict === 'return' ? 'Return' : 'Reject') : 'Decision recorded';
+  const youDecided = uncertain ? `${decision}, result not confirmed` : note ? `${decision}, with the note “${note}”` : known ? `${decision}, with no note` : decision;
+  const next = waiting?.[0];
   return (
     <>
       <DecideHeader
@@ -438,11 +475,6 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         title={uncertain ? `${label}: result not confirmed` : words.heading(view?.client ? `${label} for ${view.client}` : label)}
         focusHeading
       />
-      {!uncertain && (
-        <p className="cmp-sr" role="status">
-          Your decision was recorded.
-        </p>
-      )}
       <div className="decide-done">
         {uncertain && <UncertainNotice />}
         {refreshFailed && (
@@ -450,32 +482,74 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
             <Callout kind="warning">We couldn&rsquo;t refresh this item. Open the work item to see the latest.</Callout>
           </div>
         )}
-        {reloaded && <FactsStrip facts={reloaded.facts} details={facts?.facts} tones={facts?.fact_tones} paidNote={false} />}
-        <div className="decide-done__row">
-          {reloaded && !uncertain && (
-            <div className={`psl-callout psl-callout--${approved ? 'success' : 'info'} decide-next`}>
-              {image && <Image className="decide-next__img" src={image} alt="" width={96} height={136} unoptimized />}
-              <p className="decide-plain">
-                <strong>Next step.</strong> {nextStep}
+        <div className="decide-done__cols">
+          <div className="decide-done__record">
+            {reloaded && <FactsStrip facts={reloaded.facts} details={facts?.facts} tones={facts?.fact_tones} paidNote={false} />}
+            <dl className="decide-sum" aria-label="Summary">
+              <Row label="Work">
+                {item.reference} · {item.line}
+              </Row>
+              {view?.subject && <Row label="Project">{view.subject}</Row>}
+              <Row label="You decided">{youDecided}</Row>
+              <Row label="Decided">
+                <time dateTime={result.decided_at}>{decidedAt(result.decided_at)}</time>, by {result.decided_by}
+              </Row>
+            </dl>
+            {approved && <p className="decide-plain decide-paid">Paid is tracked separately by Finance and is not part of this decision.</p>}
+          </div>
+          <div className="decide-done__side">
+            <section className="decide-donepanel" aria-labelledby="decide-next-head">
+              <h2 id="decide-next-head" className="decide-donepanel__head">
+                WHAT HAPPENS NEXT
+              </h2>
+              {reloaded && !uncertain && (
+                <div className={`psl-callout psl-callout--${approved ? 'success' : 'info'} decide-next`}>
+                  {image && <Image className="decide-next__img" src={image} alt="" width={64} height={91} unoptimized />}
+                  <p className="decide-plain">
+                    <strong>Next step.</strong> {nextStep}
+                  </p>
+                </div>
+              )}
+              <p className="decide-links">
+                {next && (
+                  <Link className={buttonClass('dark', 'lg')} href={workHref(next.id)}>
+                    Next decision · 1 of {waiting.length}
+                  </Link>
+                )}
+                <Link className={buttonClass('secondary', 'lg')} href={workHref(id)}>
+                  Open the work item
+                </Link>
               </p>
-            </div>
-          )}
-          <p className="decide-links">
-            {next && (
-              <Link className={buttonClass('dark', 'lg')} href={next.href}>
-                {next.label}
-              </Link>
+            </section>
+            {waiting && (
+              <section className="decide-still" aria-labelledby="decide-still-head">
+                <h2 id="decide-still-head" className="decide-still__head">
+                  {waiting.length === 0 ? 'ALL CAUGHT UP' : `STILL WAITING ON YOU · ${waiting.length}`}
+                </h2>
+                {waiting.length === 0 ? (
+                  <p className="decide-plain">
+                    You&rsquo;re all caught up. <Link href="/my-work">Back to my work</Link>
+                  </p>
+                ) : (
+                  <>
+                    <ul>
+                      {waiting.slice(0, SHOWN).map((w) => (
+                        <li key={w.id}>
+                          <Link href={workHref(w.id)}>{w.title}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                    {waiting.length > SHOWN && (
+                      <p className="decide-plain">
+                        <Link href="/my-work">See all</Link>
+                      </p>
+                    )}
+                  </>
+                )}
+              </section>
             )}
-            <Link className={buttonClass('secondary', 'lg')} href={workHref(id)}>
-              Open the work item
-            </Link>
-          </p>
+          </div>
         </div>
-        {showPaid && <p className="decide-plain decide-paid">Paid is tracked separately by Finance and is not part of this decision.</p>}
-        <p className="decide-plain decide-back">
-          <Link href="/my-work">Back to my work</Link>
-        </p>
-        <p className="decide-plain decide-done__by">Decided by {result.decided_by}</p>
       </div>
     </>
   );

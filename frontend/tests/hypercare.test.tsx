@@ -13,6 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkItem } from '@/features/work-item/labels';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
+import { setWhen } from './controls';
 import { withoutBellFeed } from './bell-feed';
 
 configure({ asyncUtilTimeout: 5000 });
@@ -89,14 +90,16 @@ async function open(first: WorkItem, ...later: (WorkItem | (() => Response | Pro
 const ws = () => within(document.querySelector('.ws') as HTMLElement);
 const pageText = () => document.body.textContent ?? '';
 /** The notices at the top of the page; the agent's own "Done: …" lines are not in them. */
-const notices = () => document.querySelector('.ws-notices')?.textContent ?? '';
+const notices = () => [document.querySelector('.ws-notices'), document.querySelector('.cmp-toasts')].map((el) => el?.textContent ?? '').join(' ');
 const wsText = () => (document.querySelector('.ws') as HTMLElement).textContent ?? '';
 const press = async (name: string) => {
   await act(async () => {
     fireEvent.click(ws().getByRole('button', { name }));
   });
 };
-const type = (label: string, value: string) => fireEvent.change(ws().getByLabelText(new RegExp(label)), { target: { value } });
+// A date and a time is picked from the shared dropdown (D-158); anything else is typed.
+const type = (label: string, value: string) =>
+  /^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(value) ? setWhen(label, value, ws()) : fireEvent.change(ws().getByLabelText(new RegExp(label)), { target: { value } });
 const rowOf = (text: string) => ws().getByText(text).closest('tr') as HTMLElement;
 
 describe('four states from the fixture (AC 5)', () => {

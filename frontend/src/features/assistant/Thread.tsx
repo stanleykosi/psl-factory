@@ -6,9 +6,11 @@ import { Fragment } from 'react';
 
 import { AGENTS, AgentChecklist, ChatMessage, formatClock, Link, SourceTag, useIsPhone, type AgentStep } from '@/components';
 
+import { uploadHref } from './api';
 import { DraftStart } from './DraftStart';
+import { SENDING } from './labels';
 import { runStatus, sourcesOf, stepsOf, workHref } from './model';
-import type { Conversation, Message } from './types';
+import type { Message, ThreadConversation } from './types';
 
 type Ref = NonNullable<NonNullable<Message['step_details']>[number]['reference']>;
 
@@ -17,15 +19,19 @@ function stepRecord(ref: Ref, words: string): AgentStep['source'] {
   return ref.work_id ? <Link href={workHref(ref.work_id)}>{words}</Link> : words;
 }
 
-export function Thread({ conversation, reread }: { conversation: Conversation; reread: () => Promise<unknown> }) {
+export function Thread({ conversation, reread }: { conversation: ThreadConversation; reread: () => Promise<unknown> }) {
   const phone = useIsPhone();
   const agent = conversation.agent;
   return (
     <section className="as__thread" aria-label="Conversation">
       {conversation.messages.map((message, at) => {
         if (message.role === 'person') {
+          // A message not yet on the server shows its local previews; one that is shows the uploads' own address.
+          const images = message.local
+            ? message.local.images.map(({ id, name, src }) => ({ id, name, src, href: src }))
+            : (message.attachments ?? []).map((a) => ({ id: a.file_id, name: a.name, src: uploadHref(a.file_id), href: uploadHref(a.file_id) }));
           return (
-            <ChatMessage key={at} from="person">
+            <ChatMessage key={at} from="person" images={images} chips={message.local?.chips} note={message.local?.sending ? SENDING : undefined}>
               {message.text}
             </ChatMessage>
           );

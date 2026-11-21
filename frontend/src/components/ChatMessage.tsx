@@ -10,7 +10,7 @@ import { AGENTS, AgentAvatar, type AgentKey } from './Avatar';
 import { cx, usePhone } from './internal';
 
 export type ChatMessageProps =
-  | { from: 'person'; children: ReactNode; className?: string }
+  | { from: 'person'; children: ReactNode; /** Thumbnails of the images sent with it (an `ImageList`-style list of links). */ images?: { id: string; name: string; src: string; href: string }[]; /** The @/# marks the person added, shown under the words. */ chips?: string[]; /** A muted line under it ("Sending…"). */ note?: ReactNode; className?: string }
   | {
       from: 'agent';
       agent: AgentKey;
@@ -36,7 +36,27 @@ export function ChatMessage(props: ChatMessageProps) {
   if (props.from === 'person') {
     return (
       <div className={cx('cmp-chat cmp-chat--person', props.className)}>
-        <p className="cmp-chat__text">{props.children}</p>
+        {props.children !== '' && <p className="cmp-chat__text">{props.children}</p>}
+        {props.chips && props.chips.length > 0 && (
+          <ul className="cmp-chat__chips" aria-label="Mentions">
+            {props.chips.map((chip) => (
+              <li key={chip}>{chip}</li>
+            ))}
+          </ul>
+        )}
+        {props.images && props.images.length > 0 && (
+          <ul className="cmp-chat__images" aria-label="Images">
+            {props.images.map((image) => (
+              <li key={image.id}>
+                <a href={image.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${image.name}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- the person's own upload; its size is not known here */}
+                  <img src={image.src} alt={image.name} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        {props.note && <p className="cmp-chat__note">{props.note}</p>}
       </div>
     );
   }

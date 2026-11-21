@@ -21,7 +21,7 @@ export type DecideViewState =
   | { kind: 'stale'; replaced: TaskDecision; item: WorkItem }
   /** Decide had an uncertain effect and the reload failed: nothing is known, so nothing can be decided. */
   | { kind: 'unconfirmed'; item: WorkItem; replaced: TaskDecision; revision: number; checking: boolean }
-  | { kind: 'done'; result: DecideResult; label: string; item: WorkItem; reloaded: WorkItem | null; refreshFailed: boolean };
+  | { kind: 'done'; result: DecideResult; label: string; note?: string; item: WorkItem; reloaded: WorkItem | null; refreshFailed: boolean };
 
 export type ClaimState =
   | { key: string; status: 'pending' }
@@ -194,7 +194,7 @@ export function useDecision(id: string, taskId: string | undefined) {
       try {
         const result = await call(api.POST('/api/v1/tasks/{task_id}/decision', { params: { path: { task_id: task.id } }, body }));
         setSubmit({ status: 'idle' });
-        setView({ kind: 'done', result, label: task.decision.version.label, item, reloaded: null, refreshFailed: false });
+        setView({ kind: 'done', result, label: task.decision.version.label, note: body.note, item, reloaded: null, refreshFailed: false });
         try {
           const reloaded = await fetchItem();
           setView((v) => (v.kind === 'done' ? { ...v, reloaded } : v));

@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "at": "2026-11-18T11:52:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Started checking business units",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T11:50:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Read the staff list",
+      "restricted": false,
+      "detail": "Used: hr_staff_oct_late_joiner.xlsx",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T11:49:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T11:48:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the staff list",
+      "restricted": false,
+      "detail": "hr_staff_oct_late_joiner.xlsx",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T11:46:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Chose the month",
+      "restricted": false,
+      "detail": "October (late joiner)",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-18T11:45:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "Send the staff list for payroll · stand-in line"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

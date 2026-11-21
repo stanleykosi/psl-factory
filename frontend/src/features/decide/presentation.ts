@@ -4,7 +4,6 @@
 // Presentation only: nothing here decides access or authority, nothing here is ever sent to an endpoint, and a
 // contract field always wins where one exists.
 import type { WorkItem } from '@/api/types';
-import { isAppPath } from '@/features/work-item/presentation';
 
 export type DecidePresentation = {
   /** "DECISIONS / 1 OF 3 / …" and "Next decision · 2 of 3". */
@@ -42,12 +41,6 @@ export type DecidePresentation = {
 export function decidePresentationOf(item: WorkItem | null | undefined): DecidePresentation | undefined {
   const value = item && (item as WorkItem & { decide_presentation?: unknown }).decide_presentation;
   return value && typeof value === 'object' ? (value as DecidePresentation) : undefined;
-}
-
-/** "Next decision · 2 of 3" only when it links inside the app. */
-export function nextDecision(view: DecidePresentation | undefined): { label: string; href: string } | undefined {
-  const next = view?.queue?.next;
-  return next && typeof next.href === 'string' && isAppPath(next.href) ? next : undefined;
 }
 
 /** "1 of 3", when the block carries a queue position. */

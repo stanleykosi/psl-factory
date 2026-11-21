@@ -108,7 +108,7 @@ async function open(first: WorkItem, ...later: (WorkItem | (() => Response | Pro
 const ws = () => within(document.querySelector('.ws') as HTMLElement);
 const pageText = () => document.body.textContent ?? '';
 const wsText = () => (document.querySelector('.ws') as HTMLElement).textContent ?? '';
-const notices = () => document.querySelector('.ws-notices')?.textContent ?? '';
+const notices = () => [document.querySelector('.ws-notices'), document.querySelector('.cmp-toasts')].map((el) => el?.textContent ?? '').join(' ');
 const press = async (name: string) => {
   await act(async () => {
     fireEvent.click(ws().getByRole('button', { name }));
@@ -336,7 +336,7 @@ describe('Draft v2 is Tola’s work (AC 8)', () => {
     await waitFor(() => expect(pageText()).toContain('Drafting v2'));
     expect(posts('/steps')).toHaveLength(1);
     expect(posts('/steps')[0].body).toMatchObject({ step: 'draft_v2', expected_revision: 1 });
-    expect(notices()).toContain('Waiting: Tola is drafting v2.');
+    await waitFor(() => expect(notices()).toContain('Waiting: Tola is drafting v2.'));
     expect(ws().getAllByText('OPEN')).toHaveLength(2);
     expect(document.querySelector('.ws .ws-note.psl-callout--success')).toBe(null);
     expect(pageText()).not.toMatch(/Handover acknowledged|v2 published/i);

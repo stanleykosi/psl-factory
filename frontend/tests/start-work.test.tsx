@@ -295,7 +295,7 @@ describe('fields by kind', () => {
     expect(within(dialog()).getByLabelText('From').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(within(dialog()).getByLabelText('To').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(within(dialog()).getByLabelText('Period (optional)').getAttribute('type')).toBe('month');
-    expect(within(dialog()).getByLabelText('When (optional)').getAttribute('type')).toBe('datetime-local');
+    expect(within(dialog()).getByLabelText('When (optional)').getAttribute('aria-haspopup')).toBe('dialog');
     expect(within(dialog()).getByLabelText('Count (optional)').getAttribute('type')).toBe('number');
     const audience = within(dialog()).getByRole('radiogroup', { name: 'Audience' });
     expect(within(audience).getAllByRole('radio').map((r) => r.textContent)).toEqual(['Internal', 'Client']);
@@ -375,7 +375,7 @@ describe('record options from E-LINE-OPTIONS', () => {
     fireEvent.click(milestone());
     const m4 = await within(dialog()).findByRole('option', { name: /Milestone 4 · hypercare/ });
     const last = optionGets().at(-1)!;
-    expect(last.pathname + last.search).toBe('/api/v1/lines/invoice/fields/milestone/options?parent=P-0101&limit=20');
+    expect(last.pathname + last.search).toBe('/api/v1/lines/invoice/fields/milestone/options?parent=P-0101&limit=10');
     expect(m4.getAttribute('aria-disabled')).toBe('true');
     expect(m4.textContent).toContain("Milestone 4 isn't marked complete yet. Record its completion and proof first.");
     fireEvent.click(m4);
@@ -389,22 +389,26 @@ describe('record options from E-LINE-OPTIONS', () => {
     expect(optionGets().at(-1)!.searchParams.get('parent')).toBe('P-0102');
   });
 
-  it('ceo: the project picker lists 20, Show more fetches the next page, and search sends q', async () => {
+  it('ceo: the project picker lists 10 with no paging footer, reaching the end loads the next pages, and search sends q', async () => {
     persona = 'ceo';
     await openChooser();
     fireEvent.click(within(dialog()).getByRole('radio', { name: /Controlled change/ }));
     press('Next');
     fireEvent.click(within(dialog()).getByRole('combobox', { name: 'Project' }));
     await within(dialog()).findByRole('option', { name: 'Lagoon Health · patient app' });
-    expect(within(dialog()).getAllByRole('option')).toHaveLength(20);
-    press('Show more');
+    expect(within(dialog()).getAllByRole('option')).toHaveLength(10);
+    expect(within(dialog()).queryByRole('radiogroup', { name: 'Rows per page' })).toBeNull();
+    expect(within(dialog()).queryByRole('button', { name: 'Show more' })).toBeNull();
+    fireEvent.keyDown(within(dialog()).getAllByRole('option').at(-1)!, { key: 'ArrowDown' });
+    await waitFor(() => expect(within(dialog()).getAllByRole('option')).toHaveLength(20));
+    expect(optionGets().at(-1)!.searchParams.get('cursor')).toBe('o:10');
+    fireEvent.keyDown(within(dialog()).getAllByRole('option').at(-1)!, { key: 'ArrowDown' });
     await waitFor(() => expect(within(dialog()).getAllByRole('option')).toHaveLength(26));
     expect(optionGets().at(-1)!.searchParams.get('cursor')).toBe('o:20');
-    expect(within(dialog()).queryByRole('button', { name: 'Show more' })).toBeNull();
     fireEvent.change(within(dialog()).getByRole('searchbox', { name: 'Search Project' }), { target: { value: 'harm' } });
     await waitFor(() => expect(within(dialog()).getAllByRole('option').map((o) => o.textContent)).toEqual(['Harmattan Bank · mobile onboarding']));
     expect(optionGets().at(-1)!.searchParams.get('q')).toBe('harm');
-    expect(optionGets().every((u) => u.searchParams.get('limit') === '20')).toBe(true);
+    expect(optionGets().every((u) => u.searchParams.get('limit') === '10')).toBe(true);
     expect(optionGets().filter((u) => u.searchParams.has('q')).map((u) => u.searchParams.get('q'))).toEqual(['harm']);
   });
 

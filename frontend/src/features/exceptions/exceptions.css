@@ -32,12 +32,6 @@ a.exc-title:hover { text-decoration: underline; }
 .exc-card:hover a.exc-title { text-decoration: underline; }
 a.exc-back { min-height: var(--control-md); margin: calc(var(--space-2) * -1) 0; display: inline-flex; align-items: center; gap: var(--space-1); color: var(--ink); text-decoration: none; }
 
-/* paging bar below the table (D-PAGING): shown, As of, rows per page, Show more */
-.exc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); font-size: var(--text-hint-size); color: var(--ink-muted); }
-.exc-foot .psl-showmore { border: 0; padding: 0; background: none; gap: var(--space-4); }
-.exc-rows { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; font-family: var(--font-mono); font-size: var(--text-label-size); }
-.exc-rowslabel { letter-spacing: .06em; }
-
 .exc-note, .exc-seeall { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
 .exc-seeall { font-size: var(--text-body-size); }
 .exc-footer { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
@@ -47,6 +41,4 @@ a.exc-back { min-height: var(--control-md); margin: calc(var(--space-2) * -1) 0;
   .exc-toolbar .cmp-toolsearch { flex: 1 1 0; min-width: 0; max-width: none; }
   .exc-page { gap: var(--space-10px); }
   .exc-header { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
-  .exc-rows { margin: 0; flex: 1 1 100%; justify-content: space-between; }
-  .exc-foot .psl-showmore { flex: 1 1 100%; justify-content: space-between; }
 }

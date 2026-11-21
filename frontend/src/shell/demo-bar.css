@@ -1,0 +1,6 @@
+/* The demo bar (D-155): a small pill at the bottom right that opens a narrow panel. It stays clear of the toast host
+   (bottom centre) and the assistant composer; on a phone it sits above the docked bars. */
+.demo-bar { position: fixed; right: var(--space-3); bottom: var(--space-3); z-index: var(--z-bar); }
+.demo-bar__panel { display: flex; flex-direction: column; gap: var(--space-3); width: 240px; padding: var(--space-3); background: var(--surface); border: var(--rule-thin) solid var(--rule-soft); }
+.demo-bar__head { display: flex; align-items: center; justify-content: space-between; }
+@media (max-width: 719px) { .demo-bar { bottom: 88px; } }

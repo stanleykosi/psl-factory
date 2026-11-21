@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "at": "2026-11-10T05:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Asked the CEO to approve",
+      "restricted": false,
+      "detail": "Costing v1",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T04:12:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 2 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-09T19:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 1 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-09T18:02:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted costing v1",
+      "restricted": false,
+      "detail": "3 phases",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-08T23:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added scope notes",
+      "restricted": false,
+      "detail": "Scope v2",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-08T03:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Read the scope notes",
+      "restricted": false,
+      "_kind": "agent_work"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

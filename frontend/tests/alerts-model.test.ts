@@ -16,6 +16,7 @@ import {
   parseView,
   quietLabel,
   viewSearch,
+  workHref,
 } from '@/features/alerts/model';
 
 const fixture = (name: string) => JSON.parse(readFileSync(join(__dirname, '../mock/fixtures', name), 'utf8'));
@@ -121,5 +122,13 @@ describe('settings PUT body', () => {
     expect(buildPrefsBody(unset, draftFrom(unset), false)).not.toHaveProperty('digest_at');
     expect(quietLabel(prefs)).toBe('20:00 to 07:00, and weekends');
     expect(quietLabel({ ...prefs, quiet_hours: { options: prefs.quiet_hours!.options } })).toBeUndefined();
+  });
+});
+
+describe('workHref (D-164)', () => {
+  const alert = { id: 'N-1', work_id: 'W-9001', agent: 'tola', text: 'x', at: '2026-11-15T08:00:00Z', read: false };
+  it('opens the work item, or the project the alert names', () => {
+    expect(workHref(alert)).toBe('/work/W-9001');
+    expect(workHref({ ...alert, case_id: 'P-9001' })).toBe('/projects/P-9001');
   });
 });

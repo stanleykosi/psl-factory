@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "at": "2026-11-10T03:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Asked the CEO to review",
+      "restricted": false,
+      "detail": "Report v1",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T02:52:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted the report",
+      "restricted": false,
+      "detail": "6 projects covered",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T00:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Collected the records",
+      "restricted": false,
+      "detail": "Unknown values are shown as unknown",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-09T23:42:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Added the PMO notes",
+      "restricted": false,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-09T21:02:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Started the report",
+      "restricted": false,
+      "_kind": "decision"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

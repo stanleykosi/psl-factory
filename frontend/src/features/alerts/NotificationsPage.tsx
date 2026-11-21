@@ -6,7 +6,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormE
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, Link, ListToolbar, Loading, PageTitle, ShowMore, Skeleton, Tag, useIsPhone, VisuallyHidden } from '@/components';
+import { Button, EmptyState, Link, ListToolbar, Loading, PageTitle, ShowMore, Skeleton, Tag, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type PageSize, VisuallyHidden } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
@@ -20,7 +20,8 @@ type Loaded = { items: Alert[]; nextCursor?: string; total?: number; now: number
 type ListState = { status: 'loading' } | ({ status: 'ready' } & Loaded) | { status: 'error'; error: ApiError };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-const fetchPage = (v: View, cursor?: string) => call(api.GET('/api/v1/notifications', { params: { query: buildAlertQuery(v, cursor) } }));
+// The first page is 10 rows; the paging footer asks for more by cursor.
+const fetchPage = (v: View, cursor?: string, limit: PageSize = DEFAULT_PAGE_SIZE) => call(api.GET('/api/v1/notifications', { params: { query: buildAlertQuery(v, cursor, limit) } }));
 
 /** /notifications (SCR-15): the person's own alerts. useSearchParams needs a Suspense boundary for `next build`. */
 export function NotificationsPage() {
@@ -83,12 +84,12 @@ function Notifications() {
     [router],
   );
 
-  const showMore = async () => {
+  const showMore = async (limit: PageSize) => {
     if (list.status !== 'ready' || !list.nextCursor || more === 'loading') return;
     const mine = seq.current;
     setMore('loading');
     try {
-      const data = await fetchPage(view, list.nextCursor);
+      const data = await fetchPage(view, list.nextCursor, limit);
       if (mine !== seq.current) return;
       setAsOf(data.as_of);
       setUnreadCount(data.unread_count);
@@ -131,6 +132,17 @@ function Notifications() {
     closeFilter();
     navigate({ agent: filters.agent, unread: filters.unread });
   };
+
+  const listReady = list.status === 'ready' ? list : undefined;
+  const { rows, paging } = usePagedRows({
+    items: listReady?.items ?? [],
+    next: Boolean(listReady?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: `${view.q ?? ''}|${view.agent ?? ''}|${view.unread ?? ''}`,
+    total: listReady?.total,
+  });
 
   const openAlert = useOpenAlert();
 
@@ -177,24 +189,16 @@ function Notifications() {
   } else {
     const { now } = list;
     body = (
-      <div className="alerts-listwrap">
-        <ul aria-label="Alerts" className="alerts-list">
-          {list.items.map((alert) => (
-            <AlertRow key={alert.id} alert={alert} now={now} onOpen={openAlert} />
-          ))}
-        </ul>
-        {(list.nextCursor || more === 'loading') && (
-          <ShowMore className="alerts-showmore" shown={list.items.length} hasMore busy={more === 'loading'} onMore={() => void showMore()} />
-        )}
-        {more === 'error' && (
-          <Callout kind="problem">
-            We couldn&rsquo;t load more. Nothing was changed.{' '}
-            <Button kind="secondary" size="sm" onClick={() => void showMore()}>
-              Try again
-            </Button>
-          </Callout>
-        )}
-      </div>
+      <>
+        <div className="alerts-listwrap">
+          <ul aria-label="Alerts" className="alerts-list">
+            {rows.map((alert) => (
+              <AlertRow key={alert.id} alert={alert} now={now} onOpen={openAlert} />
+            ))}
+          </ul>
+          <ShowMore {...paging} />
+        </div>
+      </>
     );
   }
 

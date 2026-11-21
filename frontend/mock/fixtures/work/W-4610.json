@@ -1,0 +1,71 @@
+{
+  "id": "W-4610",
+  "title": "Business unit changes · October",
+  "line": "Fix staff records",
+  "reference": "HRR-0005",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Find the gaps",
+      "status": "done"
+    },
+    {
+      "name": "Choose business units",
+      "status": "done"
+    },
+    {
+      "name": "Update records",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Listed 3 staff who moved business unit in October",
+        "status": "done",
+        "source": "Business unit register"
+      },
+      {
+        "text": "Updated their records after HR chose the units",
+        "status": "done",
+        "source": "Staff records"
+      }
+    ]
+  },
+  "next_step": "Done. The three records now show the new business units.",
+  "sample": true
+}

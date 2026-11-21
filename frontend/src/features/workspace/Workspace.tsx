@@ -9,7 +9,7 @@ import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNo
 
 import Link from 'next/link';
 
-import { Button, buttonClass, Callout, Checkbox, Drawer, formatClock, formatDayTime, MiniStationBar, Tag, useIsPhone, type StationStatus } from '@/components';
+import { Button, buttonClass, Callout, Checkbox, Drawer, formatClock, formatDayTime, MiniStationBar, Tag, useIsPhone, useToastWhen, type StationStatus } from '@/components';
 import { asResponseItem, ReconcilePanel } from '@/features/response';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
@@ -305,6 +305,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const notMovedOn = decidedNow?.settled === true && waitsForReread(workspace.line_key) && decidedNow.taskId !== undefined && decideTasks.has(decidedNow.taskId);
   const decidedLabel = notMovedOn ? item.tasks.find((t) => t.id === decidedNow.taskId)?.decision?.version?.label : undefined;
   const decidedShown = notMovedOn ? { ...decidedNow, settled: false, text: DECIDE_TEXT.notConfirmed(decidedLabel ?? 'This decision') } : decidedNow;
+  // The results of a finished action are toasts (D-151); the failures and the lasting states below stay Callouts.
+  useToastWhen(recorded);
+  useToastWhen(assignFlow.notice?.kind === 'done' ? assignFlow.notice.text : null);
+  useToastWhen(decidedShown?.settled ? decidedShown.text : null);
+  useToastWhen(flow.notice?.kind === 'done' || flow.notice?.kind === 'queued' ? flow.notice.text : null, flow.notice?.kind === 'done' ? flow.notice.label : undefined);
   const staleShown = staleDecide !== null && !decideTasks.has(staleDecide.taskId) && flow.pending === null && flow.notice === null ? staleDecide : null;
   // F-52 (F-35 UX-3-1, UX-3-3): on the leadership report the stale notice also says what to do next, and focus moves to it
   const staleNotice = useRef<HTMLDivElement>(null);
@@ -691,14 +696,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   return (
     <>
       <div ref={notices} className="ws-notices">
-        {/* A finished or queued step is told politely; an uncertain send and a changed record answer the press, so each
-            is an alert, as on base (a warning Callout has no live role of its own). */}
+        {/* A finished or queued step is a toast (D-151). A send that did not reach a re-read is told politely here; an uncertain
+            send and a changed record answer the press, so each is an alert, as on base (a warning Callout has no live role of its own). */}
         <div role="status" aria-live="polite" className="ws-live">
-          {recorded && (
-            <Callout kind="success" announce={false}>
-              <span>{recorded}</span>
-            </Callout>
-          )}
           {sentNote && (
             <Callout kind="warning" announce={false}>
               <span>{sentNote}</span>
@@ -707,22 +707,6 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {teamGone && (
             <Callout kind="warning" announce={false}>
               <span>{RESPONSE_TEXT.teamGone(teamGone)}</span>
-            </Callout>
-          )}
-          {assignFlow.notice?.kind === 'done' && (
-            <Callout kind="success" announce={false}>
-              <span>{assignFlow.notice.text}</span>
-            </Callout>
-          )}
-          {decidedShown?.settled && (
-            <Callout kind="success" announce={false}>
-              <span>{decidedShown.text}</span>
-            </Callout>
-          )}
-          {(notice?.kind === 'done' || notice?.kind === 'queued') && (
-            <Callout kind="success" announce={false}>
-              {notice.kind === 'done' && notice.label && <strong>{notice.label} </strong>}
-              <span>{notice.text}</span>
             </Callout>
           )}
         </div>

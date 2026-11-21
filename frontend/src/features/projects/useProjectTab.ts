@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
+import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
 import { buildTabQuery, isTabResponse, rowsOf, type ListTab, type TabResponse, type TabRows, type TabView } from './tabsModel';
 
@@ -25,8 +26,8 @@ export function useProjectTab<T extends ListTab>(caseId: string, tab: T, view: T
   const { register, q } = view;
 
   const fetchPage = useCallback(
-    async (cursor?: string) => {
-      const query = buildTabQuery(tab, { register, q }, cursor);
+    async (limit: PageSize, cursor?: string) => {
+      const query = buildTabQuery(tab, { register, q }, cursor, limit);
       const data = await call(api.GET('/api/v1/projects/{case_id}/{tab}', { params: { path: { case_id: caseId, tab }, query } }));
       if (!isTabResponse(data, tab)) throw new ApiError(200, 'server', 'unexpected_response', UNEXPECTED_MESSAGE);
       return data;
@@ -39,7 +40,7 @@ export function useProjectTab<T extends ListTab>(caseId: string, tab: T, view: T
     setState({ status: 'loading' });
     setMore('idle');
     try {
-      const data = await fetchPage();
+      const data = await fetchPage(DEFAULT_PAGE_SIZE);
       if (mine !== seq.current) return;
       setState({ status: 'ready', rows: rowsOf(data, tab), summary: data.summary, asOf: data.as_of, nextCursor: data.next_cursor });
     } catch (error) {
@@ -48,12 +49,12 @@ export function useProjectTab<T extends ListTab>(caseId: string, tab: T, view: T
     }
   }, [fetchPage, tab]);
 
-  const showMore = useCallback(async () => {
+  const showMore = useCallback(async (limit: PageSize) => {
     if (state.status !== 'ready' || !state.nextCursor) return;
     const mine = seq.current;
     setMore('loading');
     try {
-      const data = await fetchPage(state.nextCursor);
+      const data = await fetchPage(limit, state.nextCursor);
       if (mine !== seq.current) return;
       setState((prev) =>
         prev.status !== 'ready' ? prev : { ...prev, rows: [...prev.rows, ...rowsOf(data, tab)] as TabRows[T], asOf: data.as_of, nextCursor: data.next_cursor },

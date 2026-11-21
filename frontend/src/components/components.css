@@ -29,17 +29,31 @@
 .cmp-menuhead { padding: var(--space-3) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); }
 .cmp-menuhead strong { display: block; }
 .psl-menuitem.cmp-menubutton { width: 100%; border: none; background: none; font: inherit; text-align: left; }
-.cmp-menu .psl-menuitem:focus-visible { outline-offset: calc(var(--rule-strong) * -1); }
 
 /* inputs that wrap an <input> (money, date): the ring sits on the box */
-.psl-input.cmp-wrapped:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); background: var(--surface); }
+.psl-input.cmp-wrapped:focus-within { outline: none; border-color: var(--focus); background: var(--surface); }
 .cmp-wrapped input:focus-visible { outline: none; }
 .psl-input.cmp-wrapped.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
 /* the button inside a wrapped field (calendar) is a full 44px target: it overlaps the box's 2px border top and bottom */
 .cmp-inputbtn.psl-iconbtn { width: calc(var(--control-md) - var(--space-2)); height: var(--control-md); margin: calc(var(--rule-strong) * -1) calc(var(--space-2) * -1) calc(var(--rule-strong) * -1) 0; }
+/* D-159: its hover fill stays inside the box's border; the 44px target still reaches over the border */
+.cmp-inputbtn.psl-iconbtn { padding: var(--rule-strong) 0; background-clip: content-box; }
 .cmp-search { appearance: none; }
 .cmp-search::-webkit-search-cancel-button, .cmp-search::-webkit-search-decoration { appearance: none; -webkit-appearance: none; }
 .cmp-cal__row { display: contents; }
+
+/* D-158 date and time: the select box, and one panel with the calendar beside Hour and Minute lists. The panel opens
+   in the page's flow, as the record pickers do, so it pushes the fields below down instead of covering them.
+   The list rows are the calendar's own day cells (psl-day), so a chosen hour looks like a chosen day. */
+.cmp-dtfield__value { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psl-pop.cmp-dtpop { position: static; margin-top: var(--space-1); width: max-content; max-width: 100%; display: flex; flex-direction: column; }
+.cmp-dtpop__body { display: flex; align-items: stretch; }
+.cmp-timelist { display: flex; flex-direction: column; width: 64px; border-left: var(--rule-thin) solid var(--rule-soft); }
+/* the heads sit level with the month, and the rows start level with the weekday letters */
+.cmp-timelist__head { height: var(--control-md); margin: var(--space-10px) 0 var(--space-2); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: var(--text-label-size); font-weight: var(--text-label-weight); color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; }
+.cmp-timelist__rows { position: relative; list-style: none; margin: 0; padding: 0 var(--space-1) var(--space-10px); flex: 1 1 0; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+.cmp-dtpop__foot { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-10px); border-top: var(--rule-thin) solid var(--rule-soft); }
 
 /* the select's arrow: the boards' small ▾ (D-93), drawn by CSS so it is not part of the control's text */
 .cmp-selectarrow::before { content: "▾"; }
@@ -118,7 +132,21 @@
 .cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: var(--text-sheet-title-size); }
 
 /* toast */
-.cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); }
+.cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); pointer-events: none; }
+.cmp-toasts > * { pointer-events: auto; }
+@media (max-width: 719.98px) {
+  /* D-158: on a phone the calendar takes the panel's width and the hour and minute lists sit side by side under it */
+  .psl-pop.cmp-dtpop { width: 100%; }
+  .cmp-dtpop__body { flex-wrap: wrap; }
+  .psl-cal.cmp-dtpop__cal { width: 100%; }
+  .cmp-timelist { flex: 1 1 0; border-left: none; border-top: var(--rule-thin) solid var(--rule-soft); }
+  .cmp-timelist + .cmp-timelist { border-left: var(--rule-thin) solid var(--rule-soft); }
+  .cmp-timelist__head { margin-top: var(--space-1); height: auto; padding: var(--space-1) 0; }
+  .cmp-timelist__rows { flex: none; height: 180px; }
+  .cmp-toasts { left: var(--space-4); right: var(--space-4); transform: none; bottom: calc(var(--toast-lift, 0px) + var(--space-4)); align-items: stretch; }
+  .cmp-toasts > .psl-toast { display: flex; }
+  .cmp-toasts > .psl-toast > span:not(.psl-tick) { flex: 1; }
+}
 .cmp-toast__action { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--on-strong); text-decoration: underline; cursor: pointer; }
 
 /* tooltip above its trigger */
@@ -126,7 +154,7 @@
 .psl-tip.cmp-tip[hidden] { display: none; }
 
 /* file upload */
-.psl-drop.cmp-drop:has(input:focus-visible) { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.psl-drop.cmp-drop:has(input:focus-visible) { outline: none; border-color: var(--focus); }
 .cmp-drop__error { color: var(--signal-ink); }
 .psl-file.cmp-file--restricted { border-color: var(--rule-soft); }
 .psl-progress.cmp-progress { display: block; }
@@ -152,7 +180,6 @@
 .cmp-source { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink); }
 .cmp-source__box { display: inline-flex; align-items: center; gap: var(--space-6px); font-family: var(--font-mono); font-size: var(--text-reference-size); line-height: var(--text-reference-line); padding: var(--space-1) var(--space-2); border: 1.5px solid var(--action); }
 .cmp-source--link:hover .cmp-source__box { background: var(--action-tint); color: var(--action-ink); }
-.cmp-source--link:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
 .cmp-source--restricted { color: var(--ink-muted); }
 .cmp-source--restricted .cmp-source__box { border: 1.5px dashed var(--ink-muted); }
 .cmp-source .psl-icon { width: var(--space-14px); height: var(--space-14px); }
@@ -173,6 +200,11 @@
 
 /* chat message (ChatMessage): your ink box on the right; an agent's avatar, name, hand-off, steps, answer, sources */
 .cmp-chat__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cmp-chat__chips { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-6px); font-size: var(--text-hint-size); font-weight: 500; opacity: .85; }
+.cmp-chat__images { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: flex-end; }
+.cmp-chat__images a { display: block; width: calc(var(--space-7) + var(--space-5)); height: calc(var(--space-7) + var(--space-5)); background: var(--neutral-tint); }
+.cmp-chat__images img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cmp-chat__note { margin: var(--space-1) 0 0; font-size: var(--text-hint-size); opacity: .75; }
 .cmp-chat--person { align-self: flex-end; max-width: calc(var(--space-7) * 13 + var(--space-2)); background: var(--ink); color: var(--on-strong); padding: var(--space-3) var(--space-4); }
 .cmp-chat--agent { display: grid; grid-template-columns: var(--control-sm) minmax(0, 1fr); grid-template-areas: "av who" "av body"; column-gap: var(--space-3); row-gap: var(--space-10px); align-items: start; }
 .cmp-chat--nowho { display: block; }
@@ -185,10 +217,10 @@
 .cmp-chat__cannot { color: var(--signal-ink); }
 .cmp-chat__sources { display: flex; flex-wrap: wrap; gap: var(--space-6px); }
 
-/* composer (Composer): the focus ring is on the whole box */
+/* composer (Composer): focus in the text area changes the box's own border (D-143); its buttons keep their own ring */
 .cmp-composer { display: flex; flex-direction: column; gap: var(--space-1); }
 .cmp-composer__box { display: flex; flex-direction: column; border: var(--rule-strong) solid var(--ink); background: var(--surface); }
-.cmp-composer__box:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-composer__box:has(textarea:focus) { border-color: var(--focus); }
 .cmp-composer__chips { list-style: none; margin: 0; padding: var(--space-10px) var(--space-3) 0; display: flex; flex-wrap: wrap; gap: var(--space-6px); }
 .cmp-composer__chip { display: inline-flex; align-items: center; gap: var(--space-6px); padding: 3px var(--space-2); background: var(--neutral-tint); color: var(--neutral-ink); font-size: var(--text-hint-size); font-weight: 500; }
 .cmp-composer__remove { border: none; background: none; padding: 0; font: inherit; color: var(--ink-muted); cursor: pointer; }
@@ -196,12 +228,24 @@
 .cmp-composer__input::placeholder { color: var(--ink-subtle); }
 .cmp-composer__tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-10px); border-top: 1.5px solid var(--rule-soft); }
 .cmp-composer__end { margin-left: auto; display: flex; gap: var(--space-2); }
+/* chosen images (D-161): a thumbnail each with a remove button in its corner; busy while uploading, the server's words under it on error */
+.cmp-composer__images { list-style: none; margin: 0; padding: var(--space-10px) var(--space-3) 0; display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-start; }
+.cmp-composer__image { display: flex; flex-direction: column; gap: var(--space-1); max-width: calc(var(--space-7) * 4); }
+.cmp-composer__thumb { position: relative; display: block; width: calc(var(--space-7) + var(--space-5)); height: calc(var(--space-7) + var(--space-5)); background: var(--neutral-tint); box-shadow: inset 0 0 0 var(--rule-thin) var(--rule-soft); }
+.cmp-composer__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cmp-composer__image--uploading img { opacity: .45; }
+.cmp-composer__image--error .cmp-composer__thumb { box-shadow: inset 0 0 0 var(--rule-strong) var(--signal-ink); }
+.cmp-composer__image--error img { opacity: .6; }
+.cmp-composer__uploading { position: absolute; inset: 0; align-items: center; justify-content: center; color: var(--ink); }
+.cmp-composer__thumb .cmp-composer__remove { position: absolute; top: 0; right: 0; width: var(--space-5); height: var(--space-5); display: inline-flex; align-items: center; justify-content: center; background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 var(--rule-thin) var(--ink); }
+.cmp-composer__imgerr { overflow-wrap: anywhere; }
 .cmp-composer__mic.psl-iconbtn { box-shadow: none; border: 1.5px solid var(--disabled); cursor: not-allowed; color: var(--ink-muted); }
 .cmp-composer__send { width: var(--control-md); height: var(--control-md); border: none; background: var(--ink); color: var(--on-strong); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
 .cmp-composer__send:hover { background: var(--ink-strong); }
 .cmp-composer__send[aria-disabled="true"] { background: var(--disabled); color: var(--ink-subtle); cursor: not-allowed; }
 .cmp-composer__send[aria-busy="true"] { background: var(--ink); color: var(--on-strong); cursor: progress; }
-.cmp-composer__send:focus-visible, .cmp-composer__mic:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-composer__send:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-on-strong) !important; }
+.cmp-composer__input:focus-visible { box-shadow: none !important; }
 
 /* phones: every target at least 44px (D-92 c) */
 @media (max-width: 719.98px) {
@@ -235,4 +279,22 @@
   .cmp-composer__input { font-size: var(--text-body-phone-size); min-height: auto; padding: var(--space-10px) var(--space-3); }
   .cmp-composer__remove { width: var(--control-md); height: var(--control-md); margin: calc((var(--control-md) - var(--chip-height)) / -2) calc(var(--space-2) * -1) calc((var(--control-md) - var(--chip-height)) / -2) 0; }
   .cmp-composer__chips { row-gap: var(--space-3); }
+  .cmp-composer__thumb .cmp-composer__remove { width: var(--control-md); height: var(--control-md); margin: 0; }
+}
+
+/* paging footer (ShowMore): count, rows per page, Show more. Inside a table's frame it sits under the last row; under
+   a list of cards (solo) it has the same frame. At phone width it wraps and every target is 44px. */
+.psl-showmore { flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.psl-showmore__count { margin-right: auto; }
+.psl-showmore__rows { display: inline-flex; align-items: center; gap: var(--space-2); }
+.psl-showmore__label { letter-spacing: .06em; text-transform: uppercase; font-size: var(--text-small-size); }
+.psl-showmore__fail { flex: 1 1 100%; margin: 0; color: var(--signal-ink); font-family: var(--font-sans); font-size: var(--text-hint-size); }
+.psl-showmore--solo { border: var(--rule-strong) solid var(--ink); margin-top: var(--space-2); }
+.psl-tableframe { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.psl-tableframe > .psl-tablewrap { border: 0; }
+.psl-tableframe > .psl-showmore { border-top: var(--rule-strong) solid var(--ink); }
+.psl-showmore--phone .psl-showmore__more { min-height: var(--control-md); }
+@media (max-width: 719.98px) {
+  .psl-showmore__rows { flex: 1 1 100%; justify-content: space-between; }
+  .psl-showmore__more { flex: 1 1 100%; }
 }

@@ -5,12 +5,12 @@
 // editable rows only (PMO-0-3); one panel is open at a time.
 import { useState } from 'react';
 
-import { Breadcrumb, Button, Callout, PageTitle, Panel, Tag } from '@/components';
+import { Breadcrumb, Button, Callout, PageTitle, Panel, Tag, ShowMore } from '@/components';
 
 import type { RuleRow } from './contract-proposal';
 import { groupButtonLabel, isEditable, valueText } from './format';
 import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
-import { RulesEmpty, RulesReadState, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
+import { RulesEmpty, RulesReadState, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
 const OTHER = 'Other Finance rules';
@@ -68,13 +68,15 @@ export function FinancePageView() {
 
 function FinanceRulesView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules('finance');
+  const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'rules');
   useSetupPhoneBack('RULES');
   const [open, setOpen] = useState<string | null>(null);
   // A save outcome whose group panel closed because the re-read left that group no editable rule (QA-1-1).
   const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
-  const { page, items } = state;
+  const { page } = state;
+  const items = pagedItems;
   const groups = groupRows(items);
   const notSet = page.not_set_count;
   const allUnset = !state.nextCursor && items.length > 0 && items.every((row) => !row.set);
@@ -140,7 +142,8 @@ function FinanceRulesView() {
                 );
               })}
             </div>
-            <ShowMore state={state} onMore={() => void loadMore()} />
+            <ShowMore solo {...paging} />
+            <PagingNotes notes={notes} />
           </>
         )}
       </div>
@@ -165,6 +168,7 @@ function FinanceRulesView() {
                 + {moreGroups} MORE {moreGroups === 1 ? 'LINE' : 'LINES'} · OPEN ON DESKTOP
               </p>
             )}
+            <ShowMore solo {...paging} />
           </>
         )}
       </div>

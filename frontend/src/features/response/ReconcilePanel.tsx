@@ -4,7 +4,7 @@
 // the backend lists "reconcile" in allowed_actions; otherwise nothing renders and nothing is sent. The answer
 // goes through E-WORK-ACTION once per press; the page then reloads. Nothing here resends anything: a resend,
 // if the answer allows one, is the backend's step.
-import { Button, RadioGroup, useIsPhone } from '@/components';
+import { Button, RadioGroup, useIsPhone, useToastWhen } from '@/components';
 import { useCallback, useId, useRef, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
@@ -59,6 +59,8 @@ function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: Resp
     reloadCaseRevision,
     onAccessError: setAccessError,
   });
+
+  useToastWhen(status.kind === 'done' ? 'Recorded. Reloading the work item…' : null);
 
   if (accessError?.kind === 'unauthenticated') {
     return (
@@ -194,11 +196,6 @@ function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: Resp
                 Reload the work item
               </Button>
             </div>
-          )}
-          {status.kind === 'done' && (
-            <p className="psl-callout psl-callout--success" role="status">
-              <span>Recorded. Reloading the work item…</span>
-            </p>
           )}
           <div className="psl-actionbar resp-actionbar">
             <Button

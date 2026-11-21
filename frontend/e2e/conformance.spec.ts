@@ -29,8 +29,7 @@ test('response form at 390: the shared Select, DateField, radios, checkbox and f
   await loaded(page);
   await expectTargets([
     page.getByRole('combobox', { name: 'Who responded' }),
-    page.getByLabel('When they responded', { exact: true }).locator('xpath=ancestor::span[contains(@class, "cmp-wrapped")]'),
-    page.getByLabel('When they responded, time'),
+    page.getByRole('button', { name: /^When they responded / }),
     page.getByRole('radio', { name: 'Approved' }).locator('xpath=ancestor::label'),
     page.getByRole('checkbox').locator('xpath=ancestor::label'),
     page.getByRole('button', { name: 'Take a photo or choose a file' }),

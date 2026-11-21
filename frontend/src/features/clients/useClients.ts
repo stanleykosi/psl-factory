@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
+import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
 import { fetchClients, type ClientList, type ClientRow } from './api';
 
@@ -18,7 +19,7 @@ function checked(data: ClientList) {
   return data;
 }
 
-/** E-CLIENTS: page 1 on open, then "Show more" appends the next page by the cursor the backend returned. */
+/** E-CLIENTS: page 1 on open, then "Show more" appends (the size is the paging footer's) the next page by the cursor the backend returned. */
 export function useClients() {
   const [state, setState] = useState<ClientsState>({ status: 'loading' });
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
@@ -30,7 +31,7 @@ export function useClients() {
     setState({ status: 'loading' });
     setMore('idle');
     try {
-      const data = checked(await fetchClients());
+      const data = checked(await fetchClients(DEFAULT_PAGE_SIZE));
       if (mine !== seq.current) return;
       setState({ status: 'ready', items: data.items, nextCursor: data.next_cursor, asOf: data.as_of });
     } catch (error) {
@@ -46,14 +47,14 @@ export function useClients() {
   }, [load]);
 
   /** Appends the next page; resolves with the number of rows before it, so the caller can move focus to the first new row. */
-  const showMore = async () => {
+  const showMore = async (limit: PageSize) => {
     if (state.status !== 'ready' || !state.nextCursor || pressed.current) return undefined;
     pressed.current = true;
     const mine = seq.current;
     const before = state.items.length;
     setMore('loading');
     try {
-      const data = checked(await fetchClients(state.nextCursor));
+      const data = checked(await fetchClients(limit, state.nextCursor));
       if (mine !== seq.current) return undefined;
       setState((prev) => (prev.status !== 'ready' ? prev : { ...prev, items: [...prev.items, ...data.items], nextCursor: data.next_cursor, asOf: data.as_of }));
       setMore('idle');

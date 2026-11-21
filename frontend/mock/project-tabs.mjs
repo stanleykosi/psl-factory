@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { demoProject, demoVisible } from './demo-projects.mjs';
 import { NO_ACCESS_CASE_ID } from './projects.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -50,7 +51,7 @@ export function projectTab({ url, persona, cookies = {} }) {
   if (!LISTED_TABS.includes(tab)) return { status: 404, body: NOT_FOUND };
 
   const row = list.rows.find((r) => r.item.case_id === caseId);
-  if (caseId === NO_ACCESS_CASE_ID || (row && !row.personas.includes(persona))) return { status: 404, body: NOT_FOUND };
+  if (caseId === NO_ACCESS_CASE_ID || (row && !row.personas.includes(persona)) || (demoProject(caseId) && !demoVisible(persona))) return { status: 404, body: NOT_FOUND };
   if (caseId === FORBIDDEN_CASE_ID) return { status: 403, body: FORBIDDEN };
 
   const params = url.searchParams;

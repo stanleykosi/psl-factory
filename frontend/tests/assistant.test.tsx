@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setCsrfToken } from '@/api/client';
 import { AssistantFrame } from '@/features/assistant/AssistantFrame';
 import { AssistantHome } from '@/features/assistant/AssistantHome';
+import { ConversationList } from '@/features/assistant/ConversationList';
 import { poseFor } from '@/features/assistant/SidePanel';
 import { ThreadPage } from '@/features/assistant/ThreadPage';
 import { AppShell } from '@/shell/AppShell';
@@ -133,15 +134,15 @@ describe('default state (SCR-05-desktop)', () => {
     expect(await violations()).toEqual([]);
   });
 
-  it('draws no attach button, no shortcut prompts, and a held microphone', async () => {
+  it('draws the attach paperclip and a held microphone, and no shortcut prompts', async () => {
     await open('/assistant');
-    expect(screen.queryByRole('button', { name: /attach/i })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Attach images' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /create an invoice|draft a sow|ask about/i })).toBeNull();
     expect(screen.getByRole('button', { name: 'Speak your request' }).getAttribute('aria-disabled')).toBe('true');
   });
 
   it('the list is empty in words when there are no conversations', async () => {
-    await open('/assistant', 'ceo');
+    await open('/assistant', 'admin');
     expect(await screen.findByText('No conversations yet.')).toBeTruthy();
   });
 
@@ -378,7 +379,7 @@ describe('thread (SCR-05-desktop-thread)', () => {
     expect(within(draft).getByText('Next: Finance review by a Finance Lead')).toBeTruthy();
     expect(within(draft).getByRole('button', { name: 'Start this invoice' })).toBeTruthy();
     // what the board draws and this feature leaves out, and what an agent never offers
-    expect(screen.queryByRole('button', { name: /edit draft|attach/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /edit draft/i })).toBeNull();
     expect(screen.queryByRole('button', { name: /approve|pay|send for/i })).toBeNull();
     const side = screen.getByRole('complementary', { name: 'Agent and context' });
     expect(within(side).getByText('Chidi has a draft ready for you to check.')).toBeTruthy();
@@ -934,5 +935,69 @@ describe('phone: the bar and the footer', () => {
     expect(footer.getAttribute('href')).toBe('/work/W-1401');
     expect(footer.className).toContain('psl-btn--block');
     expect(screen.queryByRole('textbox')).toBeNull();
+  });
+});
+
+describe('conversation list: infinite scroll (D-138)', () => {
+  type IO = { cb: (e: { isIntersecting: boolean }[]) => void; node: Element; disconnected: boolean };
+  const observers: IO[] = [];
+  const row = (n: number) => ({ conversation_id: `CV-${n}`, title: `Chat ${n}`, agent: 'tola', status: 'idle', updated_at: '2026-11-14T09:00:00Z' }) as never;
+  beforeEach(() => {
+    observers.length = 0;
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        io: IO;
+        constructor(cb: IO['cb']) {
+          this.io = { cb, node: document.body, disconnected: false };
+          observers.push(this.io);
+        }
+        observe(node: Element) {
+          this.io.node = node;
+        }
+        disconnect() {
+          this.io.disconnected = true;
+        }
+      },
+    );
+  });
+  const live = () => observers.filter((o) => !o.disconnected);
+  const state = (n: number, extra = {}) => ({ status: 'ready' as const, items: Array.from({ length: n }, (_, i) => row(i)), next: 'o10', asOf: '2026-11-14T10:00:00Z', more: 'idle' as const, ...extra });
+
+  it('loads the next page when the end comes into view; shows no paging footer or rows per page', () => {
+    const onMore = vi.fn();
+    render(<ConversationList state={state(10)} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    expect(screen.queryByRole('radiogroup')).toBeNull();
+    expect(screen.queryByRole('button', { name: /Show/ })).toBeNull();
+    expect(onMore).not.toHaveBeenCalled();
+    act(() => live()[0].cb([{ isIntersecting: false }]));
+    expect(onMore).not.toHaveBeenCalled();
+    act(() => live()[0].cb([{ isIntersecting: true }]));
+    expect(onMore).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows Loading… while the next page loads, and a retry line when it fails; the rows stay', () => {
+    const onMore = vi.fn();
+    const { rerender } = render(<ConversationList state={state(10, { more: 'loading' })} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    expect(screen.getByText('Loading…')).toBeTruthy();
+    expect(screen.getAllByRole('link')).toHaveLength(10);
+    rerender(<ConversationList state={state(10, { more: 'error' })} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    expect(screen.getByRole('alert').textContent).toContain('Couldn’t load more.');
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(onMore).toHaveBeenCalledTimes(1);
+    expect(screen.getAllByRole('link')).toHaveLength(10);
+  });
+
+  it('keyboard: focus reaching the last conversation loads the next page; nothing more at the end', () => {
+    const onMore = vi.fn();
+    const { rerender } = render(<ConversationList state={state(3)} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    fireEvent.focus(screen.getAllByRole('link')[0]);
+    expect(onMore).not.toHaveBeenCalled();
+    fireEvent.focus(screen.getAllByRole('link')[2]);
+    expect(onMore).toHaveBeenCalledTimes(1);
+    rerender(<ConversationList state={state(3, { next: undefined })} onMore={onMore} onRetry={() => undefined} pathname="/assistant" />);
+    fireEvent.focus(screen.getAllByRole('link')[2]);
+    expect(onMore).toHaveBeenCalledTimes(1);
+    expect(live()).toHaveLength(0);
   });
 });

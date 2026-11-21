@@ -2,6 +2,7 @@
 // board's values, one upload and one start, the landing and the Unassigned row, 44px targets on a phone, axe WCAG 2.2 AA.
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type BrowserContext, type Page, type Request } from '@playwright/test';
+import { fillWhen } from './controls';
 
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
@@ -72,11 +73,11 @@ async function fillBoard(page: Page, file = true) {
     await chooseFile(page);
     await expect(documentBox(page).getByText('Uploaded · 2.4 MB')).toBeVisible();
   }
-  await dialog(page).getByLabel('Received').fill('2026-11-12T09:40');
+  await fillWhen(dialog(page), 'Received', '2026-11-12T09:40');
   await dialog(page).getByRole('radiogroup', { name: 'How the client wants it submitted' }).getByRole('radio', { name: 'Email' }).click();
   await dialog(page).getByLabel('Submit to (optional)').fill('procurement@tamarindloans.example');
   await dialog(page).getByRole('radiogroup', { name: 'Submission deadline' }).getByRole('radio', { name: 'Stated', exact: true }).click();
-  await dialog(page).getByLabel('Deadline (optional)').fill('2026-11-28T17:00');
+  await fillWhen(dialog(page), 'Deadline (optional)', '2026-11-28T17:00');
   await dialog(page).getByLabel('Note (optional)').fill('Received from their procurement lead by email.');
 }
 
@@ -200,14 +201,14 @@ for (const [label, viewport, phone] of [
       await expect(documentBox(page).getByText('Uploaded · 2.4 MB')).toBeVisible();
       await pick(page, 'Client or prospect', 'Tamarind Loans Ltd');
       await dialog(page).getByLabel('RFP reference').fill('TL-RFP-2026-014');
-      await dialog(page).getByLabel('Received').fill('2026-12-31T09:40');
+      await fillWhen(dialog(page), 'Received', '2026-12-31T09:40');
       await dialog(page).getByRole('radiogroup', { name: 'How the client wants it submitted' }).getByRole('radio', { name: 'By hand' }).click();
       await dialog(page).getByRole('radiogroup', { name: 'Submission deadline' }).getByRole('radio', { name: 'Unknown' }).click();
       await dialog(page).getByRole('button', { name: 'Log RFP' }).click();
       await expect(dialog(page).locator('[data-field="received_at"] .psl-error')).toHaveText("Received can't be in the future.");
       await expect(dialog(page).getByRole('button', { name: 'Log RFP' })).toBeDisabled();
       await expectNoAxeViolations(page, '422');
-      await dialog(page).getByLabel('Received').fill('2026-11-12T09:40');
+      await fillWhen(dialog(page), 'Received', '2026-11-12T09:40');
       await dialog(page).getByRole('button', { name: 'Log RFP' }).click();
       await expect(dialog(page).getByRole('button', { name: 'Check again' })).toBeVisible();
       await expect(dialog(page).getByText('If it started, it will appear in My work.')).toBeVisible();
@@ -241,7 +242,7 @@ for (const [label, viewport, phone] of [
       await dialog(page).getByLabel('RFP reference').fill('AC-2026-001');
       await chooseFile(page, 'acme.pdf', 4096);
       await expect(documentBox(page).getByText('Uploaded · 4 KB')).toBeVisible();
-      await dialog(page).getByLabel('Received').fill('2026-11-12T09:40');
+      await fillWhen(dialog(page), 'Received', '2026-11-12T09:40');
       await dialog(page).getByRole('radiogroup', { name: 'How the client wants it submitted' }).getByRole('radio', { name: 'By hand' }).click();
       await dialog(page).getByRole('radiogroup', { name: 'Submission deadline' }).getByRole('radio', { name: 'Not stated' }).click();
       await expectNoAxeViolations(page, 'new client');

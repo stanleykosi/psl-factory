@@ -116,6 +116,8 @@ export function useOutcome(id: string) {
   const [busy, setBusy] = useState(false);
   // "Record the outcome" on a pending or unknown recorded view shows the form again.
   const [reopened, setReopened] = useState(false);
+  /** The result just recorded by this page, for the toast; null before and while a new record runs. */
+  const [justRecorded, setJustRecorded] = useState<string | null>(null);
   // One write at a time, checked synchronously so a double press cannot record twice.
   const writing = useRef(false);
 
@@ -181,6 +183,7 @@ export function useOutcome(id: string) {
     writing.current = true;
     setBusy(true);
     setNotice(null);
+    setJustRecorded(null);
     try {
       let reply;
       try {
@@ -203,6 +206,7 @@ export function useOutcome(id: string) {
         if (apiError.kind === 'stale') setNotice({ kind: 'stale' });
         return;
       }
+      setJustRecorded(reply.result);
       // One reload so the page shows what the backend recorded; without it, the returned result only.
       try {
         const next = await getWorkItem(id);
@@ -249,6 +253,7 @@ export function useOutcome(id: string) {
     notice,
     busy,
     reopened,
+    justRecorded,
     reopen: () => setReopened(true),
     record,
     recheck,

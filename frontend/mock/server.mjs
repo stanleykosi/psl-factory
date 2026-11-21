@@ -1,7 +1,8 @@
 // Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
-// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead; default finance_lead).
+// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead | hr | hr_lead; default finance_lead). hr is a stand-in (D-142): PSL has not defined what HR staff may see..
+// ceo (D-150) has sample data of its own: W-50xx rows and items, alerts, Assistant conversations; and it sees every project.
 // Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.
@@ -17,6 +18,7 @@
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 // Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -24,6 +26,8 @@ import { fileURLToPath } from 'node:url';
 
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { delayMs, delayReply, demoOn } from './demo.mjs';
+import { addDemoProject } from './demo-projects.mjs';
 import { caseVisible, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
 import { documentRead } from './documents.mjs';
@@ -33,22 +37,24 @@ import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { invoices } from './invoices.mjs';
 import { overview } from './overview.mjs';
+import { STATION_ITEMS_PATH, stationItems, withDemoRuns } from './station-items.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
+import { createLineRuns } from './line-runs.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
-import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, createAssistantMock } from './assistant.mjs';
+import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
 export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
-export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead'];
+export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead', 'hr', 'hr_lead'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
@@ -99,12 +105,14 @@ function historyPage(history, query) {
   return page;
 }
 
-function workResponse(operationId, url, fixtures, work, overrides) {
+function workResponse(operationId, url, fixtures, work, overrides, persona) {
   const workId = decodeCookie(url.pathname.split('/')[4] ?? '');
   if (workId === NO_ACCESS_WORK_ID) return [404, SCENARIO_BODIES[404]];
   // Only plain ids ("W-1003") pick a per-id file, so "W-1004.history" or other sidecar names never answer as an item.
   const own = (name) => (/^W-\d+$/.test(workId) && Object.hasOwn(work, name) ? work[name] : undefined);
-  if (operationId === 'E-WORK-ITEM') return [200, overrides.get(workId) ?? own(workId) ?? fixtures['E-WORK-ITEM']];
+  // F-55: <id>.<persona>.json is that persona's own copy of an item (W-4605 reads differently for hr and hr_lead)
+  const forPersona = /^W-\d+$/.test(workId) && Object.hasOwn(work, `${workId}.${persona}`) ? work[`${workId}.${persona}`] : undefined;
+  if (operationId === 'E-WORK-ITEM') return [200, overrides.get(workId) ?? forPersona ?? own(workId) ?? fixtures['E-WORK-ITEM']];
   return [200, historyPage(own(`${workId}.history`) ?? fixtures['E-WORK-HISTORY'], url.searchParams)];
 }
 
@@ -148,9 +156,11 @@ function findTask(taskId, fixtures, work, overrides) {
 }
 
 function taskResponse(operationId, url, raw, ctx) {
-  const { fixtures, work, overrides, validators, me } = ctx;
+  const { fixtures, work, overrides, validators, me, runs, persona } = ctx;
   const taskId = decodeCookie(url.pathname.split('/')[4] ?? '');
-  const found = findTask(taskId, fixtures, work, overrides);
+  // D-155: a task of a demo line run (line-runs.mjs) is decided there; every other task is a fixture's.
+  const run = runs.findTask(taskId, persona);
+  const found = run ?? findTask(taskId, fixtures, work, overrides);
   if (!found) return [404, SCENARIO_BODIES[404]];
   let body;
   try {
@@ -172,6 +182,7 @@ function taskResponse(operationId, url, raw, ctx) {
   if (!task.you_can_act) return [403, SCENARIO_BODIES[403]];
   if (!decide) return [200, { task_id: task.id, revision: task.revision, claimed_by: me.name }];
 
+  if (run) return [200, { task_id: task.id, verdict: body.verdict, decided_by: me.name, decided_at: new Date().toISOString(), work_state: runs.decide(task.id, body.verdict, body.note, persona) }];
   const next = work[`${workId}.next`];
   if (next && !overrides.has(workId)) {
     overrides.set(workId, next);
@@ -181,6 +192,14 @@ function taskResponse(operationId, url, raw, ctx) {
   if (decided) overrides.set(workId, decided);
   const result = { task_id: task.id, verdict: body.verdict, decided_by: me.name, decided_at: new Date().toISOString() };
   return [200, { ...result, work_state: (decided ?? item).state }];
+}
+
+/** D-155: a start made with the demo on creates a line run, and the 201 names its work item; any other reply stands. */
+function demoStart(runs, reply, raw, persona, client) {
+  if (reply[0] !== 201) return reply;
+  const body = JSON.parse(raw);
+  const run = runs.start({ key: body.idempotency_key, lineKey: body.line, persona, client: body.line === 'rfp_intake' ? client(body.intake, persona) : undefined });
+  return [201, { work_id: run.id, state: 'processing' }];
 }
 
 export function loadRoutes(openapi) {
@@ -232,14 +251,29 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const overrides = new Map();
   const alerts = createAlertsMock({ openapi });
   const assistant = createAssistantMock({ openapi });
+  // D-155: the live demo's line runs; they exist only after a start made with the demo on.
+  // D-164: a demo RFP that is verified (won) creates the client's project and tells whoever started it.
+  const runs = createLineRuns({
+    work,
+    me,
+    raise: (persona, alert) => alerts.raise(persona, alert),
+    onVerified: (run) => {
+      if (run.lineKey !== 'rfp_intake' || !run.client) return;
+      const project = addDemoProject({ client: run.client, run });
+      alerts.raise(run.starter, { id: `N-P${project.case_id.slice(2)}`, work_id: run.id, case_id: project.case_id, agent: run.agent, text: `${project.title} is ready to plan`, at: new Date().toISOString(), read: false, reference: run.reference, delivered_via: ['in_app'] });
+    },
+  });
 
   return http.createServer((req, res) => {
     const chunks = [];
     req.on('data', (chunk) => chunks.push(chunk));
     req.on('end', () => {
-      const raw = Buffer.concat(chunks).toString('utf8');
+      const rawBytes = Buffer.concat(chunks);
+      const raw = rawBytes.toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
       const method = (req.method ?? 'GET').toLowerCase();
+      // D-155: in the live demo every answer to the API waits a realistic time (demo.mjs); off, there is no wait.
+      if (url.pathname.startsWith('/api/')) delayReply(res, delayMs(method, parseCookies(req.headers.cookie)));
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
         startWork.reset();
@@ -251,11 +285,32 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetWorkspace();
         resetClients();
         assistant.reset();
+        runs.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
+      // D-161 (proposal, not in v7): the assistant's image upload and its read-back.
+      if (url.pathname === ASSISTANT_UPLOADS_PATH || url.pathname.startsWith(`${ASSISTANT_UPLOADS_PATH}/`)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        if (method === 'post' && url.pathname === ASSISTANT_UPLOADS_PATH) {
+          if (req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+          return send(res, ...assistant.upload(rawBytes, req.headers['content-type'], persona, me[persona].assistant_agents ?? []));
+        }
+        const file = method === 'get' ? assistant.uploadRead(url.pathname.slice(ASSISTANT_UPLOADS_PATH.length + 1), persona) : null;
+        if (!file) return send(res, 404, NO_ROUTE);
+        res.writeHead(200, { 'Content-Type': file.type, 'Cache-Control': 'no-store' });
+        return res.end(file.bytes);
+      }
+      // D-162 (proposal G-OVERVIEW-STATION, not in v7): the work at one station of the factory floor.
+      if (method === 'get' && url.pathname === STATION_ITEMS_PATH) {
+        const cookies = parseCookies(req.headers.cookie);
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -289,10 +344,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) {
         return send(res, 403, CSRF_FAILED);
       }
+      const demo = demoOn(cookies);
+      if (demo) runs.tick();
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
-      if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [] }));
+      if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECT-TAB') { const r = projectTab({ url, persona, cookies }); return send(res, r.status, r.body); }
@@ -306,17 +363,23 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
         if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });
-        return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
+        // D-155: the item and history of a demo line run
+        const runId = decodeCookie(url.pathname.split('/')[4] ?? '');
+        if (runs.owns(runId)) return send(res, 200, route.operationId === 'E-WORK-ITEM' ? runs.item(runId, persona) : historyPage(runs.history(runId), url.searchParams));
+        return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides, persona));
       }
       if (TASK_OPERATIONS.includes(route.operationId)) {
-        return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
+        return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona], runs, persona }));
       }
       if (route.operationId === 'E-WORK-START') {
         const fromDraft = assistant.draftStart(raw, persona);
         if (fromDraft) return send(res, ...fromDraft);
       }
-      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona, cookies }));
-      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
+      if (START_OPERATIONS.includes(route.operationId)) {
+        const reply = startWork.handle(route.operationId, { url, raw, persona, cookies });
+        return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona, startWork.clientLabel) : reply));
+      }
+      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, demo ? withDemoRuns(r.body, runs.floor()) : r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
       // F-23: the one document the minutes fixtures name (D-2304 v1); any other document stays unmocked, as before.

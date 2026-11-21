@@ -145,15 +145,15 @@ describe('queue tabs (A-MYWORK)', () => {
     await open();
     expect(tabs().map((t) => t.querySelector('.psl-badge'))).toEqual([null, null, null]);
     expect(screen.getByText('Count unavailable')).toBeTruthy();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('20+ ITEMS');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('10+ ITEMS');
   });
 
-  it('each tab requests its queue with limit=20 and writes ?queue= to the URL', async () => {
+  it('each tab requests its queue with limit=10 and writes ?queue= to the URL', async () => {
     await open();
-    expect(query(calls[0])).toEqual({ queue: 'needs_me', limit: '20' });
+    expect(query(calls[0])).toEqual({ queue: 'needs_me', limit: '10' });
     for (const [i, queue] of ['waiting_on_others', 'done', 'unassigned', 'needs_me'].entries()) {
       fireEvent.click(tabs()[(i + 1) % 4]);
-      await until(() => expect(query(lastCall())).toEqual({ queue, limit: '20' }));
+      await until(() => expect(query(lastCall())).toEqual({ queue, limit: '10' }));
       expect(window.location.search).toBe(queue === 'needs_me' ? '' : `?queue=${queue}`);
     }
     expect(nav.router.replace).toHaveBeenCalledWith('/my-work?queue=done', { scroll: false });
@@ -224,7 +224,7 @@ describe('rows', () => {
       followup_needed: ['Stopped: invoice follow-up needed', 'person'],
     });
     work = () => json(200, { ...crafted, items: states.map(([state], i) => ({ ...crafted.items[0], id: `W-${i}`, state })) });
-    await open();
+    await open('?limit=20');
     const tags = [...rows()].map((r) => r.querySelectorAll('td')[2].querySelector('.psl-tag')!);
     expect(tags.map((t) => [t.textContent, t.className])).toEqual(states.map(([, [words, family]]) => [words, `psl-tag psl-tag--${family}`]));
   });
@@ -272,7 +272,7 @@ describe('search', () => {
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(200));
     await until(() => expect(calls).toHaveLength(2));
-    expect(query(calls[1])).toEqual({ queue: 'needs_me', limit: '20', q: 'lagoon' });
+    expect(query(calls[1])).toEqual({ queue: 'needs_me', limit: '10', q: 'lagoon' });
     expect(document.activeElement).toBe(box);
     await until(() => expect(rows()).toHaveLength(2));
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 OF 24 ITEMS');
@@ -294,7 +294,7 @@ describe('search', () => {
     expect(screen.getByText('Nothing in Needs me matches your search and filters.')).toBeTruthy();
     expect(document.querySelector('.psl-showmore')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
-    await until(() => expect(rows()).toHaveLength(20));
+    await until(() => expect(rows()).toHaveLength(10));
     expect(lastCall().searchParams.has('q')).toBe(false);
     expect((box as HTMLInputElement).value).toBe('');
   });
@@ -331,7 +331,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     const preview = calls.find((c) => c.searchParams.get('line') === 'invoice' && c.searchParams.get('limit') === '50');
     expect(query(preview!)).toEqual({ queue: 'needs_me', limit: '50', line: 'invoice', state: 'action_needed' });
     fireEvent.click(show);
-    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', line: 'invoice', state: 'action_needed' }));
+    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10', line: 'invoice', state: 'action_needed' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(document.activeElement).toBe(filter));
     expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('2');
@@ -341,17 +341,17 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     expect(chips).toEqual(['LinePrepare an invoice×', 'StateAction needed×']);
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove Line filter' }));
-    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', state: 'action_needed' }));
+    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10', state: 'action_needed' }));
     expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('1');
     fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
-    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20' }));
+    await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10' }));
     expect(filter.querySelector('.psl-badge')).toBeNull();
     expect(document.querySelector('.psl-chip')).toBeNull();
   });
 
   it('restores project and waiting_on from the URL as chips', async () => {
     await open('?project=C-LAGOON-HEALTH&waiting_on=me');
-    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', project: 'C-LAGOON-HEALTH', waiting_on: 'me' });
+    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10', project: 'C-LAGOON-HEALTH', waiting_on: 'me' });
     expect([...document.querySelectorAll('.psl-chip')].map((c) => c.textContent)).toEqual(['ProjectC-LAGOON-HEALTH×', 'Waiting onMe×']);
     expect(rows()).toHaveLength(2);
   });
@@ -365,7 +365,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(document.activeElement).toBe(filter));
     expect(filter.getAttribute('aria-expanded')).toBe('false');
-    expect(calls.filter((c) => c.pathname === '/api/v1/work' && c.searchParams.get('limit') === '20')).toHaveLength(1);
+    expect(calls.filter((c) => c.pathname === '/api/v1/work' && c.searchParams.get('limit') === '10')).toHaveLength(1);
     fireEvent.click(filter);
     expect(screen.queryAllByRole('checkbox', { checked: true })).toHaveLength(0);
     fireEvent.mouseDown(document.body);
@@ -391,48 +391,58 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
 });
 
 describe('paging (D-PAGING r2)', () => {
-  it('20 of 24, Show 4 more appends with the cursor and focuses the first new row', async () => {
+  it('10 of 24; Show 10 more appends with the cursor and focuses the first new row; then Show 4 more and All 24', async () => {
     await open();
-    expect(rows()).toHaveLength(20);
-    expect(document.querySelector('.psl-showmore > span')!.textContent).toBe('20 of 24 showing');
+    expect(rows()).toHaveLength(10);
+    expect(document.querySelector('.psl-showmore > span')!.textContent).toBe('10 of 24 showing');
     const group = screen.getByRole('radiogroup', { name: 'Rows per page' });
     expect(within(group).getAllByRole('radio').map((r) => [r.textContent, r.getAttribute('aria-checked')])).toEqual([
-      ['10', 'false'],
-      ['20', 'true'],
+      ['10', 'true'],
+      ['20', 'false'],
       ['50', 'false'],
     ]);
-    const more = screen.getByRole('button', { name: 'Show 4 more' });
+    const more = screen.getByRole('button', { name: 'Show 10 more' });
     fireEvent.click(more);
-    expect(more.getAttribute('aria-busy')).toBe('true');
-    // Busy, not disabled: the button keeps its width and ignores a second press.
-    expect((more as HTMLButtonElement).disabled).toBe(false);
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10', cursor: 'o10' });
+    await waitFor(() => expect(document.activeElement).toBe(rows()[10].querySelector('a')));
+    expect(document.querySelector('.psl-showmore > span')!.textContent).toBe('20 of 24 showing');
+    fireEvent.click(screen.getByRole('button', { name: 'Show 4 more' }));
     await until(() => expect(rows()).toHaveLength(24));
-    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', cursor: 'o20' });
-    await waitFor(() => expect(document.activeElement).toBe(rows()[20].querySelector('a')));
+    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10', cursor: 'o20' });
     expect(document.querySelector('.psl-showmore > span')!.textContent).toBe('All 24 showing');
     expect(screen.queryByRole('button', { name: /^Show .*more$/ })).toBeNull();
   });
 
-  it('choosing 10 reloads page 1 with limit=10 and keeps it in the URL', async () => {
+  it('choosing 20 adds rows in place: the first rows stay, only the next page is fetched, the URL keeps the choice', async () => {
     await open();
+    const firstRows = [...rows()];
+    const before = calls.length;
+    fireEvent.click(screen.getByRole('radio', { name: '20' }));
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(calls.length).toBe(before + 1);
+    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10', cursor: 'o10' });
+    expect(window.location.search).toBe('?limit=20');
+    firstRows.forEach((row, i) => expect(rows()[i]).toBe(row));
+    expect(document.querySelector('.psl-loading')).toBeNull();
+    expect(screen.getByRole('radio', { name: '20' }).getAttribute('aria-checked')).toBe('true');
+    // a smaller choice trims without a request
     fireEvent.click(screen.getByRole('radio', { name: '10' }));
-    await until(() => expect(rows()).toHaveLength(10));
-    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10' });
-    expect(window.location.search).toBe('?limit=10');
-    expect(screen.getByRole('button', { name: 'Show 10 more' })).toBeTruthy();
+    expect(rows()).toHaveLength(10);
+    expect(calls.length).toBe(before + 1);
+    expect(window.location.search).toBe('');
   });
 
   it('a failed Show more keeps the rows and retries the same cursor', async () => {
     await open();
     work = () => json(500, { code: 'boom', message: 'x' });
-    fireEvent.click(screen.getByRole('button', { name: 'Show 4 more' }));
-    await until(() => expect(screen.getByText('We couldn’t load more. Your work is safe; nothing was changed.')).toBeTruthy());
-    expect(document.querySelector('.psl-callout--problem')).toBeTruthy();
-    expect(rows()).toHaveLength(20);
+    fireEvent.click(screen.getByRole('button', { name: 'Show 10 more' }));
+    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
+        expect(rows()).toHaveLength(10);
     work = (url) => mockResponse(url);
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await until(() => expect(rows()).toHaveLength(24));
-    expect(lastCall().searchParams.get('cursor')).toBe('o20');
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(lastCall().searchParams.get('cursor')).toBe('o10');
   });
 });
 
@@ -441,7 +451,9 @@ describe('URL restore', () => {
     const cookie = document.cookie;
     const stored = [localStorage.length, sessionStorage.length];
     await open('?queue=done&q=lagoon&state=verified&limit=50');
-    expect(query(calls[0])).toEqual({ queue: 'done', q: 'lagoon', state: 'verified', limit: '50' });
+    // the first page is always 10 rows; the 50 in the address is the choice, shown as the rows per page
+    expect(query(calls[0])).toEqual({ queue: 'done', q: 'lagoon', state: 'verified', limit: '10' });
+    expect(screen.getByRole('radio', { name: '50' }).getAttribute('aria-checked')).toBe('true');
     expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe('lagoon');
     expect(tabs()[2].getAttribute('aria-selected')).toBe('true');
     expect([localStorage.length, sessionStorage.length]).toEqual(stored);
@@ -450,7 +462,7 @@ describe('URL restore', () => {
 
   it('invalid values fall back to needs_me, 20 and no state', async () => {
     await open('?queue=bogus&limit=7&state=nope');
-    expect(query(calls[0])).toEqual({ queue: 'needs_me', limit: '20' });
+    expect(query(calls[0])).toEqual({ queue: 'needs_me', limit: '10' });
   });
 });
 
@@ -473,7 +485,7 @@ describe('staying current (D-UPDATES r2)', () => {
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(1));
     await until(() => expect(calls).toHaveLength(2));
-    expect(query(calls[1])).toEqual({ queue: 'needs_me', limit: '20' });
+    expect(query(calls[1])).toEqual({ queue: 'needs_me', limit: '10' });
 
     act(() => setVisibility('hidden'));
     await act(() => vi.advanceTimersByTimeAsync(60_000));
@@ -487,7 +499,7 @@ describe('staying current (D-UPDATES r2)', () => {
   it('a refresh keeps the rows loaded with Show more, focus and no loading text', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     await open();
-    fireEvent.click(screen.getByRole('button', { name: 'Show 4 more' }));
+    fireEvent.click(screen.getByRole('radio', { name: '50' }));
     await until(() => expect(rows()).toHaveLength(24));
     const link = rows()[21].querySelector('a')!;
     link.focus();
@@ -503,7 +515,7 @@ describe('staying current (D-UPDATES r2)', () => {
     };
     await act(() => vi.advanceTimersByTimeAsync(15_000));
     await until(() => expect(screen.getByText('45 records you can see · updated 10:57')).toBeTruthy());
-    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20' });
+    expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '10' });
     expect(rows()).toHaveLength(24);
     expect(rows()[0].querySelector('a')!.getAttribute('href')).toBe(firstId);
     expect(rows()[0].querySelectorAll('td')[2].querySelector('.psl-tag')!.textContent).toBe('Verified');
@@ -521,7 +533,7 @@ describe('staying current (D-UPDATES r2)', () => {
     work = fail as () => Promise<Response>;
     await act(() => vi.advanceTimersByTimeAsync(15_000));
     await until(() => expect(document.querySelector('.my-work__updated[role="status"]')!.textContent).toBe('44 records you can see · Couldn’t refresh · updated 10:42'));
-    expect(rows()).toHaveLength(20);
+    expect(rows()).toHaveLength(10);
     expect(screen.queryByRole('alert')).toBeNull();
     work = (url) => mockResponse(url);
     await act(() => vi.advanceTimersByTimeAsync(15_000));
@@ -626,7 +638,7 @@ describe('screen states', () => {
     expect(screen.getByRole('search')).toBeTruthy();
     work = (url) => mockResponse(url);
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await until(() => expect(rows()).toHaveLength(20));
+    await until(() => expect(rows()).toHaveLength(10));
     expect(query(lastCall())).toEqual(query(calls[0]));
   });
 
@@ -679,6 +691,6 @@ describe('screen states', () => {
     expect(rows()).toHaveLength(0);
     expect(tabs()[0].querySelector('.psl-badge')!.textContent).toBe('24');
     await act(async () => release());
-    await until(() => expect(rows()).toHaveLength(12));
+    await until(() => expect(rows()).toHaveLength(10));
   });
 });

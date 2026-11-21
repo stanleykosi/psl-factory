@@ -6,6 +6,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
+import type { Me } from '@/api/types';
 import { AGENTS, EmptyState, useIsPhone } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -14,21 +15,11 @@ import { useAssistant } from './AssistantContext';
 import { TalkTo } from './Chrome';
 import { ComposerBar } from './ComposerBar';
 import { HOME_ABILITY, hello, NO_AGENTS } from './labels';
+import { startedConversation } from './pending';
 import { SidePanel } from './SidePanel';
+import { Thread } from './Thread';
 import type { AgentName } from './types';
 import { useSend } from './useSend';
-
-function HomeComposer({ agent }: { agent: AgentName }) {
-  const router = useRouter();
-  const pathname = usePathname() ?? '/assistant';
-  const { list } = useAssistant();
-  const send = useSend({
-    agent,
-    listChanged: list.refresh,
-    onSent: (id) => router.replace(`/assistant/${encodeURIComponent(id)}`),
-  });
-  return <ComposerBar agent={agent} send={send} pathname={pathname} />;
-}
 
 /** Phone bar: "← Home" and "N earlier", which opens the conversation list (the boards draw both in the bar). */
 function PhoneHome({ home, count, more, onOpen }: { home: string; count: number; more: boolean; onOpen: () => void }) {
@@ -37,10 +28,8 @@ function PhoneHome({ home, count, more, onOpen }: { home: string; count: number;
 }
 
 function Home() {
-  const { me, agents, list, showList } = useAssistant();
-  const router = useRouter();
+  const { me, agents } = useAssistant();
   const params = useSearchParams();
-  const phone = useIsPhone();
   const requested = params?.get('agent') as AgentName | null;
   const agent = requested && agents.includes(requested) ? requested : agents[0];
 
@@ -54,7 +43,22 @@ function Home() {
       </div>
     );
   }
+  return <HomeFor key={agent} agent={agent} me={me} />;
+}
+
+function HomeFor({ agent, me }: { agent: AgentName; me: Me }) {
+  const { agents, list, pending, showList } = useAssistant();
+  const router = useRouter();
+  const pathname = usePathname() ?? '/assistant';
+  const phone = useIsPhone();
+  const send = useSend({
+    agent,
+    listChanged: list.refresh,
+    onSent: (id) => router.replace(`/assistant/${encodeURIComponent(id)}`),
+  });
   const who = AGENTS[agent];
+  // The first message shows in place of the hello as soon as it is pressed (D-160), and the thread page carries on from it.
+  const first = send.started && pending ? startedConversation('new', pending) : undefined;
   return (
     <>
       <div className="as__center">
@@ -65,13 +69,20 @@ function Home() {
           onOpen={showList}
         />
         <TalkTo agents={agents} selected={agent} onPick={(next) => router.replace(`/assistant?agent=${next}`, { scroll: false })} />
-        <section className="as__home" aria-label="Start a request">
-          <img className="as__idle" src={`/agents/${agent}-idle.png`} alt={`${who.name}, the ${who.role}, standing and ready`} />
-          <h1 className="as__hello">{hello(agent, me.name.split(' ')[0])}</h1>
-          <p className="as__can">{HOME_ABILITY[agent]}</p>
-          {phone && <p className="as__note">Agents use only records you can see. They draft, read and explain; they cannot approve, send, pay or change a record.</p>}
-        </section>
-        <HomeComposer key={agent} agent={agent} />
+        {first ? (
+          <div className="as__scroll">
+            <h1 className="cmp-sr">Conversation</h1>
+            <Thread conversation={first} reread={async () => undefined} />
+          </div>
+        ) : (
+          <section className="as__home" aria-label="Start a request">
+            <img className="as__idle" src={`/agents/${agent}-idle.png`} alt={`${who.name}, the ${who.role}, standing and ready`} />
+            <h1 className="as__hello">{hello(agent, me.name.split(' ')[0])}</h1>
+            <p className="as__can">{HOME_ABILITY[agent]}</p>
+            {phone && <p className="as__note">Agents use only records you can see. They draft, read and explain; they cannot approve, send, pay or change a record.</p>}
+          </section>
+        )}
+        <ComposerBar agent={agent} send={send} pathname={pathname} />
       </div>
       {!phone && <SidePanel agent={agent} pose="idle" status={`${who.name} is ready.`} project={undefined} access={undefined} />}
     </>

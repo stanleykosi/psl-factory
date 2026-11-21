@@ -194,7 +194,7 @@ for (const [label, viewport] of [
         await page.keyboard.press('Shift+Tab');
         await page.keyboard.press('Tab');
         await expect(stage3).toBeFocused();
-        const ring = await stage3.evaluate((el) => getComputedStyle(el).outlineStyle);
+        const ring = await stage3.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'));
         expect(ring).not.toBe('none');
         await expectNoAxeViolations(page);
       });

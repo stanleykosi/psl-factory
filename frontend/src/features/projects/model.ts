@@ -40,7 +40,7 @@ export const PROJECT_TABS: readonly { key: ProjectTab; label: string; path: stri
 ];
 
 export const LIMITS: Limit[] = [10, 20, 50];
-const DEFAULT_LIMIT: Limit = 20;
+const DEFAULT_LIMIT: Limit = 10;
 export const LIST_TABS: readonly { key: ListTab; label: string }[] = [
   { key: 'active', label: 'Active' },
   { key: 'closed', label: 'Closed' },
@@ -58,7 +58,7 @@ export function parseProjectsView(params: URLSearchParams): ProjectsView {
   return { q, limit, tab };
 }
 
-/** The URL search for a view; q is left out when empty, limit when 20 and status when Active. Cursors are never written. */
+/** The URL search for a view; q is left out when empty, limit when 10 and status when Active. Cursors are never written. */
 export function projectsSearch(view: ProjectsView): string {
   const params = new URLSearchParams();
   if (view.tab !== DEFAULT_TAB) params.set('status', view.tab);

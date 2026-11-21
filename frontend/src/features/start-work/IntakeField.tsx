@@ -31,7 +31,7 @@ type Props = {
   movedHelp?: { id: string; text?: string };
 };
 
-const NATIVE: Record<string, string> = { period: 'month', datetime: 'datetime-local', integer: 'number' };
+const NATIVE: Record<string, string> = { period: 'month', integer: 'number' };
 
 /** The label of a field whose control brings none of its own (a choice row, a range, a record picker, a display value). */
 function Label({ id, field, as = 'span', plain = false }: { id: string; field: Field; as?: 'span' | 'legend'; plain?: boolean }) {
@@ -113,7 +113,6 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
     case 'text':
     case 'integer':
     case 'period':
-    case 'datetime':
       return frame(
         <TextField
           id={controlId}
@@ -136,6 +135,9 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
       return frame(
         <TextArea id={controlId} label={label} optional={optional} oneLine={optional} placeholder={field.placeholder} value={text} readOnly={readOnly} hint={hint} error={error} onChange={(event) => onChange(event.target.value)} {...common} />,
       );
+    case 'datetime':
+      // D-158: the shared date-and-time dropdown, not the browser's own box
+      return frame(<DateField time id={controlId} label={label} optional={optional} value={text} disabled={readOnly} hint={hint} error={error} onChange={(when) => onChange(when)} />);
     case 'date':
       return frame(<DateField id={controlId} label={label} optional={optional} value={text} disabled={readOnly} hint={hint} error={error} onChange={(iso) => onChange(iso)} />);
     case 'date_range': {

@@ -12,7 +12,6 @@ import {
   AgentAvatar,
   Button,
   buttonClass,
-  Callout,
   EmptyState,
   FilterPanel,
   ListToolbar,
@@ -20,6 +19,8 @@ import {
   RadioGroup,
   SEARCH_MIN_CHARS,
   ShowMore,
+  usePagedRows,
+  type ShowMoreProps,
   Table,
   Tag,
   Unknown,
@@ -131,8 +132,8 @@ const COLUMNS: Column<InvoiceRow>[] = [
   { key: 'overdue', header: 'OVERDUE BY', cell: (row) => <Overdue row={row} /> },
 ];
 
-function InvoiceTable({ items }: { items: InvoiceRow[] }) {
-  return <Table className="payments__table" caption="Invoices" columns={COLUMNS} rows={items} rowKey={(row) => row.invoice_id} empty="No invoices to show yet." />;
+function InvoiceTable({ items, paging }: { items: InvoiceRow[]; paging: ShowMoreProps }) {
+  return <Table className="payments__table" caption="Invoices" columns={COLUMNS} rows={items} rowKey={(row) => row.invoice_id} empty="No invoices to show yet." paging={paging} />;
 }
 
 function InvoiceCards({ items }: { items: InvoiceRow[] }) {
@@ -282,17 +283,24 @@ export function PaymentsView() {
     if (q !== queryRef.current.q) navigate({ q });
   };
 
+  const bodyReady = state.status === 'ready' ? state.body : undefined;
+  const { rows: shownRows, paging } = usePagedRows({
+    items: bodyReady?.items ?? [],
+    next: Boolean(bodyReady?.next_cursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: `${query.q ?? ''}|${query.status ?? ''}`,
+    total: bodyReady?.total,
+  });
+
   useEffect(() => {
-    if (focusRow.current !== null && state.status === 'ready') {
+    if (focusRow.current !== null && state.status === 'ready' && shownRows.length > focusRow.current) {
       rows.current?.querySelectorAll<HTMLElement>('[data-invoice-row]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [state]);
+  }, [state, shownRows.length]);
 
-  const press = async () => {
-    const before = await showMore();
-    if (before !== undefined) focusRow.current = before;
-  };
 
   if (state.status === 'error' && state.error.kind === 'unauthenticated') return <SignedOutState pathname={`${PAYMENTS_PATH}${querySearch(query)}`} />;
   if (state.status === 'error' && (state.error.kind === 'forbidden' || state.error.kind === 'not_found')) return <PaymentsNoAccess />;
@@ -301,6 +309,15 @@ export function PaymentsView() {
   const filters = body?.filters ?? [];
   const closeFilter = () => setFilterOpen(false);
   const narrowed = query.q !== undefined || query.status !== undefined;
+
+  // Show more: the keyboard moves to the first row it added.
+  const footer: ShowMoreProps = {
+    ...paging,
+    onMore: () => {
+      if (more !== 'error') focusRow.current = shownRows.length;
+      paging.onMore();
+    },
+  };
 
   let list;
   if (state.status === 'loading') {
@@ -325,20 +342,16 @@ export function PaymentsView() {
   } else {
     list = (
       <>
-        <div ref={rows}>{phone ? <InvoiceCards items={state.body.items} /> : <InvoiceTable items={state.body.items} />}</div>
-        {state.body.next_cursor && (
-          <div className="payments__more">
-            <ShowMore shown={state.body.items.length} hasMore busy={more === 'loading'} onMore={() => void press()} />
-            {more === 'error' && (
-              <Callout kind="problem">
-                We couldn’t load more invoices. Nothing was changed.{' '}
-                <Button kind="secondary" size="sm" onClick={() => void press()}>
-                  Try again
-                </Button>
-              </Callout>
-            )}
-          </div>
-        )}
+        <div ref={rows}>
+          {phone ? (
+            <>
+              <InvoiceCards items={shownRows} />
+              <ShowMore solo {...footer} />
+            </>
+          ) : (
+            <InvoiceTable items={shownRows} paging={footer} />
+          )}
+        </div>
       </>
     );
   }

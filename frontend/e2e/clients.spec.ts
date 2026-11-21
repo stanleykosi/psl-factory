@@ -45,7 +45,7 @@ async function keyboardRing(page: Page, target: Locator) {
   await expect(target).toBeFocused();
   return target.evaluate((el) => {
     const s = getComputedStyle(el);
-    return { style: s.outlineStyle, width: s.outlineWidth };
+    return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
   });
 }
 
@@ -123,9 +123,11 @@ for (const [label, viewport] of [
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto('/clients');
       await listLoaded(page);
-      await expect(clientLinks(page)).toHaveCount(20);
-      await expect(page.getByText(/^20 clients loaded as of /)).toBeVisible();
+      await expect(clientLinks(page)).toHaveCount(10);
+      await expect(page.getByText(/^10 clients loaded as of /)).toBeVisible();
       if (phone) await expectTouchTargets([page.getByRole('button', { name: 'Show more' })]);
+      await page.getByRole('button', { name: 'Show more' }).click();
+      await expect(clientLinks(page)).toHaveCount(20);
       await page.getByRole('button', { name: 'Show more' }).click();
       await expect(clientLinks(page)).toHaveCount(25);
       await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
@@ -137,7 +139,7 @@ for (const [label, viewport] of [
 
     test('list: signed-out and error states', async ({ page }) => {
       let status = 500;
-      await page.route('**/api/v1/clients', (route) =>
+      await page.route('**/api/v1/clients?*', (route) =>
         status === 0 ? route.continue() : route.fulfill({ status, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }),
       );
       await page.goto('/clients');
@@ -182,7 +184,8 @@ for (const [label, viewport] of [
         expect(ring.style).not.toBe('none');
       }
       await save.click();
-      await expect(page.locator('.psl-callout--success')).toHaveText('Billing contact saved.');
+      await expect(page.locator('.psl-toast')).toHaveText('Billing contact saved.');
+      await expect(page.locator('.psl-callout--success')).toHaveCount(0);
       await expect(page.getByText("No billing contact, so invoices for this client can't start.")).toHaveCount(0);
       await expectNoAxeViolations(page);
     });

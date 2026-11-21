@@ -1,0 +1,1267 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-54",
+  "outcome": "F-54 One paging footer inside the table, and History laid out like Overview",
+  "state": "BLOCKED",
+  "task_ids": [
+    "FE-PAGING-CONSISTENCY"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "The work item History tab (/work/[id]/history) uses the same header as Overview at 1440 and at 390: same breadcrumb row, title line, state tag and Overview / History tabs in the same position. The column grid is identical (same main column width and side column width and gap). \u2014 verify: screenshots of /work/W-1408 and /work/W-1408/history at 1440 and 390 attached to build.md, plus an e2e that measures the tabs' and main column's bounding boxes on both tabs and asserts they are equal (within 1px).",
+    "One shared paging footer exists in `frontend/src/components` with count, 10 / 20 / 50 segmented rows-per-page, and Show more, and `Table` can draw it inside its frame (the table's border encloses the footer). It has unit tests for: count text with and without a total, default 20, changing rows per page, Show more busy state, and no Show more when all rows show.",
+    "Every paged list uses that footer and nothing else: work item History, My work, Projects, Exceptions, Clients, assistant Conversations, project tabs (TabParts), Setup Rules, Templates, Delegation, Finance rules, Delivery rules (and SetupFrame), Notifications, the start-work record picker and Payments. No \"Rows per page\" Select remains, and no list keeps its own paging CSS. \u2014 verify: `grep -rn \"Rows per page\" src/features` shows no Select; `grep -rn \"psl-showmore\\|historyfoot\\|exc-foot\\|my-work__rows\" src/features` shows no per-list paging styles; a lint or unit check is optional.",
+    "Lists that paged client-side at a fixed 50 now offer 10 / 20 / 50 with default 20 (D-PAGING r2). Lists paged by cursor pass the chosen size to the existing `limit` parameter they already send; no contract change.",
+    "Keyboard: the rows-per-page buttons are reachable by Tab and work with arrow keys like the shared Segmented; after a change, focus stays on the chosen option. On phones every target is at least 44 by 44 px. \u2014 verify: component test plus e2e at 390 on History and My work.",
+    "All existing unit tests and e2e pass. Update tests only where they asserted the old dropdown, the old footer markup or the fixed 50; never weaken another assertion. \u2014 verify: checks.sh plus the e2e for work-item, my-work, projects, exceptions, setup, payments, assistant, alerts and start-work.",
+    "Before and after screenshots at 1440 and 390 of History, My work, Projects, Exceptions and one ShowMore list (Clients) attached to build.md."
+  ],
+  "risk": {
+    "level": "low",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "coordinator (the design engineer asked for it on 20 Nov while viewing /work/W-1408/history: \"it should match how overview looks so there is no layout shift. even the table, shouldnt the row per page also be part of the table? it is different accross board which shouldnt be, i dont want the dropdown one.\")",
+    "rationale": "Low. Shared-component change across many merged lists. The risk is an unintended visual or behaviour change, so existing tests and e2e must stay green apart from the deliberate paging change."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-54/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-20T17:33:07Z",
+      "seconds": 321.5,
+      "evidence_ref": "delivery/features/F-54/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "a0337ff319bd4ef7852f56dc489b084e087156a5",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-21T13:39:05Z",
+      "seconds": 59.6,
+      "evidence_ref": "delivery/features/F-54/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "38fa47267395387152db5aad0be6e65f1ad8ceff",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-21T13:47:59Z",
+      "seconds": 319.7,
+      "evidence_ref": "delivery/features/F-54/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 3,
+      "commit": "8bb3d6cff87028173e9a1635e695154469e2462b",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-21T13:54:45Z",
+      "seconds": 369.5,
+      "evidence_ref": "delivery/features/F-54/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-54/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "After a send (useSend.ts:67, 80, 99, via ThreadPage.tsx:35), a start or an ended working conversation, `useConversationList.refresh` (useConversationList.ts:27) replaces `items` with the first page only and sets `next` from it, so every later page already shown is dropped and the list jumps back to 10 rows. Expected (spec AC8, D-138): \"the shown conversations never reload\"; the rows already shown stay in place, the first page's rows are merged at the top (the same idea as MyWork's `mergeRefresh`), and the loaded later pages and their cursor are kept. Actual: the person who scrolled to row 45 and sends a reply loses those rows, their scroll place, and has to fetch them again.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Projects (ProjectsList.tsx:190) and Payments (PaymentsView.tsx:288) call `usePagedRows` without `total`, although E-PROJECTS and E-INVOICES return a top-level `total` (schema.d.ts E-PROJECTS, E-INVOICES). Result: while a cursor remains the footer reads \"10 showing\" rather than \"10 of 74 showing\", and the 20 and 50 options stay active when the list's total is at or below them (for example 15 invoices with 10 loaded keeps 50 active), where the spec says an option is inactive when the total is at or below the next smaller option. Expected: pass the same total the result count already uses (ProjectsList computes it at about line 296 from `list.total` or the tab count; Payments reads `body.total`), as NotificationsPage.tsx:144 already does. Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:03Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "ShowMore.tsx:63 tops up automatically whenever `missing > 0 && next && !busy && !failed`. A page that returns zero rows while still giving a cursor leaves `missing` unchanged, and the `busy` true-to-false change re-runs the effect, so the same cursor is requested again until the cursor runs out, or forever if the server echoes it. Exceptions is filtered by grants after the query, so empty pages are plausible. Expected: stop the automatic top-up after a page that adds no rows and leave Show more to the person. Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "ShowMore.tsx:24 (`limitFor`) rounds the missing rows up to the next allowed size. From 20 shown to 50, 30 missing rows request `limit=50`, so 20 rows load unseen. The spec says only the extra rows are fetched; the contract accepts only 10, 20 or 50, so an exact fetch would need two calls (20 then 10). Accept and note it in the build, or split the request. Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-20T19:07:06Z",
+          "refs": [],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": "contract allows only 10/20/50; rounding up over-fetches at most 20 unseen rows; noted in limitFor and build.md"
+        }
+      ],
+      "risk_authority": "design engineer (D-146)"
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "ShowMore.tsx:105 (`let focusSize`) is module-level. It is cleared only when a matching option is drawn, so if the footer unmounts after a choice, the next footer that mounts on any list takes focus. Expected: keep the pending focus per footer instance (a ref) and drop it on unmount. Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "features/projects/model.ts:61 says `limit` is left out \"when 20\"; the default is now 10. Owner: frontend (docs).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "TECH-1-7",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Per-list paging wrappers and failure notices remain: `.my-work__foot` (MyWork.tsx:391) and `.projects__foot` (ProjectsList.tsx:278) carry their own CSS and each list writes its own \"couldn't load more\" Callout with different wording (MyWork, Projects, Exceptions, Notifications, Clients, RecordPicker). Spec: \"no list draws its own paging markup or CSS\". Expected: one shared failure notice owned by the footer or a shared component, or a note that the wording stays per list (spec: \"don't change wording\"). Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer (lead)",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer (lead)",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:04Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Projects ignores the total it is given, so the footer cannot apply the \"inactive\" rule or show \"10 of N\". A list of 15 projects (response `total: 15`, `next_cursor` on page one) showed \"10 showing\" with 10 / 20 / 50 all enabled; 74 showed \"10 showing\" with the same three enabled. Expected (spec rules, D-137): \"10 of 15 showing\" with 50 disabled, and \"10 of 74 showing\". Cause: `usePagedRows` in `frontend/src/features/projects/ProjectsList.tsx:190` is not passed `total`, though `list.total` (line 151) and the `total` used for the result text (line 296) are already known. Same pattern should be checked on other lists whose response carries a total (project tabs, notifications, clients, exceptions return none, so they are right to say \"N showing\"). Without the fix, the only visible effect on today's mock is Projects with 15-20 rows; with the real backend any total in that range shows an option that adds nothing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When a larger rows-per-page choice fails to load (cursor request aborted), the footer marks 20 selected while 10 rows show, with \"We couldn\u2019t load more. Nothing was changed. Try again\". The rows stay and Show more retries, so nothing is lost; only the selection state is ahead of the rows. Reproduced on /projects with the cursor request aborted (frontend/src/features/projects/ProjectsList.tsx, onSize -> navigate).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "QA-1-3",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "backend (mock)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The hr stand-in persona (D-142) can open /exceptions by URL and the endpoint returns 25 rows for hr (`GET /api/v1/exceptions?limit=50` with `psl_mock_persona=hr`). The navigation offers only My work and Assistant, and Projects shows \"This section isn\u2019t open to your role\", as asked, but Exceptions is not closed. D-142 says \"empty queues\"; what HR may see is PSL's to define (D-PAYROLL-VISIBILITY open), so this is only noted for the coordinator.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:05Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "D-138 / criterion 8: scrolling the desktop conversation list to its end does not load the next page at window heights of 700 and 800 (it works at 900 and on a phone). The sentinel in `frontend/src/features/assistant/ConversationList.tsx:86` is a 0-height div, and when the list is scrolled fully down it sits at y 708.31 while the scroll column's bottom (the IntersectionObserver root, `.as__listscroll`) is 708, so it never counts as intersecting (measured: scrollTop 77 of max, sentinel top 708.3125, root bottom 708, 10 of 10 conversations stay and no cursor request is sent). Expected: reaching the end always loads the next page. Fix: give the sentinel a 1px or more height, or add a rootMargin (e.g. `0px 0px 48px 0px`) to the observer at line 51, and add a unit or e2e case at a non-integer layout height. The keyboard route (focus on the last conversation) still works.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-54/round-1/review-ux.md"
+      ],
+      "raised_by": "ux-reviewer",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "ux-reviewer",
+          "at": "2026-11-20T18:01:08Z",
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-20T19:07:06Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "coordinator (D-146: from builder test evidence)",
+          "at": "2026-11-20T19:07:06Z",
+          "refs": [
+            "delivery/features/F-54/round-2/build.md"
+          ],
+          "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ],
+      "verified_by": "coordinator (D-146: from builder test evidence)",
+      "verification_refs": [
+        "delivery/features/F-54/round-2/build.md"
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "technical-reviewer (lead)",
+          "authority": "technical reviewer (lead), round 1 of F-54",
+          "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "evidence_refs": [
+            "delivery/features/F-54/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA",
+          "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "evidence_refs": [
+            "delivery/features/F-54/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-54/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "ux-reviewer",
+          "authority": "UX reviewer",
+          "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "evidence_refs": [
+            "delivery/features/F-54/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "ui-reviewer",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+          "evidence_refs": [
+            "delivery/features/F-54/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-PAGING-CONSISTENCY",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "c40a8583764302397a1ff060d34a3810b998bc1c",
+    "task_branch": "fe-paging-consistency-table-footer",
+    "head_sha": "801bb659a6f649dfbb85027cc8e744d411c7f02a",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-54",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/89",
+    "pr_number": 89,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "58409a88eeee75578816926b9ce5dfe337d399c7",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-54/feature.json",
+      "delivery/features/F-54/round-1/build.md",
+      "delivery/features/F-54/round-1/checks.md",
+      "delivery/features/F-54/round-1/review-qa.md",
+      "delivery/features/F-54/round-1/review-technical.md",
+      "delivery/features/F-54/round-1/review-ui.md",
+      "delivery/features/F-54/round-1/review-ux.md",
+      "delivery/features/F-54/round-1/screenshots/after/clients-1440.png",
+      "delivery/features/F-54/round-1/screenshots/after/clients-390.png",
+      "delivery/features/F-54/round-1/screenshots/after/exceptions-1440.png",
+      "delivery/features/F-54/round-1/screenshots/after/exceptions-390.png",
+      "delivery/features/F-54/round-1/screenshots/after/my-work-1440.png",
+      "delivery/features/F-54/round-1/screenshots/after/my-work-390.png",
+      "delivery/features/F-54/round-1/screenshots/after/projects-1440.png",
+      "delivery/features/F-54/round-1/screenshots/after/projects-390.png",
+      "delivery/features/F-54/round-1/screenshots/after/work-history-1440.png",
+      "delivery/features/F-54/round-1/screenshots/after/work-history-390.png",
+      "delivery/features/F-54/round-1/screenshots/after/work-overview-1440.png",
+      "delivery/features/F-54/round-1/screenshots/after/work-overview-390.png",
+      "delivery/features/F-54/round-1/screenshots/before/clients-1440.png",
+      "delivery/features/F-54/round-1/screenshots/before/clients-390.png",
+      "delivery/features/F-54/round-1/screenshots/before/exceptions-1440.png",
+      "delivery/features/F-54/round-1/screenshots/before/exceptions-390.png",
+      "delivery/features/F-54/round-1/screenshots/before/my-work-1440.png",
+      "delivery/features/F-54/round-1/screenshots/before/my-work-390.png",
+      "delivery/features/F-54/round-1/screenshots/before/projects-1440.png",
+      "delivery/features/F-54/round-1/screenshots/before/projects-390.png",
+      "delivery/features/F-54/round-1/screenshots/before/work-history-1440.png",
+      "delivery/features/F-54/round-1/screenshots/before/work-history-390.png",
+      "delivery/features/F-54/round-1/screenshots/before/work-overview-1440.png",
+      "delivery/features/F-54/round-1/screenshots/before/work-overview-390.png",
+      "delivery/features/F-54/round-2/build.md",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-button.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-checkbox.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-composer.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-field.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-link.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-search.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-tab.png",
+      "delivery/features/F-54/round-2/screenshots/focus/focus-table-row.png",
+      "delivery/features/F-54/round-3/build.md",
+      "delivery/features/F-54/round-3/screenshots/overview-3d-conveyor-ceo-1440.png",
+      "delivery/features/F-54/spec.md",
+      "delivery/features/F-55/feature.json",
+      "delivery/features/F-55/readiness.md",
+      "delivery/features/F-55/round-1/build.md",
+      "delivery/features/F-55/spec.md",
+      "design/canvas/project/SCR-03-desktop-done.dc.html",
+      "design/canvas/project/SCR-03-done-concepts.dc.html",
+      "design/canvas/project/SCR-03-mobile-done.dc.html",
+      "design/canvas/project/canvas.json",
+      "design/system/project/components/ChatMessage/README.md",
+      "design/system/project/components/DateField/README.md",
+      "design/system/project/components/Toast/README.md",
+      "design/system/project/components/bundle.css",
+      "frontend/e2e/alerts.spec.ts",
+      "frontend/e2e/assistant.spec.ts",
+      "frontend/e2e/ceo.spec.ts",
+      "frontend/e2e/clients.spec.ts",
+      "frontend/e2e/conformance.spec.ts",
+      "frontend/e2e/controls.ts",
+      "frontend/e2e/decide-board.spec.ts",
+      "frontend/e2e/decide.spec.ts",
+      "frontend/e2e/delivery-hypercare.spec.ts",
+      "frontend/e2e/demo.spec.ts",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/engagement-planning.spec.ts",
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/e2e/finance-month-end.spec.ts",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/hr.spec.ts",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/e2e/money.spec.ts",
+      "frontend/e2e/my-work.spec.ts",
+      "frontend/e2e/overview.spec.ts",
+      "frontend/e2e/payments.spec.ts",
+      "frontend/e2e/project-tabs.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/e2e/response.spec.ts",
+      "frontend/e2e/rfp-assign.spec.ts",
+      "frontend/e2e/rfp-intake.spec.ts",
+      "frontend/e2e/rfp.spec.ts",
+      "frontend/e2e/setup-delegation.spec.ts",
+      "frontend/e2e/setup-templates.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/e2e/support-handover.spec.ts",
+      "frontend/e2e/text-focus.spec.ts",
+      "frontend/e2e/weekly.spec.ts",
+      "frontend/e2e/work-item-board.spec.ts",
+      "frontend/e2e/work-item.spec.ts",
+      "frontend/e2e/workspace.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/assistant.mjs",
+      "frontend/mock/delegations.mjs",
+      "frontend/mock/demo-projects.mjs",
+      "frontend/mock/demo.mjs",
+      "frontend/mock/exceptions.mjs",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/alerts/notifications.ceo.json",
+      "frontend/mock/fixtures/alerts/notifications.hr.json",
+      "frontend/mock/fixtures/alerts/notifications.hr_lead.json",
+      "frontend/mock/fixtures/assistant/CV-2421.json",
+      "frontend/mock/fixtures/assistant/CV-2422.json",
+      "frontend/mock/fixtures/assistant/CV-2423.json",
+      "frontend/mock/fixtures/assistant/CV-2424.json",
+      "frontend/mock/fixtures/assistant/CV-2425.json",
+      "frontend/mock/fixtures/assistant/CV-2431.json",
+      "frontend/mock/fixtures/assistant/CV-2432.json",
+      "frontend/mock/fixtures/assistant/CV-2433.json",
+      "frontend/mock/fixtures/assistant/CV-2441.json",
+      "frontend/mock/fixtures/assistant/CV-2442.json",
+      "frontend/mock/fixtures/assistant/CV-2443.json",
+      "frontend/mock/fixtures/assistant/CV-2444.json",
+      "frontend/mock/fixtures/assistant/CV-2445.json",
+      "frontend/mock/fixtures/assistant/index.json",
+      "frontend/mock/fixtures/me.hr.json",
+      "frontend/mock/fixtures/me.hr_lead.json",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/projects/list.json",
+      "frontend/mock/fixtures/start-work/lines.hr.json",
+      "frontend/mock/fixtures/start-work/lines.hr_lead.json",
+      "frontend/mock/fixtures/start-work/options/incident.json",
+      "frontend/mock/fixtures/start-work/options/issue.json",
+      "frontend/mock/fixtures/start-work/options/meeting.json",
+      "frontend/mock/fixtures/start-work/options/milestone.json",
+      "frontend/mock/fixtures/start-work/options/project.json",
+      "frontend/mock/fixtures/work/W-4601.history.json",
+      "frontend/mock/fixtures/work/W-4601.json",
+      "frontend/mock/fixtures/work/W-4602.history.json",
+      "frontend/mock/fixtures/work/W-4602.json",
+      "frontend/mock/fixtures/work/W-4603.history.json",
+      "frontend/mock/fixtures/work/W-4603.json",
+      "frontend/mock/fixtures/work/W-4604.history.json",
+      "frontend/mock/fixtures/work/W-4604.json",
+      "frontend/mock/fixtures/work/W-4605.history.json",
+      "frontend/mock/fixtures/work/W-4605.hr.json",
+      "frontend/mock/fixtures/work/W-4605.json",
+      "frontend/mock/fixtures/work/W-4606.history.json",
+      "frontend/mock/fixtures/work/W-4606.json",
+      "frontend/mock/fixtures/work/W-4607.history.json",
+      "frontend/mock/fixtures/work/W-4607.json",
+      "frontend/mock/fixtures/work/W-4608.history.json",
+      "frontend/mock/fixtures/work/W-4608.json",
+      "frontend/mock/fixtures/work/W-4609.history.json",
+      "frontend/mock/fixtures/work/W-4609.json",
+      "frontend/mock/fixtures/work/W-4610.history.json",
+      "frontend/mock/fixtures/work/W-4610.json",
+      "frontend/mock/fixtures/work/W-4611.json",
+      "frontend/mock/fixtures/work/W-4612.history.json",
+      "frontend/mock/fixtures/work/W-4612.json",
+      "frontend/mock/fixtures/work/W-4613.history.json",
+      "frontend/mock/fixtures/work/W-4613.json",
+      "frontend/mock/fixtures/work/W-4614.history.json",
+      "frontend/mock/fixtures/work/W-4614.json",
+      "frontend/mock/fixtures/work/W-4615.history.json",
+      "frontend/mock/fixtures/work/W-4615.json",
+      "frontend/mock/fixtures/work/W-4616.history.json",
+      "frontend/mock/fixtures/work/W-4616.json",
+      "frontend/mock/fixtures/work/W-4617.history.json",
+      "frontend/mock/fixtures/work/W-4617.json",
+      "frontend/mock/fixtures/work/W-5001.history.json",
+      "frontend/mock/fixtures/work/W-5001.json",
+      "frontend/mock/fixtures/work/W-5002.history.json",
+      "frontend/mock/fixtures/work/W-5002.json",
+      "frontend/mock/fixtures/work/W-5003.history.json",
+      "frontend/mock/fixtures/work/W-5003.json",
+      "frontend/mock/fixtures/work/W-5004.history.json",
+      "frontend/mock/fixtures/work/W-5004.json",
+      "frontend/mock/fixtures/work/W-5005.history.json",
+      "frontend/mock/fixtures/work/W-5005.json",
+      "frontend/mock/fixtures/work/W-5006.history.json",
+      "frontend/mock/fixtures/work/W-5006.json",
+      "frontend/mock/fixtures/work/W-5007.history.json",
+      "frontend/mock/fixtures/work/W-5007.json",
+      "frontend/mock/fixtures/work/W-5008.history.json",
+      "frontend/mock/fixtures/work/W-5008.json",
+      "frontend/mock/fixtures/work/W-5009.history.json",
+      "frontend/mock/fixtures/work/W-5009.json",
+      "frontend/mock/fixtures/work/W-5010.history.json",
+      "frontend/mock/fixtures/work/W-5010.json",
+      "frontend/mock/fixtures/work/W-5011.history.json",
+      "frontend/mock/fixtures/work/W-5011.json",
+      "frontend/mock/fixtures/work/W-5012.history.json",
+      "frontend/mock/fixtures/work/W-5012.json",
+      "frontend/mock/fixtures/work/W-5013.history.json",
+      "frontend/mock/fixtures/work/W-5013.json",
+      "frontend/mock/fixtures/work/W-5014.history.json",
+      "frontend/mock/fixtures/work/W-5014.json",
+      "frontend/mock/line-runs.mjs",
+      "frontend/mock/money.mjs",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/mock/projects.mjs",
+      "frontend/mock/proposals/assistant-attach.json",
+      "frontend/mock/proposals/overview-station-items.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/mock/station-items.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/next.config.ts",
+      "frontend/playwright.config.ts",
+      "frontend/scripts/dev.mjs",
+      "frontend/src/app/layout.tsx",
+      "frontend/src/components/ChatMessage.tsx",
+      "frontend/src/components/Composer.tsx",
+      "frontend/src/components/DateField.tsx",
+      "frontend/src/components/ListToolbar.tsx",
+      "frontend/src/components/Menu.tsx",
+      "frontend/src/components/README.md",
+      "frontend/src/components/Select.tsx",
+      "frontend/src/components/ShowMore.tsx",
+      "frontend/src/components/Table.tsx",
+      "frontend/src/components/Toast.tsx",
+      "frontend/src/components/components.css",
+      "frontend/src/components/index.ts",
+      "frontend/src/components/internal.ts",
+      "frontend/src/features/alerts/AlertSettingsPage.tsx",
+      "frontend/src/features/alerts/NotificationsPage.tsx",
+      "frontend/src/features/alerts/alerts.css",
+      "frontend/src/features/alerts/model.ts",
+      "frontend/src/features/alerts/types.ts",
+      "frontend/src/features/assistant/AssistantContext.tsx",
+      "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/assistant/AssistantHome.tsx",
+      "frontend/src/features/assistant/ComposerBar.tsx",
+      "frontend/src/features/assistant/ConversationList.tsx",
+      "frontend/src/features/assistant/MentionPicker.tsx",
+      "frontend/src/features/assistant/SidePanel.tsx",
+      "frontend/src/features/assistant/Thread.tsx",
+      "frontend/src/features/assistant/ThreadPage.tsx",
+      "frontend/src/features/assistant/api.ts",
+      "frontend/src/features/assistant/assistant.css",
+      "frontend/src/features/assistant/labels.ts",
+      "frontend/src/features/assistant/pending.ts",
+      "frontend/src/features/assistant/types.ts",
+      "frontend/src/features/assistant/useConversation.ts",
+      "frontend/src/features/assistant/useConversationList.ts",
+      "frontend/src/features/assistant/useSend.ts",
+      "frontend/src/features/clients/BillingContactForm.tsx",
+      "frontend/src/features/clients/ClientsList.tsx",
+      "frontend/src/features/clients/api.ts",
+      "frontend/src/features/clients/clients.css",
+      "frontend/src/features/clients/useClients.ts",
+      "frontend/src/features/decide/DecideStates.tsx",
+      "frontend/src/features/decide/DecideView.tsx",
+      "frontend/src/features/decide/decide.css",
+      "frontend/src/features/decide/presentation.ts",
+      "frontend/src/features/decide/useDecision.ts",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/exceptions/ExceptionsList.tsx",
+      "frontend/src/features/exceptions/exceptions.css",
+      "frontend/src/features/exceptions/labels.ts",
+      "frontend/src/features/exceptions/useExceptions.ts",
+      "frontend/src/features/finance/payments/PaymentsView.tsx",
+      "frontend/src/features/finance/payments/payments.css",
+      "frontend/src/features/finance/payments/usePayments.ts",
+      "frontend/src/features/floor/Floor3D.tsx",
+      "frontend/src/features/floor/StationStrip.tsx",
+      "frontend/src/features/floor/floor.css",
+      "frontend/src/features/floor/scene.ts",
+      "frontend/src/features/floor/stationWork.ts",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/overview/OverviewPage.tsx",
+      "frontend/src/features/overview/overview.css",
+      "frontend/src/features/projects/ActionsTab.tsx",
+      "frontend/src/features/projects/DocumentsTab.tsx",
+      "frontend/src/features/projects/MilestonesTab.tsx",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/projects/RegistersTab.tsx",
+      "frontend/src/features/projects/TabParts.tsx",
+      "frontend/src/features/projects/model.ts",
+      "frontend/src/features/projects/project-tabs.css",
+      "frontend/src/features/projects/projects.css",
+      "frontend/src/features/projects/tabsModel.ts",
+      "frontend/src/features/projects/useProjectTab.ts",
+      "frontend/src/features/response/ReconcilePanel.tsx",
+      "frontend/src/features/response/ResponseView.tsx",
+      "frontend/src/features/response/response.css",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/rfp/OutcomeView.tsx",
+      "frontend/src/features/rfp/useOutcome.ts",
+      "frontend/src/features/setup/DelegationView.tsx",
+      "frontend/src/features/setup/DeliveryRulesView.tsx",
+      "frontend/src/features/setup/FinanceRulesView.tsx",
+      "frontend/src/features/setup/RulesView.tsx",
+      "frontend/src/features/setup/SetRulePanel.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/setup/TemplatesView.tsx",
+      "frontend/src/features/setup/api.ts",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/setup/useDelegations.ts",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/features/work-item/WorkItemHistory.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/labels.ts",
+      "frontend/src/features/work-item/useWorkHistory.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/DemoBar.tsx",
+      "frontend/src/shell/demo-bar.css",
+      "frontend/src/styles/psl-bundle.css",
+      "frontend/tests/alerts-model.test.ts",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/asset-schedule.test.tsx",
+      "frontend/tests/assistant-bridge.ts",
+      "frontend/tests/assistant-mock.test.ts",
+      "frontend/tests/assistant-send.test.tsx",
+      "frontend/tests/assistant.test.tsx",
+      "frontend/tests/ceo-mock.test.ts",
+      "frontend/tests/clients.test.tsx",
+      "frontend/tests/components/assistant-components.test.tsx",
+      "frontend/tests/components/conformance-options.test.tsx",
+      "frontend/tests/components/lists-and-states.test.tsx",
+      "frontend/tests/components/show-more.test.tsx",
+      "frontend/tests/components/toast-host.test.tsx",
+      "frontend/tests/controls.ts",
+      "frontend/tests/conversation-list-merge.test.tsx",
+      "frontend/tests/decide-board.test.tsx",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/demo-mock.test.ts",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/floor3d-keys.test.tsx",
+      "frontend/tests/floor3d-strip.test.tsx",
+      "frontend/tests/focus-rules.test.ts",
+      "frontend/tests/hr-mock.test.ts",
+      "frontend/tests/hypercare.test.tsx",
+      "frontend/tests/income-schedule.test.tsx",
+      "frontend/tests/ledger-source.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-document-review.test.ts",
+      "frontend/tests/mock-work-list.test.ts",
+      "frontend/tests/my-work-model.test.ts",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/no-success-callouts.test.ts",
+      "frontend/tests/overview.test.tsx",
+      "frontend/tests/payment-reminder.test.tsx",
+      "frontend/tests/payments.test.tsx",
+      "frontend/tests/project-tabs-model.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-model.test.ts",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/rfp-intake.test.tsx",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/setup.ts",
+      "frontend/tests/start-work.test.tsx",
+      "frontend/tests/station-items-mock.test.ts",
+      "frontend/tests/support-handover-mock.test.ts",
+      "frontend/tests/support-handover.test.tsx",
+      "frontend/tests/weekly.test.tsx",
+      "frontend/tests/work-item-board.test.tsx",
+      "frontend/tests/work-item.test.tsx",
+      "frontend/tests/workspace-step.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-20T15:36:50Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-20T15:36:50Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T15:37:26Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-20T17:33:22Z",
+      "round": 1,
+      "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-20T18:01:12Z",
+      "round": 1,
+      "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-20T18:01:12Z",
+      "round": 2,
+      "head": "b73aff3f69fb0795c6c673fd301995b3a31c530a",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "BLOCKED",
+      "at": "2026-11-21T18:54:42Z",
+      "round": 2,
+      "head": "801bb659a6f649dfbb85027cc8e744d411c7f02a",
+      "reason": "Merged by PR 89 (58409a88, head 801bb659) under D-146 with the design engineer's approval (21 Nov: 'can we push all fixes to main now'). The record cannot express D-146: stages after the gate need review-agent files, and round 2's three gate attempts were used (lint fail, flake fail, pass on 8bb3d6cf) before an e2e-spec-only head change. Evidence on 801bb659: delivery/checks.sh by hand passed (3606 unit tests, build); full Playwright 1152 passed, 0 failed. See D-168."
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "haiku",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-54/readiness.md",
+      "delivery/features/F-54/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 3,
+    "verdict": "PASS",
+    "commit": "8bb3d6cff87028173e9a1635e695154469e2462b"
+  },
+  "blocked": {
+    "from": "IMPLEMENTING",
+    "reason": "Merged by PR 89 (58409a88, head 801bb659) under D-146 with the design engineer's approval (21 Nov: 'can we push all fixes to main now'). The record cannot express D-146: stages after the gate need review-agent files, and round 2's three gate attempts were used (lint fail, flake fail, pass on 8bb3d6cf) before an e2e-spec-only head change. Evidence on 801bb659: delivery/checks.sh by hand passed (3606 unit tests, build); full Playwright 1152 passed, 0 failed. See D-168.",
+    "at": "2026-11-21T18:54:42Z"
+  }
+}

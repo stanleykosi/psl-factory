@@ -1,0 +1,74 @@
+{
+  "id": "W-5013",
+  "title": "Savanna Telecom · Escalate and communicate",
+  "line": "Escalate and communicate",
+  "reference": "ESC-0027",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Capture the issue",
+      "status": "done"
+    },
+    {
+      "name": "Draft the client message",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "done"
+    },
+    {
+      "name": "CEO decides",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the approved message to the client sponsor",
+        "status": "done",
+        "source": "Message v2"
+      }
+    ]
+  },
+  "next_step": "Done. The CEO’s decision was carried out and the sponsor’s reply is recorded.",
+  "sample": true
+}

@@ -1,0 +1,136 @@
+{
+  "id": "W-5001",
+  "title": "Kora Logistics · SOW v3",
+  "line": "Plan a project",
+  "reference": "PLN-0050",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Costing",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "done"
+    },
+    {
+      "name": "CEO approval",
+      "status": "current_person"
+    },
+    {
+      "name": "Send the SOW",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "current"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-5001",
+      "kind": "decide",
+      "title": "Approve statement of work v3",
+      "required_role": "CEO",
+      "you_can_act": true,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Statement of work v3",
+          "number": 3,
+          "drafted_at": "2026-11-08T16:10:00Z"
+        },
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PM",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PM",
+              "person": "Tunde Bello",
+              "status": "approved",
+              "is_you": false,
+              "decided_at": "2026-11-08T15:20:00Z"
+            },
+            {
+              "position": 2,
+              "role": "PMO Lead",
+              "person": "Kemi Adebayo",
+              "status": "approved",
+              "is_you": false,
+              "decided_at": "2026-11-08T15:20:00Z"
+            },
+            {
+              "position": 3,
+              "role": "CEO",
+              "person": "Folake Bello",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "your_step": 3,
+          "step_count": 3
+        },
+        "amount": {
+          "amount": "42500000.00",
+          "currency": "NGN",
+          "unknown": false
+        },
+        "basis": "Costing v3 · 4 stages · terms v2"
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the signed scope notes and costing v3",
+        "status": "done",
+        "source": "Costing v3"
+      },
+      {
+        "text": "Drafted statement of work v3 from the plan",
+        "status": "done",
+        "source": "Plan v3"
+      }
+    ]
+  },
+  "next_step": "You decide on statement of work v3. After you approve it, it goes to the client to sign.",
+  "sample": true
+}

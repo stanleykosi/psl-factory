@@ -9,7 +9,18 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   reporter: [['list']],
-  use: { baseURL: `http://localhost:${appPort}`, ...devices['Desktop Chrome'] },
+  // D-155: the e2e run with the live demo off and no answer delay, whatever mock they meet; a spec that wants the demo opts in.
+  use: {
+    baseURL: `http://localhost:${appPort}`,
+    ...devices['Desktop Chrome'],
+    storageState: {
+      cookies: ['psl_mock_demo=off', 'psl_mock_speed=fast'].map((pair) => {
+        const [name, value] = pair.split('=');
+        return { name, value, domain: 'localhost', path: '/', expires: -1, httpOnly: false, secure: false, sameSite: 'Lax' as const };
+      }),
+      origins: [],
+    },
+  },
   webServer: [
     {
       command: 'node mock/server.mjs',

@@ -1,0 +1,82 @@
+{
+  "conversation_id": "CV-2421",
+  "agent": "zainab",
+  "title": "Is the November staff list ready for Finance?",
+  "status": "answered",
+  "context": {
+    "project": {
+      "case_id": "C-HR-STAFF",
+      "title": "Staff records for payroll"
+    },
+    "access": [
+      "HR · staff and business unit records",
+      "No payroll amounts (not set up yet)"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Is the November staff list ready to go to Finance?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-18T09:20:00Z"
+    },
+    {
+      "role": "agent",
+      "steps": [
+        "Read the November staff list (pay columns left out)",
+        "Compared it with the October list",
+        "Checked every name has a business unit"
+      ],
+      "sources": [],
+      "at": "2026-11-18T09:21:00Z",
+      "text": "Not yet. I checked the list against October: 3 joiners and 1 leaver. Two people, Ifeoma Nwosu and Sani Garba, have no business unit, and payroll matching needs one for each. Once you choose their units and confirm the list, I can send it to Finance. This is sample data from the HR stand-in.",
+      "step_details": [
+        {
+          "text": "Read the November staff list (pay columns left out)",
+          "state": "done",
+          "reference": {
+            "label": "STAFF LIST · NOVEMBER"
+          }
+        },
+        {
+          "text": "Compared it with the October list",
+          "state": "done",
+          "reference": {
+            "label": "STAFF LIST · OCTOBER"
+          }
+        },
+        {
+          "text": "Checked every name has a business unit",
+          "state": "done",
+          "reference": {
+            "label": "BUSINESS UNITS"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "STAFF LIST",
+          "label": "STAFF LIST · NOVEMBER",
+          "restricted": false,
+          "link": {
+            "work_id": "W-4601"
+          }
+        },
+        {
+          "kind": "FIX",
+          "label": "STAFF RECORDS · HRR-0007",
+          "restricted": false,
+          "link": {
+            "work_id": "W-4602"
+          }
+        },
+        {
+          "kind": "PAYROLL",
+          "label": "PAYROLL AMOUNTS",
+          "restricted": true
+        }
+      ]
+    }
+  ]
+}

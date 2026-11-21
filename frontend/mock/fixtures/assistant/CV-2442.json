@@ -1,0 +1,81 @@
+{
+  "conversation_id": "CV-2442",
+  "agent": "tola",
+  "title": "Is the Kora Logistics SOW v3 ready for me to approve?",
+  "status": "answered",
+  "context": {
+    "project": {
+      "case_id": "C-0103",
+      "title": "Kora Logistics · fleet tracker"
+    },
+    "access": [
+      "CEO · read all projects and decisions"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Is the Kora Logistics SOW v3 ready for me to approve?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-10T09:20:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "Yes, it has reached your step. The PM and the PMO Lead have both approved it. The stage amounts follow costing v3 and the plan has four stages. One thing to know: the client has not yet confirmed the go-live date, so the last stage shows its date as unknown. You decide; I cannot approve for you.",
+      "steps": [
+        "Read SOW v3 and its approval chain",
+        "Compared the stage amounts with costing v3",
+        "Checked the milestone dates"
+      ],
+      "sources": [],
+      "at": "2026-11-10T09:21:00Z",
+      "step_details": [
+        {
+          "text": "Read SOW v3 and its approval chain",
+          "state": "done",
+          "reference": {
+            "label": "SOW · PLN-0050"
+          }
+        },
+        {
+          "text": "Compared the stage amounts with costing v3",
+          "state": "done",
+          "reference": {
+            "label": "COSTING v3"
+          }
+        },
+        {
+          "text": "Checked the milestone dates",
+          "state": "done",
+          "reference": {
+            "label": "MILESTONES"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "SOW",
+          "label": "SOW · PLN-0050",
+          "restricted": false,
+          "link": {
+            "work_id": "W-5001"
+          }
+        },
+        {
+          "kind": "COSTING",
+          "label": "COSTING v3",
+          "restricted": false
+        },
+        {
+          "kind": "MILESTONES",
+          "label": "MILESTONES · Kora fleet tracker",
+          "restricted": false,
+          "link": {
+            "case_id": "P-0103"
+          }
+        }
+      ]
+    }
+  ]
+}

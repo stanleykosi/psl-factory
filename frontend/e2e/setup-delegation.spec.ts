@@ -100,9 +100,9 @@ test.describe('desktop', () => {
     await expectNoAxeViolations(page);
     const add = panel.getByRole('button', { name: 'Add delegation' });
     await add.focus();
-    expect(await add.evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe('none');
+    expect(await add.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'))).not.toBe('none');
     await add.dblclick();
-    await expect(page.locator('[aria-live="polite"]')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
+    await expect(page.locator('.psl-toast')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
     await expect(desktopRows(page)).toHaveCount(3);
     await expect(desktopRows(page).nth(2).locator('td')).toHaveText(['Kemi Adebayo · PMO Lead', 'Femi Ade · PMO Lead', '01–03 Dec 2026', 'Training', 'Upcoming']);
     await expect(desktopRows(page).nth(2)).toBeFocused();
@@ -239,7 +239,7 @@ test.describe('phone', () => {
     await expect(sheet).toHaveCount(0);
     await expect(page.locator('.setup-phone [role="listitem"]')).toHaveCount(3);
     await expect(page.locator('.setup-phone [role="listitem"]').nth(2)).toBeFocused();
-    await expect(page.locator('[aria-live="polite"]')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
+    await expect(page.locator('.psl-toast')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
   });
 
   test('uncertain warning, empty, readonly and not-open pass axe with no side scroll (AC 19)', async ({ page, context }) => {

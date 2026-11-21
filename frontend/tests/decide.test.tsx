@@ -28,7 +28,7 @@ const FORBIDDEN = { code: 'forbidden', message: 'Your role does not allow this.'
 type Call = { method: string; path: string; body: unknown; csrf: string | null };
 type Answer = (n: number, call: Call) => Response | Promise<Response>;
 let calls: Call[];
-let answers: { me: string; item: Answer; claim: Answer; decide: Answer };
+let answers: { me: string; item: Answer; claim: Answer; decide: Answer; list: Answer };
 
 const counts = () => ({
   gets: calls.filter((c) => c.method === 'GET' && c.path.startsWith('/api/v1/work/')).length,
@@ -40,6 +40,7 @@ beforeEach(() => {
   calls = [];
   answers = {
     me: 'finance_lead',
+    list: () => json(200, { items: [], as_of: '2026-11-12T09:48:00Z', counts: { needs_me: 0, waiting_on_others: 0, done: 0 } }),
     item: () => json(200, item('W-1201')),
     claim: (_, c) => json(200, { task_id: c.path.split('/')[4], revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }),
     decide: (_, c) => json(200, { task_id: c.path.split('/')[4], verdict: (c.body as { verdict: string }).verdict, decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'ready' }),
@@ -54,6 +55,7 @@ beforeEach(() => {
       const c: Call = { method: request.method, path: url.pathname, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };
       calls.push(c);
       if (url.pathname === '/api/v1/me') return json(200, read(`me.${answers.me}.json`));
+      if (url.pathname === '/api/v1/work') return answers.list(0, c);
       if (url.pathname.endsWith('/claim')) return answers.claim(n.claim++, c);
       if (url.pathname.endsWith('/decision')) return answers.decide(n.decide++, c);
       return answers.item(n.item++, c);
@@ -192,17 +194,17 @@ describe('claim and decide', () => {
     const banner = screen.getByText(/^YOU APPROVED ·/).closest('.decide-banner')!;
     expect(banner.className).toBe('decide-banner decide-banner--success');
     expect(within(banner as HTMLElement).getByRole('heading', { level: 1 }).textContent).toBe('Invoice v2 is approved');
-    expect(screen.getByText('Decided by Ada Okafor')).toBeTruthy();
+    expect(screen.getByText('Thu 12 Nov, 10:47 WAT').closest('dd')!.textContent).toBe('Thu 12 Nov, 10:47 WAT, by Ada Okafor');
     await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
     expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--success');
     const approved = within(screen.getByRole('list', { name: 'Facts' })).getAllByRole('listitem')[2];
     expect(approved.textContent).toBe('APPROVEDEarned12 Nov 10:47');
     expect(screen.getByText('Paid is tracked separately by Finance and is not part of this decision.')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1201');
-    expect(screen.getByRole('link', { name: 'Back to my work' }).getAttribute('href')).toBe('/my-work');
+    await screen.findByRole('link', { name: 'Back to my work' });
     expect(decisionControls()).toHaveLength(0);
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(counts().gets).toBe(2);
+    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
   });
 
   it('QA-3-1: an approve whose work_state is effect_uncertain shows the uncertain notice, no approved banner, no next step and no Paid line', async () => {
@@ -216,6 +218,7 @@ describe('claim and decide', () => {
     expect(document.querySelector('.decide-banner--success')).toBeNull();
     expect(text()).not.toMatch(/is approved|YOU APPROVED|Next step\.|Paid is tracked/);
     expect(document.querySelector('.decide-next')).toBeNull();
+    expect(screen.getByText('Approve, result not confirmed')).toBeTruthy(); // the summary never says it was approved
     expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1201');
     expect(counts().decides).toHaveLength(1);
   });
@@ -332,7 +335,7 @@ describe('stale (A-STALE)', () => {
     fireEvent.click(button('Approve v2'));
     await screen.findByText('A newer version arrived while you were reading.');
     expect(counts().decides).toHaveLength(1);
-    expect(counts().gets).toBe(2);
+    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
     expect(text()).toContain('Version 3 was drafted at 12 Nov 10:46.');
     expect(text()).toContain('Version 2 can no longer be approved.');
     const old = screen.getByRole('region', { name: 'VERSION 2 · REPLACED' });
@@ -472,7 +475,7 @@ describe('errors', () => {
     await screen.findByText('This decision needs a Finance Lead.');
     expect(text()).toContain('You can’t approve, return or reject it.');
     expect(decisionControls()).toHaveLength(0);
-    expect(counts().gets).toBe(2);
+    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
     expect(counts().decides).toHaveLength(1);
   });
 
@@ -527,7 +530,7 @@ describe('errors', () => {
     expect(uncertain.closest('[role="alert"]')).not.toBeNull();
     expect(text()).toContain('We’ve reloaded this item so you can see whether it was recorded.');
     await ready();
-    expect(counts().gets).toBe(2);
+    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
     expect(counts().decides).toHaveLength(1);
     expect(counts().claims).toHaveLength(1);
   });
@@ -548,7 +551,7 @@ describe('errors', () => {
     };
     off();
     expect(text()).not.toContain('We’ve reloaded this item');
-    expect(counts().gets).toBe(2);
+    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
     // A tap on a disabled control sends nothing.
     fireEvent.click(button(/^Approve v2/));
     expect(counts().decides).toHaveLength(1);
@@ -647,7 +650,7 @@ describe('errors', () => {
     expect(card.textContent).toContain('Reference server_error for support.');
     fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
     await ready();
-    expect(counts().gets).toBe(2);
+    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
   });
 
   it.each([

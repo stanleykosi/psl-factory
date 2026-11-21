@@ -109,7 +109,7 @@ async function open() {
 const desktop = () => within(document.querySelector('.setup-desktop') as HTMLElement);
 const phone = () => within(document.querySelector('.setup-phone') as HTMLElement);
 const panel = () => within(screen.getByRole('complementary', { name: 'Add a delegation' }));
-const announced = () => document.querySelector('[aria-live="polite"]')?.textContent;
+const announced = () => document.querySelector('.psl-toast')?.textContent; // D-151: the toast, which is announced as a status
 const rows = () =>
   desktop()
     .getAllByRole('row')
@@ -193,11 +193,11 @@ describe('the list (AC 3)', () => {
     expect(panel().getByRole('button', { name: 'Add delegation' })).toBeTruthy();
   });
 
-  it('pages: 20 rows, Show more appends 20 then 5 and says the end; a failed page keeps the rows with the problem', async () => {
+  it('pages: 10 rows, Show more appends 10, 10, 10 then 5 by cursor and says the end; a failed page keeps the rows with the problem', async () => {
     const all = fixture('many');
-    const pageAt = (offset: number) => {
-      const body: DelegationsPage = { ...all, items: all.items.slice(offset, offset + 20) };
-      if (offset + 20 < all.items.length) body.next_cursor = `o:${offset + 20}`;
+    const pageAt = (offset: number, size: number) => {
+      const body: DelegationsPage = { ...all, items: all.items.slice(offset, offset + size) };
+      if (offset + size < all.items.length) body.next_cursor = `o:${offset + size}`;
       else delete body.next_cursor;
       return body;
     };
@@ -208,20 +208,24 @@ describe('the list (AC 3)', () => {
         return json(500, BOOM);
       }
       const m = /cursor=o%3A(\d+)/.exec(c.query);
-      return json(200, pageAt(m ? Number(m[1]) : 0));
+      return json(200, pageAt(m ? Number(m[1]) : 0, 10));
     };
     await open();
-    expect(rows()).toHaveLength(20);
+    expect(rows()).toHaveLength(10);
     failNext = true;
     fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
-    await waitFor(() => expect(desktop().getByText('We couldn’t load more delegations. Choose Show more to try again.')).toBeTruthy());
-    expect(rows()).toHaveLength(20);
+    await waitFor(() => expect(desktop().getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
+    expect(rows()).toHaveLength(10);
+    fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
+    await waitFor(() => expect(rows()).toHaveLength(20));
+    fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
+    await waitFor(() => expect(rows()).toHaveLength(30));
     fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
     await waitFor(() => expect(rows()).toHaveLength(40));
     fireEvent.click(desktop().getByRole('button', { name: /Show more/ }));
     await waitFor(() => expect(rows()).toHaveLength(45));
     expect(desktop().getByText('All 45 delegations are shown.')).toBeTruthy();
-    expect(lists().map((c) => c.query)).toEqual(['', '?cursor=o%3A20', '?cursor=o%3A20', '?cursor=o%3A40']);
+    expect(lists().map((c) => c.query)).toEqual(['?limit=10', '?limit=10&cursor=o%3A10', '?limit=10&cursor=o%3A10', '?limit=10&cursor=o%3A20', '?limit=10&cursor=o%3A30', '?limit=10&cursor=o%3A40']);
     expect(desktop().getAllByText('Unknown')).toHaveLength(1);
   });
 });

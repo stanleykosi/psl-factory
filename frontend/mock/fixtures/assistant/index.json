@@ -54,6 +54,123 @@
       "status": "drafted",
       "status_line": "Drafted · ready to start",
       "updated_at": "2026-11-16T08:17:00Z"
+    },
+    {
+      "conversation_id": "CV-2421",
+      "_persona": "hr",
+      "title": "Is the November staff list ready for Finance?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T09:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2422",
+      "_persona": "hr",
+      "title": "Fix the two staff with no business unit",
+      "agent": "zainab",
+      "status": "drafted",
+      "status_line": "Drafted · ready to review",
+      "updated_at": "2026-11-18T09:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2423",
+      "_persona": "hr",
+      "title": "Why did Finance ask about a leaver?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T10:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2424",
+      "_persona": "hr",
+      "title": "A staff member’s salary",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-18T11:01:00Z"
+    },
+    {
+      "conversation_id": "CV-2425",
+      "_persona": "hr",
+      "title": "Who joined or left in November?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T11:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2431",
+      "_persona": "hr_lead",
+      "title": "What is waiting for my decision?",
+      "agent": "zainab",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-18T15:11:00Z"
+    },
+    {
+      "conversation_id": "CV-2432",
+      "_persona": "hr_lead",
+      "title": "Are the business unit moves safe to confirm?",
+      "agent": "zainab",
+      "status": "drafted",
+      "status_line": "Drafted · ready to review",
+      "updated_at": "2026-11-18T15:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2433",
+      "_persona": "hr_lead",
+      "title": "Can I see Ifeoma’s pay?",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-18T15:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2441",
+      "_persona": "ceo",
+      "title": "What is waiting for my decision?",
+      "agent": "tola",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-10T09:31:00Z"
+    },
+    {
+      "conversation_id": "CV-2442",
+      "_persona": "ceo",
+      "title": "Is the Kora Logistics SOW v3 ready for me to approve?",
+      "agent": "tola",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-10T09:21:00Z"
+    },
+    {
+      "conversation_id": "CV-2443",
+      "_persona": "ceo",
+      "title": "Which client invoices are still unpaid?",
+      "agent": "chidi",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-10T08:51:00Z"
+    },
+    {
+      "conversation_id": "CV-2444",
+      "_persona": "ceo",
+      "title": "Can I see what the Delivery team is paid?",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-10T08:11:00Z"
+    },
+    {
+      "conversation_id": "CV-2445",
+      "_persona": "ceo",
+      "title": "Which projects need me this week?",
+      "agent": "tola",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-09T16:31:00Z"
     }
   ]
 }

@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "at": "2026-11-18T08:30:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked the HR Lead to confirm",
+      "restricted": false,
+      "detail": "4 moves, Finance matching waits for this",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T08:20:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Listed the moves",
+      "restricted": false,
+      "detail": "4 staff since October",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T08:11:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T08:10:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Gathered the unit heads’ replies",
+      "restricted": false,
+      "detail": "All four agreed",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T08:05:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the register",
+      "restricted": false,
+      "detail": "bu_register_nov.xlsx",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T08:00:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "Before November payroll matching"
+    }
+  ],
+  "as_of": "2026-11-18T15:00:00Z"
+}

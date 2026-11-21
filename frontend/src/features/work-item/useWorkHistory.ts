@@ -4,37 +4,37 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
+import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
-import type { HistoryEntry, HistoryKind, HistoryLimit } from './labels';
+import type { HistoryEntry, HistoryKind } from './labels';
 
 export type WorkHistoryState =
   | { status: 'loading' }
   | { status: 'error'; error: ApiError }
   | { status: 'ready'; items: HistoryEntry[]; nextCursor?: string; asOf: string; more: 'idle' | 'loading' | 'failed' };
 
-/** One work item's history (D-PAGING r2): rows in the order returned, cursor "Show more" appends. */
+/** One work item's history (D-PAGING r2, D-137): first page of 10, then the paging footer asks for more by cursor and appends. */
 export function useWorkHistory(id: string, revision: number) {
   const [kind, setKind] = useState<HistoryKind>('all');
-  const [limit, setLimit] = useState<HistoryLimit>(20);
   const [state, setState] = useState<WorkHistoryState>({ status: 'loading' });
   // Answers to an earlier filter, limit or revision are dropped.
   const request = useRef(0);
 
   const fetchPage = useCallback(
-    (cursor?: string) =>
+    (limit: PageSize, cursor?: string) =>
       call(
         api.GET('/api/v1/work/{work_id}/history', {
           params: { path: { work_id: id }, query: cursor ? { kind, limit, cursor } : { kind, limit } },
         }),
       ),
-    [id, kind, limit],
+    [id, kind],
   );
 
   const load = useCallback(async () => {
     const n = ++request.current;
     setState({ status: 'loading' });
     try {
-      const page = await fetchPage();
+      const page = await fetchPage(DEFAULT_PAGE_SIZE);
       if (n === request.current) {
         setState({ status: 'ready', items: page.items, nextCursor: page.next_cursor, asOf: page.as_of, more: 'idle' });
       }
@@ -50,12 +50,12 @@ export function useWorkHistory(id: string, revision: number) {
   }, [load, revision]);
 
   const cursor = state.status === 'ready' ? state.nextCursor : undefined;
-  const showMore = useCallback(async () => {
+  const showMore = useCallback(async (limit: PageSize) => {
     if (!cursor) return;
     const n = request.current;
     setState((s) => (s.status === 'ready' ? { ...s, more: 'loading' } : s));
     try {
-      const page = await fetchPage(cursor);
+      const page = await fetchPage(limit, cursor);
       if (n !== request.current) return;
       setState((s) =>
         s.status === 'ready'
@@ -67,5 +67,5 @@ export function useWorkHistory(id: string, revision: number) {
     }
   }, [cursor, fetchPage]);
 
-  return { state, kind, setKind, limit, setLimit, retry: load, showMore };
+  return { state, kind, setKind, retry: load, showMore };
 }

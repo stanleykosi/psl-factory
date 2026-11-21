@@ -40,7 +40,7 @@ export type ResponseView =
    * before: the item as it was when Record was pressed (its current station names the success heading). A task
    * opened already recorded has no such item: station then names the heading instead.
    */
-  | { kind: 'done'; before: ResponseWorkItem; recorded?: Recorded; next?: string[]; responderId?: string; station?: string };
+  | { kind: 'done'; before: ResponseWorkItem; recorded?: Recorded; next?: string[]; responderId?: string; station?: string; fresh?: true };
 
 export type Notice =
   | { kind: 'stale' }
@@ -210,7 +210,7 @@ export function useResponse(id: string, taskId: string | undefined) {
     (before: ResponseWorkItem, item: ResponseWorkItem, responderId: string, keepForm: Notice | null) => {
       const now = findTask(item, taskId);
       if (now?.response?.recorded) {
-        setView({ kind: 'done', before, recorded: now.response.recorded, next: now.response.next, responderId });
+        setView({ kind: 'done', before, recorded: now.response.recorded, next: now.response.next, responderId, fresh: true });
         return;
       }
       sync(item.case_revision);
@@ -321,7 +321,7 @@ export function useResponse(id: string, taskId: string | undefined) {
         }
         return;
       }
-      setView({ kind: 'done', before, recorded: result.recorded, next: result.next, responderId: e.who });
+      setView({ kind: 'done', before, recorded: result.recorded, next: result.next, responderId: e.who, fresh: true });
       // One reload so the rest of the app sees the new state; it fills what the 200 left out.
       try {
         const item = await getWorkItem(id);

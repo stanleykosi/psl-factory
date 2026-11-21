@@ -27,7 +27,7 @@ export const QUEUES: { key: Queue; label: string; empty: string }[] = [
   { key: 'unassigned', label: 'Unassigned', empty: 'Nothing is unassigned' },
 ];
 export const LIMITS: Limit[] = [10, 20, 50];
-const DEFAULT_LIMIT: Limit = 20;
+const DEFAULT_LIMIT: Limit = 10;
 
 export type Family = 'person' | 'agent' | 'waiting' | 'done' | 'neutral';
 
@@ -187,18 +187,9 @@ export function resultCount(view: View, counts: Counts | null | undefined, loade
   return `${loaded}${more ? '+' : ''} OF ${total} ITEMS`;
 }
 
-/** Footer text: how many rows are showing. */
-export function shownText(view: View, counts: Counts | null | undefined, loaded: number, more: boolean): string {
-  if (!more) return `All ${loaded} showing`;
-  const total = counts?.[view.queue];
-  if (isNarrowed(view) || total === undefined) return `${loaded} showing`;
-  return `${loaded} of ${total} showing`;
-}
-
-export function showMoreLabel(view: View, counts: Counts | null | undefined, loaded: number): string {
-  const total = counts?.[view.queue];
-  if (isNarrowed(view) || total === undefined || total - loaded <= 0) return 'Show more';
-  return `Show ${Math.min(view.limit, total - loaded)} more`;
+/** The queue's open count for the paging footer: known only when no search or filter narrows the list. */
+export function queueTotal(view: View, counts: Counts | null | undefined): number | undefined {
+  return isNarrowed(view) ? undefined : counts?.[view.queue];
 }
 
 /** A refresh replaces page 1 and keeps the rows loaded after it, minus any id now on page 1. */

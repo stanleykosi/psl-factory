@@ -1,0 +1,70 @@
+{
+  "id": "W-5008",
+  "title": "Tamarind Loans · SOW",
+  "line": "Prepare a SOW",
+  "reference": "SOW-0201",
+  "state": "waiting",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "done"
+    },
+    {
+      "name": "CEO approval",
+      "status": "done"
+    },
+    {
+      "name": "Client signs",
+      "status": "waiting"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the approved statement of work to the client",
+        "status": "done",
+        "source": "SOW v1"
+      }
+    ]
+  },
+  "next_step": "Tamarind Loans signs the statement of work. Whether they have opened it is not known yet.",
+  "sample": true
+}

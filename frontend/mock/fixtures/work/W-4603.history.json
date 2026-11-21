@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "at": "2026-11-18T10:24:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked HR for the date",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T10:23:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Found the gap",
+      "restricted": false,
+      "detail": "The leaving date is blank in the staff record",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T10:22:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Read the question",
+      "restricted": false,
+      "detail": "Used: Staff record · Segun Alade",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T10:21:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T10:20:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Asked HR a question",
+      "restricted": false,
+      "detail": "Which day did Segun Alade leave? Needed to close October matching",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-18T10:19:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From a Finance question"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

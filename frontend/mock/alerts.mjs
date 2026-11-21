@@ -53,8 +53,8 @@ function shifted(list) {
 /** The data a persona starts with: finance_lead's follows the scenario, the others keep their own records. */
 function initialState(persona, scenario) {
   const own = persona !== 'finance_lead';
-  const who = persona === 'admin' || persona === 'ceo' || persona === 'pmo_lead' ? 'none' : persona; // admin, ceo and pmo_lead have no alert records of their own yet; they start with the empty person's
-  let list = own ? read(`alerts/notifications.${who}.json`) : read('E-NOTIFICATIONS.json');
+  const who = persona === 'admin' || persona === 'ceo' || persona === 'pmo_lead' || persona === 'hr' || persona === 'hr_lead' ? 'none' : persona; // admin and pmo_lead have no alert records of their own yet; they start with the empty person's
+  let list = own ? read(`alerts/notifications.${persona === 'hr' || persona === 'hr_lead' || persona === 'ceo' ? persona : who}.json`) : read('E-NOTIFICATIONS.json');
   if (scenario === 'empty') list = read('alerts/notifications.empty.json');
   else if (scenario === 'many' && !own) list = read('alerts/notifications.many.json');
   else if (scenario === 'needs-you' && !own) {
@@ -160,14 +160,24 @@ function savePrefs(state, raw, validate, scenario) {
 export function createAlertsMock({ openapi }) {
   const validate = putValidator(openapi);
   const states = new Map();
+  // D-155: alerts the live demo's runs raised (line-runs.mjs), by persona; they join that persona's list on its next read.
+  const raised = new Map();
 
   return {
+    raise(persona, item) {
+      raised.set(persona, [item, ...(raised.get(persona) ?? [])]);
+    },
     handle({ operationId, url, raw, persona, cookies = {} }) {
       const chosen = cookies.psl_mock_alerts ?? process.env.MOCK_ALERTS_SCENARIO;
       const scenario = ALERT_SCENARIOS.includes(chosen) ? chosen : 'board';
       const key = `${persona}:${scenario}`;
       if (!states.has(key)) states.set(key, initialState(persona, scenario));
       const state = states.get(key);
+      const added = raised.get(persona);
+      if (added) {
+        state.list.items.unshift(...added);
+        raised.delete(persona);
+      }
       const bare = scenario === 'bare';
       if (operationId === 'E-NOTIFICATIONS') return listResponse(state, url, bare);
       if (bare && operationId !== 'E-ALERT-PREFS') return { status: 404, body: NOT_FOUND };
@@ -177,6 +187,7 @@ export function createAlertsMock({ openapi }) {
     },
     reset() {
       states.clear();
+      raised.clear();
     },
   };
 }

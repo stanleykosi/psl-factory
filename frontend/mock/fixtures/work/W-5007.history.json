@@ -1,0 +1,47 @@
+{
+  "items": [
+    {
+      "at": "2026-11-10T09:32:00Z",
+      "actor_kind": "agent",
+      "actor": "Chidi · Finance agent",
+      "event": "Started drafting",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T09:27:00Z",
+      "actor_kind": "agent",
+      "actor": "Chidi · Finance agent",
+      "event": "Collected the records",
+      "restricted": false,
+      "detail": "2 milestones, 1 invoice",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T09:17:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added a note for the week",
+      "restricted": false,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-10T09:07:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Started the weekly update",
+      "restricted": false,
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-09T08:32:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Sent last week’s update",
+      "restricted": false,
+      "detail": "WCU-0027",
+      "_kind": "decision"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

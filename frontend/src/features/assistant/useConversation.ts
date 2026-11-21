@@ -19,7 +19,8 @@ export type ConversationState =
   | { status: 'signed_out' }
   | { status: 'error'; error: ApiError };
 
-export function useConversation(id: string, onSettled?: () => void) {
+/** `waiting`: the person just sent a message into it, so it is read every 5 s until the agent has replied (D-160), working or not. */
+export function useConversation(id: string, onSettled?: () => void, waiting = false) {
   const [state, setState] = useState<ConversationState>({ status: 'loading' });
   const data = useRef<Conversation | null>(null);
   const reading = useRef(false);
@@ -57,7 +58,7 @@ export function useConversation(id: string, onSettled?: () => void) {
     void read();
   }, [read]);
 
-  const working = state.status === 'ready' && state.data.status === 'working';
+  const working = waiting || (state.status === 'ready' && state.data.status === 'working');
   useEffect(() => {
     if (!working) return undefined;
     const timer = setInterval(() => {

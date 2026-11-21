@@ -1,4 +1,24 @@
-import { afterEach } from 'vitest';
+import { createElement, type ReactElement, type ReactNode } from 'react';
+import { afterEach, vi } from 'vitest';
+
+// D-151: the app shell mounts the one toast host, so every render here has it too; a test reads a toast like a person does.
+vi.mock('@testing-library/react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@testing-library/react')>();
+  const { ToastProvider } = await import('@/components');
+  const wrap = <T extends { wrapper?: React.JSXElementConstructor<{ children: ReactNode }> }>(options?: T) => {
+    const Inner = options?.wrapper;
+    return {
+      ...options,
+      wrapper: ({ children }: { children: ReactNode }) =>
+        createElement(ToastProvider, null, Inner ? createElement(Inner, null, children) : children),
+    };
+  };
+  return {
+    ...actual,
+    render: (ui: ReactElement, options?: object) => actual.render(ui, wrap(options)),
+    renderHook: (hook: never, options?: object) => actual.renderHook(hook, wrap(options)),
+  };
+});
 
 if (typeof window !== 'undefined') {
   // jsdom has no fetch API, so Node's Request is used; give it the browser's behaviour of

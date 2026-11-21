@@ -13,6 +13,8 @@ async function setCookies(context: BrowserContext, cookies: Record<string, strin
 }
 
 async function expectNoAxeViolations(page: Page, state: string) {
+  // A button that just changed state fades its fill over 120ms; axe must read the settled colours, not a frame of the fade.
+  await page.waitForFunction(() => document.getAnimations().every((a) => !(a instanceof CSSTransition)));
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`), state).toEqual([]);
 }

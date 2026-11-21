@@ -6,7 +6,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import { api, call, setCsrfToken } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import type { Me } from '@/api/types';
-import { useIsPhone } from '@/components';
+import { ToastProvider, useIsPhone } from '@/components';
 import { AlertsDrawer } from '@/features/alerts/AlertsDrawer';
 import type { BellProps } from '@/features/alerts/AlertsBell';
 import { needsYou, needsYouKnown } from '@/features/alerts/model';
@@ -140,7 +140,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     );
 
   return (
-    <>
+    <ToastProvider>
       <a className="shell-skip" href="#main" inert={alertsOpen}>
         Skip to main content
       </a>
@@ -154,6 +154,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         {main}
       </main>
       {alertsOpen && <AlertsDrawer feed={feed} phone={phone} pathname={pathname} onClose={closeAlerts} onLeave={leaveAlerts} />}
-    </>
+    </ToastProvider>
   );
 }

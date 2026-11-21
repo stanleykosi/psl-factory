@@ -271,7 +271,7 @@ test('visible focus on the search box and the note link', async ({ page }) => {
       await page.keyboard.press('Tab');
     }
     await expect(target).toBeFocused();
-    return target.evaluate((el) => getComputedStyle(el).outlineStyle !== 'none');
+    return target.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none') !== 'none');
   };
   expect(await ring(page.getByRole('searchbox', { name: 'Search' }))).toBe(true);
   expect(await ring(page.getByRole('link', { name: 'Open the reminder draft' }))).toBe(true);

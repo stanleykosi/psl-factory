@@ -46,8 +46,9 @@ export function countLine(total: number | undefined): string | undefined {
   return `${total} ${total === 1 ? 'ALERT' : 'ALERTS'}`;
 }
 
-/** The work an alert points to: /work/<work_id>. */
-export const workHref = (alert: Alert) => `/work/${encodeURIComponent(alert.work_id)}`;
+/** The work an alert points to: /work/<work_id>, or the project it names (proposed `case_id`): /projects/<case_id>. */
+export const workHref = (alert: Alert & { case_id?: string }) =>
+  alert.case_id ? `/projects/${encodeURIComponent(alert.case_id)}` : `/work/${encodeURIComponent(alert.work_id)}`;
 
 /** Only `needs_you === true` waits on the person; false, absent or any other value is for information. */
 export const needsYou = (alert: AlertWithNeed) => alert.needs_you === true;
@@ -96,9 +97,10 @@ export const isNarrowed = (view: View) => Boolean(view.q || view.agent || view.u
 /** Facets set in the Filter panel (agent, unread); search is not counted. */
 export const filterCount = (view: View) => (view.agent ? 1 : 0) + (view.unread ? 1 : 0);
 
-/** Only the v7 parameters; limit is never sent, so the server default applies. */
-export function buildAlertQuery(view: View, cursor?: string): AlertQuery {
+/** The v7 parameters; `limit` only where a list asks for a page size (the Notifications page, via its footer). */
+export function buildAlertQuery(view: View, cursor?: string, limit?: AlertQuery['limit']): AlertQuery {
   const query: AlertQuery = {};
+  if (limit) query.limit = limit;
   if (view.q) query.q = view.q;
   if (view.agent) query.agent = view.agent;
   if (view.unread) query.unread = true;

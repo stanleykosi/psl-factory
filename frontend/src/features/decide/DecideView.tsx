@@ -103,6 +103,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
         item={view.item}
         result={view.result}
         label={view.label}
+        note={view.note}
         reloaded={view.reloaded}
         refreshFailed={view.refreshFailed}
         view={deco}

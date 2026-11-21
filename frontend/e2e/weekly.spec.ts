@@ -92,7 +92,7 @@ test('W-2204 approve: a double click is one send on the mock, done shows the liv
   await openItem(page, 'W-2204');
   const approve = page.getByRole('button', { name: 'Approve and send' });
   await approve.dblclick();
-  await expect(page.getByRole('status').filter({ hasText: 'Lagoon Health received v1' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Lagoon Health received v1' })).toBeVisible();
   const log = (await (await request.get(`${MOCK}/__mock/workspace-log`)).json()) as { sends: Record<string, number> };
   expect(Object.values(log.sends)).toEqual([1]);
 });

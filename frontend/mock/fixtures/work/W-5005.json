@@ -1,0 +1,79 @@
+{
+  "id": "W-5005",
+  "title": "PMO · Leadership report (November)",
+  "line": "Leadership report",
+  "reference": "LDR-0020",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Collect records",
+      "status": "done"
+    },
+    {
+      "name": "Draft the report",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-5005",
+      "kind": "do",
+      "title": "Review the November leadership report",
+      "required_role": "CEO",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Collected the milestone, risk and payment records",
+        "status": "done",
+        "source": "Project records"
+      },
+      {
+        "text": "Drafted the November report",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "You review the November leadership report. After your review it goes to the leadership group.",
+  "sample": true
+}

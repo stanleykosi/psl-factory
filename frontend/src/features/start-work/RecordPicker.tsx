@@ -2,10 +2,11 @@
 
 // SCR-04 record and records fields: a select-only combobox that opens a searchable listbox of E-LINE-OPTIONS.
 // Options are only ever those returned for this line, field and parent; an option with a disabled_reason shows
-// the reason and can't be chosen. Search waits 250 ms; "Show more" appends the next page while next_cursor is present.
+// the reason and can't be chosen. Search waits 250 ms. D-157: no paging footer; the search finds a record, and the next page
+// appends when the end of the list scrolls into view or the keyboard reaches the last option, while next_cursor is present.
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 
-import { Button, Loading, SearchField, ShowMore } from '@/components';
+import { Button, DEFAULT_PAGE_SIZE, Loading, SearchField, type PageSize } from '@/components';
 
 import { isNew, type NewValue } from './intake';
 import { allowsNew } from './showWhen';
@@ -52,12 +53,12 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
   const popupId = `${id}-popup`;
 
   const load = useCallback(
-    async (cursor?: string) => {
+    async (cursor?: string, limit: PageSize = DEFAULT_PAGE_SIZE) => {
       const seq = ++request.current;
       lastCursor.current = cursor;
       setList((current) => (cursor ? { status: 'ready', items: current.items, next: cursor, more: true } : { status: 'loading', items: [] }));
       try {
-        const page = await fetchOptions(lineKey, field.name, { parent, q: query, cursor });
+        const page = await fetchOptions(lineKey, field.name, { parent, q: query, cursor, limit });
         if (seq !== request.current) return;
         setList((current) => ({ status: 'ready', items: cursor ? [...current.items, ...page.items] : page.items, next: page.next_cursor, more: false }));
       } catch {
@@ -67,6 +68,26 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
     },
     [field.name, lineKey, parent, query],
   );
+
+  const rows = list.items;
+  const next = list.status === 'ready' && !list.more ? list.next : undefined;
+  const loadMore = useRef<() => void>(() => undefined);
+  useEffect(() => {
+    loadMore.current = () => {
+      if (next) void load(next);
+    };
+  });
+  const sentinel = useRef<HTMLLIElement>(null);
+  // The observer is made again after each page, so a list still short of its bottom keeps loading.
+  useEffect(() => {
+    const node = sentinel.current;
+    if (!open || !node || !next || typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) loadMore.current();
+    }, { root: listRef.current, rootMargin: '0px 0px 48px 0px' });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [open, next, rows.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -110,6 +131,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       const to = event.key === 'ArrowDown' ? Math.min(at + 1, items.length - 1) : at - 1;
+      if (event.key === 'ArrowDown' && at === items.length - 1) loadMore.current();
       if (to < 0) focusSearch();
       else items[to].focus();
     } else if (event.key === 'Enter' || event.key === ' ') {
@@ -175,7 +197,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
           {list.status === 'ready' && list.items.length === 0 && !allowsNew(field) && <p className="psl-hint sw-picker__empty">Nothing to choose from.</p>}
           {(list.items.length > 0 || (list.status === 'ready' && allowsNew(field))) && (
             <ul ref={listRef} className="psl-listbox" role="listbox" aria-labelledby={labelId} aria-multiselectable={multiple || undefined}>
-              {list.items.map((option) => {
+              {rows.map((option) => {
                 const selected = chosen.some((c) => c.value === option.value);
                 return (
                   <li
@@ -213,18 +235,17 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
                   {NEW_CLIENT}
                 </li>
               )}
+              {list.status === 'ready' && list.next && <li ref={sentinel} role="presentation" className="sw-picker__end" aria-hidden="true" />}
             </ul>
           )}
+          {list.status === 'ready' && list.more && <Loading className="sw-picker__loading">Loading more…</Loading>}
           {list.status === 'error' && list.items.length > 0 && (
             <p className="psl-error sw-picker__error">
-              We couldn&rsquo;t load these options.{' '}
+              We couldn&rsquo;t load more.{' '}
               <Button kind="text" size="sm" onClick={() => void load(lastCursor.current)}>
                 Try again
               </Button>
             </p>
-          )}
-          {list.status === 'ready' && list.next && (
-            <ShowMore shown={list.items.length} hasMore busy={list.more} onMore={() => void load(list.next)} />
           )}
         </div>
       )}
