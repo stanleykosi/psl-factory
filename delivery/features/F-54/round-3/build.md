@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 2255dd240938a17bc2152385c1bad3b61b47bb03
+COMMIT: 469281c2
 BUILDER: builder
 LANE: full
 
@@ -183,3 +183,11 @@ Commit 2255dd24.
 - Full vitest: 149 files, 3606 tests: 3605 passed, 1 failed (a `buttons()` expectation near line 455 of a file the run did not name; `asset-schedule.test.tsx`, the known flaky "reject with a note on W-3903", passes 37/37 alone). Targeted: demo-mock 30/30, station-items-mock 4/4, floor3d-strip 11/11, floor3d-keys, alerts-model 14/14.
 - Not run: `npm ci`, `npm run build`, `checks.sh` (they would overwrite the live server's `.next` and `node_modules`; the gate will run them). The e2e used a scratch copy under the scratchpad, ports 4961 and 4962, both stopped.
 - The mock on 4951 needs a RESTART for both changes.
+
+## D-165 SCR-03 done page, concept B (21 Nov, live design change)
+- Commits (branch fe-paging-consistency-table-footer): 9939b204 (page, tests, e2e), 469281c2 (class rename so the decide panel styles do not reach the new panel). Pushed.
+- What changed: `DoneView` in frontend/src/features/decide/DecideStates.tsx is the banner, then a record column (shared facts strip, summary box, Paid hint) beside a 380px "WHAT HAPPENS NEXT" panel (agent next-step band with the working pose, "Next decision · 1 of N", "Open the work item") and a "STILL WAITING ON YOU · N" box. Phones stack banner, panel, facts, summary, still waiting through `display: contents` and `order` in decide.css; the buttons are no longer a fixed bottom bar. The decided note now travels to the done view (`note` in useDecision's done state). `nextDecision()` in presentation.ts is gone: the next decision now comes from the My work needs_me read, not the `queue.next` proposal.
+- Data I had to choose: PROJECT uses the decide_presentation `subject` (the work item has no project field; row hidden without it). "Next decision" links to the work item `/work/<id>` because list rows carry no task id. N counts the decision rows of the first 50 needs_me rows. Pose images are `/agents/<agent>-working.png` (board shows the working pose), not the old chidi-done. The Paid sentence is always cut from the next step and shown once under the summary on approve (desktop and phone).
+- Not followed: the board's "Next step" blue band uses 64px art; I used the existing public/agents poses scaled to 64px (no new art).
+- Tests: tsc, eslint --quiet, full vitest 149 files / 3606 tests pass (before the final rename; decide.test.tsx and decide-board.test.tsx, 71 tests, rerun after it). e2e on private ports 4961/4962 from a scratch copy (deleted): decide.spec.ts "approve done view", and the new desktop and phone "summary and next panel" tests, 3 of 3 pass; screenshots at 1440 and 390 looked at. checks.sh, npm ci and a build in the worktree were not run.
+- Mock: no mock change, no restart needed (the Next dev server hot-reloads).
