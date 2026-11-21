@@ -334,7 +334,7 @@ test.describe('desktop rules', () => {
       await page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: new RegExp(`^${label}`) }).click();
       await expect(page).toHaveURL(new RegExp(`${path}$`));
       await expect(page.getByRole('heading', { level: 2, name: `${label} comes next.` })).toBeVisible();
-      await expect(page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: label, exact: true })).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: new RegExp(`^${label}`) })).toHaveAttribute('aria-selected', 'true'); // Roles keeps the missing-roles count the Rules read gave the frame (D-170)
       await expect(page).toHaveTitle(`${label} · Setup · PSL Factory`);
     }
     expect(seen).toEqual([]);
