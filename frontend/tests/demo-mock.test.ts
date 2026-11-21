@@ -318,7 +318,12 @@ describe('D-159: who decides a demo line the PMO Lead started', () => {
 describe('D-164: a won demo RFP creates a project', () => {
   const HOUR = 60 * 60 * 1000;
   const PERSONAS_WITH = ['ceo', 'pmo_lead', 'pm', 'finance_lead'];
-  const noAlertExtras = (alerts: any[]) => alerts.map(({ case_id: _case, ...rest }: any) => rest);
+  const noAlertExtras = (alerts: any[]) =>
+    alerts.map((alert: any) => {
+      const rest = { ...alert };
+      delete rest.case_id;
+      return rest;
+    });
 
   /** Logs an RFP as the PMO Lead in the demo: one proof upload, then the start. */
   async function startRfp(intake: Record<string, unknown> = {}, cookie = 'psl_mock_demo=on; psl_mock_speed=fast') {

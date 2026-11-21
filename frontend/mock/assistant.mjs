@@ -414,7 +414,7 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
       const validate = ops[operationId].replies[String(reply[0])];
       // D-161: the reply as v7 knows it: no `attachments`, and the words an image-only message does not have.
       const asV7 = operationId === 'E-CONVERSATION' && reply[0] === 200
-        ? { ...reply[1], messages: reply[1].messages.map(({ attachments, ...m }) => (m.text === '' ? { ...m, text: 'x' } : m)) }
+        ? { ...reply[1], messages: reply[1].messages.map((full) => { const m = { ...full }; delete m.attachments; return m.text === '' ? { ...m, text: 'x' } : m; }) }
         : reply[1];
       if (validate && !validate(asV7)) return [500, { code: 'mock_invalid_reply', message: `The mock's ${operationId} ${reply[0]} reply does not match v7.` }];
       return reply;

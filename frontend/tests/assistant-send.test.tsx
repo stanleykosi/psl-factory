@@ -16,7 +16,7 @@ import { json, startBridge, useNodeUploads } from './assistant-bridge';
 
 configure({ asyncUtilTimeout: 5000 });
 
-const nav = vi.hoisted(() => ({ pathname: '/assistant', go: (_to: string) => {} }));
+const nav = vi.hoisted(() => ({ pathname: '/assistant', go: vi.fn() as (to: string) => void }));
 vi.mock('next/navigation', () => ({
   usePathname: () => nav.pathname,
   useRouter: () => ({ push: (to: string) => nav.go(to), replace: (to: string) => nav.go(to), prefetch: vi.fn() }),
