@@ -136,7 +136,8 @@
 .psl-option { min-height: 40px; padding: 8px 12px 8px 36px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: pointer; }
 .psl-option small { font-size: 12px; font-weight: 400; color: var(--ink-muted); }
 .psl-option:hover, .psl-option.is-hover { background: var(--steel); }
-.psl-option.is-active { background: var(--steel); box-shadow: inset 2px 0 0 var(--focus), inset -2px 0 0 var(--focus), inset 0 2px 0 var(--focus), inset 0 -2px 0 var(--focus); }
+/* D-156: the keyboard-active option shows the fill only; the selected one adds the bold text and tick. No blue ring. */
+.psl-option.is-active { background: var(--steel); }
 .psl-option[aria-selected="true"] { font-weight: 600; }
 .psl-option[aria-selected="true"]::before { content: ""; position: absolute; left: 12px; top: 50%; width: 14px; height: 14px; margin-top: -7px;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2 7.5l3 3L12 3.5' fill='none' stroke='%231F2427' stroke-width='2.2'/%3E%3C/svg%3E") center/14px no-repeat; }
@@ -152,7 +153,7 @@
 .psl-menuitem strong { font-weight: 600; font-size: 14px; }
 .psl-menuitem small { font-size: 12px; color: var(--ink-muted); }
 .psl-menuitem:hover, .psl-menuitem.is-hover { background: var(--steel); }
-.psl-menuitem.is-active { background: var(--steel); box-shadow: inset 3px 0 0 var(--focus); }
+.psl-menuitem.is-active { background: var(--steel); }
 .psl-menuitem--danger strong, .psl .psl-menuitem--danger { color: var(--signal-ink); }
 .psl-menuitem--agent { flex-direction: row; align-items: center; gap: 10px; }
 .psl-menuitem[aria-disabled="true"] { cursor: not-allowed; background: none; }
