@@ -41,3 +41,20 @@ Task: FE-PAGING-CONSISTENCY (coordinator-defined, at the design engineer's reque
 
 ## Out of scope
 Numbered pages. Any change to data, contract, authority or wording beyond the paging footer.
+
+13. A sent message shows at once and the page never reloads for it (D-160, design engineer, 21 Nov). Best practice: optimistic UI with reconciliation.
+   - On send, in a thread or from the home, the person's message (text, @/# chips, image thumbnails) is in the thread at once with a muted "Sending…" under it, the composer empties, and the agent's working step shows. No new colours.
+   - The send button is busy from the press until the agent's reply arrives (the conversation leaves `working`), not only until the POST returns. Typing the next message is allowed; pressing Send waits. One press is still one request.
+   - After the POST the conversation is read again and the optimistic message is replaced by the server's copy in place: no skeleton, no flash, no scroll jump, the person's text once. The loading skeleton is never shown for a conversation the person just sent into.
+   - First message from the home: the message shows in place of the hello on the press; /assistant/<id> opens with the message and the working step already there (no skeleton), then reconciles.
+   - The conversation list changes in place (no list skeleton on refresh).
+   - Failure keeps the useSend rules: a refused send removes the message, puts text, chips and images back in the composer and shows the error; an uncertain send found on the re-read stays; one not found shows "Try again" with the text restored. Nothing is resent automatically.
+   - Verify: unit tests (tests/assistant-send.test.tsx) for each point; e2e `D-160` in e2e/assistant.spec.ts measures that no `.psl-skel` appears and the document is not reloaded.
+
+14. Attach images in the composer (D-161, design engineer, 21 Nov). Mock overlay and proposal only: the v7 contract has no attachments.
+   - A paperclip icon button, the same size and style as the microphone button, accessible name "Attach images", opens the image chooser (`image/*`, several files; phones offer the camera too). It is on phones as well.
+   - Chosen images are thumbnails in the composer with a remove (×) each, a busy state while uploading, and an error state per image with the server's message word for word. Send is disabled while any image is uploading or refused; it works with images and no text.
+   - The person's sent message shows the images as thumbnails (local previews until the server's copy arrives); clicking one opens the full image in a new tab. The mock conversation returns them so they survive a reload.
+   - Proposal (frontend/mock/proposals/assistant-attach.json, delivery/BACKEND-HANDOFF.md G-SCR05-ATTACH): `POST /api/v1/assistant/uploads` (multipart, one image) answers `{ file_id, name, size, content_type }`; optional `attachments: [{ file_id }]` on the E-MESSAGE body and on the person's message in E-CONVERSATION. Mock limits: 422 "Images up to 10 MB." over 10 MB; 422 "Attach an image file." for a non-image.
+   - Design system: the ChatMessage README (Composer) gains the attach button and the thumbnail states; CSS in src/components/components.css, tokens only.
+   - Verify: unit tests (tests/assistant-send.test.tsx, tests/components/assistant-components.test.tsx, tests/assistant-mock.test.ts) and e2e `D-161` in e2e/assistant.spec.ts (needs the mock with the upload, i.e. restarted).

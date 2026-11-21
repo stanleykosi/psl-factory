@@ -148,6 +148,17 @@ Screens: SCR-05 default, working, thread, draft-started (`/assistant`, `/assista
 - **Edit draft** (G-SCR05-2), **mentions echo and milestone/meeting kinds** (G-SCR05-4), **an alert when a working conversation ends** (G-SCR05-7: the page says "You can leave; you'll be alerted"), backend-owned agent copy and status words: see the gap file.
 - **Speech input** stays held by D-SPEECH-INPUT: the microphone is drawn but does nothing.
 
+### G-SCR05-ATTACH: images in the assistant (D-161, F-54, 21 Nov; proposal, mock only)
+
+The composer has a paperclip ("Attach images"). The v7 contract has no attachments, so the mock proposes (overlay `frontend/mock/proposals/assistant-attach.json`, code in `frontend/mock/assistant.mjs`): `POST /api/v1/assistant/uploads` (multipart, one `file` part, CSRF) answering `{file_id, name, size, content_type}`; `GET /api/v1/assistant/uploads/{file_id}` for the thumbnail and "open in a new tab"; optional `attachments: [{file_id}]` on the E-MESSAGE body (text may be empty then) and on the person's message in E-CONVERSATION. Each image is uploaded when chosen, one request each, and is never resent automatically. Questions for the backend:
+- **Endpoint shape**: is a separate upload then `attachments` on the message right, or should E-MESSAGE take the files directly? Should it reuse E-EVIDENCE-UPLOAD's base64 body instead of multipart?
+- **Limits**: size (the mock says 10 MB, 422 "Images up to 10 MB."), allowed types (the mock: anything `image/*`; 422 "Attach an image file."), how many per message, and the words of every refusal (the page shows the server's message word for word).
+- **Storage and retention**: where the files live, how long, and whether they join the conversation's audit history.
+- **Who may see them**: only the person and the agent run? Do they follow the conversation's record access, and does an agent read pixels at all (which provider)?
+- **Virus scan / content checks**: before the file is usable, and what the person sees while it runs (the page has an "uploading" state only).
+- **Mentions echo**: E-CONVERSATION returns no `mentions` on a person's message, so the @/# chips shown under a just-sent message are gone once the server's copy replaces it. Return them (G-SCR05-4)?
+- **Empty text**: the page sends `text: ""` with images only; v7 has `minLength: 1`.
+
 ## Added during F-26: the project Money tab (17 Nov)
 
 Screen: SCR-12 (`/projects/{caseId}/money`), read-only, on the contract mock (`frontend/mock/money.mjs`; D-PROJECT-TAB-ROWS is still proposed; nothing released). Gap ids G-SCR12-1..4 are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
