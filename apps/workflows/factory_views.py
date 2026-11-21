@@ -688,18 +688,23 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
 
 @login_required
 def index(request):
+    # Retain legacy filtered workspace links while making the root a work-first surface.
+    if any(k in request.GET for k in ['kind','area','tenant']):
+        from apps.core.workbench_views import home
+        return home(request)
+    response=render(request,'factory/queue.html',queue_context(request.user,request.GET))
+    response['Cache-Control']='no-store';return response
+
+
+def queue_context(actor, values, *, scope=None):
     from time import monotonic
     from django.core.paginator import Paginator
     from apps.core.read_budget import ReadLimit, limit_queries
     from apps.core.read_observation import observation_scope
 
-    # Retain legacy filtered workspace links while making the root a work-first surface.
-    if any(k in request.GET for k in ['kind','area','tenant']):
-        from apps.core.workbench_views import home
-        return home(request)
-    params=work_queue_params(request.GET)
+    params=work_queue_params(values)
     queue,q,line=params['queue'],params['q'],params.get('line','')
-    query=visible(request.user)
+    query=visible(actor) if scope is None else scope
     known_lines = set(query.order_by().values_list('definition', flat=True).distinct())
     line_choices = sorted((key, value['title']) for key, value in DEFINITIONS.items() if key in known_lines)
     if line:query=query.filter(definition=line)
@@ -707,15 +712,15 @@ def index(request):
     if queue=='verified':query=query.filter(status='verified')
     elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
-    elif queue=='mine':query=query.filter(actor=request.user)
+    elif queue=='mine':query=query.filter(actor=actor)
     elif queue=='waiting':query=query.filter(status__in=['waiting','waiting_effect'])
     else:query=query.exclude(status__in=['verified','cancelled'])
-    candidates=Paginator(query.distinct().order_by('-updated_at','-pk'), 8).get_page(request.GET.get('page'))
+    candidates=Paginator(query.distinct().order_by('-updated_at','-pk'), 8).get_page(values.get('page'))
     items=[];deferred=[];evaluated=0;deadline=monotonic()+9
     for work in candidates:
         try:
             with observation_scope(), limit_queries(1400, deadline=deadline):
-                row=presentation(request.user,work)
+                row=presentation(actor,work)
         except ReadLimit:
             deferred.append(work)
             continue
@@ -728,12 +733,11 @@ def index(request):
         if queue=='unassigned' and row['owner']!='Unassigned':continue
         items.append(row)
     from apps.finance.payroll_questions import queue_cards as payroll_question_cards
-    questions=payroll_question_cards(request.user,queue,q,line)
-    response=render(request,'factory/queue.html',{'rows':items,'candidates':candidates,'deferred':deferred,'payroll_questions':questions,
+    questions=payroll_question_cards(actor,queue,q,line)
+    return {'rows':items,'candidates':candidates,'deferred':deferred,'payroll_questions':questions,
         'queue':queue,'queues':QUEUES,'q':q,'line':line,'line_choices':line_choices,'work_query':'?'+urlencode(params),
         'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
-        'evaluated':evaluated,'limited':bool(deferred),'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
-    response['Cache-Control']='no-store';return response
+        'evaluated':evaluated,'limited':bool(deferred),'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)}
 
 def assistant_origin(request, form, envelope):
     turn_id = request.GET.get('assistant_turn')
@@ -825,6 +829,17 @@ class StartForm(StartWithBackground):
             if not values.get(field):self.add_error(field,'Select the exact source for this intake mode.')
         return values
 
+
+def start_invoice(actor, values):
+    case_id, key, reference, revision = (values['case'].pk, values['key'], values['reference'], values['revision'])
+    if values['mode']=='existing-preparation/v1':
+        from .factory_invoice_intake import start as start_preparation
+
+        return start_preparation(actor,case_id,key,values['preparation'].pk,reference,values['due_date'],revision,
+                                 values['invoice'].pk if values['invoice'] else None)
+    return d.start(actor,case_id,key,values['coverage'].pk,values['handoff'].pk,reference,revision)
+
+
 @login_required
 def create(request):
     envelope=request.POST.get('definition',request.GET.get('definition','pmo-finance/v1'))
@@ -909,13 +924,7 @@ def create(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            def start_native():
-                if v['mode']=='existing-preparation/v1':
-                    from .factory_invoice_intake import start as start_preparation
-                    return start_preparation(request.user,v['case'].pk,v['key'],v['preparation'].pk,v['reference'],v['due_date'],v['revision'],v['invoice'].pk if v['invoice'] else None)
-                return d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
-
-            return submit_start(request, v, envelope, start_native)
+            return submit_start(request, v, envelope, lambda: start_invoice(request.user, v))
         except ValidationError as exc:form.add_error(None,str(exc))
     response = assistant_origin(request, form, envelope)
     if response is not None:
@@ -1587,27 +1596,28 @@ class CommercialStartForm(StartWithBackground):
                 except (ValidationError,PermissionDenied):pass
             self.fields['predecessor_id'].initial=CommercialCase.objects.filter(case=selected).values_list('current_id',flat=True).first()
 
-def create_commercial(request):
-    from django.db import transaction
+def start_commercial(actor, values):
     from apps.pmo import commercial_intake
     from .factory_commercial import start
+    from adapters.commercial_intake import FIELDS
+
+    sources = {key: values[key].pk if values[key] else None for key in FIELDS}
+    head = commercial_intake.capture(actor,values['case'].pk,sources,values['predecessor'],values['revision'])
+    work = start(actor,values['case'].pk,values['key'],head.pk,values['reference'])
+    if values['assistant_turn'] and work.request != {'intake': head.pk, 'reference': values['reference']}:
+        raise ValidationError('Commercial work already exists with different inputs. Open it to record a correction.')
+    return work
+
+
+def create_commercial(request):
     case_id=request.POST.get('case') if request.method=='POST' else request.GET.get('case')
     try:form=CommercialStartForm(request.user,request.POST if request.method=='POST' else None,case_id)
     except (ValueError,ValidationError):
         form=CommercialStartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available project.')
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
-        from adapters.commercial_intake import FIELDS
-        values={key:v[key].pk if v[key] else None for key in FIELDS}
         try:
-            def start_native():
-                head=commercial_intake.capture(request.user,v['case'].pk,values,v['predecessor'],v['revision'])
-                work=start(request.user,v['case'].pk,v['key'],head.pk,v['reference'])
-                if v['assistant_turn'] and work.request != {'intake': head.pk, 'reference': v['reference']}:
-                    raise ValidationError('Commercial work already exists with different inputs. Open it to record a correction.')
-                return work
-
-            return submit_start(request, v, 'commercial/v1', start_native)
+            return submit_start(request, v, 'commercial/v1', lambda: start_commercial(request.user, v))
         except ValidationError as exc:form.add_error(None,'; '.join(exc.messages))
     response = assistant_origin(request, form, 'commercial/v1')
     if response is not None:

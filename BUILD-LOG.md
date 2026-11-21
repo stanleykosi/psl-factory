@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Consolidated the Next.js cutover interface into a Django-owned API with 47 operations. Built native intake adapters for all 25 factory work definitions and mapped all 262 design states to their current API and Django routes. Connected exact Finance reviews, case and project reads, reviewed bid packs and minutes, department chats and drafts, and the eight file agents to existing services. The combined Railway gate passed 12 checks and both preservation probes. The screen map tracks outstanding typed detail and commands separately from the completed Django walkthroughs.
+
 21 November 2026. Completed all 262 scoped design walkthroughs. Candidate 292 passed five commercial PostgreSQL tests and both read-only preservation probes. After the paired rollout, Trial saw the exact saved Return reason on work 239 and confirmed there was no submission or receipt. The ledger audit found zero open or unseen states. Actual owner decisions stayed deferred.
 
 21 November 2026. Trial completed seven scoped browser journeys in one session, bringing the ledger to 261. Read back both invoice reviews, corrected Accounting source, Payroll replacement receipt and staff match Return, corrected closure, and both verified asset schedules. Found that the bid work page omitted the exact controlled pack Return rationale. Prepared the authorized readback and isolated PostgreSQL gate for the last row.

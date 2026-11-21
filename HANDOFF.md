@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Frontend API checkpoint · 21 November 2026
+
+Live-source contract at `/api/v1/openapi.json`. Use `manage.py export_factory_api` for the specification and `manage.py export_factory_api --screen-map` for the verified 262-state cutover map. Read [frontend API](docs/design/frontend-api.md) before connecting the existing Next.js prototype. It still builds its mock types from the design v7 snapshot. Keep current Django routes during the feature-by-feature cutover. No actual owner rules, provider settings or grants were added.
+
+The new contract covers 47 operations across 41 paths. Start controllers bind 25 native work definitions. The API includes scoped reads, exact Finance tasks, domain reviews and recovery, bid packs and outcomes, minutes confirmation, the three department chat personas and reviewed work drafts, and all eight file-agent roles. Route-level API coverage and the earlier 262 browser walkthroughs represent different verification scope. The remaining typed domain details and commands are tracked per screen group.
+
+Exact gate `bc5071fe-3ed7-4bd5-aca5-1b5380066d67` passed 12 tests, Django, schema drift, both preservation probes and the complete map audit. Verified source overlays are pinned in `.runtime/design-api-v1c-checks-overlays.sha256`. Matching web `a556395e-c564-4fb0-9458-c0a6748d3df3` and worker `7bf3e941-0e47-44b7-8e60-30f4e582df2c` are active. The existing Trial session read the exact saved reason on both work 239 Django and API pages. Next cutover work should use the live contract and validate one connected domain group at a time.
+
 ## Completed checkpoint · 21 November 2026
 
 All **262 scoped design walkthroughs** are complete on Railway with synthetic data, zero open and zero unseen. Use the acceptance ledger as the functional baseline. Keep actual HOD owners and policies deferred. Preserve 122 process IDs and 13 families, the 108 PMO/Finance release and existing 14 BaaS IDs and behavior. Preserve the test accounts and original evidence. Any further pilot work remains on the build branch until an explicit main merge is approved.

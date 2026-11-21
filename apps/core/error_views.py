@@ -10,6 +10,10 @@ def forbidden(request, exception):
 
 
 def missing(request, exception):
+    if request.path_info.startswith('/api/v1/'):
+        from .factory_api.http import missing as missing_record
+
+        return missing_record()
     response = defaults.page_not_found(request, exception, template_name='404.html')
     response['Cache-Control'] = 'no-store'
     return response
@@ -22,6 +26,10 @@ def failed(request):
 
 
 def csrf_failure(request, reason=''):
+    if request.path_info.startswith('/api/v1/'):
+        from .factory_api.http import error
+
+        return error(403, 'csrf_failed', 'Refresh your session and try again.')
     response = render(request, 'csrf_failure.html', status=403)
     response['Cache-Control'] = 'no-store'
     return response

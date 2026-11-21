@@ -23,7 +23,7 @@ from apps.finance import ppe_views
 from apps.finance import schedule_views
 from apps.finance import bu_views
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import include, path
 from .health import health
 from apps.agents import upload_views
 from apps.policy import delegation_views
@@ -67,6 +67,7 @@ handler404 = 'apps.core.error_views.missing'
 handler500 = 'apps.core.error_views.failed'
 
 urlpatterns = [
+    path('api/v1/', include('apps.core.factory_api.urls')),
     path('cases/<uuid:case_id>/costing/proposals/<int:pk>/', costing_proposal_views.detail, name='costing_proposal'),
     path('health/', health, name='health'),
     path('cases/<uuid:case_id>/files/', upload_views.workbench, name='case_uploads'),

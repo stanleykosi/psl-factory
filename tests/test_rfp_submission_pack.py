@@ -62,6 +62,7 @@ class RFPSubmissionPackTests(TestCase):
         self.assertFalse(RFPSubmissionArtifact.objects.exists())
         self.assertEqual(current_version(case, legacy.pk), legacy)
         decision_url = reverse('factory_invoice_decision', args=[work.pk])
+        api_url = f'/api/v1/work/{work.pk}/bid-pack'
 
         def command(action, **fields):
             work.refresh_from_db()
@@ -155,8 +156,13 @@ class RFPSubmissionPackTests(TestCase):
         returned_page = self.client.get(decision_url)
         self.assertContains(returned_page, 'Returned for changes · Pack draft 1 · Document version 2')
         self.assertContains(returned_page, return_note)
+        api = self.client.get(api_url)
+        self.assertEqual(api.status_code, 200, api.content[:500])
+        self.assertEqual(api.json()['decision']['note'], return_note)
+        self.assertEqual(api.json()['document_version_id'], first_version.pk)
         read_grant.update(active=False)
         self.assertNotContains(self.client.get(decision_url), return_note)
+        self.assertEqual(self.client.get(api_url).status_code, 403)
         read_grant.update(active=True)
         other_reader = get_user_model().objects.create_user('sample-pack-document-reader')
         Grant.objects.bulk_create(Grant(user=other_reader, case=case, action=action)
@@ -165,6 +171,7 @@ class RFPSubmissionPackTests(TestCase):
         other_page = self.client.get(decision_url)
         self.assertContains(other_page, 'Returned for changes · Pack draft 1 · Document version 2')
         self.assertNotContains(other_page, return_note)
+        self.assertIsNone(self.client.get(api_url).json()['decision']['note'])
         self.assertFalse(Publication.objects.exists())
 
         self.client.force_login(maker)
@@ -172,8 +179,15 @@ class RFPSubmissionPackTests(TestCase):
         self.assertContains(self.client.get(reverse('factory_detail', args=[work.pk])), return_note)
         revised = dict(declared, **{'pack-base': pack.pk, 'pack-file_size_rule': 'less_than', 'pack-file_size_bytes': 20_000_000,
                                     'pack-cover_note': 'Revised cover note.'})
-        self.assertEqual(command('submission_pack', **revised).status_code, 302)
+        work.refresh_from_db()
+        saved = self.client.post(api_url, {'expected_revision': work.revision, 'case_revision': rev(case),
+            'response_id': response.pk, 'base_pack_id': pack.pk, 'file_extension': 'PDF', 'file_count': 1,
+            'file_size_rule': 'less_than', 'file_size_bytes': 20_000_000, 'cover_note': 'Revised cover note.'},
+            content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content[:500])
         successor = packs.current(response)
+        self.assertEqual(saved.json()['pack_id'], successor.pk)
+        self.assertIsNone(self.client.get(api_url).json()['decision'])
         self.assertEqual((successor.number, successor.supersedes_id), (2, pack.pk))
         self.assertEqual(pack.cover_note, first_note)
         self.assertContains(command('submission_pack', **revised), 'pack changed')

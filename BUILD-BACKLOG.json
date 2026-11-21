@@ -1,4 +1,20 @@
 {
+  "frontend_api_v1_20261121": {
+    "status": "hosted_postgresql_and_browser_smoke_passed",
+    "contract": "/api/v1/openapi.json",
+    "operations": 47,
+    "paths": 41,
+    "intake_definitions": 25,
+    "screen_map": "contracts/factory-api-screen-map.json",
+    "mapped_states": 262,
+    "screen_groups": 59,
+    "checks": "bc5071fe-3ed7-4bd5-aca5-1b5380066d67",
+    "tests": {"finance":2,"project":4,"shared":5,"commercial":1,"exit":0,"preservation_probes":2},
+    "preview": {"web":"a556395e-c564-4fb0-9458-c0a6748d3df3","worker":"7bf3e941-0e47-44b7-8e60-30f4e582df2c","migrations":false,"browser":["live_openapi_47_operations","authorized_session_bootstrap","django_work_queue","exact_bid_return_api_and_django_parity"]},
+    "django_routes_retained": true,
+    "hod_decisions_deferred": true,
+    "next": "Connect the Next.js prototype feature by feature using the live contract. Complete remaining domain detail and scoped commands in the screen map before each screen moves off Django."
+  },
   "design_consolidation_20261116": {
     "batch_acceptance":{"status":"completed_postgresql_candidate_201_failed","plan":"docs/design/batch-acceptance.md","runner":"scripts/design_acceptance_batch.py","checks":"c63026cf-d5e9-4cb7-8e4e-53cb5bc65c52","frozen_test_modules":36,"final_result":{"ran":487,"seconds":7478.882,"failures":4,"errors":3,"exit":1},"groups":["commercial","project_delivery","finance_reporting","shared"],"inventory_audit_passed":true,"hod_decisions_deferred":true},
     "batch_candidate_202":{"status":"focused_gate_returned_one_test_order_error","checks":"a228548f-2306-4719-bc08-349bb2a4a7d7","gate_result":{"ran":22,"seconds":982.773,"passes":21,"errors":1,"exit":1,"baseline_seven_passed":true,"error":"Accounting test attempted drafting readback before output approval"},"test_modules":40,"local_discovery_only":{"commercial":106,"project_delivery":168,"finance_reporting":136,"shared":108},"parallel_groups":2,"synthetic_starting_scenarios":14,"unapplied_preview_migration":"pmo.0073_archive_copy_lease_operation","implemented":["All seven baseline corrections including linked-note policy check in fixed-asset verification","Current archive copy versus receipt lookup status","Exact native bid costing read and approval history","Finance workflow progress based on current claims and original delivery receipts","Unit confirmation and same-file successor retaining the held submission","Guarded Railway test grouping and additive browser sample pack"],"engineering_remaining":["Versioned bid adjustments and approval restart UI","Security estimate request release and receipt","Additional unit scales and their validated conversion contracts","Exact deployment and grouped in-app journeys"],"owner_decisions_deferred":["Allowed adjustment authorities and limits","Actual Security estimate route and contact","Permitted Finance source scales and conversion authority"]},

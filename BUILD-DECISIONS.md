@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. The future frontend uses the live `/api/v1` factory contract generated from the mounted Django API. The prototype v7 mock stays available as a design reference. The live API reuses native work and project projections, request forms and domain services. It uses the existing session and staff revocation checks, CSRF on writes, current revisions, exact evidence pins and record grants. Granular commands retain independent approval and receipt verification. The cutover map identifies every design state and its current API and Django entry points.
+
 21 November 2026. A controlled bid pack displays the recorded decision only when it binds to the current response, exact pack draft, current document version and matching document digest. Current controlled-document readers can see the status. The pack author and the recorded reviewer can also see the reason while their read access is current. A successor draft starts its own review. The readback uses the existing decision and leaves submission and receipt controls independent.
 
 21 November 2026. Payroll recipient readback and receipt recording share the same scoped exact checks. The read uses a read-only native path and shows the current aggregate and the recipient’s own earlier withdrawal metadata. The separate receipt command still requires current authority. A corrected trial balance keeps the original Return and opens one new same-period review. An optional private asset-date file binds to the exact recorded dates and leaves the later Finance decision separate.

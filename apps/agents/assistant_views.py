@@ -32,6 +32,18 @@ def owned_conversations(actor):
     return AssistantConversation.objects.filter(actor=actor).filter(scope).select_related('case')
 
 
+def open_conversation(actor, persona, case, key):
+    if persona not in assistant.PERSONAS or not assistant.cases_for(actor, persona).filter(pk=case.pk).exists():
+        raise PermissionDenied
+    conversation, _ = AssistantConversation.objects.get_or_create(pk=key, defaults={
+        'actor': actor, 'case': case, 'persona': persona,
+    })
+    assistant.check(actor, conversation)
+    if conversation.persona != persona or conversation.case_id != case.pk:
+        raise ValidationError('IDEMPOTENCY_CONFLICT: Open a new conversation for the selected project or agent.')
+    return conversation
+
+
 class ConversationForm(forms.Form):
     workspace = forms.ModelChoiceField(queryset=None)
     key = forms.UUIDField(widget=forms.HiddenInput)
@@ -81,11 +93,9 @@ def start(request, persona):
                             request.POST if request.method == 'POST' else None, workspace=workspace)
     if request.method == 'POST' and form.is_valid():
         values = form.cleaned_data
-        conversation, _ = AssistantConversation.objects.get_or_create(pk=values['key'], defaults={
-            'actor': request.user, 'case': values['workspace'], 'persona': persona,
-        })
-        assistant.check(request.user, conversation)
-        if conversation.persona != persona or conversation.case_id != values['workspace'].pk:
+        try:
+            conversation = open_conversation(request.user, persona, values['workspace'], values['key'])
+        except ValidationError:
             form.add_error(None, 'This request has already been used. Open a new conversation.')
         else:
             return redirect('assistant_thread', conversation_id=conversation.pk)
@@ -109,6 +119,17 @@ def thread(request, conversation_id):
             return redirect('assistant_thread', conversation_id=conversation.pk)
         except ValidationError as exc:
             form.add_error(None, exc)
+    turns = current_turns(request.user, conversation, sources, next_work, payroll_only)
+    return render(request, 'design/assistant_thread.html', {
+        'case': conversation.case, 'conversation': conversation, 'persona': assistant.PERSONAS[conversation.persona],
+        'turns': turns, 'form': form,
+        'earlier': owned_conversations(request.user).exclude(pk=conversation.pk).order_by('-updated_at', '-pk')[:12],
+        'waiting': any(turn.status in {'queued', 'running'} for turn in turns),
+    })
+
+
+def current_turns(actor, conversation, sources, next_work, payroll_only):
+    """Apply the same current-source fence for HTML and API readback."""
     saved = AssistantDraftVersion.objects.filter(turn_id=OuterRef('pk')).order_by('-number')
     history = conversation.turns.all()
     if payroll_only:
@@ -124,7 +145,7 @@ def thread(request, conversation_id):
     if started_ids:
         from apps.workflows.factory_views import visible
 
-        visible_work = set(visible(request.user).filter(pk__in=started_ids).values_list('pk', flat=True))
+        visible_work = set(visible(actor).filter(pk__in=started_ids).values_list('pk', flat=True))
     for turn in turns:
         turn.stale = False
         if turn.context_hash:
@@ -158,12 +179,7 @@ def thread(request, conversation_id):
             turn.next_url = reverse('factory_create') + '?' + urlencode({
                 'definition': turn.next_work, 'case': conversation.case_id, 'assistant_turn': turn.pk,
             })
-    return render(request, 'design/assistant_thread.html', {
-        'case': conversation.case, 'conversation': conversation, 'persona': assistant.PERSONAS[conversation.persona],
-        'turns': turns, 'form': form,
-        'earlier': owned_conversations(request.user).exclude(pk=conversation.pk).order_by('-updated_at', '-pk')[:12],
-        'waiting': any(turn.status in {'queued', 'running'} for turn in turns),
-    })
+    return turns
 
 
 @login_required

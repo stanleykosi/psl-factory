@@ -1,0 +1,129 @@
+"""Typed intake over exact records owned by each factory line."""
+from datetime import date
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.utils import timezone
+
+from apps.identity.services import require, visible_cases
+from apps.finance.schedules import DETAIL
+from apps.workflows import (
+    factory, factory_accounting, factory_archive, factory_bu, factory_change, factory_closure, factory_commercial,
+    factory_delivery, factory_emergency, factory_engagement, factory_escalation, factory_forecast,
+    factory_forecast_sources, factory_go_live, factory_handover, factory_hypercare, factory_invoice_intake,
+    factory_issues, factory_leadership, factory_ledger, factory_minutes, factory_payroll, factory_planning,
+    factory_ppe, factory_progress, factory_reporting, factory_rfp, factory_schedules, factory_views,
+)
+
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
+from .work import WORK_RESULT, result
+
+
+REF = {**TEXT, 'maxLength': 160}
+KEY = {**TEXT, 'maxLength': 100, 'pattern': '^[ -~]+$'}
+NID = nullable(ID)
+IDS = {**array(ID, limit=100), 'uniqueItems': True}
+
+
+def ids(names):
+    return obj(dict.fromkeys(names, NID))
+
+
+def invoice_start(actor, *, mode, **values):
+    if mode == 'preparation':
+        if values['due_date'] is not None:
+            values['due_date'] = date.fromisoformat(values['due_date'])
+        return factory_invoice_intake.start(actor, **values)
+    return factory.start(actor, **values)
+
+
+RFP_PAYLOAD = obj({
+    'response_evidence': NID, 'public_terms': NID, 'lessons': NID,
+    'sources': ids(('requirements', 'plan', 'costing')),
+    'matrix': array(obj({'key': {**TEXT, 'maxLength': 100}, 'evidence_id': ID,
+                         'response': {**TEXT, 'maxLength': 4000},
+                         'disposition': choice('addressed', 'clarification', 'out_of_scope')}), limit=100),
+})
+
+STARTS = {
+    'pmo-issues/v1': (factory_issues.start, obj({'issue_id': ID})),
+    'pmo-leadership-report/v1': (factory_leadership.start, obj({'inputs': factory_leadership.INPUT})),
+    'finance-ledger/v1': (factory_ledger.start, obj({'evidence_id': ID, 'predecessor_id': NID})),
+    'finance-bu/v1': (factory_bu.start, obj({'inputs': factory_bu.INPUT})),
+    'engagement/v1': (factory_engagement.start, obj({'capture_id': ID})),
+    'pmo-minutes/v1': (factory_minutes.start, obj({'data': factory_minutes.SELECTION})),
+    'pmo-escalation/v1': (factory_escalation.start, obj({'request_id': ID, 'template_id': NID})),
+    'pmo-weekly-report/v1': (factory_reporting.start, obj({'inputs': factory_reporting.INPUT})),
+    'finance-schedules/v1': (factory_schedules.start, obj({
+        'kind': choice('income', 'inventory'), 'parent_id': NID, 'evidence_id': ID, 'payload': nullable(DETAIL),
+    })),
+    'finance-ppe/v1': (factory_ppe.start, obj({'register_id': ID, 'prior_id': NID, 'ledger_id': NID})),
+    'finance-forecast/v1': (factory_forecast.start, obj({'value': obj({
+        'protocol': {'const': factory_forecast_sources.PROTOCOL}, 'scenario_id': ID, 'as_of': TEXT,
+        'months': array(TEXT, limit=120), 'source_ids': {**array(ID, limit=4000), 'uniqueItems': True},
+        'template_id': NID, 'audience': choice('internal', 'management', 'group'),
+    })})),
+    'finance-payroll/v1': (factory_payroll.start, obj({'request_id': ID, 'inputs': factory_payroll.INPUT})),
+    'pmo-emergency/v1': (factory_emergency.start, obj({'profile_id': ID, 'inputs': factory_emergency.INPUT})),
+    'pmo-change/v1': (factory_change.start, obj({'version_id': ID, 'inputs': factory_change.INPUT})),
+    'rfp-response/v1': (factory_rfp.start, obj({'payload': RFP_PAYLOAD})),
+    'finance-accounts/v1': (factory_accounting.start, obj({'source_id': ID, 'adjustment_ids': IDS})),
+    'pmo-finance/v1': (invoice_start, {'oneOf': [
+        obj({'mode': {'const': 'completion'}, 'coverage_id': ID, 'handoff_id': ID}),
+        obj({'mode': {'const': 'preparation'}, 'preparation_id': ID,
+             'due_date': nullable({'type': 'string', 'format': 'date'}), 'invoice_id': NID}),
+    ]}),
+    'planning/v1': (factory_planning.start, obj({'packet_id': ID})),
+    'commercial/v1': (factory_commercial.start, obj({'head_id': ID})),
+    'delivery-release/v1': (factory_delivery.start, obj({'dossier_id': ID})),
+    'delivery-hypercare/v1': (factory_hypercare.start, obj({'dossier_id': ID})),
+    'delivery-archive/v1': (factory_archive.start, obj({'dossier_id': ID, 'inventory': factory_archive.INVENTORY})),
+    'delivery-handover/v1': (factory_handover.start, obj({'dossier_id': ID, 'inputs': ids(factory_handover.FIELDS)})),
+    'delivery-closure/v1': (factory_closure.start, obj({'dossier_id': ID, 'inputs': ids(factory_closure.FIELDS)})),
+    'delivery-go-live/v1': (factory_go_live.start, obj({'dossier_id': ID, 'inputs': ids(factory_go_live.FIELDS)})),
+}
+INTAKE_GRANTS = {key: grants for key, _, _, grants in factory_views.INTAKES}
+DERIVED_REFERENCES = {'pmo-issues/v1', 'finance-ledger/v1'}
+
+START_INPUT = {'oneOf': [
+    obj({'line': {'type': 'string', 'const': line}, 'case_id': UUID, 'case_revision': REVISION,
+         'idempotency_key': KEY, 'background': BOOLEAN, 'intake': schema,
+         **({} if line in DERIVED_REFERENCES else {'reference': REF})},
+        optional=('background',)) for line, (_, schema) in STARTS.items()
+]}
+LINE = obj({'key': TEXT, 'title': TEXT, 'description': TEXT, 'can_submit_via_api': BOOLEAN, 'django_url': TEXT})
+
+
+@endpoint(response=obj({'items': array(LINE), 'as_of': DATETIME}), summary='List available factory intake choices')
+def lines(request):
+    return {'items': [
+        {'key': item['definition'], 'title': item['title'], 'description': item['description'],
+         'can_submit_via_api': item['definition'] in STARTS,
+         'django_url': reverse('factory_create') + '?definition=' + item['definition']}
+        for item in factory_views.intake_options(request.user)
+    ], 'as_of': timezone.now()}
+
+
+@endpoint(method='POST', request=START_INPUT,
+          response=obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')}),
+          summary='Start the selected factory line using the current exact native sources')
+def start(request, *, body):
+    case = get_object_or_404(visible_cases(request.user), kind='project', pk=body['case_id'])
+    starter, _ = STARTS[body['line']]
+    for grant in INTAKE_GRANTS[body['line']]:
+        require(request.user, case, grant)
+    inputs = dict(body['intake'])
+    if body['line'] not in DERIVED_REFERENCES:
+        inputs['reference'] = body['reference']
+    with transaction.atomic():
+        work = starter(request.user, case_id=case.pk, key=body['idempotency_key'], expected=body['case_revision'], **inputs)
+        background = 'not_requested'
+        if body.get('background', True):
+            existed = getattr(work, 'background_progress', None) is not None
+            try:
+                factory_progress.set_progress(request.user, work.pk, work.revision, True, initial=True)
+                background = 'existing' if existed else 'queued'
+            except (PermissionDenied, ValidationError):
+                background = 'held'
+    return {**result(work), 'background': background}
