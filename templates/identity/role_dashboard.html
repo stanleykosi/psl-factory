@@ -12,6 +12,7 @@
     {% if positions|length > 1 %}<p>{{ position.name }} · {{ position.focus }}</p>{% endif %}
     {% if position.team %}<p>{{ position.team }}{% if position.mode == 'lead' %} · Team lead{% endif %}</p>{% endif %}
     {% if position.invite_url %}<a class="button secondary" href="{{ position.invite_url }}">Invite a teammate</a>{% endif %}
+    {% if position.manage_url %}<a class="button secondary" href="{{ position.manage_url }}">Manage teams and assignments</a>{% endif %}
   </section>
   {% endfor %}
 </div>

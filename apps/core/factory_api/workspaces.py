@@ -44,6 +44,7 @@ def project_for(actor, case_id):
     'csrf_token': TEXT, 'assistant_agents': array(choice(*PERSONAS)),
 }), summary='Bootstrap the same-origin Django session')
 def me(request):
+    from apps.identity.primary_roles import administered_projects
     from apps.identity.teams import memberships
 
     actor = request.user
@@ -53,7 +54,7 @@ def me(request):
     personas = [name for name in PERSONAS if cases_for(actor, name).exists()]
     if personas:
         destinations.append(('assistant', 'Assistant', 'design_agents'))
-    if memberships(actor).exists():
+    if memberships(actor).exists() or administered_projects(actor).exists():
         role_dashboard = ('role_dashboard', 'Role assignments', 'role_dashboard')
         destinations = [role_dashboard, *destinations] if visible_cases(actor).exists() else [role_dashboard]
     return {

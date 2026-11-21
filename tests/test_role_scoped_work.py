@@ -76,6 +76,38 @@ class RoleScopedWorkTests(TestCase):
         Draft202012Validator(schema, format_checker=FormatChecker()).validate(response.json())
         return response.json()
 
+    def test_admin_lands_on_staff_dashboard_without_business_approval_access(self):
+        user = get_user_model().objects.create_user('staff-only-administrator',password=PASSWORD)
+        value = {**self.delegation_value,'allowed_actions':['case.read','action.manage','evidence.add','action.own','action.work'],
+                 'initial_actions':['case.read','action.manage','evidence.add']}
+        intake.provision(self.root,user,'synthetic-staff-start',value,self.expiry,True,'Synthetic staff-only role')
+        case = intake.create_case(user,'synthetic-staff-start','starter','Starter workspace','project')
+        response = self.client.post(reverse('login'),{'username':user.username,'password':PASSWORD})
+        self.assertRedirects(response,reverse('role_dashboard'),fetch_redirect_response=False)
+        page = self.client.get(reverse('role_dashboard'))
+        self.assertContains(page,'<h1>Admin</h1>',html=True)
+        self.assertContains(page,'Manage teams and assignments')
+        self.assertNotContains(page,self.case.title)
+        dashboard = self.checked(self.api('/role-dashboard'),'/role-dashboard')
+        self.assertEqual([(item['role'],item['mode']) for item in dashboard['positions']],[('admin','administrator')])
+        self.assertEqual(dashboard['decisions'],[])
+        self.assertEqual(dashboard['approval_desks'],[])
+        self.assertEqual(self.client.get(dashboard['positions'][0]['manage_url']).status_code,200)
+        for action in ('finance.read','finance.invoice.review','issue.escalation_decide'):
+            with self.assertRaises(PermissionDenied):
+                require(user,case,action)
+        for role, label in (('pmo-lead','PMO Lead'),('finance-lead','Finance Lead')):
+            team = teams.create_team(user,case.pk,role,label)
+            _, token = staff.invite_person(user,case.pk,f'staff-start-{role}',label,f'{role}@example.test',
+                                            rev(case),role=role,mode='lead',team_id=team.pk)
+            staff.accept(token,PASSWORD,role_required=True)
+            client = Client()
+            client.post(reverse('login'),{'username':f'staff-start-{role}','password':PASSWORD})
+            lead_page = client.get(reverse('role_dashboard'))
+            self.assertContains(lead_page,f'<h1>{label}</h1>',html=True)
+            self.assertContains(lead_page,'Invite a teammate')
+            self.assertNotContains(lead_page,'Manage teams and assignments')
+
     def update(self, row, operation):
         path = f'/role-work/{row.pk}'
         value = self.checked(self.api(path), '/role-work/{assignment_id}')

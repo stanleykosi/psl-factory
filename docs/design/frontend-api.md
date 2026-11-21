@@ -24,6 +24,8 @@ Setup starts with PMO Lead, Finance Lead, CEO, CTO, HR and Admin. In **Setup →
 
 An account has the Admin role in a workspace when its existing staff administration delegation is current there. The technical bootstrap administrator uses **Workspace delegation** and **Staff account controls** to review that authority. Admins can add a workspace role from the available access functions. Business approvals still follow the configured decision rules, including separate authority for restricted payroll, invoice release and technical release.
 
+The role dashboard exposes a delegated Admin position with mode `administrator` and a `manage_url` for its workspace. A staff-only Admin lands there after sign-in. Team leads land on their own team dashboard and retain their department’s invitation link. Business approval access continues to come from the exact workflow decision and current authority.
+
 | API operation | Use |
 | --- | --- |
 | `GET /api/v1/setup/primary-roles` | Read the built-in roles |

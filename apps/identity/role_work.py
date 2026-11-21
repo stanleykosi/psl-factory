@@ -276,13 +276,21 @@ def approval_desks(actor, page):
 
 def dashboard(actor, page):
     from time import monotonic
+    from .primary_roles import administered_projects
 
     memberships = teams.memberships(actor).select_related('case', 'team').order_by('role', 'case__title', 'pk')
     positions = [{'role': item.role, 'mode': item.mode, 'name': teams.scope_label(item.role, item.mode),
                   'area': teams.FOCUS[item.role][0], 'focus': teams.FOCUS[item.role][1],
                   'workspace': workspace_name(item.case), 'team': item.team.name if item.team else None,
-                  'invite_url': reverse('staff_team_invite',args=[item.case_id,item.team_id]) if item.mode=='lead' else None}
-                 for item in memberships[:51]]
+                  'invite_url': reverse('staff_team_invite',args=[item.case_id,item.team_id]) if item.mode=='lead' else None,
+                  'manage_url': None}
+                 for item in memberships[:50]]
+    if len(positions)<50:
+        projects = administered_projects(actor).order_by('title','pk')[:50-len(positions)]
+        area, focus = teams.FOCUS['admin']
+        positions.extend({'role':'admin','mode':'administrator','name':'Admin','area':area,'focus':focus,
+                          'workspace':workspace_name(case),'team':None,'invite_url':None,
+                          'manage_url':reverse('staff_teams',args=[case.pk])} for case in projects)
     offset = (page - 1) * SIZE
     query = scoped_rows(actor)
     rows = list(query.filter(action__isnull=False).order_by('action__current__due_at', '-pk')[offset:offset+SIZE+1])

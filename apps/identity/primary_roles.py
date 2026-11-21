@@ -5,6 +5,7 @@ from uuid import UUID
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404
 from django.utils.text import slugify
 
@@ -15,7 +16,7 @@ from apps.documents.contracts import digest
 from . import intake, staff, staff_accounts
 from .intake_models import AccessChange
 from .models import Grant
-from .services import require
+from .services import require, visible_cases
 from .staff_models import StaffPrimaryRoleChange, StaffRoleDefinition
 
 
@@ -99,6 +100,15 @@ def is_admin(actor, case):
     except PermissionDenied:
         return False
     return True
+
+
+def administered_projects(actor):
+    scope = Q(pk__in=[])
+    for delegation in intake.options(actor, 'manage_access'):
+        if ('project' in delegation.value['kinds']
+                and delegation.value.get('staff_lifecycle', {}).get('allow_profile_edit') is True):
+            scope |= Q(tenant=delegation.tenant, synthetic=delegation.value['classification']=='synthetic')
+    return visible_cases(actor).filter(scope,kind='project')
 
 
 def actions(functions):

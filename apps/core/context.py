@@ -11,6 +11,7 @@ def interface(request):
         return nav
     from apps.core.workbench import granted
     from apps.identity.models import Grant
+    from apps.identity.primary_roles import administered_projects
     from apps.identity.role_work import APPROVAL_DESKS
     from apps.identity.teams import memberships
     from apps.identity.services import visible_cases
@@ -19,7 +20,8 @@ def interface(request):
     has_membership = memberships(request.user).exists()
     approval_actions = {actions[-1] for _,_,actions in APPROVAL_DESKS}
     nav['role_dashboard_available'] = (has_membership or granted(request.user,['factory.read']).exists()
-        or Grant.objects.filter(user=request.user,active=True,action__in=approval_actions).exists())
+        or Grant.objects.filter(user=request.user,active=True,action__in=approval_actions).exists()
+        or administered_projects(request.user).exists())
     if has_membership and not visible_cases(request.user).exists():
         nav['role_only_navigation'] = True
         return nav
