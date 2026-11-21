@@ -1485,6 +1485,9 @@ Use immutable native Audit records as per-submission intake receipts while Finan
 ## 6 November2026 — independent controlled-change connection on restored54178de
 
 pmo-change/v1 coordinates existing native P56-P60 records with exact source pins, human-only business decisions, scoped investigation/controlled drafting, recipient receipts and actual signature closure. It does not recreate the change engine. Source and scope decisions are in docs/runbooks/controlled-change-factory.md. Standard retains native catalogue controls; Emergency P61/P62 remains on its separate native route, not ordinary change authorization. First factory notice audience is explicit client. No policy, real owner, deployment or external authenticity is invented. Independent workflows0064/documents0021 build only on restored existing predecessors; absent held Finance/performance work is neither imported nor reconstructed.
+
 ## 21 November 2026 · Native department specialist handoffs
 
 O01 subscribes to original native subjects and keeps its tasks, reviewed handoff and downstream receipt attached to that subject. A department command checks the current specialist packet inside its own transaction. Source revisions, grants, uncertainty and original business decisions retain their owning service. Independent customer responses and audience acknowledgements remain recordable when received. Activation of a project model, its permitted source projection and its reviewer are deferred owner decisions.
+
+A reviewer can resolve differences between completed readings. A held, uncertain or missing private report pauses the handoff even if a decision-maker is available. Its source must be corrected or the original operation reconciled before work continues.

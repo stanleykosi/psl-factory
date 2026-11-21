@@ -2,9 +2,15 @@
 
 ## Native department handoffs · 21 November 2026
 
-The 63 formerly unbound processes now use the same O01 workflow worker as the original Start work paths. See the per-process routing book for trigger models, the test ledger for receipt evidence and the three domain route registries for current authority and receipt checks. The project’s Department handoffs page shows currently authorised evidence and opens its review. Keep actual customers, paid external business effects and deferred department policies outside synthetic acceptance. The prior checkpoint below records the state before these bindings.
+The 63 formerly unbound processes now use the same O01 workflow worker as the original Start work paths. All 108 release IDs have a coordinator binding. The project’s Department handoffs page shows the signed-in reader’s current evidence and opens the business review. [Process routes](docs/design/specialist-process-routes.md) · [Per-process Railway receipts](docs/design/native-department-receipts.md) · [Test ledger](BUILD-TESTS.md)
 
-## Embedded specialist coordination · 21 November 2026
+New source records enroll automatically when the project has authorised the source and specialist team. To recover a single older source, use `python manage.py work_native_stations --process PROCESS_ID --subject SOURCE_PK --actor OPERATOR_PK`. The command checks the department reader and project recovery authority. The worker uses the original subject owner and rechecks the project configuration. Department decisions still go through their usual screens. Keep real-data disclosure, appointments, external destinations and other business policy with their owners.
+
+Railway design acceptance runs application build `7013ebd7` on web deployment `0b7a352d-3a82-4a26-a7c1-ce1f614c5c09` and worker deployment `ae2691b0-86bf-49a3-9a22-71046b9bde49`. Five migrations through `workflows.0100` were applied on the preceding rollout. Both services reported success, the worker started two source readers, and the health and sign-in pages returned HTTP 200. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/)
+
+The release ledger combines the 29 PMO and shared checks and 14 Finance operations checks on `44b5d9aa-0e71-478e-a4ad-dedf57b72ab6` with the six Finance close checks on `ca2df73e-d7d7-42cd-adcd-3d7f5ae71e61`. Each new process reached its own downstream record. Build `32613afa` adds test database isolation and evidence reporting. A future verifier can run any named suite with `python scripts/railway-native-stations.py pmo`, `accounts` or `operations` on the isolated Railway checks service.
+
+## Earlier checkpoint — embedded specialist coordination · 21 November 2026
 
 Railway design acceptance runs web deployment `59d9a9ae-5def-4dcf-a936-12e70fbdef38` and worker deployment `6822d178-348b-4b30-b5b0-7dd010071f28`. Both reported success. The worker started two source readers and continued ordinary native jobs. The sign-in page returned HTTP 200. The provider checks used synthetic records and an isolated database on Railway. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/)
 

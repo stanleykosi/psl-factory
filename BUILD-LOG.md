@@ -1,6 +1,6 @@
 # Build progress log
 
-21 November 2026. Added native source events for the remaining 63 PMO and Finance processes, specialist handoffs checked inside their consuming commands, scoped project review and downstream receipt verification. The first three isolated Railway suites reached all 63 receiving records. The separate consumption, provider and deployment checks are recorded in BUILD-TESTS.md.
+21 November 2026. Released coordinator bindings for the remaining 63 PMO and Finance processes to Railway design acceptance. Across the final department suites, 49 tests passed and all 63 processes reached their downstream receipts. Two synthetic cases separately passed with OpenRouter and private storage. Corrected the PMO template-owner path, HR disclosure readback, handling of missing specialist reports and test database isolation. [Per-process evidence](docs/design/native-department-receipts.md) · [Test ledger](BUILD-TESTS.md)
 
 21 November 2026. Generated the 122-process routing book before changing the coordinator. Connected multi-specialist source review to native work, business review and assistant retrieval. Removed the staff-facing specialist launcher and kept historic file decisions accessible. Added a private, source-checked reporting projection and a four-specialist follow-up for an exact native delivery-progress investigation. Recorded provider tests separately from PostgreSQL tests with simulated model responses.
 

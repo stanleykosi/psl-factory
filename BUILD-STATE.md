@@ -4,7 +4,7 @@
 
 The remaining 34 PMO and 29 Finance processes now enter O01 from their own department records. Each produces a versioned source reading, an assigned specialist packet and a link to the actual downstream record. The 25 staff-facing Start work types remain the entry points for the original 45 IDs. The internal department-handoff definition covers the other 63. The process catalogue retains all 14 deferred BaaS IDs. Operational disclosure, named reviewers and business authority remain project decisions. [Routing book](docs/design/specialist-process-routes.md)
 
-The first isolated Railway run reached all 63 actual downstream records with simulated specialist responses. The build subsequently added explicit receipt of the findings inside native commands and a database guard on completion. The test ledger distinguishes these stages.
+Railway synthetic acceptance reached all 63 downstream records with the domain commands, human decisions and PostgreSQL receipt guards active. Two additional synthetic flows used OpenRouter and private storage end to end, for department approval routing and an HR-authorised Finance handoff. Missing specialist reports hold the affected handoff. The per-process evidence identifies the receiving record for each ID. [Receipt ledger](docs/design/native-department-receipts.md) · [Test runs and recovery](BUILD-TESTS.md)
 
 ## Earlier checkpoint — embedded specialist coordination · 21 November 2026
 
