@@ -4,7 +4,9 @@
 
 All staff roles use the same menu and complete Start work catalogue. A person can select their permitted workspace, see appropriate native work, and use their own assignments. Team leads can oversee the current team in that workspace. Approval and restricted evidence checks still run on the native subject. The role dashboard remains the staff entry point, with the shared factory pages available from it.
 
-Railway web `5f5e4ecc-5152-4fea-a87b-c5f6ca3675c8` and worker `1402770e-9d1c-4249-b729-a18fc7710cac` preserve the handoff deployment and use the existing role preview database. The Codex browser verified the live PMO Lead menu, Projects, Overview, Assistant, My work queue and Start work with 26 lines. No account reset or new owner policy was applied. The checks service runs the isolated suite in `1a547f9e-fbbb-4354-b7ec-6553c61f0081`. See [BUILD-TESTS.md](BUILD-TESTS.md) for the outcome.
+Railway web `1ed0b570-6b80-49d6-8e3b-29c3efedef7a` and worker `ca03c20c-c755-436a-8827-b9271972b640` preserve the handoff deployment and use the existing role preview database. The Codex browser verified the live PMO Lead menu, Projects, Overview, Assistant, My work queue, Setup and Start work with 26 lines. Report review uses the outward packet. Reading internal meeting records requires separate source authority. No account reset or new owner policy was applied. See [BUILD-TESTS.md](BUILD-TESTS.md) for the PostgreSQL run and retest.
+
+The Railway batch and targeted retest verified 50 distinct PostgreSQL cases. The additional local retest verified the private file-draft review on the staged release. The source checkpoint is on `codex/restore-role-navigation` so parallel handoff work in the main checkout remains available for reconciliation.
 
 ## Clean Railway role testing · 21 November 2026
 

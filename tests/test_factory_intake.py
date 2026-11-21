@@ -85,7 +85,15 @@ class FactoryIntakeTests(TestCase):
                     selected = self.client.get(reverse('factory_create'), {
                         'definition': option['definition'], 'case': case.pk,
                     })
-                    self.assertContains(selected, 'name="background"')
+                    if option['definition'] == 'pmo-emergency/v1':
+                        self.assertContains(selected, 'The current project manager must submit this incident plan.')
+                        self.assertNotContains(selected, 'name="background"')
+                        existing = self.client.get(reverse('factory_create'), {
+                            'definition': option['definition'], 'case': case.pk, 'mode': 'existing',
+                        })
+                        self.assertContains(existing, 'name="background"')
+                    else:
+                        self.assertContains(selected, 'name="background"')
         self.assertEqual(FactoryWork.objects.count(),0)
 
     def test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved(self):

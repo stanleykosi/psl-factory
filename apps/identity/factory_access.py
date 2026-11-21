@@ -12,7 +12,7 @@ LEAD_ACTIONS = {
     'pmo-lead': frozenset({
         'case.read', 'factory.read', 'factory.start', 'agent.extract', 'evidence.add',
         'engagement.read', 'engagement.capture', 'planning.read', 'delivery.read',
-        'meeting.read', 'issue.read', 'change.read', 'report.read', 'emergency.read', 'rfp.read',
+        'issue.read', 'change.read', 'report.read', 'emergency.read', 'rfp.read',
     }),
     'finance-lead': frozenset({
         'case.read', 'factory.read', 'factory.start', 'agent.extract', 'evidence.add',
@@ -50,6 +50,8 @@ def project_actions(actor, case):
     actions = {action for _, action in active_case_grants(actor, [case.pk])}
     for role in leads(actor).filter(case=case).values_list('role', flat=True):
         actions.update(LEAD_ACTIONS[role])
+        if role == 'pmo-lead':
+            actions.add('team.actions.read')
     return actions
 
 

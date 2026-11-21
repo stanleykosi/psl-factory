@@ -26,7 +26,7 @@ TABS = (
     ('money', 'Money', {'finance.read'}),
     ('month-end', 'Month-end', {'finance.read'}),
     ('registers', 'Registers', {'issue.read', 'change.read', 'rfp.read', 'emergency.read'}),
-    ('actions', 'Actions', {'meeting.read'}),
+    ('actions', 'Actions', {'meeting.read', 'team.actions.read'}),
     ('hr', 'HR', {'hrfinance.read'}),
 )
 
@@ -130,7 +130,7 @@ def change_timeline(case, query, page):
 def filters(case,tab,grants,data):
     fields={}
     records=None
-    if tab=='actions' and 'meeting.read' in grants:
+    if tab=='actions' and {'meeting.read', 'team.actions.read'}.intersection(grants):
         records=ActionItem.objects.filter(case=case,current__isnull=False)
     if tab=='registers' and 'issue.read' in grants:
         records=public_current_issues(case)
