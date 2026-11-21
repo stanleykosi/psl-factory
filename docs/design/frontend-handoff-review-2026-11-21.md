@@ -1,5 +1,9 @@
 # What remains from the frontend handoff
 
+## Decision 4 · Finance files and units
+
+Finance can submit its original file. Chidi reads the layout and amounts and proposes the scale. A project Finance member or the Finance lead approves the actual figures or returns the document for clarification. Approved figures can enter management accounts in full currency units. [Checks and evidence](finance-document-checks-2026-11-21.md)
+
 ## Decision 3 · Payroll totals
 
 An acknowledged recipient can ask Zainab for the total staff cost and the breakdown by business unit from that exact reviewed report. An employee’s pay stays private. The answer comes directly from the published report inside PSL. [Checks and screenshots](payroll-chat-checks-2026-11-21.md)

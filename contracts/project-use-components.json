@@ -3,6 +3,9 @@
     {
       "id":"D06.import_unit_conversion","parent_decision_id":"D06",
       "schema_ref":"schema:psl/import-unit-conversion/v1","subject_scope":"One project's management accounts, entity, currency, period and declared feed.",
+      "reviewed_document_path":{"decision_version":"psl-finance-document/1","status":"PSL_APPROVED",
+        "preparer":"chidi","reviewer_department":"finance-lead","approval":"per_document",
+        "units":{"units":1,"thousands":1000,"millions":1000000}},
       "current_value":null,"status":"UNCONFIGURED",
       "value_schema":{"type":"object","additionalProperties":false,
         "required":["entity","period","currency","feed","units","control_total_unit","adjustment_unit"],

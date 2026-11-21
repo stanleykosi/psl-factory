@@ -11,6 +11,7 @@
 {% else %}
 <section class="card">{% if workspace_field %}<form method="get"><input type="hidden" name="definition" value="{{ definition }}"><label for="accounting-workspace">Workspace</label>{{ workspace_field }}<button>Select workspace</button></form>{% else %}
 <h2>{{ case.title }}</h2>
+{% if not correction %}<p><a class="button secondary" href="{% url 'finance_document_inbox' case.pk %}">Upload a document for Chidi and Finance to review</a></p>{% endif %}
 {% if correction %}
 <p><strong>Returned for correction</strong> {{ correction.reason }}</p>
 <p>{{ correction.entity }} · {{ correction.period }} · {{ correction.currency }}</p>

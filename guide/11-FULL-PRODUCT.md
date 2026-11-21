@@ -30,6 +30,8 @@ The current bid owner may share an original bid and its recorded client conversa
 
 A current named payroll report recipient can ask Zainab for the total staff cost and the amounts by business unit after personally acknowledging the reviewed report. The answer links to the exact report and uses only published totals. Individual pay stays private. The report’s existing review and small-group rules apply before publication.
 
+For management-accounts files, Chidi reads the original and proposes the currency, units, amounts and their source locations. A Finance member assigned to the project or the Finance lead can correct, approve or return the reading. Approved figures retain their original and full-currency amounts and can be used for management accounts and cited in Finance conversations.
+
 Zainab is available to HR staff in their assigned workspaces. The live HR system still needs to be connected. Admin manages changes to the PMO appointment. Work and decisions remain assigned to the people responsible for them. CTO and CEO have standalone scopes. Cross-department sharing is a future decision.
 
 | Base role | Dashboard focus |

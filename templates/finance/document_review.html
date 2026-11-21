@@ -1,0 +1,58 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'finance_document_inbox' doc.case_id %}">Finance files in {{ doc.case.title }}</a>
+<header class="page-heading"><h1>{{ doc.name }}</h1><a class="button secondary" href="{% url 'finance_document_original' doc.case_id doc.pk %}">Download original file</a></header>
+{% if doc.status == 'queued' or doc.status == 'reading' %}
+<section class="card"><h2>Waiting for Chidi’s reading</h2><p>Your file is saved. The figures will appear here for Finance to review.</p><a href="">Check progress</a></section>
+<script>setTimeout(() => window.location.reload(), 10000)</script>
+{% elif doc.status == 'held' %}<section class="card"><h2>Reading needs attention</h2><p>{{ doc.message }}</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="retry"><input type="hidden" name="attempt" value="{{ doc.attempt }}"><button>Ask Chidi to read it again</button></form></section>
+{% elif doc.status == 'review' %}
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="approve"><input type="hidden" name="attempt" value="{{ doc.attempt }}">
+<section class="card"><h2>Review Chidi’s reading</h2><p>Check the amounts as printed. Finance applies the confirmed units once when you approve.</p>
+{% if doc.draft.issues %}<h3>Questions from Chidi</h3><ul>{% for issue in doc.draft.issues %}<li>{{ issue }}</li>{% endfor %}</ul>{% endif %}
+{% for field in form %}{% if field.name != 'checked' and field.name != 'note' %}<p{% if field.name == 'no_total' %} id="confirm-missing-total"{% endif %}>{{ field.label_tag }} {{ field }} {{ field.errors }}</p>{% endif %}{% endfor %}</section>
+<section class="card"><h2>Figures in the file</h2>{{ rows.management_form }}{{ rows.non_form_errors }}
+<div id="figure-rows">{% for row in rows %}<fieldset><legend>Figure {{ forloop.counter }}</legend>{{ row.as_p }}<p>Full amount: <output></output></p></fieldset>{% endfor %}</div>
+<template id="blank-figure"><fieldset><legend>Additional figure</legend>{{ rows.empty_form.as_p }}<p>Full amount: <output></output></p></fieldset></template>
+<button type="button" class="secondary" id="add-figure">Add a missing figure</button></section>
+<section class="card">{{ form.note.as_field_group }}<p>{{ form.checked }} {{ form.checked.label_tag }} {{ form.checked.errors }}</p><button>Approve reviewed figures</button></section></form>
+<script>
+function previewFigures() {
+  document.getElementById('confirm-missing-total').hidden = Boolean(document.getElementById('id_control_total').value.trim());
+  const places = {units: 0, thousands: 3, millions: 6};
+  for (const row of document.querySelectorAll('#figure-rows fieldset')) {
+    let text = row.querySelector('[name$="-amount"]').value.trim().replace(/^\(([^+-].*)\)$/, '-$1');
+    const match = /^([+-]?)([0-9]+|[0-9]{1,3}(?:,[0-9]{3})+)(?:\.([0-9]{1,8}))?$/.exec(text);
+    const unit = row.querySelector('[name$="-unit"]').value;
+    const shift = places[unit === 'file' ? document.getElementById('id_unit').value : unit];
+    let value = 'Check amount and units';
+    if (match && shift !== undefined) {
+      const fraction = (match[3] || '').padEnd(shift, '0');
+      const whole = BigInt(match[2].replaceAll(',', '') + fraction.slice(0, shift));
+      const remainder = fraction.slice(shift).replace(/0+$/, '');
+      value = document.getElementById('id_currency').value + ' ' + match[1] + whole.toLocaleString('en-GB') + (remainder ? '.' + remainder : '');
+    }
+    row.querySelector('output').textContent = value;
+  }
+}
+document.addEventListener('input', previewFigures);
+previewFigures();
+document.getElementById('add-figure').addEventListener('click', () => {
+  const count = document.getElementById('id_rows-TOTAL_FORMS');
+  if (Number(count.value) >= 100) return;
+  document.getElementById('figure-rows').insertAdjacentHTML('beforeend', document.getElementById('blank-figure').innerHTML.replaceAll('__prefix__', count.value));
+  count.value = Number(count.value) + 1;
+  previewFigures();
+});
+</script>
+<details class="card"><summary>Return the file for clarification</summary><form method="post">{% csrf_token %}<input type="hidden" name="action" value="return"><input type="hidden" name="attempt" value="{{ doc.attempt }}"><label>What needs clarifying? <input name="reason" maxlength="1000" required></label><button>Return file</button></form></details>
+{% elif doc.status == 'returned' %}<section class="card"><h2>Returned by Finance</h2><p>{{ doc.message }}</p><a href="{% url 'finance_document_inbox' doc.case_id %}">Upload a clarified copy</a></section>
+{% else %}<section class="card"><h2>Approved by Finance</h2><p>{{ doc.reviewer.get_username }} · {{ doc.reviewed_at }} · {{ doc.approved.entity }} · {{ doc.approved.period }}</p>
+<p>{{ doc.approved.unit_evidence }}</p>
+<table><thead><tr><th>Account or item</th><th>As printed</th><th>Units</th><th>Full amount ({{ doc.approved.currency }})</th><th>Source</th></tr></thead><tbody>
+{% for row in display_rows %}<tr><td>{{ row.account }}</td><td>{{ row.amount }}</td><td>{{ row.unit }}</td><td>{{ row.display_amount }}</td><td>{{ row.citation }}</td></tr>{% endfor %}</tbody></table>
+{% if display_total %}<p><strong>Checked total: {{ doc.approved.currency }} {{ display_total }}</strong></p>{% endif %}
+{% if doc.approved.note %}<p>{{ doc.approved.note }}</p>{% endif %}</section>
+<section class="card"><h2>Management accounts</h2>{% if receipt %}<p>Submission {{ receipt.receipt }} · {{ receipt.status }}</p>{% for finding in receipt.findings %}<p>{{ finding }}</p>{% endfor %}{% endif %}
+{% if not receipt or receipt.status == 'configuration_needed' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="accounts">{{ accounts.as_p }}<button>Use approved figures for management accounts</button></form>{% endif %}
+</section>{% endif %}{% endblock %}

@@ -96,3 +96,4 @@ from .reminder_models import PaymentReminderDraft, PaymentReminderDispatch, Paym
 from .reminder_models import PaymentReminderMailboxMessage
 from .payroll_question_models import PayrollReportQuestion,PayrollReportQuestionEvent
 from .short_payment_models import InvoiceShortPaymentDecision
+from .document_models import FinanceDocument, ReviewedFinanceFigure

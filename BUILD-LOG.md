@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Connected private Finance uploads, Chidi’s document reading, human review, the approved figure register and the management-accounts intake. Finance can correct the reading or return the file. The original, AI proposal and human decision stay linked. [Walkthrough](docs/design/finance-document-checks-2026-11-21.md)
+
 21 November 2026. Connected report acknowledgement, the recipient’s report list and Zainab’s answer to the exact reviewed publication. The same report now supplies the total and business-unit breakdown in chat, with checks when a saved answer is reopened. The in-app browser walkthrough used two Finance team members and a report naming only one of them. [Evidence](docs/design/payroll-chat-checks-2026-11-21.md)
 
 21 November 2026. Added owner-controlled bid sharing, client conversation notes, a PMO bid library, and citations back to the original bid. Connected the same sharing choice to winning-answer review and Tola’s saved replies. Tested with separate PMO workspaces and real OpenRouter answers. [Browser evidence](docs/design/bid-sharing-checks-2026-11-21.md)

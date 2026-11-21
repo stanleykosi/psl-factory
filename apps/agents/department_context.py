@@ -26,6 +26,8 @@ class Register:
 
     def entries(self):
         fields = {name for pattern in (self.label, self.fact) for _, name, _, _ in Formatter().parse(pattern) if name}
+        if self.key == 'finance_figure':
+            fields.add('document_id')
         return self.rows.annotate(project_id=F(self.case_path + '_id'), project=F(self.case_path + '__title')).values(
             'project_id', 'project', 'pk', *sorted(fields - {'pk'})).order_by('-pk')
 
@@ -38,7 +40,7 @@ class Register:
         from django.db.models.functions import Greatest
 
         fields = [name for _, name, _, _ in Formatter().parse(self.label) if name in (
-            'name', 'reference', 'transaction_ref', 'scenario__reference')]
+            'name', 'reference', 'account', 'transaction_ref', 'scenario__reference')]
         numbers = {int(value) for value in re.findall(r'#([0-9]{1,17})\b', question)}
         if numbers:
             from django.db.models import Case, When
@@ -66,10 +68,12 @@ class Register:
             except ReadLimit:
                 paid = owed = None
             fact += f" Paid: {paid if paid is not None else 'unknown'}. Owed: {owed if owed is not None else 'unknown'}."
+        url = reverse('department_records', args=[persona, row['project_id']]) + '?' + urlencode({'group': self.key, 'id': row['pk']})
+        if self.key == 'finance_figure':
+            url = reverse('finance_document_review', args=[row['project_id'], row['document_id']])
         return {'label': f"{row['project']} · {label}", 'fact': fact,
                 'record': {'field': self.key, 'pk': row['pk']},
-                'url': reverse('department_records', args=[persona, row['project_id']]) + '?' +
-                       urlencode({'group': self.key, 'id': row['pk']})}
+                'url': url}
 
 
 def work_definitions(persona):
@@ -131,6 +135,7 @@ def registers(persona, cases):
                      '{kind} report #{pk}', 'Status: {status}. Next due: {next_due_at}.'),
         ])
     else:
+        from apps.finance.document_models import ReviewedFinanceFigure
         from apps.finance.models import CashAllocation, CashReceipt, CashVerification, FinanceRun, ForecastRun, Handoff, Invoice, PaymentAssessment, ScheduleWork
         from apps.finance.ledger_models import LedgerLineage
 
@@ -151,6 +156,9 @@ def registers(persona, cases):
                      '{kind} schedule version {version}.'),
             Register('forecast', 'Forecasts', ForecastRun.objects.filter(case__in=cases), 'Forecast #{pk}',
                      'Scenario {scenario__reference}, version {scenario__number}. Calculated on {created_at}.'),
+            Register('finance_figure', 'Figures approved by Finance', ReviewedFinanceFigure.objects.filter(
+                     document__case__in=cases, document__status='approved'), '{account}',
+                     '{period}: {currency} {amount}. Source: {document__name}, {citation}.', 'document__case'),
             Register('accounts', 'Accounting and analysis runs', FinanceRun.objects.filter(case__in=cases),
                      '{kind} #{pk}', 'Recorded on {created_at}.'),
             Register('payment', 'Payment assessments', PaymentAssessment.objects.filter(case__in=cases),

@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+21 November 2026. Checked Finance document upload, the real OpenRouter reading, Finance corrections and approval in the in-app browser using a sample PDF. An image-only scan went through the PDF reader. The PostgreSQL tests exercised approval, rejection, retries, native accounting intake and project access. [Evidence and environment](docs/design/finance-document-checks-2026-11-21.md)
+
 21 November 2026. Verified Zainab’s recipient-only totals in PostgreSQL and the in-app browser. The sample report showed a total of 410.00, with 250.00 and 160.00 by business unit. A second Finance member could see neither the report nor the figures. [Browser evidence and test scope](docs/design/payroll-chat-checks-2026-11-21.md)
 
 21 November 2026. Checked the owner’s private bid, the other team’s read-only public bid, Tola’s cited answer, and the withdrawn link and reply after the owner restored privacy. Both the receiving member and returning owner received answers through OpenRouter using a sample client conversation. The hosted check opened the library from the PMO bid register. [Screenshots and PostgreSQL checks](docs/design/bid-sharing-checks-2026-11-21.md)

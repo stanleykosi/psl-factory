@@ -27,11 +27,11 @@ def answer(model, department, question, sources, allowed_next, history):
     ), json.dumps({'question': question, 'sources': sources, 'allowed_next_work': allowed_next, 'prior_context': history}))
 
 
-def completion(model, instructions, data):
+def completion(model, instructions, data, *, max_tokens=700, timeout=45, plugins=None):
     body = {
         'model': model,
         'provider': {'data_collection': 'deny'},
-        'max_tokens': 700,
+        'max_tokens': max_tokens,
         'reasoning': {'enabled': False},
         'response_format': {'type': 'json_object'},
         'messages': [
@@ -39,10 +39,14 @@ def completion(model, instructions, data):
             {'role': 'user', 'content': data},
         ],
     }
+    if plugins:
+        body['plugins'] = plugins
     request = Request(URL, json.dumps(body).encode(), {
         'Authorization': 'Bearer ' + os.environ['OPENROUTER_API_KEY'],
         'Content-Type': 'application/json',
     })
-    with urlopen(request, timeout=45) as response:
-        payload = json.loads(response.read(256 * 1024))
+    with urlopen(request, timeout=timeout) as response:
+        payload = json.loads(response.read(1024 * 1024))
+    if payload['choices'][0].get('finish_reason') == 'length':
+        raise ValueError('Incomplete model response')
     return json.loads(payload['choices'][0]['message']['content'])

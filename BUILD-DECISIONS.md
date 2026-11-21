@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. PSL approved Decision 4. Chidi reads the original management-accounts document, including its headings, amounts and context. A Finance member in the project or the Finance lead must check, correct and approve the extraction before the figures become Finance knowledge or an accounting input. The file may use full currency amounts, thousands, millions or separately labelled rows. Finance can return an unclear file. A standard layout is still under consideration and is optional for this path.
+
 21 November 2026. PSL approved Decision 3. Zainab may show both the reviewed staff-cost total and the breakdown by business unit to a named recipient who acknowledged that exact payroll report. Individual pay stays private. The reply uses the published figures inside PSL. The existing report review, publication, recipient list, small-group limits and current-access checks still apply. A revoked or expired local disclosure closes access to totals in chat.
 
 21 November 2026. PSL approved Decision 2. The current bid owner chooses Private or Public for the original bid and its recorded client conversation. Public gives other PMO teams in the same organisation read access to that bid from their own workspace. Their Tola can use and cite it. Private closes that shared access while the original team keeps its workspace access. New bids start private. Sample and operational records stay separate. A person still reviews a reused winning answer before accepting it into another bid.

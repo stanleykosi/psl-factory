@@ -105,6 +105,13 @@ urlpatterns = [
     path('cases/<uuid:case_id>/policy/', views.policy_workbench, name='policy'),
     path('cases/<uuid:case_id>/policy/delegation/', delegation_views.workspace, name='design_delegation')]
 urlpatterns += finance_intake_patterns
+from apps.finance import document_views as finance_documents
+urlpatterns += [
+    path('finance/document-review/', finance_documents.inbox, name='finance_document_projects'),
+    path('projects/<uuid:case_id>/finance/documents/', finance_documents.inbox, name='finance_document_inbox'),
+    path('projects/<uuid:case_id>/finance/documents/<int:pk>/', finance_documents.review, name='finance_document_review'),
+    path('projects/<uuid:case_id>/finance/documents/<int:pk>/original/', finance_documents.original, name='finance_document_original'),
+]
 from apps.policy import scope_views
 from apps.policy import impact_views
 urlpatterns += [path('cases/<uuid:case_id>/policy/impact/',impact_views.workbench,name='policy_impact'),

@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Finance document review · 21 November 2026
+
+Finance can upload a PDF, spreadsheet, Word or text file from its project records. Chidi proposes the figures, units and source locations. A Finance member or Finance lead reviews the original and approves or returns the file. Approved figures become available to Chidi and can be submitted to management accounts. [Checks](docs/design/finance-document-checks-2026-11-21.md)
+
 ## Payroll totals in Zainab · 21 November 2026
 
 A named recipient who acknowledges a current report can ask Zainab for both the overall staff cost and every published business-unit amount. The answer links to that exact report. A person on the same Finance team who did not receive it cannot open the link. [Browser checks](docs/design/payroll-chat-checks-2026-11-21.md)
@@ -20,7 +24,7 @@ The existing My work page is the signed-in workspace for every staff role. It sh
 
 The separate frontend now opens the signed-in work desk, pages through authorised records and displays Finance decisions with their evidence. The two clients share the same desk. Source selection, specialist reviews and complex intakes open their existing factory forms. The screen map correctly assigns the weekly update to SCR-25 and Planning to SCR-42. The new document review and replacement template operations call the existing document services.
 
-The original handoff added four project settings under **Business rule settings → Project data permissions and Finance units**. PSL has since decided how department assistants, bid sharing and payroll totals work, as recorded above. Scaled Finance files still require a recorded decision, validation and activation. [Checks and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
+The original handoff added four project settings under **Business rule settings → Project data permissions and Finance units**. PSL’s subsequent decisions appear above. The older, direct trial-balance import still supports source-specific conversion rules. [Checks and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
 
 ## Shared factory navigation for role accounts · 21 November 2026
 
