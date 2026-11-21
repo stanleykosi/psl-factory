@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Role-based operations requirement · 21 November 2026
+
+The user confirmed that PMO Lead, Finance Lead, HR and Admin are team bases. Members work within their department’s functions on their own assignments. Leads see the work of their configured teams within their remit. CTO and CEO hold standalone scopes. Dashboards, permission checks, decision queues, invitation preview, account activation and the first signed-in page must follow that model. See [role-based work and supervision](guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) and `role_scoped_operations` in [BUILD-BACKLOG.json](BUILD-BACKLOG.json).
+
+Start the connected engineering increment with PMO. `apps/identity/primary_roles.py` currently issues workspace grants, `apps/workflows/factory_views.py` uses those grants for factory work discovery, and native links can still use workspace-level permission checks. `apps/identity/staff.py` pins access profiles to invitations. Add and verify shared record scope before offering team-scoped invitations. Keep native approval eligibility and private-source checks, and review legacy access before declaring an account restricted to its own work. Actual team rosters, leadership assignments and approval rules remain deferred.
+
 ## HR role and workspace checkpoint · 21 November 2026
 
 The built-in catalogue now includes HR alongside PMO Lead, Finance Lead, CEO, CTO and Admin. Admin assigns the role under **Setup → People → Review primary role** for an admitted project workspace. It grants `hrfinance.read`. The HR project tab and `GET /api/v1/projects/{case_id}/hr` open the native handoff and staff-cost question desks, with correction review and Zainab shown under their current permissions. Staff access stays under Admin delegation. Private source access, disclosure, correction review, Finance receipt and owner routing keep their existing checks. An older custom role named HR resolves by its definition ID and retains its prior audit and access history.

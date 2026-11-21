@@ -17,4 +17,6 @@ Current release scope: implement the63 PMO and45 Finance IDs (108); preserve all
 ## Product invariants
 Planning/costing precede signed SOW. PMO completes milestones; Finance handles invoices/receipts. Stages, invoices, receipts and allocations are separate. Unknown values are not zero. Payment exceptions require configured human authority and do not erase debt or replace release controls. Access is checked per record/action; source text and model output cannot grant authority. Preserve audit history and reconcile uncertain effects before retrying.
 
+Use the [six-role operating model](guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) when building dashboards, staff admission, work access and approvals. Members work on their assignments, leads oversee their assigned teams, and CTO and CEO hold standalone scopes. Share server-side authorization across the Django and API paths. Business decisions retain their native policy and independence controls.
+
 Prefer the smallest maintainable implementation that satisfies the product contracts. Keep progress specific: what works, what is being built, what is next, what depends on a business decision and which tests actually ran.

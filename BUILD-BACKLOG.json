@@ -1,4 +1,24 @@
 {
+  "role_scoped_operations": {
+    "status": "requirements_confirmed_engineering_open",
+    "reference": "guide/11-FULL-PRODUCT.md#role-based-work-and-supervision",
+    "team_bases": ["PMO Lead","Finance Lead","HR","Admin"],
+    "standalone_roles": ["CTO","CEO"],
+    "engineering": [
+      "Bind staff to reviewed role, team, workspace and current assignment scope. Preserve historical grants and review any existing broad access before claiming member isolation.",
+      "Enforce exact work scope on server-side lists, records, actions, related evidence, search, exports and agent reads. Check lead authority against the current managed team.",
+      "Build role dashboards and decision queues from authorized work. Keep action eligibility, independent review, private data and source-required approvals in the native services.",
+      "Connect Admin invitation creation, recipient preview, acceptance and the first signed-in landing to the same reviewed role and scope. Revalidate changed authority and team membership before access is activated.",
+      "Prove a PMO member-to-lead workflow on PostgreSQL and in the Railway preview, then exercise the same scope through Finance, HR, Admin, CTO and CEO paths in Django and the API."
+    ],
+    "acceptance": [
+      "Two members in the same workspace see and act on their respective assigned work. A member cannot open a peer record by direct link, API, search, or evidence link.",
+      "A lead can see their team across each authorized workspace. A different team's work and restricted evidence require their own authorization.",
+      "My decisions reflects exact configured eligibility. A team lead, standalone executive or Admin cannot approve as a result of title alone.",
+      "An invited member, a lead and each standalone role see the reviewed scope on arrival. Stale, revoked or changed scope needs renewed review. Reassignment and deactivation remove prior access without rewriting history."
+    ],
+    "hod_decisions_deferred": true
+  },
   "hr_role_20261121": {
     "status": "hosted_postgresql_and_browser_verified",
     "built_in_roles": ["PMO Lead","Finance Lead","CEO","CTO","HR","Admin"],

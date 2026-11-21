@@ -36,6 +36,8 @@ An account has the Admin role in a workspace when its existing staff administrat
 
 The HR role opens the **HR** project tab with handoff metadata and staff-cost follow-up. Correction reviews, disclosures, private exports and Zainab still use their existing, separate permissions. Native HR-to-Finance and payroll services own the workflow and its commands. Staff accounts and access stay under Admin delegation.
 
+The [role-based operating model](../../guide/11-FULL-PRODUCT.md#role-based-work-and-supervision) is the target for the dashboard, invitation and access changes. The live catalogue currently describes workspace roles. The API still needs explicit member and lead scope, team assignments and a role-aware dashboard projection before clients can rely on team isolation. Consume the same backend access decisions in Django and Next.js.
+
 ## Workflow coverage
 
 The [cutover map](../../contracts/factory-api-screen-map.json) groups the 262 states by screen and lists the available JSON operations, the working Django routes and the remaining contracts. A grouped mapping points to workflow capability. It does not imply that every variation already has a JSON equivalent.

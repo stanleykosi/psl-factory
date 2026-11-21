@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Recorded the user-confirmed six-role operating model and traced it to the dashboard, record-access, approval and invitation paths. Current project-wide role grants and profile-based invitations establish the starting point. Added the team scope, standalone roles, first-login behavior and verification requirements to the product blueprint and backlog.
+
 21 November 2026. Added HR as the sixth built-in role and consolidated the existing HR-to-Finance handoff, staff matching corrections, staff-cost questions and Zainab entry point on each permitted project. Setup and its API use the same role catalogue. The new project API shares the Django destination checks. An older custom HR definition remains selectable and keeps its access history. Actual owners and disclosure rules remain deferred.
 
 21 November 2026. Added the five primary role choices to Setup and the live API contract. Admin role creation uses current workspace delegation. Existing staff can receive a reviewed workspace role and retain separate grants during changes. Added immutable definition and role-change history and verified the role, invitation and lifecycle flows in the corrected 68-check Railway gate.

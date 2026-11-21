@@ -20,6 +20,23 @@ Counts, ageing, throughput and bottleneck views derive from current authorised s
 
 Outputs are complete only with the source-required validation, review/acceptance and receipt evidence for that operation. Dispatch, generated text or an agent’s success claim cannot close debt, approve release or prove downstream acceptance. Exceptions retain ownership, evidence, uncertainty and a controlled correction/recovery path.
 
+### Role-based work and supervision
+
+The six base roles guide dashboards, access, decision routing and invitations. PMO Lead, Finance Lead, HR and Admin are the bases for teams. Team members use their department’s functions on work currently assigned to them. A team lead can oversee work assigned to their team within their recorded remit. For example, a PMO team member sees their own planning, delivery and reporting assignments. Their PMO Lead sees the team's assignments, progress, overdue work and decisions waiting for action. CTO and CEO are standalone roles with individually scoped access.
+
+| Base role | Dashboard focus |
+| --- | --- |
+| PMO Lead | Planning, delivery, milestones, issues, reporting and project handoffs |
+| Finance Lead | Billing, receivables, payments, forecasting and the Finance close |
+| HR | HR-to-Finance handoffs, staff matching corrections and staff-cost questions |
+| Admin | Staff invitations, access requests, account changes and role setup under current delegation |
+| CTO | Technical readiness, changes, incidents and release decisions assigned to the CTO |
+| CEO | Approved leadership reporting, verified outcomes and decisions assigned to the CEO |
+
+Use the same current scope for dashboard counts, work queues, direct records, search, attachments, exports, Assistant sources and API actions. Team membership supplies an entitlement only for its current remit. Native record, source and action checks still govern restricted evidence and operations. Approval queues separately show decisions the person is eligible to take under the applicable workflow rules, including independence and delegation checks. Supervisory access lets leads track waiting decisions and their accountable owners. Business approval authority comes from the configured decision route. Only a currently delegated Admin can add roles, and any additional role belongs to a base role family and follows its scope rules.
+
+Invitations identify the base role, the member or lead scope where applicable, the responsible lead or team and the admitted workspace scope. Show the reviewed assignment to the inviter and recipient before acceptance. Acceptance binds the reviewed access and opens the appropriate role dashboard after sign-in. A recipient can set up their account and sign in. Changes to role, team, scope or delegation require authorised review. The engineering checklist for this increment is in [BUILD-BACKLOG.json](../BUILD-BACKLOG.json).
+
 The operating descriptions below are proposed implementation requirements, not claims that those agent paths already work. Apply the per-ID A01–A08/O01 assignments and human-reserved decisions in contracts/process-map.json. Each family may contribute several stations to a work item; cross-family dependencies and receipts connect them. Actual completion remains tracked per process in contracts/implementation-coverage.json.
 
 
