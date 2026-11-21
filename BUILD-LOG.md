@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Completed all 262 scoped design walkthroughs. Candidate 292 passed five commercial PostgreSQL tests and both read-only preservation probes. After the paired rollout, Trial saw the exact saved Return reason on work 239 and confirmed there was no submission or receipt. The ledger audit found zero open or unseen states. Actual owner decisions stayed deferred.
+
 21 November 2026. Trial completed seven scoped browser journeys in one session, bringing the ledger to 261. Read back both invoice reviews, corrected Accounting source, Payroll replacement receipt and staff match Return, corrected closure, and both verified asset schedules. Found that the bid work page omitted the exact controlled pack Return rationale. Prepared the authorized readback and isolated PostgreSQL gate for the last row.
 
 21 November 2026. The admitted preparer verified seven more scoped browser journeys, bringing the ledger to 254. Separately queued the corrected invoice and Accounting reviews, approved the corrected closure document as Quality and published only the reviewed synthetic Payroll replacement. The original decisions and receipts stayed in history.

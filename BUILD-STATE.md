@@ -4,6 +4,8 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 ## Current implementation and verification
 
+**262 of 262 scoped design walkthroughs complete.** Codex in-app browser acceptance used synthetic data and scoped accounts on Railway. The final bid pack Return on work 239 preserved its original rationale alongside the exact draft and document version. The returned pack had no submission or receipt. Candidate 292 passed all five focused commercial PostgreSQL tests and both preservation probes. Matching web and worker are healthy, with no new migrations. [State ledger](docs/design/screen-state-acceptance.md).
+
 The 233 Railway preview wakes the existing background request after human minutes confirmation. All 48 grouped PostgreSQL tests and both preservation probes passed. Web and worker are healthy. Work 177 verified the exact private client test pack, independently checked delivery and removed the due reminder after the fictional client replied. Work 176 reached verified internal minutes version 113 with the action's owner and deadline still unknown. Work 178 exercised valid, missing and unsupported notes at phone width. Identity `0011`, Finance `0082` and Project `0074` remain applied and immutable.
 
 Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate 201 finished all 487 PostgreSQL tests across 36 modules in 7,478.882 seconds. The final result was four failures, three errors and exit 1. The seven traces cover the bid form, Standard Change fixture authority, invoice test setup and database scope, and the fixed-asset linked-note authority check.
@@ -14,7 +16,7 @@ The grouped 205 PostgreSQL regression passed all 520 tests. Candidate 206 passed
 
 Railway 236 passed 20 grouped PostgreSQL tests and both original preservation probes. It separates the customer's expected decision date from the internal follow-up and wakes the existing Finance schedule or Business Unit worker after reviewed source changes. Schedule verification now accepts exact supplied input without an optional override. The 237 group adds schedule history privacy, precise reminder times, staff access and explicit minutes submission for review. [Actual test evidence](BUILD-TESTS.md).
 
-All 262 design states have direct browser evidence. The ledger records 261 completed scoped journeys and one open check. The grouped Trial session verified both invoice reviews, corrected Accounting source, Payroll replacement receipt and staff match Return, corrected project closure and both asset schedules. The bid pack Return is recorded and the private rationale readback is in its isolated PostgreSQL gate. [State ledger](docs/design/screen-state-acceptance.md).
+The final grouped Trial session verified both invoice reviews, corrected Accounting source, Payroll replacement receipt and staff match Return, corrected project closure, both asset schedules and the bid pack Return rationale. The last asset and staff-match actions ran at desktop width after the in-app phone viewport control timed out. Device widths are recorded in the state ledger.
 
 Candidate 287b passed 25 PostgreSQL checks and applied core 0008 and Finance 0086. Candidate 288 passed 13 for private bank receipt, independent costing examples and exact Emergency decision. Candidate 289 had two isolated fixture errors and hosted only its checked 25-file subset. Candidate 290 corrected both fixtures and passed all 131 PostgreSQL tests and both preservation probes. Railway applied Finance 0087. All five guarded setup commands passed. Actual owner, route and financial values remain deferred.
 
@@ -36,18 +38,9 @@ Client ordinary testing is complete for its synthetic scope: exact target224 and
 
 Agents0012/0013, pmo0070–0072 and Finance0080/0081 are applied in testDB and preview, immutable. Preserve all prior migrations, especially identity0006–0010/pmo0064–0069. Never reset test_design_archive_20261117 or older synthetic/source clocks.
 
-## Remaining product work
+## Broader product and pilot work
 
-The [acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain every state and its remaining checks. Hosted 200 verified management accounts, the escalation receipt and the monthly leadership receipt on desktop and phone. Earlier asset and cash forecast results need revalidation. Invitation 6 established single-workspace account setup. Multiple workspace setup and verified alerts remain open.
-
-- Continue disjoint Railway browser groups for Commercial, Project delivery and Finance. Integrate fixes by native workflow, then verify them in a grouped PostgreSQL candidate and return to the affected browser states.
-- Finish commercial client-requested rework/historical recovery and invitation onboarding variants. Existing native signature/adoption/Finance controls remain authoritative; design examples do not set billing rules.
-- Connect aggregate-only report recipients to actual Zainab/Assistant through reviewed model-egress interfaces; closed human HR questions are implemented.
-- Add explicitly authorised optional HR name/employment inputs; membership dates do not establish employment departure.
-- Finish started-work/recording handover, multi/all-project profiles/invites and reviewed past-winning RFP answer reuse.
-- Complete remaining costing, standard change, Emergency, leadership, Finance/asset/schedule/forecast and role/device/recovery variants. Hypercare evaluating and archive working are separate domain states.
-- Consolidate native supporting Planning controls into the current plain business layout; their technical capture tools remain too prominent despite the verified agent handoff.
-- Complete operational private-file model egress and Railway infrastructure migration before1December; keep the current test-only provider restriction until explicit authority exists.
+The design inventory has zero open functional walkthroughs. Separate follow-up includes aggregate-only Payroll access through the Assistant, authorised HR source extensions, reviewed reuse of past winning bid answers and further simplification of supporting Planning forms. Live private-file model access and provider delivery need approved source and destination contracts. Track infrastructure readiness and wider role and device coverage separately in the [backlog](BUILD-BACKLOG.json).
 
 ## Owner decisions and external evidence
 
