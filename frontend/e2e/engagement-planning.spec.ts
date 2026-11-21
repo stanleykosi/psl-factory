@@ -68,8 +68,6 @@ for (const [label, viewport] of [
       await page.getByRole('button', { name: 'Confirm PM' }).click();
       await expect(page.getByText('PM confirmed: Sola Martins')).toBeVisible();
       expect((await log()).assignments.filter((a) => a.written)).toHaveLength(1);
-      // D-151: on a phone the confirmation toast sits over the drawer's last button until it fades (6 seconds).
-      if (phone) await expect(page.getByText('PM confirmed: Sola Martins')).toBeHidden({ timeout: 10_000 });
       await page.getByRole('button', { name: 'Register engagement' }).click();
       const scope = phone ? page.getByRole('dialog') : page.locator('form[aria-labelledby]');
       await expectNoAxeViolations(page);

@@ -129,6 +129,9 @@ export function useToastWhen(text: string | null | undefined, label?: string) {
 
 export const MAX_TOASTS = 3;
 
+/** How far above the bottom edge a pinned bar may end and still count (a sticky bar inside a padded drawer body). */
+const BAR_GAP = 24;
+
 /**
  * The one toast host, mounted in the app shell so it outlives a client-side route change. Newest at the bottom,
  * at most MAX_TOASTS (older ones drop). It never moves focus. On phones it is full width inside the gutters and
@@ -149,17 +152,21 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
   const remove = useCallback((id: number) => setItems((all) => all.filter((item) => item.id !== id)), []);
 
-  // Phones: measure the bars pinned to the bottom edge and sit above the tallest one.
+  // Phones: measure the bars pinned to the bottom edge and sit above the tallest one. With a drawer or dialog open,
+  // only its own bars count (the page's bars are behind it), and a sticky action bar may end a gutter above the edge.
   useLayoutEffect(() => {
     const node = host.current;
     if (!node) return undefined;
     const lift = () => {
       let top = window.innerHeight;
       if (items.length > 0 && window.innerWidth < 720) {
-        for (const el of document.body.querySelectorAll<HTMLElement>('main *, body > *')) {
+        const modals = document.body.querySelectorAll<HTMLElement>('[aria-modal="true"]');
+        const modal = modals[modals.length - 1];
+        const candidates = modal ? modal.querySelectorAll<HTMLElement>('*') : document.body.querySelectorAll<HTMLElement>('main *, body > *');
+        for (const el of candidates) {
           if (node.contains(el)) continue;
           const rect = el.getBoundingClientRect();
-          if (rect.width < window.innerWidth * 0.9 || rect.height === 0 || rect.bottom < window.innerHeight - 1 || rect.top < window.innerHeight * 0.3) continue;
+          if (rect.width < window.innerWidth * 0.9 || rect.height === 0 || rect.bottom < window.innerHeight - BAR_GAP || rect.top < window.innerHeight * 0.3) continue;
           const position = getComputedStyle(el).position;
           if (position === 'fixed' || position === 'sticky') top = Math.min(top, rect.top);
         }
