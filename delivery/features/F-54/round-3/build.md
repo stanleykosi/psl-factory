@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 537eaa4b0b626755bf2af8a6df1e2e703007b5ff
+COMMIT: 2255dd240938a17bc2152385c1bad3b61b47bb03
 BUILDER: builder
 LANE: full
 
@@ -159,3 +159,27 @@ Commit 537eaa4b. Mock overlay and proposal only.
 - Not done: the design-fidelity tool (no board draws the paperclip or thumbnails; D-161 proposes them).
 - Known and reported: the @/# marks shown under a just-sent message disappear when the server's copy replaces it, because E-CONVERSATION returns no mentions (question in G-SCR05-ATTACH).
 
+
+## D-164: a won demo RFP creates a project
+Commit 0e7a50ec. Demo mode only; mock code, one small frontend change.
+- `mock/demo-projects.mjs` (new): module-level store of the projects won RFPs created (cleared by Reset demo through `startWork.reset()`), their list row, journey and picker row. `line-runs.mjs`: `start({client})` and an `onVerified(run)` callback when a run reaches Done; `server.mjs` passes the RFP's client (`startWork.clientLabel`: the chosen client's label or the new client's name), creates the project for a verified `rfp_intake` and raises the alert. `start-work.mjs` adds the projects to every `project` picker (newest first, for the four personas); `projects.mjs`, `project-tabs.mjs` and `money.mjs` serve the list row, the page and empty tabs (money: `money: []`); hr and others get 404 as for any record they cannot see.
+- PM: the list item says "Not assigned yet" (the contract's `pm` is required, so it cannot be left out); the project page has no `pm`; next milestone is Unknown.
+- Alert: "<Client> · new engagement is ready to plan" with a proposed `case_id` (mock only; `alerts/types.ts` `case_id?`, `workHref` opens `/projects/<id>` when it is there). Backend question: an alert that links to a project needs `case_id` (or a link) in E-NOTIFICATIONS; not added to BACKEND-HANDOFF yet beyond this note.
+- Tests: `demo-mock.test.ts` +6 (30 in the file), `alerts-model.test.ts` +1, e2e `a won RFP creates a project` in `e2e/demo.spec.ts`.
+- Validated: the e2e passed (1 of 1, 20 s) against a scratch copy of the frontend on port 4962 with the mock on 4961 (E2E_DEMO=1); the other two demo specs were not run.
+
+## D-162: the 3D floor's readout strip lists a station's work (concept B)
+Commit 2255dd24.
+- `features/floor/scene.ts`: the scene reports `onPreview({line, name} | null)` (pointer or focus) and `onPin(...)` (canvas click or tap, chip click, which covers Enter and Space) instead of readout text; `setPinned` presses the pinned chip (`aria-pressed`, `floor__chip--pinned`) and keeps its machine lifted (the D-159 hover lift is unchanged).
+- `floor/stationWork.ts` (new): the station read (untyped GET through the typed client, as D-161's upload), the per-session cache keyed by line, station, count and needs-a-person, Show all (pages of 50, at most 200 rows), Try again, and the row words. `floor/StationStrip.tsx` (new): head, "Pinned" and the x (`IconButton`), rows as `Link`s, loading (`Loading`), empty, error (`ErrorState`, "Try again"), "Show all N" (`Button`), scroll past 20 rows. `Floor3D.tsx`: preview and pinned state, Esc from the floor or the strip, a station that left the floor lets go; the idle strip still shows the old hint. `floor.css`: tokens only, a fixed minimum height so the page does not jump, no transitions.
+- Mock: `mock/station-items.mjs` + route in `server.mjs` (`GET /api/v1/overview/stations/items`, scenario cookie honoured), overlay `mock/proposals/overview-station-items.json`. Rows come from the work fixtures that fit the floor line, as many as the station's count (needs-a-person stations lead with one). In the demo, `line-runs.mjs floor()` lets running runs stand at a station of their floor line, and E-OVERVIEW counts them (totals too) so the strip, the counts and the machines agree; with the demo off the overview is the fixture, unchanged. Persona: the mock shows the same rows to everyone, as E-OVERVIEW does.
+- Backend questions (G-OVERVIEW-STATION, in `delivery/BACKEND-HANDOFF.md`): shape, visibility (per-record: restricted rows left out but counted), ordering, paging (limit 1 to 50, cursor), `needs_person_count`, waiting time source, freshness against E-OVERVIEW's counts.
+- Phones: the app never offers the 3D floor on a phone (Overview shows Flat there), so no strip was added to the flat view; say if you want the list on the flat view too.
+- Tests: `floor3d-strip.test.tsx` (11), `station-items-mock.test.ts` (4), `floor3d-keys.test.tsx` stub updated, e2e `3D floor strip (D-162)` and the conveyor spec's readout lines updated in `e2e/overview.spec.ts`.
+- Validated: Playwright, 4 of 4 overview 3D specs (the new one and the three existing 3D ones) green at 1440 against a scratch copy of the frontend on 4962 with the mock on 4961 (WebGL runs headless). Looked at screenshots of the hovered and the pinned strip. The design-fidelity tool was not run (no board draws the strip; D-162 is the design engineer's concept B).
+
+### Validation for D-164 and D-162
+- `npx tsc --noEmit -p .` clean; `npx eslint . --quiet` clean.
+- Full vitest: 149 files, 3606 tests: 3605 passed, 1 failed (a `buttons()` expectation near line 455 of a file the run did not name; `asset-schedule.test.tsx`, the known flaky "reject with a note on W-3903", passes 37/37 alone). Targeted: demo-mock 30/30, station-items-mock 4/4, floor3d-strip 11/11, floor3d-keys, alerts-model 14/14.
+- Not run: `npm ci`, `npm run build`, `checks.sh` (they would overwrite the live server's `.next` and `node_modules`; the gate will run them). The e2e used a scratch copy under the scratchpad, ports 4961 and 4962, both stopped.
+- The mock on 4951 needs a RESTART for both changes.

@@ -159,6 +159,17 @@ The composer has a paperclip ("Attach images"). The v7 contract has no attachmen
 - **Mentions echo**: E-CONVERSATION returns no `mentions` on a person's message, so the @/# chips shown under a just-sent message are gone once the server's copy replaces it. Return them (G-SCR05-4)?
 - **Empty text**: the page sends `text: ""` with images only; v7 has `minLength: 1`.
 
+### G-OVERVIEW-STATION: the work at one station of the factory floor (D-162, F-54, 21 Nov; proposal, mock only)
+
+The 3D floor's strip under the canvas lists the work at the station the person points at or pins (up to five rows, "Show all N" for the rest). E-OVERVIEW has counts only, so the mock proposes (overlay `frontend/mock/proposals/overview-station-items.json`, code `frontend/mock/station-items.mjs`): `GET /api/v1/overview/stations/items?line=<line>&station=<station>&limit=<1-50>&cursor=<opaque>` answering `{items: [{work_id, title, project_title?, client?, reference, state, waiting_since?, needs_person, held_by: {kind: role|agent, name}}], total, needs_person_count?, next_cursor?, as_of}`. Questions for the backend:
+- **Shape**: is a station read the right way, or should E-OVERVIEW carry the first rows? Are `line` and `station` names stable keys (the page matches stations by the names E-OVERVIEW returns), or should E-OVERVIEW return ids?
+- **Visibility**: same people as E-OVERVIEW, and only the records each may see. The page counts "N here" from `total`; if restricted rows are left out of `items`, should `total` still count them (so it matches the floor), and should a restricted row be shown as locked text instead?
+- **Ordering**: the page expects needs-a-person first, then the longest waiting. Is that the server's order?
+- **Paging**: `limit` 1 to 50 (the page asks 5, then 50 at a time for Show all, up to 200 rows) and `next_cursor`. Fine, or the usual 10, 20, 50?
+- **Words**: `needs_person_count` (the "X need a person" in the head), `waiting_since` (how long it has waited at this station, not since it started), `held_by` (a role or an agent), and which of `project_title`, `client` and `title` to show as the link text.
+- **Freshness**: counts in E-OVERVIEW and rows here come from two reads; the page re-reads a station when its count changes, and shows whatever this read says.
+- An alert that links to a project (D-164, demo only): the mock adds `case_id` to an E-NOTIFICATIONS item so the alert opens the project; v7 has `work_id` only. Does the backend want `case_id`, or a general `link`?
+
 ## Added during F-26: the project Money tab (17 Nov)
 
 Screen: SCR-12 (`/projects/{caseId}/money`), read-only, on the contract mock (`frontend/mock/money.mjs`; D-PROJECT-TAB-ROWS is still proposed; nothing released). Gap ids G-SCR12-1..4 are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
