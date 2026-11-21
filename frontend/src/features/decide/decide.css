@@ -175,15 +175,29 @@
 
 /* done */
 .decide-done { display: flex; flex-direction: column; gap: var(--space-20px); }
-.decide-done__row { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: stretch; }
-.decide-next { flex: 1 1 480px; margin: 0; padding: var(--space-10px) var(--space-3) 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-3); align-items: end; }
-.decide-next p { margin: 0 0 var(--space-3); font-size: var(--text-body-size); line-height: 1.45; color: var(--ink); }
-.psl-callout.decide-next { background: var(--action-tint); color: var(--action-ink); }
-.decide-next__img { width: 96px; height: auto; display: block; }
-.decide-links { margin: 0; flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: var(--space-10px); }
+.decide-done__cols { display: flex; gap: var(--space-5); align-items: flex-start; }
+.decide-done__record { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--space-18px); }
+.decide-done__side { flex: 0 0 380px; display: flex; flex-direction: column; gap: var(--space-14px); }
+.decide-sum { margin: 0; padding: var(--space-1) var(--space-4) var(--space-2); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.decide-sum__row { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-10px) 0; border-top: var(--rule-thin) solid var(--rule-soft); }
+.decide-sum__row:first-child { border-top: none; }
+.decide-sum dt { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+.decide-sum dd { margin: 0; overflow-wrap: anywhere; }
+.decide-panel { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.decide-panel__head, .decide-still__head { margin: 0; font-family: var(--font-mono); font-size: 11px; font-weight: 400; letter-spacing: 0.06em; }
+.decide-panel__head { padding: var(--space-10px) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); }
+.decide-next { margin: 0; padding: var(--space-10px) var(--space-14px) 0; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: var(--space-3); align-items: end; }
+.decide-next p { margin: 0 0 var(--space-3); font-size: 14px; line-height: 1.5; color: var(--ink); }
+.psl-callout.decide-next { background: var(--action-tint); color: var(--action-ink); border: none; border-radius: 0; }
+.decide-next__img { width: 64px; height: auto; display: block; }
+.decide-links { margin: 0; padding: var(--space-14px); display: flex; flex-direction: column; gap: var(--space-10px); }
 .decide-links .psl-btn { display: flex; width: 100%; box-sizing: border-box; }
-.decide-back a { min-height: var(--control-md); display: inline-flex; align-items: center; }
-.decide-paid, .decide-done__by { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.decide-still { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3) var(--space-14px); display: flex; flex-direction: column; gap: var(--space-2); }
+.decide-still__head { color: var(--ink-muted); }
+.decide-still ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+.decide-still a { color: var(--ink); font-weight: 600; }
+.decide-still .decide-plain { margin: 0; }
+.decide-paid { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 
 /* no access: the frame's title size, as every decision state (the work item's permission board sets it smaller) */
 .decide-noaccess .shell-title { font-size: var(--text-display-xl-size); }
@@ -275,16 +289,16 @@
   .decide-stale__action { max-width: none; }
   .decide-stale__action .psl-btn { min-height: var(--control-xl); font-size: 17px; }
 
-  /* done: the agent card, the Paid line, then the links */
-  .decide-done { gap: var(--space-14px); padding-bottom: 130px; }
+  /* done: banner, the next panel, facts, summary (with the Paid hint), still waiting; the columns dissolve into one */
+  .decide-done { gap: var(--space-14px); }
   .decide-done .work-facts .psl-fact { padding: var(--space-10px); }
   .decide-banner { padding: var(--space-14px); }
-  .decide-done__row { display: contents; }
-  .decide-next { order: 1; flex: none; }
-  .decide-paid, .decide-back, .decide-done__by { order: 2; }
-  /* Next decision and Open the work item sit at the bottom, as SCR-03-mobile-done draws them */
-  .decide-links { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); max-width: none; padding: var(--space-10px) var(--space-18px) var(--space-18px); background: var(--steel); }
-  .decide-links .psl-btn--dark { min-height: 52px; }
-  .decide-links a.psl-btn--secondary { background: none; box-shadow: none; color: var(--action); text-decoration: underline; min-height: var(--control-md); font-weight: 400; }
+  .decide-done__cols, .decide-done__record, .decide-done__side { display: contents; }
+  .decide-panel { order: 1; }
+  .decide-done__record > :nth-child(1) { order: 2; }
+  .decide-done__record > :nth-child(2) { order: 3; }
+  .decide-done__record > :nth-child(3) { order: 4; }
+  .decide-still { order: 5; }
+  .decide-sum__row { grid-template-columns: 110px minmax(0, 1fr); }
   .decide-next p { color: var(--action-ink); }
 }

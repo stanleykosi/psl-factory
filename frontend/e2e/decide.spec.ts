@@ -156,6 +156,49 @@ test('the approve done view has the green success banner; return has the neutral
   await expect(banner).toHaveCSS('background-color', 'rgb(226, 229, 224)');
 });
 
+for (const [label, viewport] of [
+  ['desktop', DESKTOP],
+  ['phone', PHONE],
+] as const) {
+  test(`${label}: the done view is the summary and next panel (SCR-03 concept B)`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await openDecision(page, 'W-1201', 'T-1201');
+    await page.getByRole('button', { name: 'Approve v2' }).click();
+    await expect(page.locator('.decide-banner').getByRole('heading', { level: 1 })).toHaveText('Invoice v2 is approved');
+    const panel = page.getByRole('region', { name: 'WHAT HAPPENS NEXT' });
+    await expect(panel.getByText(/^Next step\./)).toBeVisible();
+    await expect(panel.getByRole('link', { name: 'Open the work item' })).toHaveAttribute('href', '/work/W-1201');
+    const summary = page.getByLabel('Summary');
+    await expect(summary).toContainText('INV-0412 · Prepare an invoice');
+    await expect(summary).toContainText('Approve, with no note');
+    await expect(page.getByText('Paid is tracked separately by Finance and is not part of this decision.')).toHaveCount(1);
+    // the still-waiting box reads the same list as My work; it never claims caught up before it has read it
+    await expect(page.locator('.decide-still')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Back to my work' }).or(page.getByRole('link', { name: /^Next decision · 1 of \d+$/ })).first()).toBeVisible();
+    const box = async (loc: Locator) => (await loc.boundingBox())!;
+    const [banner, side, facts, sum, still] = [
+      await box(page.locator('.decide-banner')),
+      await box(panel),
+      await box(page.getByRole('list', { name: 'Facts' })),
+      await box(summary),
+      await box(page.locator('.decide-still')),
+    ];
+    if (viewport === DESKTOP) {
+      expect(side.width).toBeGreaterThanOrEqual(379);
+      expect(side.width).toBeLessThanOrEqual(381);
+      expect(side.x).toBeGreaterThan(sum.x + sum.width - 1); // the panel is the right column
+      expect(Math.abs(side.y - facts.y)).toBeLessThan(2); // top-aligned with the record
+      expect(still.y).toBeGreaterThan(side.y + side.height - 1); // the waiting box sits under the panel
+      await expect(panel).toHaveCSS('border-top-width', '2px');
+    } else {
+      // banner, panel, facts, summary, still waiting; one column
+      expect([banner.y, side.y, facts.y, sum.y, still.y]).toEqual([...[banner.y, side.y, facts.y, sum.y, still.y]].sort((x, y) => x - y));
+      expect(side.x).toBe(sum.x);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+  });
+}
+
 test('decide and reload both fail: the controls stay off and Try again only re-reads the item', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   const writes: string[] = [];
