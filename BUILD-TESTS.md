@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+21 November 2026. The merged handoff and role-navigation regression run passed 37 checks on PostgreSQL. The separate frontend claimed and approved a sample invoice with a valid session, CSRF token and explicitly trusted frontend origin. The final in-app Railway check opened the signed-in PMO Lead Decisions queue on the combined My work release. [Screenshots and scope](docs/design/frontend-handoff-review-2026-11-21.md)
+
 21 November 2026. The broader My work regression run passed all 36 isolated local PostgreSQL tests in 653.733 seconds. It covered the role-scoped work, Factory API and intake suites. Node's syntax check for the connected work client and Django's API screen map export also passed.
 
 21 November 2026. My work consolidation passed eight focused PostgreSQL tests in 35.599 seconds on Railway `906d53d1-cbbc-46c6-a33e-9c0ff0faa41d`. Django, migration drift and the API screen map also passed. The checks covered all six role headings after sign-in, own and team assignments, an independent decision, same-team invitations and the API contract. The preceding checks image `8daf85ae-d7d4-484b-b675-e85dfeb66ec4` omitted its acceptance settings and stopped before tests. The retest included that settings file.

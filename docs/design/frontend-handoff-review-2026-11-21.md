@@ -4,6 +4,8 @@
 
 The original design work is in [d935c921](https://github.com/stanleykosi/psl-factory/commit/d935c921). The frontend developer added the [backend handoff and its 45 questions in 24d53631](https://github.com/stanleykosi/psl-factory/commit/24d53631). The findings below this update describe the build before the repairs.
 
+The final in-app check used the newer combined My work release. In the live PMO Lead session, **My work and decisions → Decisions** loaded page 1 and correctly showed an empty queue. Railway reported success for web `87c5fc26-446c-45e1-8aec-36ca90868c4a` and worker `02f03744-62d1-420b-a150-7c871cb16c02`. The separate frontend also claimed and approved a second sample invoice through Django after its exact frontend address was configured. The merged role and handoff regression run passed all 37 checks. [Live PMO Lead queue](../test-evidence/handoff-2026-11-21/railway-final-work-desk.jpg) · [Approval through the separate frontend](../test-evidence/handoff-2026-11-21/next-sample-decision.png)
+
 | Where checked | What the browser showed | Evidence |
 | --- | --- | --- |
 | Railway, Codex in-app browser | Signed in as PMO Lead in **PSL Role Testing**. Opened **My work and decisions**, saw the permitted **Role assignments** link and returned to the PMO dashboard. Both assignment and decision queues were empty. | [Work desk](../test-evidence/handoff-2026-11-21/railway-work-desk.jpg) · [PMO dashboard](../test-evidence/handoff-2026-11-21/railway-pmo-role.jpg) |
