@@ -1,5 +1,6 @@
 """Render the 122 existing process contracts for implementation and owner review."""
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -15,16 +16,39 @@ def render():
     sys.path.insert(0, str(ROOT))
     from apps.workflows.factory_processes import PROCESS_IDS
 
-    stations = {process: line for line, ids in PROCESS_IDS.items() for process in ids}
+    stations = {}
+    for line, processes in PROCESS_IDS.items():
+        for process in processes:
+            stations.setdefault(process, []).append(line)
     rows = load("contracts/process-map.json")["rows"]
     assignments = load("reference/08-agent-architecture/process-agent-assignments.json")["assignments"]
     by_id = {item["id"]: item for item in assignments}
-    bindings = {
-        item["id"]: item
-        for item in load("reference/12-payment-exception-policy/process-execution-bindings.json")
-    }
-    if len(rows) != 122 or set(by_id) != {row["id"] for row in rows}:
-        raise ValueError("Process assignments and source contracts differ")
+    execution_rows = load("reference/12-payment-exception-policy/process-execution-bindings.json")
+    bindings = {item["id"]: item for item in execution_rows}
+    ids = {row["id"] for row in rows}
+    if (
+        len(ids) != 122
+        or any(len(records) != len(ids) for records in (rows, assignments, execution_rows))
+        or ids != set(by_id)
+        or ids != set(bindings)
+    ):
+        raise ValueError("The catalogue, specialist assignments and execution contracts must contain the same 122 processes exactly once.")
+    if set(stations) - ids or any(by_id[process]["department"] == "BaaS" for process in stations):
+        raise ValueError("A native release station refers to an unknown or deferred process.")
+    specialists = {f"A{i:02}" for i in range(1, 9)}
+    for row in rows:
+        team = by_id[row["id"]]["specialist_roles"]
+        members = [role["id"] for role in team]
+        primary = [role for role in team if role["assignment"] == "Primary capability for this process"]
+        if (
+            not team
+            or primary != team[:1]
+            or len(members) != len(set(members))
+            or set(members) - specialists
+            or by_id[row["id"]]["department"] != row["department"]
+            or any(not role["process_responsibility"].strip() for role in team)
+        ):
+            raise ValueError(f"Review the primary specialist, supporting tasks and department for {row['id']}.")
     lines = [
         "# Per-process specialist routing",
         "",
@@ -42,10 +66,8 @@ def render():
                 + ("Deferred BaaS scope" if row["department"] == "BaaS" else "Release scope"),
                 "",
                 "**Direct Start work station** "
-                + stations.get(
-                    row["id"],
-                    "No direct O01 station binding. This process retains its source contract and domain controls.",
-                ),
+                + (", ".join(stations.get(row["id"], []))
+                   or "No direct O01 station binding. This process retains its source contract and domain controls."),
                 "",
                 f"**Trigger** {row['trigger']}",
                 "",
@@ -97,4 +119,13 @@ def render():
 
 
 if __name__ == "__main__":
-    (ROOT / "docs/design/specialist-process-routes.md").write_text(render(), encoding="utf-8", newline="\n")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="Check source contracts and the saved routing book without writing files.")
+    target = ROOT / "docs/design/specialist-process-routes.md"
+    book = render()
+    if parser.parse_args().check:
+        if target.read_text(encoding="utf-8") != book:
+            parser.exit(1, "The specialist routing book differs from the current process contracts.\n")
+        print("All 122 process routes match their source contracts and the saved routing book.")
+    else:
+        target.write_text(book, encoding="utf-8", newline="\n")
