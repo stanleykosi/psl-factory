@@ -192,7 +192,7 @@ def current_turns(actor, conversation, sources, next_work, payroll_only):
         turn.stale = False
         if turn.context_hash:
             try:
-                if (role_sources or turn.question == assistant.TOTALS_QUESTION
+                if (role_sources or conversation.persona == 'tola' or turn.question == assistant.TOTALS_QUESTION
                         or getattr(turn, 'rfp_answer', None) is not None):
                     current, _ = assistant.turn_context(turn, pending=False)
                 else:

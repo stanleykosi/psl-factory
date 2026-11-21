@@ -27,7 +27,7 @@
           "personas": {"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["tola","chidi","zainab"]}},
           "provider": {"const":"openrouter"},
           "model": {"type":"string","minLength":1,"maxLength":180},
-          "sources": {"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["packet","requirements","meeting","milestone","rfp_intake","handoff","bu_report","payroll_report","rfp_requirement"]}},
+          "sources": {"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["packet","requirements","meeting","milestone","rfp_intake","handoff","bu_report","payroll_report","rfp_requirement","bid_record"]}},
           "send_user_question": {"const":true}
         }
       }

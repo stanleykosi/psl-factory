@@ -154,12 +154,14 @@ def transfer(actor, turn_id, target):
 
 
 def tool_context(conversation, *, question=''):
+    from apps.pmo.bid_sharing import chat_sources
+
     if role_managed(conversation.actor):
         from .department_context import records
 
         check(conversation.actor, conversation)
         if conversation.scope == 'department':
-            return records(conversation, question), []
+            return records(conversation, question) + chat_sources(conversation, question), []
         native, next_work = _tool_context(conversation)
         # Keep source pins needed to start drafts and specialist recipient reports.
         draft_groups = {'packet': 'planning', 'requirements': 'planning', 'rfp_intake': 'bid', 'handoff': 'handoff'}
@@ -172,13 +174,13 @@ def tool_context(conversation, *, question=''):
             elif field in ('bu_report', 'payroll_report') or source['url'].startswith(
                     reverse('hrfinance', args=[conversation.case_id]) + 'snapshots/'):
                 pinned.append(source)
-        return pinned + records(conversation, question), next_work
+        return pinned + records(conversation, question) + chat_sources(conversation, question), next_work
     sources, next_work = _tool_context(conversation)
     if (not conversation.case.synthetic and payroll_report_only(conversation)
             and assistant_access.permission(conversation.case, assistant_access.TOTALS)
             and not assistant_access.model_rule(conversation.case, conversation.persona)):
         return sources, []
-    sources = assistant_access.project_sources(conversation, sources)
+    sources = assistant_access.project_sources(conversation, sources + chat_sources(conversation, question))
     return sources, next_work if sources else []
 
 

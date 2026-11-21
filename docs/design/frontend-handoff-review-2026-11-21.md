@@ -1,5 +1,9 @@
 # What remains from the frontend handoff
 
+## Decision 2 · Bid sharing
+
+PSL chose privacy at the level of the original bid. The owner can keep it private or make it available to other PMO teams, including its recorded client conversation. Tola can cite the original from a receiving team's own workspace. The owner can withdraw that access. This replaces the earlier proposal below to pick one answer and receiving project. [Decision and browser evidence](bid-sharing-checks-2026-11-21.md)
+
 ## Decision 1 · Department assistants
 
 PSL chose role-based access for Tola, Chidi and Zainab on 21 November. For staff on the new roles, the department and project assignment determine what the assistant reads. The single PMO head can ask Tola across PMO, and the Finance head can ask Chidi across Finance. Project staff see their assigned projects. Zainab is available to HR with the live HR connection pending. The earlier references below to project-by-project assistant approval describe the previous setup. [Current role rules](../../guide/11-FULL-PRODUCT.md#role-based-work-and-supervision)
@@ -20,7 +24,7 @@ The final in-app check used the newer combined My work release. In the live PMO 
 
 The screen checklist now points SCR-25 to weekly reporting and SCR-42 to Planning. Tests also exercised a standalone report approval, retrieval of the recipient-facing preview and replay of a replacement template upload. The checked API has 64 operations across 54 paths. Specialist source selections and several detailed workflows still open their existing factory forms.
 
-**Decisions for PSL.** For each real project, specify which assistant, model and record types may receive a staff question. The bid owner selects the winning requirement and receiving project. The payroll owner chooses which aggregate figures an acknowledged recipient may see. Finance identifies the feed, entity, month, currency and permitted file scale. Additional HR data for name and employment checks needs an approved source. Microphone input and actual email or WhatsApp destinations remain open. No operational data was sent to a model for this release check.
+**Remaining decisions for PSL.** The payroll owner chooses which aggregate figures an acknowledged recipient may see. Finance identifies the feed, entity, month, currency and permitted file scale. Additional HR data for name and employment checks needs an approved source. Microphone input and actual email or WhatsApp destinations remain open. The browser examples used sample data.
 
 Web release `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker release `c0e9a5d3-7151-4c90-bde6-912db6eb6b65` both succeeded on the Railway design-acceptance instance. Its health page returned `ok`. The previously recorded 262 walkthroughs used the former preview database. The current clean workspace received no business transactions from these tests.
 

@@ -179,6 +179,13 @@ from apps.workflows import factory_rfp_views
 from apps.workflows import factory_rfp_pricing
 from apps.workflows import factory_rfp_estimate_views
 from apps.pmo import rfp_answer_views
+from apps.pmo import bid_sharing_views
+
+urlpatterns += [
+    path('projects/<uuid:case_id>/bid-library/', bid_sharing_views.library, name='bid_library'),
+    path('projects/<uuid:case_id>/bid-library/<int:bid_id>/', bid_sharing_views.record, name='bid_record'),
+    path('projects/<uuid:case_id>/bid-library/<int:bid_id>/file/', bid_sharing_views.original_file, name='bid_original_file'),
+]
 from apps.pmo import rfp_staged_upload_views
 urlpatterns += [path('work/<int:work_id>/requirements/', rfp_answer_views.workbench, name='factory_rfp_answers')]
 urlpatterns += [path('work/<int:work_id>/pricing/', factory_rfp_pricing.detail, name='factory_rfp_pricing')]

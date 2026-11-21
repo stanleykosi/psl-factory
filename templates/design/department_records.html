@@ -5,6 +5,7 @@
 <header class="page-heading"><h1>{{ department }} records</h1><a class="button secondary" href="{% url 'assistant_start' agent %}?workspace={{ case.pk }}">Ask {{ agent|title }}</a></header>
 {% if groups %}<nav class="project-tabs" aria-label="Record types">{% for item in groups %}<a href="?group={{ item.key }}"{% if item.key == group.key %} aria-current="page"{% endif %}>{{ item.title }}</a> {% endfor %}</nav>
 <section class="card"><h2>{{ group.title }}</h2>
+{% if agent == 'tola' and group.key == 'bid' %}<p><a href="{% url 'bid_library' case.pk %}">Open bid library and client conversations</a></p>{% endif %}
 {% for entry in entries %}<article><h3>{{ entry.label }}</h3><p>{{ entry.fact }}</p></article>{% empty %}<p>No matching records.</p>{% endfor %}
 {% if page.has_previous %}<a href="?group={{ group.key }}&amp;page={{ page.previous_page_number }}">Previous page</a>{% endif %}
 {% if page.has_next %}<a href="?group={{ group.key }}&amp;page={{ page.next_page_number }}">Next page</a>{% endif %}</section>

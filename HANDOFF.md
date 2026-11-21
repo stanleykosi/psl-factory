@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Decision 2 · Original bid sharing
+
+Open the project’s **PMO records → Bid requests → Open bid library and client conversations**. The current bid owner opens the original bid to record a client note or change sharing. Public lets other PMO teams in the organisation open this bid and ask Tola about it. Private restores workspace-only use. A saved owner choice replaces any earlier individual-answer release on the bid. [Browser checks](docs/design/bid-sharing-checks-2026-11-21.md)
+
 ## Department roles and assistants · 21 November 2026
 
 Decision 1 is implemented. Open **Assistant** as the PMO or Finance head, choose the named assistant, and keep **All department projects** selected for an organisation-wide departmental answer. A member selects an assigned project. HR can start a conversation with Zainab before connecting its source system. Admin can end a PMO appointment and name the next head. The account cleanup remains a separate task. [Release and browser checks](docs/design/department-role-checks-2026-11-21.md)
@@ -14,7 +18,7 @@ The change uses current workspace permissions, accounts and business policies. R
 
 The clean role preview runs web `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker `c0e9a5d3-7151-4c90-bde6-912db6eb6b65`. Both releases build on the clean role cutover below. The in-app browser verified the PMO Lead dashboard, its empty work and decision queues, and the new work desk. Local browser samples exercised the Finance and bid decisions without populating that workspace. The earlier October accounting sample is historical.
 
-See the [frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md) before enabling real project use. PSL needs to name the approved model and records, decide which winning answers can be shared, confirm what report totals recipients may see, and approve each applicable Finance file convention. Additional HR records, microphone use and external delivery destinations still require owner decisions.
+The remaining owner decisions cover payroll report totals, Finance file conventions, additional HR records, microphone use and external delivery destinations. Department assistant access and bid sharing are covered by Decisions 1 and 2 above. [Frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md)
 
 ## Role navigation and workspace scope · 21 November 2026
 

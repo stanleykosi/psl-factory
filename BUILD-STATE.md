@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Original bids and client conversations · 21 November 2026
+
+The bid owner can record a client conversation and choose who can use the original bid. Other PMO teams can open a public bid and ask Tola about it from their own workspace. Switching back to Private closes the shared link and hides earlier replies that relied on it. [Browser checks](docs/design/bid-sharing-checks-2026-11-21.md)
+
 ## Department assistants · 21 November 2026
 
 Tola, Chidi and Zainab use the signed-in person's role. PMO and Finance heads can open one conversation for their whole department or choose a project. Project staff see just their assigned projects. Staff using the new roles can read departmental records on incoming projects without an individual project approval. The database enforces one PMO head per organisation. HR's live connection is pending. [Browser checks and test scope](docs/design/department-role-checks-2026-11-21.md)

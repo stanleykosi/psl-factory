@@ -3,6 +3,7 @@
 <div class="page-heading"><div><p class="eyebrow">RFP RESPONSE AND CUSTOMER OUTCOME</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'rfp' case.pk %}">Received RFP and team inputs</a></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small>{{ row.evidence_as_of|date:'d M Y H:i:s T' }}</div></div>
 {% include 'factory/work_focus.html' with has_response=True %}
+<p><a href="{% url 'bid_library' case.pk %}">Open bid library and client conversations</a></p>
 <p><a href="{% url 'factory_rfp_pricing' row.work.pk %}">View bid costing and approvals</a></p>
 <div class="factory-case-layout"><div>
 {% if final_costing %}

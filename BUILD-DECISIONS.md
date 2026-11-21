@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. PSL approved Decision 2. The current bid owner chooses Private or Public for the original bid and its recorded client conversation. Public gives other PMO teams in the same organisation read access to that bid from their own workspace. Their Tola can use and cite it. Private closes that shared access while the original team keeps its workspace access. New bids start private. Sample and operational records stay separate. A person still reviews a reused winning answer before accepting it into another bid.
+
 21 November 2026. PSL approved Decision 1. Enable Tola for PMO, Chidi for Finance and Zainab for HR through the configured OpenRouter model. The single PMO head and the Finance head can each read across their department within the organisation. A project lead or member reads their own department on assigned projects. HR uses assigned workspaces while its source system is disconnected. Admin can replace the PMO head. Future cross-department sharing and additional assistants are outside this decision. Existing review and payment decisions retain their native controls.
 
 21 November 2026. The user chose the existing My work entry as the single workspace for role headings and team invitations. Show current roles as the heading and carry forward scoped assignments, decisions and team actions. The former page address resolves to My work. Keep the existing role assignments API available to the connected work client.

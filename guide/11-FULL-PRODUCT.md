@@ -26,6 +26,8 @@ All signed-in staff use the same factory navigation and Start work catalogue. Th
 
 The six base roles guide dashboards, access, decision routing and invitations. Each organisation has one PMO head. That person sees all its PMO projects, including new intake, and can ask Tola about one project or the whole department. The Finance head has the same reach in Finance through Chidi. Project leads and team members see their department’s records on the projects where they have a current staff assignment. The same limits apply to the project list, assistant conversations and record links. Sample and operational workspaces have separate audiences.
 
+The current bid owner may share an original bid and its recorded client conversation with other PMO teams in the same organisation. New bids are private. Choosing Public gives those teams read access to the bid from their own workspace and lets Tola cite it. Returning to Private closes that access. The receiving project manager reviews any winning answer proposed for a new bid.
+
 Zainab is available to HR staff in their assigned workspaces. The live HR system still needs to be connected. Admin manages changes to the PMO appointment. Work and decisions remain assigned to the people responsible for them. CTO and CEO have standalone scopes. Cross-department sharing is a future decision.
 
 | Base role | Dashboard focus |

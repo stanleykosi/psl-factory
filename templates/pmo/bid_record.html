@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ bid.reference }} · Original bid{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'bid_library' case.pk %}">← Bid library</a>
+<header class="page-heading"><div><h1>{{ bid.reference }}</h1><p class="lede">Original bid and client conversation</p></div><a class="button secondary" href="{% url 'assistant_start' 'tola' %}?workspace={{ case.pk }}">Ask Tola</a></header>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+<section class="card"><h2>Bid sharing</h2>
+<p><strong>{% if bid.is_public %}Public to PMO{% else %}Private to this workspace{% endif %}</strong></p>
+{% if earlier_rule %}<p>An earlier rule shares individual winning answers with selected bids. Saving your choice here replaces that rule for this bid.</p>{% endif %}
+{% if owner %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="sharing"><input type="hidden" name="version" value="{{ bid.sharing_version|default:0 }}">
+<label>Who can use this bid?<select name="visibility"><option value="private"{% if not bid.is_public %} selected{% endif %}>Private · this workspace</option><option value="public"{% if bid.is_public %} selected{% endif %}>Public · all PSL PMO teams</option></select></label>
+<p>Public lets other PMO teams and their Tola read the original bid, submitted answers and client conversation, including new notes. Choose Private to close that access.</p>
+<button>Save sharing</button></form>{% endif %}</section>
+<section class="card"><h2>Bid history</h2>
+{% if attachment %}<p><a href="{% url 'bid_original_file' case.pk bid.pk %}">Download original bid document</a> · {{ attachment.name }}</p>{% endif %}
+{% for entry in entries %}<article><h3>{{ entry.label }}</h3><p class="secondary-text">{{ entry.date|date:'j M Y, H:i T' }}</p><p>{{ entry.body|linebreaksbr }}</p></article>{% empty %}<p>No client conversation has been recorded yet.</p>{% endfor %}</section>
+{% if owner %}<section class="card"><h2>Record a client conversation</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="note"><input type="hidden" name="operation" value="{{ operation }}"><label>What did you and the client discuss?<textarea name="body" rows="4" maxlength="4000" required>{{ request.POST.body }}</textarea></label><button>Save conversation note</button></form></section>{% endif %}
+{% endblock %}

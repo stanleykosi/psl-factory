@@ -7,16 +7,39 @@ from apps.core.workbench import granted
 from apps.documents.contracts import digest
 from apps.identity.services import require
 from apps.policy.models import Configuration
-from .models import RFPDisposition
+from .models import RFPCase, RFPDisposition
+from . import bid_sharing
 from .rfp_outcomes import assert_public_submission_sources, historical_submission
 
 
 def options(actor, destination):
+    choices = []
+    try:
+        shared = bid_sharing.available(actor, destination).filter(is_public=True).exclude(case=destination)
+    except PermissionDenied:
+        shared = RFPCase.objects.none()
+    if RFPCase.objects.filter(case=destination).exists():
+        for bid in shared.order_by('pk'):
+            win = RFPDisposition.objects.filter(rfp=bid, kind='route_a', outcome__result='won').select_related(
+                'outcome__submission__response').first()
+            if not win:
+                continue
+            try:
+                submission = win.outcome.submission
+                assert_public_submission_sources(bid.case, submission)
+                response = historical_submission(bid.case, submission)
+            except (ValidationError, PermissionDenied):
+                continue
+            for row in response.matrix:
+                if row['disposition'] == 'addressed' and row['response'].strip():
+                    pin = {'sharing': bid.sharing_version, 'source': str(bid.case_id), 'destination': str(destination.pk),
+                           'outcome_id': win.outcome_id, 'requirement': row['key']}
+                    choices.append((digest(pin), pin, public_citation(destination, bid, win, response, row)))
     configured = Configuration.objects.filter(component=WINNING,
         envelope__value__answers__contains=[{'destination': str(destination.pk)}]).values('case_id')
     projects = granted(actor, ['case.read', 'rfp.read']).filter(pk__in=configured,
-        synthetic=destination.synthetic, tenant=destination.tenant).exclude(pk=destination.pk)
-    choices = []
+        synthetic=destination.synthetic, tenant=destination.tenant).exclude(pk=destination.pk).exclude(
+            rfpcase__sharing_decisions__isnull=False)
     for project in projects.order_by('pk').iterator():
         config = permission(project, WINNING)
         if config is None:
@@ -33,18 +56,33 @@ def options(actor, destination):
     return choices
 
 
+def public_citation(destination, bid, win, response, row):
+    return {'label': f'{bid.reference} · winning response {response.number} · {row["key"]}',
+            'fact': row['response'], 'url': reverse('bid_record', args=[destination.pk, bid.pk]),
+            'record': {'field': 'winning_answer', 'pk': response.pk, 'outcome': win.outcome_id,
+                       'requirement': row['key'], 'sharing': bid.sharing_version}}
+
+
 def read(actor, destination, pin):
     from apps.core.models import Case
 
     project = Case.objects.filter(pk=pin['source'], tenant=destination.tenant, synthetic=destination.synthetic).first()
     if project is None or pin['destination'] != str(destination.pk):
         raise PermissionDenied
-    for action in ('case.read', 'rfp.read'):
-        require(actor, project, action)
-    config = permission(project, WINNING)
-    entry = {key: pin[key] for key in ('destination', 'outcome_id', 'requirement')}
-    if not config or config.pk != pin['policy'] or entry not in config.envelope['value']['answers']:
-        raise PermissionDenied('This answer is no longer released to this project.')
+    if 'sharing' in pin:
+        bid = bid_sharing.available(actor, destination).filter(case=project, is_public=True,
+            sharing_version=pin['sharing']).exclude(case=destination).first()
+        if bid is None or not RFPCase.objects.filter(case=destination).exists():
+            raise PermissionDenied('The original bid is no longer shared here.')
+    else:
+        if RFPCase.objects.filter(case=project, sharing_decisions__isnull=False).exists():
+            raise PermissionDenied('The owner changed sharing for this bid.')
+        for action in ('case.read', 'rfp.read'):
+            require(actor, project, action)
+        config = permission(project, WINNING)
+        entry = {key: pin[key] for key in ('destination', 'outcome_id', 'requirement')}
+        if not config or config.pk != pin['policy'] or entry not in config.envelope['value']['answers']:
+            raise PermissionDenied('This answer is no longer released to this project.')
     disposition = RFPDisposition.objects.select_related('outcome__submission__response', 'rfp').filter(
         rfp__case=project, kind='route_a', outcome_id=pin['outcome_id'], outcome__result='won').first()
     if not disposition:
@@ -55,6 +93,8 @@ def read(actor, destination, pin):
     row = next((r for r in response.matrix if r['key'] == pin['requirement'] and r['disposition'] == 'addressed'), None)
     if not row or not row['response'].strip():
         raise ValidationError('The original submission contains no accepted answer for this requirement.')
+    if 'sharing' in pin:
+        return public_citation(destination, bid, disposition, response, row)
     return {'label': f'{disposition.rfp.reference} · winning response {response.number} · {row["key"]}',
             'fact': row['response'], 'url': reverse('rfp', args=[project.pk]),
             'record': {'field': 'winning_answer', 'pk': response.pk, 'outcome': disposition.outcome_id,

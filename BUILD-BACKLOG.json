@@ -1,4 +1,12 @@
 {
+  "original_bid_sharing_20261121": {
+    "decision": 2,
+    "status": "implemented_and_browser_checked",
+    "owner": "Current assigned bid owner",
+    "default": "Private to the original workspace",
+    "public": "Read the original bid and client conversation from another PMO workspace in the same organisation and data classification",
+    "evidence": "docs/design/bid-sharing-checks-2026-11-21.md"
+  },
   "department_assistant_roles_20261121": {
     "decision": 1,
     "status": "implemented_and_browser_checked",

@@ -29,13 +29,18 @@ ADMISSION = 'rfp.intake_attachment_admitted'
 
 def attachment_for(actor, case, intake):
     require_read(actor, case)
+    return bound_attachment(case, intake, check_uploader=True)
+
+
+def bound_attachment(case, intake, *, check_uploader):
     if intake.rfp.case_id != case.pk:
         return None
     evidence = Evidence.objects.filter(pk=intake.evidence_id, case=case, kind='rfp_intake', source=SOURCE,
                                        created_by_id=intake.actor_id).only('id', 'sha256').first()
     if not evidence:
         return None
-    authorize_write(intake.actor, case)
+    if check_uploader:
+        authorize_write(intake.actor, case)
     binding = Audit.objects.filter(case=case, actor_id=intake.actor_id, action=ADMISSION,
         data__intake=intake.pk, data__evidence=evidence.pk, data__evidence_sha256=evidence.sha256).first()
     if binding is None or type(binding.data.get('upload')) is not int:

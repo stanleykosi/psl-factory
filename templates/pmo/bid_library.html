@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Bid library · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Bid library</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'assistant_start' 'tola' %}?workspace={{ case.pk }}">Ask Tola</a></header>
+<p>Open this project’s bid or an original bid another PMO team has made public.</p>
+<form method="get" class="filter-bar"><label>Find a bid by reference <input name="q" value="{{ query }}" maxlength="160"></label><button>Search</button></form>
+<section class="card"><h2>Available bids</h2>
+{% for bid in page %}<p><a href="{% url 'bid_record' case.pk bid.pk %}">{{ bid.reference }}</a> · {% if bid.case_id == case.pk %}This project{% else %}Shared by another PMO team{% endif %}</p>
+{% empty %}<p>{% if query %}No bids match that reference.{% else %}There are no bids available here yet.{% endif %}</p>{% endfor %}
+{% if page.has_previous %}<a href="?q={{ query|urlencode }}&amp;page={{ page.previous_page_number }}">Previous</a>{% endif %}
+{% if page.has_next %}<a href="?q={{ query|urlencode }}&amp;page={{ page.next_page_number }}">Next</a>{% endif %}</section>
+{% endblock %}

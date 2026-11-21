@@ -5,6 +5,7 @@
 {% if earlier_received %}<section class="card"><h2>Original bid receipt</h2><p>Received {{ earlier_received.received_at|date:'d M Y H:i:s T' }} · Intake version {{ earlier_received.number }}.</p><a href="{% url 'rfp_intake_attachment' case.pk earlier_received.pk %}">Open the original received document</a></section>{% endif %}
 <p>. Capture the received RFP, accountable PM and actual deadline. Engineering, QA, Security and Product inputs support the cited response. PMO Lead and Engineering Lead review it before the ordered PM → Head of PMO → CEO costing chain. The outward version receives a separate quality review.</p>
 {% if rfp %}<section><h2>{{ rfp.reference }}</h2><p>Received {{ rfp.current_intake.received_at }} · Deadline {{ rfp.current_intake.deadline_status }} {{ rfp.current_intake.deadline_at|default_if_none:'' }}</p><p>{{ rfp.current_intake.note }}</p>
+<p><a href="{% url 'bid_record' case.pk rfp.pk %}">Original bid, client conversation and sharing</a></p>
 {% if current_attachment %}<p><a href="{% url 'rfp_intake_attachment' case.pk rfp.current_intake_id %}">Open original bid document</a> · {{ current_attachment.name }}</p>{% endif %}
 {% if intake_context %}<h3>Recorded submission instructions</h3><dl>
   <dt>Client or prospect</dt><dd>{{ intake_context.facts.prospect_name|default:'Unknown' }}</dd>

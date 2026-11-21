@@ -7,6 +7,7 @@ from .change_stage_models import ChangeMilestoneLink
 from .standard_models import StandardPreapproval, StandardBinding
 from .rfp_models import RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,RFPReview,RFPDocumentBinding,RFPSubmission,RFPOutcome,RFPDisposition
 from .rfp_models import RFPIntakeSourceContext
+from .bid_sharing_models import BidSharingDecision, BidConversationNote
 from .rfp_upload_models import RFPStagedUpload
 from .rfp_submission_pack_models import RFPSubmissionPack
 from .rfp_submission_artifact_models import RFPSubmissionArtifact
