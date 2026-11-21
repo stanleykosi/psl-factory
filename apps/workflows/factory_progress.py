@@ -108,11 +108,14 @@ def queue_invoice_release(actor, work_id, expected):
 
 
 @transaction.atomic
-def claim():
+def claim(work_id=None):
     now = timezone.now()
-    job = FactoryProgress.objects.select_for_update(skip_locked=True).filter(
+    due = FactoryProgress.objects.select_for_update(skip_locked=True).filter(
         status__in=ACTIVE, available_at__lte=now,
-    ).order_by('available_at', 'pk').first()
+    )
+    if work_id is not None:
+        due = due.filter(work_id=work_id)
+    job = due.order_by('available_at', 'pk').first()
     if job:
         job.status = 'running'
         job.token = uuid4()
@@ -168,8 +171,8 @@ def run_job(job):
     return 'waiting', factory.snapshot(work, profile)[0]['hash']
 
 
-def run_once():
-    job = claim()
+def run_once(*, work_id=None):
+    job = claim() if work_id is None else claim(work_id=work_id)
     if not job:
         return None
     try:

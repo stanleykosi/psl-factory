@@ -160,10 +160,16 @@ def assert_run_current(run):
     if snapshot!=run.snapshot:raise ValidationError('Source, policy, review or authority changed; rebuild the exact Finance preview')
     return True
 
+@transaction.atomic
 def store(actor,case,source,kind,parent,request,snapshot,result):
     key=digest({'actor':actor.pk,'case':str(case.pk),'source':source.pk,'kind':kind,'parent':parent.pk if parent else None,'request':request,'snapshot':snapshot})
     old=FinanceRun.objects.filter(operation_key=key).first()
     if old:return old
+    if kind == 'mapping':
+        from apps.workflows.native_stations import receive_advice
+        receive_advice('F02', source, actor, case=case)
+        for adjustment in FinanceAdjustment.objects.filter(source=source, pk__in=request['adjustment_ids']):
+            receive_advice('F04', adjustment, actor, case=case)
     run=FinanceRun.objects.create(case=case,source=source,parent=parent,kind=kind,request=request,snapshot=snapshot,result=result,operation_key=key,actor=actor)
     event(actor,case,'finance.preview_created',run=run.pk,kind=kind,operation_key=key,status=result['status']);bump(case);return run
 

@@ -256,6 +256,8 @@ def accept(actor, case_id, source_id, expected=None):
     revision(case, expected)
     receipt = source.receipts.filter(duplicate_of=None).first()
     if not receipt: raise ValidationError('Original intake receipt required')
+    from apps.workflows.native_stations import receive_advice
+    receive_advice("F28", source, actor, case=case)
     acceptance = UsageIntakeAcceptance.objects.create(source=source, receipt=receipt, result=result, actor=actor)
     predecessors = []
     previous = source.predecessor

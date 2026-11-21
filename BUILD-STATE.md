@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Native department handoffs · 21 November 2026
+
+The remaining 34 PMO and 29 Finance processes now enter O01 from their own department records. Each produces a versioned source reading, an assigned specialist packet and a link to the actual downstream record. The 25 staff-facing Start work types remain the entry points for the original 45 IDs. The internal department-handoff definition covers the other 63. The process catalogue retains all 14 deferred BaaS IDs. Operational disclosure, named reviewers and business authority remain project decisions. [Routing book](docs/design/specialist-process-routes.md)
+
+The first isolated Railway run reached all 63 actual downstream records with simulated specialist responses. The build subsequently added explicit receipt of the findings inside native commands and a database guard on completion. The test ledger distinguishes these stages.
+
 ## Embedded specialist coordination · 21 November 2026
 
 The routing book defines the trigger, inputs, specialist responsibilities, domain controls, owner decisions and expected outputs for all 122 source processes. Within the release, 25 native Start work types bind 45 distinct process IDs directly or through an exact native investigation. The other 63 release IDs have documented assignments. Their individual O01 bindings still need engineering and acceptance. The 14 BaaS IDs remain deferred. [Per-process routing](docs/design/specialist-process-routes.md)

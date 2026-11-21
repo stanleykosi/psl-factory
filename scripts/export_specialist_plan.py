@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -15,11 +16,18 @@ def load(path):
 def render():
     sys.path.insert(0, str(ROOT))
     from apps.workflows.factory_processes import PROCESS_IDS
+    from apps.workflows.native_station_contracts import DEFINITION, registry
+    import django
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    django.setup()
+    triggered = registry()
 
     stations = {}
     for line, processes in PROCESS_IDS.items():
         for process in processes:
-            stations.setdefault(process, []).append(line)
+            station = f"{line} · {triggered[process].model}" if line == DEFINITION else line
+            stations.setdefault(process, []).append(station)
     rows = load("contracts/process-map.json")["rows"]
     assignments = load("reference/08-agent-architecture/process-agent-assignments.json")["assignments"]
     by_id = {item["id"]: item for item in assignments}
@@ -65,7 +73,7 @@ def render():
                 f"{row['workflow_family_id']} · {row['source_owner']} · "
                 + ("Deferred BaaS scope" if row["department"] == "BaaS" else "Release scope"),
                 "",
-                "**Direct Start work station** "
+                "**Coordinator station** "
                 + (", ".join(stations.get(row["id"], []))
                    or "No direct O01 station binding. This process retains its source contract and domain controls."),
                 "",

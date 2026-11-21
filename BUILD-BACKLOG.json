@@ -1,4 +1,13 @@
 {
+  "native_department_handoffs_20261121": {
+    "implementation": "63 source-event bindings across PMO and Finance; original 45 process bindings retained",
+    "baseline_railway_receipts": 63,
+    "baseline_checks_deployment": "468810e4-e724-4bf2-9781-646c81cdff41",
+    "verification": "BUILD-TESTS.md",
+    "active_release_process_count": 108,
+    "deferred_baas_process_count": 14,
+    "owner_decisions": "Operational data and model selection, reviewer appointments, domain policy values and outside destinations."
+  },
   "embedded_specialist_coordination_20261121": {
     "status": "connected_native_stations",
     "source_process_contracts": 122,

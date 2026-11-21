@@ -327,6 +327,9 @@ def review(actor,case_id,run_id,role,verdict,evidence_id,reason,expected):
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose exact review verdict')
     snapshot=review_snapshot(run) if verdict=='approve' else {'run_hash':run.sha256}
     authority=review_authority(actor,case,'forecast_rollover' if run.scenario.parent_id else 'forecast',role,verdict,run.actor_id)
+    if verdict=='approve':
+        from .coordinator_operations_cash import receive_forecast_sources
+        receive_forecast_sources(run,actor)
     r=ForecastReview.objects.create(run=run,snapshot=snapshot,role=role,verdict=verdict,authority=authority,evidence=subject(case,evidence_id,'forecast_review'),reason=reason,actor=actor)
     event(actor,case,'forecast.reviewed',review=r.pk,run=run.pk,verdict=verdict);bump(case);return r
 
@@ -424,6 +427,8 @@ def prioritize(actor,case_id,run_id,role,reference,description,owner_id,due_at,e
     proof=subject(case,evidence_id,'forecast_review')
     from apps.pmo.meetings import create_action
     from .models import ForecastPriority
+    from apps.workflows.native_stations import receive_advice
+    receive_advice('F40',review,actor,case=case)
     item=create_action(actor,case.pk,reference,description,owner_id,due_at,proof.pk,reason,case.revision)
     binding=ForecastPriority.objects.create(review=review,action=item,authority=authority)
     event(actor,case,'forecast.priority_recorded',priority=binding.pk,review=review.pk,action_item=item.pk,execution_authorized=False);return binding

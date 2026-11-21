@@ -59,6 +59,9 @@ def public_evidence(queryset):return queryset.exclude(forecast_private_query() |
 def public_agent_runs(queryset):
  # A public workspace/agent.extract grant does not authorise a private domain result.
  from apps.core.models import Evidence
+ from apps.workflows.models import FactoryAttempt
+ private_station = FactoryAttempt.objects.filter(agent_run_id=OuterRef('pk'), activity__work__definition='process-handoff/v1')
+ queryset = queryset.filter(~Exists(private_station))
  sources = public_evidence(Evidence.objects.filter(pk=OuterRef('evidence_id')))
  return queryset.filter(Exists(sources)).exclude(provider='deterministic-finance-lineage-v1',result__has_key='statement_inputs',result__statement_inputs__contains=[{'source_type':'ppe_schedule'}]).exclude(provider='deterministic-finance-lineage-v1',result__has_key='run',result__run__in=RawSQL('SELECT to_jsonb(statement_id) FROM finance_financestatementppeinput',[]))
 

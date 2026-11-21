@@ -1,6 +1,7 @@
 """Source process for each native station. Only the native observation selects a route."""
 
 from django.core.exceptions import ValidationError
+from . import native_station_contracts as stations
 
 STATIC = {
     "pmo-issues/v1": "P50",
@@ -20,6 +21,7 @@ STATIC = {
 }
 
 PROCESS_IDS = {
+    stations.DEFINITION: stations.PROCESSES,
     **{line: (process,) for line, process in STATIC.items()},
     "delivery-release/v1": ("P32", "P28"),
     "finance-bu/v1": ("F21", "F44"),
@@ -38,6 +40,8 @@ PROCESS_IDS = {
 
 def process_for(work, activity, observed, profile):
     line = work.definition
+    if line == stations.DEFINITION:
+        return work.native_station.process
     if line in STATIC:
         return STATIC[line]
     if line == "finance-bu/v1":

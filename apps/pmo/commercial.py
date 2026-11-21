@@ -214,6 +214,8 @@ def draft_submission(actor, case_id, revision_id, template_id, expected, *, temp
         raise ValidationError('Returned, rejected or withdrawn proposals need revision')
     decisions = valid_approvals(revision)
     template = Template.objects.filter(case=case, pk=template_id, definition__document_type='sow').first()
+    from .coordinator_intake import accept
+    accept(actor,case,revision,"P08","P09")
     if not template:
         raise ValidationError('Select this case controlled SOW template')
     from adapters.commercial import LocalCommercialAdapter
@@ -282,6 +284,9 @@ def adopt_signed(actor, case_id, revision_id, response_id, expected):
         raise ValidationError('Signature evidence cannot be reused for another baseline')
     from .signatures import current_packet, record_use
     signature_packet = current_packet(case, response.evidence_id, revision)
+    from .coordinator_intake import accept
+    accept(actor,case,response.receipt,"P19")
+    accept(actor,case,signature_packet,"P20")
     before = baseline_manifest(case)
     if before.get('signed_id'):
         # A signed scope change also needs the independently controlled change authorization.

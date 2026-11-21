@@ -120,7 +120,7 @@ def intake(request):
         'can_ask_tola': cases_for(request.user, 'tola').exists()})
     response['Cache-Control']='no-store';return response
 
-def work_grant_scope(actor):
+def work_grant_scope(actor, *, include_native=False):
     """Grant-level discovery scope. Protected native records may narrow it further."""
     from apps.agents.department_context import work_definitions
     from apps.identity.factory_access import department_cases
@@ -132,8 +132,9 @@ def work_grant_scope(actor):
     for persona, role in [('tola', 'pmo-lead'), ('chidi', 'finance-lead')]:
         scope |= Q(definition__in=work_definitions(persona), case_id__in=department_cases(actor, role).values('pk'))
     explicit = visible_cases(actor)
+    works = FactoryWork.objects.all() if include_native else FactoryWork.objects.exclude(definition='process-handoff/v1')
     if not explicit.exists():
-        return FactoryWork.objects.filter(scope)
+        return works.filter(scope)
     by_actions = {}
     for name,spec in DEFINITIONS.items():
         actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
@@ -145,14 +146,19 @@ def work_grant_scope(actor):
         for action in sorted(actions):
             eligible &= Q(case_id__in=grants.filter(action=action).values('case_id'))
         legacy |= eligible
-    return FactoryWork.objects.filter(scope | (legacy & Q(case__in=explicit,
+    return works.filter(scope | (legacy & Q(case__in=explicit,
         case_id__in=grants.filter(action='factory.read').values('case_id'))))
 
 
 def visible(actor, *, work_id=None, case_id=None):
-    query=work_grant_scope(actor).select_related('case','actor','invoice','source_head')
+    query=work_grant_scope(actor, include_native=work_id is not None).select_related('case','actor','invoice','source_head')
     if work_id is not None:
         query=query.filter(pk=work_id)
+        native=query.filter(definition='process-handoff/v1').first()
+        if native:
+            from .native_stations import readable
+            if not readable(actor,native):
+                return query.none()
     if case_id is not None:
         query=query.filter(case_id=case_id)
     from apps.finance.fixed_charge import preparation_access
@@ -979,6 +985,9 @@ def _detail(request,work_id,focus=None):
         raise Http404
     if focus and focus not in SCREENS.get(work.definition, {}):
         raise Http404
+    if work.definition=='process-handoff/v1':
+        from .native_station_views import detail
+        return detail(request,work)
     if work.definition=='engagement/v1':
         from .factory_engagement_views import detail as engagement_detail
         return engagement_detail(request,work)

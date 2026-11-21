@@ -7,7 +7,7 @@ O01 owns dispatch and resumption for connected factory work. Supporting roles ru
 
 AF01 · Support · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A customer complaint is received through an authorised support channel.
 
@@ -88,7 +88,7 @@ AF01 · Support · Deferred BaaS scope
 
 AF01 · Support (proposed reporting) · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** An authorised reviewer requests a complaint summary for a defined period/scope.
 
@@ -169,7 +169,7 @@ AF01 · Support (proposed reporting) · Deferred BaaS scope
 
 AF01 · Support (proposed metrics) · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A defined reporting period or individual case metric is requested.
 
@@ -249,7 +249,7 @@ AF01 · Support (proposed metrics) · Deferred BaaS scope
 
 AF01 · Support (proposed flow) · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** Support agrees to define or revise a standard case flow.
 
@@ -330,7 +330,7 @@ AF01 · Support (proposed flow) · Deferred BaaS scope
 
 AF02 · Reconciliation; Support · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A complaint or reconciliation discrepancy suggests a corrective credit may be needed.
 
@@ -410,7 +410,7 @@ AF02 · Reconciliation; Support · Deferred BaaS scope
 
 AF02 · Engineering executes; Support / Reconciliation requests · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** An evidenced discrepancy has passed the required settlement and correction review.
 
@@ -493,7 +493,7 @@ AF02 · Engineering executes; Support / Reconciliation requests · Deferred BaaS
 
 AF02 · Reconciliation; Engineering · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** Reconciliation identifies a fund/queue action needing Engineering access.
 
@@ -575,7 +575,7 @@ AF02 · Reconciliation; Engineering · Deferred BaaS scope
 
 AF02 · Reconciliation (second-hand description) · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** Discovery requests the reconciliation owner’s walkthrough, or a validated future reconciliation run begins.
 
@@ -656,7 +656,7 @@ AF02 · Reconciliation (second-hand description) · Deferred BaaS scope
 
 AF03 · BaaS stakeholder; holder unconfirmed · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** An agreement is registered/amended or an approved notice/renewal review date approaches.
 
@@ -737,7 +737,7 @@ AF03 · BaaS stakeholder; holder unconfirmed · Deferred BaaS scope
 
 AF03 · BaaS stakeholder; stage holders unconfirmed · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A customer onboarding case is initiated or an authorised stage owner records a transition.
 
@@ -818,7 +818,7 @@ AF03 · BaaS stakeholder; stage holders unconfirmed · Deferred BaaS scope
 
 AF03 · BaaS holder to be confirmed · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** An authorised status-age review is requested, or the approved future internal review cadence runs.
 
@@ -898,7 +898,7 @@ AF03 · BaaS holder to be confirmed · Deferred BaaS scope
 
 AF03 · BaaS; Data / admin inputs · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A partner activity report is requested for a defined period and audience.
 
@@ -978,7 +978,7 @@ AF03 · BaaS; Data / admin inputs · Deferred BaaS scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** finance-ledger/v1
+**Coordinator station** finance-ledger/v1
 
 **Trigger** A finance user receives a supported transaction requiring ledger entry; actual intake and close rules require walkthrough.
 
@@ -1058,7 +1058,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceSource
 
 **Trigger** Finance supplies a trial-balance export for a specified reporting run.
 
@@ -1138,7 +1138,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** finance-accounts/v1
+**Coordinator station** finance-accounts/v1
 
 **Trigger** An F02 snapshot and a Finance-approved mapping version are selected for one reporting run.
 
@@ -1218,7 +1218,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceAdjustment
 
 **Trigger** A reporting run requires an adjustment or a movement/total comparison.
 
@@ -1298,7 +1298,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRun
 
 **Trigger** F03 mapping and any F04 reporting adjustments are ready for an approved note subset.
 
@@ -1378,7 +1378,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRun
 
 **Trigger** A reviewed asset-note population is prepared for a reporting snapshot.
 
@@ -1456,7 +1456,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** finance-ppe/v1
+**Coordinator station** finance-ppe/v1
 
 **Trigger** Finance prepares or updates an asset schedule for a reporting period.
 
@@ -1539,7 +1539,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRun
 
 **Trigger** Mapped liability balances are ready for note preparation.
 
@@ -1618,7 +1618,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** finance-accounts/v1
+**Coordinator station** finance-accounts/v1
 
 **Trigger** Finance prepares the balance-sheet output for a specified reporting version.
 
@@ -1699,7 +1699,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinancePerformance
 
 **Trigger** A reporting period and required comparison view are selected.
 
@@ -1778,7 +1778,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceBudget
 
 **Trigger** Finance selects or updates a budget version for a reporting month.
 
@@ -1858,7 +1858,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** finance-schedules/v1
+**Coordinator station** finance-schedules/v1
 
 **Trigger** Finance prepares detailed income or identifies a supplemental adjustment to linked note figures.
 
@@ -1938,7 +1938,7 @@ AF04 · Finance · Release scope
 
 AF04 · Finance · Release scope
 
-**Direct Start work station** finance-schedules/v1
+**Coordinator station** finance-schedules/v1
 
 **Trigger** Finance seeks to include a schedule beyond the explicitly defined note and statement slice.
 
@@ -2018,7 +2018,7 @@ AF04 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRun
 
 **Trigger** A reviewed management-account revenue snapshot is available for monthly BU reporting.
 
@@ -2097,7 +2097,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRun
 
 **Trigger** Reviewed cost-of-sales/direct-cost source is ready for BU reporting.
 
@@ -2176,7 +2176,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** finance-payroll/v1
+**Coordinator station** finance-payroll/v1
 
 **Trigger** Finance receives the two payroll sources for a selected period.
 
@@ -2256,7 +2256,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance; HR supplies staff data · Release scope
 
-**Direct Start work station** finance-payroll/v1
+**Coordinator station** finance-payroll/v1
 
 **Trigger** An F16 restricted payroll snapshot and HR-authorised staff view are available.
 
@@ -2335,7 +2335,7 @@ AF05 · Finance; HR supplies staff data · Release scope
 
 AF05 · Finance; HR staff input · Release scope
 
-**Direct Start work station** finance-payroll/v1
+**Coordinator station** finance-payroll/v1
 
 **Trigger** Payroll and HR/BU matching have been reviewed for the period.
 
@@ -2414,7 +2414,7 @@ AF05 · Finance; HR staff input · Release scope
 
 AF05 · Finance; HR headcount input · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRun
 
 **Trigger** Finance prepares an eligible other-staff-cost pool for a reporting period.
 
@@ -2493,7 +2493,7 @@ AF05 · Finance; HR headcount input · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.BUWork
 
 **Trigger** A reviewed standard shared-staff cost pool is available.
 
@@ -2572,7 +2572,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** finance-bu/v1
+**Coordinator station** finance-bu/v1
 
 **Trigger** A staff cost is explicitly identified as outside the standard F20 allocation method.
 
@@ -2653,7 +2653,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** finance-accounts/v1
+**Coordinator station** finance-accounts/v1
 
 **Trigger** An operating-expense pool is confirmed as shared rather than directly attributed.
 
@@ -2733,7 +2733,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** finance-accounts/v1
+**Coordinator station** finance-accounts/v1
 
 **Trigger** Monthly BU revenue and cost allocations are assembled for a common period.
 
@@ -2813,7 +2813,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinancePerformance
 
 **Trigger** Finance selects a YTD reporting cut-off.
 
@@ -2892,7 +2892,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinancePerformance
 
 **Trigger** A YTD BU report needs its comparable budget.
 
@@ -2971,7 +2971,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinancePerformance
 
 **Trigger** Reviewed monthly/YTD actuals and comparable budget are ready for presentation.
 
@@ -3052,7 +3052,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.FinanceRestatement
 
 **Trigger** Finance receives a request to add/reclassify reporting categories or rework past reports.
 
@@ -3134,7 +3134,7 @@ AF05 · Finance · Release scope
 
 AF05 · Finance · Release scope
 
-**Direct Start work station** finance-bu/v1
+**Coordinator station** finance-bu/v1
 
 **Trigger** A future approved design considers a new financial event or revises its BU attribution.
 
@@ -3215,7 +3215,7 @@ AF05 · Finance · Release scope
 
 AF06 · Finance; Data / BaaS pricing contributors · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A monthly billing preparation cycle or proposed pricing integration change is reviewed.
 
@@ -3297,7 +3297,7 @@ AF06 · Finance; Data / BaaS pricing contributors · Deferred BaaS scope
 
 AF06 · Data team supplies usage; Finance receives · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.UsageIntakeSource
 
 **Trigger** The Data team submits a usage snapshot for a billing period or a correction to a prior one.
 
@@ -3379,7 +3379,7 @@ AF06 · Data team supplies usage; Finance receives · Release scope
 
 AF06 · Finance · Release scope
 
-**Direct Start work station** pmo-finance/v1
+**Coordinator station** pmo-finance/v1
 
 **Trigger** Accepted usage has a matching approved rate/rule source for the billing period.
 
@@ -3460,7 +3460,7 @@ AF06 · Finance · Release scope
 
 AF06 · Finance · Release scope
 
-**Direct Start work station** pmo-finance/v1
+**Coordinator station** pmo-finance/v1
 
 **Trigger** A reviewed pricing input is handed to the incumbent flow, subject to its verified release contract.
 
@@ -3542,7 +3542,7 @@ AF06 · Finance · Release scope
 
 AF06 · IT maintains clients; Finance invoices · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.CoveragePreparationRequest
 
 **Trigger** A scheduled billing review or IT client/service change occurs.
 
@@ -3623,7 +3623,7 @@ AF06 · IT maintains clients; Finance invoices · Release scope
 
 AF06 · Finance; IT collection context · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.CashReceipt
 
 **Trigger** Finance reviews receivables or receives evidence of a receipt, dispute or collection issue.
 
@@ -3704,7 +3704,7 @@ AF06 · Finance; IT collection context · Release scope
 
 AF06 · Finance; business-line contributors to confirm · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.CoverageTerms
 
 **Trigger** A future approved client/service change or period-coverage review occurs.
 
@@ -3785,7 +3785,7 @@ AF06 · Finance; business-line contributors to confirm · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastScenario
 
 **Trigger** Finance prepares or refreshes a forecast scenario for a chosen horizon.
 
@@ -3866,7 +3866,7 @@ AF07 · Finance · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastScenario
 
 **Trigger** Finance refreshes expected cash outflows for a forecast horizon.
 
@@ -3947,7 +3947,7 @@ AF07 · Finance · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastScenario
 
 **Trigger** A forecast period is opened or the cash position is refreshed.
 
@@ -4028,7 +4028,7 @@ AF07 · Finance · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** finance-forecast/v1
+**Coordinator station** finance-forecast/v1
 
 **Trigger** F36/F37 assumptions and F38 opening position are ready under an approved forecast rule.
 
@@ -4108,7 +4108,7 @@ AF07 · Finance · Release scope
 
 AF07 · Management decides; Finance prepares · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastReview
 
 **Trigger** Management reviews a versioned cash forecast and near-term obligations.
 
@@ -4189,7 +4189,7 @@ AF07 · Management decides; Finance prepares · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastMatch
 
 **Trigger** A receipt/payment is verified or a scheduled actuals refresh occurs.
 
@@ -4268,7 +4268,7 @@ AF07 · Finance · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastScenario
 
 **Trigger** A forecast period closes or Finance changes the planning horizon.
 
@@ -4350,7 +4350,7 @@ AF07 · Finance · Release scope
 
 AF07 · Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ForecastBinding
 
 **Trigger** Finance prepares a cash report for a specified recipient audience.
 
@@ -4431,7 +4431,7 @@ AF07 · Finance · Release scope
 
 AF08 · Finance; project managers · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.ProgressPacket
 
 **Trigger** Finance needs project progress/price evidence for a reporting or recognition review.
 
@@ -4512,7 +4512,7 @@ AF08 · Finance; project managers · Release scope
 
 AF08 · Finance; Project Manager/PMO supplies milestone and costing information · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.Milestone
 
 **Trigger** SOP events: client signs SOW/PRD; project plan milestones are approved; a milestone is reached; or closure reporting checks that every milestone has been notified.
 
@@ -4600,7 +4600,7 @@ AF08 · Finance; Project Manager/PMO supplies milestone and costing information 
 
 AF08 · HR; Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · finance.HRDisclosure
 
 **Trigger** Finance needs staff/BU or approved payroll-supporting fields for a defined reporting period.
 
@@ -4682,7 +4682,7 @@ AF08 · HR; Finance · Release scope
 
 AF08 · Project Manager sends; Finance invoices and follows up · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.Milestone
 
 **Trigger** Signed SOW/PRD baseline is available; Planning milestones are agreed; a milestone is reached; or closure reconciliation begins.
 
@@ -4765,7 +4765,7 @@ AF08 · Project Manager sends; Finance invoices and follows up · Release scope
 
 AF08 · Client signs; Project Manager shares with Finance · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.CommercialSignaturePacket
 
 **Trigger** Detailed planning and approved costing/client documents ready for signature; obtain signed SOW then create opening Finance billing handoff.
 
@@ -4846,7 +4846,7 @@ AF08 · Client signs; Project Manager shares with Finance · Release scope
 
 AF08 · Project Manager notifies; Finance invoices or follows up · Release scope
 
-**Direct Start work station** pmo-finance/v1
+**Coordinator station** pmo-finance/v1
 
 **Trigger** PM confirms a specific project milestone has been reached.
 
@@ -4925,7 +4925,7 @@ AF08 · Project Manager notifies; Finance invoices or follows up · Release scop
 
 AF09 · PMO coordinates; referenced departments retain approval ownership · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.ApprovalRequest
 
 **Trigger** An in-scope SOW/core coordination case needs to know which PMO decision or external prerequisite is outstanding.
 
@@ -5003,7 +5003,7 @@ AF09 · PMO coordinates; referenced departments retain approval ownership · Rel
 
 AF09 · PMO; assigned Project Manager · Release scope
 
-**Direct Start work station** engagement/v1
+**Coordinator station** engagement/v1
 
 **Trigger** A client engagement begins; later, the same engagement reaches Planning and needs a formal project ID.
 
@@ -5080,7 +5080,7 @@ AF09 · PMO; assigned Project Manager · Release scope
 
 AF09 · PMO; assigned Project Manager · Release scope
 
-**Direct Start work station** engagement/v1
+**Coordinator station** engagement/v1
 
 **Trigger** Client engagement confirmed via Route A RFP won, Route B direct client engagement, or Route C Product paper route.
 
@@ -5157,7 +5157,7 @@ AF09 · PMO; assigned Project Manager · Release scope
 
 AF09 · PMO coordinates; Product prepares product paper/PRD; delivery teams contribute · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · core.Evidence
 
 **Trigger** Engagement P16 is logged and requirements/stakeholder coordination begins.
 
@@ -5236,7 +5236,7 @@ AF09 · PMO coordinates; Product prepares product paper/PRD; delivery teams cont
 
 AF09 · PMO coordinates; Product and cross-functional delivery teams · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · core.Evidence
 
 **Trigger** Pre-signature alignment uses current draft PRD and planned scope to resolve requirements/dependencies before detailed planning and signature. Preserve both documented alignment purposes; after signature revalidate only changes against the signed baseline, without making signature a prerequisite to planning.
 
@@ -5313,7 +5313,7 @@ AF09 · PMO coordinates; Product and cross-functional delivery teams · Release 
 
 AF09 · Product/Design own; Design Lead and Client if applicable sign; PMO confirms · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.DeliverySource
 
 **Trigger** Planning involves UI design, and UI development or Planning exit is approaching.
 
@@ -5390,7 +5390,7 @@ AF09 · Product/Design own; Design Lead and Client if applicable sign; PMO confi
 
 AF09 · Engineering owns; Engineering Lead approves; PMO confirms · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.DeliverySource
 
 **Trigger** Technical design for architecture, integrations and data flow is ready, and development/Planning exit needs its prerequisite.
 
@@ -5466,7 +5466,7 @@ AF09 · Engineering owns; Engineering Lead approves; PMO confirms · Release sco
 
 AF09 · QA/Product own; QA Lead and Product Owner sign; PMO confirms · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.DeliverySource
 
 **Trigger** Planning is preparing to exit, or QA/UAT execution needs current strategy evidence.
 
@@ -5542,7 +5542,7 @@ AF09 · QA/Product own; QA Lead and Product Owner sign; PMO confirms · Release 
 
 AF09 · Product Owner approves scope; Engineering Lead approves estimates · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · core.Evidence
 
 **Trigger** Requirements and owning-team estimates available; establish scope/effort baselines during detailed planning before client SOW signature.
 
@@ -5617,7 +5617,7 @@ AF09 · Product Owner approves scope; Engineering Lead approves estimates · Rel
 
 AF09 · PMO prepares; PMO Lead approves · Release scope
 
-**Direct Start work station** planning/v1
+**Coordinator station** planning/v1
 
 **Trigger** Requirements, estimates and relevant planning inputs available; complete detailed planning before client SOW signature. A signed SOW is not a prerequisite to performing detailed planning. Preserve other prescribed sign-offs.
 
@@ -5695,7 +5695,7 @@ AF09 · PMO prepares; PMO Lead approves · Release scope
 
 AF09 · PMO; Product; Engineering; QA; Infra; Security · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.MeetingVersion
 
 **Trigger** Approved project plan and referenced Planning sign-offs are confirmed.
 
@@ -5774,7 +5774,7 @@ AF09 · PMO; Product; Engineering; QA; Infra; Security · Release scope
 
 AF09 · PMO tracks; Engineering and QA execute under their SOPs · Release scope
 
-**Direct Start work station** delivery-release/v1
+**Coordinator station** delivery-release/v1
 
 **Trigger** Execution begins or progress/dependency/blocker/scope information changes.
 
@@ -5856,7 +5856,7 @@ AF09 · PMO tracks; Engineering and QA execute under their SOPs · Release scope
 
 AF09 · QA Lead signs; PMO confirms · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.GateRecord
 
 **Trigger** Engineering/QA candidate build is proposed for Product UAT.
 
@@ -5933,7 +5933,7 @@ AF09 · QA Lead signs; PMO confirms · Release scope
 
 AF09 · Product Manager; Product Owner; client contact person · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.GateRecord
 
 **Trigger** QA exit P29 is confirmed and Product UAT begins for a specific candidate and requirements version.
 
@@ -6012,7 +6012,7 @@ AF09 · Product Manager; Product Owner; client contact person · Release scope
 
 AF09 · Engineering decides; PMO confirms · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.GateRecord
 
 **Trigger** A candidate is being prepared for production deployment request.
 
@@ -6089,7 +6089,7 @@ AF09 · Engineering decides; PMO confirms · Release scope
 
 AF09 · Project Manager raises; Security, CTO and CEO approve; Infra/DevOps releases · Release scope
 
-**Direct Start work station** delivery-release/v1
+**Coordinator station** delivery-release/v1
 
 **Trigger** A production release or production change is proposed after required upstream evidence, including Engineering Go / No-Go.
 
@@ -6171,7 +6171,7 @@ AF09 · Project Manager raises; Security, CTO and CEO approve; Infra/DevOps rele
 
 AF09 · Project Manager and Client · Release scope
 
-**Direct Start work station** delivery-go-live/v1
+**Coordinator station** delivery-go-live/v1
 
 **Trigger** Production release has occurred and post-release go-live/business acceptance is ready to be recorded.
 
@@ -6249,7 +6249,7 @@ AF09 · Project Manager and Client · Release scope
 
 AF09 · Engineering/Infrastructure confirm; PMO verifies · Release scope
 
-**Direct Start work station** delivery-hypercare/v1
+**Coordinator station** delivery-hypercare/v1
 
 **Trigger** Project has post-release go-live sign-off and is preparing for closure.
 
@@ -6325,7 +6325,7 @@ AF09 · Engineering/Infrastructure confirm; PMO verifies · Release scope
 
 AF09 · PMO/Project Manager; Support/Operations receive · Release scope
 
-**Direct Start work station** delivery-handover/v1
+**Coordinator station** delivery-handover/v1
 
 **Trigger** Project Closure includes operational handover after go-live.
 
@@ -6403,7 +6403,7 @@ AF09 · PMO/Project Manager; Support/Operations receive · Release scope
 
 AF09 · PMO; relevant project participants · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.MeetingVersion
 
 **Trigger** Closure lessons-learned activity is due and relevant participants/evidence are available.
 
@@ -6481,7 +6481,7 @@ AF09 · PMO; relevant project participants · Release scope
 
 AF09 · Project Manager prepares; Finance confirms notifications; Head of PMO approves · Release scope
 
-**Direct Start work station** delivery-closure/v1
+**Coordinator station** delivery-closure/v1
 
 **Trigger** Go-live sign-off exists and Closure activities/evidence are being assembled.
 
@@ -6562,7 +6562,7 @@ AF09 · Project Manager prepares; Finance confirms notifications; Head of PMO ap
 
 AF09 · PMO owns delivery governance; named approvers and other teams retain their decisions · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.DeliveryRecord
 
 **Trigger** Apply phase guards with detailed planning/costing before signed SOW. Historical signed-SOW-before-detailed-planning dependency is superseded; unrelated gates remain.
 
@@ -6641,7 +6641,7 @@ AF09 · PMO owns delivery governance; named approvers and other teams retain the
 
 AF10 · PMO; Project Manager; Head of PMO; CEO · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.CommercialDocumentBinding
 
 **Trigger** A PM proposes to share an SOW or its cost with a client; the specific commercial and document versions must be identified.
 
@@ -6720,7 +6720,7 @@ AF10 · PMO; Project Manager; Head of PMO; CEO · Release scope
 
 AF10 · PMO; Engineering and Security supply estimates · Release scope
 
-**Direct Start work station** commercial/v1
+**Coordinator station** commercial/v1
 
 **Trigger** A SOW, plan, RFP or cost-impacting change needs resource effort translated into a supported cost proposal.
 
@@ -6798,7 +6798,7 @@ AF10 · PMO; Engineering and Security supply estimates · Release scope
 
 AF10 · Project Manager; PMO; Product where applicable · Release scope
 
-**Direct Start work station** commercial/v1
+**Coordinator station** commercial/v1
 
 **Trigger** Engagement requirements are sufficiently understood for a proposed SOW; Route C uses Product’s product paper where applicable.
 
@@ -6878,7 +6878,7 @@ AF10 · Project Manager; PMO; Product where applicable · Release scope
 
 AF10 · PMO; Project Manager; Head of PMO; CEO · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.CommercialRevision
 
 **Trigger** A previously prepared/approved SOW or other cost proposal is revised, or a pricing-model update is proposed.
 
@@ -6958,7 +6958,7 @@ AF10 · PMO; Project Manager; Head of PMO; CEO · Release scope
 
 AF10 · Project Manager → Head of PMO → CEO (final) · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.CommercialRevision
 
 **Trigger** A costed SOW with breakdown and milestones is ready for internal review before client sharing.
 
@@ -7035,7 +7035,7 @@ AF10 · Project Manager → Head of PMO → CEO (final) · Release scope
 
 AF10 · PMO coordinates; Engineering and Security supply estimates · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · core.Evidence
 
 **Trigger** SOW preparation or Planning effort estimation requires current effort and timeline estimates.
 
@@ -7113,7 +7113,7 @@ AF10 · PMO coordinates; Engineering and Security supply estimates · Release sc
 
 AF10 · Project Manager; PMO; Client · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.PublicationReceipt
 
 **Trigger** SOW/client document version has passed P01 release eligibility; PM is ready for client submission.
 
@@ -7193,7 +7193,7 @@ AF10 · Project Manager; PMO; Client · Release scope
 
 AF10 · PMO; CEO typically assigns; Project Manager · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.RFPIntake
 
 **Trigger** An RFP is received, typically assigned by CEO.
 
@@ -7271,7 +7271,7 @@ AF10 · PMO; CEO typically assigns; Project Manager · Release scope
 
 AF10 · PMO; Engineering; QA; Security; Product · Release scope
 
-**Direct Start work station** rfp-response/v1
+**Coordinator station** rfp-response/v1
 
 **Trigger** RFP logged and assigned to PM through P45.
 
@@ -7351,7 +7351,7 @@ AF10 · PMO; Engineering; QA; Security; Product · Release scope
 
 AF10 · PM coordinates; PMO Lead and Engineering Lead approve · Release scope
 
-**Direct Start work station** rfp-response/v1
+**Coordinator station** rfp-response/v1
 
 **Trigger** RFP analysis inputs P46 are ready for response preparation.
 
@@ -7430,7 +7430,7 @@ AF10 · PM coordinates; PMO Lead and Engineering Lead approve · Release scope
 
 AF10 · Project Manager → Head of PMO → CEO; PMO submits · Release scope
 
-**Direct Start work station** rfp-response/v1
+**Coordinator station** rfp-response/v1
 
 **Trigger** P47 internal review is complete for final technical/commercial response and costing.
 
@@ -7512,7 +7512,7 @@ AF10 · Project Manager → Head of PMO → CEO; PMO submits · Release scope
 
 AF10 · PMO; Project Manager · Release scope
 
-**Direct Start work station** rfp-response/v1
+**Coordinator station** rfp-response/v1
 
 **Trigger** A credible RFP outcome is received after submission P48.
 
@@ -7591,7 +7591,7 @@ AF10 · PMO; Project Manager · Release scope
 
 AF11 · PMO; Project Manager; PMO leadership · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.MinutesReportBinding
 
 **Trigger** Delivery updates arrive or a reporting period is due; actual source cutoffs and metrics still need owner confirmation.
 
@@ -7670,7 +7670,7 @@ AF11 · PMO; Project Manager; PMO leadership · Release scope
 
 AF11 · PMO; Management and Engineering as permitted audiences · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · policy.PolicyState
 
 **Trigger** A permitted PMO, management or Engineering user requests a project overview.
 
@@ -7749,7 +7749,7 @@ AF11 · PMO; Management and Engineering as permitted audiences · Release scope
 
 AF11 · PMO; document owners to confirm · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.TemplateScope
 
 **Trigger** A SOW, report, minutes or other controlled document is being prepared.
 
@@ -7824,7 +7824,7 @@ AF11 · PMO; document owners to confirm · Release scope
 
 AF11 · PMO; Project Managers; PMO Lead for external-document review · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.Template
 
 **Trigger** A controlled template/document is introduced, updated, archived or referenced by a project.
 
@@ -7903,7 +7903,7 @@ AF11 · PMO; Project Managers; PMO Lead for external-document review · Release 
 
 AF11 · Engineering finalizes technical documentation; PMO archives · Release scope
 
-**Direct Start work station** delivery-archive/v1
+**Coordinator station** delivery-archive/v1
 
 **Trigger** Project enters Closure after go-live sign-off, and final documentation is ready to be collected.
 
@@ -7982,7 +7982,7 @@ AF11 · Engineering finalizes technical documentation; PMO archives · Release s
 
 AF11 · PMO only · Release scope
 
-**Direct Start work station** pmo-leadership-report/v1
+**Coordinator station** pmo-leadership-report/v1
 
 **Trigger** Each Tuesday internal PMO review is due; local time, holidays and meeting hour are not supplied.
 
@@ -8060,7 +8060,7 @@ AF11 · PMO only · Release scope
 
 AF11 · PMO/Project Manager; PMO Lead reviews external document · Release scope
 
-**Direct Start work station** pmo-weekly-report/v1
+**Coordinator station** pmo-weekly-report/v1
 
 **Trigger** Weekly client reporting is due for a project; specific weekday/recipients still need confirmation.
 
@@ -8137,7 +8137,7 @@ AF11 · PMO/Project Manager; PMO Lead reviews external document · Release scope
 
 AF11 · PMO leadership; external stakeholders only where required · Release scope
 
-**Direct Start work station** pmo-leadership-report/v1
+**Coordinator station** pmo-leadership-report/v1
 
 **Trigger** Monthly executive reporting period closes; date, metrics and exact audience are not specified.
 
@@ -8216,7 +8216,7 @@ AF11 · PMO leadership; external stakeholders only where required · Release sco
 
 AF11 · PMO; meeting action owners · Release scope
 
-**Direct Start work station** pmo-minutes/v1
+**Coordinator station** pmo-minutes/v1
 
 **Trigger** Any formal meeting occurs, including alignment, kick-off, status review or retrospective.
 
@@ -8295,7 +8295,7 @@ AF11 · PMO; meeting action owners · Release scope
 
 AF11 · Project Managers; document owners · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.Version
 
 **Trigger** A project document is created, updated, reviewed or prepared for use.
 
@@ -8374,7 +8374,7 @@ AF11 · Project Managers; document owners · Release scope
 
 AF11 · PMO Lead reviews; PM/author prepares · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.Version
 
 **Trigger** Any document, report, issue summary, SOW, RFP or minutes is proposed for external sharing.
 
@@ -8455,7 +8455,7 @@ AF11 · PMO Lead reviews; PM/author prepares · Release scope
 
 AF12 · PMO or CTO; PMO Lead / Head of PMO approves client communication · Release scope
 
-**Direct Start work station** pmo-escalation/v1
+**Coordinator station** pmo-escalation/v1
 
 **Trigger** An unresolved internal/client-dependent issue reaches an escalation threshold, or any blocker affects delivery timelines immediately.
 
@@ -8535,7 +8535,7 @@ AF12 · PMO or CTO; PMO Lead / Head of PMO approves client communication · Rele
 
 AF12 · PM/assigned team logs; PM sets severity; responsible owner resolves; QA and PM close · Release scope
 
-**Direct Start work station** pmo-issues/v1
+**Coordinator station** pmo-issues/v1
 
 **Trigger** PM or assigned team identifies a Bug, Risk, Blocker, Dependency or Change Request for a project.
 
@@ -8618,7 +8618,7 @@ AF12 · PM/assigned team logs; PM sets severity; responsible owner resolves; QA 
 
 AF12 · Security owns company/client/product risk register; PMO references · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.IssueReferenceObservation
 
 **Trigger** A project issue/report needs risk information or a Risk-typed issue is recorded.
 
@@ -8697,7 +8697,7 @@ AF12 · Security owns company/client/product risk register; PMO references · Re
 
 AF12 · Engineering owns incident process; PMO tracks reporting requirements · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.IssueState
 
 **Trigger** A production/post-deployment issue is logged or updated, or weekly/monthly reporting is prepared.
 
@@ -8777,7 +8777,7 @@ AF12 · Engineering owns incident process; PMO tracks reporting requirements · 
 
 AF12 · Engineering owns; Incident Lead is Security Lead or Engineering Lead · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.IssueReferenceObservation
 
 **Trigger** An Engineering-owned incident affects a PMO project or requires a production change.
 
@@ -8858,7 +8858,7 @@ AF12 · Engineering owns; Incident Lead is Security Lead or Engineering Lead · 
 
 AF12 · Requestor; Project Manager classifies · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.ChangeVersion
 
 **Trigger** Change proposed to scope, requirements, timelines, architecture or production system.
 
@@ -8938,7 +8938,7 @@ AF12 · Requestor; Project Manager classifies · Release scope
 
 AF12 · PMO coordinates; Engineering; QA; Infra; Security · Release scope
 
-**Direct Start work station** pmo-change/v1
+**Coordinator station** pmo-change/v1
 
 **Trigger** Logged/classified CR P56 requires impact assessment before relevant change decisions.
 
@@ -9020,7 +9020,7 @@ AF12 · PMO coordinates; Engineering; QA; Infra; Security · Release scope
 
 AF12 · Product; Engineering; Client if client-facing; PM → Head of PMO → CEO if cost impact; Engineering Lead and Security Manager for timelines · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · pmo.ChangeVersion
 
 **Trigger** CR impact assessment identifies affected scope, technical work, client impact, cost, timeline and production deployment.
 
@@ -9107,7 +9107,7 @@ AF12 · Product; Engineering; Client if client-facing; PM → Head of PMO → CE
 
 AF12 · PMO coordinates; Engineering/QA execute; stakeholders receive · Release scope
 
-**Direct Start work station** pmo-change/v1
+**Coordinator station** pmo-change/v1
 
 **Trigger** Applicable change approvals P58 or valid emergency route are documented; unresolved emergency execution is not automated.
 
@@ -9188,7 +9188,7 @@ AF12 · PMO coordinates; Engineering/QA execute; stakeholders receive · Release
 
 AF12 · Project Manager and Client sign go-live; PMO tracks completeness · Release scope
 
-**Direct Start work station** pmo-change/v1
+**Coordinator station** pmo-change/v1
 
 **Trigger** Approved change implementation/testing has completed and closure is requested.
 
@@ -9267,7 +9267,7 @@ AF12 · Project Manager and Client sign go-live; PMO tracks completeness · Rele
 
 AF12 · Incident Lead and Engineering Lead; CTO additionally for P1 · Release scope
 
-**Direct Start work station** pmo-emergency/v1
+**Coordinator station** pmo-emergency/v1
 
 **Trigger** Critical production issue needs immediate implementation and is linked to an incident.
 
@@ -9351,7 +9351,7 @@ AF12 · Incident Lead and Engineering Lead; CTO additionally for P1 · Release s
 
 AF12 · PMO coordinates; Product and Engineering Lead approve retrospectively · Release scope
 
-**Direct Start work station** pmo-emergency/v1
+**Coordinator station** pmo-emergency/v1
 
 **Trigger** Emergency change has been implemented through the authorized existing route.
 
@@ -9434,7 +9434,7 @@ AF12 · PMO coordinates; Product and Engineering Lead approve retrospectively ·
 
 AF13 · BaaS; Support; Reconciliation · Deferred BaaS scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** No direct O01 station binding. This process retains its source contract and domain controls.
 
 **Trigger** A definition lacks primary documents, actual examples or accountable owner validation.
 
@@ -9515,7 +9515,7 @@ AF13 · BaaS; Support; Reconciliation · Deferred BaaS scope
 
 AF13 · Head of PMO (document owner); PMO · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.DiscoverySource
 
 **Trigger** SOP v1.1 is received or a clarification/update is supplied by the document owner.
 
@@ -9595,7 +9595,7 @@ AF13 · Head of PMO (document owner); PMO · Release scope
 
 AF13 · PMO; Engineering; Security; other documentation holders as relevant · Release scope
 
-**Direct Start work station** commercial/v1
+**Coordinator station** commercial/v1
 
 **Trigger** Documentation follow-up on the 8 October request for a pricing-model walkthrough; calculator and examples remain outstanding.
 
@@ -9673,7 +9673,7 @@ AF13 · PMO; Engineering; Security; other documentation holders as relevant · R
 
 AF13 · Departmental process users; PMO; automation team · Release scope
 
-**Direct Start work station** No direct O01 station binding. This process retains its source contract and domain controls.
+**Coordinator station** process-handoff/v1 · documents.ValidationPackage
 
 **Trigger** A workflow family definition is ready for review or later a tested implementation is presented for acceptance.
 

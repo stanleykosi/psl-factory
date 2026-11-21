@@ -162,6 +162,8 @@ def receive(actor,case_id,snapshot_id,operation_key,evidence_id,expected):
   if old.kind!='receipt' or old.snapshot_id!=s.pk or old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Receipt intent changed')
   return old
  read_snapshot(actor,s);a=authority(actor,c,'receive')
+ from apps.workflows.native_stations import receive_advice
+ receive_advice('F35',s.contract,actor,case=c)
  r=HRHandoffRecord.objects.create(contract=s.contract,snapshot=s,kind='receipt',operation_key=operation_key,payload={'sha256':s.sha256,'receipt_only':True,'hr_write':False},authority=a,evidence=e,actor=actor)
  event(actor,c,'hrfinance.receipt',receipt=r.pk,snapshot=s.pk);bump(c);return r
 

@@ -228,6 +228,14 @@ def review(actor,case_id,package_id,kind,verdict,operation_key,evidence_id,reaso
     authority=owner_authority(actor,p,kind)
     if verdict=='revoke' and (not latest_review(p,kind) or latest_review(p,kind).verdict!='approve'):raise ValidationError('Only a prior approval can be revoked')
     pins=review_inputs(p,kind,actor) if verdict=='approve' else {'package':p.sha256}
+    if verdict == "approve":
+        from apps.pmo.coordinator_intake import accept
+        if kind == "meaning" and "P13" in p.payload["process_ids"]:
+            for source in DiscoverySource.objects.filter(case=case, pk__in=p.payload["source_ids"],
+                    metadata__document_kind="pmo_sop", metadata__process_ids__contains=["P13"]):
+                accept(actor,case,source,"P13")
+        elif kind == "acceptance" and "P15" in p.payload["process_ids"]:
+            accept(actor,case,p,"P15")
     r=ValidationReview.objects.create(package=p,kind=kind,verdict=verdict,operation_key=operation_key,authority=authority,snapshot=pins,evidence=e,reason=reason,actor=actor)
     evaluation.changed();event(actor,case,'agent.data.finance_validation_review' if p.finance_handoffs.exists() or hasattr(p,'private_readiness_packet') or hasattr(p,'private_protection_packet') else 'validation.review_recorded',review=r.pk,kind=kind,verdict=verdict,production_authorized=False);bump(case);return r
 

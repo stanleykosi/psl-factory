@@ -78,7 +78,7 @@ class Register:
 
 def work_definitions(persona):
     finance = {key for key in DEFINITIONS if key.startswith(('finance-', 'pmo-finance/'))}
-    return finance if persona == 'chidi' else set(DEFINITIONS) - finance if persona == 'tola' else set()
+    return finance if persona == 'chidi' else set(DEFINITIONS) - finance - {'process-handoff/v1'} if persona == 'tola' else set()
 
 
 def registers(persona, cases):

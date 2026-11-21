@@ -88,6 +88,8 @@ def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadl
 def assign(actor,case_id,pm,role,evidence_id,note_text,expected):
     case=lock_case(actor,case_id,'rfp.assign',expected);r=root(case);ensure_open(r);note(note_text)
     auth=authority(actor,case,'assignment',role);require(pm,case,'rfp.prepare');decision_authority(pm,case,'PM')
+    from .coordinator_intake import accept
+    accept(actor,case,r.current_intake,"P45")
     a=RFPAssignment.objects.create(intake=r.current_intake,pm=pm,role=role,authority=auth,
         evidence=subject(case,evidence_id,metadata_only=True),note=note_text,actor=actor)
     event(actor,case,'rfp.assigned',assignment=a.pk,pm=pm.pk);bump(case);return a

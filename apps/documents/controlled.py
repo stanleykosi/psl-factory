@@ -60,6 +60,9 @@ def _create_version(actor,case_id,template_id,title,audience,fields,expected,doc
         from .template_access import require_scope
         require_scope(actor,scope_for(case,template_scope_id))
     template_manifest = selection(case,template,audience,template_scope_id) if template_scope_id is not None else {}
+    if template_manifest:
+        from apps.pmo.coordinator_intake import accept
+        accept(actor,case,scope_for(case,template_scope_id),"P10")
     validate({'type':'object','maxProperties':16,'properties':{key:{'type':'object','properties':{
         'text':{'type':'string','maxLength':12000},'evidence_ids':{'type':'array','uniqueItems':True,'maxItems':20,'items':{'type':'integer','minimum':1}}},
         'required':['text','evidence_ids'],'additionalProperties':False} for key in FIELDS},'additionalProperties':False},fields)
@@ -331,12 +334,19 @@ def reserve_publication(actor,case_id,version_id,expected,factory_work_id=None):
     if lock_report_scope(actor, case, version_id) and factory_work_id is None:
         raise ValidationError('Publish this exact leadership report through its reviewed work item.')
     version,context,_=guard_reserve_publication(actor,case,version_id)
+    from apps.pmo.coordinator_intake import publication as receive_pmo_advice
+    receive_pmo_advice(actor,version)
     scope={}
     if factory_work_id is not None:
         from apps.workflows.factory_publications import publication_scope
         scope=publication_scope(actor,case,version,factory_work_id)
     review=ControlledReview.objects.get(pk=context['review']) if context['review'] else None
     policies,recipients,retention=context['policies'],context['recipients'],context['retention_days']
+    from apps.finance.models import ForecastBinding
+    forecast_binding=ForecastBinding.objects.filter(version=version).first()
+    if forecast_binding:
+        from apps.workflows.native_stations import receive_advice
+        receive_advice('F43',forecast_binding,actor,case=case)
     publication=Publication.objects.create(version=version,review=review,actor=actor,policies=policies,recipient_ids=recipients,
           retention_days=retention,operation_key=f'document:{version.document_id}:v{version.number}:{version.audience}:v1',**scope)
     PublicationJob.objects.create(publication=publication)

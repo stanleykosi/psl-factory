@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Native department stations · 21 November 2026
+
+Railway design-acceptance checks deployment `468810e4-e724-4bf2-9781-646c81cdff41` ran three suites on separate isolated PostgreSQL databases with synthetic people, documents and provider responses. All 34 PMO, 15 Finance close and 14 Finance operations process IDs reached their recorded downstream models. PMO passed 12 tests in 231.474 seconds, close passed six in 389.879 seconds and operations passed 12 in 134.910 seconds. This baseline preceded the final consuming-command guards. An earlier local run exposed the closed factory definition in PostgreSQL; migration 0098 extended its source, policy and observed receipt checks.
+
 ## Embedded specialists · 21 November 2026
 
 Railway deployment `b392fca5-4f88-492e-941a-cf04813a093a` passed all 16 PostgreSQL workflow and permission checks in 222.562 seconds with the provider simulated. This included a changed source after human review, a missing specialist, concurrent claims, permission checks, conflicting readings, departmental reuse, and the work interface. Django reported no system issues or missing migrations. The application sign-in page also returned HTTP 200. The independent route-book check passed against all 122 source assignments. Five intentionally damaged, in-memory catalogues were rejected for duplicated processes, missing task text, an unknown specialist, a displaced primary and duplicate execution bindings.

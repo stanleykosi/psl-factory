@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load studio_ui %}
+{% block title %}Department handoffs · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><h1>Department handoffs</h1><p>{{ case|workspace_name }}</p></header>
+<section class="card">{% for work, title in rows %}
+<a class="floor-line" href="{% url 'factory_detail' work.pk %}"><strong>{{ title }}</strong><span>{{ work.status|readable }}</span></a>
+{% empty %}<p>No handoffs are available to you on this page.</p>{% endfor %}</section>
+{% if cursor %}<a href="?before={{ cursor }}">Earlier handoffs</a>{% endif %}
+{% endblock %}

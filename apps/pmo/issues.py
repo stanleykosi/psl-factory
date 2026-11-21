@@ -119,6 +119,8 @@ def close_issue_log(actor,case_id,issue_id,state_id,role,evidence_id,note,expect
     issue=current_issue(case,issue_id,state_id);state=issue.current
     if role not in ['QA','PM'] or state.status!='Resolved':raise ValidationError('QA and PM log updates close a resolved issue; no separate approval task')
     decision_authority(actor,case,role)
+    from .coordinator_intake import accept
+    accept(actor,case,state,"P54")
     note_required(note)
     if IssueClosureEntry.objects.filter(state=state,role=role).exists():raise ValidationError('This role already updated the closure log for this exact resolution')
     for entry in state.closure_entries.select_related('actor'):

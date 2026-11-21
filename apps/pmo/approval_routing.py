@@ -63,6 +63,9 @@ def reserve(a,case_id,request_id,purpose='request',expected=None,factory_work_id
  c=d.locked(a,case_id,'approval.route',expected)
  r,value,existing,generation=guard_reserve(a,c,request_id,purpose,factory_work_id)
  if existing:return existing
+ if purpose=='request':
+  from .coordinator_intake import accept
+  accept(a,c,r,"P02")
  j=ApprovalRouteJob.objects.create(request=r,actor=a,generation=generation,purpose=purpose,operation_key=digest({'tenant':c.tenant,'request':r.pk,'generation':generation,'purpose':purpose}),intent=value)
  event(a,c,'approval.route_reserved',job=j.pk,approval_granted=False);bump(c);return j
 

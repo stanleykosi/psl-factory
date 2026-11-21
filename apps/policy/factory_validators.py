@@ -93,6 +93,12 @@ ENGAGEMENT_SCHEMA='schema:psl/factory-engagement-execution/v1'
 ENGAGEMENT_VALUE=deepcopy(PLANNING_VALUE)
 ENGAGEMENT_VALUE['properties']['definition']={'const':'engagement/v1'}
 
+STATION_COMPONENT='OPS.factory_native_station_execution'
+STATION_SCHEMA='schema:psl/factory-native-station-execution/v1'
+STATION_VALUE=deepcopy(PLANNING_VALUE)
+STATION_VALUE['properties'].update(definition={'const':'process-handoff/v1'},
+    required_evidence_kinds={'const':['native_station_projection']}, information_resolver_id=deepcopy(ID))
+
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
     commercial=component==COMMERCIAL_COMPONENT
@@ -109,6 +115,8 @@ def validate_reference(component,target,case,runtime=False):
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
         GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE),PPE_COMPONENT:(PPE_SCHEMA,PPE_VALUE),SCHEDULES_COMPONENT:(SCHEDULES_SCHEMA,SCHEDULES_VALUE)}.get(component,(SCHEMA,VALUE))
     from .factory_provider_profiles import shape_for,scope
+    if component == STATION_COMPONENT:
+        schema,shape=STATION_SCHEMA,STATION_VALUE
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
     from types import SimpleNamespace

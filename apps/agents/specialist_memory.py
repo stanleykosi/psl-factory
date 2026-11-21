@@ -7,7 +7,7 @@ import os
 from datetime import timedelta
 from uuid import uuid4
 
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -54,6 +54,15 @@ def lines_for(source):
 
 
 def inputs_for(work, sources, profile, actor, process):
+    if work.definition == "process-handoff/v1":
+        from apps.workflows.native_stations import PROJECTION, checked_work
+
+        if work.native_station.process != process:
+            raise PermissionDenied("The process does not match its source station.")
+        reading = checked_work(work, actor)
+        if sources.get(PROJECTION) == reading.source:
+            yield reading.source, PROJECTION, reading.lines
+        return
     if process == "P28" and work.definition == "delivery-release/v1":
         from apps.pmo import progress
         from apps.workflows.factory_delivery import subject
@@ -111,6 +120,23 @@ def inputs_for(work, sources, profile, actor, process):
 
 def read_context(work, actor, process):
     from apps.workflows.factory_views import visible
+    if work.definition == "process-handoff/v1":
+        from apps.workflows.factory_views import work_grant_scope
+        from apps.workflows.native_stations import PROJECTION, checked_work
+
+        if (work.cancel_requested or work.status == "cancelled" or work.native_station.process != process
+                or not work_grant_scope(actor, include_native=True).filter(pk=work.pk).exists()):
+            raise PermissionDenied("This department handoff is unavailable.")
+        _, profile = factory.profile(work)
+        shared = None
+        for person in {actor, work.execution_actor}:
+            factory.access(person, work.case, "factory.read", work.definition)
+            current_source = checked_work(work, person)
+            if current_source.source.created_at < timezone.now() - timedelta(seconds=profile["max_age_seconds"]):
+                raise PermissionDenied("The department source is no longer current.")
+            allowed = {current_source.source.pk: (PROJECTION, current_source.lines)}
+            shared = allowed if shared is None else {k: v for k, v in shared.items() if allowed.get(k) == v}
+        return shared
 
     if work.cancel_requested or work.status == "cancelled" or not visible(actor, work_id=work.pk).exists():
         raise PermissionDenied("This reading is unavailable.")
@@ -144,6 +170,10 @@ def current(reading, actor, *, context=None):
         or permission(work, reading.role, reading.process, selected[0], reading.model) != reading.permission_id
     ):
         raise PermissionDenied("The cited source has changed or is unavailable.")
+    if reading.projection_sha256:
+        from apps.documents.contracts import digest
+        if digest(selected[1]) != reading.projection_sha256:
+            raise PermissionDenied("The permitted source projection has changed.")
     return selected[1]
 
 
@@ -309,15 +339,21 @@ def run_once():
 
 
 def sources_for(actor, cases, definitions, *, work_id=None, review=False):
+    from django.db.models import Q
+
     scope = {"work_id": work_id} if work_id is not None else {}
     if not review:
         scope["specialistpacket__consumed_at__isnull"] = False
         scope["specialistpacket__reviewed_at__isnull"] = True
         scope["specialistpacket__superseded_by__isnull"] = True
         scope["disposition"] = "supported"
+    allowed = Q(work__definition__in=definitions)
+    for department_prefix, definition in (("F", "finance-accounts/v1"), ("P", "planning/v1")):
+        if definition in definitions:
+            allowed |= Q(work__definition="process-handoff/v1", process__startswith=department_prefix)
     rows = (
         SpecialistReading.objects.filter(
-            **scope, work__case_id__in=cases, work__definition__in=definitions, status="ready"
+            allowed, **scope, work__case_id__in=cases, status="ready"
         )
         .select_related("work__case", "work__actor", "source", "actor")
         .distinct()
@@ -350,6 +386,34 @@ def outcome_sources(actor, cases, definitions):
     from apps.workflows.factory_views import visible
 
     allowed = visible(actor).filter(case_id__in=cases, definition__in=definitions, status="verified")
+    from apps.workflows.native_stations import DEFINITION, checked_work, projection_pin, receiver_identity
+    from apps.workflows.native_station_models import NativeStationReceipt
+    from django.db.models import Q
+
+    subject = Q(pk__in=[])
+    for prefix, definition in (("F", "finance-accounts/v1"), ("P", "planning/v1")):
+        if definition in definitions:
+            subject |= Q(handoff__station__process__startswith=prefix)
+    native_results = []
+    receipts = NativeStationReceipt.objects.filter(subject, handoff__station__work__case_id__in=cases).select_related(
+        "handoff__station__work__case", "handoff__station__work__actor"
+    ).order_by("-pk")[:6]
+    for receipt in receipts:
+        station = receipt.handoff.station
+        work = station.work
+        try:
+            factory.access(actor, work.case, "factory.read", DEFINITION)
+            current_source = checked_work(work, actor)
+        except (PermissionDenied, ValidationError, ObjectDoesNotExist):
+            continue
+        if (work.status == "verified" and projection_pin(current_source) == receipt.handoff.projection_sha256
+                and receiver_identity(current_source) == [receipt.receiver_model, receipt.receiver_pk]):
+            native_results.append({
+                "label": routes()[station.process]["original_title"],
+                "fact": f"The department receiver was verified on {receipt.created_at.isoformat()}.",
+                "record": {"field": "native_station_receipt", "pk": receipt.pk},
+                "url": reverse("factory_detail", args=[work.pk]),
+            })
     attempts = (
         FactoryAttempt.objects.filter(activity__work__in=allowed, activity__kind="ACT13", phase="observed")
         .select_related("activity__work__case", "activity__work__actor")
@@ -383,4 +447,4 @@ def outcome_sources(actor, cases, definitions):
                 "url": reverse("factory_detail", args=[work.pk]),
             }
         )
-    return result
+    return native_results + result

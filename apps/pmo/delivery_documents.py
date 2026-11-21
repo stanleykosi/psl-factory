@@ -18,6 +18,10 @@ def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,ex
     case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d);decision_authority(actor,case,'PM')
     if purpose not in INPUTS:raise ValidationError('Choose go_live, handover or closure')
     snapshot=INPUTS[purpose](d,data)
+    if purpose == 'closure':
+        from .coordinator_intake import accept
+        from .delivery_closure import current_retrospective
+        accept(actor,case,current_retrospective(d,data['retrospective_id']),"P38")
     template=Template.objects.filter(case=case,pk=template_id,definition__document_type='project_artifact').first()
     if not template:raise ValidationError('Select this case controlled project artifact template')
     if purpose=='go_live':

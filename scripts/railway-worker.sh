@@ -22,6 +22,7 @@ while true; do
     python manage.py work_approval_routes --limit 20
     python manage.py work_agent_uploads
     python manage.py work_assistant
+    python manage.py work_native_stations --limit 20
     python manage.py work_factory_progress
     sleep 30
 done

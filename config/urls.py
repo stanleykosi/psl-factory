@@ -24,6 +24,7 @@ from apps.finance import schedule_views
 from apps.finance import bu_views
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from apps.workflows import native_station_views
 from .health import health
 from apps.agents import specialist_views, upload_views
 from apps.policy import delegation_views
@@ -71,6 +72,7 @@ urlpatterns = [
     path('cases/<uuid:case_id>/costing/proposals/<int:pk>/', costing_proposal_views.detail, name='costing_proposal'),
     path('health/', health, name='health'),
     path('cases/<uuid:case_id>/files/', upload_views.workbench, name='case_uploads'),
+    path('cases/<uuid:case_id>/department-handoffs/', native_station_views.project, name='project_handoffs'),
     path('work/<int:work_id>/source-readings/<int:pk>/', specialist_views.report, name='specialist_report'),
     path('work/<int:work_id>/source-reviews/<int:pk>/resolve/', specialist_views.resolve_findings, name='resolve_source_findings'),
     path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),

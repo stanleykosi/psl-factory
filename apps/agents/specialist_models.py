@@ -12,6 +12,7 @@ class SpecialistReading(models.Model):
     source = models.ForeignKey("core.Evidence", on_delete=models.PROTECT)
     identity = models.CharField(max_length=64, unique=True)
     source_hash = models.CharField(max_length=64)
+    projection_sha256 = models.CharField(max_length=64, blank=True)
     policy = models.ForeignKey("policy.Configuration", on_delete=models.PROTECT)
     permission = models.ForeignKey(
         "policy.Configuration", null=True, related_name="+", on_delete=models.PROTECT

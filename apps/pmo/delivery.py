@@ -191,6 +191,9 @@ def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose an explicit planning verdict')
     authority=decision_authority(actor,case,'PMO Lead',verdict)
     inputs = planning_inputs(d)
+    if verdict == 'approve':
+        from .coordinator_intake import planning_exit
+        planning_exit(actor,d,inputs)
     prior = latest(d, 'planning_decision', False)
     remedy = planning_remedy(d, prior, inputs, actor=actor) if verdict == 'approve' or (
         prior and prior.data['verdict'] in ('return', 'reject')) else None
@@ -293,6 +296,9 @@ def record_progress(actor,case_id,dossier_id,kind,evidence_id,note,expected,meet
         meeting=MeetingVersion.objects.filter(pk=meeting_id,meeting__case=case,kind='kickoff').first()
         if not meeting or meeting.meeting.current_id!=meeting.pk or meeting.occurred_at<plan.created_at or meeting.occurred_at>timezone.now():
             raise ValidationError('Link the current actual kickoff meeting after Planning approval')
+        from .coordinator_intake import accept
+        accept(actor,case,plan,"P63")
+        accept(actor,case,meeting,"P27")
     return record(actor,case,d,kind,subject(case,evidence_id),{'note':note,'meeting_id':meeting.pk if meeting else None},{'planning_id':plan.pk})
 
 
@@ -346,6 +352,8 @@ def prepare_readiness(actor,case_id,dossier_id,expected):
     case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d)
     if latest(d,'release_outcome',False):raise ValidationError('Actual release already recorded; a later readiness check cannot authorize earlier work')
     inputs=readiness_inputs(d)
+    from .coordinator_intake import release_readiness
+    release_readiness(actor,d,inputs['upstream'])
     return record(actor,case,d,'release_ready',latest(d,'glpi_request').evidence,{},inputs)
 
 

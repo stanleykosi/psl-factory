@@ -50,6 +50,8 @@ def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline
     case = lock_case(actor, case_id, 'change.assess:'+contributor, expected)
     version = current_change(case, version_id)
     require_open_version(version)
+    from .coordinator_intake import accept
+    accept(actor,case,version,"P56")
     if contributor not in CONTRIBUTORS or any(v is not None and type(v) is not bool for v in [cost_impact, timeline_impact, client_facing]):
         raise ValidationError('Use an explicit contributor and true/false/unknown impact values')
     note_required(note)
@@ -175,6 +177,8 @@ def authorize_change(actor, case_id, version_id, commercial_id, expected):
     version = current_change(case, version_id)
     require_open_version(version)
     ids, flags, decisions = authorization_inputs(case, version)
+    from .coordinator_intake import accept
+    accept(actor,case,version,"P58")
     commercial = current_revision(case, commercial_id) if commercial_id else None
     if flags['cost_impact'] and not commercial:
         raise ValidationError('Cost impact requires a current approved commercial revision')

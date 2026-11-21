@@ -90,7 +90,7 @@ class ProjectUseForm(forms.Form):
         values = super().clean()
         if self.component == 'OPS.specialist_source_reading' and values.get('processes') and values.get('roles'):
             from apps.agents.specialists import validate_selection
-            validate_selection(values['processes'], values['roles'])
+            validate_selection(values['processes'], values['roles'], values.get('source_kinds', ()))
         return values
 
     def save(self, actor):

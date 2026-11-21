@@ -33,13 +33,17 @@ SUPPORT = {
 }
 
 
-def validate_selection(processes, roles):
+def validate_selection(processes, roles, source_kinds=()):
+    from apps.workflows.native_station_contracts import PROCESSES, PROJECTION
     assigned = set()
     for process in processes:
         route = routes().get(process)
         matching = {row["id"] for row in route["specialist_roles"]} if route else set()
         if not route or route["department"] == "BaaS" or not matching.intersection(roles):
             raise ValidationError("Each process needs a matching release specialist.")
+        if PROJECTION in source_kinds and process in PROCESSES and matching.difference(roles):
+            missing = ", ".join(sorted(matching.difference(roles)))
+            raise ValidationError(f"The department handoff for {process} also requires {missing}.")
         assigned.update(matching)
     if set(roles) - assigned:
         raise ValidationError("Select only specialists assigned to at least one chosen process.")
@@ -83,7 +87,8 @@ def dispatch(work, child, assignment_record, choice, profile, sources, missing, 
     # Commit the receipt with the child attempt and domain command. Private
     # native results continue to live behind the original subject's reader.
     receipt = {**assignment_record, "native_result_sha256": digest(result)}
-    if child.kind in ("ACT04", "ACT08", "ACT09"):
+    station = work.definition == "process-handoff/v1"
+    if child.kind == "ACT04" or (not station and child.kind in ("ACT08", "ACT09")):
         packet = specialist_packets.schedule(
             work,
             child,
@@ -93,6 +98,8 @@ def dispatch(work, child, assignment_record, choice, profile, sources, missing, 
         )
         if packet:
             receipt["source_review"] = packet.pk
+        elif station:
+            raise ValidationError("Project authorization and a configured model are required for this source review.")
     if (
         work.definition == "delivery-release/v1"
         and child.kind == "ACT04"

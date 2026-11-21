@@ -223,7 +223,10 @@ def guard_prepare(a,c,packet_id):
 @transaction.atomic
 def prepare(a,case_id,packet_id):
     c=locked(a,case_id,'prepare')
-    _,value,old=guard_prepare(a,c,packet_id)
+    source,value,old=guard_prepare(a,c,packet_id)
+    if not old:
+        from .coordinator_intake import accept
+        accept(a,c,source,"P17","P18","P21","P25")
     return old or write(a,c,'ready',value)
 
 def current_readiness(c,evidence_id):

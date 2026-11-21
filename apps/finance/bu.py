@@ -289,6 +289,9 @@ def publish(actor,case_id,work_id,key,expected):
  if w.metadata.get('historical'):review_current(w,'historical')
  if w.metadata['status']!='complete' or not w.payload['conserved']:raise ValidationError('Reconciled source population required')
  policy,v=disclosure_for(w)
+ if w.kind == 'staff':
+  from apps.workflows.native_stations import receive_advice
+  receive_advice('F20', w, actor, case=c)
  payload={**w.metadata['scope'],'unit':'major_currency','by_bu':w.payload['by_bu'],'company_source_total':w.payload['source_total'],'allocated_total':w.payload['allocated_total'],'company_only':w.payload.get('company_only','0'),'residual':w.payload['residual'],'conserved':True,'source_work':w.pk,'coverage':'selected_supplied_population_only','native_authenticity_verified':False,'destination':v['destination'],'ledger_posted':False,'source_written':False,'disclosure':'aggregate_only'}
  version=(BUReport.objects.filter(work=w).order_by('-version').values_list('version',flat=True).first() or 0)+1
  report=BUReport.objects.create(work=w,review=r,version=version,operation_key=key,payload=payload,policy_ids={**a,DISCLOSE:policy.pk},actor=actor)

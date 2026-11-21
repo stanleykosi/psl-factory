@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from .native_station_models import NativeStation, NativeStationAdvice, NativeStationReceipt, NativeStationUse
 
 
 class Outbox(models.Model):

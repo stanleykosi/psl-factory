@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Native department handoffs · 21 November 2026
+
+The 63 formerly unbound processes now use the same O01 workflow worker as the original Start work paths. See the per-process routing book for trigger models, the test ledger for receipt evidence and the three domain route registries for current authority and receipt checks. The project’s Department handoffs page shows currently authorised evidence and opens its review. Keep actual customers, paid external business effects and deferred department policies outside synthetic acceptance. The prior checkpoint below records the state before these bindings.
+
 ## Embedded specialist coordination · 21 November 2026
 
 Railway design acceptance runs web deployment `59d9a9ae-5def-4dcf-a936-12e70fbdef38` and worker deployment `6822d178-348b-4b30-b5b0-7dd010071f28`. Both reported success. The worker started two source readers and continued ordinary native jobs. The sign-in page returned HTTP 200. The provider checks used synthetic records and an isolated database on Railway. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/)

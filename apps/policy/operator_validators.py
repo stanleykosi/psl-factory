@@ -130,6 +130,8 @@ SCHEMAS[FACTORY_LEDGER]=(LEDGER_SCHEMA,LEDGER_VALUE)
 
 from .factory_validators import ENGAGEMENT_COMPONENT as FACTORY_ENGAGEMENT,ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE
 SCHEMAS[FACTORY_ENGAGEMENT]=(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE)
+from .factory_validators import STATION_COMPONENT, STATION_SCHEMA, STATION_VALUE
+SCHEMAS[STATION_COMPONENT]=(STATION_SCHEMA,STATION_VALUE)
 from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEMA, VALUE as REMINDER_VALUE, validate_delivery
 SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
 from .short_payment_validators import COMPONENT as SHORT_PAYMENT, SCHEMA as SHORT_PAYMENT_SCHEMA, VALUE as SHORT_PAYMENT_VALUE, validate_reference as validate_short_payment
@@ -181,6 +183,7 @@ def validate_reference(component,target,case,runtime=False):
     if component==FACTORY_REPORTING:return validate_reporting_factory(component,target,case,runtime)
     if component==FACTORY_EMERGENCY:return validate_emergency_factory(component,target,case,runtime)
     if component==FACTORY_MINUTES:return validate_minutes(component,target,case,runtime)
+    if component==STATION_COMPONENT:return validate_factory(component,target,case,runtime)
     if component in [FACTORY_LEDGER,FACTORY_BU,FACTORY_ENGAGEMENT,FACTORY_SCHEDULES,FACTORY_PPE,FACTORY_PAYROLL,FACTORY,FACTORY_PLANNING,FACTORY_COMMERCIAL,FACTORY_DELIVERY,FACTORY_HYPERCARE,FACTORY_ARCHIVE,FACTORY_HANDOVER,FACTORY_CLOSURE,FACTORY_GO_LIVE,FACTORY_CHANGE]:return validate_factory(component,target,case,runtime)
     if component==PLANNING:return validate_planning(component,target,case,runtime)
     if component==PROJECT_VIEW:return validate_project_view(component,target,case,runtime)

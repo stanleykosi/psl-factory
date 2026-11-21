@@ -66,7 +66,7 @@ def schedule(work, child, process, sources, profile):
                     grant,
                 ]
             )
-            assignments.append((key, role, source, grant))
+            assignments.append((key, role, source, grant, digest(lines)))
     if not assignments:
         return None
     keys = [key for key, *_ in assignments]
@@ -81,7 +81,7 @@ def schedule(work, child, process, sources, profile):
         raise ValidationError("The work allowance cannot cover its complete source review.")
     if count and task_count(work) + count > profile["max_children"]:
         raise ValidationError("The work reached its specialist task limit.")
-    for key, role, source, grant in assignments:
+    for key, role, source, grant, projection in assignments:
         if key not in existing:
             existing[key] = SpecialistReading.objects.create(
                 work=work,
@@ -91,6 +91,7 @@ def schedule(work, child, process, sources, profile):
                 role=role,
                 source=source,
                 source_hash=source.sha256,
+                projection_sha256=projection,
                 policy_id=work.policy_id,
                 permission_id=grant,
                 identity=key,

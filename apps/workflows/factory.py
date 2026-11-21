@@ -110,6 +110,9 @@ def invoice_job_observation(jobs):
     return [(job.pk,job.status,'expired' if job.status=='leased' and uncertain_job(job) else None) for job in jobs]
 
 def _snapshot(work,value,reader=None):
+    if work.definition=='process-handoff/v1':
+        from .native_stations import snapshot as station_snapshot
+        return station_snapshot(work,value,reader)
     if work.definition=='pmo-issues/v1':
         from .factory_issues import snapshot as fn
         return fn(work,value,reader=reader)
@@ -224,6 +227,9 @@ def snapshot(work,value,reader=None):
     return (state,*result[1:])
 
 def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
+    if work.definition=='process-handoff/v1':
+        from .native_stations import eligible as station_eligible
+        return station_eligible(work,observed)
     if work.definition=='pmo-issues/v1':
         from .factory_issues import eligible as fn
         return fn(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -371,6 +377,9 @@ def task(work,kind,context,resolver=None):
     return row
 
 def act(work,choice,value,latest,missing,tasks,jobs):
+    if work.definition=='process-handoff/v1':
+        from .native_stations import act as station_act
+        return station_act(work,choice['activity'])
     if work.definition=='pmo-issues/v1':
         from .factory_issues import act as fn
         return fn(work,choice,value,latest,missing,tasks,jobs)

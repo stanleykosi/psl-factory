@@ -2,6 +2,15 @@
   "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
   "components": [
     {
+      "id":"OPS.factory_native_station_execution", "parent_decision_id":"OPS",
+      "schema_ref":"schema:psl/policy-component/OPS.factory_native_station_execution/v1",
+      "subject_scope":"Execution limits and the information reviewer for the project's native department handoffs.",
+      "current_value":null, "status":"UNCONFIGURED",
+      "value_schema":{"type":"object","additionalProperties":false,"required":["artifact_ref","artifact_version","sha256","schema_ref"],
+        "properties":{"artifact_ref":{"type":"string","minLength":1},"artifact_version":{"type":"integer","minimum":1},
+        "sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"schema_ref":{"type":"string","pattern":"^schema:"}}}
+    },
+    {
       "id":"OPS.issue_message_controls",
       "parent_decision_id":"OPS",
       "schema_ref":"schema:psl/policy-component/OPS.issue_message_controls/v1",

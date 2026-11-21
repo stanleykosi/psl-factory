@@ -107,6 +107,9 @@ def claim_current(actor, case_id, scope_id, template_id, evidence_id, note, expe
     if type(confirm_owner) is not bool:
         raise ValidationError('Explicit owner confirmation must be boolean')
     policy = owner_policy(actor, scope) if confirm_owner else None
+    if policy:
+        from apps.pmo.coordinator_intake import accept
+        accept(actor,case,template,"P11")
     if policy and template.pk not in reference_values(policy)[0]['template_ids']:
         raise ValidationError('Owner-approved current template must be enabled by current storage policy')
     result = TemplateClaim.objects.create(scope=scope, template=template, evidence=source(case, evidence_id, actor),
