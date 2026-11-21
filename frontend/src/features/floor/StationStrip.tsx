@@ -2,6 +2,7 @@
 
 import { Button, ErrorState, IconButton, Link, Loading } from '@/components';
 
+import './floor.css';
 import { rowMeta, rowTitle, stationCounts, type StationState } from './stationWork';
 
 /** Rows past this many scroll inside the strip. */
@@ -17,10 +18,13 @@ type Props = {
   onUnpin: () => void;
   onRetry: () => void;
   onShowAll: () => void;
+  /** The flat view says Open and Close; the 3D floor says Pinned and Unpin. */
+  pinLabel?: string;
+  closeLabel?: string;
 };
 
-/** The strip under the 3D floor: a station's head line and up to five rows, each a link to the work (D-162). */
-export function StationStrip({ line, station, count, state, pinned, onUnpin, onRetry, onShowAll }: Props) {
+/** The strip under the 3D floor, and under a line in the flat view (D-165): a station's head line and up to five rows, each a link to the work (D-162). */
+export function StationStrip({ line, station, count, state, pinned, onUnpin, onRetry, onShowAll, pinLabel = 'Pinned', closeLabel = 'Unpin station' }: Props) {
   const ready = state.status === 'ready' ? state : null;
   const total = ready?.read.total ?? count;
   const needs = ready ? (ready.read.needs_person_count ?? (ready.read.items.length === total ? ready.read.items.filter((i) => i.needs_person).length : undefined)) : undefined;
@@ -36,8 +40,8 @@ export function StationStrip({ line, station, count, state, pinned, onUnpin, onR
         </p>
         {pinned && (
           <>
-            <span className="floor__pin">Pinned</span>
-            <IconButton icon="close" label="Unpin station" bare onClick={onUnpin} />
+            <span className="floor__pin">{pinLabel}</span>
+            <IconButton icon="close" label={closeLabel} bare onClick={onUnpin} />
           </>
         )}
       </div>

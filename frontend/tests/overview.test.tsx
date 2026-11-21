@@ -77,7 +77,9 @@ const overviewCalls = () => calls.filter((u) => u.pathname === '/api/v1/overview
 const linesSection = () => screen.queryByRole('region', { name: 'Lines' });
 const rows = () => within(within(linesSection()!).getAllByRole('list')[0]).getAllByRole('listitem').filter((el) => el.classList.contains('overview__row'));
 const stations = (line: string) => within(screen.getByRole('list', { name: `${line} stations` })).getAllByRole('listitem');
-const station = (line: string, name: string) => stations(line).find((li) => li.querySelector('.cmp-sr')!.textContent!.startsWith(`${name}: `))!;
+// D-165: in the flat view a square is a button named by its station; behind the 3D floor it is plain text
+const said = (li: Element) => li.querySelector('button')?.getAttribute('aria-label') ?? li.querySelector('.cmp-sr')?.textContent ?? li.textContent ?? '';
+const station = (line: string, name: string) => stations(line).find((li) => said(li).startsWith(`${name}: `))!;
 const tiles = () =>
   [...document.querySelectorAll('dl.overview__totals > div')].map((d) => [d.querySelector('dt')!.textContent, d.querySelector('dd')!.textContent]);
 const settle = (body: Overview) => {
@@ -120,22 +122,22 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
     for (const l of DEFAULT.lines) {
       const items = stations(l.line);
       expect(items).toHaveLength(l.stations.length);
-      l.stations.forEach((s, i) => expect(items[i].textContent).toContain(`${s.name}: ${s.count} ${s.count === 1 ? 'item' : 'items'}`));
+      l.stations.forEach((s, i) => expect(said(items[i])).toContain(`${s.name}: ${s.count} ${s.count === 1 ? 'item' : 'items'}`));
     }
-    expect(station('Pre-sale', 'Brief').textContent).toContain('Brief: 1 item');
-    expect(station('Planning', 'Scope').textContent).toContain('Scope: 2 items');
-    expect(station('Pre-sale', 'Qualify').textContent).toContain('Qualify: 0 items');
+    expect(said(station('Pre-sale', 'Brief'))).toContain('Brief: 1 item');
+    expect(said(station('Planning', 'Scope'))).toContain('Scope: 2 items');
+    expect(said(station('Pre-sale', 'Qualify'))).toContain('Qualify: 0 items');
   });
 
   it('square state follows count and needs_person; without a status the tag tone follows needs_person only', async () => {
     await open();
     const person = station('Pre-sale', 'Proposal');
     expect(person.className).toContain('overview__station--person');
-    expect(person.textContent).toContain('Proposal: 0 items, needs a person');
+    expect(said(person)).toContain('Proposal: 0 items, needs a person');
     const work = station('Invoices', 'Milestone');
     expect(work.className).toContain('overview__station--work');
     expect(work.querySelector('.overview__sq')!.textContent).toBe('3');
-    expect(work.textContent).not.toContain('needs a person');
+    expect(said(work)).not.toContain('needs a person');
     const empty = station('Pre-sale', 'Qualify');
     expect(empty.className).toContain('overview__station--empty');
     expect(empty.querySelector('.overview__sq')!.textContent).toBe('');
@@ -412,5 +414,26 @@ describe('the 3D option follows reduced motion, WebGL and width', () => {
     expect(flat.getAttribute('aria-checked')).toBe('true');
     expect(floor.getAttribute('aria-checked')).toBe('false');
     expect(document.querySelector('.overview__hint')).toBeNull();
+  });
+});
+
+describe('D-165: a flat square opens its station’s work under the line', () => {
+  it('a press opens the list with links, aria-expanded follows, and the same press, Close or Esc shuts it', async () => {
+    await open();
+    const square = within(station('Planning', 'Scope')).getByRole('button');
+    expect(square.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(square);
+    expect(square.getAttribute('aria-expanded')).toBe('true');
+    const strip = document.getElementById(square.getAttribute('aria-controls')!)!;
+    expect(strip.textContent).toContain('Planning · Scope');
+    fireEvent.click(square);
+    expect(square.getAttribute('aria-expanded')).toBe('false');
+    expect(document.querySelector('.overview__open')).toBeNull();
+    fireEvent.click(square);
+    fireEvent.click(screen.getByRole('button', { name: 'Close station' }));
+    expect(document.querySelector('.overview__open')).toBeNull();
+    fireEvent.click(square);
+    fireEvent.keyDown(square, { key: 'Escape' });
+    expect(document.querySelector('.overview__open')).toBeNull();
   });
 });
