@@ -1,7 +1,8 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Setup · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><h1>Setup</h1><p>Choose a workspace to review its rules or manage staff access.</p></div><a class="button secondary" href="{% url 'staff_roster' %}">Staff</a></header>
+<header class="page-heading"><div><h1>Setup</h1><p>Choose a workspace to review its rules or manage staff access.</p></div><a class="button secondary" href="{% url 'staff_roster' %}">People</a></header>
+<section class="card"><h2>Primary roles</h2><p>{% for role in primary_roles %}{{ role.name }}{% if not forloop.last %} · {% endif %}{% endfor %}</p></section>
 <form method="get" role="search" class="filter-bar">
   <label>Search workspaces<input type="search" name="q" value="{{ search }}"></label>
   <button>Search</button>
@@ -13,7 +14,8 @@
     <thead><tr><th scope="col">Workspace</th><th scope="col">Available settings</th></tr></thead>
     <tbody>{% for workspace in workspaces %}
       <tr><th scope="row">{{ workspace|workspace_name }}</th><td data-label="Available settings">
-        {% if workspace.can_read_rules %}<a class="button secondary" href="{% url 'workspace_settings' workspace.pk %}">Roles and rules</a>{% endif %}
+        {% if workspace.can_read_rules %}<a class="button secondary" href="{% url 'workspace_settings' workspace.pk %}">Decision rules</a>{% endif %}
+        {% if workspace.kind == 'project' %}<a class="button secondary" href="{% url 'staff_primary_roles' workspace.pk %}">Primary roles</a>{% endif %}
         {% if workspace.can_manage_accounts %}<a class="button secondary" href="{% url 'case_access' workspace.pk %}">Staff accounts</a>{% endif %}
         {% if workspace.can_invite_staff %}<a class="button secondary" href="{% url 'staff_invites' workspace.pk %}">Invitations</a>{% endif %}
       </td></tr>

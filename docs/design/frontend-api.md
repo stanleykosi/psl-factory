@@ -18,6 +18,21 @@ Run these commands from the repository root. The first emits machine-readable Op
 - Send initiation and Assistant requests with the same idempotency key for the same intent. Treat an accepted command as an acknowledgement. Refresh authorized work or receipt status for the business outcome. Explicit release and receipt reconciliation remain separate.
 - Read queue coverage and handle incomplete results and pages. Amounts are decimal strings where projected as money. Unknown values remain null.
 
+## Primary roles
+
+Setup starts with PMO Lead, Finance Lead, CEO, CTO and Admin. In **Setup → People**, open a person’s workspace and choose **Review primary role**. Preview the access added or removed, then confirm with a reason. A person can hold one primary role per workspace. Each role change preserves separately granted access and checks outstanding work before removal.
+
+An account has the Admin role in a workspace when its existing staff administration delegation is current there. The technical bootstrap administrator uses **Workspace delegation** and **Staff account controls** to review that authority. Admins can add a workspace role from the available access functions. Business approvals still follow the configured decision rules, including separate authority for restricted payroll, invoice release and technical release.
+
+| API operation | Use |
+| --- | --- |
+| `GET /api/v1/setup/primary-roles` | Read the five built-in roles |
+| `GET /api/v1/setup/{case_id}/primary-roles` | Read the workspace catalogue and whether the signed-in person can add roles |
+| `POST /api/v1/setup/{case_id}/primary-roles` | Add a role under current Admin delegation |
+| `GET /api/v1/setup/{case_id}/people/{person_id}/primary-role?role=cto` | Preview an exact assignment. An empty role value previews removal |
+| `POST /api/v1/setup/{case_id}/people/{person_id}/primary-role` | Confirm the preview using its fingerprint and a stable request ID |
+| `GET /api/v1/me/workspaces/{case_id}/primary-role` | Read your role within the selected workspace |
+
 ## Workflow coverage
 
 The [cutover map](../../contracts/factory-api-screen-map.json) groups the 262 states by screen and lists the available JSON operations, the working Django routes and the remaining contracts. A grouped mapping points to workflow capability. It does not imply that every variation already has a JSON equivalent.

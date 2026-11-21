@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Primary roles checkpoint · 21 November 2026
+
+Setup and the API have five built-in roles. Scope each PMO Lead, Finance Lead, CEO or CTO assignment to an existing person’s project workspace under Setup → People. Admin comes from the current workspace staff administration delegation. Only Admin can add a role in that workspace. The role editor previews grant changes and preserves independently granted access, checks native handover before removal and records immutable history. Keep actual people and approval decisions deferred. Use the [roles guide and API](docs/design/frontend-api.md#primary-roles).
+
+Isolated Railway `d2660e0a-8ed1-4099-81f6-5c210a45b77a` passed 68 checks, the complete API map audit and both preservation probes. The additive identity migration is `0013_primary_staff_roles`. Reviewed overlays are in `.runtime/design-primary-roles-b-overlays.sha256`. The 262 completed browser states remain the previous functional baseline.
+
+Web `c045b705-3279-47a7-860d-127d8e282496` applied the additive migration and worker `5b0ba447-af3a-490d-a418-1e326dcb4792` started normally. Codex read the same five role names in Setup, a workspace catalogue and the live API. Current Admin-only creation and assignment were exercised with synthetic accounts in the isolated checks. Preserve the existing delegation and independent approval controls.
+
 ## Frontend API checkpoint · 21 November 2026
 
 Live-source contract at `/api/v1/openapi.json`. Use `manage.py export_factory_api` for the specification and `manage.py export_factory_api --screen-map` for the verified 262-state cutover map. Read [frontend API](docs/design/frontend-api.md) before connecting the existing Next.js prototype. It still builds its mock types from the design v7 snapshot. Keep current Django routes during the feature-by-feature cutover. No actual owner rules, provider settings or grants were added.

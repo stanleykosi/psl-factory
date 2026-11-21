@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
-from . import agents, assistant_drafts, commands, intake, notifications, reviews, work, workspaces
+from . import agents, assistant_drafts, commands, intake, notifications, reviews, roles, work, workspaces
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
 
@@ -37,6 +37,10 @@ ROUTES = (
     ('clients/<uuid:case_id>', workspaces.client),
     ('clients/<uuid:case_id>/contacts', workspaces.save_contact),
     ('setup/<uuid:case_id>/delegations', workspaces.delegations),
+    ('setup/primary-roles', roles.built_ins),
+    ('setup/<uuid:case_id>/primary-roles', roles.catalogue, roles.create),
+    ('setup/<uuid:case_id>/people/<int:person_id>/primary-role', roles.review, roles.apply),
+    ('me/workspaces/<uuid:case_id>/primary-role', roles.own),
     ('assistant/conversations', agents.conversations, agents.start_conversation),
     ('assistant/conversations/<uuid:conversation_id>', agents.conversation),
     ('assistant/conversations/<uuid:conversation_id>/messages', agents.message),

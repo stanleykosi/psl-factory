@@ -1,0 +1,35 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Primary role · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div><h1>{{ person.get_full_name|default:person.username }}’s primary role</h1><p>{{ case|workspace_name }}</p></div>
+  <a class="button secondary" href="{% url 'staff_person' person.pk %}">Back to person</a>
+</header>
+<section class="card">
+  <h2>Current role</h2>
+  <p>{% if current %}{{ current.name }}{% if current.state == 'review_needed' %} · Access needs review{% endif %}{% else %}No primary role assigned{% endif %}</p>
+  <form method="get">
+    <label for="primary-role-choice">Choose a role</label>
+    <select id="primary-role-choice" name="role">
+      <option value="">Remove primary role</option>
+      {% for role in roles %}<option value="{{ role.key }}"{% if selection == role.key %} selected{% endif %}>{{ role.name }}</option>{% endfor %}
+    </select>
+    <button class="button secondary">Preview access</button>
+  </form>
+  <p><a href="{% url 'staff_primary_roles' case.pk %}">View available roles</a></p>
+</section>
+{% if finding %}<p class="card" role="alert">{{ finding }}</p>{% endif %}
+{% if plan %}
+<section class="card">
+  <h2>{% if plan.selected %}Assign {{ plan.selected.name }}{% else %}Remove primary role{% endif %}</h2>
+  {% if plan.changed %}
+  <h3>Access added</h3>
+  <ul>{% for label in plan.added_labels %}<li>{{ label }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
+  <h3>Access removed</h3>
+  <ul>{% for label in plan.removed_labels %}<li>{{ label }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
+  <p>Separately granted access is retained.</p>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Confirm role change</button></form>
+  {% else %}<p>This selection matches the current role and access.</p>{% endif %}
+</section>
+{% endif %}
+{% endblock %}

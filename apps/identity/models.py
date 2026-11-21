@@ -13,3 +13,4 @@ class Grant(models.Model):
 
 from .intake_models import TenantAuthority,CaseIntake,AccessChange,WorkAccessRequest
 from .staff_models import StaffInvitation, StaffAdmission, StaffDeparture, StaffAccountChange, StaffProfileChange
+from .staff_models import StaffPrimaryRoleChange, StaffRoleDefinition

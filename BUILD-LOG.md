@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Added the five primary role choices to Setup and the live API contract. Admin role creation uses current workspace delegation. Existing staff can receive a reviewed workspace role and retain separate grants during changes. Added immutable definition and role-change history and verified the role, invitation and lifecycle flows in the corrected 68-check Railway gate.
+
 21 November 2026. Consolidated the Next.js cutover interface into a Django-owned API with 47 operations. Built native intake adapters for all 25 factory work definitions and mapped all 262 design states to their current API and Django routes. Connected exact Finance reviews, case and project reads, reviewed bid packs and minutes, department chats and drafts, and the eight file agents to existing services. The combined Railway gate passed 12 checks and both preservation probes. The screen map tracks outstanding typed detail and commands separately from the completed Django walkthroughs.
 
 21 November 2026. Completed all 262 scoped design walkthroughs. Candidate 292 passed five commercial PostgreSQL tests and both read-only preservation probes. After the paired rollout, Trial saw the exact saved Return reason on work 239 and confirmed there was no submission or receipt. The ledger audit found zero open or unseen states. Actual owner decisions stayed deferred.

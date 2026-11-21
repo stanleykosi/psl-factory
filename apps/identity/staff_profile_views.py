@@ -15,6 +15,7 @@ from apps.core.views import accessible_case
 from . import intake,staff_accounts,staff_profiles
 from .intake_models import TenantAuthority
 from .models import Grant
+from .staff_models import StaffPrimaryRoleChange
 
 
 @login_required
@@ -27,10 +28,23 @@ def person(request,person_id):
     page=Paginator(cases,20).get_page(request.GET.get('page'))
     labels=staff_profiles.labels([c.pk for c in page],user.pk)
     cfgs={c.tenant:c for c in intake.options(request.user,'manage_access')}
+    current_reads = set(Grant.objects.filter(user=user, case__in=page.object_list, active=True, action='case.read')
+                        .values_list('case_id', flat=True))
+    primary = dict(StaffPrimaryRoleChange.objects.filter(user=user, case__in=page.object_list)
+                   .order_by('case_id', '-pk').distinct('case_id').values_list('case_id', 'role_name'))
+    delegated = {cfg.tenant: cfg.value for cfg in intake.options(user, 'manage_access')} if user.is_active else {}
+    protected = user.is_staff or user.is_superuser or staff_accounts._technical_authority(user)
     for case in page:
         case.account_access_label=labels[case.pk]
         case.can_edit_profile=(user.is_active and user.pk!=request.user.pk and not(user.is_staff or user.is_superuser)
                                and cfgs[case.tenant].value.get('staff_lifecycle',{}).get('allow_profile_edit') is True)
+        target_delegation = delegated.get(case.tenant, {})
+        is_admin = (case.kind == 'project' and case.pk in current_reads
+                    and target_delegation.get('staff_lifecycle', {}).get('allow_profile_edit') is True
+                    and case.kind in target_delegation.get('kinds', [])
+                    and case.synthetic == (target_delegation.get('classification') == 'synthetic'))
+        case.primary_role = ('Admin' if is_admin else primary.get(case.pk)) if user.is_active and case.pk in current_reads else None
+        case.can_assign_primary_role = (case.can_edit_profile and not protected and case.pk in current_reads and case.kind == 'project')
     return render(request,'identity/staff_person.html',{'person':user,'workspaces':page})
 
 

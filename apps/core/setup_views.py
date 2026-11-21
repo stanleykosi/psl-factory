@@ -160,6 +160,8 @@ def delivery_rules(actor, case):
 @require_safe
 @never_cache
 def index(request):
+    from apps.identity.primary_roles import built_ins
+
     management = {(row.tenant, row.value['classification'] == 'synthetic'): row
                   for row in options(request.user, 'manage_access')}
     rules = Grant.objects.filter(user=request.user, case_id=OuterRef('pk'),
@@ -178,7 +180,7 @@ def index(request):
         case.can_manage_accounts = authority is not None
         case.can_invite_staff = bool(authority and authority.value.get('staff_lifecycle'))
     return render(request, 'design/setup_index.html', {
-        'workspaces': page, 'search': search, 'observed_at': timezone.now(),
+        'workspaces': page, 'search': search, 'observed_at': timezone.now(), 'primary_roles': built_ins(),
     })
 
 

@@ -1,4 +1,15 @@
 {
+  "primary_roles_20261121": {
+    "status": "hosted_and_browser_catalogue_verified",
+    "built_in_roles": ["PMO Lead","Finance Lead","CEO","CTO","Admin"],
+    "scope": "One primary role per admitted project workspace. Admin represents current explicit staff administration delegation. Admin-created roles are scoped to their workspace and delegated access functions.",
+    "api_operations_added": 6,
+    "migration": "identity.0013_primary_staff_roles",
+    "checks": "d2660e0a-8ed1-4099-81f6-5c210a45b77a",
+    "tests": {"roles_and_contract":8,"profiles_and_invitations":27,"account_lifecycle":33,"preservation_probes":2,"exit":0},
+    "preview": {"web":"c045b705-3279-47a7-860d-127d8e282496","worker":"5b0ba447-af3a-490d-a418-1e326dcb4792","migration_applied":true,"contract_paths":45,"contract_operations":53,"browser":["setup_catalogue","workspace_catalogue","authenticated_role_api","creation_hidden_without_workspace_admin"]},
+    "hod_decisions_deferred": true
+  },
   "frontend_api_v1_20261121": {
     "status": "hosted_postgresql_and_browser_smoke_passed",
     "contract": "/api/v1/openapi.json",

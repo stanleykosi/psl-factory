@@ -1,0 +1,36 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Primary roles · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div><h1>Primary roles</h1><p>{{ case|workspace_name }}</p></div>
+  <a class="button secondary" href="{% url 'staff_roster' %}">People</a>
+</header>
+<section class="card">
+  <p>Assign a primary role from a person’s workspace access page. Approval decisions follow the project’s rules.</p>
+  <div class="table-wrap detail-table">
+    <table><thead><tr><th scope="col">Role</th><th scope="col">Workspace access</th></tr></thead>
+      <tbody>
+        {% for role in roles %}
+        <tr>
+          <th scope="row">{{ role.name }}{% if role.description %}<br><small>{{ role.description }}</small>{% endif %}</th>
+          <td data-label="Workspace access">
+            {% if role.key == 'admin' %}Managed through the workspace’s staff administration delegation.
+            {% else %}{{ role.access_labels|join:", " }}{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% if form %}
+<section class="card">
+  <h2>Add a role</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="button primary">Add role</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}

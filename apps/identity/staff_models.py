@@ -73,3 +73,38 @@ class StaffProfileChange(AppendOnly):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['invitation', 'case'], name='staff_invite_workspace_profile')]
+
+
+class StaffRoleDefinition(AppendOnly):
+    """An administrator-created workspace role with an explicit list of functions."""
+    case = models.ForeignKey('core.Case', on_delete=models.PROTECT)
+    authority = models.ForeignKey('identity.TenantAuthority', on_delete=models.PROTECT)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
+    key = models.SlugField(max_length=50)
+    name = models.CharField(max_length=80)
+    functions = models.JSONField()
+    reason = models.CharField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['case', 'key'], name='staff_role_workspace_key')]
+
+
+class StaffPrimaryRoleChange(AppendOnly):
+    case = models.ForeignKey('core.Case', on_delete=models.PROTECT)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
+    authority = models.ForeignKey('identity.TenantAuthority', on_delete=models.PROTECT)
+    role_key = models.SlugField(max_length=50, blank=True)
+    role_name = models.CharField(max_length=80, blank=True)
+    definition = models.ForeignKey(StaffRoleDefinition, on_delete=models.PROTECT, null=True)
+    managed_access = models.JSONField(default=dict)
+    added = models.JSONField(default=list)
+    removed = models.JSONField(default=list)
+    operation = models.UUIDField(unique=True)
+    intent_sha256 = models.CharField(max_length=64)
+    reason = models.CharField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['case', 'user', '-id'], name='staff_primary_role_head')]
