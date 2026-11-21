@@ -653,6 +653,7 @@ def run_once(work_id,provider=None,adapter=None):
                     work.status = 'waiting'
                     work.finding = {'waiting': 'Checking the source evidence.',
                                     'source_changed': 'Current source material and its reading permission are required.',
+                                    'unavailable': 'A specialist report is missing. Check the original reading and private file before continuing.',
                                     'review': 'The source findings need a decision from the information reviewer.'}[state]
                     work.lease_until = None
                     work.save(update_fields=['status', 'finding', 'lease_until', 'budget_used'])

@@ -18,6 +18,10 @@ SUITES = {
     "accounts": ("tests.test_finance_coordinator_accounts", set("F02 F04 F05 F06 F08 F10 F11 F14 F15 F19 F20 F24 F25 F26 F27".split())),
     "operations": ("tests.test_finance_coordinator_operations", set("F28 F31 F32 F33 F34 F35 F36 F37 F38 F40 F41 F42 F43 F45".split())),
 }
+LIVE_CASES = {
+    "P02": "test_department_routing_from_source_to_receipt",
+    "F35": "test_restricted_hr_handoff_to_named_finance_recipient",
+}
 
 
 def run(group):
@@ -38,7 +42,7 @@ def run(group):
     return status == 0 and observed == required
 
 
-def live(params, database):
+def live(params, database, processes):
     """Reserve any paid run once per deployment, even if the container is restarted."""
     if not all(os.environ.get(k) for k in ("PSL_ACCEPTANCE_SOURCE_MODEL", "PSL_ACCEPTANCE_SOURCE_KEY")):
         raise RuntimeError("The checks service has no temporary provider binding.")
@@ -51,7 +55,8 @@ def live(params, database):
         if not new:
             row = state.execute("SELECT result FROM specialist_acceptance.station_live WHERE deployment=%s", (deployment,)).fetchone()
             return row == (0,)
-        result = subprocess.run([sys.executable, "manage.py", "test", "tests.test_native_station_live", "--keepdb", "--noinput", "--verbosity", "2"],
+        names = ["tests.test_native_station_live.NativeProviderAcceptance." + LIVE_CASES[pid] for pid in processes]
+        result = subprocess.run([sys.executable, "manage.py", "test", *names, "--keepdb", "--noinput", "--verbosity", "2"],
                                 env={**os.environ, "PSL_STATION_LIVE": "1"}).returncode
         state.execute("UPDATE specialist_acceptance.station_live SET result=%s WHERE deployment=%s", (result, deployment))
         return result == 0
@@ -60,7 +65,9 @@ def live(params, database):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("groups", nargs="*", default=list(SUITES))
-    parser.add_argument("--live", action="store_true", help="Also run two synthetic cases with actual provider and storage receipts.")
+    provider = parser.add_mutually_exclusive_group()
+    provider.add_argument("--live", action="store_true", help="Also run both synthetic provider and storage checks.")
+    provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
     groups = options.groups
     if not groups or set(groups) - SUITES.keys() or len(set(groups)) != len(groups):
@@ -84,11 +91,12 @@ def main():
             name = "test_psl_stations_" + group
             if not admin.execute("SELECT 1 FROM pg_database WHERE datname=%s", (name,)).fetchone():
                 admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(sql.Identifier(name), sql.Identifier(template)))
+    selected_passed = live(params, template, [options.live_case]) if options.live_case else True
     with ThreadPoolExecutor(max_workers=len(groups)) as pool:
         passed = all(list(pool.map(run, groups)))
     if passed and options.live:
-        passed = live(params, template)
-    return passed
+        passed = live(params, template, LIVE_CASES)
+    return passed and selected_passed
 
 
 if __name__ == "__main__":

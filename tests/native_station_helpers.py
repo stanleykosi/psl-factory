@@ -84,10 +84,16 @@ def _drive(test, work, *, through_receipt):
             pass
         if getattr(test, "live_provider", False):
             from apps.agents import specialist_packets
+            from apps.agents.specialist_models import SpecialistReading
+            incomplete = list(SpecialistReading.objects.filter(work=work, status__in=("uncertain", "held"))
+                              .values_list("role", "status", "finding"))
+            test.assertEqual(incomplete, [], "The synthetic specialist run stopped before a private report was verified")
             work.refresh_from_db()
             result = specialist_packets.review_for(work, work.actor)
             if result:
-                test.assertTrue(all(row["status"] == "ready" for row in result["contributions"]))
+                pending = list(SpecialistReading.objects.filter(specialistpacket=result["packet"]).exclude(status="ready")
+                               .values_list("role", "status", "finding"))
+                test.assertEqual(pending, [], "Source reader status before the synthetic evidence review")
                 specialist_packets.acknowledge(work.actor, work.pk, result["packet"], result["digest"],
                     "Synthetic source reviewer checked the cited lines. Retain the gaps and require the native department decision.")
         work.refresh_from_db()

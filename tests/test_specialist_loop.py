@@ -296,6 +296,14 @@ class SpecialistLoopTests(LoopSetup, TransactionTestCase):
         )
         self.assertFalse(self.objects)
         self.assertEqual(self.provider.call_count, 2)
+        packet = SpecialistPacket.objects.get(work=self.work)
+        result = packets.inspect(packet, self.actor)
+        self.assertEqual(result["state"], "unavailable")
+        with self.assertRaises(ValidationError):
+            packets.acknowledge(self.actor, self.work.pk, packet.pk, result["digest"], "Checked the missing reports")
+        self.assertIsNone(packets.review_for(self.work, self.actor))
+        self.assertEqual(self.reach_wait(), "waiting")
+        self.assertFalse(InvoiceIssue.objects.exists())
 
     def test_concurrent_workers_take_distinct_tasks_and_retry_identical_storage_bytes(self):
         self.start_invoice()

@@ -174,7 +174,7 @@ def current_receipt(work, observation):
         return None
     return NativeStationReceipt.objects.filter(
         handoff__station=work.native_station, handoff__projection_sha256=projection_pin(observation),
-        receiver_model=receiver[0], receiver_pk=receiver[1]
+        handoff__packet__superseded_by__isnull=True, receiver_model=receiver[0], receiver_pk=receiver[1]
     ).order_by("-pk").first()
 
 
@@ -279,7 +279,7 @@ def eligible(work, state):
     packet = latest_packet(work)
     if not packet or not packet.members.filter(source_id=state["sources"][0][0], projection_sha256=state["line_hash"]).exists():
         return ["ACT04"], "Read the current department evidence."
-    handoff = NativeStationAdvice.objects.filter(station=station, projection_sha256=state["projection"]).order_by("-pk").first()
+    handoff = NativeStationAdvice.objects.filter(station=station, packet=packet, projection_sha256=state["projection"]).first()
     if not handoff:
         return ["ACT09"], "Bring the specialist findings to the department."
     if not state["receiver"]:

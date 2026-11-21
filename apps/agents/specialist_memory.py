@@ -299,7 +299,8 @@ def run_once():
             "Even when evidence is insufficient, cite the line you examined and name the missing evidence in gaps. "
             "Use assessment supported, conflicting or insufficient. Facts may be empty. Include a fact only when "
             "a source line explicitly states a reference, currency, total or due_date. For each such fact provide "
-            "field, line, and value copied verbatim. Never infer a decision or claim execution. Task: " + task,
+            "field, line, and value copied verbatim. A reporting period or revision alone supplies none of these facts. "
+            "Use a short summary and short gaps. Never infer a decision or claim execution. Task: " + task,
             json.dumps(lines, ensure_ascii=False),
             max_tokens=min(job.token_limit, 700),
         )

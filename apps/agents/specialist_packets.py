@@ -121,6 +121,7 @@ def inspect(packet, actor):
         raise PermissionDenied("The source review needs the remaining assigned specialists.")
     pins = []
     pending = False
+    unavailable = False
     attention = False
     values_by_field = {}
     disagreements = []
@@ -131,7 +132,9 @@ def inspect(packet, actor):
         lines = memory.current(reading, actor, context=context)
         if reading.status in ("queued", "reading", "storing"):
             pending = True
-        elif reading.status != "ready" or reading.disposition != "supported":
+        elif reading.status != "ready" or not reading.sha256 or not reading.size:
+            unavailable = True
+        elif reading.disposition != "supported":
             attention = True
         for anchor in reading.anchors:
             field = anchor["field"]
@@ -156,7 +159,9 @@ def inspect(packet, actor):
         )
     fingerprint = digest([packet.identity, pins])
     reviewed = packet.reviewed_hash == fingerprint and packet.reviewer_id is not None
-    if pending:
+    if unavailable:
+        state = "unavailable"
+    elif pending:
         state = "waiting"
     elif attention and not reviewed:
         state = "review"
