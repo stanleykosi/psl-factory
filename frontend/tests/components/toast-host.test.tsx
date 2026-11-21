@@ -125,6 +125,48 @@ describe('toast host', () => {
     expect(screen.getAllByRole('status')).toHaveLength(2);
   });
 
+  describe('on a phone', () => {
+    const size = { w: window.innerWidth, h: window.innerHeight };
+    beforeEach(() => Object.assign(window, { innerWidth: 390, innerHeight: 844 }));
+    afterEach(() => Object.assign(window, { innerWidth: size.w, innerHeight: size.h }));
+    const rect = (top: number, bottom: number) => ({ top, bottom, left: 16, right: 374, width: 358, height: bottom - top, x: 16, y: top, toJSON: () => ({}) });
+    const lift = () => document.querySelector<HTMLElement>('.cmp-toasts')?.style.getPropertyValue('--toast-lift');
+
+    it('lifts above a fixed bar on the page', () => {
+      render(
+        <ToastProvider>
+          <main>
+            <Buttons />
+            <div data-testid="bar" style={{ position: 'fixed' }} />
+          </main>
+        </ToastProvider>,
+      );
+      vi.spyOn(screen.getByTestId('bar'), 'getBoundingClientRect').mockReturnValue(rect(747, 844) as DOMRect);
+      press('save');
+      expect(lift()).toBe('97px');
+    });
+
+    it("lifts above an open drawer's sticky action bar, not the page's bar behind it (the bar may end above the edge)", () => {
+      render(
+        <ToastProvider>
+          <main>
+            <Buttons />
+            <div data-testid="page-bar" style={{ position: 'fixed' }} />
+          </main>
+          <div style={{ position: 'fixed' }}>
+            <aside role="dialog" aria-modal="true" aria-label="Register engagement">
+              <div data-testid="actions" style={{ position: 'sticky' }} />
+            </aside>
+          </div>
+        </ToastProvider>,
+      );
+      vi.spyOn(screen.getByTestId('page-bar'), 'getBoundingClientRect').mockReturnValue(rect(747, 844) as DOMRect);
+      vi.spyOn(screen.getByTestId('actions'), 'getBoundingClientRect').mockReturnValue(rect(724, 830) as DOMRect);
+      press('save');
+      expect(lift()).toBe('120px');
+    });
+  });
+
   it('has no accessibility violations', async () => {
     vi.useRealTimers();
     setup();

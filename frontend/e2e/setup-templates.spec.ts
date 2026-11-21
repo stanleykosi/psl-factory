@@ -19,6 +19,8 @@ async function setCookies(context: BrowserContext, cookies: Record<string, strin
 }
 
 async function expectNoAxeViolations(page: Page) {
+  // A control that has just turned on is mid-fade (120ms background transition); check the settled colours.
+  await page.waitForFunction(() => document.getAnimations().every((a) => !(a instanceof CSSTransition)));
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);
 }
