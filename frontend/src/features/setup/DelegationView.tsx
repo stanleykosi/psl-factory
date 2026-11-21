@@ -15,7 +15,7 @@ import type { DelegationBody, DelegationRow, DelegationsPage } from './contract-
 import { CHANGED, DelegationForm, type Blocked, type FormFrame, type SendResult, type Summary } from './DelegationForm';
 import { boardDate, dateRange } from './format';
 import { OutcomeNotice, type Notice } from './SetRulePanel';
-import { RulesReadState, SetupFrame, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
+import { RulesReadState, PagingNotes, useSetupPaging, useSetupPhoneBack, useSetupRead } from './SetupFrame';
 import { useDelegationAdd } from './useDelegationAdd';
 import { useDelegations } from './useDelegations';
 
@@ -47,18 +47,11 @@ const authorityText = (row: DelegationRow, page: DelegationsPage) =>
 const canAdd = (page: DelegationsPage): page is DelegationsPage & { revision: number } => page.can_add === true && typeof page.revision === 'number';
 
 export function DelegationPageView() {
-  return (
-    <SetupGate>
-      <DelegationView />
-    </SetupGate>
-  );
-}
-
-function DelegationView() {
   const { state, retry, refresh, loadMore, signOut } = useDelegations();
   const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'delegations');
   const { busy, add } = useDelegationAdd(refresh);
   useSetupPhoneBack();
+  useSetupRead(state.status);
   const [sheet, setSheet] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [blocked, setBlocked] = useState<Blocked>(null);
@@ -200,7 +193,6 @@ function DelegationView() {
   return (
     <>
       <div className="setup-page setup-desktop">
-        <SetupFrame current="delegation" />
         <div className="setup-columns">
           <section className="setup-main" aria-label="Delegations">
             {head}

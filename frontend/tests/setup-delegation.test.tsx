@@ -13,6 +13,7 @@ import type { DelegationRow, DelegationsPage } from '@/features/setup/contract-p
 import { CHANGED, CHOOSE_FROM_FIRST, NOTE, TO_HINT } from '@/features/setup/DelegationForm';
 import { DelegationPageView } from '@/features/setup/DelegationView';
 import { dateRange } from '@/features/setup/format';
+import { SetupLayoutFrame } from '@/features/setup/SetupFrame';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
 
@@ -101,12 +102,16 @@ function serveList(page: DelegationsPage) {
 async function open() {
   render(
     <AppShell>
-      <DelegationPageView />
+      <SetupLayoutFrame>
+        <DelegationPageView />
+      </SetupLayoutFrame>
     </AppShell>,
   );
   await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
 const desktop = () => within(document.querySelector('.setup-desktop') as HTMLElement);
+// the frame the Setup layout draws on desktop, beside the page's own desktop body
+const frame = () => within(document.querySelector('.setup-frame--desktop') as HTMLElement);
 const phone = () => within(document.querySelector('.setup-phone') as HTMLElement);
 const panel = () => within(screen.getByRole('complementary', { name: 'Add a delegation' }));
 const announced = () => document.querySelector('.psl-toast')?.textContent; // D-151: the toast, which is announced as a status
@@ -160,7 +165,7 @@ describe('the list (AC 3)', () => {
       ['Ada Okafor → Chika Obi', 'Finance Lead · 02–04 Nov 2026 · Conference', 'Ended'],
     ]);
     expect(phone().getByRole('heading', { level: 1 }).textContent).toBe('Delegation');
-    expect(desktop().getByRole('heading', { level: 1 }).textContent).toBe('Roles, rules and delegation');
+    expect(frame().getByRole('heading', { level: 1 }).textContent).toBe('Roles, rules and delegation');
   });
 
   it('a missing end is Unknown; a missing reason or role draws nothing; status only from status (a past scheduled row stays Upcoming)', async () => {
@@ -236,7 +241,9 @@ describe('the add control follows the response only (AC 4, 5)', () => {
       serveList(page);
       const view = render(
         <AppShell>
-          <DelegationPageView />
+          <SetupLayoutFrame>
+            <DelegationPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await waitFor(() => expect(desktop().getByRole('table')).toBeTruthy());
@@ -253,7 +260,9 @@ describe('the add control follows the response only (AC 4, 5)', () => {
       answers.me = meWith(persona, { destinations: ['my_work', 'setup'], roles: ['Somebody'] });
       const view = render(
         <AppShell>
-          <DelegationPageView />
+          <SetupLayoutFrame>
+            <DelegationPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await waitFor(() => expect(panel().getByRole('button', { name: 'Add delegation' })).toBeTruthy());
@@ -608,7 +617,9 @@ describe('access (AC 15)', () => {
       answers.list = () => json(status, status === 403 ? FORBIDDEN : { code: 'not_found', message: 'Not found.' });
       const view = render(
         <AppShell>
-          <DelegationPageView />
+          <SetupLayoutFrame>
+            <DelegationPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await waitFor(() => expect(screen.getByText('This section isn’t open to your role.')).toBeTruthy());
@@ -628,7 +639,9 @@ describe('access (AC 15)', () => {
       answers.put = () => json(status, body);
       const view = render(
         <AppShell>
-          <DelegationPageView />
+          <SetupLayoutFrame>
+            <DelegationPageView />
+          </SetupLayoutFrame>
         </AppShell>,
       );
       await waitFor(() => expect(panel()).toBeTruthy());
@@ -644,7 +657,9 @@ describe('access (AC 15)', () => {
     answers.me = meWith('pm');
     render(
       <AppShell>
-        <DelegationPageView />
+        <SetupLayoutFrame>
+          <DelegationPageView />
+        </SetupLayoutFrame>
       </AppShell>,
     );
     await waitFor(() => expect(screen.getByText('This section isn’t open to your role.')).toBeTruthy());

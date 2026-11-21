@@ -4,11 +4,12 @@
 // Submission are plain text unless the response says where they are (F-37: the Requirements page; F-38: a Submission tab
 // that carries `work_id`), never a dead link or a disabled button.
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 import type { WorkItem } from '@/api/types';
 
 import type { Rfp, RfpTab } from './contract';
+import { rememberRfpFrame } from './frameMemory';
 import { frameHeading, statusTone } from './labels';
 import './rfp.css';
 
@@ -72,6 +73,8 @@ export function RfpFrame({ id, item, rfp, fallback, current, end }: { id: string
   // the Requirements page links its Team input tab to the form of a team-input task the response says this person can act on
   const teamTask = current === 'requirements' ? item.tasks?.find((t) => t.you_can_act && (t.response as { variant?: string } | undefined)?.variant === 'team_input')?.id : undefined;
   const heading = frameHeading(rfp) ?? fallback;
+  const { line, rfp_outcome: outcome } = item;
+  useEffect(() => rememberRfpFrame({ rfp, item: { line, rfp_outcome: outcome }, fallback }), [rfp, line, outcome, fallback]);
   return (
     <header className="rfp-frame">
       <p className="rfp-eyebrow">
