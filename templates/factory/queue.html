@@ -1,6 +1,17 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
-<div class="page-heading"><div><h1>My work</h1>{% if line_title %}<p class="lede">{{ line_title }} · <a href="?queue={{ queue }}">Clear workflow filter</a></p>{% endif %}</div></div>
+<div class="page-heading">
+  <div><h1>{{ role_heading|default:"My work" }}</h1>{% if line_title %}<p class="lede">{{ line_title }} · <a href="?queue={{ queue }}">Clear workflow filter</a></p>{% endif %}</div>
+  {% if workspace_positions %}
+  <div class="actions">
+    {% for position in workspace_positions %}
+      {% if position.invite_url %}<a class="button secondary" href="{{ position.invite_url }}">Invite a teammate{% if workspace_positions|length > 1 %} · {{ position.team }}, {{ position.workspace }}{% endif %}</a>{% endif %}
+      {% if position.manage_url %}<a class="button secondary" href="{{ position.manage_url }}">Manage teams and assignments{% if workspace_positions|length > 1 %} · {{ position.workspace }}{% endif %}</a>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
 <nav class="factory-queues" aria-label="Work views">{% for key,label in queues.items %}<a href="?queue={{ key }}&amp;q={{ q|urlencode }}{% if line %}&amp;line={{ line|urlencode }}{% endif %}" {% if queue == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>
+{% if assignments %}{% include 'identity/workspace_assignments.html' %}{% endif %}
 {% if queue == 'unassigned' %}<p><a href="{% url 'rfp_assignment_queue' %}">Review unassigned bids →</a></p>{% endif %}
 <section class="workspace-panel factory-queue shared-mobile-controls"><form method="get" class="workspace-search" role="search"><input type="hidden" name="queue" value="{{ queue }}">{% if line %}<input type="hidden" name="line" value="{{ line }}">{% endif %}{% include 'ui/search_field.html' with field_id='work-search' field_label='Search work' field_value=q hide_label=True placeholder='Search invoice, project or work reference' %}<button type="submit">Search</button></form>
 <details class="work-filter"{% if line %} open{% endif %}><summary>Filter work</summary>

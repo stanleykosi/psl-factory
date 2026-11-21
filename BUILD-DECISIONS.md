@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. The user chose the existing My work entry as the single workspace for role headings and team invitations. Show current roles as the heading and carry forward scoped assignments, decisions and team actions. The former page address resolves to My work. Keep the existing role assignments API available to the connected work client.
+
 ## 21 November 2026 · Handoff implementation choices
 
 Both clients use the existing work, review and scoped intake services. A winning answer is released by the source project to a named destination and reviewed again on the new bid. Payroll chat reads only a recipient’s current, acknowledged report and answers the totals question inside the factory. Finance preserves the original file amount and stores the approved scaling factor with the calculation. These are engineering choices. Each project’s business settings remain subject to its authorised owner’s recorded decision.

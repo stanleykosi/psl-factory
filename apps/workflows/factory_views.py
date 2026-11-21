@@ -16,7 +16,6 @@ from django.views.decorators.http import require_http_methods, require_safe
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from apps.identity.models import Grant
-from apps.identity.services import visible_cases
 from apps.core.models import Evidence,Case,Audit
 from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
@@ -690,16 +689,22 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
 
 @login_required
 def index(request):
-    from apps.identity.teams import memberships
+    from apps.identity import role_work
+    from apps.identity.role_work_views import page_number
 
     # Retain legacy filtered workspace links while making the root a work-first surface.
     if any(k in request.GET for k in ['kind','area','tenant']):
         from apps.core.workbench_views import home
         return home(request)
-    if (not visible_cases(request.user).exists() and memberships(request.user).exists()
-            and not granted(request.user, ['factory.read']).exists()):
-        return redirect('role_dashboard')
-    response=render(request,'factory/queue.html',queue_context(request.user,request.GET))
+    context = queue_context(request.user, request.GET)
+    positions = role_work.workspace_positions(request.user)
+    context['role_heading'] = ' · '.join(dict.fromkeys(position['name'] for position in positions))
+    context['workspace_positions'] = positions
+    if (positions or context['queue'] == 'decisions') and context['queue'] in ('needs_me', 'decisions') and not (
+            context['q'] or context['line']):
+        context['assignments'] = role_work.dashboard(request.user, page_number(request.GET.get('assignments_page')),
+                                                    positions=positions, include_workspace_decisions=False)
+    response=render(request,'factory/queue.html',context)
     response['Cache-Control']='no-store';return response
 
 

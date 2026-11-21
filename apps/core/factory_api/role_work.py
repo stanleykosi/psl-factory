@@ -27,7 +27,7 @@ PINS = {'expected': REVISION, 'case_expected': REVISION}
     'approval_desks':array(obj({'title':TEXT,'workspace':TEXT,'url':TEXT}),limit=domain.DESK_PAGE_SIZE*len(domain.APPROVAL_DESKS)),
     'has_teams': BOOLEAN, 'page': ID, 'has_next': BOOLEAN, 'as_of': DATETIME,
 }), query={'page': {'type': 'integer', 'minimum': 1, 'maximum': 9999}},
-    summary='Read role dashboards and exact current work and decision assignments')
+    summary='Read workspace roles and exact current work and decision assignments')
 def dashboard(request):
     return domain.dashboard(request.user, page_number(request.GET.get('page')))
 

@@ -71,7 +71,7 @@ class FactoryLogin(LoginView):
         actor = self.request.user
         if memberships(actor).exists() or (
                 not granted(actor,['factory.read']).exists() and administered_projects(actor).exists()):
-            return reverse('role_dashboard')
+            return reverse('home')
         if not visible_cases(self.request.user).exists():
             return reverse('getting_started')
         return super().get_default_redirect_url()
@@ -84,7 +84,7 @@ def getting_started(request):
     from apps.identity.teams import memberships
 
     if memberships(request.user).exists():
-        return redirect('role_dashboard')
+        return redirect('home')
     if visible_cases(request.user).exists():
         return redirect('home')
     return render(request, 'design/getting_started.html', {

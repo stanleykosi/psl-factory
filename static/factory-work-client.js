@@ -43,7 +43,7 @@ class FactoryWorkClient extends HTMLElement {
     for (const item of this.profile.destinations) {
       nav.append(item.key === 'my_work' ? this.link(item.title) : this.native(item.title, item.django_url), ' ');
     }
-    if (this.profile.startable_lines.length) nav.append(this.native('Start work', '/factory/start/'));
+    nav.append(this.native('Start work', '/factory/start/'));
     this.body = element('section');
     this.replaceChildren(nav, this.body);
     const params = new URLSearchParams(location.search);
@@ -52,19 +52,28 @@ class FactoryWorkClient extends HTMLElement {
     const task = params.get('task');
     if (task && /^\d+$/.test(task)) return this.review(task);
     if (work && /^\d+$/.test(work)) return this.detail(work, params.get('history') || (path?.[2] === 'history' ? 'worker' : ''));
-    if (this.profile.destinations.some(item => item.key === 'my_work')) return this.queue(params);
-    this.body.append(element('h1', 'Your work'), element('p', 'Open your role assignments to see your assigned work.'));
+    return this.queue(params);
   }
 
   async queue(params) {
     const selected = params.get('queue') || 'needs_me';
     const query = { queue: selected, page: params.get('page') || '1' };
-    const queue = await this.api('work?' + new URLSearchParams(query));
-    this.body.append(element('h1', 'My work'));
+    const [queue, workspace] = await Promise.all([
+      this.api('work?' + new URLSearchParams(query)),
+      this.api('role-dashboard?' + new URLSearchParams({ page: params.get('assignments_page') || '1' })),
+    ]);
+    const roles = [...new Set(workspace.positions.map(position => position.name))];
+    this.body.append(element('h1', roles.join(' · ') || 'My work'));
+    for (const position of workspace.positions) {
+      const suffix = workspace.positions.length > 1 ? ' · ' + position.workspace : '';
+      if (position.invite_url) this.body.append(this.native('Invite a teammate' + suffix, position.invite_url), ' ');
+      if (position.manage_url) this.body.append(this.native('Manage teams and assignments' + suffix, position.manage_url), ' ');
+    }
     for (const [key, label] of Object.entries({ needs_me: 'Needs my attention', mine: 'Started by me',
       active: 'Active work', decisions: 'Decisions', exceptions: 'Exceptions', verified: 'Verified outcomes' })) {
       this.body.append(this.link(label, { queue: key }), ' ');
     }
+    if (selected === 'needs_me' || selected === 'decisions') this.assignments(workspace, selected);
     const list = element('ul');
     for (const row of queue.items) {
       const item = element('li');
@@ -77,6 +86,24 @@ class FactoryWorkClient extends HTMLElement {
     this.body.append(element('p', 'Page ' + queue.page));
     if (queue.page > 1) this.body.append(this.link('Previous page', { queue: selected, page: queue.page - 1 }), ' ');
     if (queue.next_page) this.body.append(this.link('Next page', { queue: selected, page: queue.next_page }));
+  }
+
+  assignments(workspace, queue) {
+    for (const [title, rows] of [[workspace.has_teams ? 'Team assignments' : 'My assignments', workspace.actions],
+      ['Decisions for me', workspace.decisions], ['Other approvals', workspace.approval_desks],
+      ['Waiting on my team', workspace.team_decisions]]) {
+      if (!rows.length) continue;
+      const list = element('ul');
+      for (const row of rows) {
+        const entry = element('li');
+        entry.append(this.native(row.title, row.url), ' · ' + row.workspace);
+        list.append(entry);
+      }
+      this.body.append(element('h2', title), list);
+    }
+    if (workspace.limited) this.body.append(element('p', 'Some decisions need a fresh access check.'));
+    if (workspace.page > 1) this.body.append(this.link('Previous assignments', { queue, assignments_page: workspace.page - 1 }), ' ');
+    if (workspace.has_next) this.body.append(this.link('Next assignments', { queue, assignments_page: workspace.page + 1 }));
   }
 
   async detail(id, history) {

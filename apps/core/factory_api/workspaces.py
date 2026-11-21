@@ -45,17 +45,11 @@ def project_for(actor, case_id):
     'csrf_token': TEXT, 'assistant_agents': array(choice(*PERSONAS)),
 }), summary='Bootstrap the same-origin Django session')
 def me(request):
-    from apps.identity.primary_roles import administered_projects
-    from apps.identity.teams import memberships
-
     actor = request.user
     destinations = [('my_work', 'My work', 'home'), ('projects', 'Projects', 'workspace_overview'),
                     ('overview', 'Overview', 'design_overview'), ('setup', 'Setup', 'design_setup'),
                     ('clients', 'Clients', 'design_clients'), ('assistant', 'Assistant', 'design_agents')]
     personas = [name for name in PERSONAS if cases_for(actor, name).exists()]
-    if memberships(actor).exists() or administered_projects(actor).exists():
-        role_dashboard = ('role_dashboard', 'Role assignments', 'role_dashboard')
-        destinations.insert(0, role_dashboard)
     return {
         'name': actor.get_full_name() or actor.get_username(),
         'work_desk_url': reverse('connected_factory_work'),

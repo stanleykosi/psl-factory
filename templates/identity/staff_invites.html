@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Staff invitations · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><h1>{% if lead %}Invite a teammate{% else %}Staff invitations{% endif %}</h1><p>{{ case.title }}{% if lead %} · {{ lead.team.name }}{% endif %}</p></div>{% if lead %}<a class="button secondary" href="{% url 'role_dashboard' %}">My work</a>{% else %}<a class="button secondary" href="{% url 'staff_teams' case.pk %}">Manage teams</a>{% endif %}</header>
+<header class="page-heading"><div><h1>{% if lead %}Invite a teammate{% else %}Staff invitations{% endif %}</h1><p>{{ case.title }}{% if lead %} · {{ lead.team.name }}{% endif %}</p></div>{% if lead %}<a class="button secondary" href="{% url 'home' %}">My work</a>{% else %}<a class="button secondary" href="{% url 'staff_teams' case.pk %}">Manage teams</a>{% endif %}</header>
 {% if invitation_link %}<section class="card onboarding-card">
   <h2>Invitation is ready</h2><p>Share this one-use link with the named recipient through an approved channel.</p>
   <label for="staff-invitation-link">Invitation link</label><input id="staff-invitation-link" readonly value="{{ invitation_link }}">

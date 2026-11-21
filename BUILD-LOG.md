@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Put role headings and team invitation links on My work and moved the scoped assignments and decisions there. Updated sign-in, navigation, back links and the connected work client. The former page address now redirects to My work.
+
 ## 21 November 2026 · Frontend handoff
 
 Corrected the weekly-report and Planning checklist entries and added a regression check. Connected both work desks to the existing session, page numbers, review evidence and decision history. Added the document review and replacement-template operations and four owner-controlled project settings. Deployed the changes over the clean Railway role release and verified the PMO Lead flow in the in-app browser. [Outcomes and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)

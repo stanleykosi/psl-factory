@@ -79,15 +79,15 @@ class RoleScopedWorkTests(TestCase):
         Draft202012Validator(schema, format_checker=FormatChecker()).validate(response.json())
         return response.json()
 
-    def test_admin_lands_on_staff_dashboard_without_business_approval_access(self):
+    def test_admin_lands_on_my_work_without_business_approval_access(self):
         user = get_user_model().objects.create_user('staff-only-administrator',password=PASSWORD)
         value = {**self.delegation_value,'allowed_actions':['case.read','action.manage','evidence.add','action.own','action.work'],
                  'initial_actions':['case.read','action.manage','evidence.add']}
         intake.provision(self.root,user,'synthetic-staff-start',value,self.expiry,True,'Synthetic staff-only role')
         case = intake.create_case(user,'synthetic-staff-start','starter','Starter workspace','project')
         response = self.client.post(reverse('login'),{'username':user.username,'password':PASSWORD})
-        self.assertRedirects(response,reverse('role_dashboard'),fetch_redirect_response=False)
-        page = self.client.get(reverse('role_dashboard'))
+        self.assertRedirects(response,reverse('home'),fetch_redirect_response=False)
+        page = self.client.get(reverse('home'))
         self.assertContains(page,'<h1>Admin</h1>',html=True)
         self.assertContains(page,'Manage teams and assignments')
         for label in ('Projects', 'Overview', 'Assistant', 'Start work', 'Menu'):
@@ -108,7 +108,7 @@ class RoleScopedWorkTests(TestCase):
             staff.accept(token,PASSWORD,role_required=True)
             client = Client()
             client.post(reverse('login'),{'username':f'staff-start-{role}','password':PASSWORD})
-            lead_page = client.get(reverse('role_dashboard'))
+            lead_page = client.get(reverse('home'))
             self.assertContains(lead_page,f'<h1>{label}</h1>',html=True)
             self.assertContains(lead_page,'Invite a teammate')
             self.assertNotContains(lead_page,'Manage teams and assignments')
@@ -127,12 +127,21 @@ class RoleScopedWorkTests(TestCase):
         for position, agents, starter in positions:
             with self.subTest(role=position.role, mode=position.mode):
                 self.client.force_login(position.user)
-                page = self.client.get(reverse('role_dashboard'))
+                page = self.client.get(reverse('home'))
+                self.assertContains(page, f'<h1>{teams.scope_label(position.role, position.mode)}</h1>', html=True)
+                self.assertNotContains(page, 'Role dashboard')
+                if position.mode == 'lead':
+                    invite_url = reverse('staff_team_invite', args=[self.case.pk, position.team_id])
+                    self.assertContains(page, invite_url)
+                    self.assertContains(self.client.get(invite_url), f'href="{reverse("home")}"')
+                else:
+                    self.assertNotContains(page, 'Invite a teammate')
                 for label in ('My work', 'Projects', 'Overview', 'Assistant', 'Start work', 'Menu'):
                     self.assertContains(page, label)
                 profile = self.checked(self.api('/me'), '/me')
-                self.assertTrue({'role_dashboard', 'my_work', 'projects', 'overview', 'assistant', 'setup'}
-                                <= {entry['key'] for entry in profile['destinations']})
+                keys = {entry['key'] for entry in profile['destinations']}
+                self.assertTrue({'my_work', 'projects', 'overview', 'assistant', 'setup'} <= keys)
+                self.assertNotIn('role_dashboard', keys)
                 self.assertEqual(profile['assistant_agents'], agents)
                 self.assertFalse(Grant.objects.filter(user=position.user, case=self.case, active=True).exists())
                 for route in ('workspace_overview', 'design_overview', 'design_agents', 'factory_intake', 'design_setup'):
@@ -265,6 +274,12 @@ class RoleScopedWorkTests(TestCase):
         dashboard = self.checked(self.api('/role-dashboard'), '/role-dashboard')
         self.assertTrue(dashboard['has_teams'])
         self.assertEqual({row['id'] for row in dashboard['actions']}, {one.pk,two.pk})
+        home = self.client.get(reverse('home'))
+        self.assertContains(home, one.action.current.description)
+        self.assertContains(home, two.action.current.description)
+        self.assertNotContains(home, hidden.action.current.description)
+        self.assertRedirects(self.client.get('/my-role/?page=2'),
+                             reverse('home') + '?assignments_page=2#assignments', fetch_redirect_response=False)
         self.assertNotContains(self.client.get(path), 'Mark complete')
         self.assertEqual(self.update(one, 'complete').status_code, 403)
         self.assertEqual(self.api(f'/role-work/{hidden.pk}').status_code, 404)
@@ -304,6 +319,8 @@ class RoleScopedWorkTests(TestCase):
 
         self.client.force_login(reviewer.user)
         self.assertEqual([row['id'] for row in self.api('/role-dashboard').json()['decisions']], [entry.pk])
+        self.assertContains(self.client.get(reverse('home'), {'queue': 'decisions'}),
+                            reverse('role_work_detail', args=[entry.pk]))
         view = self.checked(self.api(f'/role-work/{entry.pk}'), '/role-work/{assignment_id}')
         self.assertEqual(view['review']['verdicts'], ['approve'])
         self.assertNotIn('PRIVATE TRACE', str(view))
@@ -321,7 +338,7 @@ class RoleScopedWorkTests(TestCase):
         with self.assertRaises((ValidationError, PermissionDenied)):
             controlled.validate_review(self.case, version)
 
-    def test_03_all_six_role_dashboards_and_reviewed_invites(self):
+    def test_03_all_six_roles_open_my_work_after_reviewed_invites(self):
         for role in teams.FOCUS:
             with self.subTest(role=role):
                 standalone = role in ('ceo','cto')
@@ -341,14 +358,16 @@ class RoleScopedWorkTests(TestCase):
                 self.assertEqual(member.role, role)
                 self.assign(member, f'Own sample {role} assignment')
                 target = invite.post(reverse('login'), {'username':row.username,'password':PASSWORD})
-                self.assertRedirects(target, reverse('role_dashboard'), fetch_redirect_response=False)
+                self.assertRedirects(target, reverse('home'), fetch_redirect_response=False)
                 value = self.checked(self.api('/role-dashboard', client=invite), '/role-dashboard')
                 self.assertEqual(value['positions'][0]['role'], role)
                 self.assertEqual([item['title'] for item in value['actions']], [f'Own sample {role} assignment'])
                 self.assertEqual(value['decisions'], [])
                 self.assertFalse(Grant.objects.filter(user=member.user, case=self.case, active=True).exists())
                 self.assertEqual(invite.get(reverse('staff_teams', args=[self.case.pk])).status_code, 404)
-                self.assertContains(invite.get(reverse('role_dashboard')), teams.FOCUS[role][1])
+                page = invite.get(reverse('home'))
+                self.assertContains(page, f'<h1>{teams.scope_label(role, mode)}</h1>', html=True)
+                self.assertContains(page, f'Own sample {role} assignment')
                 with self.assertRaises(ValidationError):
                     staff.accept(token, PASSWORD)
 
@@ -663,7 +682,7 @@ class RoleScopedWorkTests(TestCase):
         f.review()
         self.assertEqual(f.finish()['decision'],result['review_id'])
 
-    def test_16_role_dashboard_links_only_current_specialist_desks_in_that_workspace(self):
+    def test_16_my_work_links_only_current_specialist_desks_in_that_workspace(self):
         reviewer = get_user_model().objects.create_user(username='synthetic-specialist-desk-reviewer')
         Grant.objects.bulk_create([
             Grant(user=reviewer,case=self.case,action=action)
@@ -676,7 +695,7 @@ class RoleScopedWorkTests(TestCase):
         url = reverse('payment_controls',args=[self.case.pk])
         response = self.checked(self.api('/role-dashboard'),'/role-dashboard')
         self.assertEqual([desk['url'] for desk in response['approval_desks']],[url])
-        self.assertContains(self.client.get(reverse('role_dashboard')),url)
+        self.assertContains(self.client.get(reverse('home'), {'queue': 'decisions'}),url)
         self.assertEqual(self.client.get(url).status_code,200)
         Grant.objects.filter(user=reviewer,case=self.case,action='payment.exception.decide').update(active=False)
         self.assertEqual(self.checked(self.api('/role-dashboard'),'/role-dashboard')['approval_desks'],[])

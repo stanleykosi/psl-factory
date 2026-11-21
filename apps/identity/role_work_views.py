@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods, require_safe
 
@@ -24,8 +25,10 @@ def page_number(value):
 @login_required
 @require_safe
 @never_cache
-def dashboard(request):
-    return render(request, 'identity/role_dashboard.html', role_work.dashboard(request.user, page_number(request.GET.get('page'))))
+def workspace_redirect(request):
+    page = page_number(request.GET.get('page'))
+    query = f'?assignments_page={page}' if page > 1 else ''
+    return redirect(reverse('home') + query + '#assignments')
 
 
 class UpdateForm(forms.Form):

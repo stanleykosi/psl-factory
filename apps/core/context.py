@@ -9,17 +9,8 @@ def interface(request):
     nav = {'control_plane': control_plane}
     if control_plane or not request.user.is_authenticated:
         return nav
-    from apps.core.workbench import granted
-    from apps.identity.models import Grant
-    from apps.identity.primary_roles import administered_projects
-    from apps.identity.role_work import APPROVAL_DESKS
-    from apps.identity.teams import memberships
     from apps.workflows.factory_views import QUEUES
 
-    has_staff_home = memberships(request.user).exists() or administered_projects(request.user).exists()
-    approval_actions = {actions[-1] for _,_,actions in APPROVAL_DESKS}
-    nav['role_dashboard_available'] = (has_staff_home or granted(request.user,['factory.read']).exists()
-        or Grant.objects.filter(user=request.user,active=True,action__in=approval_actions).exists())
     url = reverse('factory_intake')
     context = {}
     if request.resolver_match and request.resolver_match.url_name == 'home':

@@ -233,7 +233,7 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
              'url': reverse('role_work_detail', args=[a.role_assignment]) if scoped else
              reverse('design_project_action', args=[case.pk, a.pk])})
         if scoped:
-            result.update(action='Open team assignments', url=reverse('role_dashboard'))
+            result.update(action='Open team assignments', url=reverse('home') + '#assignments')
         return [result]
     if tab == 'registers':
         result = []

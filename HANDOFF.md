@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Single My work entry · 21 November 2026
+
+Use the existing My work link. The header shows the person's current role, with team invitations for leads and team management for delegated Admins. The same page carries scoped assignments and decisions. The former `/my-role/` page redirects to My work. The connected work client reads the existing assignments API and offers the same scoped controls.
+
+The change uses current workspace permissions, accounts and business policies. Railway web `87c5fc26-446c-45e1-8aec-36ca90868c4a` and worker `02f03744-62d1-420b-a150-7c871cb16c02` are active in design acceptance. Codex verified the PMO Lead heading on My work, the team's invitation form and its return link. See [BUILD-TESTS.md](BUILD-TESTS.md) for verification.
+
 ## Factory handoff repairs · 21 November 2026
 
 The clean role preview runs web `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker `c0e9a5d3-7151-4c90-bde6-912db6eb6b65`. Both releases build on the clean role cutover below. The in-app browser verified the PMO Lead dashboard, its empty work and decision queues, and the new work desk. Local browser samples exercised the Finance and bid decisions without populating that workspace. The earlier October accounting sample is historical.

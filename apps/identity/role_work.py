@@ -1,4 +1,4 @@
-"""Record-scoped action work and exact native decisions for role dashboards."""
+"""Record-scoped action work and exact native decisions for My work."""
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import Count, Exists, F, Func, JSONField, OuterRef, Q
@@ -274,8 +274,7 @@ def approval_desks(actor, page):
     return desks,len(cases)>DESK_PAGE_SIZE
 
 
-def dashboard(actor, page):
-    from time import monotonic
+def workspace_positions(actor):
     from .primary_roles import administered_projects
 
     memberships = teams.memberships(actor).select_related('case', 'team').order_by('role', 'case__title', 'pk')
@@ -291,6 +290,14 @@ def dashboard(actor, page):
         positions.extend({'role':'admin','mode':'administrator','name':'Admin','area':area,'focus':focus,
                           'workspace':workspace_name(case),'team':None,'invite_url':None,
                           'manage_url':reverse('staff_teams',args=[case.pk])} for case in projects)
+    return positions
+
+
+def dashboard(actor, page, *, positions=None, include_workspace_decisions=True):
+    from time import monotonic
+
+    if positions is None:
+        positions = workspace_positions(actor)
     offset = (page - 1) * SIZE
     query = scoped_rows(actor)
     rows = list(query.filter(action__isnull=False).order_by('action__current__due_at', '-pk')[offset:offset+SIZE+1])
@@ -314,7 +321,9 @@ def dashboard(actor, page):
                     decisions.append(card(row, actor))
     except ReadLimit:
         limited = True
-    native_rows, native_next, native_limited = workspace_decisions(actor,page)
+    native_rows, native_next, native_limited = (
+        workspace_decisions(actor,page) if include_workspace_decisions else ([], False, False)
+    )
     desks, desks_next = approval_desks(actor,page)
     return {'positions': positions[:50], 'actions': [card(row, actor) for row in rows[:SIZE]], 'decisions': decisions,
             'team_decisions': [card(row, actor) for row in team_decisions[:SIZE]], 'limited': limited or native_limited,

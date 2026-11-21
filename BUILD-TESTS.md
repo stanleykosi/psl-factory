@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+21 November 2026. My work consolidation passed eight focused PostgreSQL tests in 35.599 seconds on Railway `906d53d1-cbbc-46c6-a33e-9c0ff0faa41d`. Django, migration drift and the API screen map also passed. The checks covered all six role headings after sign-in, own and team assignments, an independent decision, same-team invitations and the API contract. The preceding checks image `8daf85ae-d7d4-484b-b675-e85dfeb66ec4` omitted its acceptance settings and stopped before tests. The retest included that settings file.
+
+21 November 2026. Web `87c5fc26-446c-45e1-8aec-36ca90868c4a` and worker `02f03744-62d1-420b-a150-7c871cb16c02` are active. In Codex, the former dashboard address opened My work. The PMO Lead heading, current PMO team invitation form, return link, shared navigation and Start work were visible. The connected work client also displayed the PMO Lead heading and invitation. The browser check used the existing PMO session and did not send an invitation.
+
 ## Frontend handoff checks · 21 November 2026
 
 An isolated PostgreSQL 16 database applied finance migration 0088. The two final focused runs passed 5 and 15 checks, including exact invoice evidence and history, report review, template replay, approved scaling and revocation, project-scoped model use, payroll disclosure and winning-answer reuse. The frontend passed TypeScript and 107 tests across the shell, intake and start-work suites. The start-work suite passed separately after its original test process timed out starting. Django found no pending model changes. The screen map resolved 59 groups and 262 states, and the previous browser ledger retained its 262 completed walks.

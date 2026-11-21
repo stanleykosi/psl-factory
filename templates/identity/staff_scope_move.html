@@ -7,7 +7,7 @@
 {% if problem %}<p role="alert">{{ problem }}</p>{% endif %}
 {% if preview %}
 <section class="card"><h2>{{ preview.label }}</h2>
-<p>This move removes {{ preview.grants|length }} workspace permissions and carries {{ preview.items|length }} open actions into the role dashboard.</p>
+<p>This move removes {{ preview.grants|length }} workspace permissions and carries {{ preview.items|length }} open actions into My work.</p>
 {% if preview.items %}<ul>{% for item in preview.items %}<li>{{ item.current.description }}</li>{% endfor %}</ul>{% endif %}
 <details><summary>Workspace permissions being removed</summary><ul>{% for label in preview.removed_labels %}<li>{{ label }}</li>{% endfor %}</ul></details>
 {% if preview.holds %}<ul aria-label="Items to resolve before moving">{% for hold in preview.holds %}<li>{{ hold }}</li>{% endfor %}</ul>{% endif %}

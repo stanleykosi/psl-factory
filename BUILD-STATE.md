@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## My work and role headings · 21 November 2026
+
+The existing My work page is the signed-in workspace for every staff role. It shows the person's role as its heading. Team invitation and staff administration links sit beside the heading, and scoped assignments and decisions use the workspace's existing work views. The former Role dashboard address redirects to My work. Existing workspace access, decision authority and team invitation rules govern the actions shown.
+
 ## Frontend handoff repairs · 21 November 2026
 
 The separate frontend now opens the signed-in work desk, pages through authorised records and displays Finance decisions with their evidence. The two clients share the same desk. Source selection, specialist reviews and complex intakes open their existing factory forms. The screen map correctly assigns the weekly update to SCR-25 and Planning to SCR-42. The new document review and replacement template operations call the existing document services.

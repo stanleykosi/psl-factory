@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}{{ item.title }} · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><a class="back-link" href="{% url 'role_dashboard' %}">← My work</a>
+<header class="page-heading"><div><a class="back-link" href="{% url 'home' %}#assignments">← My work</a>
   <h1>{% if item.review %}{{ item.review.title }}{% else %}{{ item.title }}{% endif %}</h1>
   <p>{{ item.workspace }} · {{ item.state }}</p>
 </div></header>
