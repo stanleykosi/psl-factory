@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Recorded PSL’s choice to keep staff alerts in the app. The live Alerts page showed two Tola replies for the signed-in PMO lead. Both external channels were unchecked on that account.
+
 21 November 2026. Released Decision 6 on Railway. Staff can dictate locally, edit the draft, and send the question to their department assistant. The in-app browser showed the local speech-pack setup and allowed editing. [Browser evidence](docs/design/assistant-dictation-checks-2026-11-21.md)
 
 21 November 2026. Recorded Decision 5 and marked Zainab’s staff name and employment checks as waiting for the live HR connection.

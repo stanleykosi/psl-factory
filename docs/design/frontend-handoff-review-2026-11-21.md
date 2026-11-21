@@ -1,5 +1,9 @@
 # What remains from the frontend handoff
 
+## Decision 7 · Staff alerts
+
+Staff receive alerts inside PSL Factory. Email and WhatsApp will be connected later. The live Railway Alerts page showed two Tola replies for the signed-in PMO lead. The account’s alert settings showed both external channels unchecked and no recent deliveries. The web service and worker had no real staff alert destinations configured.
+
 ## Decision 6 · Talking to an assistant
 
 PSL chose on-device dictation. Staff can check and edit what the browser heard and decide when to send the message. The shared message box offers typing on every device. [Checks and screenshots](assistant-dictation-checks-2026-11-21.md)
@@ -40,7 +44,7 @@ The final in-app check used the newer combined My work release. In the live PMO 
 
 The screen checklist now points SCR-25 to weekly reporting and SCR-42 to Planning. Tests also exercised a standalone report approval, retrieval of the recipient-facing preview and replay of a replacement template upload. The checked API has 64 operations across 54 paths. Specialist source selections and several detailed workflows still open their existing factory forms.
 
-**Remaining decision for PSL.** Actual email or WhatsApp destinations remain open. Decisions 4 through 6 above cover Finance files, the source for HR checks and microphone use. The browser examples used sample data.
+PSL has answered all seven decisions above. WhatsApp and email connections are deferred. The browser examples in the table used sample data.
 
 Web release `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker release `c0e9a5d3-7151-4c90-bde6-912db6eb6b65` both succeeded on the Railway design-acceptance instance. Its health page returned `ok`. The previously recorded 262 walkthroughs used the former preview database. The current clean workspace received no business transactions from these tests.
 

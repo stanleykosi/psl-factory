@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+21 November 2026. Three PostgreSQL alert tests passed for personal read state, saved preferences and in-app alerts with both external channels disconnected. An unread assistant reply remained visible even with both preferences selected. The worker queued zero external deliveries and made zero calls to the delivery service. The Railway in-app browser showed two Tola replies and the signed-in account’s unchecked email and WhatsApp settings.
+
 21 November 2026. Four message-box tests and 13 PostgreSQL assistant and payroll tests passed. In Chrome, the local speech engine transcribed a sample voice with the page offline. Changing Friday to Monday and pressing Send after reconnecting queued the edited text once. Railway’s in-app browser completed speech-pack setup and allowed editing without sending. [Screenshots and test conditions](docs/design/assistant-dictation-checks-2026-11-21.md)
 
 21 November 2026. For Decision 5, the existing PostgreSQL test for department access passed. It checked that Zainab’s HR conversation reports the live HR system as disconnected. The backlog also parsed with the expected waiting status.

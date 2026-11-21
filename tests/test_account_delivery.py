@@ -82,6 +82,16 @@ class AccountDeliveryTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(AccountDelivery.objects.count(), 1)
 
+    @override_settings(CONTACT_DELIVERY=None)
+    def test_staff_alert_stays_in_app_when_channels_are_disconnected(self):
+        self.client.force_login(self.actor)
+        alerts.save_preferences(self.actor, 1, True, True)
+        with patch('apps.core.account_delivery.receipt_for') as relay:
+            call_command('work_account_delivery')
+            relay.assert_not_called()
+        self.assertContains(self.client.get(reverse('design_alerts')), 'Assistant reply')
+        self.assertFalse(AccountDelivery.objects.filter(actor=self.actor, purpose='alert').exists())
+
     def test_native_alert_delivers_once_per_channel_and_has_private_receipts(self):
         self.client.force_login(self.actor)
         preferences = reverse('design_alert_preferences')

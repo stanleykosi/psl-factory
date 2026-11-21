@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Staff alerts · 21 November 2026
+
+Staff can find their alerts under the bell or on the Alerts page. Railway has no real email or WhatsApp destinations configured for staff alerts. PSL deferred connecting both channels.
+
 ## Talking to an assistant · 21 November 2026
 
 In a conversation with a message box, staff can dictate on a supported device, stop, edit the words, and press Send. The browser handles the audio locally. A browser that lacks local speech recognition offers typing. [Browser checks](docs/design/assistant-dictation-checks-2026-11-21.md)

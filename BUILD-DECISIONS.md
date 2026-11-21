@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. Decision 7. Staff receive work alerts inside PSL Factory. PSL will connect WhatsApp and email later.
+
 21 November 2026. Decision 6. Staff may dictate a question to Tola, Chidi or Zainab when their browser can turn speech into text on their device. Staff review and edit the words and press Send themselves. Typing remains available. A conversation limited to an acknowledged payroll report keeps its approved question choices.
 
 21 November 2026. Decision 5. PSL chose to wait for the live HR system before Zainab checks official staff names or whether someone worked at PSL on a given date. An uploaded staff list is outside the approved sources for these checks. Until the connection is ready, HR can confirm individual cases directly.
