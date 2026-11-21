@@ -118,7 +118,14 @@ class ControlledDocumentTests(TestCase):
         self.assertNotContains(self.client.get(successor_url), 'PRIVATE TRACE')
         self.assertNotContains(self.client.get(url), 'Clarified status for the client')
         submit(successor_url, action='request')
-        submit(successor_url, action='review', verdict='approve:0', note='Reviewed changed status')
+        review_api = f'/api/v1/projects/{self.case.pk}/document-reviews/{successor.pk}'
+        preview = self.client.get(review_api)
+        self.assertContains(preview, 'Clarified status for the client')
+        self.assertNotContains(preview, 'PRIVATE TRACE')
+        self.assertIn('approve:0', preview.json()['decisions'])
+        decision = self.client.post(review_api, {'verdict':'approve', 'delegated':False,
+            'expected_revision':rev(self.case), 'note':'Reviewed changed status'}, content_type='application/json')
+        self.assertEqual(decision.json()['verdict'], 'approve')
         page = self.client.get(successor_url)
         self.assertContains(page, 'Recipients for version 2')
         token = page.context['publication']['token']

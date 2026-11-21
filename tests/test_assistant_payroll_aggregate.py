@@ -20,6 +20,30 @@ from tests.payroll_helpers import fixture, pipeline
 
 @patch.dict('os.environ', {'OPENROUTER_MODEL': 'synthetic', 'OPENROUTER_API_KEY': 'synthetic'})
 class AssistantPayrollAggregateTests(TestCase):
+    def test_approved_total_comes_from_current_receipt_and_stays_inside_the_factory(self):
+        from tests.helpers import activate
+        from apps.policy.services import transition
+
+        data = fixture()
+        actor, case = data['manager'], data['case']
+        *_, report = pipeline(data, 'approved-chat-total')
+        Grant.objects.create(case=case, user=actor, action='agent.extract')
+        payroll.receive_report(actor, case.pk, report.pk, rev(case))
+        config = activate(data['owner'], case, 'OPS.payroll_chat_totals',
+            {'fields':['eligible_total'], 'audience':'current_acknowledged_recipient', 'delivery':'local_reply_only'},
+            data['e']['policy_decision'])
+        chat = AssistantConversation.objects.create(actor=actor, case=case, persona='zainab')
+        with patch('adapters.openrouter.answer') as model:
+            turn = assistant.reserve(actor, chat.pk, uuid4(), assistant.TOTALS_QUESTION)
+            model.assert_not_called()
+        self.assertEqual(turn.status, 'answered')
+        self.assertIn(report.payload['eligible_total'], turn.answer)
+        self.client.force_login(actor)
+        url = reverse('assistant_thread', args=[chat.pk])
+        self.assertContains(self.client.get(url), turn.answer)
+        transition(data['owner'], config.pk, 'revoked')
+        self.assertNotContains(self.client.get(url), turn.answer)
+
     def test_received_payroll_metadata_connects_zainab_without_private_sources_or_prior_hr_chat(self):
         data = fixture()
         case, recipient, publisher = data['case'], data['manager'], data['preparer']

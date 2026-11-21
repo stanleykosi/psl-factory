@@ -16,7 +16,7 @@ from apps.identity.services import visible_cases
 from apps.workflows.factory_rfp import DEFINITION, inputs
 from apps.workflows.models import FactoryWork
 
-from . import rfp_answers
+from . import rfp_answers, winning_answers
 
 
 class AnswerForm(forms.Form):
@@ -63,8 +63,9 @@ def workbench(request, work_id):
             action = request.POST.get('action')
             if action == 'suggest':
                 rfp_answers.request(request.user, work.pk, selected_key, request.POST.get('operation_key'),
-                    expected, case_revision)
-                messages.success(request, 'Tola is drafting this answer. Your current response stays available.')
+                    expected, case_revision, prior_choice=request.POST.get('prior_answer', ''))
+                messages.success(request, 'The winning answer is ready for your review.' if request.POST.get('prior_answer')
+                                 else 'Tola is drafting this answer. Your current response stays available.')
                 return redirect(item_url(work.pk, selected_key))
             if action == 'review':
                 form = AnswerForm(request.POST)
@@ -97,7 +98,7 @@ def workbench(request, work_id):
                 '-pk').values('verdict')[:1]
             pending = {suggestion.key: suggestion for suggestion in
                 RFPAnswerSuggestion.objects.annotate(last_verdict=Subquery(last_verdict)).filter(
-                    pk__in=latest_ids, turn__status='answered', context=current_anchors).filter(
+                    pk__in=latest_ids, turn__status='answered', context__contains=current_anchors or {}).filter(
                     Q(last_verdict__isnull=True) | Q(last_verdict='undo')).select_related('turn')}
             next_key = next((row['key'] for row in inputs(work)['matrix']
                 if row['key'] != selected_key and row['key'] in pending
@@ -138,9 +139,12 @@ def workbench(request, work_id):
             previous = reviews.get(suggestion.pk)
             item.update(review=previous, predecessor=previous.pk if previous else 0)
             try:
-                if (current_anchors != suggestion.context or not readable_sources[row['evidence_id']]
+                original = {k: v for k, v in suggestion.context.items() if k != 'prior_answer'}
+                if (current_anchors != original or not readable_sources[row['evidence_id']]
                         or suggestion.row['evidence_id'] != row['evidence_id']):
                     raise ValidationError('The original source needs review.')
+                if 'prior_answer' in suggestion.context:
+                    item['prior_citation'] = winning_answers.read(request.user, work.case, suggestion.context['prior_answer'])
                 if previous and previous.verdict != 'undo':
                     item.update(status={'accept': 'Accepted', 'edit': 'Accepted with edits', 'replace': 'Own answer'}.get(previous.verdict, 'Reviewed'),
                         code='accepted', can_undo=writable and row == previous.row)
@@ -167,9 +171,10 @@ def workbench(request, work_id):
         form = AnswerForm(initial={'suggestion': selected['suggestion'].pk, 'predecessor': selected['predecessor'],
             'verdict': mode, 'disposition': selected['row']['disposition'],
             'answer': '' if mode == 'replace' else selected['original_answer']})
+    prior_options = [(token, source['label']) for token, _, source in winning_answers.options(request.user, work.case)] if writable else []
     shown = [item for item in items if (not query or query.casefold() in (item['row']['key'] + ' ' + item['row']['response']).casefold())
              and (not status_filter or item['code'] == status_filter)]
     return render(request, 'factory/rfp_answers.html', {'case': work.case, 'work': work, 'items': shown,
-        'selected': selected, 'form': form, 'can_write': writable, 'query': query, 'status_filter': status_filter,
+        'selected': selected, 'form': form, 'can_write': writable, 'prior_options': prior_options, 'query': query, 'status_filter': status_filter,
         'total': len(items), 'waiting': any(item['code'] == 'working' and item.get('suggestion') and
             item['suggestion'].turn.status in {'queued', 'running'} for item in items)})

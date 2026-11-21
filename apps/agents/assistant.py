@@ -16,6 +16,7 @@ from apps.core.workbench import granted
 from apps.documents.contracts import digest
 
 from .assistant_models import AssistantConversation, AssistantTurn
+from . import assistant_access
 
 
 PERSONAS = {
@@ -25,6 +26,38 @@ PERSONAS = {
 }
 INSUFFICIENT_EVIDENCE = 'I could not answer from the available records.'
 PAYROLL_REPORT_QUESTIONS = tuple(PAYROLL_REPORT_TOPICS.values())
+TOTALS_QUESTION = 'What are the approved totals in my received staff-cost report?'
+
+
+def payroll_questions_for(conversation):
+    if assistant_access.permission(conversation.case, assistant_access.TOTALS):
+        if not conversation.case.synthetic and not assistant_access.model_rule(conversation.case, 'zainab'):
+            return (TOTALS_QUESTION,)
+        return (*PAYROLL_REPORT_QUESTIONS, TOTALS_QUESTION)
+    return PAYROLL_REPORT_QUESTIONS
+
+
+def totals_reply(conversation):
+    from apps.finance.payroll import observe_publication
+
+    config = assistant_access.permission(conversation.case, assistant_access.TOTALS)
+    sources = payroll_report_sources(conversation)
+    if not config or not sources:
+        raise ValidationError('An approved disclosure and a current received payroll report are required.')
+    publication = sources[0]['record']['pk']
+    report = observe_publication(conversation.actor, publication)
+    fields = config.envelope['value']['fields']
+    parts = [f"Reviewed staff costs for {report['period']} ({report['currency']})."]
+    if 'eligible_total' in fields:
+        value = report.get('eligible_total')
+        parts.append('Eligible total: ' + (str(value) if value is not None else 'Unknown') + '.')
+    if 'by_bu' in fields:
+        for unit, value in sorted(report['by_bu'].items()):
+            parts.append(f"{unit}: {value if value is not None else 'Unknown'}.")
+    answer = ' '.join(parts)
+    if len(answer) > 4000:
+        raise ValidationError('Open the report to see all approved business units.')
+    return answer, [dict(sources[0], disclosure=config.pk, figures_digest=digest(answer))]
 
 
 def cases_for(actor, persona):
@@ -41,7 +74,12 @@ def cases_for(actor, persona):
         received = PayrollReportReceipt.objects.filter(actor=actor).values('publication__request__case_id')
         report_cases = granted(actor, ['agent.extract', 'payroll.read', 'payroll.report.read']).filter(pk__in=received)
         cases = cases | report_cases
-    return cases.filter(synthetic=True, kind='project')
+        allowed = assistant_access.admitted(cases, persona)
+        local_only = report_cases.filter(kind='project', synthetic=False).exclude(
+            pk__in=granted(actor, ['hrfinance.read']).values('pk'))
+        ids = [case.pk for case in local_only.iterator() if assistant_access.permission(case, assistant_access.TOTALS)]
+        return allowed | report_cases.filter(pk__in=ids)
+    return assistant_access.admitted(cases, persona)
 
 
 def check(actor, conversation):
@@ -110,6 +148,16 @@ def transfer(actor, turn_id, target):
 
 
 def tool_context(conversation):
+    sources, next_work = _tool_context(conversation)
+    if (not conversation.case.synthetic and payroll_report_only(conversation)
+            and assistant_access.permission(conversation.case, assistant_access.TOTALS)
+            and not assistant_access.model_rule(conversation.case, conversation.persona)):
+        return sources, []
+    sources = assistant_access.project_sources(conversation, sources)
+    return sources, next_work if sources else []
+
+
+def _tool_context(conversation):
     actor, case, persona = conversation.actor, conversation.case, conversation.persona
     check(actor, conversation)
     if payroll_report_only(conversation):
@@ -270,6 +318,8 @@ def message_context(conversation, focus):
 
 
 def turn_context(turn, *, pending=True):
+    if turn.question == TOTALS_QUESTION:
+        return totals_reply(turn.conversation)[1], []
     suggestion = getattr(turn, 'rfp_answer', None)
     if suggestion is not None:
         from apps.pmo.rfp_answers import context_for
@@ -288,7 +338,7 @@ def reserve(actor, conversation_id, operation_key, question, focus=''):
     keys = sorted(set(keys))
     conversation = AssistantConversation.objects.select_for_update(of=('self',)).select_related('case').get(pk=conversation_id)
     check(actor, conversation)
-    if payroll_report_only(conversation) and (question not in PAYROLL_REPORT_QUESTIONS or len(keys) > 1):
+    if payroll_report_only(conversation) and (question not in payroll_questions_for(conversation) or len(keys) > 1):
         raise ValidationError('Choose a question about your received staff-cost report.')
     previous = AssistantTurn.objects.filter(pk=operation_key).first()
     if previous is not None:
@@ -298,6 +348,20 @@ def reserve(actor, conversation_id, operation_key, question, focus=''):
         return previous
     if conversation.turns.filter(status__in=['queued', 'running']).exists():
         raise ValidationError('Wait for the current answer before sending another question.')
+    if question == TOTALS_QUESTION:
+        if conversation.persona != 'zainab' or not payroll_report_only(conversation):
+            raise PermissionDenied('Use the recipient view for your received payroll report.')
+        visible_sources, _ = tool_context(conversation)
+        selected = source_focus(visible_sources, keys)
+        answer, sources = totals_reply(conversation)
+        if not any(row.get('record') == sources[0]['record'] for row in selected):
+            raise ValidationError('Select your current received report.')
+        turn = AssistantTurn.objects.create(pk=operation_key, conversation=conversation, question=question,
+            status='answered', answer=answer, sources=sources, context_hash=digest(sources), selected_sources=keys)
+        conversation.save(update_fields=['updated_at'])
+        return turn
+    if not conversation.case.synthetic and not assistant_access.model_rule(conversation.case, conversation.persona):
+        raise PermissionDenied('This project requires approval before a question can be sent to the model.')
     if not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('The department assistant needs a configured model.')
     if keys:
@@ -335,6 +399,10 @@ def answer_claim(turn, model):
         return False
     conversation = turn.conversation
     try:
+        if not conversation.case.synthetic:
+            rule = assistant_access.model_rule(conversation.case, conversation.persona)
+            if not rule or rule.envelope['value']['model'] != model:
+                raise PermissionDenied('The current provider and model need project approval.')
         sources, next_work = turn_context(turn)
         report_only = payroll_report_only(conversation) or any(
             source.get('record', {}).get('field') == 'payroll_report' for source in sources)

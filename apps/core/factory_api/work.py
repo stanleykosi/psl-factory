@@ -202,16 +202,32 @@ def detail(request, work_id):
 ATTEMPT = obj({'at': DATETIME, 'station': TEXT, 'status': TEXT})
 
 
-@endpoint(response=obj({'items': array(ATTEMPT, limit=30), 'as_of': DATETIME}), summary='Read recent worker transitions')
+@endpoint(response=obj({'items': array(ATTEMPT, limit=30), 'as_of': DATETIME}),
+          query={'kind': choice('worker', 'decision', 'evidence')}, summary='Read recent work, decision or evidence history')
 def history(request, work_id):
     work, _, protected = observed_work(request.user, work_id)
+    kind = request.GET.get('kind', 'worker')
+    if kind not in ('worker', 'decision', 'evidence'):
+        raise Problem(422, 'invalid_filter', 'Choose a listed history filter.')
     items = []
     if not protected.get('recipient_only'):
         from apps.core.templatetags.studio_ui import readable
+        from apps.workflows.models import TaskEvent
 
-        attempts = (FactoryAttempt.objects.filter(activity__work=work)
-                    .order_by('-pk').values_list('created_at', 'activity__kind', 'phase')[:30])
-        items = [{'at': at, 'station': readable(station), 'status': phase} for at, station, phase in attempts]
+        if kind == 'worker':
+            attempts = (FactoryAttempt.objects.filter(activity__work=work)
+                        .order_by('-pk').values_list('created_at', 'activity__kind', 'phase')[:30])
+            items = [{'at': at, 'station': readable(station), 'status': phase} for at, station, phase in attempts]
+        else:
+            events = TaskEvent.objects.filter(task__case=work.case, task__context__work=work.pk,
+                                              task__factory_key__startswith=f'factory:{work.pk}:')
+            if kind == 'decision':
+                events = events.filter(data__verdict__in=['approve', 'return', 'reject'])
+            else:
+                events = events.filter(action__in=['factory.information_verified', 'factory.packet_superseded'])
+            items = [{'at': event.created_at, 'station': readable(event.task.kind),
+                      'status': event.data['verdict'] if kind == 'decision' else readable(event.action.split('.')[-1])}
+                     for event in events.select_related('task').order_by('-pk')[:30]]
     return {'items': items, 'as_of': timezone.now()}
 
 
@@ -269,7 +285,8 @@ PACKET = obj({
 })
 
 
-@endpoint(response=obj({'task': TASK, 'work_id': ID, 'label': TEXT, 'invoice_packet': nullable(PACKET)}),
+@endpoint(response=obj({'task': TASK, 'work_id': ID, 'label': TEXT, 'invoice_packet': nullable(PACKET),
+                        'review_evidence': array(obj({'id': ID, 'version': ID, 'source': TEXT, 'sha256': TEXT}))}),
           summary='Read the exact current Finance task and permitted invoice packet')
 def task(request, task_id):
     work, _ = review_task(request.user, task_id)
@@ -289,8 +306,16 @@ def task(request, task_id):
                       'recipient': getattr(selected, 'recipient_name', None),
                       'sources': [{'id': item.pk, 'version': item.version, 'kind': item.kind, 'sha256': item.sha256}
                                   for item in selected.source_records]}
-    return {'task': task_data(selected, request.user), 'work_id': work.pk,
-            'label': getattr(selected, 'label', 'Review the exact invoice'), 'invoice_packet': fields}
+    from apps.core.evidence_access import public_evidence
+    from apps.core.models import Evidence
+
+    info = task_data(selected, request.user)
+    proofs = []
+    if info['can_decide'] and fields:
+        proofs = list(public_evidence(Evidence.objects.filter(case=work.case, kind='invoice_review'))
+                      .order_by('-pk').values('id', 'version', 'source', 'sha256'))
+    return {'task': info, 'work_id': work.pk, 'review_evidence': proofs,
+            'label': getattr(selected, 'label', 'Finance review'), 'invoice_packet': fields}
 
 
 @endpoint(method='POST', request=obj({'expected_revision': REVISION}),

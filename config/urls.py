@@ -124,6 +124,8 @@ urlpatterns += [path('cases/<uuid:case_id>/identity-resolution/',identity_resolu
 from apps.baas import summary_views
 urlpatterns += [path('cases/<uuid:case_id>/support/summaries/',summary_views.workbench,name='complaint_summaries'),path('cases/<uuid:case_id>/support/summaries/<int:pk>/',summary_views.view,name='complaint_summary_draft'),path('cases/<uuid:case_id>/support/summaries/<int:pk>/export/',summary_views.view,{'reviewed':True},name='complaint_summary_export')]
 from apps.core import workbench_views
+from apps.policy import project_use
+urlpatterns += [path('projects/<uuid:case_id>/settings/data-use/', project_use.settings, name='project_data_use')]
 from apps.identity import work_access_views
 urlpatterns += [path('work/',workbench_views.inbox,name='work_inbox')]
 urlpatterns += pilot_patterns
@@ -147,6 +149,10 @@ urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/closure/',c
     path('cases/<uuid:case_id>/client-response/settings/',client_uat_views.configuration,name='client_uat_rules'),
     path('cases/<uuid:case_id>/client-response/<int:response_id>/proof/<int:upload_id>/',client_uat_views.proof,name='client_uat_proof')]
 from apps.core import workbench_views
+from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView
+urlpatterns += [path('factory/my-work/', login_required(TemplateView.as_view(
+    template_name='factory/connected_work.html')), name='connected_factory_work')]
 urlpatterns += [path('workspaces/',workbench_views.home,name='workspace_overview'),
     path('factory/new/',factory_views.create,name='factory_create'),
     path('factory/start/',factory_views.intake,name='factory_intake'),

@@ -62,7 +62,7 @@ def conversation(request, conversation_id):
     return {
         **conversation_data(row),
         'available_sources': [{'key': digest(item), 'label': item['label'], 'django_url': item['url']} for item in sources],
-        'question_options': list(assistant.PAYROLL_REPORT_QUESTIONS) if payroll_only else [],
+        'question_options': list(assistant.payroll_questions_for(row)) if payroll_only else [],
         'messages': [
             {'id': turn.pk, 'question': turn.question, 'at': turn.created_at,
              'status': 'source_changed' if turn.stale else turn.status,

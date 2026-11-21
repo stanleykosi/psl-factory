@@ -60,6 +60,37 @@ class RFPAnswerTests(TestCase):
         work.refresh_from_db()
         return rfp_answers.review(data['actor'], work.pk, work.revision, rev(data['case']), decisions)
 
+    def test_reuse_requires_a_released_winning_answer_and_current_access(self):
+        from apps.pmo import winning_answers
+        from apps.policy.services import transition
+        from tests.helpers import activate, setup_case
+
+        destination = self.data
+        owner, project = setup_case(username='prior-award-owner')
+        original = configured('SAMPLE-PRIOR-WIN', context=(owner, project))
+        work = start(original)
+        response, _ = reviewed_document(original, work)
+        factory.run_until_wait(work.pk)
+        submission = factory_rfp.submission_for(work)
+        outcome = rfp.outcome(owner, project.pk, submission.pk, 'won', timezone.now(), 'Client',
+            original['evidence']['rfp_outcome'].pk, 'Sample award for this version.', rev(project))
+        factory.run_until_wait(work.pk)
+        actor, case = destination['actor'], destination['case']
+        rule = activate(owner, project, 'OPS.winning_bid_reuse', {'answers': [
+            {'outcome_id':outcome.pk, 'requirement':'R1', 'destination':str(case.pk)}]}, original['evidence']['policy_decision'])
+        self.assertEqual(winning_answers.options(actor, case), [])
+        for action in ['case.read', 'rfp.read']:
+            Grant.objects.create(case=project, user=actor, action=action)
+        token, _, citation = winning_answers.options(actor, case)[0]
+        self.assertEqual(citation['fact'], response.matrix[0]['response'])
+        target = destination['work']
+        suggestion = rfp_answers.request(actor, target.pk, 'R1', uuid4(), target.revision, rev(case), prior_choice=token)
+        self.assertEqual(suggestion.turn.answer, citation['fact'])
+        self.assertFalse(suggestion.reviews.exists())
+        transition(owner, rule.pk, 'revoked')
+        with self.assertRaises(PermissionDenied):
+            self.save([decision(suggestion)])
+
     def test_model_draft_human_edit_native_reviews_submission_outcome_and_verified_route(self):
         data = self.data
         actor, case, work = data['actor'], data['case'], data['work']

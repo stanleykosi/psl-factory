@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Frontend handoff repairs · 21 November 2026
+
+The separate frontend now opens the signed-in work desk, pages through authorised records and displays Finance decisions with their evidence. The two clients share the same desk. Source selection, specialist reviews and complex intakes open their existing factory forms. The screen map correctly assigns the weekly update to SCR-25 and Planning to SCR-42. The new document review and replacement template operations call the existing document services.
+
+Four versioned project settings now govern department assistant use on real projects, reuse of approved winning answers, payroll totals in recipient chat and scaled Finance files. A person with configuration authority can prepare a draft under **Business rule settings → Project data permissions and Finance units**. Each setting needs a recorded decision and separate validation and activation. The clean Railway preview has no new business rules or sample transactions from this work. [Checks and screenshots](docs/design/frontend-handoff-review-2026-11-21.md)
+
 Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 BaaS IDs/behaviour. HOD people/policies deferred. No main merge.
 
 ## Current implementation and verification

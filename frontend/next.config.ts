@@ -5,11 +5,18 @@ import type { NextConfig } from 'next';
 const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:4010';
 
 const nextConfig: NextConfig = {
+  env: { NEXT_PUBLIC_FACTORY_ORIGIN: process.env.NEXT_PUBLIC_FACTORY_ORIGIN ?? '' },
   // `next dev` blocks its dev resources for any host but localhost, so a page opened on
   // 127.0.0.1 never hydrates and stays on "Loading…". Loopback only; no effect on `next build`.
   allowedDevOrigins: ['127.0.0.1'],
   async rewrites() {
-    return [{ source: '/api/v1/:path*', destination: `${apiOrigin}/api/v1/:path*` }];
+    return { beforeFiles: [
+      { source: '/api/v1/:path*', destination: `${apiOrigin}/api/v1/:path*` },
+      { source: '/factory-assets/work-client.js', destination: `${apiOrigin}/static/factory-work-client.js` },
+      { source: '/accounts/:path*', destination: `${apiOrigin}/accounts/:path*` },
+      { source: '/factory-forms/:path*', destination: `${apiOrigin}/:path*` },
+      { source: '/static/:path*', destination: `${apiOrigin}/static/:path*` },
+    ], afterFiles: [], fallback: [{ source: '/:path*', destination: `${apiOrigin}/:path*` }] };
   },
 };
 

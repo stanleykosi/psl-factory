@@ -54,6 +54,24 @@ def validate_envelope(case, envelope, runtime=False, *, budget=None):
         if not ref.startswith('evidence:') or not ref.split(':')[-1].isdigit() or not Evidence.objects.filter(case=case, pk=ref.split(':')[-1]).exists():
             raise ValidationError('Evidence/decision references must identify evidence on this case')
     value = envelope['value']
+    from .registry import PROJECT_USE_COMPONENTS
+    if envelope['component_id'] in PROJECT_USE_COMPONENTS:
+        if case.kind != 'project':
+            raise ValidationError('This permission needs a project workspace.')
+        if envelope['component_id'] == 'OPS.winning_bid_reuse':
+            from apps.pmo.models import RFPOutcome
+            from apps.core.models import Case
+
+            for entry in value['answers']:
+                outcome = RFPOutcome.objects.filter(pk=entry['outcome_id'], submission__response__rfp__case=case,
+                                                    result='won').select_related('submission__response').first()
+                if not outcome or not any(row['key'] == entry['requirement'] and row['disposition'] == 'addressed'
+                                          for row in outcome.submission.response.matrix):
+                    raise ValidationError('Choose an answered requirement in a winning submission from this project.')
+                if not Case.objects.filter(pk=entry['destination'], tenant=case.tenant, synthetic=case.synthetic,
+                                           kind='project').exists():
+                    raise ValidationError('Choose a destination project in the same organisation and data environment.')
+        return
     if envelope['component_id'] == 'D04.iana_timezone':
         try:
             ZoneInfo(value)

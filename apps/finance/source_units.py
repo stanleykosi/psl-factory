@@ -65,6 +65,18 @@ def inspect(source):
     elif not units or 'unknown' in units:
         status = 'unknown'
     elif units != {'major_currency'}:
+        from apps.policy.services import resolve
+        resolution = resolve('D06.import_unit_conversion', source.case)
+        config = resolution.configuration if resolution.status == 'ACTIVE' else None
+        unit, = units
+        if config:
+            rule = config.envelope['value']
+            matches = (source.entity == rule['entity'] and unit in rule['units'] and
+                       all(row['feed'] == rule['feed'] for row in value['declarations']) and
+                       all((row['currency'], row['period']) == (rule['currency'], rule['period']) for row in source.batch.rows))
+            if matches:
+                return {'status': 'converted_major_currency', 'declaration': value, 'findings': [],
+                        'policy': config.pk, 'factor': {'thousands_currency': 1000, 'millions_currency': 1000000}[unit]}
         status = 'unsupported'
     else:
         status = 'declared_major_currency'
@@ -74,6 +86,6 @@ def inspect(source):
 
 def require_mapping(source):
     state = inspect(source)
-    if state['status'] not in {'legacy_undeclared', 'declared_major_currency'}:
+    if state['status'] not in {'legacy_undeclared', 'declared_major_currency', 'converted_major_currency'}:
         raise ValidationError(state['findings'])
     return state

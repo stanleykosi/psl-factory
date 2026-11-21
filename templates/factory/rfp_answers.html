@@ -11,6 +11,14 @@
 {% if selected %}<section class="card"><h2>{{ selected.row.key }}</h2><p>{{ selected.status }}</p>
 {% if selected.source %}<details open><summary>Requirement source · version {{ selected.source.version }}</summary><p>{{ selected.source.body|linebreaksbr }}</p><p class="secondary-text">{{ selected.source.source }}</p><a href="{% url 'case' case.pk %}">Project source documents</a></details>{% endif %}
 <h3>Current answer</h3><p>{{ selected.row.response|linebreaksbr }}</p>
+{% if selected.prior_citation %}<p>Answer source: <a href="{{ selected.prior_citation.url }}">{{ selected.prior_citation.label }}</a></p>{% endif %}
+{% if can_write and prior_options and selected.code != 'working' %}
+<form method="post">{% csrf_token %}
+<input type="hidden" name="action" value="suggest"><input type="hidden" name="requirement" value="{{ selected.row.key }}">
+<input type="hidden" name="revision" value="{{ work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+<input type="hidden" name="operation_key" value="{{ selected.operation_key }}">
+<label>Approved answers from winning bids<select name="prior_answer" required><option value="">Choose an answer</option>{% for key,label in prior_options %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select></label>
+<button class="secondary">Review winning answer</button></form>{% endif %}
 {% if selected.original_answer %}<details open><summary>Tola’s original suggestion</summary><p>{{ selected.original_answer|linebreaksbr }}</p></details>{% endif %}
 {% if form %}<form method="post" id="answer-review">{% csrf_token %}<input type="hidden" name="action" value="review"><input type="hidden" name="requirement" value="{{ selected.row.key }}"><input type="hidden" name="revision" value="{{ work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">{{ form.as_p }}<button>Save answer</button><a class="button secondary" href="{{ selected.url }}">Cancel</a></form>
 {% elif selected.review %}<p>{{ selected.review.actor.get_username }} · {{ selected.review.created_at|date:'d M Y H:i T' }}</p>{% if selected.review.note %}<details><summary>Internal reason</summary><p>{{ selected.review.note|linebreaksbr }}</p></details>{% endif %}{% endif %}

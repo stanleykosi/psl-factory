@@ -29,6 +29,19 @@ SPEC = contract()
 
 
 class ContractTests(SimpleTestCase):
+    def test_weekly_update_and_planning_screen_entries_have_their_own_workflows(self):
+        import json
+        from django.conf import settings
+
+        screens = json.loads((settings.BASE_DIR / 'contracts/factory-api-screen-map.json').read_text())['screens']
+        weekly, planning = screens['SCR-25'], screens['SCR-42']
+        self.assertIn('weekly client update', weekly['journey'])
+        self.assertIn('POST /work/{work_id}/reviews', weekly['json'])
+        self.assertNotIn('factory_rfp_answers', weekly['django'])
+        self.assertIn('Planning readiness', planning['journey'])
+        self.assertIn('planning', planning['django'])
+        self.assertNotIn('delivery', planning['django'])
+
     def test_contract_matches_mounted_routes_and_all_native_start_lines(self):
         self.assertEqual(set(STARTS), set(DEFINITIONS))
         self.assertEqual(set(STARTS), set(INTAKE_GRANTS))
@@ -86,6 +99,14 @@ class FactoryApiTests(TestCase):
         client.force_login(self.actor)
         profile = self.check(client.get(f'{BASE}/me'), '/me')
         self.assertIn('pmo-finance/v1', profile['startable_lines'])
+        origin = 'https://frontend.example.test'
+        headers = {'HTTP_ORIGIN': origin, 'HTTP_X_CSRFTOKEN': profile['csrf_token']}
+        self.assertEqual(self.post('/tasks/1/claim', {}, client, **headers).status_code, 403)
+        with self.settings(CSRF_TRUSTED_ORIGINS=[origin]):
+            frontend_client = Client(enforce_csrf_checks=True)
+            frontend_client.cookies = client.cookies.copy()
+            self.assertEqual(self.post('/tasks/1/claim', {}, frontend_client, HTTP_ORIGIN=origin).status_code, 403)
+            self.assertEqual(self.post('/tasks/1/claim', {}, frontend_client, **headers).status_code, 422)
         url = f'/work/{self.work.pk}/background'
         payload = {'expected_revision': self.work.revision, 'enabled': True}
         response = self.post(url, payload, client)
@@ -132,11 +153,15 @@ class FactoryApiTests(TestCase):
         claim = self.check(self.post(claim_url, {'expected_revision': task.revision}),
                            '/tasks/{task_id}/claim', method='post')
         self.assertEqual(self.post(claim_url, {'expected_revision': task.revision}).status_code, 409)
+        current = self.client.get(f'{BASE}/tasks/{task.pk}').json()
+        self.assertIn(native['proof'].pk, [row['id'] for row in current['review_evidence']])
         decision = self.check(self.post(f'/tasks/{task.pk}/decision', {
             'expected_revision': claim['revision'], 'verdict': 'approve',
             'evidence_id': native['proof'].pk, 'note': 'Reviewed the exact fictional invoice packet.',
         }), '/tasks/{task_id}/decision', method='post')
         self.assertEqual(decision['verdict'], 'approve')
+        history = self.client.get(f'{BASE}/work/{work.pk}/history?kind=decision').json()
+        self.assertIn('approve', [row['status'] for row in history['items']])
         self.assertFalse(InvoiceJob.objects.filter(invoice=work.invoice).exists())
         self.assertFalse(InvoiceIssue.objects.filter(invoice=work.invoice).exists())
 

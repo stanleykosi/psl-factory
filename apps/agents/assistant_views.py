@@ -60,11 +60,11 @@ class QuestionForm(forms.Form):
                                        help_text='Choose up to five records or leave blank to check recent department records.')
     key = forms.UUIDField(widget=forms.HiddenInput)
 
-    def __init__(self, sources, data=None, *, payroll_only=False):
+    def __init__(self, sources, data=None, *, payroll_only=False, questions=assistant.PAYROLL_REPORT_QUESTIONS):
         super().__init__(data, initial={'key': uuid4()})
         if payroll_only:
             self.fields['question'] = forms.ChoiceField(label='Ask about your staff-cost report',
-                choices=[('', 'Choose a question'), *((question, question) for question in assistant.PAYROLL_REPORT_QUESTIONS)])
+                choices=[('', 'Choose a question'), *((question, question) for question in questions)])
             self.fields['focus'].label = 'Received report'
             self.fields['focus'].help_text = 'The available report is checked even when you leave this blank.'
         self.fields['focus'].choices = [(digest(s), s['label']) for s in sources]
@@ -111,7 +111,8 @@ def thread(request, conversation_id):
     conversation = get_object_or_404(owned_conversations(request.user), pk=conversation_id)
     payroll_only = assistant.payroll_report_only(conversation)
     sources, next_work = assistant.tool_context(conversation)
-    form = QuestionForm(sources, request.POST if request.method == 'POST' else None, payroll_only=payroll_only)
+    form = QuestionForm(sources, request.POST if request.method == 'POST' else None, payroll_only=payroll_only,
+                        questions=assistant.payroll_questions_for(conversation) if payroll_only else ())
     if request.method == 'POST' and form.is_valid():
         try:
             values = form.cleaned_data
@@ -133,7 +134,7 @@ def current_turns(actor, conversation, sources, next_work, payroll_only):
     saved = AssistantDraftVersion.objects.filter(turn_id=OuterRef('pk')).order_by('-number')
     history = conversation.turns.all()
     if payroll_only:
-        history = history.filter(question__in=assistant.PAYROLL_REPORT_QUESTIONS).filter(
+        history = history.filter(question__in=assistant.payroll_questions_for(conversation)).filter(
             Q(sources__contains=[{'record': {'field': 'payroll_report'}}]) | Q(sources=[], next_work=''))
     turns = list(reversed(history.select_related('started_draft', 'rfp_answer').annotate(
         saved_number=Subquery(saved.values('number')[:1]),
@@ -150,7 +151,7 @@ def current_turns(actor, conversation, sources, next_work, payroll_only):
         turn.stale = False
         if turn.context_hash:
             try:
-                if getattr(turn, 'rfp_answer', None) is not None:
+                if turn.question == assistant.TOTALS_QUESTION or getattr(turn, 'rfp_answer', None) is not None:
                     current, _ = assistant.turn_context(turn, pending=False)
                 else:
                     current = assistant.source_focus(sources, turn.selected_sources or turn.focus)

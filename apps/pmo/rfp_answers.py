@@ -87,15 +87,24 @@ def context_for(suggestion, *, pending=True):
     work = FactoryWork.objects.select_related('case', 'source_head__created_by').get(pk=suggestion.work_id)
     current = anchors(actor, work)
     source = source_for(actor, work, suggestion.row)
-    if current != suggestion.context or (pending and row_for(work, suggestion.key) != suggestion.row):
+    prior = suggestion.context.get('prior_answer')
+    if current != {k: v for k, v in suggestion.context.items() if k != 'prior_answer'} or (pending and row_for(work, suggestion.key) != suggestion.row):
         raise ValidationError('This requirement changed. Ask for a fresh suggestion.')
-    return [{
+    sources = [{
         'label': 'Requirement ' + suggestion.key,
         'fact': {'requirement': suggestion.key, 'source': source.body,
                  'current_answer': suggestion.row['response'], 'coverage': suggestion.row['disposition']},
         'url': reverse('factory_rfp_answers', args=[work.pk]),
         'record': {'field': 'rfp_requirement', 'pk': source.pk, 'sha256': source.sha256},
-    }], []
+    }]
+    if prior:
+        from .winning_answers import read
+        return [*sources, read(actor, work.case, prior)], []
+    from apps.agents.assistant_access import project_sources
+    selected = project_sources(suggestion.turn.conversation, sources)
+    if not selected:
+        raise PermissionDenied('Project approval is required to draft from this requirement.')
+    return selected, []
 
 
 def writable(actor, work):
@@ -135,7 +144,7 @@ def read_state(actor, work):
 
 
 @transaction.atomic
-def request(actor, work_id, key, operation_key, expected, case_revision):
+def request(actor, work_id, key, operation_key, expected, case_revision, prior_choice=''):
     revisions(work_id, expected, case_revision)
     if not isinstance(key, str) or not key.strip() or len(key) > 100:
         raise ValidationError('Choose a named requirement from this bid.')
@@ -151,17 +160,26 @@ def request(actor, work_id, key, operation_key, expected, case_revision):
     if previous:
         if previous.work_id != work.pk or previous.key != key or previous.turn.conversation.actor_id != actor.pk:
             raise ValidationError('This request key belongs to a different answer.')
+        prior = previous.context.get('prior_answer')
+        if prior_choice != (digest(prior) if prior else ''):
+            raise ValidationError('This request key belongs to a different answer source.')
         return previous
     if work.revision != expected:
         raise ValidationError('The bid changed. Reload its current answers.')
     from apps.agents.assistant import cases_for
 
-    if not cases_for(actor, 'tola').filter(pk=work.case_id).exists():
-        raise PermissionDenied('The model connection is available for authorised test projects.')
-    if not os.getenv('OPENROUTER_MODEL'):
+    if not prior_choice and not cases_for(actor, 'tola').filter(pk=work.case_id).exists():
+        raise PermissionDenied('The project needs approved access for Tola to use the model.')
+    if not prior_choice and not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('Tola needs a configured model before drafting an answer.')
     row = row_for(work, key)
     context = anchors(actor, work)
+    if prior_choice:
+        from .winning_answers import options
+        selected = next((pin for token, pin, _ in options(actor, work.case) if token == prior_choice), None)
+        if selected is None:
+            raise ValidationError('Choose a currently released winning answer.')
+        context['prior_answer'] = selected
     source_for(actor, work, row)
     active = RFPAnswerSuggestion.objects.filter(work=work, key=key, turn__status__in=['queued', 'running']).first()
     if active:
@@ -172,6 +190,11 @@ def request(actor, work_id, key, operation_key, expected, case_revision):
                  'State uncertainties and avoid unsupported capabilities or commitments. The project manager will review it.')
     suggestion = RFPAnswerSuggestion.objects.create(turn=turn, work=work, source_head=work.source_head,
         key=key, row=row, context=context)
+    if prior_choice:
+        sources, _ = context_for(suggestion)
+        turn.question = 'Review the selected answer from a winning submission.'
+        turn.status, turn.answer, turn.sources, turn.context_hash = 'answered', sources[-1]['fact'], sources, digest(sources)
+        turn.save(update_fields=['question', 'status', 'answer', 'sources', 'context_hash'])
     event(actor, work.case, 'rfp.answer_requested', suggestion=suggestion.pk, work=work.pk)
     return suggestion
 

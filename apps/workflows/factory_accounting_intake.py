@@ -150,6 +150,16 @@ def resume(actor, case_id, receipt_id, expected):
     if evidence.sha256 != payload['sha256']:
         raise ValidationError('Intake source hash changed')
     prior = latest(receipt)
+    if prior['status'] == 'source_units_needed' and payload.get('unit_declaration'):
+        from apps.finance.source_units import inspect
+        source = analysis.source_for(case, prior['source'])
+        state = inspect(source)
+        if state['status'] == 'converted_major_currency':
+            context = {key: payload[key] for key in ('entity', 'period', 'currency', 'accounting_basis', 'completeness',
+                                                      'control_total', 'source_evidence_id', 'unit_declaration')}
+            context['extracted_at'] = datetime.fromisoformat(payload['extracted_at'])
+            return submit(actor, case.pk, f"unit-conversion:{receipt.pk}:{state['policy']}", evidence.pk,
+                          context, payload['reference'], case.revision, correction=receipt.data.get('correction'))
     if prior['status'] in ['started', 'source_units_needed']:
         # Observation only. Never promote a held receipt or reset completed work on retry.
         return prior

@@ -54,6 +54,11 @@ CONTACT_DELIVERY = load_contact_runtime()
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
+# A separately hosted frontend can forward same-origin browser requests to Django.
+# Trust only deployment-selected frontend origins. Django still requires the session CSRF token.
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('PSL_FRONTEND_ORIGINS', '').split(',') if origin.strip()]
+if any('*' in origin for origin in CSRF_TRUSTED_ORIGINS):
+    raise ValueError('Set PSL_FRONTEND_ORIGINS to exact frontend origins.')
 CSRF_FAILURE_VIEW = 'apps.core.error_views.csrf_failure'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'

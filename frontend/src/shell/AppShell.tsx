@@ -16,6 +16,7 @@ import { destinationForPath, visibleDestinations } from './destinations';
 import { ForbiddenState, LoadErrorState, LoadingState, NoSectionsState, SignedOutState } from './FrameStates';
 import { PhoneBar, type PhoneBack } from './PhoneBar';
 import { TopNav } from './TopNav';
+import { FactoryDesk } from './FactoryDesk';
 
 type MeState = { status: 'loading' } | { status: 'ready'; me: Me } | { status: 'error'; error: ApiError };
 
@@ -69,7 +70,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [load]);
 
   const me = state.status === 'ready' ? state.me : null;
-  const destinations = me ? visibleDestinations(me.destinations) : [];
+  const native = me && 'work_desk_url' in me ? me as unknown as {
+    destinations: {key: string; title: string; django_url: string}[];
+  } : null;
+  const destinations = me && !native ? visibleDestinations(me.destinations) : [];
   const current = destinations.find((d) => d.key === destinationForPath(pathname)?.key);
 
   // The alert bell (F-15): one feed and one drawer for both bars. The drawer is open on the path it was opened on,
@@ -123,6 +127,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       },
     };
   }
+
+  if (native) return <FactoryDesk pathname={pathname} destinations={native.destinations} />;
 
   let main: ReactNode;
   if (state.status === 'loading') main = <LoadingState />;

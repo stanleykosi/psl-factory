@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Frontend handoff checks · 21 November 2026
+
+An isolated PostgreSQL 16 database applied finance migration 0088. The two final focused runs passed 5 and 15 checks, including exact invoice evidence and history, report review, template replay, approved scaling and revocation, project-scoped model use, payroll disclosure and winning-answer reuse. The frontend passed TypeScript and 107 tests across the shell, intake and start-work suites. The start-work suite passed separately after its original test process timed out starting. Django found no pending model changes. The screen map resolved 59 groups and 262 states, and the previous browser ledger retained its 262 completed walks.
+
+The Railway in-app checks and fresh local browser transactions are recorded with screenshots in the [handoff evidence](docs/design/frontend-handoff-review-2026-11-21.md). The clean workspace contains no sample transactions from these checks. Providers were simulated in the question tests. The payroll total and released bid answer were produced locally.
+
 21 November 2026. Railway role-reset preparation `ac971d74-770c-4f4b-b8da-025c24a9006c` passed five PostgreSQL tests in 26.759 seconds, Django checks, schema drift and the API screen-map audit. The new database migrated and the three accounts were created. The preliminary sign-in check exited 1 because the checks container rejected the public web hostname in its local allowed-host configuration. Public web verification replaced that check after cutover.
 
 21 November 2026. Web `0a152f54-06bd-449f-b339-5bb171377feb` and worker `7ff05ca3-2278-4371-9e86-fc626488efec` started on the clean database. Codex verified health, the Admin dashboard contract and the sign-in page. Cleanup job `d9399501-0113-4754-986b-8c0071774f15` verified actual public sign-in, the exact role dashboard and the permitted staff or team controls for Admin, PMO Lead and Finance Lead. It dropped the former database, removed 42 stored objects and 42 object versions, and verified the test bucket was empty. The former database contained 349 accounts and 297 workspaces at preparation. The temporary checks credential contents were cleared.

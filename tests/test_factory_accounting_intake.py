@@ -184,6 +184,33 @@ class AccountingSuppliedIntakeTests(TestCase):
         self.assertFalse(FactoryWork.objects.exists())
         self.assertFalse(FinanceRun.objects.exists())
 
+    def test_approved_conversion_resumes_same_file_and_maps_exact_figures(self):
+        from decimal import Decimal
+        from apps.finance import analysis
+        from tests.helpers import activate
+
+        actor, case, proof, *_ = self.data
+        held, file, _ = self.submit(with_units=False)
+        declared = intake.confirm_units(actor, case.pk, held['receipt'], 'thousands_currency',
+            proof['finance_source'].pk, 'Checked the sample file footer.', rev(case))
+        source = FinanceSource.objects.get(pk=declared['source'])
+        rule = {'entity': source.entity, 'period': '2026-10', 'currency': source.batch.rows[0]['currency'],
+                'feed': 'trial-balance', 'units': ['thousands_currency'], 'control_total_unit': 'as_declared_in_file',
+                'adjustment_unit': 'major_currency'}
+        config = activate(actor, case, 'D06.import_unit_conversion', rule, proof['policy_decision'])
+        started = intake.resume(actor, case.pk, declared['receipt'], rev(case))
+        self.assertEqual(started['status'], 'started')
+        self.assertEqual(intake.resume(actor, case.pk, declared['receipt'], rev(case)), started)
+        run = analysis.map_source(actor, case.pk, source.pk, [], rev(case))
+        self.assertEqual(run.snapshot['source_units']['policy'], config.pk)
+        row = next(row for row in run.result['rows'] if row['origin'] == 'import' and row['amount'] is not None)
+        self.assertEqual(Decimal(row['amount']), Decimal(row['raw_amount']) * 1000)
+        self.assertEqual(source.batch.evidence_id, file.pk)
+        self.assertEqual(Decimal(run.result['source_control']['difference']), Decimal(0))
+        transition(actor, config.pk, 'revoked')
+        with self.assertRaises(ValidationError):
+            analysis.map_source(actor, case.pk, source.pk, [], rev(case))
+
     def test_http_confirm_millions_preserves_exact_source_and_holds_calculation(self):
         actor, case, evidence, *_ = self.data
         held, source_file, _ = self.submit(with_units=False)

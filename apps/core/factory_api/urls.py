@@ -5,13 +5,15 @@ from django.http import JsonResponse
 from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
-from . import agents, assistant_drafts, commands, intake, notifications, reviews, role_work, roles, work, workspaces
+from . import agents, assistant_drafts, commands, documents, intake, notifications, reviews, role_work, roles, work, workspaces
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
 
 PREFIX = '/api/v1/'
 ROUTES = (
     ('me', workspaces.me),
+    ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
+    ('projects/<uuid:case_id>/templates/replacements', documents.replace_template),
     ('lines', intake.lines),
     ('work', work.queue, intake.start),
     ('work/<int:work_id>', work.detail),

@@ -70,3 +70,8 @@ Prioritize the next cutover in this order.
 4. Account and staff administration, template intake and policy Setup. Retain the native Django forms until equivalents have permission, concurrency and browser parity. HOD-owned values remain deferred.
 
 Keep the current Railway browser ledger as the Django functional baseline. Test newly migrated screens against live API responses with synthetic data and the ordinary test roles before switching their navigation.
+### Connecting a separate frontend host
+
+Set `API_ORIGIN` on the Next server to the Django server. When the browser uses a different origin from Django, set `PSL_FRONTEND_ORIGINS` on Django to that exact public frontend origin, including the port if present. Multiple approved origins can be separated with commas. Django still checks the session and the CSRF token on writes. Same-origin Railway use needs no additional origin.
+
+The separate frontend serves the signed-in work queue and Finance invoice review. The other work forms open through the same frontend proxy. A deployment with a separately reachable public Django site may set `NEXT_PUBLIC_FACTORY_ORIGIN` to use that site for the forms.

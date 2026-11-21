@@ -562,6 +562,14 @@ describe('server answers', () => {
     expect(posts).toHaveLength(1);
   });
 
+  it('opens a created work record when Django returns 200 and a numeric ID', async () => {
+    override = (request) => request.method === 'POST' ? Promise.resolve(json(200, {work_id: 18})) : undefined;
+    await invoiceWith('Milestone 3');
+    press('Start the invoice');
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/18'));
+    expect(posts).toHaveLength(1);
+  });
+
   it('a network failure locks the form; only "Check again" resends, with the same key and body', async () => {
     override = (request) => (request.method === 'POST' && posts.length === 1 ? Promise.reject(new TypeError('Failed to fetch')) : undefined);
     await invoiceWith('Milestone 3');

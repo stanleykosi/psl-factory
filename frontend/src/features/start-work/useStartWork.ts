@@ -183,7 +183,12 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
         setUncertain(true);
         return show({ kind: 'uncertain' });
       }
-      if (response.status === 201) return onStarted((data as { work_id: string }).work_id);
+      if ((response.status === 200 || response.status === 201) && data && typeof data === 'object' && 'work_id' in data) {
+        const id = data.work_id;
+        if ((typeof id === 'string' && id.trim()) || (typeof id === 'number' && Number.isSafeInteger(id) && id > 0)) {
+          return onStarted(String(id));
+        }
+      }
       if (response.status >= 500 || response.status < 400) {
         setUncertain(true);
         return show({ kind: 'uncertain' });

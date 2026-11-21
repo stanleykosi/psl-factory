@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Factory handoff repairs · 21 November 2026
+
+The clean role preview runs web `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker `c0e9a5d3-7151-4c90-bde6-912db6eb6b65`. Both releases build on the clean role cutover below. The in-app browser verified the PMO Lead dashboard, its empty work and decision queues, and the new work desk. Local browser samples exercised the Finance and bid decisions without populating that workspace. The earlier October accounting sample is historical.
+
+See the [frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md) before enabling real project use. PSL needs to name the approved model and records, decide which winning answers can be shared, confirm what report totals recipients may see, and approve each applicable Finance file convention. Additional HR records, microphone use and external delivery destinations still require owner decisions.
+
 ## Clean Railway role testing · 21 November 2026
 
 The [Railway test site](https://psl-design-web-design-acceptance.up.railway.app/) now uses `psl_role_preview_20261121`. The user authorised removal of the previous test accounts, work and uploads. The former application database was dropped, and 42 private test objects and their recorded versions were removed. Earlier walkthrough entries describe the former preview.

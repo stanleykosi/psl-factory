@@ -69,6 +69,9 @@ class ClientAndTemplateDesignTests(TestCase):
             for _ in range(2):
                 submitted = self.client.post(url, dict(data, file=SimpleUploadedFile('update.pdf', body)))
                 self.assertRedirects(submitted, catalogue, fetch_redirect_response=False)
+            replay = self.client.post(f'/api/v1/projects/{self.case.pk}/templates/replacements',
+                                      dict(data, file=SimpleUploadedFile('update.pdf', body)))
+            self.assertEqual(replay.json()['version'], self.base.version + 1)
             self.assertContains(self.client.post(url, dict(data, file=SimpleUploadedFile('different.pdf', body))), 'upload request is already in use')
             put.assert_called_once()
         attachment = TemplateFile.objects.select_related('template').get()

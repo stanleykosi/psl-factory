@@ -1,4 +1,21 @@
 {
+  "frontend_handoff_repairs_20261121": {
+    "status": "hosted_and_browser_checked",
+    "delivered": [
+      "Weekly update and Planning screen-map corrections",
+      "Live work navigation, pages, history and evidenced invoice review",
+      "Standalone report review and replacement template operations",
+      "Scoped model permission, winning-answer release, local payroll chat totals and scaled Finance imports"
+    ],
+    "owner_decisions": [
+      "Project-approved models, sources and staff questions",
+      "Exact winning answers and receiving projects",
+      "Allowed payroll totals and additional HR sources",
+      "Entity, feed, reporting month, currency and file units",
+      "Microphone use and external destinations"
+    ],
+    "evidence": "docs/design/frontend-handoff-review-2026-11-21.md"
+  },
   "clean_role_preview_20261121": {
     "status": "hosted_and_verified",
     "scope": "Railway design-acceptance only. Fresh workspace with delegated Admin and scoped PMO and Finance leads.",

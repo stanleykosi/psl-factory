@@ -40,7 +40,7 @@ def project_for(actor, case_id):
 
 
 @endpoint(response=obj({
-    'name': TEXT, 'destinations': array(LINK), 'startable_lines': array(TEXT),
+    'name': TEXT, 'work_desk_url': TEXT, 'destinations': array(LINK), 'startable_lines': array(TEXT),
     'csrf_token': TEXT, 'assistant_agents': array(choice(*PERSONAS)),
 }), summary='Bootstrap the same-origin Django session')
 def me(request):
@@ -59,6 +59,7 @@ def me(request):
         destinations = [role_dashboard, *destinations] if visible_cases(actor).exists() else [role_dashboard]
     return {
         'name': actor.get_full_name() or actor.get_username(),
+        'work_desk_url': reverse('connected_factory_work'),
         'destinations': [{'key': key, 'title': label,
                           'django_url': reverse(route) + ('?kind=project' if key == 'projects' else '')}
                          for key, label, route in destinations],
