@@ -295,7 +295,7 @@ describe('fields by kind', () => {
     expect(within(dialog()).getByLabelText('From').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(within(dialog()).getByLabelText('To').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(within(dialog()).getByLabelText('Period (optional)').getAttribute('type')).toBe('month');
-    expect(within(dialog()).getByLabelText('When (optional)').getAttribute('type')).toBe('datetime-local');
+    expect(within(dialog()).getByLabelText('When (optional)').getAttribute('aria-haspopup')).toBe('dialog');
     expect(within(dialog()).getByLabelText('Count (optional)').getAttribute('type')).toBe('number');
     const audience = within(dialog()).getByRole('radiogroup', { name: 'Audience' });
     expect(within(audience).getAllByRole('radio').map((r) => r.textContent)).toEqual(['Internal', 'Client']);

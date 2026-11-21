@@ -636,8 +636,7 @@ describe('outcome guards', () => {
     fireEvent.click(button('Save as unknown'));
     await screen.findByText('Check these fields: learned_at.');
     expect(gets()).toBe(before);
-    expect((screen.getByLabelText('Last contact with the client') as HTMLInputElement).value).toBe('4 Dec 2026');
-    expect((screen.getByLabelText('Last contact with the client, time') as HTMLInputElement).value).toBe('11:00');
+    expect(screen.getByLabelText('Last contact with the client').textContent).toBe('4 Dec 2026, 11:00');
   });
 
   it('403 reloads and removes the form with the server message', async () => {

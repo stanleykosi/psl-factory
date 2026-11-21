@@ -192,7 +192,7 @@ describe('the step form (AC 14, 15)', () => {
     expect(f.getByLabelText('Answer due (optional)').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(f.getByRole('group', { name: 'Covers (optional)' })).toBeTruthy();
     expect(f.getByLabelText('Reporting month (optional)').getAttribute('type')).toBe('month');
-    expect(f.getByLabelText('Discussed at (optional)').getAttribute('type')).toBe('datetime-local');
+    expect(f.getByLabelText('Discussed at (optional)').getAttribute('aria-haspopup')).toBe('dialog');
     expect(f.getByLabelText('Hours to build (optional)').getAttribute('type')).toBe('number');
     expect(f.getByLabelText('Price for this requirement (optional)')).toBeTruthy();
     expect(f.getByRole('radiogroup', { name: 'Status' })).toBeTruthy();

@@ -40,6 +40,19 @@
 .cmp-search::-webkit-search-cancel-button, .cmp-search::-webkit-search-decoration { appearance: none; -webkit-appearance: none; }
 .cmp-cal__row { display: contents; }
 
+/* D-158 date and time: the select box, and one panel with the calendar beside Hour and Minute lists. The panel opens
+   in the page's flow, as the record pickers do, so it pushes the fields below down instead of covering them.
+   The list rows are the calendar's own day cells (psl-day), so a chosen hour looks like a chosen day. */
+.cmp-dtfield__value { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psl-pop.cmp-dtpop { position: static; margin-top: var(--space-1); width: max-content; max-width: 100%; display: flex; flex-direction: column; }
+.cmp-dtpop__body { display: flex; align-items: stretch; }
+.cmp-timelist { display: flex; flex-direction: column; width: 64px; border-left: var(--rule-thin) solid var(--rule-soft); }
+/* the heads sit level with the month, and the rows start level with the weekday letters */
+.cmp-timelist__head { height: var(--control-md); margin: var(--space-10px) 0 var(--space-2); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: var(--text-label-size); font-weight: var(--text-label-weight); color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; }
+.cmp-timelist__rows { position: relative; list-style: none; margin: 0; padding: 0 var(--space-1) var(--space-10px); flex: 1 1 0; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+.cmp-dtpop__foot { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-10px); border-top: var(--rule-thin) solid var(--rule-soft); }
+
 /* the select's arrow: the boards' small ▾ (D-93), drawn by CSS so it is not part of the control's text */
 .cmp-selectarrow::before { content: "▾"; }
 
@@ -120,6 +133,14 @@
 .cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); pointer-events: none; }
 .cmp-toasts > * { pointer-events: auto; }
 @media (max-width: 719.98px) {
+  /* D-158: on a phone the calendar takes the panel's width and the hour and minute lists sit side by side under it */
+  .psl-pop.cmp-dtpop { width: 100%; }
+  .cmp-dtpop__body { flex-wrap: wrap; }
+  .psl-cal.cmp-dtpop__cal { width: 100%; }
+  .cmp-timelist { flex: 1 1 0; border-left: none; border-top: var(--rule-thin) solid var(--rule-soft); }
+  .cmp-timelist + .cmp-timelist { border-left: var(--rule-thin) solid var(--rule-soft); }
+  .cmp-timelist__head { margin-top: var(--space-1); height: auto; padding: var(--space-1) 0; }
+  .cmp-timelist__rows { flex: none; height: 180px; }
   .cmp-toasts { left: var(--space-4); right: var(--space-4); transform: none; bottom: calc(var(--toast-lift, 0px) + var(--space-4)); align-items: stretch; }
   .cmp-toasts > .psl-toast { display: flex; }
   .cmp-toasts > .psl-toast > span:not(.psl-tick) { flex: 1; }

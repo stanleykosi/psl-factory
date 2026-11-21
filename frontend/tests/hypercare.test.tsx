@@ -13,6 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkItem } from '@/features/work-item/labels';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
+import { setWhen } from './controls';
 import { withoutBellFeed } from './bell-feed';
 
 configure({ asyncUtilTimeout: 5000 });
@@ -96,7 +97,9 @@ const press = async (name: string) => {
     fireEvent.click(ws().getByRole('button', { name }));
   });
 };
-const type = (label: string, value: string) => fireEvent.change(ws().getByLabelText(new RegExp(label)), { target: { value } });
+// A date and a time is picked from the shared dropdown (D-158); anything else is typed.
+const type = (label: string, value: string) =>
+  /^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(value) ? setWhen(label, value, ws()) : fireEvent.change(ws().getByLabelText(new RegExp(label)), { target: { value } });
 const rowOf = (text: string) => ws().getByText(text).closest('tr') as HTMLElement;
 
 describe('four states from the fixture (AC 5)', () => {
