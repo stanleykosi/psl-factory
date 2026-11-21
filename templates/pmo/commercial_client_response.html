@@ -18,7 +18,7 @@
 {% elif response_is_current_version and revision_desk %}
   {% if not revision_desk.pending and not revision_desk.approved %}
   <form method="post">{% csrf_token %}<input type="hidden" name="action" value="review_changes"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Ask the planning agent to review the changes</button></form>{% endif %}
-  {% if revision_desk.pending %}<p role="status">Open the file review to see the draft, review it, or recover a stopped request.</p><p><a href="{% url 'case_uploads' case.pk %}">Open planning agent drafts</a></p>{% endif %}
+  {% if revision_desk.pending %}<p role="status">The planning file is awaiting review.</p><p><a href="{% url 'case_uploads' case.pk %}">Review the planning file</a></p>{% endif %}
   {% for job, advice in revision_desk.approved %}<details><summary>Reviewed advice for {{ job.upload.name }}</summary><p>{{ advice.summary|linebreaksbr }}</p>{% if advice.gaps %}<ul>{% for gap in advice.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}</details>{% endfor %}
   {% if revision_desk.form %}<details{% if error %} open{% endif %}><summary>{% if revision_desk.saved %}Correct the saved revision draft{% else %}Write the revised scope{% endif %}</summary><p>Leave unconfirmed sources blank. Saving does not approve the revision or set a price.</p>
   <form method="post">{% csrf_token %}<input type="hidden" name="action" value="save_revision"><input type="hidden" name="revision" value="{{ case.revision }}">{{ revision_desk.form.as_p }}<button>Save revised wording for review</button></form></details>{% endif %}

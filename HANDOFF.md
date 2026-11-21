@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Embedded specialist coordination · 21 November 2026
+
+Railway design acceptance runs web deployment `59d9a9ae-5def-4dcf-a936-12e70fbdef38` and worker deployment `6822d178-348b-4b30-b5b0-7dd010071f28`. Both reported success. The worker started two source readers and continued ordinary native jobs. The sign-in page returned HTTP 200. The provider checks used synthetic records and an isolated database on Railway. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/)
+
+Start with [the routing book](docs/design/specialist-process-routes.md) and [the coordinator contract](docs/design/coordinator-specialists.md). The process registry covers 122 source assignments. The active harness has 25 native work types with 45 distinct direct or investigation-bound processes. The remaining 63 release processes need their own native trigger and receipt bindings. BaaS retains its 14 deferred process contracts.
+
+The source reader stores leased task identity, evidence versions, citations and the human resolution in PostgreSQL. Private storage holds each completed report. The model worker shares the existing Railway worker service and runs independently of native progression. Continue testing conflicting evidence, corrected sources, reviewer access, model availability and the private file receipt. Use the exact command and isolated-environment instructions in [the test ledger](BUILD-TESTS.md). Projects require their own reviewed source-use rule before operational data can reach a model.
+
 ## Decision 7 · Staff alerts
 
 Keep staff work alerts inside PSL Factory. The bell and Alerts page are available. PSL will connect email and WhatsApp later.

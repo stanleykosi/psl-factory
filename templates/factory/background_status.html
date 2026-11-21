@@ -1,3 +1,12 @@
+{% if readings %}<section class="card"><h2>Source readings</h2>{% for reading in readings %}<p><a href="{{ reading.url }}">{{ reading.label }}</a></p>{% endfor %}</section>{% endif %}
+{% if source_review %}<section class="card"><h2>Resolve source findings</h2>
+<p>Check the original evidence and the readings before continuing. Business approvals follow separately.</p>
+{% for conflict in source_review.disagreements %}<p>Different readings of {{ conflict.field }} in source {{ conflict.source }}.</p>{% endfor %}
+<ul>{% for row in source_review.contributions %}<li>Source {{ row.source }} · {% if row.status == 'ready' %}<a href="{% url 'specialist_report' work.pk row.task %}">{{ row.assessment }}</a>{% else %}Reading unavailable · {{ row.status }}{% endif %}</li>{% endfor %}</ul>
+<form action="{% url 'resolve_source_findings' work.pk source_review.packet %}" method="post">{% csrf_token %}
+<input type="hidden" name="digest" value="{{ source_review.digest }}">
+<label>Which evidence resolves the findings?<textarea name="reason" required maxlength="2000"></textarea></label>
+<button type="submit">Record source review</button></form></section>{% endif %}
 {% if job or can_control and can_continue %}
 <section class="card"{% if watching %} data-work-watch data-preserve-form="{{ preserve_form|yesno:'true,false' }}"{% endif %}>
   <h2>Background work</h2>

@@ -195,6 +195,10 @@ def records(conversation, question=''):
         return result + [{'label': 'Your role', 'fact': role_fact + ' ' + scope_fact, 'url': url},
                          {'label': 'HR connection', 'fact': 'The live HR system is not connected yet. '
                           'Only available handoff records can be checked here.', 'url': url}]
+    from .specialist_memory import outcome_sources, sources_for
+    definitions = work_definitions(persona)
+    result.extend(outcome_sources(conversation.actor,cases.values("pk"),definitions))
+    result.extend(sources_for(conversation.actor,cases.values("pk"),definitions))
     groups = registers(persona, cases)
     counts = []
     for group in groups:

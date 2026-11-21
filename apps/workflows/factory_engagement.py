@@ -208,6 +208,13 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         data={'work':work.pk,'capture':source.pk,'assignment':assignment.pk,'packet':packet.pk,'planning_work':child.pk,'head':work.source_head_id}
         if receipt and receipt.data!=data:raise ValidationError('Original handoff receipt is retained; no implicit replacement')
         if not receipt:receipt=event(actor,case,LINKED,**data)
+        from .factory_progress import ACTIVE, set_progress
+        from .models import FactoryProgress
+        if FactoryProgress.objects.filter(work=work, status__in=ACTIVE).exists():
+            try:
+                set_progress(actor, child.pk, child.revision, True, initial=True)
+            except (PermissionDenied, ValidationError):
+                event(actor, case, 'factory.planning_handoff_attention', work=work.pk, planning_work=child.pk)
         return {'planning_work':child.pk,'planning_packet':packet.pk,'handoff':receipt.pk,'approval_granted':False,'registration_due':True}
     if kind=='ACT13':
         result=verify(work,actor);work.status='verified';return result

@@ -1,4 +1,17 @@
 {
+  "embedded_specialist_coordination_20261121": {
+    "status": "connected_native_stations",
+    "source_process_contracts": 122,
+    "release_processes": 108,
+    "deferred_baas_processes": 14,
+    "native_start_work_types": 25,
+    "direct_or_native_investigation_process_ids": 45,
+    "release_ids_without_an_individual_coordinator_binding": 63,
+    "routing_book": "docs/design/specialist-process-routes.md",
+    "verification": "BUILD-TESTS.md",
+    "next": "Connect the outstanding domain events using their original business subject, exact source reader and independent native outcome. Start with adjacent delivery gates and Finance close substeps.",
+    "owner_decisions": "Project model and source disclosure, reviewer appointments, financial policy and external destinations remain explicitly configured."
+  },
   "staff_alert_delivery_20261121": {
     "decision": 7,
     "status": "in_app_only",

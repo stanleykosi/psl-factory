@@ -15,7 +15,7 @@ from .factory_progress import set_progress
 
 
 class StartWithBackground(forms.Form):
-    background = forms.BooleanField(required=False, initial=True, label='Continue in background after starting')
+    background = forms.BooleanField(required=False, initial=True, disabled=True, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Embedded specialist coordination · 21 November 2026
+
+The routing book defines the trigger, inputs, specialist responsibilities, domain controls, owner decisions and expected outputs for all 122 source processes. Within the release, 25 native Start work types bind 45 distinct process IDs directly or through an exact native investigation. The other 63 release IDs have documented assignments. Their individual O01 bindings still need engineering and acceptance. The 14 BaaS IDs remain deferred. [Per-process routing](docs/design/specialist-process-routes.md)
+
+Start work requests background progression. O01 retains a separate task for each permitted specialist and source, combines their cited results and records which native action received the packet. Open findings reach the designated information reviewer on the work item. Native approvals and external receipts remain separately required. Department assistants can retrieve eligible source excerpts and verified native outcomes under current access. [Execution design](docs/design/coordinator-specialists.md)
+
 ## Staff alerts · 21 November 2026
 
 Staff can find their alerts under the bell or on the Alerts page. Railway has no real email or WhatsApp destinations configured for staff alerts. PSL deferred connecting both channels.

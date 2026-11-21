@@ -3,6 +3,7 @@ from functools import lru_cache
 from django.conf import settings
 
 PROJECT_USE_COMPONENTS = frozenset({
+    'OPS.specialist_source_reading',
     'OPS.department_assistant_use', 'OPS.payroll_chat_totals', 'OPS.winning_bid_reuse', 'D06.import_unit_conversion',
 })
 

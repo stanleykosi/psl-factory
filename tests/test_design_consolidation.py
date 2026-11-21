@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.agents.models import AgentJob, CaseUpload
-from apps.agents.upload_jobs import ROLES, run_once
+from apps.agents.upload_jobs import ROLES
 from apps.core.models import Case
 from apps.documents.controlled import register_template
 from apps.identity.models import Grant
@@ -250,14 +250,14 @@ class DesignConsolidationTests(TestCase):
         item.refresh_from_db()
         self.assertEqual(item.current_id, assigned.pk)
 
-    def test_agent_entry_lists_eight_roles_and_checks_current_grants(self):
+    def test_department_assistant_entry_keeps_file_reviews_on_their_project(self):
         self.client.force_login(self.actor)
         assistant = reverse('design_agents')
         files = reverse('case_uploads', args=[self.case.pk])
         response = self.client.get(assistant)
         for title, _ in ROLES.values():
-            self.assertContains(response, title)
-        self.assertContains(response, f'{files}#agent-job-{self.job.pk}')
+            self.assertNotContains(response, title)
+        self.assertNotContains(response, f'{files}#agent-job-{self.job.pk}')
         self.assertNotContains(response, 'Private draft body')
         files_page = self.client.get(files)
         self.assertContains(files_page, 'Private draft body')
@@ -284,34 +284,14 @@ class DesignConsolidationTests(TestCase):
         self.assertEqual(self.client.get(url).status_code, 403)
 
     @patch.dict(os.environ, {'OPENROUTER_MODEL': 'synthetic', 'OPENROUTER_API_KEY': 'synthetic'})
-    def test_assistant_queues_each_role_through_the_real_worker(self):
+    def test_department_chat_does_not_offer_a_manual_specialist_dispatch(self):
         self.client.force_login(self.actor)
         assistant = reverse('design_agents')
-        store = {}
         source = b'Synthetic acceptance evidence.\n'
-
-        def save(key, data):
-            store[key] = data
-
-        def draft(model, instructions, text):
-            self.assertEqual(model, 'synthetic')
-            self.assertIn(instructions, [instruction for _, instruction in ROLES.values()])
-            self.assertEqual(text, source.decode())
-            return {'summary': 'A scoped draft', 'quotes': ['1'], 'gaps': []}
-
-        with (patch('adapters.case_uploads.put', side_effect=save),
-              patch('adapters.case_uploads.read', side_effect=lambda upload: store[upload.key]),
-              patch('adapters.openrouter.review', side_effect=draft)):
-            forbidden = self.client.post(assistant, {'workspace': self.other.pk, 'role': 'A01',
-                                                     'file': SimpleUploadedFile('source.txt', source)})
-            self.assertEqual(forbidden.status_code, 200)
-            self.assertEqual(store, {})
+        with patch('adapters.case_uploads.put') as store:
             for role in ROLES:
                 response = self.client.post(assistant, {'workspace': self.case.pk, 'role': role,
                                                        'file': SimpleUploadedFile('source.txt', source)})
-                self.assertEqual(response.status_code, 302)
-                self.assertTrue(run_once())
-                job = AgentJob.objects.get(upload__name='source.txt', role=role)
-                self.assertEqual(job.status, 'draft')
-                self.assertEqual(job.result['quotes'], [source.decode().strip()])
-            self.assertEqual(len(store), 1)
+                self.assertEqual(response.status_code, 405)
+            store.assert_not_called()
+            self.assertFalse(AgentJob.objects.filter(upload__name='source.txt').exists())

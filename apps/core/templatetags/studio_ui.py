@@ -65,7 +65,11 @@ def factory_background_status(context, work):
     request=context.get('request')
     return_query = (work_queue_query(context, work) if request and {'queue', 'q', 'line'}.intersection(request.GET)
                     else '')
-    return {'work': work, 'job': job, 'active': bool(job and job.status in ACTIVE),
+    from apps.agents.specialist_memory import sources_for
+    from apps.agents.specialist_packets import review_for
+    readings=sources_for(context['user'],[work.case_id],[work.definition],work_id=work.pk,review=True)
+    return {'work': work, 'job': job, 'readings':readings, 'source_review':review_for(work, context['user']),
+            'active': bool(job and job.status in ACTIVE),
             'watching':watching,'preserve_form':bool(request and request.method=='POST'),'work_query':return_query,
             'current_claim': bool(job and job.status == 'running' and job.available_at > timezone.now()),
             'can_control': can_control(context['user'], work), 'csrf_token': context.get('csrf_token'),

@@ -66,9 +66,6 @@ def workbench(request, case_id):
         try:
             if request.POST.get('action') == 'upload':
                 upload_file(request.user, case, request.FILES.get('file'))
-            elif request.POST.get('action') == 'queue':
-                upload = get_object_or_404(uploads, pk=request.POST.get('upload'))
-                queue_draft(request.user, upload, request.POST.get('role'))
             elif request.POST.get('action') == 'review':
                 attempted_review = request.POST.get('job')
                 file_draft_reviews.retain(request.user, case, request.POST.get('job'), request.POST)
@@ -109,10 +106,9 @@ def workbench(request, case_id):
             job.handoff_form = workflow_handoffs.form_for(job)
             job.handoff_label = workflow_handoffs.LABELS[job.role]
     response = render(request, 'agents/uploads.html', {
-        'case': case, 'uploads': uploads.order_by('-pk')[:50], 'roles': ROLES,
+        'case': case, 'uploads': uploads.order_by('-pk')[:50],
         'jobs': jobs,
         'watch_jobs': any(job.status in {'queued', 'running'} for job in jobs),
-        'can_queue': can_use_agent and bool(os.getenv('OPENROUTER_MODEL')),
         'error': error,
     })
     response['Cache-Control'] = 'no-store'

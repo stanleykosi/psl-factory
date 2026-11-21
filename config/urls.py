@@ -25,7 +25,7 @@ from apps.finance import bu_views
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from .health import health
-from apps.agents import upload_views
+from apps.agents import specialist_views, upload_views
 from apps.policy import delegation_views
 finance_intake_patterns=[path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',finance_followup_inbox,name='finance_followup_inbox')]
 from apps.documents import validation_views
@@ -71,6 +71,8 @@ urlpatterns = [
     path('cases/<uuid:case_id>/costing/proposals/<int:pk>/', costing_proposal_views.detail, name='costing_proposal'),
     path('health/', health, name='health'),
     path('cases/<uuid:case_id>/files/', upload_views.workbench, name='case_uploads'),
+    path('work/<int:work_id>/source-readings/<int:pk>/', specialist_views.report, name='specialist_report'),
+    path('work/<int:work_id>/source-reviews/<int:pk>/resolve/', specialist_views.resolve_findings, name='resolve_source_findings'),
     path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),
     path('cases/<uuid:case_id>/documents/templates/current/', template_views.workbench, name='template_current'),
     path('cases/<uuid:case_id>/documents/templates/current/sources/<int:source_id>/', template_views.source_detail, name='template_source_detail'),

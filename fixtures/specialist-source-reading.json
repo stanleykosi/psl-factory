@@ -1,0 +1,9 @@
+{
+  "classification": "Synthetic policy form example. Activate only with this project's recorded human decision.",
+  "value": {
+    "model": "synthetic-test-model",
+    "processes": ["P34"],
+    "roles": ["A04", "A07"],
+    "source_kinds": ["completion"]
+  }
+}

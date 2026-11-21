@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Generated the 122-process routing book before changing the coordinator. Connected multi-specialist source review to native work, business review and assistant retrieval. Removed the staff-facing specialist launcher and kept historic file decisions accessible. Added a private, source-checked reporting projection and a four-specialist follow-up for an exact native delivery-progress investigation. Recorded provider tests separately from PostgreSQL tests with simulated model responses.
+
 21 November 2026. Recorded PSL’s choice to keep staff alerts in the app. The live Alerts page showed two Tola replies for the signed-in PMO lead. Both external channels were unchecked on that account.
 
 21 November 2026. Released Decision 6 on Railway. Staff can dictate locally, edit the draft, and send the question to their department assistant. The in-app browser showed the local speech-pack setup and allowed editing. [Browser evidence](docs/design/assistant-dictation-checks-2026-11-21.md)

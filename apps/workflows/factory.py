@@ -636,12 +636,27 @@ def run_once(work_id,provider=None,adapter=None):
             if options==['ACT12'] and work.observation_hash==observed['hash']:
                 work.status='waiting_effect';work.finding='Provider result is still unknown. Reconcile the original operation when another observation is available.';work.lease_until=None;work.save();return False
             if not latest:raise ValidationError('Missing initial source evidence; no invented AgentRun source')
+            from apps.agents import specialist_packets
+            handoffs = []
+            if not set(options).issubset(specialist_packets.INDEPENDENT):
+                state, handoffs = specialist_packets.join(work, work.execution_actor, latest, value)
+                if state != 'ready':
+                    work.status = 'waiting'
+                    work.finding = {'waiting': 'Checking the source evidence.',
+                                    'source_changed': 'Current source material and its reading permission are required.',
+                                    'review': 'The source findings need a decision from the information reviewer.'}[state]
+                    work.lease_until = None
+                    work.save(update_fields=['status', 'finding', 'lease_until', 'budget_used'])
+                    return False
             if original:
                 activity=original.activity;number=original.number;started=original
                 context=original.result['native_context'];observed=dict(original.observation,work_revision=work.revision)
             else:
                 reserve=value['tokens_per_call']
-                if work.budget_used+reserve>min(work.budget_limit,value['max_tokens']) or work.plan_revision>=value['max_steps'] or work.activities.count()+2>value['max_children']:raise ValidationError('BUDGET_EXHAUSTED: aggregate work allowance includes retries and both plan/child records')
+                if (work.budget_used+reserve>min(work.budget_limit,value['max_tokens'])
+                        or work.plan_revision>=value['max_steps']
+                        or specialist_packets.task_count(work)+2>value['max_children']):
+                    raise ValidationError('BUDGET_EXHAUSTED: aggregate work allowance includes retries and plan, child and reading records')
                 work.budget_used+=reserve;work.plan_revision+=1;work.save()
                 key=digest(['plan',observed['hash'],options])
                 activity,created=Activity.objects.get_or_create(work=work,key=key,defaults={'kind':'ACT03','plan_revision':work.plan_revision,'status':'running'})
@@ -662,23 +677,16 @@ def run_once(work_id,provider=None,adapter=None):
             fresh,latest,missing,stale,tasks,jobs=snapshot(work,value)
             if fresh['hash']!=observed['hash'] or fresh['work_revision']!=observed['work_revision']:raise ValidationError('STALE_VERSION: case/evidence/decision/work changed while planning')
             if not isinstance(answer,dict) or set(answer)!={'activity','citations'} or answer['activity'] not in options:raise PermissionDenied('FORBIDDEN: model choice is outside current capabilities')
+            if handoffs:
+                state, checked = specialist_packets.join(work, work.execution_actor, latest, value)
+                if state != 'ready' or checked != handoffs:
+                    raise ValidationError('The source findings changed during coordination.')
             if not isinstance(answer['citations'],list) or not answer['citations'] or any(type(pk) is not int or pk not in context['evidence_ids'] for pk in answer['citations']):raise ValidationError('Unsupported citation')
-            process={'pmo-issues/v1':'P50','finance-ledger/v1':'F01','finance-bu/v1':('F21' if work.request.get('mode')=='staff' else 'F44'),'engagement/v1':'P16' if answer['activity']=='ACT04' else 'P03','pmo-minutes/v1':'P43','pmo-escalation/v1':'P44','pmo-weekly-report/v1':'P41','pmo-leadership-report/v1':('P40' if work.request.get('kind')=='internal_tuesday' else 'P42'),'finance-schedules/v1':('F12' if work.request.get('kind')=='income' else 'F13'),'finance-ppe/v1':'F07','finance-forecast/v1':'F39','finance-payroll/v1':'F16','pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
-                'delivery-hypercare/v1':'P35','delivery-release/v1':'P32','planning/v1':'P26'}.get(work.definition)
-            if work.definition=='finance-payroll/v1':
-                process='F18' if observed['native']['stage'] in ['aggregate','aggregate_review','publish','receipt','complete'] else 'F17' if observed['native']['stage'] in ['match','match_review'] else 'F16'
-            if work.definition=='pmo-emergency/v1':
-                process='P62' if observed['native']['outcome'] else 'P61'
-            if work.definition=='pmo-change/v1':
-                process='P57' if answer['activity']=='ACT04' else 'P60' if observed['native']['stage'] in ['go_live','signatures','complete'] else 'P59'
-            if work.definition=='finance-accounts/v1':
-                from .factory_accounting import process_for_activity
-                process=process_for_activity(answer['activity'],observed,value)
-            if work.definition=='rfp-response/v1':
-                process='P46' if answer['activity']=='ACT04' else 'P47' if not observed['document'] else 'P49' if observed['submission'] else 'P48'
-            if process is None:
-                process=('P14' if answer['activity']=='ACT04' else 'P06' if answer['activity']=='ACT08' else 'P07') if work.definition=='commercial/v1' else 'F29' if answer['activity']=='ACT08' else 'F30' if answer['activity'] in ['ACT09','ACT10','ACT11','ACT12','ACT13'] else 'P34'
-            run=AgentRun.objects.create(case=work.case,actor=work.execution_actor,evidence=latest[next(iter(latest))],provider=provider_name,process_id=process,result=answer)
+            from apps.agents import specialists
+            from .factory_processes import process_for
+            process = process_for(work, answer['activity'], observed, value)
+            assignment = specialists.assignment(process, answer['activity'])
+            run=AgentRun.objects.create(case=work.case,actor=work.execution_actor,evidence=latest[next(iter(latest))],provider=provider_name,process_id=process,result={**answer,'assignment':assignment})
             child_key=digest(['ACT04',observed['sources'],work.source_head_id]) if answer['activity']=='ACT04' and work.definition in ['planning/v1','commercial/v1'] else digest(['ACT04',observed['sources']]) if answer['activity']=='ACT04' else digest([activity.key,answer['activity']])
             if answer['activity']=='ACT04' and work.definition=='planning/v1':
                 from .factory_planning import investigation_key as planning_investigation_key
@@ -700,11 +708,16 @@ def run_once(work_id,provider=None,adapter=None):
             child,created=Activity.objects.get_or_create(work=work,key=child_key,defaults={'parent':activity,'kind':answer['activity'],'plan_revision':work.plan_revision})
             child_number=(child.attempts.aggregate(n=Max('number'))['n'] or 0)+1
             Attempt.objects.create(activity=child,number=child_number,phase='started',fence=token,observation=fresh)
-            result=act(work,answer,value,latest,missing,tasks,jobs)
+            result, specialist_receipt = specialists.dispatch(work,child,assignment,answer,value,latest,missing,stale,tasks,jobs)
+            if handoffs and answer['activity'] not in specialist_packets.INDEPENDENT:
+                specialist_receipt['source_handoffs'] = handoffs
+                specialist_packets.SpecialistPacket.objects.filter(
+                    pk__in=[item['packet'] for item in handoffs], consumed_at=None
+                ).update(consumed_at=timezone.now())
             child.status='succeeded';child.save(update_fields=['status'])
             Attempt.objects.create(activity=child,number=child_number,phase='observed',fence=token,observation=fresh,result=result,agent_run=run)
             activity.status='succeeded';activity.save(update_fields=['status'])
-            Attempt.objects.create(activity=activity,number=number,phase='observed',fence=token,observation=fresh,result={'child':child.pk,'activity':answer['activity']},agent_run=run)
+            Attempt.objects.create(activity=activity,number=number,phase='observed',fence=token,observation=fresh,result={'child':child.pk,'activity':answer['activity'],'specialist':specialist_receipt},agent_run=run)
             if work.status not in TERMINAL:work.status='waiting' if result.get('waiting') else 'ready'
             work.finding=result.get('finding',result.get('waiting',''));work.observation_hash=fresh['hash'];work.revision+=1;work.save()
         # Native worker owns effect retries. No transaction is held across adapter calls.
@@ -808,7 +821,10 @@ def decide(actor,task_id,expected,verdict,evidence_id,reason):
     review=invoices.review(actor,t.case_id,work.invoice_id,'Finance',verdict,evidence_id,reason,t.case.revision,delegated=delegated_for(work,actor))
     TaskEvent.objects.create(task=t,actor=actor,action='factory.review',data={'native_review':review.pk,'packet_hash':digest(t.context['packet']),'verdict':verdict})
     t.status='completed' if verdict=='approve' else 'returned';t.revision+=1;t.save(update_fields=['status','revision'])
-    work.status='ready' if verdict=='approve' else 'blocked';work.finding='' if verdict=='approve' else 'Finance returned or rejected this exact packet';work.revision+=1;work.save();return review
+    work.status='ready' if verdict=='approve' else 'blocked';work.finding='' if verdict=='approve' else 'Finance returned or rejected this exact packet';work.revision+=1;work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return review
 
 @transaction.atomic
 def manage(actor,work_id,expected,operation,*,draft_stop=None):

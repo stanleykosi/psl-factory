@@ -5,7 +5,12 @@ until python manage.py migrate --check; do
     sleep 10
 done
 
+python manage.py work_specialist_readings --watch &
+source_worker=$!
+trap 'kill "$source_worker" 2>/dev/null || true' EXIT
+trap 'exit 0' TERM INT
 while true; do
+    kill -0 "$source_worker" || exit 1
     python manage.py work_outbox --limit 20
     python manage.py work_publications --limit 20
     python manage.py work_archive_files --limit 10

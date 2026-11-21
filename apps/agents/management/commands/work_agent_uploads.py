@@ -10,4 +10,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         finance = read_finance_document()
         general = run_once()
-        self.stdout.write('Agent task processed' if finance or general else 'Agent queue idle')
+        self.stdout.write('Source reading processed' if finance or general else 'Reading queue idle')

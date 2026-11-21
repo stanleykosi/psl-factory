@@ -1,5 +1,6 @@
 """Prepare an evidenced project rule for the existing validation and activation steps."""
 from django import forms
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +13,7 @@ from .services import save_draft
 
 
 TITLES = {
+    'OPS.specialist_source_reading': 'Which source records background specialists may read with a model',
     'OPS.department_assistant_use': 'Which records a department assistant may use',
     'OPS.payroll_chat_totals': 'Which staff costs Zainab may show a report recipient',
     'OPS.winning_bid_reuse': 'Release a winning bid answer to another project',
@@ -28,8 +30,12 @@ def settings(request, case_id):
         raise Http404
     form = ProjectUseForm(request.user, case, component, request.POST if request.method == 'POST' else None) if component else None
     if request.method == 'POST' and form and form.is_valid():
-        form.save(request.user)
-        return redirect('policy', case.pk)
+        try:
+            form.save(request.user)
+        except ValidationError as exc:
+            form.add_error(None, exc.messages[0])
+        else:
+            return redirect('policy', case.pk)
     response = render(request, 'project_use_settings.html', {'case': case, 'choices': TITLES.items(),
         'form': form, 'component': component, 'title': TITLES.get(component)})
     response['Cache-Control'] = 'no-store'
@@ -65,6 +71,11 @@ class ProjectUseForm(forms.Form):
                     self.fixed[key] = components()[component]['current_value']['fields']
                 elif 'const' in spec:
                     self.fixed[key] = spec['const']
+                elif component == 'OPS.specialist_source_reading' and key == 'processes':
+                    from apps.agents.specialists import routes
+                    self.fields[key] = forms.MultipleChoiceField(choices=[
+                        (pid, f"{pid} · {route['original_title']}") for pid, route in routes().items()
+                        if route['department'] != 'BaaS'])
                 elif spec['type'] == 'array':
                     self.fields[key] = forms.MultipleChoiceField(label=LABELS.get(key, key),
                         choices=[(item, item.replace('_', ' ').capitalize()) for item in spec['items']['enum']],
@@ -74,6 +85,13 @@ class ProjectUseForm(forms.Form):
         self.fields['proof'] = forms.ModelChoiceField(label='Record of the owner’s decision',
             queryset=public_evidence(Evidence.objects.filter(case=case, kind='policy_decision')).order_by('-pk'))
         self.fields['effective'] = forms.DateTimeField(label='Effective from', widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
+
+    def clean(self):
+        values = super().clean()
+        if self.component == 'OPS.specialist_source_reading' and values.get('processes') and values.get('roles'):
+            from apps.agents.specialists import validate_selection
+            validate_selection(values['processes'], values['roles'])
+        return values
 
     def save(self, actor):
         data = self.cleaned_data.copy()

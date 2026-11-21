@@ -1,4 +1,5 @@
 from django.conf import settings
+from .specialist_models import SpecialistPacket, SpecialistReading
 from django.db import models
 from apps.core.models import AppendOnly
 from .boundary_models import EvidenceProjection,EvidenceProjectionReview,EvidenceExtraction,EvidenceExtractionReceipt,EvidenceExtractionReview

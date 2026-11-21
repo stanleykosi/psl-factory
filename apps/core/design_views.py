@@ -1,5 +1,4 @@
 """Server-rendered factory screens based on native records and current grants."""
-import os
 
 from django import forms
 from django.contrib.auth import get_user_model
@@ -8,23 +7,18 @@ from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
 from django.db.models import Count
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods, require_safe
 
-from apps.agents.models import AgentJob
-from apps.agents.upload_jobs import ROLES
-from apps.agents.upload_views import queue_draft, upload_file
 from apps.identity.factory_access import project_actions, project_cases
 from apps.identity.intake import options as intake_authority
 from apps.identity.services import active_case_grants, require, visible_cases
 from apps.workflows.factory_definitions import DEFINITIONS
 from apps.workflows.factory_views import visible
 
-from .presentation import workspace_name
 from . import project_journey
 from .workbench import granted
 
@@ -112,54 +106,16 @@ def overview(request):
     })
 
 
-class DraftForm(forms.Form):
-    workspace = forms.ModelChoiceField(queryset=None)
-    role = forms.ChoiceField(label='Agent', choices=[(key, values[0]) for key, values in ROLES.items()])
-    file = forms.FileField()
-
-    def __init__(self, workspaces, *args):
-        super().__init__(*args)
-        self.fields['workspace'].queryset = workspaces
-        self.fields['workspace'].label_from_instance = workspace_name
-
-
 @login_required
-@require_http_methods(['GET', 'HEAD', 'POST'])
+@require_safe
 @never_cache
 def agents(request):
     from apps.agents import assistant
     from apps.agents.assistant_views import owned_conversations
 
-    eligible = granted(request.user, ['agent.extract']).filter(synthetic=True)
-    cases = eligible.order_by('title', 'pk')[:25]
-    can_start = os.getenv('OPENROUTER_MODEL')
-    selectable = granted(request.user, ['agent.extract', 'evidence.add']).filter(synthetic=True)
-    first_cases = list(selectable.order_by('title', 'pk').values_list('pk', flat=True)[:25])
-    workspaces = selectable.filter(pk__in=first_cases).order_by('title', 'pk')
-    draft_form = DraftForm(workspaces, *(request.POST, request.FILES) if request.method == 'POST' else ())
-    if request.method == 'POST' and draft_form.is_valid():
-        case = draft_form.cleaned_data['workspace']
-        try:
-            if not can_start:
-                raise ValidationError('Agent work needs a configured model.')
-            require(request.user, case, 'agent.extract')
-            upload = upload_file(request.user, case, draft_form.cleaned_data['file'])
-            job = queue_draft(request.user, upload, draft_form.cleaned_data['role'])
-            return HttpResponseRedirect(reverse('case_uploads', args=[case.pk]) + f'#agent-job-{job.pk}')
-        except ValidationError as exc:
-            draft_form.add_error(None, exc)
-        except OSError:
-            draft_form.add_error(None, 'The file could not be saved. Try again.')
-    jobs = list(AgentJob.objects.filter(
-        actor=request.user, upload__actor=request.user, upload__case__in=eligible,
-    ).select_related('upload__case').defer('result').order_by('-pk')[:25])
-    for job in jobs:
-        job.role_label = ROLES.get(job.role, ('Agent', ''))[0]
     departments = [(key, name, department) for key, (name, department, _) in assistant.PERSONAS.items()
                    if assistant.cases_for(request.user, key).exists()]
-    return render(request, 'design/agents.html', {'roles': ROLES.values(), 'cases': cases, 'jobs': jobs,
-                                                  'draft_form': draft_form if can_start and first_cases else None,
-                                                  'departments': departments,
+    return render(request, 'design/agents.html', {'departments': departments,
                                                   'conversations': owned_conversations(request.user).order_by('-updated_at')[:25]})
 
 

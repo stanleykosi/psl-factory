@@ -281,12 +281,14 @@ class RoleScopedWorkTests(TestCase):
         source = b'Synthetic confirmed meeting date.'
         self.client.force_login(lead.user)
         with patch('adapters.case_uploads.put'):
-            response = self.client.post(reverse('design_agents'), {
-                'workspace': self.case.pk, 'role': 'A01',
+            response = self.client.post(reverse('case_uploads', args=[self.case.pk]), {
+                'action': 'upload',
                 'file': SimpleUploadedFile('brief.txt', source, content_type='text/plain'),
             })
         self.assertEqual(response.status_code, 302, response.content[:500])
-        job = AgentJob.objects.get(actor=lead.user)
+        from apps.agents.models import CaseUpload
+        from apps.agents.upload_views import queue_draft
+        job = queue_draft(lead.user, CaseUpload.objects.get(actor=lead.user, case=self.case), 'A01')
         files = reverse('case_uploads', args=[self.case.pk])
         download = reverse('case_upload_download', args=[self.case.pk, job.upload_id])
         with patch('adapters.case_uploads.read', return_value=source), patch('adapters.openrouter.review',

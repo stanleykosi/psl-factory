@@ -181,6 +181,11 @@ def tool_context(conversation, *, question=''):
                 pinned.append(source)
         return pinned + records(conversation, question) + chat_sources(conversation, question), next_work
     sources, next_work = _tool_context(conversation)
+    from .department_context import work_definitions
+    from .specialist_memory import outcome_sources, sources_for
+    definitions=work_definitions(conversation.persona)
+    cases=[conversation.case_id]
+    sources=outcome_sources(conversation.actor,cases,definitions)+sources_for(conversation.actor,cases,definitions)+sources
     sources = assistant_access.project_sources(conversation, sources + chat_sources(conversation, question))
     return sources, next_work if sources else []
 
