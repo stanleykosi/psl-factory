@@ -49,7 +49,7 @@ async function keyboardRing(page: Page, target: Locator) {
 /** Station screen-reader texts per line, as read from the flat list. */
 const stationTexts = (page: Page) =>
   page.locator('section[aria-label="Lines"] ol').evaluateAll((ols) =>
-    ols.map((ol) => [...ol.querySelectorAll('.cmp-sr')].map((sr) => sr.textContent)),
+    ols.map((ol) => [...ol.querySelectorAll('.overview__station')].map((li) => li.querySelector('button')?.getAttribute('aria-label') ?? li.querySelector('.cmp-sr')?.textContent)),
   );
 
 test.describe('desktop 1440', () => {

@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { fillWhen } from './controls';
 
 // F-34 (contract mock only): the hypercare work item (SCR-46) at 1440 and 390: axe, touch targets, one column, and the
 // record-release and log-observation writes with their recorded requests. Nothing here deploys, evaluates or qualifies anything.
@@ -76,7 +77,7 @@ for (const [label, viewport] of [
       const form = page.getByRole('form');
       await expect(form).toBeVisible();
       await expect(form.getByRole('heading', { name: 'Record release' })).toBeFocused();
-      await form.getByLabel(/Released on/).fill('2026-04-01T22:00');
+      await fillWhen(form, 'Released on', '2026-04-01T22:00');
       await form.locator('input[type="file"]').setInputFiles(proof);
       await expect(form.getByText(/release-1.0.0-log.pdf/)).toBeVisible();
       if (phone) {
@@ -112,7 +113,7 @@ test.describe('the writes', () => {
     await expect(page.getByText(/the hypercare window starts from the release date/).first()).toBeVisible();
     await form.getByRole('button', { name: 'Record release' }).click();
     expect(writes).toHaveLength(0);
-    await form.getByLabel(/Released on/).fill('2026-04-01T22:00');
+    await fillWhen(form, 'Released on', '2026-04-01T22:00');
     await form.getByRole('button', { name: 'Record release' }).click();
     expect(writes).toHaveLength(0);
     await form.locator('input[type="file"]').setInputFiles(proof);
@@ -135,7 +136,7 @@ test.describe('the writes', () => {
     await loaded(page);
     await page.getByRole('button', { name: 'Record release' }).click();
     const form = page.getByRole('form');
-    await form.getByLabel(/Released on/).fill('2026-04-01T22:00');
+    await fillWhen(form, 'Released on', '2026-04-01T22:00');
     await form.locator('input[type="file"]').setInputFiles(proof);
     await expect(form.getByText(/release-1.0.0-log.pdf/)).toBeVisible();
     await form.getByRole('button', { name: 'Record release' }).click();

@@ -83,7 +83,7 @@ test.describe('desktop 1440', () => {
     const more = page.getByRole('button', { name: 'Show more' });
     expect(await tabTo(page, more)).toEqual(ring);
     await page.keyboard.press('Enter');
-    await expect(rows).toHaveCount(10);
+    await expect(rows).toHaveCount(20);
     await more.click();
     await expect(rows).toHaveCount(25);
     await expect(more).toHaveCount(0);

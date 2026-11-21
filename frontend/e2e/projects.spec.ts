@@ -431,6 +431,9 @@ test.describe('phone 390 card focus', () => {
     expect(await keyboardRing(page, projectLinks(page).first())).toEqual({ style: 'solid', width: '2px' });
     await page.goto('/projects/P-0101');
     await journeyLoaded(page);
-    expect(await keyboardRing(page, page.getByRole('link', { name: 'Back to Projects', exact: true }))).toEqual({ style: 'solid', width: '2px' });
+    // D-143: the back link sits on the dark phone bar, so its ring is the on-strong (white) 2px underline, not the blue edge.
+    const back = page.getByRole('link', { name: 'Back to Projects', exact: true });
+    await keyboardRing(page, back);
+    expect(await back.evaluate((el) => { const s = getComputedStyle(el); return { line: s.textDecorationLine, color: s.textDecorationColor, width: s.textDecorationThickness }; })).toEqual({ line: 'underline', color: 'rgb(255, 255, 255)', width: '2px' });
   });
 });
