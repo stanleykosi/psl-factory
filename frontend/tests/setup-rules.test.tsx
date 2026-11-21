@@ -282,7 +282,7 @@ async function fillFirstSave({ why = 'Agreed at the PSL leadership meeting', fil
   fireEvent.click(panel().getByRole('checkbox', { name: 'PMO Lead' }));
   fireEvent.change(panel().getByLabelText('Why'), { target: { value: why } });
   if (file) {
-    const input = panel().getByLabelText(/^Proof/) as HTMLInputElement;
+    const input = panel().getByLabelText(/^Proof/, { selector: 'input' }) as HTMLInputElement;
     fireEvent.change(input, { target: { files: [new File(['x'.repeat(2048)], 'minutes.pdf', { type: 'application/pdf' })] } });
     await waitFor(() => expect(panel().getByText('Uploaded · 2 KB')).toBeTruthy());
   }
@@ -574,11 +574,11 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
 describe('proof (AC 15)', () => {
   it('a second file in the same edit sends the returned case_revision; a row without proof_case is disabled', async () => {
     await open();
-    const input = () => panel().getByLabelText(/^Proof/) as HTMLInputElement;
+    const input = () => panel().getByLabelText(/^Proof/, { selector: 'input' }) as HTMLInputElement;
     fireEvent.change(input(), { target: { files: [new File(['a'], 'one.pdf')] } });
     await waitFor(() => expect(panel().getByText('one.pdf')).toBeTruthy());
     // The shared field shows the chosen file with Remove; another file is chosen after removing it.
-    fireEvent.click(panel().getByRole('button', { name: 'Remove' }));
+    fireEvent.click(panel().getByRole('button', { name: 'Remove one.pdf' }));
     fireEvent.change(input(), { target: { files: [new File(['b'], 'two.pdf')] } });
     await waitFor(() => expect(panel().getByText('two.pdf')).toBeTruthy());
     expect(uploads().map((u) => (u.body as { case_revision: number }).case_revision)).toEqual([1, 2]);
@@ -590,15 +590,15 @@ describe('proof (AC 15)', () => {
     const drop = panel().getByText('Proof can’t be attached here yet.').closest('.psl-drop')!;
     expect(drop.className).toBe('psl-drop is-disabled');
     expect(drop.getAttribute('aria-disabled')).toBe('true');
-    expect(panel().queryByLabelText(/^Proof/)).toBeNull();
+    expect(panel().queryByLabelText(/^Proof/, { selector: 'input' })).toBeNull();
   });
 
   it('a 422 upload marks Proof invalid and Save still works without evidence_id', async () => {
     answers.upload = () => json(422, { code: 'invalid', message: 'Check these fields: content_base64.' });
     await open();
-    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.pdf')] } });
+    fireEvent.change(panel().getByLabelText(/^Proof/, { selector: 'input' }), { target: { files: [new File(['a'], 'one.pdf')] } });
     await waitFor(() => expect(panel().getByText('Check these fields: content_base64.')).toBeTruthy());
-    expect(panel().getByLabelText(/^Proof/).getAttribute('aria-invalid')).toBe('true');
+    expect(panel().getByLabelText(/^Proof/, { selector: 'input' }).getAttribute('aria-invalid')).toBe('true');
     fireEvent.click(saveButton());
     await waitFor(() => expect(saves()).toHaveLength(1));
     expect(saves()[0].body).not.toHaveProperty('evidence_id');
@@ -607,17 +607,17 @@ describe('proof (AC 15)', () => {
   it('409 asks for the file again and re-reads the list; a network failure never retries', async () => {
     answers.upload = (n) => (n === 0 ? json(409, STALE) : Promise.reject(new TypeError('Failed to fetch')));
     await open();
-    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.pdf')] } });
+    fireEvent.change(panel().getByLabelText(/^Proof/, { selector: 'input' }), { target: { files: [new File(['a'], 'one.pdf')] } });
     await waitFor(() => expect(panel().getByText('The record changed. Choose the file again.')).toBeTruthy());
     await waitFor(() => expect(reads()).toHaveLength(2));
-    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.pdf')] } });
+    fireEvent.change(panel().getByLabelText(/^Proof/, { selector: 'input' }), { target: { files: [new File(['a'], 'one.pdf')] } });
     await waitFor(() => expect(panel().getByText('We couldn’t attach the file. Choose it again.')).toBeTruthy());
     expect(uploads()).toHaveLength(2);
   });
 
   it('a file type the proof field refuses (.exe) sends nothing', async () => {
     await open();
-    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.exe')] } });
+    fireEvent.change(panel().getByLabelText(/^Proof/, { selector: 'input' }), { target: { files: [new File(['a'], 'one.exe')] } });
     await waitFor(() => expect(panel().getByText('EXE files can’t be used as proof')).toBeTruthy());
     expect(uploads()).toHaveLength(0);
   });

@@ -153,7 +153,7 @@ describe('1 and 2: the drawers are drawn from data', () => {
     expect([...dialog().querySelectorAll('[data-field]')].map((b) => b.getAttribute('data-field'))).toEqual(['proof', 'prior_schedule', 'accounting_note']);
     expect(within(dialog()).getByText(/^Prior schedule/)).toBeTruthy();
     expect(within(dialog()).getByText(/^Accounting note/)).toBeTruthy();
-    expect(within(proofBox()).getByRole('button', { name: 'Choose a file' })).toBeTruthy();
+    expect(within(proofBox()).getByText('choose a file')).toBeTruthy();
     expect(within(dialog()).queryByText(/Proof \(optional\)/)).toBeNull();
     // the required Proof is named on the page, focus moves there and nothing is sent
     press('Start schedule');

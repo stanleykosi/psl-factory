@@ -58,7 +58,7 @@ export function SupportHandoverForm(props: FormProps & { gapsProblem?: boolean }
           />
         </div>
       )}
-      <ProofField proof={proof} layout="card" choose="Choose a file" label="Proof of the reply" hideLabel />
+      <ProofField proof={proof} label="Proof of the reply" hideLabel />
       <Attest entries={entries} setEntry={setEntry} short />
       {next}
       <RecordRow props={props} ready={ready} line={line} />

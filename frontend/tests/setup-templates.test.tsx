@@ -118,7 +118,7 @@ async function openPanel(name: string) {
   return panel();
 }
 function choose(p: ReturnType<typeof panel>, file: File, note?: string) {
-  fireEvent.change(p.getByLabelText('File'), { target: { files: [file] } });
+  fireEvent.change(p.getByLabelText('File', { selector: 'input' }), { target: { files: [file] } });
   if (note !== undefined) fireEvent.change(p.getByLabelText('Note (optional)'), { target: { value: note } });
 }
 const send = () => fireEvent.click(panel().getByRole('button', { name: /^Upload version$|^Uploading…$/ }));
@@ -393,7 +393,7 @@ describe('the upload request (AC 7)', () => {
   it('the panel has a labelled File input, a Note with a counter, Upload version (off until a file) and Cancel', async () => {
     await open();
     const p = await openPanel('Invoice');
-    expect(p.getByLabelText('File').getAttribute('type')).toBe('file');
+    expect(p.getByLabelText('File', { selector: 'input' }).getAttribute('type')).toBe('file');
     expect(p.getByLabelText('Note (optional)').tagName).toBe('TEXTAREA');
     expect(p.getByText('0 / 2000')).toBeTruthy();
     expect(submit().disabled).toBe(true);
@@ -517,7 +517,7 @@ describe('invalid (422) and client refusals (AC 10)', () => {
     choose(p, pdf('bad.docx'), 'keep me');
     send();
     await waitFor(() => expect(p.getByRole('alert').textContent).toBe('Check these fields: filename, note.'));
-    const file = p.getByLabelText('File');
+    const file = p.getByLabelText('File', { selector: 'input' });
     const note = p.getByLabelText('Note (optional)');
     expect(file.getAttribute('aria-invalid')).toBe('true');
     expect(note.getAttribute('aria-invalid')).toBe('true');
@@ -539,7 +539,7 @@ describe('invalid (422) and client refusals (AC 10)', () => {
     choose(p, pdf());
     send();
     await waitFor(() => expect(p.getByRole('alert').textContent).toBe('This file cannot be used.'));
-    expect(p.getByLabelText('File').getAttribute('aria-invalid')).toBeNull();
+    expect(p.getByLabelText('File', { selector: 'input' }).getAttribute('aria-invalid')).toBeNull();
   });
 
   it('refuses a zero-byte file and a 2001-character note before any request', async () => {
@@ -547,7 +547,7 @@ describe('invalid (422) and client refusals (AC 10)', () => {
     const p = await openPanel('Invoice');
     choose(p, pdf('empty.pdf', new Uint8Array(0)));
     expect(p.getByText('That file is empty. Choose another file.')).toBeTruthy();
-    expect(p.getByLabelText('File').getAttribute('aria-invalid')).toBe('true');
+    expect(p.getByLabelText('File', { selector: 'input' }).getAttribute('aria-invalid')).toBe('true');
     expect(submit().disabled).toBe(true);
     fireEvent.click(submit());
     choose(p, pdf(), 'x'.repeat(2001));

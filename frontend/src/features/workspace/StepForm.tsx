@@ -141,7 +141,7 @@ function EvidenceField(props: { workId: string; caseId?: string; caseRevision?: 
   }, [ids]);
   return (
     <div className="psl-field sw-field" data-field={field.name}>
-      <ProofField proof={proof} hint={field.help} label={field.label} />
+      <ProofField proof={proof} hint={field.help} label={field.label} multiple />
       {error && (
         <span className="psl-error" role="alert">
           {error}

@@ -34,7 +34,6 @@ export const ASSIGN_PM_TEXT = {
   roleHelp: 'One of the roles PSL allows to assign RFPs',
   chooseRole: 'Choose a role to continue.',
   proof: 'Proof (optional)',
-  proofChoose: 'Choose a file',
   proofBlocked: 'Remove the file that didn’t upload, or try it again.',
   nextHead: 'What happens next:',
   next: 'The PM you choose is alerted and sees it in Needs me. They start the RFP response.',
@@ -292,7 +291,7 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
               ) : null}
               {proofKind && (
                 <div className="resp-field" id={PROOF_ID} tabIndex={-1}>
-                  <ProofField proof={proof} layout="card" label={ASSIGN_PM_TEXT.proof} choose={ASSIGN_PM_TEXT.proofChoose} />
+                  <ProofField proof={proof} label={ASSIGN_PM_TEXT.proof} />
                   {(proofError ?? fieldError.evidence) && (
                     <span className="psl-error" role="alert">
                       <Icon name="warn" />
