@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Finished the available Trial session checks without a sign-in change. Restricted Payroll Start withheld the exact private inputs, and its separate publication recipient saw their own prior withdrawal. The checked runtime and linked build records were backed up at `75d087d9`. Next is one grouped preparer sign-in linked to the first returned invoice.
+
 21 November 2026. Exact 291c passed eight targeted PostgreSQL tests and both original preservation probes. The Payroll replacement now opens for its exact current recipient and shows that person’s prior withdrawn receipt without exposing old values or private review notes. The checked Accounting and asset corrections are in the matching submitted preview runtime.
 
 21 November 2026. Completed the grouped Trial decisions on exact escalation, Payroll combine, HR approval and Accounting source. The ledger reached 247 by completing the independent escalation variant. The remaining three link into the admitted preparer’s single grouped session. The sign-in, onboarding and bid source is pushed at `bcd7029f`.
