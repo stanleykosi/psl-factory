@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Released Decision 6 on Railway. Staff can dictate locally, edit the draft, and send the question to their department assistant. The in-app browser showed the local speech-pack setup and allowed editing. [Browser evidence](docs/design/assistant-dictation-checks-2026-11-21.md)
+
 21 November 2026. Recorded Decision 5 and marked Zainab’s staff name and employment checks as waiting for the live HR connection.
 
 21 November 2026. Connected private Finance uploads, Chidi’s document reading, human review, the approved figure register and the management-accounts intake. Finance can correct the reading or return the file. The original, AI proposal and human decision stay linked. [Walkthrough](docs/design/finance-document-checks-2026-11-21.md)

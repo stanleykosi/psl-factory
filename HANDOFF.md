@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Decision 6 · Talking to an assistant
+
+Open a conversation with a message box. Choose **Set up dictation** if the browser needs to download a speech pack. Choose **Dictate message**, speak, and choose **Stop dictation**. Check or change the words and press **Send**. Staff can type when local recognition is unavailable. [Browser checks](docs/design/assistant-dictation-checks-2026-11-21.md)
+
 ## Decision 5 · Staff names and employment
 
 Wait for the live HR connection before enabling these checks in Zainab. PSL declined the temporary staff-list upload. HR can confirm individual questions in the meantime.
@@ -30,7 +34,7 @@ The change uses current workspace permissions, accounts and business policies. R
 
 The clean role preview runs web `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker `c0e9a5d3-7151-4c90-bde6-912db6eb6b65`. Both releases build on the clean role cutover below. The in-app browser verified the PMO Lead dashboard, its empty work and decision queues, and the new work desk. Local browser samples exercised the Finance and bid decisions without populating that workspace. The earlier October accounting sample is historical.
 
-The remaining owner decisions cover microphone use and external delivery destinations. Decision 5 settled the HR source. The live connection is pending. [Frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md)
+The remaining owner decision covers external delivery destinations. Zainab’s staff checks are waiting for the live HR connection. [Frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md)
 
 ## Role navigation and workspace scope · 21 November 2026
 

@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Talking to an assistant · 21 November 2026
+
+In a conversation with a message box, staff can dictate on a supported device, stop, edit the words, and press Send. The browser handles the audio locally. A browser that lacks local speech recognition offers typing. [Browser checks](docs/design/assistant-dictation-checks-2026-11-21.md)
+
 ## Staff names and employment · 21 November 2026
 
 PSL chose the live HR system as Zainab’s source for checking staff names and employment dates. Both checks are on hold until it is connected.

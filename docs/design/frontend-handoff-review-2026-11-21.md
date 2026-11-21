@@ -1,5 +1,9 @@
 # What remains from the frontend handoff
 
+## Decision 6 · Talking to an assistant
+
+PSL chose on-device dictation. Staff can check and edit what the browser heard and decide when to send the message. The shared message box offers typing on every device. [Checks and screenshots](assistant-dictation-checks-2026-11-21.md)
+
 ## Decision 5 · Staff names and employment
 
 PSL chose to wait for the live HR system before Zainab verifies a staff name or employment on a given date. HR can answer these questions directly while the connection is pending.
@@ -36,7 +40,7 @@ The final in-app check used the newer combined My work release. In the live PMO 
 
 The screen checklist now points SCR-25 to weekly reporting and SCR-42 to Planning. Tests also exercised a standalone report approval, retrieval of the recipient-facing preview and replay of a replacement template upload. The checked API has 64 operations across 54 paths. Specialist source selections and several detailed workflows still open their existing factory forms.
 
-**Remaining decisions for PSL.** Microphone input and actual email or WhatsApp destinations remain open. Decisions 4 and 5 above cover Finance files and the source for HR checks. The browser examples used sample data.
+**Remaining decision for PSL.** Actual email or WhatsApp destinations remain open. Decisions 4 through 6 above cover Finance files, the source for HR checks and microphone use. The browser examples used sample data.
 
 Web release `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker release `c0e9a5d3-7151-4c90-bde6-912db6eb6b65` both succeeded on the Railway design-acceptance instance. Its health page returned `ok`. The previously recorded 262 walkthroughs used the former preview database. The current clean workspace received no business transactions from these tests.
 

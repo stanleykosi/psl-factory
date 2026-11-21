@@ -67,6 +67,7 @@ class AssistantPayrollAggregateTests(TestCase):
         self.assertContains(page, 'Total staff cost: TEST 410.00')
         self.assertContains(page, 'BU-A: TEST 250.00')
         self.assertContains(page, 'BU-B: TEST 160.00')
+        self.assertNotContains(page, 'data-dictate')
         for private in ('E001','E002','E003','E004','TEST 70.00','TEST 90.00'):
             self.assertNotContains(page, private)
         self.assertFalse(any('"finance_payrollinput"."payload"' in q['sql'] for q in queries))

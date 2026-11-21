@@ -36,6 +36,7 @@ class DepartmentAssistantTests(TestCase):
         screen = self.client.get(url)
         self.assertContains(screen, 'Find a project record')
         self.assertContains(screen, 'assistant-source-picker.js')
+        self.assertContains(screen, 'data-dictate')
         sources, _ = assistant.tool_context(conversation)
         selected = [item for item in sources if item['label'] in ['Workspace', 'Commercial requirements']]
         self.assertEqual(len(selected), 2)
@@ -63,6 +64,7 @@ class DepartmentAssistantTests(TestCase):
             self.assertRedirects(self.client.post(url, message), url, fetch_redirect_response=False)
         self.assertEqual(conversation.turns.count(), 1)
         self.assertContains(self.client.get(url), 'Question queued')
+        self.assertNotContains(self.client.get(url), 'data-dictate')
         reply = {'answer': 'Finance has a milestone handoff. Choose the exact source for invoice preparation.',
                  'citations': ['S2'], 'next_work': 'pmo-finance/v1'}
         with patch('adapters.openrouter.answer', return_value=reply) as model:

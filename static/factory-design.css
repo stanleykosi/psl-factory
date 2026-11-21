@@ -87,6 +87,7 @@
 .assistant-question p, .assistant-reply p { margin: 4px 0 0; }
 .assistant-reply a:not(.button) { color: #2459d6; text-decoration: underline; }
 .assistant-compose textarea { width: 100%; }
+.assistant-compose [data-dictation]:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-block: .75rem; }
 .assistant-source-picker [hidden] { display: none; }
 @media (max-width: 700px) {
   .assistant-source-picker summary,

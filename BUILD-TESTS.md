@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+21 November 2026. Four message-box tests and 13 PostgreSQL assistant and payroll tests passed. In Chrome, the local speech engine transcribed a sample voice with the page offline. Changing Friday to Monday and pressing Send after reconnecting queued the edited text once. Railway’s in-app browser completed speech-pack setup and allowed editing without sending. [Screenshots and test conditions](docs/design/assistant-dictation-checks-2026-11-21.md)
+
 21 November 2026. For Decision 5, the existing PostgreSQL test for department access passed. It checked that Zainab’s HR conversation reports the live HR system as disconnected. The backlog also parsed with the expected waiting status.
 
 21 November 2026. Checked Finance document upload, the real OpenRouter reading, Finance corrections and approval in the in-app browser using a sample PDF. An image-only scan went through the PDF reader. The PostgreSQL tests exercised approval, rejection, retries, native accounting intake and project access. [Evidence and environment](docs/design/finance-document-checks-2026-11-21.md)
