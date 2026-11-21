@@ -34,6 +34,9 @@ const check = (id: string, status: number, body: unknown) => {
 const fixtures = join(__dirname, '..', 'mock', 'fixtures');
 const readJson = (path: string) => JSON.parse(readFileSync(join(fixtures, path), 'utf8'));
 
+
+const OWN = ['rfp_intake', 'issue_followup'];
+
 describe('demo switches and the answer delay', () => {
   const fixed = (value: number) => () => value;
   it('is off, fast and without delay unless the demo is on', () => {
@@ -267,13 +270,16 @@ describe('every startable line in the demo', () => {
       const waiting = runs.item(run.id, starter);
       check('E-WORK-ITEM', 200, waiting);
       expect(waiting.state).toBe('waiting');
-      const decider = runs.rows(starter).length === 1 ? raised[0][0] : '';
       expect(raised).toHaveLength(1);
-      expect(decider).not.toBe(starter);
+      const decider = raised[0][0];
+      // D-159: an assignment (Assign PM, Find the owner) stays with the PMO Lead even when the PMO Lead started it;
+      // any other decision goes to someone other than its starter.
+      if (OWN.includes(lineKey)) expect(decider).toBe('pmo_lead');
+      else expect(decider).not.toBe(starter);
       const open = runs.item(run.id, decider);
       expect(open.tasks[0].you_can_act).toBe(true);
       expect(runs.rows(decider)[0]).toMatchObject({ queue: 'needs_me' });
-      expect(runs.rows(starter)[0]).toMatchObject({ queue: 'waiting_on_others' });
+      if (decider !== starter) expect(runs.rows(starter)[0]).toMatchObject({ queue: 'waiting_on_others' });
 
       runs.decide(open.tasks[0].id, 'approve', undefined, decider);
       now += 60 * 60 * 1000;
@@ -288,4 +294,22 @@ describe('every startable line in the demo', () => {
       expect(raised.map(([persona]) => persona)).toEqual([decider, starter]);
     });
   }
+});
+
+describe('D-159: who decides a demo line the PMO Lead started', () => {
+  it('Assign PM on a logged RFP stays with the PMO Lead; a change request the PMO Lead raised goes to the CEO', () => {
+    const me = Object.fromEntries((PERSONAS as string[]).map((p) => [p, readJson(`me.${p}.json`)]));
+    const work = Object.fromEntries(Object.values(WORK_IDS as Record<string, string>).map((id) => [id, readJson(`work/${id}.json`)]));
+    let now = 0;
+    const raised: [string, any][] = [];
+    const runs = createLineRuns({ now: () => now, work, me, raise: (persona: string, alert: any) => raised.push([persona, alert]) });
+    const rfp = runs.start({ key: 'a', lineKey: 'rfp_intake', persona: 'pmo_lead' });
+    now += 60 * 60 * 1000;
+    expect(runs.item(rfp.id, 'pmo_lead').next_step).toBe('A PMO Lead decides “Assign PM”.');
+    expect(raised.map(([persona]) => persona)).toEqual(['pmo_lead']);
+    const change = runs.start({ key: 'b', lineKey: 'change_request', persona: 'pmo_lead' });
+    now += 2 * 60 * 60 * 1000;
+    runs.item(change.id, 'pmo_lead');
+    expect(raised.map(([persona]) => persona)).toEqual(['pmo_lead', 'ceo']);
+  });
 });

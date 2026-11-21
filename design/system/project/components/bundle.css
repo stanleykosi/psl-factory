@@ -340,7 +340,8 @@
 .psl-mini__text { font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
 
 .psl-facts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border: 2px solid var(--ink); background: var(--surface); }
-.psl-fact { padding: 12px 14px; border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px; color: var(--ink-subtle); }
+/* D-159: the value sits at the foot of every fact, so a label that wraps to two lines never lifts its neighbours' values out of line */
+.psl-fact { padding: 12px 14px; border-right: 2px solid var(--ink); display: flex; flex-direction: column; justify-content: space-between; gap: 4px; color: var(--ink-subtle); }
 .psl-fact:last-child { border-right: none; }
 .psl-fact b { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; }
 .psl-fact strong { font-family: var(--font-display); font-weight: 700; font-size: 16px; }

@@ -7,7 +7,6 @@
 // No agents are drawn: E-OVERVIEW does not say where an agent works.
 import {
   BoxGeometry,
-  BoxHelper,
   Color,
   DirectionalLight,
   EdgesGeometry,
@@ -53,6 +52,7 @@ const BELT = SPAN + 2.8;
 const MAX_BLOCKS = 8;
 const BLOCK = 0.6;
 const SLATS = 18;
+const LIFT = 0.4; // how far a machine rises under the pointer or keyboard focus
 const VIEW = { yaw: 0.42, pitch: 0.72, yawMin: -0.3, yawMax: 1.2, pitchMin: 0.32, pitchMax: 1.2 };
 const STEP = 0.16; // one key press: yaw moves 1.5 steps, pitch one
 
@@ -111,7 +111,6 @@ export class FloorScene {
   private size = { width: 1, height: 1 };
   private hover: Machine | null = null;
   private focus: Machine | null = null;
-  private outline: BoxHelper | null = null;
   private drag: { x: number; y: number; moved: boolean } | null = null;
   private time = 0;
   private frame = 0;
@@ -238,7 +237,6 @@ export class FloorScene {
     }
     m.anchor.position.set(m.x, top, m.z);
     this.chipFor(m, m.chip);
-    if (m === (this.focus ?? this.hover)) this.outlineFor(m);
   }
 
   /** Boxes that ride a belt from each busy station to the next, two at most per station. */
@@ -260,7 +258,6 @@ export class FloorScene {
   /** Builds the floor, every belt and every machine as given. */
   private build(lines: readonly OverviewLine[]) {
     this.scene.remove(this.root);
-    this.disposeOutline();
     this.disposeLamps();
     this.root = new Group();
     this.freeShared();
@@ -459,25 +456,7 @@ export class FloorScene {
     this.callbacks.onReadout(m ? describeStation(m.line, m.value) : null, Boolean(m?.value.needs_person));
   }
 
-  private disposeOutline() {
-    if (!this.outline) return;
-    this.scene.remove(this.outline);
-    this.outline.geometry.dispose();
-    (this.outline.material as Material).dispose();
-    this.outline = null;
-  }
-
-  private outlineFor(m: Machine | null) {
-    this.disposeOutline();
-    if (!m?.body) return;
-    this.outline = new BoxHelper(m.body, this.c.focus);
-    (this.outline.material as LineBasicMaterial).depthTest = false;
-    this.outline.renderOrder = 10;
-    this.scene.add(this.outline);
-  }
-
-  private showing(m: Machine | null) {
-    this.outlineFor(m);
+  private showing() {
     this.readout();
     this.kick();
     this.render();
@@ -488,12 +467,12 @@ export class FloorScene {
     this.hover?.chip.classList.remove('floor__chip--hot');
     this.hover = m;
     m?.chip.classList.add('floor__chip--hot');
-    this.showing(this.focus ?? m);
+    this.showing();
   }
 
   private setFocus(m: Machine | null) {
     this.focus = m;
-    this.showing(m ?? this.hover);
+    this.showing();
   }
 
   private pick(event: PointerEvent): Machine | null {
@@ -584,7 +563,14 @@ export class FloorScene {
     }
     const pulse = still ? 1 : 1 + 0.18 * Math.sin(t * 3);
     for (const m of this.machines.values()) m.lamp?.scale.set(pulse, pulse, pulse);
-    this.outline?.update();
+    // D-159: the machine under the pointer or keyboard focus lifts, as the board's cards did before the conveyor; no
+    // outline is drawn. Its label is fixed to the floor, so the lift never moves it from under the pointer.
+    const f = still ? 1 : 1 - Math.exp(-dt * 10);
+    for (const m of this.machines.values()) {
+      const up = m === this.hover || m === this.focus ? LIFT : 0;
+      const y = m.parts.position.y;
+      m.parts.position.y = Math.abs(up - y) < 0.002 ? up : y + (up - y) * f;
+    }
   }
 
   /** Starts the frame loop if it is not running; it stops by itself under reduced motion or while the tab is hidden. */
@@ -658,7 +644,6 @@ export class FloorScene {
     this.stop();
     this.unbind();
     this.overlay.replaceChildren();
-    this.disposeOutline();
     this.disposeLamps();
     this.scene.remove(this.root);
     this.freeShared();

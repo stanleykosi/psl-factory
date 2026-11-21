@@ -6,7 +6,8 @@
 // (Intake, Agent drafts, Review, Decision, Verified). One station per line is the human one (HUMAN below); the rest are the
 // agent's. An agent station ticks its three steps, `stepMs` apart (each step goes working -> done), then the item moves on.
 // At the human station the item waits: it is Needs me for the persona who decides (DECIDERS; the CEO when the starter is that
-// persona) and Waiting for the starter, and an alert is raised. Approve moves it on, Return sends it back to the agent
+// persona and the step approves the starter's own work, so no one approves what they started; an assignment such as
+// "Assign PM" stays with its own role, `own: true`) and Waiting for the starter, and an alert is raised. Approve moves it on, Return sends it back to the agent
 // station before it for rework (a new draft, a new task), Reject stops it. The last station ends verified, in Done, with a
 // history entry for every step. Sample data only: nothing is sent to anyone and no rule is decided here.
 import { WORK_IDS } from './start-work.mjs';
@@ -31,12 +32,12 @@ const LINES = {
   cash_forecast: { ...FINANCE, human: 'Review' },
   weekly_report: { ...PMO, human: 'PM review' },
   minutes: { ...PMO, human: 'PM review' },
-  issue_followup: { ...PMO, human: 'Find the owner' },
+  issue_followup: { ...PMO, human: 'Find the owner', own: true },
   change_request: { ...PMO, human: 'Decide' },
   emergency_change: { ...PMO, human: 'Preauthorise' },
   escalation: { ...PMO, human: 'Review' },
   leadership_report: { ...PMO, human: 'Review' },
-  rfp_intake: { ...PMO, human: 'Assign PM' },
+  rfp_intake: { ...PMO, human: 'Assign PM', own: true },
   hr_staff_list: { agent: 'zainab', decider: 'hr_lead', human: 'Confirm the list' },
 };
 const GENERIC = { ...PMO, human: 'Decision', stations: ['Intake', 'Agent drafts', 'Review', 'Decision', 'Verified'] };
@@ -126,7 +127,7 @@ export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, 
       line: fixture?.line ?? lineKey,
       reference: `DEMO-${pad(counter, 4)}`,
       agent: def.agent,
-      decider: def.decider === persona ? 'ceo' : def.decider,
+      decider: def.decider === persona && !def.own ? 'ceo' : def.decider,
       starter: persona,
       stations,
       humanAt,

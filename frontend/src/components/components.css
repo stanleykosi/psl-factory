@@ -36,6 +36,8 @@
 .psl-input.cmp-wrapped.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
 /* the button inside a wrapped field (calendar) is a full 44px target: it overlaps the box's 2px border top and bottom */
 .cmp-inputbtn.psl-iconbtn { width: calc(var(--control-md) - var(--space-2)); height: var(--control-md); margin: calc(var(--rule-strong) * -1) calc(var(--space-2) * -1) calc(var(--rule-strong) * -1) 0; }
+/* D-159: its hover fill stays inside the box's border; the 44px target still reaches over the border */
+.cmp-inputbtn.psl-iconbtn { padding: var(--rule-strong) 0; background-clip: content-box; }
 .cmp-search { appearance: none; }
 .cmp-search::-webkit-search-cancel-button, .cmp-search::-webkit-search-decoration { appearance: none; -webkit-appearance: none; }
 .cmp-cal__row { display: contents; }
