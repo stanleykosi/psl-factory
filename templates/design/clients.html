@@ -11,12 +11,26 @@
     </select>
     <button>Find</button>
   </form>
+</section>
+{% if groups %}
+<section class="card">
+  <h2>Clients with verified project links</h2>
+  {% for group in groups %}
+    <a class="floor-line" href="?client={{ group.group_key }}&amp;q={{ query|urlencode }}&amp;billing={{ billing|urlencode }}">
+      <span><strong>{{ group.label }}</strong> · {{ group.project_count }} project{{ group.project_count|pluralize }} in view</span>
+      <span>{% if group.contacts_needed %}Billing contact missing{% else %}Billing contacts recorded{% endif %} →</span>
+    </a>
+  {% endfor %}
+  {% if groups.has_next %}<a href="?q={{ query|urlencode }}&amp;billing={{ billing|urlencode }}&amp;clients_page={{ groups.next_page_number }}">Show more linked clients</a>{% endif %}
+</section>
+{% endif %}
+<section class="card">
   <h2>Projects without a verified client link</h2>
   {% for project in projects %}
     <a class="floor-line" href="{% url 'design_client_project' project.pk %}">
       <span>{% if project.client_name %}<strong>{{ project.client_name }}</strong> · {% endif %}{{ project|workspace_name }}</span>
       <span>{% if project.billing_status == 'recorded' %}Billing contacts recorded{% elif project.billing_status == 'needed' %}Billing contact missing{% else %}Billing status unknown{% endif %} →</span>
     </a>
-  {% empty %}<p>No projects match these filters.</p>{% endfor %}
+  {% empty %}<p>No unlinked projects match these filters.</p>{% endfor %}
   {% if projects.has_next %}<a href="?q={{ query|urlencode }}&amp;billing={{ billing|urlencode }}&amp;page={{ projects.next_page_number }}">Show more projects</a>{% endif %}
 </section>{% endblock %}

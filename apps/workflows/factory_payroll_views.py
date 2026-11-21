@@ -22,6 +22,8 @@ STAGES = {
     'combine_review': 'Combined payroll needs review',
     'match': 'Preparing the staff match',
     'match_review': 'Staff match needs review',
+    'draft_match': 'Draft staff matching approved',
+    'draft_match_held': 'Draft staff matching recorded',
     'aggregate': 'Calculating payroll totals',
     'aggregate_review': 'Payroll totals need review',
     'publish': 'Ready for publication',
@@ -99,6 +101,8 @@ def presentation(actor,work):
     row.update(next_action=state.get('finding') or 'Verify exact aggregate and recipient receipts',blocker=state.get('finding',''),readiness_changed=changed,can_advance=permitted(actor,work,'factory.execute') and work.status not in ['cancelled','verified','followup_needed'])
     stage=state['stage'];match=state['runs'].get('match',{})
     hr_held=(stage=='match' and not data['inputs']['hr_snapshot_id']) or 'hr_receipt_missing' in match.get('codes',[])
+    if stage=='draft_match':
+        hr_held=not state['draft_match']['has_hr_receipt']
     if work.status=='followup_needed':
         row.update(state='Published payroll needs follow-up',next_action='Review the original publication and outstanding receipts')
     elif work.status!='cancelled' and (work.status!='verified' or changed):
@@ -135,22 +139,27 @@ def working_next_stage(actor,work,q,data,selected,panel):
     return stage
 
 
-def working_panel(actor,work,request):
+def working_panel(actor,work,request,draft_match=None):
     """Load at most one current, authorised working payload; never an agent context."""
     from apps.finance.payroll_working import rows
     try:
         q,data=payroll.source(work,actor)
         selected=None
-        for stage in ['aggregate','match','combine']:
-            candidate=payroll.checked_run(work,stage,q,data)
-            if candidate:
-                payroll.native.run_access(actor,candidate);selected=candidate;break
+        if draft_match and draft_match['run']:
+            selected=payroll.native.exact(work.case,PayrollRun,draft_match['run'])
+            payroll.native.run_access(actor,selected)
+        else:
+            for stage in ['aggregate','match','combine']:
+                candidate=payroll.checked_run(work,stage,q,data)
+                if candidate:
+                    payroll.native.run_access(actor,candidate);selected=candidate;break
         panel={'record_id':selected.pk if selected else None,'kind':selected.kind if selected else None,
                'draft_only':True,'next_stage':None,'currency':q.metadata['currency'],'period':q.metadata['period']}
         if selected:panel.update(rows(selected.result,selected.kind,page=request.GET.get('working_page'),
                                       status=request.GET.get('working_status','all')))
-        try:panel['next_stage']=working_next_stage(actor,work,q,data,selected,panel)
-        except (PermissionDenied,ValidationError):panel['continuation_held']=True
+        if not draft_match:
+            try:panel['next_stage']=working_next_stage(actor,work,q,data,selected,panel)
+            except (PermissionDenied,ValidationError):panel['continuation_held']=True
         return panel
     except (PermissionDenied,ValidationError):return None
 
@@ -187,6 +196,8 @@ def detail(request,work,focus=None):
                 if action=='receive':notice=f'Your receipt #{result.pk} for aggregate report #{result.publication_id} is recorded.'
                 elif action=='receive_hr':notice='HR snapshot receipt recorded. Recalculate the selected payroll sources.'
                 elif action=='working':notice='Working draft prepared. Held rows and final review requirements are unchanged.'
+                elif action=='review' and result.verdict==payroll.native.draft_matching.VERDICT:
+                    notice='Approved for private staff matching. Held pay still needs correction before reporting.'
             elif action=='restart':
                 if not form or not form.is_valid():raise ValidationError('Select exact current payroll sources')
                 payroll.restart(request.user,work.pk,revision,case_revision,form.cleaned_data['request_id'].pk,form.inputs(),int(p.get('configuration_id','0')),p.get('instruction_key',''),p.get('reason',''))
@@ -211,14 +222,29 @@ def detail(request,work,focus=None):
     if not recipient and panel['can_review'] and focus in (None,'decision'):
         q=panel['request']
         inputs=PayrollInput.objects.defer('payload').filter(request=q,pk__in=panel['inputs']['input_ids']).order_by('provider')
-        runs=PayrollRun.objects.defer('result').filter(request=q,pk__in=[run['id'] for run in panel['runs'].values()]).order_by('pk')
+        run_ids=[run['id'] for run in panel['runs'].values()]
+        combined=panel.get('working_runs',{}).get('combine')
+        if combined and combined['status']=='held':
+            run_ids.append(combined['id'])
+        runs=PayrollRun.objects.defer('result').filter(request=q,pk__in=run_ids).order_by('pk')
         for kind, items in (('input',inputs), ('run',runs)):
             for item in items:
                 purpose='input' if kind=='input' else item.kind
                 try:payroll.native.authority(request.user,q,purpose,item.actor_id)
                 except (ValidationError,PermissionDenied):continue
-                review_targets.append({'kind':kind,'item':item,'title':REVIEW_HEADINGS[purpose],
-                                       'current':item.reviews.order_by('-pk').first()})
+                target={'kind':kind,'item':item,'title':REVIEW_HEADINGS[purpose],
+                        'current':item.reviews.order_by('-pk').first()}
+                if purpose=='combine' and item.metadata['status']=='held':
+                    try:_,eligible=payroll.native.draft_matching.scope(request.user,item)
+                    except (ValidationError,PermissionDenied):pass
+                    else:
+                        target['draft_scope']=payroll.native.draft_matching.summary(item,eligible)
+                        current=target['current']
+                        target['draft_approved']=current and panel.get('draft_match',{}).get('approval')==current.pk
+                        if focus=='decision' and not target['draft_approved']:
+                            row.update(state='Combined payroll needs review',
+                                       next_action='Review the eligible pay and the amounts still held.')
+                review_targets.append(target)
     if not recipient and focus in (None,'recovery'):
         publication=payroll.publication(work)
         withdrawal=payroll.withdrawal(work,publication.pk if publication else None)
@@ -252,5 +278,5 @@ def detail(request,work,focus=None):
         'publication':publication,'receipt_rows':receipt_rows,'totals':totals,
         'withdrawal':withdrawal,'withdrawal_evidence':withdrawal_evidence,'can_start_successor':can_start_successor,
         'hr_snapshot':hr_snapshot,'hr_received':hr_received,'hr_evidence':hr_evidence,
-        'working':working_panel(request.user,work,request) if not recipient and focus in (None,'recovery') else None})
+        'working':working_panel(request.user,work,request,panel.get('draft_match')) if not recipient and focus in (None,'recovery') else None})
     response['Cache-Control']='no-store';return response

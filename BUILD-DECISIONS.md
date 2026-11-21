@@ -1,5 +1,7 @@
 # Build decisions
 
+21 November 2026. Show a leadership return or rejection on the exact selected report. Disclose its rationale to the decision actor, report author and authorised source corrector. Other authorised readers can see the decision status. A release observation and an uploaded source file are tracked separately until both have browser evidence for the release recording board.
+
 21 November 2026. Retain a typed release environment only when it is recorded against the exact release. Existing evidence keeps Unknown for the unrecorded environment. Escalation preparation stops at a human Send for review. Current native reviews and original receipts remain readable. File-required bid packs retain private PDF bytes and a verified hash, with outward transmission held when the configured carrier cannot transport the file. Amounts labelled Millions stay unconverted until an exact reviewed source conversion exists.
 
 20 November 2026. Group Forecast and weekly projections can reuse exact current observations within one rendered request. Native commands assess authority and evidence again and preserve original receipts. The Clients list filters individual authorized workspaces by current billing-contact status. Cross-workspace grouping requires an explicitly recorded stable customer identity. Local billing references and names do not establish that match.

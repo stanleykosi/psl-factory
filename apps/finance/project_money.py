@@ -82,7 +82,7 @@ def balance(invoice, budget):
         return paid, face - paid if face >= paid else None, entries, allocations
 
 
-def projection(actor, case, figure=None):
+def projection(actor, case, figure=None, *, include_change_links=False):
     require(actor, case, 'finance.read')
     budget = ReadBudget()
     try:
@@ -90,9 +90,15 @@ def projection(actor, case, figure=None):
             records, baseline, scope, configuration = terms(case)
             cover = BillingCoverage.objects.filter(case=case, pk=scope).first() if scope else None
             invoices = invoice_rows(actor, case, budget)
-            return build(case, records, baseline, cover, invoices, figure, budget, configuration)
+            result = build(case, records, baseline, cover, invoices, figure, budget, configuration)
     except ReadLimit:
         return {'rows': [], 'limited': True}
+    if include_change_links:
+        from apps.pmo.change_stage_links import READ_ACTIONS, decorate, require_access
+
+        require_access(actor, case, READ_ACTIONS)
+        decorate(case, result, baseline, cover, configuration)
+    return result
 
 
 def build(case, records, baseline, cover, invoices, figure, budget, configuration):
@@ -123,7 +129,7 @@ def build(case, records, baseline, cover, invoices, figure, budget, configuratio
                 sources += [{'label': f'Applied receipt {item.lot.receipt.transaction_ref} · {invoice.currency} {item.amount:f}',
                              'url': finance_url} for item in allocations]
         has_figure = amount is not None or bool(sources)
-        item = {'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
+        item = {'key': key, 'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
                 'due_date': due_date, 'contract_stage': contract_stage,
                 'url': money_url + '?' + urlencode({'figure': key}) if has_figure else None,
                 'sources': sources, 'missing_reason': missing_reason, 'expected_name': expected_name}

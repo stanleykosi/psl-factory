@@ -429,4 +429,10 @@ def projection(actor,work,*,include_progress=False):
         projects = data['manifest']['project_scope']['projects']
         names = {str(pk): title for pk, title in Case.objects.filter(pk__in=[p['case'] for p in projects]).values_list('pk', 'title')}
         covered_projects = [dict(p, name=names.get(p['case'], 'Project')) for p in projects]
-    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,'progress':progress,'covered_projects':covered_projects}
+    decision = v.reviews.select_related('actor').order_by('-pk').first() if v else None
+    returned = decision if decision and decision.verdict in ('return', 'reject') else None
+    show_rationale = bool(returned and (can_correct or actor.pk in (returned.actor_id, v.created_by_id)))
+    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,
+            'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,
+            'review_verdicts':verdicts,'progress':progress,'covered_projects':covered_projects,
+            'return_review':returned,'show_return_rationale':show_rationale}

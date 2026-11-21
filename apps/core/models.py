@@ -80,6 +80,22 @@ class ClientBillingIdentityRevision(AppendOnly):
         constraints = [models.UniqueConstraint(fields=['case', 'customer_ref', 'number'], name='client_billing_identity_version')]
 
 
+class ClientWorkspaceLink(AppendOnly):
+    case = models.ForeignKey(Case, on_delete=models.PROTECT)
+    coverage = models.ForeignKey('finance.BillingCoverage', null=True, on_delete=models.PROTECT)
+    number = models.PositiveIntegerField()
+    previous = models.OneToOneField('self', null=True, on_delete=models.PROTECT)
+    tenant = models.CharField(max_length=100)
+    group_key = models.CharField(max_length=64, blank=True, db_index=True)
+    client_label = models.CharField(max_length=160, blank=True)
+    evidence = models.OneToOneField(Evidence, on_delete=models.PROTECT)
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['case', 'number'], name='client_workspace_link_version')]
+
+
 class Audit(AppendOnly):
     case = models.ForeignKey(Case, on_delete=models.PROTECT, related_name='audit')
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)

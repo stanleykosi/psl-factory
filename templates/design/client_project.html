@@ -14,6 +14,7 @@
 {% endif %}<p><a href="{% url 'finance_settlement' case.pk %}">Review invoices and receipts</a></p></section>{% endif %}
 {% if billing_identity %}<section class="card" aria-labelledby="client-billing-details">
 <h2 id="client-billing-details">Legal billing details</h2>
+<p><a href="{% url 'design_client_workspace_link' case.pk %}">Review the project’s client link</a></p>
 {% for row in billing_identity.rows %}
 <article><h3>{{ row.customer }}</h3><dl class="decision-facts">
   <dt>Legal business name</dt><dd>{{ row.identity.legal_name|default:'Unknown' }}</dd>

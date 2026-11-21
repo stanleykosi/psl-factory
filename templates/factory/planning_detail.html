@@ -2,6 +2,7 @@
 <a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
 <div class="page-heading"><div><p class="eyebrow">PLANNING AND DELIVERY HANDOFF</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</time></div></div>
+{% include 'factory/current_step.html' with progress=row.planning_progress only %}
 {% include 'factory/planning_departments.html' %}
 <div class="factory-case-layout"><div>
 <section class="card"><h2>Planning outcome</h2>{% if row.planning.finding %}<p role="status">{{ row.planning.finding|business_finding }}</p>{% elif row.blocker %}<p role="status">{{ row.blocker|business_finding }}</p>{% endif %}

@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Trial rechecked work 79’s original Go-live change request and the reviewed signed successor. The mobile work chooser reached the scoped weekly intake, bringing the ledger to 206. Candidate 282 passed six Finance and seven Project tests. Its two Commercial Milestones access failures are in the 283 rerun with the leadership return readback.
+
+21 November 2026. Trial saw the actual leadership worker claim on work 242 and the independent review handoff, bringing the ledger to 204 complete. Trial returned that exact report and observed the missing rationale readback. Work 241 now has an exact recorded release and its original source note. The private file evidence remains open. The 282 Project cohort passed all seven tests. Two Commercial milestone-reader assertions exposed an earlier section-access gate.
+
 21 November 2026. The passing 280 app rollout exposed the exact Planning routing hold and scoped Finance rule groups. Trial verified both on the phone, bringing the ledger to 203 completed with 59 open. Candidate 281 runs the combined customer link, Payroll draft, Issue register and Start work refinements in isolated PostgreSQL.
 
 21 November 2026. Reconciled current phone and earlier exact invoice, sign-off, costing, Staff, Setup and protected aggregate results. Verified count is 201. The passing 280 application subset deployed with the exact PDF portal receipt guard. The failed new fixture was held for the next isolated check, where client grouping, restricted Payroll draft matching, issue register metadata and the authorised Tola shortcut are also staged.

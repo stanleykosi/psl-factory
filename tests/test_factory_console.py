@@ -7,6 +7,17 @@ from apps.identity.models import Grant
 from tests.factory_helpers import fixture
 
 class FactoryConsoleTests(TestCase):
+    def test_start_chooser_offers_the_scoped_tola_conversation(self):
+        from tests.helpers import setup_case
+
+        reader, case = setup_case(username='chooser-tola-reader')
+        self.client.force_login(reader)
+        url = reverse('factory_intake')
+        assistant = reverse('assistant_start', args=['tola'])
+        self.assertContains(self.client.get(url), f'href="{assistant}">Describe it to Tola')
+        Grant.objects.filter(case=case, user=reader, action='agent.extract').update(active=False)
+        self.assertNotContains(self.client.get(url), 'Describe it to Tola')
+
     def test_mobile_work_links_keep_the_authorized_workflow_queue_and_search(self):
         from html import escape
         from urllib.parse import urlencode

@@ -192,6 +192,10 @@ urlpatterns += [path('cases/<uuid:case_id>/finance/contract-coverage/', coverage
 from apps.pmo import progress_views
 urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/progress/',progress_views.workbench,name='delivery_progress')]
 
+from apps.pmo import change_stage_views
+urlpatterns += [path('projects/<uuid:case_id>/milestones/change-link/', change_stage_views.milestone_link,
+                     name='design_change_milestone_link')]
+
 urlpatterns += [path('overview/', design_views.overview, name='design_overview'),
                 path('assistant/', design_views.agents, name='design_agents'),
                 path('assistant/new/<slug:persona>/', assistant_views.start, name='assistant_start'),
@@ -221,6 +225,9 @@ urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catal
                 path('projects/<uuid:case_id>/templates/<int:template_id>/file/', template_catalog.download, name='design_template_download')]
 urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
                 path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
+from apps.core import client_workspace_link_views
+urlpatterns += [path('clients/<uuid:case_id>/client-link/', client_workspace_link_views.detail,
+                     name='design_client_workspace_link')]
 urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
 urlpatterns += [path('finance/month-end/<uuid:case_id>/receivables/capture/', month_end.capture, name='design_capture_month_end_receivables')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]

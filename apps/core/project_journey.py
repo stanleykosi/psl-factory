@@ -11,13 +11,16 @@ from django.utils import timezone
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import ReadLimit, limit_queries
 from apps.pmo.change_impacts import timeline_rows
+from apps.pmo.issue_access import public_current_issues, public_states
 from apps.pmo.models import (ActionItem, ChangeExecutionEvent, ChangeRequest, EmergencyProfile, EscalationDecision,
-                             EscalationRequest, Issue, Milestone, RFPCase)
+                             EscalationRequest, IssueTeamAssignment, Milestone, RFPCase)
 
+
+MILESTONE_RECORD_ACTIONS = {'commercial.read', 'delivery.read', 'milestone.complete'}
 
 TABS = (
     ('journey', 'Journey', set()),
-    ('milestones', 'Milestones', {'commercial.read', 'delivery.read', 'milestone.complete'}),
+    ('milestones', 'Milestones', MILESTONE_RECORD_ACTIONS | {'finance.read'}),
     ('documents', 'Documents', {'document.read'}),
     ('templates', 'Templates', {'document.read'}),
     ('money', 'Money', {'finance.read'}),
@@ -129,16 +132,44 @@ def filters(case,tab,grants,data):
     if tab=='actions' and 'meeting.read' in grants:
         records=ActionItem.objects.filter(case=case,current__isnull=False)
     if tab=='registers' and 'issue.read' in grants:
-        records=Issue.objects.filter(case=case,current__isnull=False)
+        records=public_current_issues(case)
         severities=records.exclude(current__severity__isnull=True).order_by('current__severity').values_list('current__severity',flat=True).distinct()[:30]
         fields['severity']=forms.ChoiceField(required=False,label='Issue severity',choices=[('','All severities')]+[(value,value) for value in severities])
     if records is not None:
         states=records.order_by('current__status').values_list('current__status',flat=True).distinct()[:30]
         fields['state']=forms.ChoiceField(required=False,label='Action status' if tab=='actions' else 'Issue status',choices=[('','All statuses')]+[(value,value.replace('_',' ').capitalize()) for value in states])
         owners=get_user_model().objects.filter(pk__in=records.values('current__owner_id')).order_by('username','pk')[:100]
-        fields['owner']=forms.ChoiceField(required=False,label='Owner',choices=[('','All owners'),('unassigned','Unassigned')]+[(str(person.pk),person.get_full_name() or person.get_username()) for person in owners])
+        fields['owner']=forms.ChoiceField(required=False,label='Owner or coordinator' if tab=='registers' else 'Owner',
+            choices=[('','All owners'),('unassigned','Unassigned')]+[(str(person.pk),person.get_full_name() or person.get_username()) for person in owners])
     form=type('ProjectReadFilters',(forms.Form,),fields)(data)
     return form
+
+
+def issue_register_metadata(issues, case):
+    opening = public_states(case).filter(issue_id=OuterRef('pk'), number=1).values('created_at')
+    latest_assignment = IssueTeamAssignment.objects.filter(issue_id=OuterRef('pk')).order_by('-number').values('pk')[:1]
+    team = IssueTeamAssignment.objects.filter(pk=OuterRef('_assignment'), mode='team',
+        recorder_id=OuterRef('current__owner_id'), evidence_id__in=public_evidence(case.evidence.all()).values('pk'))
+    return issues.alias(_assignment=Subquery(latest_assignment)).annotate(
+        opened_at=Subquery(opening), team_label=Subquery(team.values('team_label')),
+    ).select_related('current__owner').only('reference', 'current__title', 'current__status', 'current__severity',
+        'current__owner__first_name', 'current__owner__last_name', 'current__owner__username')
+
+
+def issue_register_row(issue, as_of, register_url):
+    owner = issue.current.owner
+    name = owner.get_full_name() or owner.get_username()
+    closed = issue.current.status == 'Closed'
+    return {
+        'title': issue.reference, 'detail': issue.current.title,
+        'state': issue.current.status.replace('_', ' ').capitalize(),
+        'severity': issue.current.severity,
+        'owner': name if issue.team_label is None else issue.team_label or 'Owner needed',
+        'coordinator': name if issue.team_label is not None else None,
+        'closed': closed,
+        'age_days': (as_of - issue.opened_at).days if not closed and issue.opened_at and issue.opened_at <= as_of else None,
+        'url': f'{register_url}#issue-{issue.pk}',
+    }
 
 
 def sections(actor, case, tab, grants, query='', pages=None, selected=None):
@@ -169,6 +200,8 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
         return records
 
     if tab == 'milestones':
+        if not MILESTONE_RECORD_ACTIONS.intersection(grants):
+            return []
         milestones = Milestone.objects.filter(case=case, name__icontains=query,
             evidence__in=public_evidence(case.evidence.all())).select_related('completed_by').order_by('-completed_at', '-pk')
         return [section('Recorded completions', 'Open milestone records', 'case',
@@ -190,11 +223,11 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
     if tab == 'registers':
         result = []
         if 'issue.read' in grants:
-            issues = apply(Issue.objects.filter(case=case, current__isnull=False)).filter(
-                Q(reference__icontains=query) | Q(current__title__icontains=query)).select_related('current').order_by('-pk')
-            result.append(section('Issues', 'Open issues', 'issues', issues, lambda issue: {
-                'title': issue.reference, 'state': issue.current.status.replace('_', ' ').capitalize(), 'detail': issue.current.title,
-                'url':reverse('issues',args=[case.pk])+'#issue-'+str(issue.pk)}))
+            issues = apply(public_current_issues(case)).filter(
+                Q(reference__icontains=query) | Q(current__title__icontains=query)).order_by('-pk')
+            as_of, register_url = timezone.now(), reverse('issues', args=[case.pk])
+            result.append(section('Issues', 'Open issues', 'issues', issue_register_metadata(issues, case),
+                lambda issue: issue_register_row(issue, as_of, register_url)))
             decision = EscalationDecision.objects.filter(request=OuterRef('pk')).order_by('-pk').values('verdict')[:1]
             escalations = EscalationRequest.objects.filter(
                 profile__state__issue__case=case, profile__state__issue__reference__icontains=query,

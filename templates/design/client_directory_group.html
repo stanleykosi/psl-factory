@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}{{ label }} · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div><a class="back-link" href="{% url 'design_clients' %}?q={{ query|urlencode }}&amp;billing={{ billing|urlencode }}">← Clients</a><h1>{{ label }}</h1></div>
+</header>
+<section class="card">
+  <h2>Verified projects in your view</h2>
+  {% for member in members %}
+    <a class="floor-line" href="{% url 'design_client_project' member.case_id %}">
+      <span>{{ member.case|workspace_name }}</span>
+      <span>{% if member.billing_status == 'needed' %}Billing contact missing{% else %}Billing contact recorded{% endif %} →</span>
+    </a>
+  {% endfor %}
+  {% if members.has_next %}<a href="?client={{ group }}&amp;q={{ query|urlencode }}&amp;billing={{ billing|urlencode }}&amp;page={{ members.next_page_number }}">Show more projects</a>{% endif %}
+</section>
+{% endblock %}

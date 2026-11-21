@@ -42,12 +42,24 @@ class LeadershipLiveDraftingSeedTests(TestCase):
         self.assertEqual(report.pk, result['report'])
         self.assertNotEqual(report.created_by_id, trial.pk)
         self.assertContains(self.client.get(decision), 'Return exact report')
+        note = 'Confirm the fictional cross-project coverage before publishing.'
         response = self.client.post(decision, {'action': 'review', 'revision': work.revision,
             'case_revision': rev(work.case), 'version': report.pk, 'verdict': 'return',
-            'note': 'Confirm the fictional cross-project coverage before publishing.'})
+            'note': note})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(report.reviews.get().verdict, 'return')
         self.assertEqual(HumanTask.objects.get(pk=result['review']).status, 'returned')
+        review_page = self.client.get(decision)
+        self.assertContains(review_page, 'Returned for changes')
+        self.assertContains(review_page, note)
+        self.assertNotContains(review_page, 'Approve exact report')
+        reader = get_user_model().objects.create_user('leadership-return-status-reader')
+        seed.scoped.grant(work.case, reader, (*seed.scoped.READ, 'factory.read'))
+        seed.scoped.grant(Case.objects.get(pk=independent['contributor']), reader, seed.scoped.READ)
+        self.client.force_login(reader)
+        read_only = self.client.get(decision)
+        self.assertContains(read_only, 'Returned for changes')
+        self.assertNotContains(read_only, note)
         self.assertFalse(Publication.objects.filter(factory_work=work).exists())
         self.assertFalse(flow.document(FactoryWork.objects.get(pk=original['work'])))
 

@@ -3,6 +3,9 @@
 <section class="card"><h2>Department inputs</h2>
 <p role="status">{{ row.planning.department_inputs.finding|business_finding }}</p>
 <p>Record received facts under your own name. Department approval stays with its authorised owner.</p>
+{% with costing=row.planning_progress.costing %}{% if costing %}
+<p>Costing decision: {{ costing.disposition }}.{% if costing.proposal %} Proposal version {{ costing.proposal }}.{% endif %}{% if costing.previous %} Earlier proposal version {{ costing.previous }}.{% endif %}</p>
+{% endif %}{% endwith %}
 <div class="table-scroll"><table><thead><tr><th>Department</th><th>Received input</th><th>Effort</th><th>Source</th></tr></thead><tbody>
 {% for entry in row.planning.department_inputs.rows %}<tr><th>{{ entry.department }}</th><td>{% if entry.record %}{{ entry.record.summary|linebreaksbr }}<small>{{ entry.record.source_party }} · {{ entry.record.received_at_display }} · recorded by {{ entry.record.actor }}</small><small>Input revision {{ entry.record.version }}</small>{% else %}Awaiting input{% endif %}</td><td>{% if entry.record.effort_state == 'known' %}{{ entry.record.person_days }} person-days{% else %}{{ entry.record.effort_state|default:'Unknown'|readable }}{% endif %}{% if entry.record.changed_effort %}<small>{% if row.planning.department_inputs.effort_reviewed %}Changed effort reviewed{% else %}Changed effort needs review{% endif %}</small>{% endif %}</td><td>{% if entry.record %}Document {{ entry.record.source }} · version {{ entry.record.source_version }}{% else %}Not supplied{% endif %}</td></tr>{% endfor %}
 </tbody></table></div>

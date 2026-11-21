@@ -1,9 +1,12 @@
 """Contact records scoped to projects and exact native billing customers."""
+import re
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods, require_safe
@@ -15,7 +18,7 @@ from apps.identity.services import active_case_grants, require, visible_cases
 
 from .evidence_access import public_evidence
 from . import client_billing_identity
-from .client_directory import BILLING_FILTERS, page as client_directory_page
+from . import client_directory
 from .models import ClientContactRevision, Evidence
 from .read_budget import ReadLimit
 from .services import bump, event, lock_case
@@ -89,11 +92,24 @@ def save(actor, case, purpose, fields):
 def index(request):
     term = request.GET.get('q', '').strip()[:100]
     billing = request.GET.get('billing', '')
-    if billing not in dict(BILLING_FILTERS):
+    if billing not in dict(client_directory.BILLING_FILTERS):
         billing = ''
-    projects = client_directory_page(request.user, term, billing, request.GET.get('page'))
+    visible = client_directory.visible_links(request.user)
+    group = request.GET.get('client', '')
+    if group:
+        if not re.fullmatch(r'[a-f0-9]{64}', group):
+            raise Http404('Choose an available client.')
+        label, members = client_directory.group_members(client_directory.active_links(visible), group, request.GET.get('page'))
+        if not label:
+            raise Http404('Choose an available client.')
+        return render(request, 'design/client_directory_group.html',
+                      {'label': label, 'group': group, 'members': members, 'query': term, 'billing': billing})
+    links = client_directory.active_links(visible) if visible.exists() else None
+    projects = client_directory.page(request.user, term, billing, request.GET.get('page'), links)
+    groups = client_directory.grouped_page(links, term, billing, request.GET.get('clients_page')) if links is not None else None
     return render(request, 'design/clients.html',
-                  {'projects': projects, 'query': term, 'billing': billing, 'billing_filters': BILLING_FILTERS})
+                  {'projects': projects, 'groups': groups, 'query': term, 'billing': billing,
+                   'billing_filters': client_directory.BILLING_FILTERS})
 
 
 @login_required

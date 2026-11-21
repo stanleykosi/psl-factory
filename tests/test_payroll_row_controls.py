@@ -34,8 +34,8 @@ from tests.payroll_helpers import fixture,policy,capture,approve,pipeline,body
 from tests.test_design_payroll_sources import worksheet,COLUMNS
 
 
-def configured(*,mode='hold_conflicting_rows',currency='row_currency'):
-    f=fixture();access=deepcopy(f['config']['access']);merge=deepcopy(f['config']['merge'])
+def configured(*,mode='hold_conflicting_rows',currency='row_currency',preparer_receipt=True):
+    f=fixture(preparer_receipt=preparer_receipt);access=deepcopy(f['config']['access']);merge=deepcopy(f['config']['merge'])
     access.update(format='psl.payroll-access/v2',row_handling=mode,currency_mode=currency)
     merge.update(format='psl.payroll-merge/v2',duplicate_within_source={
         None:None,'reject_export':'reject','hold_conflicting_rows':'hold_conflicting_rows'}[mode])

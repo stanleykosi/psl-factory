@@ -19,7 +19,7 @@ from adapters.hrfinance import timestamp
 from adapters.payroll import SuppliedPayrollAdapter,PayrollExportError,sum_values
 from adapters.payroll_spreadsheet import rows as spreadsheet_rows
 from .rules import decimal
-from . import hrfinance as hr,payroll_math as maths
+from . import hrfinance as hr,payroll_draft_matching as draft_matching,payroll_math as maths
 from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollReview,PayrollPublication,PayrollReportReceipt,PayrollHRFollowup
 from .hrfinance_models import HRReadSnapshot
 REQUEST=obj({'entity':KEY,'period':{'type':'string','pattern':r'^\d{4}-(0[1-9]|1[0-2])$'},'currency':KEY,'providers':{'type':'array','minItems':2,'maxItems':2,'uniqueItems':True,'items':KEY},'purpose':{'const':'bu_staff_cost'}})
@@ -96,6 +96,9 @@ def check_lineage(q,chain,config,rules):
    hr.snapshot_access(current.actor,snapshot)
    if snapshot.sha256!=current.metadata['hr_sha256']:raise ValidationError('HR source changed')
    snapshots[current.pk]=snapshot
+  draft_review_id=current.metadata.get('intent',{}).get('draft_review_id')
+  if draft_review_id is not None:
+   draft_matching.current(exact(q.case,PayrollRun,current.parent_id),draft_review_id)
  return checked_inputs,snapshots
 
 def check_snapshot_reader(actor,chain,snapshots):
@@ -203,10 +206,15 @@ def combine(actor,case_id,request_id,input_ids,operation_key,expected):
  return store(actor,q,'combine',operation_key,intent,result,codes,pins,input_ids,min(i.retain_until for i in inputs))
 
 @transaction.atomic
-def match(actor,case_id,parent_id,hr_snapshot_id,operation_key,expected):
+def match(actor,case_id,parent_id,hr_snapshot_id,operation_key,expected,*,draft_review_id=None):
  c=locked(actor,case_id,'payroll.match',expected);p=exact(c,PayrollRun,parent_id)
  if p.kind!='combine':raise ValidationError('F17 requires an exact combined working sheet')
- check_run_access(actor,p);validate(KEY,operation_key);intent={'parent_id':p.pk,'hr_snapshot_id':hr_snapshot_id};old=run_old(p.request,operation_key,actor,'match',intent)
+ check_run_access(actor,p);validate(KEY,operation_key);intent={'parent_id':p.pk,'hr_snapshot_id':hr_snapshot_id}
+ if draft_review_id is not None:
+  if type(draft_review_id) is not int or draft_review_id<1:raise ValidationError('Choose an exact draft matching decision')
+  _,eligible=draft_matching.current(p,draft_review_id,read_rows=True)
+  intent['draft_review_id']=draft_review_id
+ old=run_old(p.request,operation_key,actor,'match',intent)
  if old:return old
  h=hr.exact(c,HRReadSnapshot,hr_snapshot_id);hr.authorized(h.contract)
  for k in ['hrfinance.read','hrfinance.snapshot.read']:require(actor,c,k)
@@ -220,7 +228,11 @@ def match(actor,case_id,parent_id,hr_snapshot_id,operation_key,expected):
   codes.append('hr_source_unavailable')
   if 'duplicate_or_overlapping_employee' in h.manifest.get('findings',[]):codes.append('ambiguous_hr_source')
  resolved=resolve(MATCH,c);rule=reference_values(resolved.configuration)[0] if resolved.status=='ACTIVE' else None
- result,issues=maths.match(p.result['rows'],hr_rows,p.request.metadata['period'],h.contract.payload['effective_until_semantics'],rule)
+ if draft_review_id is not None:
+  if codes or not rule:raise ValidationError('Draft matching needs the current staff snapshot, your exact receipt and a reviewed matching rule.')
+  result,issues=draft_matching.match_rows(p.result['rows'],eligible,hr_rows,p.request.metadata['period'],h.contract.payload['effective_until_semantics'],rule)
+ else:
+  result,issues=maths.match(p.result['rows'],hr_rows,p.request.metadata['period'],h.contract.payload['effective_until_semantics'],rule)
  codes+=issues
  if p.metadata['status']!='complete':codes.append('parent_working_set_held')
  pins={**p.metadata['policy_ids'],**({MATCH:resolved.configuration.pk} if rule else {})}
@@ -231,6 +243,7 @@ def match(actor,case_id,parent_id,hr_snapshot_id,operation_key,expected):
 def aggregate(actor,case_id,parent_id,operation_key,expected):
  c=locked(actor,case_id,'payroll.aggregate',expected);p=exact(c,PayrollRun,parent_id)
  if p.kind!='match':raise ValidationError('F18 requires an exact HR-matched working sheet')
+ if 'draft_review_id' in p.metadata.get('intent',{}):raise ValidationError('A draft matching result cannot prepare staff-cost totals.')
  check_run_access(actor,p);validate(KEY,operation_key);intent={'parent_id':p.pk};old=run_old(p.request,operation_key,actor,'aggregate',intent)
  if old:return old
  policy=active_component(REPORT,c);rules=reference_values(policy)[0];_,access_rules=access(p.request)
@@ -256,7 +269,8 @@ def current_review(item):
   check_input(item,q,config,rules);chain=[];snapshots={};subjects=[item]
  for index, subject_row in enumerate(subjects):
   decision=first if index==0 else subject_row.reviews.order_by('-pk').first()
-  if not decision or decision.verdict!='approve' or decision.subject_sha256!=subject_row.sha256:raise ValidationError('Current exact payroll review required')
+  if (subject_row.metadata['status']!='complete' or not decision or decision.verdict!='approve'
+      or decision.subject_sha256!=subject_row.sha256):raise ValidationError('Current exact payroll review required')
   purpose=subject_row.kind if isinstance(subject_row,PayrollRun) else 'input'
   require(decision.actor,q.case,'payroll.review');check_reader(decision.actor,q,rules)
   if purpose!='input':check_snapshot_reader(decision.actor,chain[index:],snapshots)
@@ -266,7 +280,7 @@ def current_review(item):
 @transaction.atomic
 def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expected):
  c=locked(actor,case_id,'payroll.review',expected)
- if kind not in ['input','run'] or verdict not in ['approve','return','revoke']:raise ValidationError('Select an exact input/run and approve/return/revoke')
+ if kind not in ['input','run'] or verdict not in ['approve','return','revoke',draft_matching.VERDICT]:raise ValidationError('Select an exact payroll review decision')
  item=exact(c,PayrollInput if kind=='input' else PayrollRun,subject_id);q=item.request;validate(KEY,operation_key);e=subject(c,evidence_id,'payroll_review')
  old=PayrollReview.objects.filter(request=q,operation_key=operation_key).first()
  if old:
@@ -276,6 +290,10 @@ def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expec
  if verdict!='revoke':
   if kind=='input':input_current(item)
   else:check_run_access(actor,item)
+ if verdict==draft_matching.VERDICT:
+  if kind!='run' or item.kind!='combine':raise ValidationError('Draft matching review applies only to a held combination.')
+  pin,_=draft_matching.scope(actor,item)
+  a={**a,'draft_match':pin}
  if verdict=='approve':
   if kind=='run' and item.kind=='aggregate':
    published=list(PayrollPublication.objects.filter(run=item).values_list('pk',flat=True))

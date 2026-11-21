@@ -102,6 +102,7 @@ def intake_available(actor):
 def intake(request):
     queue=request.GET.get('queue','needs_me')
     if queue not in QUEUES:queue='needs_me'
+    from apps.agents.assistant import cases_for
     from .factory_change_intake import pending_intakes
     options = intake_options(request.user)
     q = request.GET.get('q','').strip()[:120]
@@ -119,7 +120,8 @@ def intake(request):
         elif key.startswith('delivery-'):
             title = 'Delivery and closure'
         groups[title].append(option)
-    response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q})
+    response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
+        'can_ask_tola': cases_for(request.user, 'tola').exists()})
     response['Cache-Control']='no-store';return response
 
 def work_grant_scope(actor):
@@ -591,9 +593,8 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         # Optional editing is not an obligation while another principal reviews.
         # Native return/currentness/hold facts identify the correction need; native
         # can_correct remains the separate authority and settled-effect boundary.
-        verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
-        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
-        row['correction_required'] = verdict in ['return', 'reject'] and not work.cancel_requested
+        row['correction_required'] = bool(panel['return_review']) and not work.cancel_requested
+        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or row['correction_required'] or work.status in ['blocked','owner_needed','configuration_needed'])
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
@@ -1193,8 +1194,9 @@ def _detail(request,work_id,focus=None):
         row['department_panels']=department_panels(request.user,work.case,work.source_head,
             row['planning'].get('department_inputs') if row['planning'].get('packet_id')==work.source_head_id else None,
             request.POST,request.POST.get('action'))
-        from .factory_planning import owner_panels
+        from .factory_planning import owner_panels, readiness_progress
         row['owner_panels']=owner_panels(request.user,work)
+        row['planning_progress']=readiness_progress(request.user,work,row['planning'])
         from apps.pmo.models import DeliverySource
         row['handoff']=DeliverySource.objects.filter(dossier__case=work.case,kind='scope_baseline',evidence_id=row['planning'].get('readiness_id')).first() if row['planning'].get('readiness_id') else None
         row['can_read_routing_setup'] = work.status == 'owner_needed' and permitted(request.user, work, 'policy.read')

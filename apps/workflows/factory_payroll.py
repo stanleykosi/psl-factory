@@ -96,6 +96,15 @@ def checked_run(work,kind,q,data):
     if r.request_id!=q.pk or r.metadata['intent']!=intent or r.parent_id!=(parent.pk if parent else None):raise ValidationError('Native working result differs from exact factory-selected sources')
     return r
 
+def reviewed_draft_run(work, request, data, combined, approval_id):
+    result = request.runs.defer('result').filter(kind='match', operation_key=key(work, ['draft_match', approval_id])).first()
+    intent = {'parent_id': combined.pk, 'hr_snapshot_id': data['inputs']['hr_snapshot_id'], 'draft_review_id': approval_id}
+    if result and (result.parent_id != combined.pk or result.metadata['intent'] != intent
+                   or result.metadata['status'] != 'held'):
+        raise ValidationError('Draft staff match must bind the same held combination, review and staff snapshot.')
+    return result
+
+
 def publication(work):return PayrollPublication.objects.defer('payload').filter(request_id=selected_request(work),request__case=work.case,operation_key=key(work,'publish')).first()
 
 def verify(work,actor=None):
@@ -116,8 +125,8 @@ def verify(work,actor=None):
 
 def report(work,actor=None):
     actor=actor or work.execution_actor;q,data=source(work,actor);state={'request':q.pk,'inputs':data['inputs'],'stage':'input_review','finding':'','runs':{},'working_runs':{},'publication':None,'receipt_ids':[]}
+    available={}
     try:
-        available={}
         for stage in ['combine','match','aggregate']:
             r=checked_run(work,stage,q,data)
             if r:
@@ -133,7 +142,26 @@ def report(work,actor=None):
         if not p:raise ValidationError('Await actual Finance publication decision')
         state['publication']=p.pk;state['stage']='receipt';state['receipt_ids']=list(p.receipts.values_list('pk',flat=True)) if hasattr(p,'receipts') else list(PayrollReportReceipt.objects.filter(publication=p).values_list('pk',flat=True))
         verify(work,actor);state['stage']='complete'
-    except (ValidationError,PermissionDenied) as exc:state['finding']=finding(exc)
+    except (ValidationError,PermissionDenied) as exc:
+        state['finding']=finding(exc)
+        combined = available.get('combine')
+        if state['stage'] in ['input_review', 'combine_review'] and combined and combined.metadata['status'] == 'held':
+            try:
+                approval, _ = native.draft_matching.current(combined)
+                result = reviewed_draft_run(work, q, data, combined, approval.pk)
+                if result:
+                    native.run_access(actor, result)
+            except (ValidationError, PermissionDenied):
+                pass
+            else:
+                has_receipt = HRHandoffRecord.objects.filter(snapshot_id=data['inputs']['hr_snapshot_id'],
+                                                            actor=work.execution_actor, kind='receipt').exists()
+                state['draft_match'] = {'approval': approval.pk, 'run': result.pk if result else None,
+                                        'has_hr_receipt': has_receipt}
+                if result:
+                    state.update(stage='draft_match_held', finding='Draft staff matching is recorded. Resolve the held payroll sources before a report.')
+                else:
+                    state.update(stage='draft_match', finding='Match the reviewed eligible rows in a private draft.')
     return state
 
 @read_observation
@@ -152,6 +180,10 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if missing or stale:return [],'Required current payroll evidence is missing or stale'
     stage=state['native']['stage']
     if stage=='complete':return ['ACT13'],'Verify exact aggregate and recipient-owned receipts'
+    if stage=='draft_match':
+        if not state['native']['draft_match']['has_hr_receipt']:
+            return [], 'The assigned matcher must confirm receipt of the exact staff snapshot.'
+        return ['ACT08'], 'Match the reviewed eligible rows in a private draft'
     if stage in ['combine','match','aggregate']:
         if stage=='match' and not state['native']['inputs']['hr_snapshot_id']:return [],'Select the exact minimal HR snapshot and record your native HR receipt'
         return ['ACT08'],'Prepare native '+stage+' result without approval or source edits'
@@ -169,6 +201,11 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT08':
         if stage=='combine':r=native.combine(actor,case.pk,q.pk,data['inputs']['input_ids'],key(work,stage),case.revision)
         elif stage=='match':r=native.match(actor,case.pk,run(work,'combine').pk,data['inputs']['hr_snapshot_id'],key(work,stage),case.revision)
+        elif stage=='draft_match':
+            approval_id=state['draft_match']['approval']
+            combined=checked_run(work,'combine',q,data)
+            r=native.match(actor,case.pk,combined.pk,data['inputs']['hr_snapshot_id'],
+                           key(work,['draft_match',approval_id]),case.revision,draft_review_id=approval_id)
         elif stage=='aggregate':r=native.aggregate(actor,case.pk,run(work,'match').pk,key(work,stage),case.revision)
         else:raise ValidationError('Native human review required before further preparation')
         return {'head':work.source_head_id,'run':r.pk,'kind':r.kind,'sha256':r.sha256,'status':r.metadata['status'],'codes':r.metadata['codes'],'private_payloads_in_result':False}
@@ -225,6 +262,8 @@ def human_action(actor,work_id,expected,case_expected,action,values):
         planning=pending(w)
         if planning and not has_receipt(planning):raise ValidationError('Reconcile the original planning response before preparing another working result.')
         active_component(native.STAGE_POLICY[stage],w.case)
+        if stage!='combine' and report(w,actor).get('draft_match'):
+            raise ValidationError('Use the current reviewed draft matching step. Payroll totals remain on hold.')
         if stage=='combine':
             inputs=input_rows(actor,w.case,q,data['inputs'])
             if not any(i.metadata['status']=='held' for i in inputs):raise ValidationError('Use the ordinary reviewed payroll flow for complete inputs.')
@@ -249,18 +288,24 @@ def human_action(actor,work_id,expected,case_expected,action,values):
         snapshot_id = data['inputs']['hr_snapshot_id']
         if not snapshot_id or values['snapshot_id'] != snapshot_id or w.execution_actor.pk != actor.pk:
             raise ValidationError('The assigned matcher must confirm the exact selected HR snapshot')
-        return hr.receive(actor,w.case_id,snapshot_id,'factory-payroll-hr:'+digest([snapshot_id,actor.pk]),
-                          values['evidence_id'],case_expected)
+        receipt=hr.receive(actor,w.case_id,snapshot_id,'factory-payroll-hr:'+digest([snapshot_id,actor.pk]),
+                           values['evidence_id'],case_expected)
+        wake_waiting(w.pk)
+        return receipt
     if action=='review':
         refs=data['inputs']['input_ids'] if values['kind']=='input' else [r.pk for r in [run(w,s) for s in ['combine','match','aggregate']] if r]
         if values['subject_id'] not in refs:raise ValidationError('Review an exact current work subject')
+        if values['verdict']==native.draft_matching.VERDICT:
+            combined=checked_run(w,'combine',q,data)
+            if values['kind']!='run' or not combined or values['subject_id']!=combined.pk:
+                raise ValidationError('Review the exact current held combination for this work.')
         decision=native.review(actor,w.case_id,values['kind'],values['subject_id'],values['verdict'],values['operation_key'],values['evidence_id'],case_expected)
         wake_waiting(w.pk);return decision
     if action=='publish':
         a=run(w,'aggregate')
         if not a:raise ValidationError('Prepare the exact aggregate before human publication')
-        report=native.publish(actor,w.case_id,a.pk,key(w,'publish'),case_expected);wake_waiting(w.pk)
-        return report
+        published=native.publish(actor,w.case_id,a.pk,key(w,'publish'),case_expected);wake_waiting(w.pk)
+        return published
     raise ValidationError('Choose an explicit native human decision')
 
 @transaction.atomic

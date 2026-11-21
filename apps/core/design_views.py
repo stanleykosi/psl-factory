@@ -153,10 +153,11 @@ def project(request, case_id, tab='journey'):
         if tab == 'milestones' and 'finance.read' in actions:
             from apps.finance.project_money import projection
 
-            stages = projection(request.user, case)
+            stages = projection(request.user, case, include_change_links='change.read' in actions)
             stages['rows'] = [row for row in stages['rows'] if row['contract_stage']]
         return render(request, 'design/project_tab.html', {
             'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections, 'q': query, 'stages': stages,'filter_form':filter_form,
+            'can_link_milestone_change': tab == 'milestones' and {'change.read', 'change.manage', 'finance.read'}.issubset(actions),
             'change_timeline': project_journey.change_timeline(case, query, request.GET.get('plan-page'))
                 if tab == 'milestones' and 'change.read' in actions else None,
         })
