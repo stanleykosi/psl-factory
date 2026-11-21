@@ -441,7 +441,7 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     expect(ws().getByText(/Ada Okafor returned the October register on 13 Nov/)).toBeTruthy();
     expect(buttons()).toEqual([]);
     expect(document.body.textContent).not.toMatch(/every return|backend only waits|Correct and resubmit/i);
-    expect(screen.getByText('October register was returned')).toBeTruthy();
+    expect(await screen.findByText('October register was returned')).toBeTruthy();
   });
 
   it('reject with a note on W-3903 shows the rejected state the re-read returns', async () => {
@@ -451,8 +451,9 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     await click('Reject');
     await waitFor(() => expect(status().textContent).toBe('REJECTED'));
     expect(posts('/api/v1/tasks/T-3903/decision')[0].body).toEqual({ verdict: 'reject', expected_revision: 1, note: 'Not for October.' });
-    expect(screen.getByText('October in-service dates was rejected')).toBeTruthy();
-    expect(buttons()).toEqual([]);
+    // The result toast (D-151) can land a tick after the status under a loaded run: wait for it rather than read it at once.
+    expect(await screen.findByText('October in-service dates was rejected')).toBeTruthy();
+    await waitFor(() => expect(buttons()).toEqual([]));
   });
 
   it('the error under the note is announced', async () => {

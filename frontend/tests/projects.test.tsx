@@ -118,7 +118,7 @@ async function open(search = '') {
   return result;
 }
 
-const ACTIVE_20 = 'http://x/api/v1/projects?limit=20';
+const ACTIVE_20 = 'http://x/api/v1/projects?limit=10';
 const cellsOf = (i: Item) => [i.title, i.pm, i.stage, nextMilestoneText(i.next_milestone) ?? 'Unknown', String(i.needs_person ?? 'Unknown'), String(i.stopped ?? 'Unknown')];
 
 describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
@@ -126,7 +126,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     await open();
     expect(calls).toHaveLength(1);
     expect(calls[0].pathname).toBe('/api/v1/projects');
-    expect(calls[0].search).toBe('?limit=20');
+    expect(calls[0].search).toBe('?limit=10');
     expect(document.querySelector('.projects__eyebrow')!.textContent).toBe('PROJECTS');
     expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeTruthy();
     expect(tabs().map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
@@ -144,13 +144,13 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
       'STOPPED',
     ]);
     const expected = fromMock(new URL(ACTIVE_20)).body.items;
-    expect(rows()).toHaveLength(20);
+    expect(rows()).toHaveLength(10);
     expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual(expected.map(cellsOf));
     expect([...rows()[0].querySelectorAll('td')].slice(4).map((td) => td.firstElementChild!.className)).toEqual(['projects__count', 'projects__count']);
     const first = within(rows()[0] as HTMLElement).getByRole('link', { name: 'Lagoon Health · patient app' });
     expect(first.getAttribute('href')).toBe('/projects/P-0101');
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('22 PROJECTS');
-    expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeTruthy();
     expect(screen.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeTruthy();
   });
 
@@ -168,7 +168,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     await open();
     fireEvent.click(tabs()[1]);
     await until(() => expect(titles()).toEqual(['Sabi Market · web store']));
-    expect(query(lastCall())).toEqual({ limit: '20', status: 'closed' });
+    expect(query(lastCall())).toEqual({ limit: '10', status: 'closed' });
     expect(window.location.search).toBe('?status=closed');
     // D-94: on the Closed tab the API says the project is closed, so there is no next milestone to come: "—"
     expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', '—', '0', '0']);
@@ -180,7 +180,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     // Arrows only move focus (Tabs); Enter or Space opens the focused tab.
     fireEvent.click(tabs()[2]);
     await until(() => expect(rows()).toHaveLength(5));
-    expect(query(lastCall())).toEqual({ limit: '20', status: 'all' });
+    expect(query(lastCall())).toEqual({ limit: '10', status: 'all' });
     // D-94: on All I can see the rows do not say which are closed, so an unsent next milestone is Unknown
     const sabi = [...rows()].find((r) => r.textContent?.startsWith('Sabi Market'))!;
     expect(sabi.querySelectorAll('td')[3].textContent).toBe('Unknown');
@@ -265,7 +265,7 @@ describe('PROPOSAL fields in another shape (TECH-2-1)', () => {
 });
 
 describe('search', () => {
-  it('sends one q=lagoon&limit=20 request 200 ms after the last keystroke; clearing drops q', async () => {
+  it('sends one q=lagoon&limit=10 request 200 ms after the last keystroke; clearing drops q', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     await open();
     const box = screen.getByRole('searchbox', { name: 'Search' });
@@ -279,7 +279,7 @@ describe('search', () => {
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(1));
     await until(() => expect(calls).toHaveLength(2));
-    expect(calls[1].search).toBe('?limit=20&q=lagoon');
+    expect(calls[1].search).toBe('?limit=10&q=lagoon');
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
@@ -295,11 +295,11 @@ describe('search', () => {
 
   it('no match shows No projects match; Show all projects restores the full list', async () => {
     await open('?q=zzz');
-    expect(query(calls[0])).toEqual({ limit: '20', q: 'zzz' });
+    expect(query(calls[0])).toEqual({ limit: '10', q: 'zzz' });
     expect(screen.getByRole('heading', { name: 'No projects match' })).toBeTruthy();
     expect(document.querySelector('.psl-showmore')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Show all projects' }));
-    await until(() => expect(rows()).toHaveLength(20));
+    await until(() => expect(rows()).toHaveLength(10));
     expect(lastCall().searchParams.has('q')).toBe(false);
     expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe('');
   });
@@ -314,12 +314,16 @@ describe('search', () => {
 });
 
 describe('paging (D-PAGING r2)', () => {
-  it('Show more sends cursor=o20&limit=20 and appends the rest, then All N showing with no button', async () => {
+  it('Show more sends cursor=o10&limit=10 and appends, then the rest, then All N showing with no button', async () => {
     await open();
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    expect(rows()).toHaveLength(10);
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(query(lastCall())).toEqual({ limit: '10', cursor: 'o10' });
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
     await until(() => expect(rows()).toHaveLength(22));
-    await until(() => expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull());
-    expect(query(lastCall())).toEqual({ limit: '20', cursor: 'o20' });
+    await until(() => expect(screen.queryByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeNull());
+    expect(query(lastCall())).toEqual({ limit: '10', cursor: 'o20' });
     const all = fromMock(new URL('http://x/api/v1/projects?limit=50')).body.items;
     expect(titles()).toEqual(all.map((i) => i.title));
     expect(screen.getByText(`All ${all.length} showing`)).toBeTruthy();
@@ -327,56 +331,65 @@ describe('paging (D-PAGING r2)', () => {
     await waitFor(() => expect(document.activeElement?.textContent).toBe(all[20].title));
   });
 
-  it('Rows per page 10 sends limit=10 without a cursor and writes ?limit=10; a reload keeps it', async () => {
+  it('Rows per page 20 adds the next rows in place (cursor o10), writes ?limit=20 and keeps the first rows; 10 trims without a request', async () => {
     await open();
     expect(radios().map((r) => [r.textContent, r.getAttribute('aria-checked')])).toEqual([
-      ['10', 'false'],
-      ['20', 'true'],
+      ['10', 'true'],
+      ['20', 'false'],
       ['50', 'false'],
     ]);
+    const first = [...rows()];
+    fireEvent.click(radios()[1]);
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(query(lastCall())).toEqual({ limit: '10', cursor: 'o10' });
+    expect(window.location.search).toBe('?limit=20');
+    first.forEach((row, i) => expect(rows()[i]).toBe(row));
+    expect(document.querySelector('.psl-loading')).toBeNull();
+    const requests = calls.length;
     fireEvent.click(radios()[0]);
-    await until(() => expect(rows()).toHaveLength(10));
-    expect(query(lastCall())).toEqual({ limit: '10' });
-    expect(window.location.search).toBe('?limit=10');
+    expect(rows()).toHaveLength(10);
+    expect(calls.length).toBe(requests);
+    expect(window.location.search).toBe('');
   });
 
-  it('?limit=10 loads 10; ?limit=7 falls back to 20', async () => {
-    const first = await open('?limit=10');
-    expect(query(calls[0])).toEqual({ limit: '10' });
-    expect(rows()).toHaveLength(10);
+  it('?limit=20 loads 20; ?limit=7 falls back to 10', async () => {
+    const first = await open('?limit=20');
+    expect(query(calls[0])).toEqual({ limit: '20' });
+    expect(rows()).toHaveLength(20);
     first.unmount();
     calls = [];
     await open('?limit=7');
-    expect(query(calls[0])).toEqual({ limit: '20' });
+    expect(query(calls[0])).toEqual({ limit: '10' });
   });
 
   it('arrow keys move the radiogroup selection with a roving tabindex', async () => {
     await open();
-    radios()[1].focus();
+    radios()[0].focus();
+    fireEvent.keyDown(radios()[0], { key: 'ArrowRight' });
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(radios()[1].getAttribute('aria-checked')).toBe('true');
+    await waitFor(() => expect(document.activeElement).toBe(radios()[1]));
+    expect(radios().map((r) => r.tabIndex)).toEqual([-1, 0, -1]);
     fireEvent.keyDown(radios()[1], { key: 'ArrowRight' });
     await until(() => expect(rows()).toHaveLength(22));
     expect(radios()[2].getAttribute('aria-checked')).toBe('true');
     await waitFor(() => expect(document.activeElement).toBe(radios()[2]));
-    expect(radios().map((r) => r.tabIndex)).toEqual([-1, -1, 0]);
-    expect(query(lastCall())).toEqual({ limit: '50' });
     fireEvent.keyDown(radios()[2], { key: 'ArrowRight' });
-    await until(() => expect(query(lastCall())).toEqual({ limit: '10' }));
+    await until(() => expect(rows()).toHaveLength(10));
     fireEvent.keyDown(radios()[0], { key: 'ArrowLeft' });
-    await until(() => expect(query(lastCall())).toEqual({ limit: '50' }));
+    await until(() => expect(rows()).toHaveLength(22));
   });
 
   it('a failed Show more keeps the loaded rows and shows the inline problem; Try again recovers', async () => {
     await open();
     respond = () => json(503, { code: 'unavailable', message: 'Down.' });
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await until(() => expect(screen.getByText('We couldn’t load more. Nothing was changed.')).toBeTruthy());
-    expect(document.querySelector('.psl-callout--problem')).toBeTruthy();
-    expect(rows()).toHaveLength(20);
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
+    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
+        expect(rows()).toHaveLength(10);
     respond = (url) => mockResponse(url);
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await until(() => expect(rows().length).toBeGreaterThan(20));
-    expect(document.querySelector('.psl-callout--problem')).toBeNull();
-  });
+    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
+    await until(() => expect(rows().length).toBeGreaterThan(10));
+      });
 });
 
 describe('access and failures', () => {
@@ -438,8 +451,8 @@ describe('access and failures', () => {
     expect(card.textContent).toContain(`Reference ${code} for support.`);
     respond = (url) => mockResponse(url);
     fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
-    await until(() => expect(rows()).toHaveLength(20));
-    expect(query(lastCall())).toEqual({ limit: '20' });
+    await until(() => expect(rows()).toHaveLength(10));
+    expect(query(lastCall())).toEqual({ limit: '10' });
   });
 
   it('loading shows status with no old rows; a late response for an earlier q is ignored', async () => {
@@ -472,7 +485,7 @@ describe('phone and sample label', () => {
     await open();
     expect(screen.queryByRole('table')).toBeNull();
     const cards = document.querySelectorAll('.projects__cards a');
-    expect(cards).toHaveLength(20);
+    expect(cards).toHaveLength(10);
     expect(cards[0].getAttribute('href')).toBe('/projects/P-0101');
     expect(cards[0].textContent).toBe('Lagoon Health · patient appRelease · UAT with client · PM Tunde Bello2 need a person · 1 stopped');
     expect(cards[0].querySelector('.projects__attention')!.textContent).toBe('2 need a person · 1 stopped');

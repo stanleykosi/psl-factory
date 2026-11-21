@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import type { ApiError } from '@/api/errors';
+import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
 import { readDelegations } from './api';
 import type { DelegationRow, DelegationsPage } from './contract-proposal';
@@ -25,7 +26,7 @@ export function useDelegations() {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      setState(ready(await readDelegations()));
+      setState(ready(await readDelegations(DEFAULT_PAGE_SIZE)));
     } catch (error) {
       setState({ status: 'error', error: asApiError(error) });
     }
@@ -40,7 +41,7 @@ export function useDelegations() {
   /** Re-reads the first page. A failed read keeps the rows on screen unless access was lost. */
   const refresh = useCallback(async (): Promise<DelegationsPage | ApiError> => {
     try {
-      const page = await readDelegations();
+      const page = await readDelegations(DEFAULT_PAGE_SIZE);
       setState(ready(page));
       return page;
     } catch (error) {
@@ -51,11 +52,11 @@ export function useDelegations() {
   }, []);
 
   const cursor = state.status === 'ready' && state.more !== 'loading' ? state.nextCursor : undefined;
-  const loadMore = useCallback(async () => {
+  const loadMore = useCallback(async (limit: PageSize) => {
     if (!cursor) return;
     setState((s) => (s.status === 'ready' ? { ...s, more: 'loading' } : s));
     try {
-      const next = await readDelegations(cursor);
+      const next = await readDelegations(limit, cursor);
       setState((s) => (s.status === 'ready' ? { ...s, items: [...s.items, ...next.items], nextCursor: next.next_cursor, more: 'idle' } : s));
     } catch (error) {
       const apiError = asApiError(error);

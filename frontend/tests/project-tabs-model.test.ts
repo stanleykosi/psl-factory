@@ -41,10 +41,10 @@ describe('URL state', () => {
   });
 
   it('builds the request: limit always, register only on Registers, q only when set, cursor for more', () => {
-    expect(buildTabQuery('milestones', { register: 'issues' })).toEqual({ limit: 20 });
-    expect(buildTabQuery('registers', { register: 'issues' })).toEqual({ limit: 20, register: 'issues' });
-    expect(buildTabQuery('registers', { register: 'rfps', q: 'a' }, 'o20')).toEqual({ limit: 20, register: 'rfps', q: 'a', cursor: 'o20' });
-    expect(buildTabQuery('actions', { register: 'changes', q: 'a' })).toEqual({ limit: 20, q: 'a' });
+    expect(buildTabQuery('milestones', { register: 'issues' })).toEqual({ limit: 10 });
+    expect(buildTabQuery('registers', { register: 'issues' })).toEqual({ limit: 10, register: 'issues' });
+    expect(buildTabQuery('registers', { register: 'rfps', q: 'a' }, 'o20')).toEqual({ limit: 10, register: 'rfps', q: 'a', cursor: 'o20' });
+    expect(buildTabQuery('actions', { register: 'changes', q: 'a' })).toEqual({ limit: 10, q: 'a' });
   });
 });
 

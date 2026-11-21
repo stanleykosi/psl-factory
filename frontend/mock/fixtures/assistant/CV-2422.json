@@ -1,0 +1,85 @@
+{
+  "conversation_id": "CV-2422",
+  "agent": "zainab",
+  "title": "Fix the two staff with no business unit",
+  "status": "drafted",
+  "context": {
+    "project": {
+      "case_id": "C-HR-STAFF",
+      "title": "Staff records for payroll"
+    },
+    "access": [
+      "HR · staff and business unit records",
+      "No payroll amounts (not set up yet)"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Suggest business units for the two staff who have none.",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-18T09:30:00Z"
+    },
+    {
+      "role": "agent",
+      "steps": [
+        "Listed the staff with no business unit",
+        "Looked at the October project teams"
+      ],
+      "sources": [],
+      "at": "2026-11-18T09:31:00Z",
+      "text": "I drafted a suggestion from the project teams they worked on in October. Nothing is changed until you choose and save. This is sample data from the HR stand-in.",
+      "step_details": [
+        {
+          "text": "Listed the staff with no business unit",
+          "state": "done",
+          "reference": {
+            "label": "STAFF LIST · NOVEMBER"
+          }
+        },
+        {
+          "text": "Looked at the October project teams",
+          "state": "done",
+          "reference": {
+            "label": "PROJECT TEAMS · OCTOBER"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "STAFF LIST",
+          "label": "STAFF LIST · NOVEMBER",
+          "restricted": false,
+          "link": {
+            "work_id": "W-4601"
+          }
+        },
+        {
+          "kind": "PROJECT TEAMS",
+          "label": "PROJECT TEAMS · OCTOBER",
+          "restricted": false
+        }
+      ],
+      "draft": {
+        "title": "Business unit suggestions · November",
+        "status_label": "DRAFTED · NOT SAVED",
+        "rows": [
+          {
+            "label": "Ifeoma Nwosu",
+            "value": "Suggest: Delivery (on the Kora Logistics team in October)"
+          },
+          {
+            "label": "Sani Garba",
+            "value": "Suggest: Finance operations (worked with the Finance team)"
+          },
+          {
+            "label": "Template",
+            "value": "Staff records · TEST TEMPLATE"
+          }
+        ],
+        "next": "HR chooses the units, then payroll matching can start"
+      }
+    }
+  ]
+}

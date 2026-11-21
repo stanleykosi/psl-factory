@@ -2,11 +2,11 @@
 
 // /setup/rules/delivery (SCR-13-desktop-delivery-rules, SCR-13-mobile-delivery-rules): E-SETUP-RULES with
 // area=delivery, read-only as drawn.
-import { Callout, PageTitle, Panel, Table, Tag } from '@/components';
+import { Callout, PageTitle, Panel, Table, Tag, ShowMore } from '@/components';
 
 import { AreaCrumb, RuleList } from './FinanceRulesView';
 import { valueText } from './format';
-import { RulesEmpty, RulesReadState, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
+import { RulesEmpty, RulesReadState, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
 export function DeliveryPageView() {
@@ -19,10 +19,11 @@ export function DeliveryPageView() {
 
 function DeliveryRulesView() {
   const { state, retry, loadMore } = useSetupRules('delivery');
+  const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'rules');
   useSetupPhoneBack('RULES');
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
-  const { items } = state;
+  const items = pagedItems;
   const empty = items.length === 0;
   const head = items[0]?.area_label ?? 'Delivery';
 
@@ -48,8 +49,9 @@ function DeliveryRulesView() {
                   rows={items}
                   rowKey={(row) => row.component}
                   empty="No rules to show."
+                  paging={paging}
                 />
-                <ShowMore state={state} onMore={() => void loadMore()} />
+                <PagingNotes notes={notes} />
               </Panel>
               <Callout kind="info">These are PSL’s decisions. Until a rule is set, the line that needs it stops as “Setup needed” instead of guessing.</Callout>
             </div>
@@ -71,7 +73,8 @@ function DeliveryRulesView() {
             <RuleList rows={items} />
           </div>
         )}
-        <ShowMore state={state} onMore={() => void loadMore()} />
+        <ShowMore solo {...paging} />
+        <PagingNotes notes={notes} />
       </div>
     </>
   );

@@ -136,3 +136,67 @@ export function useTypeahead() {
 export function isTypeaheadKey(event: KeyboardEvent): boolean {
   return event.key.length === 1 && event.key !== ' ' && !event.ctrlKey && !event.metaKey && !event.altKey;
 }
+
+/** The part of the screen a popover may use: the window, cut down by every ancestor that clips or scrolls (a drawer body). */
+function clipBounds(el: HTMLElement) {
+  let top = 0;
+  let left = 0;
+  let right = window.innerWidth;
+  let bottom = window.innerHeight;
+  for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+    const style = getComputedStyle(p);
+    if (!/(auto|scroll|hidden|clip)/.test(`${style.overflowX} ${style.overflowY}`)) continue;
+    const r = p.getBoundingClientRect();
+    top = Math.max(top, r.top);
+    left = Math.max(left, r.left);
+    right = Math.min(right, r.left + p.clientWidth);
+    bottom = Math.min(bottom, r.top + p.clientHeight);
+  }
+  return { top, left, right, bottom };
+}
+
+const EDGE = 8;
+
+/**
+ * D-167: a popover (calendar, menu, filter, list) always stays in view and never adds space to the page. Once it is drawn it
+ * is measured against the window and any scrolling box it sits in (a drawer): too far right or left, it slides back inside;
+ * no room below but more above, it opens upward (and the other way). Only inline left/right/top/bottom are set, so the
+ * component's own classes are untouched. Placed again when the window is resized.
+ */
+export function useKeepInView(ref: RefObject<HTMLElement | null>, open: boolean) {
+  useIsoLayoutEffect(() => {
+    const el = ref.current;
+    if (!open || !el) return undefined;
+    const place = () => {
+      el.style.left = '';
+      el.style.right = '';
+      el.style.top = '';
+      el.style.bottom = '';
+      const b = clipBounds(el);
+      const r = el.getBoundingClientRect();
+      let shift = 0;
+      if (r.right > b.right - EDGE) shift = b.right - EDGE - r.right;
+      if (r.left + shift < b.left + EDGE) shift = b.left + EDGE - r.left;
+      if (shift !== 0) {
+        el.style.left = `${el.offsetLeft + shift}px`;
+        el.style.right = 'auto';
+      }
+      const anchor = (el.offsetParent as HTMLElement | null)?.getBoundingClientRect();
+      if (!anchor) return;
+      const below = b.bottom - anchor.bottom;
+      const above = anchor.top - b.top;
+      const need = r.height + EDGE;
+      const up = r.bottom <= anchor.top + 1;
+      if (!up && need > below && above > below) {
+        el.style.top = 'auto';
+        el.style.bottom = 'calc(100% + var(--space-1))';
+      } else if (up && need > above && below > above) {
+        el.style.bottom = 'auto';
+        el.style.top = 'calc(100% + var(--space-1))';
+      }
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [open, ref]);
+}

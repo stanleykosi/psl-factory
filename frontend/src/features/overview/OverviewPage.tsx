@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, type ComponentType } from 'react';
+import { useState, type ComponentType, type KeyboardEvent } from 'react';
 
-import { AgentAvatar, Callout, EmptyState, ErrorState, formatDayTime, Link, Loading, PageTitle, Segmented, Tag, useIsPhone, VisuallyHidden, When } from '@/components';
+import { AgentAvatar, Button, Callout, EmptyState, ErrorState, formatDayTime, Link, Loading, PageTitle, Segmented, Tag, useIsPhone, VisuallyHidden, When } from '@/components';
 
+import { StationStrip } from '@/features/floor/StationStrip';
+import { useStationWork } from '@/features/floor/stationWork';
 import { webglAvailable, type FloorProps } from '@/features/floor/support';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -57,25 +59,76 @@ function LineName({ line, phone }: { line: string; phone: boolean }) {
 }
 
 // Rows are ARIA list items rather than <li>, as on the board, so a row's name, subtitle and tag read as its own text.
-function LineRows({ lines, phone }: { lines: readonly OverviewLine[]; phone: boolean }) {
+// D-165: in the flat view a station's square is a button. Click, tap or Enter opens that station's work under its line
+// (the 3D floor's strip, D-162), with each piece of work a link; the same press, the ×, or Esc closes it. Pointing only
+// highlights, so the rows never jump while the pointer crosses the squares. The copy behind the 3D floor stays plain text.
+function LineRows({ lines, phone, interactive = false }: { lines: readonly OverviewLine[]; phone: boolean; interactive?: boolean }) {
+  const [open, setOpen] = useState<{ line: string; name: string } | null>(null);
+  const openLine = open ? lines.find((l) => l.line === open.line) : undefined;
+  const found = openLine?.stations.find((s) => s.name === open?.name);
+  if (open && !found) setOpen(null);
+  const { state, retry, showAll } = useStationWork(open && found ? { line: open.line, station: open.name, count: found.count, needsPerson: found.needs_person } : null);
+  const stripId = (i: number) => `overview-station-${i}`;
+  const close = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    setOpen(null);
+  };
   return (
     <div role="list" className="overview__rows">
       {lines.map((l, i) => (
         <div role="listitem" key={`${i}-${l.line}`} className="overview__row">
           <LineName line={l.line} phone={phone} />
           <ol className="overview__track" aria-label={`${l.line} stations`}>
-            {l.stations.map((s, j) => (
-              <li key={`${j}-${s.name}`} className={`overview__station overview__station--${stationKind(s)}`}>
-                <span className="overview__sq" aria-hidden="true">
-                  {s.count > 0 ? s.count : null}
-                </span>
-                <VisuallyHidden>{stationText(s)}</VisuallyHidden>
-              </li>
-            ))}
+            {l.stations.map((s, j) => {
+              const isOpen = open?.line === l.line && open.name === s.name;
+              return (
+                <li key={`${j}-${s.name}`} className={`overview__station overview__station--${stationKind(s)}`}>
+                  {interactive ? (
+                    <Button
+                      kind="bare"
+                      className={`overview__sq overview__sq--button${isOpen ? ' is-open' : ''}`}
+                      aria-label={stationText(s)}
+                      aria-expanded={isOpen}
+                      aria-controls={isOpen ? stripId(i) : undefined}
+                      onClick={() => setOpen(isOpen ? null : { line: l.line, name: s.name })}
+                      onKeyDown={close}
+                    >
+                      {s.count > 0 ? s.count : null}
+                    </Button>
+                  ) : (
+                    <>
+                      <span className="overview__sq" aria-hidden="true">
+                        {s.count > 0 ? s.count : null}
+                      </span>
+                      <VisuallyHidden>{stationText(s)}</VisuallyHidden>
+                    </>
+                  )}
+                </li>
+              );
+            })}
           </ol>
           <span className="overview__tag">
             <Tag tone={tagTone(l)}>{l.note}</Tag>
           </span>
+          {interactive && open?.line === l.line && found && state && (
+            // Esc inside the list closes it; the list itself is not a control.
+            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+            <div id={stripId(i)} className="overview__open" onKeyDown={close}>
+              <StationStrip
+                line={l.line}
+                station={found.name}
+                count={found.count}
+                state={state}
+                pinned
+                pinLabel="Open"
+                closeLabel="Close station"
+                onUnpin={() => setOpen(null)}
+                onRetry={retry}
+                onShowAll={() => void showAll()}
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -198,7 +251,7 @@ function FactoryFloor() {
               </div>
             </>
           ) : (
-            <LineRows lines={data.lines} phone={phone} />
+            <LineRows lines={data.lines} phone={phone} interactive />
           )}
         </section>
       ) : (
@@ -220,7 +273,7 @@ function FactoryFloor() {
 
       {hasLines && !phone && (
         <p className="psl-hint overview__legend">
-          Each square is a station; dark squares hold work, orange ones need a person. The 3D floor shows the same lines with work moving
+          Each square is a station; dark squares hold work, orange ones need a person. Press a square to see its work. The 3D floor shows the same lines with work moving
           between stations. With reduced motion, this flat view is shown instead. The number in a square is how many items are there.
         </p>
       )}

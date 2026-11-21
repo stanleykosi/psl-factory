@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { Callout, EmptyState, PageTitle, ShowMore as ShowMoreBar, Tabs } from '@/components';
+import { EmptyState, PageTitle, Tabs, usePagedRows, type PageSize } from '@/components';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
@@ -68,37 +68,43 @@ export function RulesEmpty() {
   return <EmptyState title="No rules to show.">Rules your role may read will appear here.</EmptyState>;
 }
 
-/** What ShowMore reads of a list state; rules and templates both fit it. */
-type PagedState = { status: 'loading' | 'error' } | { status: 'ready'; items: unknown[]; nextCursor?: string; more: 'idle' | 'loading' | 'failed' };
+/** What the paging window reads of a list state; rules, templates and delegations all fit it. */
+type PagedState<T> = { status: 'loading' | 'error' } | { status: 'ready'; items: T[]; nextCursor?: string; more: 'idle' | 'loading' | 'failed' };
 
-/** Appends the next page; a failed page keeps the loaded rows and says so. */
-export function ShowMore({ state, onMore, noun = 'rules' }: { state: PagedState; onMore: () => void; noun?: string }) {
+/** The paging window over a setup list (10 rows first, grown in place by the footer) and what to say beside it. */
+export function useSetupPaging<T>(state: PagedState<T>, loadMore: (limit: PageSize) => Promise<void>, noun = 'rules') {
+  const ready = state.status === 'ready' ? state : undefined;
   const [pressed, setPressed] = useState(false);
+  const { rows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: Boolean(ready?.nextCursor),
+    busy: ready?.more === 'loading',
+    failed: ready?.more === 'failed',
+    loadMore: (limit) => void loadMore(limit),
+  });
+  const total = ready?.items.length ?? 0;
+  return {
+    items: rows,
+    paging: { ...paging, onMore: () => { setPressed(true); paging.onMore(); } },
+    notes: { failed: ready?.more === 'failed', last: Boolean(ready) && !paging.hasMore, pressed, total, noun },
+  };
+}
+
+type Notes = ReturnType<typeof useSetupPaging>['notes'];
+
+/** A failed page keeps the loaded rows and says so; after the last Show more the end of the list takes focus. */
+export function PagingNotes({ notes }: { notes: Notes }) {
   const end = useRef<HTMLSpanElement>(null);
-  const last = state.status === 'ready' && !state.nextCursor;
+  const done = notes.pressed && notes.last;
   // The last Show more unmounts its own button, which would drop focus to the page top; the end of the list takes it (QA-3-1).
   useEffect(() => {
-    if (pressed && last) end.current?.focus();
-  }, [pressed, last]);
-  if (state.status !== 'ready') return null;
+    if (done) end.current?.focus();
+  }, [done]);
   return (
     <>
-      {state.more === 'failed' && <Callout kind="problem">We couldn’t load more {noun}. Choose Show more to try again.</Callout>}
-      {state.nextCursor && (
-        <ShowMoreBar
-          className="setup-showmore"
-          shown={state.items.length}
-          hasMore
-          busy={state.more === 'loading'}
-          onMore={() => {
-            setPressed(true);
-            onMore();
-          }}
-        />
-      )}
-      {pressed && last && (
+      {done && (
         <span ref={end} tabIndex={-1} className="cmp-sr">
-          All {state.items.length} {noun} are shown.
+          All {notes.total} {notes.noun} are shown.
         </span>
       )}
     </>

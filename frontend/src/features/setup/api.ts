@@ -2,6 +2,7 @@
 import { api, call } from '@/api/client';
 import { ApiError, errorFromResponse, networkError } from '@/api/errors';
 import type { operations } from '@/api/schema';
+import type { PageSize } from '@/components';
 
 import type {
   DelegationBody,
@@ -18,7 +19,7 @@ import type {
 
 export type RulesArea = 'finance' | 'delivery';
 
-/** One page of E-SETUP-RULES. `cursor` is a proposal: v4 returns next_cursor but declares no cursor parameter. */
+/** One page of E-SETUP-RULES. `cursor` is a proposal: v4 returns next_cursor but declares no cursor parameter. No limit is sent: the paging footer reveals the loaded rows 10, 20 or 50 at a time. */
 export async function readRules(area?: RulesArea, cursor?: string): Promise<RulesPage> {
   const query: { area?: string; cursor?: string } = {};
   if (area) query.area = area;
@@ -44,7 +45,7 @@ export type FieldProblem = { name: string; message: string };
 /** An ApiError that also carries the 422 body's fields[] (the shared client keeps only code and message). */
 export type UploadError = ApiError & { fields?: FieldProblem[] };
 
-/** One page of E-TEMPLATES. `cursor` is a proposal: v7 returns next_cursor but declares no cursor parameter. */
+/** One page of E-TEMPLATES. `cursor` is a proposal: v7 returns next_cursor but declares no cursor parameter. No limit is sent: the paging footer reveals the loaded rows. */
 export async function readTemplates(cursor?: string): Promise<TemplatesPage> {
   const query = cursor ? { cursor } : {};
   return await call(api.GET('/api/v1/setup/templates', { params: { query: query as never } }));
@@ -67,9 +68,9 @@ export async function uploadTemplateVersion(templateId: string, body: TemplateUp
   throw error;
 }
 
-/** One page of E-DELEGATIONS with the overlay fields; `limit` is not sent (the board draws no rows-per-page). */
-export async function readDelegations(cursor?: string): Promise<DelegationsPage> {
-  const query = cursor ? { cursor } : {};
+/** One page of E-DELEGATIONS with the overlay fields. */
+export async function readDelegations(limit: PageSize, cursor?: string): Promise<DelegationsPage> {
+  const query = cursor ? { limit, cursor } : { limit };
   return (await call(api.GET('/api/v1/setup/delegations', { params: { query } }))) as DelegationsPage;
 }
 

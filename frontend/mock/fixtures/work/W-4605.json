@@ -1,0 +1,84 @@
+{
+  "id": "W-4605",
+  "title": "Payroll correction · HR Lead decision",
+  "line": "Payroll correction",
+  "reference": "PCR-0004",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Spot the difference",
+      "status": "done"
+    },
+    {
+      "name": "HR notes",
+      "status": "done"
+    },
+    {
+      "name": "HR Lead decides",
+      "status": "current_person"
+    },
+    {
+      "name": "Finance applies",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4605",
+      "kind": "do",
+      "title": "Decide the payroll correction",
+      "required_role": "HR Lead",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Found a staff member listed twice in the October matching",
+        "status": "done",
+        "source": "Matching result · October"
+      },
+      {
+        "text": "Wrote the correction for the HR Lead to decide (no amounts shown)",
+        "status": "done",
+        "source": "Correction note"
+      }
+    ]
+  },
+  "next_step": "Next, the HR Lead decides whether to correct the October matching. Amounts are not shown here.",
+  "sample": true
+}

@@ -30,6 +30,15 @@
 .overview__sq { width: 26px; height: 26px; box-sizing: border-box; border: var(--rule-strong) solid var(--ink); background: var(--surface); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--text-label-size); color: var(--on-strong); }
 .overview__station--work .overview__sq { background: var(--ink); }
 .overview__station--person .overview__sq { background: var(--signal); }
+/* D-165: a square is a button in the flat view; pointing highlights it, and the open one is ringed */
+.overview__sq--button { position: relative; padding: 0; cursor: pointer; font: inherit; font-family: var(--font-mono); font-size: var(--text-label-size); }
+.overview__sq--button:hover { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.overview__sq--button.is-open { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+/* the station's work opens under its line, across the whole row */
+/* a 44px press area around the square; the square itself keeps its drawn size */
+.overview__sq--button::after { content: ""; position: absolute; inset: -9px; }
+.overview__open { grid-column: 1 / -1; padding-top: var(--space-2); border-top: var(--rule-thin) solid var(--rule-soft); }
+.overview__open .floor__strip { min-height: 0; }
 .overview__tag { text-align: right; min-width: 0; }
 
 /* 3D floor: canvas the width of the Lines panel */
@@ -58,6 +67,7 @@
   .overview__sub { display: none; }
   .overview__track { grid-column: 1 / -1; grid-row: 2; gap: var(--space-1); }
   .overview__sq { width: 18px; height: 18px; font-size: 10px; }
+  .overview__sq--button::after { inset: -13px; }
   .overview-exceptions__head { flex-direction: column; gap: var(--space-6px); }
   .overview-exceptions h2 { font-size: var(--text-lead-size); }
 }

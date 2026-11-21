@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
+import { Button, EmptyState, FilterPanel, ListToolbar, PageTitle, ShowMore, Table, Tabs, Unknown, useIsPhone, usePagedRows, type Column, type ShowMoreProps } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -17,7 +17,6 @@ import {
   buildProjectsQuery,
   countOf,
   isProjectList,
-  LIMITS,
   LIST_TABS,
   nextMilestoneText,
   parseProjectsView,
@@ -72,8 +71,8 @@ const columns = (closed: boolean): Column<ProjectRowView>[] => [
 ];
 
 /** SCR-22 desktop: Project, PM, Where it is, Next milestone, Needs a person, Stopped. */
-function ProjectTable({ items, closed }: { items: ProjectRowView[]; closed: boolean }) {
-  return <Table className="projects__table" caption="Projects" columns={columns(closed)} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." />;
+function ProjectTable({ items, closed, paging }: { items: ProjectRowView[]; closed: boolean; paging: ShowMoreProps }) {
+  return <Table className="projects__table" caption="Projects" columns={columns(closed)} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." paging={paging} />;
 }
 
 /** The phone card's red line: "2 need a person · 1 stopped"; nothing when both are 0 or not carried. */
@@ -126,7 +125,6 @@ export function ProjectsList() {
 
   const seq = useRef(0);
   const focusRow = useRef<number | null>(null);
-  const focusLimit = useRef(false);
   const viewRef = useRef(view);
   const rowsRef = useRef<HTMLDivElement>(null);
 
@@ -161,15 +159,13 @@ export function ProjectsList() {
     [fetchPage],
   );
 
-  const showMore = async () => {
+  const showMore = async (limit: ProjectsView['limit']) => {
     if (list.status !== 'ready' || !list.nextCursor) return;
     const mine = seq.current;
-    const before = list.items.length;
     setMore('loading');
     try {
-      const data = await fetchPage(view, list.nextCursor);
+      const data = await fetchPage({ ...view, limit }, list.nextCursor);
       if (mine !== seq.current) return;
-      focusRow.current = before;
       setList((prev) => (prev.status !== 'ready' ? prev : { ...prev, items: [...prev.items, ...data.items], nextCursor: data.next_cursor }));
       setMore('idle');
     } catch (error) {
@@ -179,24 +175,46 @@ export function ProjectsList() {
     }
   };
 
+  // A new search or tab reloads from page 1; a new rows-per-page choice only grows or trims the shown rows.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const reloadView = useMemo(() => view, [view.q, view.tab]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load(reloadView);
+  }, [reloadView, load]);
   useEffect(() => {
     viewRef.current = view;
-    // A new view (search or rows per page) reloads from page 1.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load(view);
-  }, [view, load]);
+  }, [view]);
+
+  const listReady = list.status === 'ready' ? list : undefined;
+  // The total the result count already uses: the response's own, or the tab's count when nothing is searched.
+  const total = listReady ? (listReady.total ?? (view.q ? undefined : countOf(listReady.counts?.[view.tab]))) : undefined;
+  const { rows, paging: basePaging } = usePagedRows({
+    items: listReady?.items ?? [],
+    next: Boolean(listReady?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: `${view.q ?? ''}|${view.tab}`,
+    total,
+    size: view.limit,
+    onSize: (limit) => navigate({ limit }),
+  });
+  // Show more: the keyboard moves to the first row it added (not when the rows grow from a rows-per-page choice).
+  const paging = {
+    ...basePaging,
+    onMore: () => {
+      if (more !== 'error') focusRow.current = rows.length;
+      basePaging.onMore();
+    },
+  };
 
   useEffect(() => {
-    if (focusRow.current !== null && list.status === 'ready') {
+    if (focusRow.current !== null && list.status === 'ready' && rows.length > focusRow.current) {
       rowsRef.current?.querySelectorAll<HTMLElement>('[data-project-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-    // The footer is redrawn after a rows-per-page reload; the keyboard stays on the chosen option.
-    if (focusLimit.current && list.status !== 'loading') {
-      document.querySelector<HTMLElement>('.projects__rows [role="radio"][aria-checked="true"]')?.focus();
-      focusLimit.current = false;
-    }
-  }, [list]);
+  }, [list, rows.length]);
 
   // Search: the box keeps what the person typed; the URL takes the settled search (SearchField's pause).
   const [text, setText] = useState(view.q ?? '');
@@ -214,10 +232,6 @@ export function ProjectsList() {
     navigate({ q: undefined });
   };
 
-  const changeLimit = (value: string) => {
-    focusLimit.current = true;
-    navigate({ limit: Number(value) as (typeof LIMITS)[number] });
-  };
   const closeFilter = useCallback(() => setFilterOpen(false), []);
 
   if (signedOut) return <SignedOutState pathname="/projects" />;
@@ -254,22 +268,14 @@ export function ProjectsList() {
   } else {
     body = (
       <>
-        <div ref={rowsRef}>{phone ? <ProjectCards items={list.items} /> : <ProjectTable items={list.items} closed={view.tab === 'closed'} />}</div>
-        <div className="projects__foot">
-          <ShowMore className="projects__showmore" shown={list.items.length} total={list.nextCursor ? undefined : list.items.length} hasMore={Boolean(list.nextCursor)} busy={more === 'loading'} onMore={() => void showMore()} />
-          <span className="projects__rows">
-            <span className="projects__rowslabel" aria-hidden="true">
-              ROWS PER PAGE
-            </span>
-            <Segmented label="Rows per page" phone={phone} options={LIMITS.map((n) => ({ value: String(n), label: String(n) }))} value={String(view.limit)} onChange={changeLimit} />
-          </span>
-          {more === 'error' && (
-            <Callout kind="problem" className="projects__morefail">
-              We couldn&rsquo;t load more. Nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => void showMore()}>
-                Try again
-              </Button>
-            </Callout>
+        <div ref={rowsRef}>
+          {phone ? (
+            <>
+              <ProjectCards items={rows} />
+              <ShowMore solo {...paging} />
+            </>
+          ) : (
+            <ProjectTable items={rows} closed={view.tab === 'closed'} paging={paging} />
           )}
         </div>
         <p className="projects__note">You see projects your roles cover. Open one for its journey, documents, money and registers.</p>
@@ -280,7 +286,6 @@ export function ProjectsList() {
   const counts = list.status === 'ready' ? list.counts : undefined;
   // The count beside the search is the result's (UX-2-1): `total` matches the tab and the search; without it, the
   // tab's count stands in only when no search is active.
-  const total = list.status !== 'ready' ? undefined : (list.total ?? (view.q ? undefined : countOf(counts?.[view.tab])));
 
   return (
     <div className="projects__page">

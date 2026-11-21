@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "at": "2026-11-18T13:10:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked the HR Lead to approve",
+      "restricted": false,
+      "detail": "Change moves Chinedu Eze to Delivery from 1 December",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T13:05:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Checked the change",
+      "restricted": false,
+      "detail": "The project team agrees; Delivery has an open place",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-18T13:01:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T13:00:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Proposed the change",
+      "restricted": false,
+      "detail": "Reason: joined the Kora Logistics team full time",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-18T12:58:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the request",
+      "restricted": false,
+      "detail": "change_request_chinedu_eze.pdf",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-18T12:55:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From a staff record change request"
+    }
+  ],
+  "as_of": "2026-11-18T15:00:00Z"
+}

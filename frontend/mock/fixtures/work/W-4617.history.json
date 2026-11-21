@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "at": "2026-11-04T12:00:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Verified",
+      "restricted": false,
+      "detail": "Record reread: new unit shown"
+    },
+    {
+      "at": "2026-11-04T11:40:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Updated the staff record",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-04T11:20:00Z",
+      "actor_kind": "person",
+      "actor": "Ngozi Adeyemi · HR Lead",
+      "event": "Approved the change",
+      "restricted": false,
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-04T11:00:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked the HR Lead to approve",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-04T10:50:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-04T10:45:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From a change request"
+    }
+  ],
+  "as_of": "2026-11-18T15:00:00Z"
+}

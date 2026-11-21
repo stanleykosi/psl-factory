@@ -5,9 +5,9 @@
 import Link from 'next/link';
 import { useRef } from 'react';
 
-import { Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
+import { ShowMore, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
 
-import { AmountValue, AsOf, NONE, TabEmpty, RowLink, RowsFooter, tabStateView } from './TabParts';
+import { AmountValue, AsOf, NONE, TabEmpty, RowLink, useTabPaging, tabStateView } from './TabParts';
 import {
   completionText,
   hasChanges,
@@ -139,24 +139,27 @@ function MilestoneCards({ rows }: { rows: MilestoneRow[] }) {
 export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: string }) {
   const phone = useIsPhone();
   const { state, more, showMore, retry } = useProjectTab(caseId, 'milestones', VIEW);
+  const { rows: pagedRows, paging } = useTabPaging(state, more, showMore, '');
   const rowsRef = useRef<HTMLDivElement>(null);
-  useFocusAfterMore(rowsRef, state.status === 'ready' ? state.rows.length : 0);
+  useFocusAfterMore(rowsRef, pagedRows.length);
   const shown = tabStateView(state, { retry, signInPath: pathname });
   if (state.status !== 'ready') return <>{shown}</>;
 
-  const { rows } = state;
+  const rows = pagedRows;
   return (
     <>
       <div ref={rowsRef} className="ptabs__rows">
         {rows.length === 0 ? (
           <TabEmpty>No milestones on this project yet.</TabEmpty>
         ) : phone ? (
-          <MilestoneCards rows={rows} />
+          <>
+            <MilestoneCards rows={rows} />
+            <ShowMore solo {...paging} />
+          </>
         ) : (
-          <Table className="ptabs__table" tableClassName={hasChanges(rows) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(hasChanges(rows))} rows={rows} rowKey={rowKey} empty="No milestones on this project yet." />
+          <Table className="ptabs__table" tableClassName={hasChanges(rows) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(hasChanges(rows))} rows={rows} rowKey={rowKey} empty="No milestones on this project yet." paging={paging} />
         )}
       </div>
-      <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />
       {rows.length > 0 && <AsOf value={state.asOf} />}
       <p className="ptabs__note">
         Milestones and amounts come from the signed SOW. Completing a milestone is the PM&rsquo;s fact; invoicing and payment are Finance&rsquo;s, and each is shown separately.

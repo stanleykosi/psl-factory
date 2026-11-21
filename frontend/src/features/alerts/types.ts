@@ -15,6 +15,8 @@ export type PrefsBody = NonNullable<operations['E-ALERT-PREFS']['requestBody']>[
 
 /**
  * PROPOSAL: not in v7. An E-NOTIFICATIONS item that may carry `needs_you`: true when the alert waits on this person
- * (a decision or an exception). The backend adds it through the contract-change route; until then it is absent.
+ * (a decision or an exception). It may also carry `case_id` (D-164): an alert about a project (a won RFP made it) then opens
+ * that project instead of its work item. The backend adds both through the contract-change route; until then they are absent.
  */
-export type AlertWithNeed = Alert & { needs_you?: boolean };
+export type AlertWithNeed = Alert & { needs_you?: boolean; case_id?: string };
+

@@ -104,7 +104,7 @@ const names = () =>
     .map((tr) => tr.querySelector('td strong')?.textContent);
 const UPLOAD = "Upload PSL's version";
 const panel = () => within(desktop().getByRole('region', { name: /^Upload a version of/ }));
-const announced = () => document.querySelector('[aria-live="polite"]')?.textContent;
+const announced = () => document.querySelector('.psl-toast')?.textContent; // D-151: the toast, which is announced as a status
 const withRows = (page: TemplatesPage, change: (rows: TemplateRow[]) => TemplateRow[], extra: Partial<TemplatesPage> = {}): TemplatesPage => ({ ...page, ...extra, items: change(structuredClone(page.items)) });
 const pdf = (name = 'invoice-v2.pdf', content: BlobPart = new Uint8Array([0x25, 0x50, 0x44, 0x46])) => new File([content], name, { type: 'application/pdf' });
 
@@ -239,12 +239,13 @@ describe('badge and copy follow test_template (AC 5)', () => {
   });
 
   it('with next_cursor: no banner and the count reads SHOWN', async () => {
-    answers.list = () => json(200, { ...fixture('desktop'), next_cursor: 'o:8' });
+    const many = fixture('many');
+    answers.list = () => json(200, { ...many, items: many.items.slice(0, 10), next_cursor: 'o:10' });
     await open();
     expect(document.body.textContent).not.toMatch(/Every document currently|All \d+ are test templates/);
-    expect(desktop().getByText('8 SHOWN · 8 TEST')).toBeTruthy();
+    expect(desktop().getByText('10 SHOWN · 10 TEST')).toBeTruthy();
     fireEvent.change(desktop().getByRole('searchbox', { name: 'Search' }), { target: { value: 'in' } });
-    expect(desktop().getByText('Searching the 8 shown')).toBeTruthy();
+    expect(desktop().getByText('Searching the 10 shown')).toBeTruthy();
   });
 
   it('a test_template that is not a boolean reads as a test template', async () => {
@@ -273,7 +274,7 @@ describe('upload gating (AC 6, 14)', () => {
     answers.list = () => json(200, fixture('readonly'));
     await open();
     expect(screen.queryAllByRole('button', { name: /Upload/ })).toHaveLength(0);
-    expect(document.querySelectorAll('.setup-table button, .setup-card button')).toHaveLength(0);
+    expect(document.querySelectorAll('.setup-table button:not(.psl-seg__opt), .setup-card button')).toHaveLength(0);
     expect(names()).toHaveLength(8);
     expect(desktop().getAllByText('TEST TEMPLATE')).toHaveLength(8);
     expect(document.body.textContent).not.toMatch(/not allowed|can’t upload|read-only/i);
@@ -625,7 +626,7 @@ describe('other failures (AC 11)', () => {
     await open();
     choose(await openPanel('Invoice'), pdf());
     send();
-    await waitFor(() => expect(desktop().getByText('The upload went through.')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('The upload went through.')).toBeTruthy());
     expect(uploads()).toHaveLength(1);
     expect(lists()).toHaveLength(2);
     expect(desktop().queryByRole('region', { name: /^Upload a version of/ })).toBeNull();
@@ -711,7 +712,11 @@ describe('paging (AC 13)', () => {
   it('Show more appears only with next_cursor, sends the cursor as returned and appends in order', async () => {
     answers.list = (_, c) => json(200, pageOf(new URLSearchParams(c.query).get('cursor')));
     await open();
+    expect(names()).toHaveLength(10);
+    // the server's page of 50 is already loaded: a larger choice shows its rows without a request
+    fireEvent.click(desktop().getByRole('radio', { name: '50' }));
     expect(names()).toHaveLength(50);
+    expect(lists()).toHaveLength(1);
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(names()).toHaveLength(60));
     expect(lists()[1].query).toBe('?cursor=o%3A50');
@@ -732,16 +737,17 @@ describe('paging (AC 13)', () => {
     };
     answers.upload = (_, c) => json(200, { template_id: decodeURIComponent(c.path.split('/')[5]), version: '2', test_template: true, revision: 2 });
     await open();
+    fireEvent.click(desktop().getByRole('radio', { name: '50' }));
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(desktop().getByText('We couldn’t load more templates. Choose Show more to try again.')).toBeTruthy());
+    await waitFor(() => expect(desktop().getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
     expect(names()).toHaveLength(50);
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(names()).toHaveLength(60));
     choose(await openPanel('Sample template 1'), pdf());
     send();
-    await waitFor(() => expect(names()).toHaveLength(50));
-    expect(lists().at(-1)!.query).toBe('');
-    expect(desktop().getByRole('button', { name: 'Show more' })).toBeTruthy();
+    // the first page is read again, and the rows the person had asked for are fetched back by cursor
+    await waitFor(() => expect(lists().slice(-2).map((c) => c.query)).toEqual(['', '?cursor=o%3A50']));
+    await waitFor(() => expect(names()).toHaveLength(60));
   });
 });
 

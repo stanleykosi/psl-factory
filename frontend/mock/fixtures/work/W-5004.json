@@ -1,0 +1,87 @@
+{
+  "id": "W-5004",
+  "title": "Lagoon Health · Escalate and communicate",
+  "line": "Escalate and communicate",
+  "reference": "ESC-0031",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Capture the issue",
+      "status": "done"
+    },
+    {
+      "name": "Draft the client message",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "done"
+    },
+    {
+      "name": "CEO decides",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "current"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-5004",
+      "kind": "do",
+      "title": "Decide how to answer the client sponsor",
+      "required_role": "CEO",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the client’s complaint",
+        "status": "done",
+        "source": "Client email"
+      },
+      {
+        "text": "Drafted the message to the sponsor",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "You decide whether to speak to the client sponsor yourself. Tola then sends the approved message.",
+  "sample": true
+}

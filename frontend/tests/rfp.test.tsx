@@ -636,8 +636,7 @@ describe('outcome guards', () => {
     fireEvent.click(button('Save as unknown'));
     await screen.findByText('Check these fields: learned_at.');
     expect(gets()).toBe(before);
-    expect((screen.getByLabelText('Last contact with the client') as HTMLInputElement).value).toBe('4 Dec 2026');
-    expect((screen.getByLabelText('Last contact with the client, time') as HTMLInputElement).value).toBe('11:00');
+    expect(screen.getByLabelText('Last contact with the client').textContent).toBe('4 Dec 2026, 11:00');
   });
 
   it('403 reloads and removes the form with the server message', async () => {
@@ -703,8 +702,10 @@ describe('outcome guards', () => {
     await openOutcome();
     await fillOutcome('Won');
     fireEvent.click(button('Record won'));
-    await screen.findByText('Outcome recorded.');
-    expect(screen.getByRole('status').textContent).toBe('Outcome recorded. Won');
+    await waitFor(() => expect(document.querySelector('.psl-toast')?.textContent).toBe('Outcome recorded. Won'));
+    expect(text()).toContain('What was recorded');
+    expect(text()).toContain('Outcome: Won');
+    expect(document.querySelector('.psl-callout--success')).toBeNull();
     expect(text()).not.toContain('What’s recorded');
   });
 

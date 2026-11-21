@@ -347,9 +347,13 @@ describe('history', () => {
     );
     await open('W-1004', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    expect(historyUrls()[0].search).toBe('?kind=all&limit=20');
+    expect(historyUrls()[0].search).toBe('?kind=all&limit=10');
+    expect(rows()).toHaveLength(10);
+    // the page holds 12 rows; 20 rows per page shows them all, with no request
+    fireEvent.click(screen.getByRole('radio', { name: '20' }));
     const shown = rows();
     expect(shown).toHaveLength(12);
+    expect(historyUrls()).toHaveLength(1);
     expect(shown.map((tr) => tr.querySelector('time')!.getAttribute('dateTime'))).toEqual(page.items.map((e) => e.at));
     expect(shown[0].querySelector('time')!.textContent).toBe('12 Nov 16:40');
     expect(shown[0].textContent).toBe('12 Nov 16:40PERSON Ada Okafor · Finance LeadApproved invoice v2Note: "Matches SOW-0198 stage 3."Version: v2');
@@ -399,7 +403,9 @@ describe('history', () => {
       ['BUTTON', 'radio', 'Decisions'],
       ['BUTTON', 'radio', 'Agent work'],
       ['BUTTON', 'radio', 'Evidence'],
-      ['BUTTON', 'combobox', '20'],
+      ['BUTTON', 'radio', '10'],
+      ['BUTTON', 'radio', '20'],
+      ['BUTTON', 'radio', '50'],
       ['BUTTON', null, 'Show more'],
     ]);
     expect(within(screen.getByRole('table')).queryAllByRole('link')).toEqual([]);
@@ -417,10 +423,10 @@ describe('history', () => {
     expect(screen.getByRole('tablist', { name: 'Work item' })).toBeTruthy();
     expect(screen.getByText('Reference unavailable for support.')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await waitFor(() => expect(rows()).toHaveLength(12));
+    await waitFor(() => expect(rows()).toHaveLength(10));
   });
 
-  it('filter, rows per page and Show more send kind, limit and cursor; Show more appends and then goes', async () => {
+  it('filter, rows per page and Show more send kind, limit and cursor; a larger size fetches only the missing rows; Show more goes when all show', async () => {
     const all = history('W-1004').items;
     serve(
       () => json(200, item('W-1004')),
@@ -433,26 +439,32 @@ describe('history', () => {
     );
     await open('W-1004', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    expect(rows()).toHaveLength(10);
+    expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('radio', { name: 'Decisions' }));
     await waitFor(() => expect(historyUrls()).toHaveLength(2));
-    expect(historyUrls()[1].search).toBe('?kind=decisions&limit=20');
+    expect(historyUrls()[1].search).toBe('?kind=decisions&limit=10');
     expect(screen.getByRole('radio', { name: 'Decisions' }).getAttribute('aria-checked')).toBe('true');
 
     fireEvent.click(screen.getByRole('radio', { name: 'All' }));
     await waitFor(() => expect(historyUrls()).toHaveLength(3));
-    fireEvent.click(screen.getByRole('combobox', { name: 'Rows per page' }));
-    fireEvent.click(screen.getByRole('option', { name: '10' }));
-    await waitFor(() => expect(historyUrls()).toHaveLength(4));
-    expect(historyUrls()[3].search).toBe('?kind=all&limit=10');
     await waitFor(() => expect(rows()).toHaveLength(10));
-
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    const firstRows = rows();
+    fireEvent.click(screen.getByRole('radio', { name: '20' }));
     await waitFor(() => expect(rows()).toHaveLength(12));
-    expect(historyUrls()[4].search).toBe('?kind=all&limit=10&cursor=o%3A10');
+    expect(historyUrls()[3].search).toBe('?kind=all&limit=10&cursor=o%3A10');
     expect(rows().map((tr) => tr.querySelector('time')!.getAttribute('dateTime'))).toEqual(all.map((e) => e.at));
+    firstRows.forEach((tr, i) => expect(rows()[i]).toBe(tr));
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole('radio', { name: '20' }));
+
+    // a smaller choice trims without a request; Show more then shows the rows already loaded
+    fireEvent.click(screen.getByRole('radio', { name: '10' }));
+    expect(rows()).toHaveLength(10);
+    fireEvent.click(screen.getByRole('button', { name: 'Show 2 more' }));
+    expect(rows()).toHaveLength(12);
+    expect(historyUrls()).toHaveLength(4);
   });
 
   it('arrow keys move through the filter and choose', async () => {
@@ -464,7 +476,7 @@ describe('history', () => {
     fireEvent.keyDown(allOption, { key: 'ArrowLeft' });
     await waitFor(() => expect(screen.getByRole('radio', { name: 'Evidence' }).getAttribute('aria-checked')).toBe('true'));
     await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'Evidence' })));
-    await waitFor(() => expect(historyUrls().at(-1)!.search).toBe('?kind=evidence&limit=20'));
+    await waitFor(() => expect(historyUrls().at(-1)!.search).toBe('?kind=evidence&limit=10'));
   });
 
   it('an empty filter says nothing is recorded yet', async () => {
@@ -588,7 +600,7 @@ describe('updates (D-UPDATES r2)', () => {
     await advance(5000); // revision 4
     await settle();
     expect(historyUrls()).toHaveLength(2);
-    expect(historyUrls()[1].search).toBe('?kind=all&limit=20');
+    expect(historyUrls()[1].search).toBe('?kind=all&limit=10');
     await advance(5000); // still 4
     expect(historyUrls()).toHaveLength(2);
   });

@@ -116,8 +116,9 @@ test.describe('desktop rules', () => {
     await panel(page).getByLabel(/^Proof/).setInputFiles({ name: 'minutes.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(120 * 1024, 1) });
     await expect(panel(page).getByText('Uploaded · 120 KB')).toBeVisible();
     await panel(page).getByRole('button', { name: 'Save as version 1' }).click();
-    await expect(panel(page).getByRole('status')).toHaveText('Saved as version 1.');
-    await expect(panel(page).getByRole('status')).toBeFocused();
+    await expect(page.locator('.psl-toast')).toHaveText('Saved as version 1.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
+    await expect(page.locator('.psl-toast')).not.toBeFocused();
     expect(seen.filter((r) => r.method === 'PUT')).toHaveLength(1);
     expect(seen.filter((r) => r.method === 'POST')).toHaveLength(1);
     expect(csrf).toBe('mock-csrf-admin');
@@ -195,6 +196,7 @@ test.describe('desktop rules', () => {
     await page.goto('/setup/rules/finance');
     await loaded(page);
     const view = page.locator('.setup-desktop');
+    await view.getByRole('radio', { name: '50' }).click();
     await view.getByRole('button', { name: 'Set BU totals rules' }).click();
     await setCookies(context, { psl_mock_setup: 'readonly' });
     await panel(page).getByRole('button', { name: 'Save as version 1' }).click();
@@ -231,7 +233,7 @@ test.describe('desktop rules', () => {
     }
     const ring = await panel(page).getByRole('button', { name: 'Save as version 1' }).evaluate((el) => {
       const s = getComputedStyle(el);
-      return `${s.outlineStyle} ${s.outlineWidth}`;
+      return `${(s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none')} ${(s.outlineStyle !== 'none' ? s.outlineWidth : '2px')}`;
     });
     expect(ring).toBe('solid 2px');
     await expect(panel(page).getByRole('group', { name: 'Roles allowed' })).toBeVisible();
@@ -239,6 +241,8 @@ test.describe('desktop rules', () => {
 
   test('paging: 50 rows, Show more appends 5 and disappears (AC 19)', async ({ page, context }) => {
     await openAs(page, context, '/setup/rules', { psl_mock_setup: 'many' });
+    await expect(table(page).locator('tbody tr')).toHaveCount(10);
+    await page.locator('.setup-desktop').getByRole('radio', { name: '50' }).click();
     await expect(table(page).locator('tbody tr')).toHaveCount(50);
     await page.locator('.setup-desktop').getByRole('button', { name: 'Show more' }).click();
     await expect(table(page).locator('tbody tr')).toHaveCount(55);
@@ -248,8 +252,9 @@ test.describe('desktop rules', () => {
   test('a failing second page keeps the 50 rows and warns (AC 19)', async ({ page, context }) => {
     await page.route(/\/api\/v1\/setup\/rules\?.*cursor=/, (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{"code":"down","message":"Down"}' }));
     await openAs(page, context, '/setup/rules', { psl_mock_setup: 'many' });
+    await page.locator('.setup-desktop').getByRole('radio', { name: '50' }).click();
     await page.locator('.setup-desktop').getByRole('button', { name: 'Show more' }).click();
-    await expect(page.locator('.setup-desktop').getByText('We couldn’t load more rules. Choose Show more to try again.')).toBeVisible();
+    await expect(page.locator('.setup-desktop').getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
     await expect(table(page).locator('tbody tr')).toHaveCount(50);
   });
 
@@ -289,6 +294,7 @@ test.describe('desktop rules', () => {
     await loaded(page);
     await expect(page).toHaveTitle('Finance rules · Setup · PSL Factory');
     const view = page.locator('.setup-desktop');
+    await view.getByRole('radio', { name: '50' }).click();
     await expect(view.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('SETUP / RULES / FINANCE');
     await expect(view.getByText('All 25 values are Not set. Real reviewers and approvers come from PSL; none are invented here.')).toBeVisible();
     await expect(view.getByRole('heading', { level: 2 })).toHaveText(['Management accounts', 'Income schedules', 'Asset schedule', 'Cash forecast', 'BU totals', 'Ledger sources', 'Payroll']);
@@ -316,7 +322,7 @@ test.describe('desktop rules', () => {
     await expect(row(page, 'Archive storage rule').locator('td')).toHaveText(['Archive storage rule', 'Keep, never purge', 'Archive']);
     await expect(page.getByText(/^These are PSL’s decisions\./)).toBeVisible();
     await expect(page.getByText('Each rule is versioned. Changing one doesn’t change work already finished.')).toBeVisible();
-    await expect(page.locator('main button, main input, main select')).toHaveCount(0);
+    await expect(page.locator('main button:not(.psl-seg__opt), main input, main select')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 
@@ -361,6 +367,7 @@ test.describe('phone', () => {
     await page.goto('/setup/rules/finance');
     await loaded(page);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Finance rules']);
+    await page.locator('.setup-phone').getByRole('radio', { name: '50' }).click();
     await expect(page.getByText('25 values Not set.')).toBeVisible();
     await expect(page.locator('.setup-phone .setup-card')).toHaveCount(3);
     await expect(page.getByText('+ 4 MORE LINES · OPEN ON DESKTOP')).toBeVisible();

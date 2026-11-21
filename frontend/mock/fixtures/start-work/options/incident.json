@@ -7,7 +7,99 @@
       "_parent": "P-0102",
       "_personas": [
         "pm",
-        "ceo"
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0050",
+      "label": "INC-0050 · Checkout times out at peak",
+      "sample": true,
+      "_parent": "P-0101",
+      "_personas": [
+        "pm",
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0051",
+      "label": "INC-0051 · Push alerts not delivered",
+      "sample": true,
+      "_parent": "P-0103",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0052",
+      "label": "INC-0052 · Reports page returns 500",
+      "sample": true,
+      "_parent": "P-0104",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0053",
+      "label": "INC-0053 · Logins rejected after the update",
+      "sample": true,
+      "_parent": "P-0105",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0054",
+      "label": "INC-0054 · Sync stuck on older devices",
+      "sample": true,
+      "_parent": "P-0106",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0055",
+      "label": "INC-0055 · Card payments declined twice",
+      "sample": true,
+      "_parent": "P-0107",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0056",
+      "label": "INC-0056 · Search returns no results",
+      "sample": true,
+      "_parent": "P-0108",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0057",
+      "label": "INC-0057 · Exports missing yesterday's rows",
+      "sample": true,
+      "_parent": "P-0109",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "INC-0058",
+      "label": "INC-0058 · Checkout times out at peak",
+      "sample": true,
+      "_parent": "P-0110",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
       ]
     }
   ]

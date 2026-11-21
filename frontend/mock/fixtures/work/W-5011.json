@@ -1,0 +1,79 @@
+{
+  "id": "W-5011",
+  "title": "Lagoon Health · Discovery plan",
+  "line": "Plan a project",
+  "reference": "PLN-0044",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Costing",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "done"
+    },
+    {
+      "name": "CEO approval",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "earned"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned"
+    },
+    {
+      "name": "verified",
+      "status": "earned"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Sent the approved plan to the client",
+        "status": "done",
+        "source": "Plan v2"
+      },
+      {
+        "text": "Recorded the client’s receipt",
+        "status": "done",
+        "source": "Client reply"
+      }
+    ]
+  },
+  "next_step": "Done. The discovery plan was approved, sent and the client’s receipt is recorded.",
+  "sample": true
+}

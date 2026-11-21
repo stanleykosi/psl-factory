@@ -1,10 +1,9 @@
-// The three.js factory floor, concept 3 "tilted swimlane board" (decision D-01; reference: concept 3 in
+// The three.js factory floor, concept 1 "isometric conveyor" (decision D-152; reference: the CONVEYOR scene in
 // design/concepts/floor-3d-concepts.html). Only Floor3D imports this file.
-// The approved flat board leaned back like a drafting table: lines are rows top to bottom, stations are
-// cards left to right in returned order, and work items are dark tiles stacked on each card (at most 10;
-// the label above the card carries the exact count). The card under the pointer or keyboard focus lifts,
-// and the board leans gently toward the pointer. Rendering is on demand: frames run only while something
-// moves (a lift, the lean, a drag, or the 280 ms change when a poll alters a station) and then stop.
+// A fixed orthographic camera looks down at an angle. Each line is a belt, running left to right, and each station a
+// machine on it, in returned order. The stack of white blocks on a machine is the waiting count (at most 8, so tall
+// stacks stay readable; the label above carries the exact number). A station that needs a person is an orange
+// machine with a lamp. Boxes ride the belts left to right while the tab is visible; with reduced motion nothing moves.
 // No agents are drawn: E-OVERVIEW does not say where an agent works.
 import {
   BoxGeometry,
@@ -16,10 +15,11 @@ import {
   LineBasicMaterial,
   LineSegments,
   Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   Object3D,
+  OrthographicCamera,
   PCFSoftShadowMap,
-  PerspectiveCamera,
   Raycaster,
   Scene,
   Vector2,
@@ -31,84 +31,92 @@ import {
 import { tagTone } from '@/features/overview/lines';
 import type { OverviewLine, OverviewStation } from '@/features/overview/types';
 
-import { describeStation, diffCounts } from './support';
+import { describeStation } from './support';
 
 /** Design tokens read from CSS custom properties at mount. */
 export type FloorStyle = {
   ink: string;
+  belt: string;
   signal: string;
   signalTint: string;
   surface: string;
-  steel: string;
-  ruleSoft: string;
   board: string;
   plate: string;
-  tileEdge: string;
+  muted: string;
+  focus: string;
 };
 
 const SPAN = 13.2; // first to last station, in scene units
-const GAP = 1.95; // between lines
-const LIFT = 0.55;
-const TILE_STEP = 0.13;
-const MAX_TILES = 10;
-const MOVE_MS = 280;
-const RISE = 0.3;
-const VIEW = { fov: 28, yaw: -0.2, pitch: 0.98, yawMin: -0.6, yawMax: 0.6, pitchMin: 0.62, pitchMax: 1.32 };
+const GAP = 3.3; // between belts
+const BELT = SPAN + 2.8;
+const MAX_BLOCKS = 8;
+const BLOCK = 0.6;
+const SLATS = 18;
+const LIFT = 0.4; // how far a machine rises under the pointer or keyboard focus
+const VIEW = { yaw: 0.42, pitch: 0.72, yawMin: -0.3, yawMax: 1.2, pitchMin: 0.32, pitchMax: 1.2 };
+const STEP = 0.16; // one key press: yaw moves 1.5 steps, pitch one
 
-type Card = {
+type Machine = {
   key: string;
   line: string;
   value: OverviewStation;
-  group: Group;
-  base: Mesh<BoxGeometry, MeshLambertMaterial>;
-  edges: LineSegments<EdgesGeometry, LineBasicMaterial>;
-  stripe: Mesh | null;
-  tiles: Mesh<BoxGeometry, MeshLambertMaterial>[];
+  parts: Group;
+  hits: Mesh[];
+  body: Mesh | null;
+  lamp: Mesh | null;
+  x: number;
+  z: number;
   anchor: Object3D;
   chip: HTMLButtonElement;
 };
-type Label = { el: HTMLElement; anchor: Object3D; align: 'bottom' | 'center' };
-type Move = { mesh: Mesh<BoxGeometry, MeshLambertMaterial>; y0: number; y1: number; o0: number; o1: number; remove: boolean };
+type Label = { el: HTMLElement; anchor: Object3D; align: 'bottom' | 'right' };
+type Mover = { mesh: Mesh; x1: number; x2: number; k: number };
+type Slat = { mesh: Mesh; k: number };
 
 const stationKey = (line: string, name: string) => `${line}\u0000${name}`;
 const shapeOf = (lines: readonly OverviewLine[]) => JSON.stringify(lines.map((l) => [l.line, l.stations.map((s) => s.name)]));
 const stationX = (i: number, n: number) => -SPAN / 2 + (n < 2 ? 0 : (i / (n - 1)) * SPAN);
-const easeOut = (t: number) => 1 - (1 - t) ** 3;
+const frac = (x: number) => x - Math.floor(x);
 const reducedMotion = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clampView = (v: { yaw: number; pitch: number }) => ({
+  yaw: Math.max(VIEW.yawMin, Math.min(VIEW.yawMax, v.yaw)),
+  pitch: Math.max(VIEW.pitchMin, Math.min(VIEW.pitchMax, v.pitch)),
+});
 
-function disposeTree(root: Object3D) {
-  root.traverse((node) => {
-    const { geometry, material } = node as Partial<Mesh>;
-    geometry?.dispose();
-    for (const m of (Array.isArray(material) ? material : material ? [material] : []) as Material[]) m.dispose();
-  });
-}
-
-export type FloorCallbacks = { onReadout: (text: string | null, needsPerson: boolean) => void };
+/** A station on the floor, by line and station name. */
+export type StationRef = { line: string; name: string };
+/** `onPreview`: the station under the pointer or keyboard focus (null when none). `onPin`: a click, tap, Enter or Space on a station. */
+export type FloorCallbacks = { onPreview: (station: StationRef | null) => void; onPin: (station: StationRef) => void };
 
 export class FloorScene {
   private readonly renderer: WebGLRenderer;
   private readonly scene = new Scene();
-  private readonly camera = new PerspectiveCamera(VIEW.fov, 1, 0.1, 400);
+  private readonly camera = new OrthographicCamera(-10, 10, 10, -10, 0.1, 400);
   private readonly raycaster = new Raycaster();
   private readonly c: Record<keyof FloorStyle, Color>;
   private root = new Group();
-  private cards = new Map<string, Card>();
+  private geometries = new Map<string, BoxGeometry>();
+  private edgeGeometries = new Map<BoxGeometry, EdgesGeometry>();
+  private materials = new Map<string, Material>();
+  private machines = new Map<string, Machine>();
+  private rows: Machine[][] = [];
+  private lineTags: HTMLElement[] = [];
   private labels: Label[] = [];
+  private slats: Slat[] = [];
+  private movers: Mover[] = [];
+  private moverGroup = new Group();
   private prev: readonly OverviewLine[] | null = null;
   private shape = '';
   private view = { yaw: VIEW.yaw, pitch: VIEW.pitch };
   private target = new Vector3();
-  private dist = 30;
+  private dist = 80;
   private fitPoints: Vector3[] = [];
   private size = { width: 1, height: 1 };
-  private hover: Card | null = null;
-  private focus: Card | null = null;
-  private pointer: { x: number; y: number } | null = null;
+  private hover: Machine | null = null;
+  private focus: Machine | null = null;
+  private pinnedKey: string | null = null;
   private drag: { x: number; y: number; moved: boolean } | null = null;
-  private tilt = { x: 0, z: 0 };
-  private moves: Move[] = [];
-  private moveStart = 0;
+  private time = 0;
   private frame = 0;
   private last = 0;
   private readonly unbind: () => void;
@@ -132,23 +140,52 @@ export class FloorScene {
     sun.position.set(-6, 14, 9);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
-    Object.assign(sun.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 50 });
+    Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 22, bottom: -22, near: 1, far: 50 });
     sun.shadow.bias = -0.0008;
     this.scene.add(sun);
     this.scene.add(this.root);
     this.unbind = this.bind();
   }
 
-  private box(parent: Object3D, w: number, h: number, d: number, x: number, y: number, z: number, color: Color, edge?: Color) {
-    const geometry = new BoxGeometry(w, h, d);
-    geometry.translate(0, h / 2, 0);
-    const mesh = new Mesh(geometry, new MeshLambertMaterial({ color }));
+  private mat(color: keyof FloorStyle) {
+    let m = this.materials.get(color) as MeshLambertMaterial | undefined;
+    if (!m) this.materials.set(color, (m = new MeshLambertMaterial({ color: this.c[color] })));
+    return m;
+  }
+
+  private edgeMat(color: keyof FloorStyle) {
+    const key = `edge:${color}`;
+    let m = this.materials.get(key) as LineBasicMaterial | undefined;
+    if (!m) this.materials.set(key, (m = new LineBasicMaterial({ color: this.c[color] })));
+    return m;
+  }
+
+  private box(parent: Object3D, w: number, h: number, d: number, x: number, y: number, z: number, color: keyof FloorStyle, edge?: keyof FloorStyle, cast = true) {
+    const key = `${w}|${h}|${d}`;
+    let geometry = this.geometries.get(key);
+    if (!geometry) {
+      geometry = new BoxGeometry(w, h, d);
+      geometry.translate(0, h / 2, 0);
+      this.geometries.set(key, geometry);
+      this.edgeGeometries.set(geometry, new EdgesGeometry(geometry));
+    }
+    const mesh = new Mesh(geometry, this.mat(color));
     mesh.position.set(x, y, z);
-    mesh.castShadow = true;
+    mesh.castShadow = cast;
     mesh.receiveShadow = true;
-    if (edge) mesh.add(new LineSegments(new EdgesGeometry(geometry), new LineBasicMaterial({ color: edge })));
+    if (edge) mesh.add(new LineSegments(this.edgeGeometries.get(geometry)!, this.edgeMat(edge)));
     parent.add(mesh);
     return mesh;
+  }
+
+  /** Frees every shared geometry and material; the meshes that used them must be gone. */
+  private freeShared() {
+    for (const g of this.geometries.values()) g.dispose();
+    for (const g of this.edgeGeometries.values()) g.dispose();
+    for (const m of this.materials.values()) m.dispose();
+    this.geometries.clear();
+    this.edgeGeometries.clear();
+    this.materials.clear();
   }
 
   private anchor(parent: Object3D, x: number, y: number, z: number) {
@@ -158,10 +195,12 @@ export class FloorScene {
     return o;
   }
 
-  private chipFor(card: Pick<Card, 'line' | 'value'>, chip = document.createElement('button')) {
+  private chipFor(card: Pick<Machine, 'key' | 'line' | 'value'>, chip = document.createElement('button')) {
     const s = card.value;
     chip.type = 'button';
-    chip.className = `floor__chip${s.needs_person ? ' floor__chip--person' : s.count > 0 ? '' : ' floor__chip--empty'}`;
+    const pinned = card.key === this.pinnedKey;
+    chip.className = `floor__chip${s.needs_person ? ' floor__chip--person' : s.count > 0 ? '' : ' floor__chip--empty'}${pinned ? ' floor__chip--pinned' : ''}`;
+    chip.setAttribute('aria-pressed', String(pinned));
     // The name starts with the visible words, then reads the station in full.
     const shown = `${s.count} ${s.name}${s.needs_person ? ' PERSON' : ''}`;
     chip.setAttribute('aria-label', `${shown}. ${describeStation(card.line, s)}`);
@@ -179,52 +218,75 @@ export class FloorScene {
     return chip;
   }
 
-  private addTile(card: Card, i: number) {
-    const tile = this.box(card.group, 1.0, 0.09, 0.72, i * 0.06, 0.15 + i * TILE_STEP, 0.05, card.value.needs_person ? this.c.signal : this.c.ink, this.c.tileEdge);
-    tile.material.transparent = true;
-    card.tiles.push(tile);
-    return tile;
-  }
 
-  private paintCard(card: Card) {
-    const s = card.value;
-    card.base.material.color.copy(s.needs_person ? this.c.signalTint : this.c.surface);
-    card.edges.material.color.copy(s.needs_person ? this.c.signal : this.c.ink);
-    if (s.needs_person && !card.stripe) card.stripe = this.box(card.group, 1.5, 0.04, 0.26, 0, 0.14, -0.47, this.c.signal);
-    if (!s.needs_person && card.stripe) {
-      card.group.remove(card.stripe);
-      disposeTree(card.stripe);
-      card.stripe = null;
+  /** Draws one machine as its station says: body, stack of blocks, and a lamp when a person is needed. */
+  private paint(m: Machine) {
+    const s = m.value;
+    m.parts.clear();
+    m.hits = [];
+    m.lamp?.geometry.dispose();
+    (m.lamp?.material as Material | undefined)?.dispose();
+    m.lamp = null;
+    const has = s.count > 0;
+    const blocks = Math.min(s.count, MAX_BLOCKS);
+    m.body = this.box(m.parts, 1.3, 0.55, 1.25, m.x, 0.18, m.z, s.needs_person ? 'signal' : has ? 'ink' : 'surface', s.needs_person ? 'ink' : has ? 'muted' : 'ink');
+    m.hits.push(m.body);
+    for (let i = 0; i < blocks; i++) m.hits.push(this.box(m.parts, 0.62, 0.56, 0.62, m.x, 0.73 + i * BLOCK, m.z, s.needs_person ? 'signalTint' : 'surface', 'ink'));
+    for (const hit of m.hits) hit.userData.machine = m;
+    let top = 0.73 + blocks * BLOCK + 0.12;
+    if (s.needs_person) {
+      this.box(m.parts, 0.07, 1.55, 0.07, m.x + 0.56, 0.73, m.z - 0.53, 'ink');
+      m.lamp = new Mesh(new BoxGeometry(0.28, 0.28, 0.28), new MeshBasicMaterial({ color: this.c.signal }));
+      m.lamp.position.set(m.x + 0.56, 2.4, m.z - 0.53);
+      m.parts.add(m.lamp);
+      top = Math.max(top, 0.9);
     }
-    for (const t of card.tiles) t.material.color.copy(s.needs_person ? this.c.signal : this.c.ink);
-    // The label is fixed to the board, not the card, so a lift never moves it from under the pointer.
-    card.anchor.position.y = 0.3 + Math.min(s.count, MAX_TILES) * TILE_STEP;
-    this.chipFor(card, card.chip);
+    m.anchor.position.set(m.x, top, m.z);
+    this.chipFor(m, m.chip);
   }
 
-  /** Builds the board, every line and every card as given, with no animation. */
+  /** Boxes that ride a belt from each busy station to the next, two at most per station. */
+  private rebuildMovers() {
+    this.moverGroup.clear();
+    this.movers = [];
+    this.rows.forEach((row, li) => {
+      row.forEach((m, i) => {
+        if (m.value.count === 0 || i === row.length - 1) return;
+        for (let k = 0; k < Math.min(m.value.count, 2); k++) {
+          const mesh = this.box(this.moverGroup, 0.36, 0.3, 0.36, m.x, 0.18, m.z, 'surface', 'ink');
+          this.movers.push({ mesh, x1: m.x + 0.85, x2: row[i + 1].x - 0.85, k: k / 2 + li * 0.13 });
+        }
+      });
+    });
+    this.animate(0);
+  }
+
+  /** Builds the floor, every belt and every machine as given. */
   private build(lines: readonly OverviewLine[]) {
     this.scene.remove(this.root);
-    disposeTree(this.root);
-    this.overlay.replaceChildren();
+    this.disposeLamps();
     this.root = new Group();
+    this.freeShared();
     this.scene.add(this.root);
-    this.cards.clear();
+    this.overlay.replaceChildren();
+    this.machines.clear();
+    this.rows = [];
+    this.lineTags = [];
     this.labels = [];
+    this.slats = [];
+    this.moverGroup = new Group();
+    this.root.add(this.moverGroup);
     this.hover = this.focus = null;
 
     const n = Math.max(1, lines.length);
     const z0 = (-(n - 1) * GAP) / 2;
-    const left = -SPAN / 2 - 4.1;
-    const right = SPAN / 2 + 1.1;
-    const cx = (left + right) / 2;
-    const width = right - left;
-    this.box(this.root, width, 0.35, (n - 1) * GAP + 2.2, cx, -0.35, 0, this.c.surface, this.c.ink).castShadow = false;
+    this.box(this.root, SPAN + 6.4, 0.4, (n - 1) * GAP + 3.2, 0, -0.4, 0, 'plate', 'ink', false);
     lines.forEach((l, li) => {
       const z = z0 + li * GAP;
-      this.box(this.root, width - 0.3, 0.02, GAP - 0.12, cx, 0, z, li % 2 ? this.c.steel : this.c.surface).castShadow = false;
-      this.box(this.root, 2.9, 0.16, GAP - 0.4, -SPAN / 2 - 2.45, 0, z, this.c.ink);
-      this.box(this.root, SPAN, 0.03, 0.06, 0, 0.02, z, this.c.ruleSoft).castShadow = false;
+      this.box(this.root, BELT, 0.18, 0.9, 0, 0, z, 'belt', undefined, false);
+      this.box(this.root, BELT, 0.3, 0.08, 0, 0, z - 0.49, 'ink');
+      this.box(this.root, BELT, 0.3, 0.08, 0, 0, z + 0.49, 'ink');
+      for (let s = 0; s < SLATS; s++) this.slats.push({ mesh: this.box(this.root, 0.1, 0.02, 0.82, 0, 0.18, z, 'muted', undefined, false), k: s / SLATS });
 
       const label = document.createElement('div');
       label.className = 'floor__line';
@@ -235,40 +297,54 @@ export class FloorScene {
       tag.className = `psl-tag psl-tag--${tagTone(l)}`;
       tag.textContent = l.note;
       label.append(name, tag);
-      this.addLabel(label, this.anchor(this.root, -SPAN / 2 - 2.45, 0.2, z), 'center');
+      this.lineTags.push(tag);
+      this.addLabel(label, this.anchor(this.root, -BELT / 2 - 0.9, 0.1, z), 'right');
 
+      const row: Machine[] = [];
       l.stations.forEach((s, i) => {
-        const group = new Group();
-        group.position.set(stationX(i, l.stations.length), 0, z);
-        this.root.add(group);
-        const base = this.box(group, 1.5, 0.12, 1.2, 0, 0.02, 0, this.c.surface, this.c.ink) as Mesh<BoxGeometry, MeshLambertMaterial>;
-        const card: Card = {
+        const parts = new Group();
+        this.root.add(parts);
+        const m: Machine = {
           key: stationKey(l.line, s.name),
           line: l.line,
           value: s,
-          group,
-          base,
-          edges: base.children[0] as LineSegments<EdgesGeometry, LineBasicMaterial>,
-          stripe: null,
-          tiles: [],
-          anchor: this.anchor(this.root, group.position.x, 0, z),
+          parts,
+          hits: [],
+          body: null,
+          lamp: null,
+          x: stationX(i, l.stations.length),
+          z,
+          anchor: this.anchor(this.root, 0, 0, 0),
           chip: document.createElement('button'),
         };
-        for (let t = 0; t < Math.min(s.count, MAX_TILES); t++) this.addTile(card, t);
-        this.paintCard(card);
-        base.userData.card = card;
-        for (const t of card.tiles) t.userData.card = card;
-        card.chip.addEventListener('pointerenter', () => this.setHover(card));
-        card.chip.addEventListener('pointerleave', () => this.setHover(null));
-        card.chip.addEventListener('focus', () => this.setFocus(card));
-        card.chip.addEventListener('blur', () => this.setFocus(null));
-        this.cards.set(card.key, card);
-        this.addLabel(card.chip, card.anchor, 'bottom');
+        this.paint(m);
+        m.chip.addEventListener('pointerenter', () => this.setHover(m));
+        m.chip.addEventListener('pointerleave', () => this.setHover(null));
+        m.chip.addEventListener('focus', () => this.setFocus(m));
+        m.chip.addEventListener('blur', () => this.setFocus(null));
+        m.chip.addEventListener('click', () => this.callbacks.onPin({ line: m.line, name: m.value.name }));
+        this.machines.set(m.key, m);
+        row.push(m);
+        this.addLabel(m.chip, m.anchor, 'bottom');
       });
+      this.rows.push(row);
     });
+    this.rebuildMovers();
     this.root.updateMatrixWorld(true);
-    this.fitPoints = this.labels.map((label) => label.anchor.getWorldPosition(new Vector3()));
+    // Fit to the tallest stack so a count change never moves the view.
+    this.fitPoints = this.labels.map((label) => {
+      const p = label.anchor.getWorldPosition(new Vector3());
+      if (label.align === 'bottom') p.y = 0.73 + MAX_BLOCKS * BLOCK + 0.12;
+      return p;
+    });
     this.fit();
+  }
+
+  private disposeLamps() {
+    for (const m of this.machines.values()) {
+      m.lamp?.geometry.dispose();
+      (m.lamp?.material as Material | undefined)?.dispose();
+    }
   }
 
   private addLabel(el: HTMLElement, anchor: Object3D, align: Label['align']) {
@@ -279,9 +355,12 @@ export class FloorScene {
     this.labels.push({ el: wrap, anchor, align });
   }
 
-  /** Centres the board and finds the camera distance at which every label anchor is in view, at the default angle. */
+  /** Frames every label anchor with the orthographic frustum at the default angle, then lets the labels themselves fill the stage. */
   private fit() {
     if (!this.fitPoints.length) return;
+    const { width, height } = this.size;
+    const saved = { ...this.view };
+    this.view = { yaw: VIEW.yaw, pitch: VIEW.pitch };
     const lo = new Vector3(Infinity, Infinity, Infinity);
     const hi = new Vector3(-Infinity, -Infinity, -Infinity);
     for (const p of this.fitPoints) {
@@ -290,36 +369,40 @@ export class FloorScene {
     }
     this.target.copy(lo).add(hi).multiplyScalar(0.5);
     this.target.y *= 0.5;
-    this.camera.aspect = this.size.width / this.size.height;
-    this.camera.updateProjectionMatrix();
-    const saved = { ...this.view };
-    this.view = { yaw: VIEW.yaw, pitch: VIEW.pitch };
-    const v = new Vector3();
-    let near = 4;
-    let far = 200;
-    for (let i = 0; i < 28; i++) {
-      this.dist = (near + far) / 2;
-      this.place();
-      const fits = this.fitPoints.every((p) => {
-        v.copy(p).project(this.camera);
-        return v.z < 1 && Math.abs(v.x) <= 0.86 && v.y <= 0.82 && v.y >= -0.86;
-      });
-      if (fits) far = this.dist;
-      else near = this.dist;
-    }
-    this.dist = far;
+    this.dist = 80;
     this.place();
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    const q = new Vector3();
+    for (const p of this.fitPoints) {
+      q.copy(p).applyMatrix4(this.camera.matrixWorldInverse);
+      minX = Math.min(minX, q.x);
+      maxX = Math.max(maxX, q.x);
+      minY = Math.min(minY, q.y);
+      maxY = Math.max(maxY, q.y);
+    }
+    const margin = 0.86;
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    let hw = (maxX - minX) / 2 / margin;
+    let hh = ((maxY - minY) / 2 / margin) * 1.08;
+    const aspect = width / height;
+    if (hw / hh > aspect) hh = hw / aspect;
+    else hw = hh * aspect;
+    Object.assign(this.camera, { left: cx - hw, right: cx + hw, top: cy + hh, bottom: cy - hh });
+    this.camera.updateProjectionMatrix();
     this.contain();
     this.view = saved;
     this.place();
   }
 
-  /** Pans and zooms so the labels themselves, not only their anchor points, fill the stage. */
+  /** Pans and zooms the frustum so the labels, not only their anchors, fill the stage. */
   private contain() {
     const { width, height } = this.size;
     const pad = 14;
-    const right = new Vector3();
-    const up = new Vector3();
+    const cam = this.camera;
     for (let i = 0; i < 4; i++) {
       this.placeLabels();
       const stage = this.overlay.getBoundingClientRect();
@@ -339,12 +422,12 @@ export class FloorScene {
       const dx = (minX + maxX) / 2 - width / 2;
       const dy = (minY + maxY) / 2 - height / 2;
       if (Math.abs(scale - 1) < 0.015 && Math.abs(dx) < 2 && Math.abs(dy) < 2) return;
-      const perPixel = (2 * this.dist * Math.tan((this.camera.fov * Math.PI) / 360)) / height;
-      right.setFromMatrixColumn(this.camera.matrixWorld, 0);
-      up.setFromMatrixColumn(this.camera.matrixWorld, 1);
-      this.target.addScaledVector(right, dx * perPixel).addScaledVector(up, -dy * perPixel);
-      this.dist *= scale;
-      this.place();
+      const fw = cam.right - cam.left;
+      const fh = cam.top - cam.bottom;
+      const mx = (cam.left + cam.right) / 2 + (dx / width) * fw;
+      const my = (cam.top + cam.bottom) / 2 - (dy / height) * fh;
+      Object.assign(cam, { left: mx - (fw * scale) / 2, right: mx + (fw * scale) / 2, top: my + (fh * scale) / 2, bottom: my - (fh * scale) / 2 });
+      cam.updateProjectionMatrix();
     }
   }
 
@@ -369,38 +452,57 @@ export class FloorScene {
       label.el.style.visibility = '';
       const x = ((v.x + 1) / 2) * width;
       const y = ((1 - v.y) / 2) * height;
-      const shift = label.align === 'center' ? 'translate(-50%, -50%)' : 'translate(-50%, -100%)';
+      const shift = label.align === 'right' ? 'translate(-100%, -50%)' : 'translate(-50%, -100%)';
       label.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) ${shift}`;
-      label.el.style.zIndex = String(Math.round((1 - v.z) * 5000));
+      label.el.style.zIndex = String(Math.round((1 - v.z) * 5000) + (label.align === 'bottom' ? 20000 : 0));
     }
   }
 
   private readout() {
-    const card = this.focus ?? this.hover;
-    this.callbacks.onReadout(card ? describeStation(card.line, card.value) : null, Boolean(card?.value.needs_person));
+    const m = this.focus ?? this.hover;
+    this.callbacks.onPreview(m ? { line: m.line, name: m.value.name } : null);
   }
 
-  private setHover(card: Card | null) {
-    if (this.hover === card) return;
+  /** The station the strip is pinned to: its chip is pressed and its machine stays lifted (null unpins). */
+  setPinned(station: StationRef | null) {
+    this.pinnedKey = station ? stationKey(station.line, station.name) : null;
+    this.markPinned();
+    this.showing();
+  }
+
+  private markPinned() {
+    for (const m of this.machines.values()) {
+      const on = m.key === this.pinnedKey;
+      m.chip.classList.toggle('floor__chip--pinned', on);
+      m.chip.setAttribute('aria-pressed', String(on));
+    }
+  }
+
+  private showing() {
+    this.readout();
+    this.kick();
+    this.render();
+  }
+
+  private setHover(m: Machine | null) {
+    if (this.hover === m) return;
     this.hover?.chip.classList.remove('floor__chip--hot');
-    this.hover = card;
-    card?.chip.classList.add('floor__chip--hot');
-    this.readout();
-    this.kick();
+    this.hover = m;
+    m?.chip.classList.add('floor__chip--hot');
+    this.showing();
   }
 
-  private setFocus(card: Card | null) {
-    this.focus = card;
-    this.readout();
-    this.kick();
+  private setFocus(m: Machine | null) {
+    this.focus = m;
+    this.showing();
   }
 
-  private pick(event: PointerEvent): Card | null {
+  private pick(event: PointerEvent): Machine | null {
     const rect = this.canvas.getBoundingClientRect();
     const at = new Vector2(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     this.raycaster.setFromCamera(at, this.camera);
-    const meshes = [...this.cards.values()].flatMap((c) => [c.base, ...c.tiles]);
-    return (this.raycaster.intersectObjects(meshes, false)[0]?.object.userData.card as Card | undefined) ?? null;
+    const meshes = [...this.machines.values()].flatMap((m) => m.hits);
+    return (this.raycaster.intersectObjects(meshes, false)[0]?.object.userData.machine as Machine | undefined) ?? null;
   }
 
   private bind() {
@@ -414,167 +516,140 @@ export class FloorScene {
       }
     };
     const move = (e: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      this.pointer = { x: ((e.clientX - rect.left) / rect.width) * 2 - 1, y: ((e.clientY - rect.top) / rect.height) * 2 - 1 };
       if (this.drag) {
         const dx = e.clientX - this.drag.x;
         const dy = e.clientY - this.drag.y;
         if (!this.drag.moved && Math.abs(dx) + Math.abs(dy) > 4) this.drag.moved = true;
         if (this.drag.moved) {
-          this.view.yaw = Math.max(VIEW.yawMin, Math.min(VIEW.yawMax, this.view.yaw - dx * 0.006));
-          this.view.pitch = Math.max(VIEW.pitchMin, Math.min(VIEW.pitchMax, this.view.pitch + dy * 0.005));
+          this.view = clampView({ yaw: this.view.yaw - dx * 0.006, pitch: this.view.pitch + dy * 0.005 });
           this.drag.x = e.clientX;
           this.drag.y = e.clientY;
           this.place();
+          this.kick();
+          this.render();
         }
       } else if (e.pointerType === 'mouse') this.setHover(this.pick(e));
-      this.kick();
     };
     const up = (e: PointerEvent) => {
-      if (this.drag && !this.drag.moved) this.setHover(this.pick(e));
+      if (this.drag && !this.drag.moved) {
+        const machine = this.pick(e);
+        this.setHover(machine);
+        if (machine) this.callbacks.onPin({ line: machine.line, name: machine.value.name });
+      }
       this.drag = null;
     };
     const leave = (e: PointerEvent) => {
-      if (this.drag) return;
-      this.pointer = null;
-      if (e.pointerType === 'mouse') this.setHover(null);
-      this.kick();
+      if (!this.drag && e.pointerType === 'mouse') this.setHover(null);
     };
     const cancel = () => {
       this.drag = null;
     };
+    const visibility = () => (document.hidden ? this.stop() : this.kick());
     el.addEventListener('pointerdown', down);
     el.addEventListener('pointermove', move);
     el.addEventListener('pointerup', up);
     el.addEventListener('pointerleave', leave);
     el.addEventListener('pointercancel', cancel);
+    document.addEventListener('visibilitychange', visibility);
     return () => {
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerup', up);
       el.removeEventListener('pointerleave', leave);
       el.removeEventListener('pointercancel', cancel);
+      document.removeEventListener('visibilitychange', visibility);
     };
   }
 
-  /** Back to the starting angle, with nothing lifted. */
+  /** Back to the starting angle. */
   reset() {
     this.view = { yaw: VIEW.yaw, pitch: VIEW.pitch };
-    this.pointer = null;
-    this.setHover(null);
     this.place();
     this.kick();
+    this.render();
   }
 
-  /** Moves lifts, lean and changes one step; returns true while anything is still moving. */
-  private advance(dt: number, now: number) {
+  /** Turns (dx: right is positive) and tilts (dy: up looks from higher) the view by key steps. */
+  turn(dx: number, dy: number) {
+    this.view = clampView({ yaw: this.view.yaw + dx * STEP * 1.5, pitch: this.view.pitch + dy * STEP });
+    this.place();
+    this.kick();
+    this.render();
+  }
+
+  /** Moves belts, boxes and lamps to time t; with reduced motion they stand still and the boxes are hidden. */
+  private animate(dt: number) {
     const still = reducedMotion();
+    if (!still) this.time += dt;
+    const t = this.time;
+    for (const s of this.slats) s.mesh.position.x = -BELT / 2 + 0.1 + frac(s.k + (still ? 0 : t * 0.045)) * (BELT - 0.2);
+    for (const m of this.movers) {
+      m.mesh.visible = !still;
+      if (!still) m.mesh.position.x = m.x1 + (m.x2 - m.x1) * frac(m.k + t * 0.12);
+    }
+    const pulse = still ? 1 : 1 + 0.18 * Math.sin(t * 3);
+    for (const m of this.machines.values()) m.lamp?.scale.set(pulse, pulse, pulse);
+    // D-159: the machine under the pointer or keyboard focus lifts, as the board's cards did before the conveyor; no
+    // outline is drawn. Its label is fixed to the floor, so the lift never moves it from under the pointer.
     const f = still ? 1 : 1 - Math.exp(-dt * 10);
-    let moving = false;
-    for (const card of this.cards.values()) {
-      const up = card === this.hover || card === this.focus ? LIFT : 0;
-      card.group.position.y += (up - card.group.position.y) * f;
-      card.group.rotation.x += ((up ? -0.12 : 0) - card.group.rotation.x) * f;
-      if (Math.abs(card.group.position.y - up) > 0.002) moving = true;
-      else card.group.position.y = up;
+    for (const m of this.machines.values()) {
+      const up = m === this.hover || m === this.focus || m.key === this.pinnedKey ? LIFT : 0;
+      const y = m.parts.position.y;
+      m.parts.position.y = Math.abs(up - y) < 0.002 ? up : y + (up - y) * f;
     }
-    const px = still || !this.pointer ? 0 : this.pointer.x;
-    const py = still || !this.pointer ? 0 : this.pointer.y;
-    this.tilt.x += (py * 0.05 - this.tilt.x) * f;
-    this.tilt.z += (-px * 0.04 - this.tilt.z) * f;
-    if (Math.abs(this.tilt.x - py * 0.05) > 0.0005 || Math.abs(this.tilt.z + px * 0.04) > 0.0005) moving = true;
-    this.root.rotation.x = this.tilt.x;
-    this.root.rotation.z = this.tilt.z;
-    if (this.moves.length) {
-      const t = still ? 1 : Math.min(1, (now - this.moveStart) / MOVE_MS);
-      const e = easeOut(t);
-      for (const m of this.moves) {
-        m.mesh.position.y = m.y0 + (m.y1 - m.y0) * e;
-        m.mesh.material.opacity = m.o0 + (m.o1 - m.o0) * e;
-      }
-      if (t < 1) moving = true;
-      else this.finishMoves();
-    }
-    return moving;
   }
 
-  /** Starts the frame loop if it is not running; it stops by itself once nothing moves. */
+  /** Starts the frame loop if it is not running; it stops by itself under reduced motion or while the tab is hidden. */
   private kick() {
-    if (this.frame) return;
+    if (this.frame || document.hidden) return;
     this.last = performance.now();
     this.frame = requestAnimationFrame(this.step);
+  }
+
+  private stop() {
+    if (this.frame) cancelAnimationFrame(this.frame);
+    this.frame = 0;
   }
 
   private step = (now: number) => {
     const dt = Math.min(0.25, Math.max(0, (now - this.last) / 1000));
     this.last = now;
-    const moving = this.advance(dt, now) || Boolean(this.drag?.moved);
+    this.animate(dt);
     this.render();
-    this.frame = moving ? requestAnimationFrame(this.step) : 0;
+    this.frame = reducedMotion() || document.hidden ? 0 : requestAnimationFrame(this.step);
   };
 
-  /** Puts any running change at its end state. */
-  private finishMoves() {
-    for (const m of this.moves) {
-      m.mesh.position.y = m.y1;
-      m.mesh.material.opacity = m.o1;
-      if (m.remove) {
-        m.mesh.parent?.remove(m.mesh);
-        disposeTree(m.mesh);
-      }
-    }
-    this.moves = [];
-  }
-
-  /** Changes one card to its new figures; returns the tile moves to animate. */
-  private change(card: Card, next: OverviewStation) {
-    const moves: Move[] = [];
-    card.value = next;
-    const want = Math.min(next.count, MAX_TILES);
-    for (let i = card.tiles.length; i < want; i++) {
-      const tile = this.addTile(card, i);
-      tile.userData.card = card;
-      moves.push({ mesh: tile, y0: tile.position.y + RISE, y1: tile.position.y, o0: 0, o1: 1, remove: false });
-      tile.position.y += RISE;
-      tile.material.opacity = 0;
-    }
-    for (const tile of card.tiles.splice(want)) moves.push({ mesh: tile, y0: tile.position.y, y1: tile.position.y + RISE, o0: 1, o1: 0, remove: true });
-    this.paintCard(card);
-    return moves;
-  }
-
-  /** Shows the lines. The first call and new or gone stations draw at once; changed stations move. */
+  /** Shows the lines. The first call and a changed set of lines or stations rebuild; changed figures repaint their machine. */
   update(lines: readonly OverviewLine[]) {
     const prev = this.prev;
     this.prev = lines;
     const shape = shapeOf(lines);
-    if (!prev) {
+    if (!prev || shape !== this.shape) {
       this.shape = shape;
       this.build(lines);
+      this.kick();
       return this.render();
-    }
-    if (shape !== this.shape) {
-      // Rebuild with the old figures for stations that stay, so their change still moves below.
-      const old = new Map(prev.flatMap((l) => l.stations.map((s) => [stationKey(l.line, s.name), s] as const)));
-      this.shape = shape;
-      this.finishMoves();
-      this.build(lines.map((l) => ({ ...l, stations: l.stations.map((s) => old.get(stationKey(l.line, s.name)) ?? s) })));
     }
     // Line notes and tones can change without a station change.
     lines.forEach((l, i) => {
-      const tag = this.labels.filter((label) => label.align === 'center')[i]?.el.querySelector('.psl-tag');
-      if (tag) {
-        tag.className = `psl-tag psl-tag--${tagTone(l)}`;
-        tag.textContent = l.note;
-      }
+      const tag = this.lineTags[i];
+      tag.className = `psl-tag psl-tag--${tagTone(l)}`;
+      tag.textContent = l.note;
     });
-    const moves = diffCounts(prev, lines).flatMap((c) => this.change(this.cards.get(stationKey(c.line, c.name))!, c.after));
+    let changed = false;
+    for (const l of lines) {
+      for (const s of l.stations) {
+        const m = this.machines.get(stationKey(l.line, s.name))!;
+        if (m.value.count === s.count && m.value.needs_person === s.needs_person) continue;
+        m.value = s;
+        this.paint(m);
+        changed = true;
+      }
+    }
+    if (changed) this.rebuildMovers();
     this.readout();
-    if (moves.length === 0) return this.render();
-    this.finishMoves();
-    this.moves = moves;
-    this.moveStart = performance.now();
     this.kick();
+    this.render();
   }
 
   resize(width: number, height: number) {
@@ -582,7 +657,7 @@ export class FloorScene {
     this.size = { width, height };
     this.renderer.setSize(width, height, false);
     this.fit();
-    if (!this.frame) this.render();
+    this.render();
   }
 
   render() {
@@ -592,12 +667,12 @@ export class FloorScene {
 
   /** Frees the renderer, geometries and materials, removes listeners and labels, and gives the WebGL context back. */
   dispose() {
-    if (this.frame) cancelAnimationFrame(this.frame);
-    this.frame = 0;
-    this.finishMoves();
+    this.stop();
     this.unbind();
     this.overlay.replaceChildren();
-    disposeTree(this.scene);
+    this.disposeLamps();
+    this.scene.remove(this.root);
+    this.freeShared();
     this.renderer.dispose();
     this.renderer.forceContextLoss();
   }

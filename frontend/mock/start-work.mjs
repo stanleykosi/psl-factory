@@ -24,19 +24,21 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
+import { demoProjects, optionRow as demoOptionRow, resetDemoProjects } from './demo-projects.mjs';
+
 export const START_OPERATIONS = ['E-LINES', 'E-LINE-OPTIONS', 'E-WORK-START'];
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'start-work');
 const readJson = (path) => JSON.parse(readFileSync(join(dir, path), 'utf8'));
 
-const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'pmo_lead'];
+const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'pmo_lead', 'hr', 'hr_lead'];
 const LIMITS = [10, 20, 50];
 // Fields whose options share a file with another field's name.
 const OPTION_FILES = { from_issue: 'issue', status_cites: 'records', risks_cites: 'records', timeline_cites: 'records', next_steps_cites: 'records' };
 // F-21, F-23: the weekly report's cite fields and the minutes' action owner are step fields of the work item, not intake fields; the mock lists this week's records for them.
 const STEP_RECORD_FIELDS = { weekly_report: ['status_cites', 'risks_cites', 'timeline_cites', 'next_steps_cites'], minutes: ['owner'] };
 // The work item each line's 201 answers with (fixtures/work/W-14xx.json, in fixture table order).
-const WORK_IDS = {
+export const WORK_IDS = {
   invoice: 'W-1401',
   weekly_report: 'W-1402',
   minutes: 'W-1403',
@@ -53,6 +55,8 @@ const WORK_IDS = {
   // F-51: the F-42 fixed asset schedule and the F-43 cash forecast
   fixed_assets: 'W-3901',
   cash_forecast: 'W-4001',
+  // F-55: the HR stand-in line (fixtures/work/W-4611.json)
+  hr_staff_list: 'W-4611',
 };
 // F-51: what a forecast start answers with under the cookie value start_hold (F-43's "preparer not set" item).
 const HELD_FORECAST = { work_id: 'W-4006', state: 'setup_needed' };
@@ -157,7 +161,9 @@ export function createStartWorkMock(openapi) {
 
   /** Options this persona is served for a field, narrowed by parent; with the mock-only keys still on. */
   function served(persona, field, parent) {
-    return optionRows(field.name).filter(
+    // D-164: the projects won demo RFPs created join every project picker, newest first
+    const won = field.name === 'project' ? demoProjects().map(demoOptionRow).reverse() : [];
+    return [...won, ...optionRows(field.name)].filter(
       (row) => row._personas.includes(persona) && (!field.depends_on || row._parent === parent),
     );
   }
@@ -388,11 +394,17 @@ export function createStartWorkMock(openapi) {
     return response;
   }
 
+  /** The client an RFP start names, as its label (a new client by its name); undefined for another line. */
+  const clientLabel = (intake, persona) =>
+    isNewClient(intake?.client) ? String(intake.client.new.name).trim() : served(persona, { name: 'client' }).find((row) => row.value === intake?.client)?.label;
+
   return {
     started,
     issued,
     ownsUpload,
+    clientLabel,
     reset: () => {
+      resetDemoProjects();
       started.clear();
       revisions.clear();
       issued.clear();

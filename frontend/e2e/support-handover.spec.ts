@@ -207,7 +207,7 @@ test.describe('Publish and the uncertain paths', () => {
     await loaded(page);
     await page.getByRole('button', { name: 'Ask Tola to draft v2' }).click();
     await expect(page.getByText('Drafting v2').first()).toBeVisible();
-    await expect(page.locator('.ws-notices').getByText('Waiting: Tola is drafting v2.')).toBeVisible();
+    await expect(page.locator('.psl-toast').getByText('Waiting: Tola is drafting v2.')).toBeVisible();
     await expect(page.getByText('OPEN')).toHaveCount(2);
     await expect(page.locator('.ws .ws-note.psl-callout--success')).toHaveCount(0);
     expect(writes).toHaveLength(1);
@@ -282,8 +282,8 @@ test.describe('Record Support’s reply', () => {
     await expect(page.locator('body')).not.toContainText(/Recorded under your name|Femi Ojo/);
   });
 
-  test('the ceo persona is not on P-0101’s list: the Delivery tab is the no-access view with no handover text', async ({ page, context }) => {
-    await context.addCookies([{ name: 'psl_mock_persona', value: 'ceo', url: test.info().project.use.baseURL! }]);
+  test('the admin persona is not on P-0101’s list: the Delivery tab is the no-access view with no handover text', async ({ page, context }) => {
+    await context.addCookies([{ name: 'psl_mock_persona', value: 'admin', url: test.info().project.use.baseURL! }]); // the CEO sees every project since D-150
     await page.goto('/projects/P-0101/delivery');
     await expect(page.getByText('You can’t open this project')).toBeVisible();
     await expect(page.locator('body')).not.toContainText(/Handover to Support|HND-0048|Femi Ojo/);

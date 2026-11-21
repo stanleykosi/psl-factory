@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "at": "2026-11-05T15:00:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Verified",
+      "restricted": false,
+      "detail": "Matching reread: no differences"
+    },
+    {
+      "at": "2026-11-05T14:30:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Applied the correction",
+      "restricted": false,
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-05T11:00:00Z",
+      "actor_kind": "person",
+      "actor": "Ngozi Adeyemi · HR Lead",
+      "event": "Approved the correction",
+      "restricted": false,
+      "detail": "Note: \"Same person after a name change.\"",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-05T10:40:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked the HR Lead to decide",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-05T10:20:00Z",
+      "actor_kind": "person",
+      "actor": "Bisi Ade · Finance",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-05T10:10:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From a matching mismatch"
+    }
+  ],
+  "as_of": "2026-11-18T15:00:00Z"
+}

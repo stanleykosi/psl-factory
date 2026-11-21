@@ -107,7 +107,6 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 /* tables scroll inside their own frame on phones */
 /* positioned, so the table headers' visually hidden text stays inside the scroll frame and never widens the page */
 .ws-tablewrap { max-width: 100%; position: relative; }
-.ws-tablewrap:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: 2px; }
 .ws-table th { text-transform: uppercase; }
 /* a narrow screen scrolls the table; a reference never breaks; the source sits on its own line under the words */
 .ws-table { min-width: 560px; }
@@ -137,7 +136,6 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-table__steps { white-space: nowrap; }
 .ws-form { min-width: 0; }
 .ws-form__head { margin: 0; }
-.ws-form__head:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: -4px; }
 .ws-form__body { gap: var(--space-4); }
 .ws-form .psl-seg__opt, .ws-form .resp-filebtn { min-height: var(--control-md); }
 .ws-form__actions { display: flex; flex-wrap: wrap; gap: var(--space-10px); }

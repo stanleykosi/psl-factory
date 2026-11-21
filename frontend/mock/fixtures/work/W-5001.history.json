@@ -1,0 +1,66 @@
+{
+  "items": [
+    {
+      "at": "2026-11-09T09:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Asked the CEO to approve",
+      "restricted": false,
+      "detail": "SOW v3, last step of the chain",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-09T08:42:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 2 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-09T03:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 1 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-09T03:02:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted SOW v3",
+      "restricted": false,
+      "detail": "Stage amounts follow costing v3",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-08T08:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added scope notes",
+      "restricted": false,
+      "detail": "Scope v3",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-07T09:22:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Costing v3 matched to the plan",
+      "restricted": false,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-06T10:02:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Started the plan",
+      "restricted": false,
+      "_kind": "agent_work"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

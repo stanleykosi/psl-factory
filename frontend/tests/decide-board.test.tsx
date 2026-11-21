@@ -25,11 +25,12 @@ const STALE = { code: 'stale_revision', message: 'Someone changed this since you
 type Call = { method: string; path: string; body: unknown };
 type Answer = (n: number, call: Call) => Response | Promise<Response>;
 let calls: Call[];
-let answers: { item: Answer; claim: Answer; decide: Answer };
+let answers: { item: Answer; claim: Answer; decide: Answer; list: Answer };
 
 beforeEach(() => {
   calls = [];
   answers = {
+    list: () => json(200, { items: [], as_of: '2026-11-12T09:48:00Z', counts: { needs_me: 0, waiting_on_others: 0, done: 0 } }),
     item: () => json(200, item('W-1901')),
     claim: (_, c) => json(200, { task_id: c.path.split('/')[4], revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }),
     decide: (_, c) => json(200, { task_id: c.path.split('/')[4], verdict: (c.body as { verdict: string }).verdict, decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'ready' }),
@@ -43,6 +44,7 @@ beforeEach(() => {
       const c: Call = { method: request.method, path: url.pathname, body: text ? JSON.parse(text) : undefined };
       calls.push(c);
       if (url.pathname === '/api/v1/me') return json(200, read('me.finance_lead.json'));
+      if (url.pathname === '/api/v1/work') return answers.list(0, c);
       if (url.pathname.endsWith('/claim')) return answers.claim(n.claim++, c);
       if (url.pathname.endsWith('/decision')) return answers.decide(n.decide++, c);
       return answers.item(n.item++, c);
@@ -73,7 +75,7 @@ const decisionControls = () => screen.queryAllByRole('button', { name: /^(approv
 const onlyContractCalls = () =>
   calls.every(
     (c) =>
-      (c.method === 'GET' && (c.path === '/api/v1/me' || c.path === '/api/v1/notifications' || /^\/api\/v1\/work\/W-\d+$/.test(c.path))) ||
+      (c.method === 'GET' && (c.path === '/api/v1/me' || c.path === '/api/v1/notifications' || c.path === '/api/v1/work' || /^\/api\/v1\/work\/W-\d+$/.test(c.path))) ||
       (c.method === 'POST' && /^\/api\/v1\/tasks\/T-\d+\/(claim|decision)$/.test(c.path)),
   );
 const factTexts = () => within(screen.getByRole('list', { name: 'Facts' })).getAllByRole('listitem').map((li) => li.textContent);
@@ -138,78 +140,125 @@ describe('default board W-1901 (criterion 8)', () => {
   });
 });
 
-describe('done board (criterion 15)', () => {
-  it('Approve on W-1901 shows the green banner, the client heading, the board facts and Next decision', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
-    await open('W-1901', 'T-1901');
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    const heading = await screen.findByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
+const waitingRow = (id: string, title: string, kind = 'decide') => ({ id, title, line: 'Prepare an invoice', reference: 'REF', kind, state: 'waiting', station: { index: 4, count: 7, name: 'Finance review' }, waiting_on: 'Finance Lead', age_seconds: 60 });
+const withWaiting = (...rows: ReturnType<typeof waitingRow>[]) => {
+  answers.list = () => json(200, { items: rows, as_of: '2026-11-12T09:48:00Z', counts: { needs_me: rows.length, waiting_on_others: 0, done: 0 } });
+};
+async function approveW1901() {
+  answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
+  await open('W-1901', 'T-1901');
+  await ready();
+  fireEvent.click(button('Approve v2'));
+  await screen.findByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
+  await screen.findByText(/^Chidi will issue it and email it to Lagoon Health\./);
+}
+const summary = () => Object.fromEntries([...screen.getByLabelText('Summary').querySelectorAll('dt')].map((dt) => [dt.textContent, dt.nextElementSibling!.textContent]));
+
+describe('done board, concept B (criterion 17)', () => {
+  it('Approve on W-1901 shows the green banner, the facts, the summary box and the next panel', async () => {
+    withWaiting(waitingRow('W-1201', 'Invoice v2 · Lagoon Health'), waitingRow('W-1301', 'Emergency change · Harmattan Bank'));
+    await approveW1901();
+    const heading = screen.getByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
     expect(heading.closest('.decide-banner')!.className).toBe('decide-banner decide-banner--success');
     expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47');
-    await screen.findByText(/^Chidi will issue it and email it to Lagoon Health\./);
     expect(factTexts().slice(0, 4)).toEqual(['DRAFTEDEarned: v2', 'REVIEWEDEarned: You', 'APPROVEDEarned: 10:47', 'SENTNot yet: Next']);
-    // the board's next_step already says it: the page does not repeat it
+    expect(summary()).toEqual({
+      Work: 'INV-0412 · Prepare an invoice',
+      Project: 'Lagoon Health, milestone 2',
+      'You decided': 'Approve, with no note',
+      Decided: 'Thu 12 Nov, 10:47 WAT, by Ada Okafor',
+    });
+    // Paid is said once, as the hint under the summary, and never inside the next step
     expect(text().match(/Paid is tracked separately/g)).toHaveLength(1);
-    expect(screen.getByRole('link', { name: 'Next decision · 2 of 3' }).getAttribute('href')).toBe('/work/W-1201/decide?task=T-1201');
-    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1901');
-    expect(screen.getByRole('link', { name: 'Back to my work' }).getAttribute('href')).toBe('/my-work');
+    expect(document.querySelector('.decide-next')!.textContent).not.toContain('Paid is tracked');
+    expect(document.querySelector('.decide-paid')!.textContent).toContain('Paid is tracked separately');
+    // the panel: head, next step with the agent's pose, then the two buttons
+    const panel = screen.getByRole('region', { name: 'WHAT HAPPENS NEXT' });
+    expect(within(panel).getByText(/^Next step\./)).toBeTruthy();
+    expect(panel.querySelector('img')!.getAttribute('src')).toContain('chidi-working.png');
+    expect(within(panel).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+      ['Next decision · 1 of 2', '/work/W-1201'],
+      ['Open the work item', '/work/W-1901'],
+    ]);
+    expect(screen.queryByRole('link', { name: 'Back to my work' })).toBeNull();
     expect(decisionControls()).toHaveLength(0);
     expect(onlyContractCalls()).toBe(true);
   });
 
-  it('on a phone the card stops before the Paid sentence and the separate line says it once (SCR-03-mobile-done)', async () => {
-    vi.stubGlobal('matchMedia', (q: string) => ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
-    await open('W-1901', 'T-1901');
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText(/^Chidi will issue it and email it to Lagoon Health\./);
-    expect(text().match(/Paid is tracked separately/g)).toHaveLength(1);
-    expect(document.querySelector('.decide-next')!.textContent).not.toContain('Paid is tracked');
-    expect(document.querySelector('.decide-paid')!.textContent).toContain('Paid is tracked separately');
+  it('lists up to three other waiting decisions with See all when there are more; this item and non-decisions are left out', async () => {
+    withWaiting(
+      waitingRow('W-1901', 'Invoice v2 · Lagoon Health'),
+      waitingRow('W-2001', 'A · One'),
+      waitingRow('W-2002', 'B · Two'),
+      waitingRow('W-2003', 'C · Three'),
+      waitingRow('W-2004', 'D · Four'),
+      waitingRow('W-2005', 'Upload evidence', 'do'),
+    );
+    await approveW1901();
+    const still = await screen.findByRole('region', { name: 'STILL WAITING ON YOU · 4' });
+    expect(within(still).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['A · One', 'B · Two', 'C · Three']);
+    expect(within(still).getByRole('link', { name: 'See all' }).getAttribute('href')).toBe('/my-work');
+    expect(screen.getByRole('link', { name: 'Next decision · 1 of 4' }).getAttribute('href')).toBe('/work/W-2001');
   });
 
-  it('moves focus to the done heading, announces the result, and draws the next step on the agent surface with the done pose', async () => {
+  it('with one other waiting decision there is no See all', async () => {
+    withWaiting(waitingRow('W-2001', 'A · One'));
+    await approveW1901();
+    const still = await screen.findByRole('region', { name: 'STILL WAITING ON YOU · 1' });
+    expect(within(still).getAllByRole('listitem')).toHaveLength(1);
+    expect(within(still).queryByRole('link', { name: 'See all' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Next decision · 1 of 1' })).toBeTruthy();
+  });
+
+  it('with none waiting there is no Next decision button, and the box says all caught up with a way back to My work', async () => {
+    await approveW1901();
+    const still = await screen.findByRole('region', { name: 'ALL CAUGHT UP' });
+    expect(still.textContent).toContain('You’re all caught up.');
+    expect(within(still).getByRole('link', { name: 'Back to my work' }).getAttribute('href')).toBe('/my-work');
+    expect(screen.queryByRole('link', { name: /Next decision/ })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1901');
+  });
+
+  it('when the waiting read fails nothing is claimed: no Next decision, no caught-up box', async () => {
+    answers.list = () => json(500, { code: 'server_error', message: 'x' });
+    await approveW1901();
+    expect(screen.queryByRole('link', { name: /Next decision/ })).toBeNull();
+    expect(screen.queryByRole('region', { name: /ALL CAUGHT UP|STILL WAITING/ })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Open the work item' })).toBeTruthy();
+  });
+
+  it('a note is shown in the summary as typed', async () => {
     answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
     await open('W-1901', 'T-1901');
     await ready();
-    fireEvent.click(button('Approve v2'));
-    const heading = await screen.findByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
+    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Wrong PO' } });
+    fireEvent.click(button('Return'));
+    await screen.findByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health was returned' });
+    expect(summary()['You decided']).toBe('Return, with the note “Wrong PO”');
+  });
+
+  it('the DOM keeps the record before the panel (decide.css orders phones: banner, panel, facts, summary, still waiting)', async () => {
+    await approveW1901();
+    const cols = document.querySelector('.decide-done__cols')!;
+    expect([...cols.children].map((c) => c.className)).toEqual(['decide-done__record', 'decide-done__side']);
+    const record = [...cols.children[0].children].map((c) => c.className || c.tagName);
+    expect(record[0]).toContain('work-facts');
+    expect(record[1]).toBe('decide-sum');
+    expect(record.at(-1)).toContain('decide-paid');
+    expect([...cols.children[1].children].map((c) => c.className)).toEqual(['decide-donepanel', 'decide-still']);
+  });
+
+  it('moves focus to the done heading and announces the result', async () => {
+    await approveW1901();
+    const heading = screen.getByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
     await waitFor(() => expect(document.activeElement).toBe(heading));
     expect(screen.getByRole('status').textContent).toBe('Your decision was recorded.');
-    const card = (await screen.findByText(/^Chidi will issue it/)).closest('.decide-next')!;
-    expect(card.querySelector('img')!.getAttribute('src')).toContain('chidi-done.png');
   });
 
   it('the 5xx error card and the signed-out view each have an h1', async () => {
     answers.item = () => json(500, { code: 'server_error', message: 'x' });
     await open('W-1901', 'T-1901');
     expect(await screen.findByRole('heading', { level: 1 })).toBeTruthy();
-  });
-
-  it('without queue.next there is no Next decision link; Back to my work stays', async () => {
-    const first = item('W-1901');
-    (first as WorkItem & { decide_presentation: { queue?: unknown } }).decide_presentation.queue = { position: 1, total: 3 };
-    answers.item = (n) => json(200, n === 0 ? first : item('W-1901.approve'));
-    await open('W-1901', 'T-1901');
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText('Invoice v2 for Lagoon Health is approved');
-    expect(screen.queryByRole('link', { name: /Next decision/ })).toBeNull();
-    expect(screen.getByRole('link', { name: 'Back to my work' })).toBeTruthy();
-  });
-
-  it.each(['https://x.example', '//x.example', 'javascript:alert(1)', '/\\x.example', ' /work'])('a crafted next href %s renders no link', async (href) => {
-    const first = item('W-1901');
-    (first as WorkItem & { decide_presentation: { queue: { next: { href: string } } } }).decide_presentation.queue.next.href = href;
-    answers.item = (n) => json(200, n === 0 ? first : item('W-1901.approve'));
-    await open('W-1901', 'T-1901');
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText('Invoice v2 for Lagoon Health is approved');
-    expect(screen.queryByRole('link', { name: /Next decision/ })).toBeNull();
-    expect(document.querySelector(`a[href="${href.replace(/["\\]/g, '\\$&')}"]`)).toBeNull();
   });
 
   it('Return keeps the neutral banner on the board fixture', async () => {

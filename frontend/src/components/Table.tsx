@@ -12,6 +12,7 @@ import { Fragment, type ReactNode } from 'react';
 import { Checkbox } from './Checkbox';
 import { Icon } from './Icon';
 import { cx } from './internal';
+import { ShowMore, type ShowMoreProps } from './ShowMore';
 
 export type Column<R> = {
   key: string;
@@ -30,7 +31,7 @@ export type Column<R> = {
 
 export type Sort = { key: string; dir: 'ascending' | 'descending' };
 
-export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, selected, onSelect, rowLabel, rowState, expanded, bulkActions, footer, leading, fullRow, className, tableClassName, wrapClassName }: {
+export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, selected, onSelect, rowLabel, rowState, expanded, bulkActions, footer, paging, leading, fullRow, className, tableClassName, wrapClassName }: {
   /** Names the table for screen readers (visually hidden). */
   caption: string;
   columns: Column<R>[];
@@ -52,6 +53,8 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
   bulkActions?: ReactNode;
   /** Totals row cells, one per column. */
   footer?: ReactNode[];
+  /** The paging footer (count, rows per page, Show more), drawn inside the table's frame under the last row. */
+  paging?: ShowMoreProps;
   /** A first column the screen fills itself (its own checkboxes), where `selected` and `onSelect` do not fit. */
   leading?: { header: ReactNode; headerClassName?: string; cell: (row: R) => ReactNode };
   /** A row shown as one full-width cell instead of its columns (a record the person may not open), or undefined. */
@@ -78,19 +81,9 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
     onSelect(next);
   }
 
-  return (
-    <div className={className}>
-      {selectable && chosen > 0 && (
-        <div className="cmp-bulk">
-          <strong>{chosen} selected</strong>
-          {bulkActions}
-          <button type="button" className="psl-link cmp-linkbutton cmp-linkbutton--small" onClick={() => onSelect(new Set())}>
-            Clear selection
-          </button>
-        </div>
-      )}
-      {/* The frame scrolls sideways on narrow screens; it takes focus so a keyboard can scroll it. */}
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+  // The frame scrolls sideways on narrow screens; it takes focus so a keyboard can scroll it.
+  const wrap = (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       <div className={cx('psl-tablewrap', wrapClassName)} role="region" aria-label={caption} tabIndex={0}>
         <table className={cx('psl-table', tableClassName)}>
           <caption className="cmp-sr">{caption}</caption>
@@ -180,6 +173,20 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
           )}
         </table>
       </div>
+  );
+
+  return (
+    <div className={className}>
+      {selectable && chosen > 0 && (
+        <div className="cmp-bulk">
+          <strong>{chosen} selected</strong>
+          {bulkActions}
+          <button type="button" className="psl-link cmp-linkbutton cmp-linkbutton--small" onClick={() => onSelect(new Set())}>
+            Clear selection
+          </button>
+        </div>
+      )}
+      {paging ? <div className="psl-tableframe">{wrap}<ShowMore {...paging} /></div> : wrap}
     </div>
   );
 }

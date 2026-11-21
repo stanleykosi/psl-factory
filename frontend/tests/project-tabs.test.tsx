@@ -123,7 +123,7 @@ describe('Milestones (SCR-38)', () => {
   it('P-0101: the four milestones in returned order, one read, facts kept separate, no totals', async () => {
     await open('P-0101', 'milestones');
     expect(calls.map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0101', '/api/v1/projects/P-0101/milestones']);
-    expect(tabCalls()[0].search).toBe('?limit=20');
+    expect(tabCalls()[0].search).toBe('?limit=10');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(screen.getByRole('tab', { name: /^Milestones/ }).getAttribute('aria-selected')).toBe('true');
     expect(document.querySelector('.ptabs__route')!.textContent).toBe('PM Tunde Bello · Route A from RFP-0031');
@@ -225,7 +225,7 @@ describe('Registers (SCR-11)', () => {
   it('Issues by default: tabs with counts, search without Filter, rows, footer; one read with register=issues', async () => {
     await open('P-0101', 'registers');
     expect(tabCalls()).toHaveLength(1);
-    expect(tabCalls()[0].search).toBe('?limit=20&register=issues');
+    expect(tabCalls()[0].search).toBe('?limit=10&register=issues');
     const tabs = within(screen.getByRole('tablist', { name: 'Register' })).getAllByRole('tab');
     expect(tabs.map((t) => t.textContent)).toEqual(['Issues 3', 'Changes 2', 'Emergencies 0', 'RFPs 1']);
     expect(tabs.map((t) => t.getAttribute('href'))).toEqual(['/projects/P-0101/registers', '/projects/P-0101/registers?register=changes', '/projects/P-0101/registers?register=emergencies', '/projects/P-0101/registers?register=rfps']);
@@ -292,11 +292,11 @@ describe('Registers (SCR-11)', () => {
     expect(nav.replaced.at(-1)).toBe('/projects/P-0101/registers');
   });
 
-  it('P-0102 pages by cursor: 20 rows, Show more appends the next, focus is kept, no cursor in the URL', async () => {
+  it('P-0102 pages by cursor: 10 rows, Show more appends the next, focus is kept, no cursor in the URL', async () => {
     vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     await open('P-0102', 'registers');
-    expect(rowsOf()).toHaveLength(20);
-    expect(text()).toContain('20 showing');
+    expect(rowsOf()).toHaveLength(10);
+    expect(text()).toContain('10 showing');
     expect(rowsOf()[1][1]).toContain('SAMPLE DATA');
     expect(rowsOf()[3][3]).toBe('No owner');
     expect(rowsOf()[4][4]).toBe('—');
@@ -304,6 +304,9 @@ describe('Registers (SCR-11)', () => {
     const more = screen.getByRole('button', { name: 'Show more' });
     more.focus();
     fireEvent.click(more);
+    await until(() => expect(rowsOf()).toHaveLength(20));
+    expect(tabCalls().at(-1)!.searchParams.get('cursor')).toBe('o10');
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     await until(() => expect(rowsOf()).toHaveLength(25));
     const second = tabCalls().at(-1)!;
     expect(second.searchParams.get('cursor')).toBe('o20');
@@ -326,7 +329,7 @@ describe('Registers (SCR-11)', () => {
 describe('Actions (SCR-29)', () => {
   it('P-0101: the header counts, nine rows, owners, due dates, state tags and the footer', async () => {
     await open('P-0101', 'actions');
-    expect(tabCalls()[0].search).toBe('?limit=20');
+    expect(tabCalls()[0].search).toBe('?limit=10');
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('9 ACTIONS · 3 OVERDUE · 1 WITHOUT OWNER');
     expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search actions');
     expect(screen.queryByRole('button', { name: /filter/i })).toBeNull();

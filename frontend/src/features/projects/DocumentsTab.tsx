@@ -4,10 +4,10 @@
 // carries a work_id opens its review (SCR-08); a row without one is plain text. No filter, search or upload.
 import Link from 'next/link';
 
-import { Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
+import { ShowMore, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
 import { documentHref } from '@/features/documents/documentModel';
 
-import { AsOf, RowsFooter, TabEmpty, tabStateView } from './TabParts';
+import { AsOf, useTabPaging, TabEmpty, tabStateView } from './TabParts';
 import { textOf } from './model';
 import type { DocumentRow } from './tabsModel';
 import { useFocusAfterMore } from './useFocusAfterMore';
@@ -47,8 +47,9 @@ function DocumentCards({ caseId, rows }: { caseId: string; rows: DocumentRow[] }
 export function DocumentsTab({ caseId }: { caseId: string }) {
   const phone = useIsPhone();
   const { state, more, showMore, retry } = useProjectTab(caseId, 'documents', VIEW);
+  const { rows: pagedRows, paging } = useTabPaging(state, more, showMore, '');
   const rowsRef = useRef<HTMLDivElement>(null);
-  useFocusAfterMore(rowsRef, state.status === 'ready' ? state.rows.length : 0);
+  useFocusAfterMore(rowsRef, pagedRows.length);
 
   const columns: Column<DocumentRow>[] = [
     {
@@ -66,16 +67,20 @@ export function DocumentsTab({ caseId }: { caseId: string }) {
 
   let body = tabStateView(state, { retry, signInPath: `/projects/${encodeURIComponent(caseId)}/documents` });
   if (state.status === 'ready') {
-    const { rows } = state;
+    const rows = pagedRows;
     body =
       rows.length === 0 ? (
         <TabEmpty>No documents on this project yet.</TabEmpty>
       ) : (
         <>
           <div ref={rowsRef} className="ptabs__rows">
-            {phone ? <DocumentCards caseId={caseId} rows={rows} /> : <Table className="ptabs__table" caption="Documents" columns={columns} rows={rows} rowKey={(row) => `${row.document_id}-${row.version}`} empty="" />}
+            {phone ? (
+              <>
+                <DocumentCards caseId={caseId} rows={rows} />
+                <ShowMore solo {...paging} />
+              </>
+            ) : <Table className="ptabs__table" caption="Documents" columns={columns} rows={rows} rowKey={(row) => `${row.document_id}-${row.version}`} empty="" paging={paging} />}
           </div>
-          <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />
           <AsOf value={state.asOf} />
         </>
       );

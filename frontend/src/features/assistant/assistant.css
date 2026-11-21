@@ -7,12 +7,13 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__note { margin: auto 0 0; padding-top: var(--space-3); font-size: var(--text-small-size); color: var(--ink-muted); line-height: 1.5; }
 .as-list__group { display: flex; flex-direction: column; gap: var(--space-10px); }
 .as-list__day { margin: var(--space-2) 0 0; font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); }
+.as-list__end { height: 1px; flex: none; }
 .as-list__empty { margin: 0; color: var(--ink-muted); }
 .as .as-row { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-10px); align-items: center; padding: var(--space-2) var(--space-10px); color: var(--ink); text-decoration: none; background: var(--surface); }
 .as-row .psl-avatar { width: var(--space-6); height: var(--space-6); }
 .as-row:hover { background: var(--steel); }
-.as-row:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: calc(var(--rule-strong) * -1); }
 .as-row[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
+.as-row[aria-current="page"]:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-on-strong) !important; }
 .as-row[aria-current="page"] .as-row__sub { color: var(--nav-muted); }
 .as-row__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; }
 .as-row__title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -23,7 +24,6 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__eyebrow { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); margin-right: var(--space-1); }
 .as-chip { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-sm); padding: 0 var(--space-14px) 0 var(--space-1); border: none; box-shadow: inset 0 0 0 var(--rule-strong) var(--disabled); border-radius: 999px; background: var(--surface); font: inherit; font-weight: 600; color: var(--ink); cursor: pointer; }
 .as-chip:hover { background: var(--steel); }
-.as-chip:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
 .as-chip[aria-pressed="true"] { box-shadow: inset 0 0 0 var(--rule-strong) var(--ink); }
 .as-chip--tola[aria-pressed="true"] { background: var(--mascot-tola-tint); }
 .as-chip--chidi[aria-pressed="true"] { background: var(--mascot-chidi-tint); }
@@ -34,13 +34,12 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__idle { height: 300px; width: auto; display: block; }
 .as__hello { margin: var(--space-1) 0 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-page-title-28-size); text-align: center; }
 .as__can { margin: 0 0 var(--space-2); color: var(--ink-muted); text-align: center; max-width: 560px; }
-.as__thread { flex-grow: 1; padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-18px); max-width: 880px; min-width: 0; }
+.as__thread { flex-grow: 1; padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-18px); max-width: 880px; min-width: 0; width: 100%; margin-inline: auto; box-sizing: border-box; }
 .as__state { padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
 .as__refresh { margin: 0 var(--space-6); }
-.as__composer { margin: 0 var(--space-6) var(--space-5); max-width: 880px; display: flex; flex-direction: column; gap: var(--space-2); }
+.as__composer { margin: 0 auto var(--space-5); width: calc(100% - var(--space-6) * 2); max-width: 880px; display: flex; flex-direction: column; gap: var(--space-2); }
 .as-tool { height: var(--control-sm); padding: 0 var(--space-3); border: 1.5px solid var(--disabled); background: var(--surface); font: inherit; color: var(--ink); cursor: pointer; white-space: nowrap; }
 .as-tool:hover { background: var(--steel); }
-.as-tool:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
 .as-mention__pop { width: calc(var(--space-7) * 8); max-width: calc(100vw - var(--space-5) * 2); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
 .as-mention__list { list-style: none; margin: 0; padding: 0; max-height: calc(var(--space-7) * 5); overflow: auto; }
 .as-mention__item { width: 100%; border: none; background: none; font: inherit; text-align: left; }
@@ -87,7 +86,7 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
   .as__thread { padding: var(--space-14px) var(--space-4); gap: var(--space-3); }
   .as__refresh { margin: 0 var(--space-4); }
   .as__state { padding: var(--space-4); }
-  .as__composer { margin: 0; max-width: none; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); }
+  .as__composer { margin: 0; width: auto; max-width: none; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); }
   .as-tool { height: var(--control-md); padding: 0 var(--space-10px); font-size: var(--text-body-size); }
   .as-row { min-height: var(--control-md); }
   /* the Open footer docks like the composer it replaces */
@@ -95,3 +94,28 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 }
 
 .as__open { padding: var(--space-3) var(--space-4) var(--space-18px); }
+
+/* D-140, desktop and tablet: the page does not scroll. The Assistant fills the space under the top bar; the two side
+   columns keep their top and their footer in place and scroll only the middle; the centre keeps "Talk to" at the top
+   and the composer at the bottom, and only the thread scrolls. Phones keep the page scroll and the docked composer. */
+.as__listscroll, .as__sidebody, .as__scroll { display: contents; }
+@media (min-width: 720px) {
+  html:has(.as) { overflow: hidden; }
+  .as { height: calc(100dvh - var(--space-7) - var(--space-3) - 1px); min-height: 0; overflow: hidden; grid-template-rows: minmax(0, 1fr); }
+  .as__list, .as__side, .as__center { min-height: 0; overflow: hidden; }
+  .as__listscroll, .as__sidebody, .as__scroll { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  .as__listscroll { gap: var(--space-10px); }
+  .as__sidebody { gap: var(--space-14px); }
+  .as__scroll { overflow-anchor: auto; }
+  .as__note { margin: 0; flex: none; }
+  .as__cannot { margin: 0; flex: none; }
+  .as__home { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+  .as__state { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+  .as__composer, .as__open { flex: none; }
+  /* D-141: the agent's cards start after the avatar column (40px and a 12px gap); the right padding takes the same, so the visible content sits as far from the composer's left edge as from its right */
+  .as__thread { padding-right: calc(var(--space-6) + 40px + var(--space-3)); }
+}
+@media (min-width: 720px) and (max-width: 1079.98px) {
+  .as { grid-template-rows: minmax(0, 1fr) minmax(0, auto); }
+  .as__side { max-height: 15rem; }
+}

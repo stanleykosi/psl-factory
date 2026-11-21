@@ -86,7 +86,7 @@ describe('rules', () => {
   });
 
   it('a persona who cannot see the project gets 404 and no text; scenarios still win', async () => {
-    const hidden = await doc('2', { persona: 'ceo' });
+    const hidden = await doc('2', { persona: 'hr' });
     expect(hidden.status).toBe(404);
     expect(JSON.stringify(hidden.body)).not.toMatch(/Statement|Scope|Lagoon/);
     expect((await doc('2', { scenario: '403' })).status).toBe(403);

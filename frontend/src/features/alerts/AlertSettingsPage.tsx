@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, ErrorState, Link, PageTitle, Select, Table, useIsPhone } from '@/components';
+import { Button, Callout, ErrorState, Link, PageTitle, Select, Table, useIsPhone, useToast } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { AlertSwitch } from './AlertSwitch';
@@ -20,7 +20,6 @@ const CHANNELS = [
 
 type PageState = { status: 'loading' } | { status: 'error'; code: string } | { status: 'ready'; prefs: AlertPrefs; draft: Draft };
 type Notice =
-  | { kind: 'saved' }
   | { kind: 'stale' }
   | { kind: 'invalid'; message: string }
   | { kind: 'problem'; message: string; code: string };
@@ -38,6 +37,7 @@ function pageFrom(data: AlertPrefs | SavedPrefs): PageState {
 /** /settings/alerts (SCR-15 settings): the person's own alert preferences, saved with the read revision. */
 export function AlertSettingsPage() {
   const phone = useIsPhone();
+  const toast = useToast();
   const [page, setPage] = useState<PageState>({ status: 'loading' });
   const [notice, setNotice] = useState<Notice | null>(null);
   const [saving, setSaving] = useState(false);
@@ -73,7 +73,6 @@ export function AlertSettingsPage() {
 
   const edit = (change: (draft: Draft) => Draft) => {
     setPage((prev) => (prev.status === 'ready' ? { ...prev, draft: change(prev.draft) } : prev));
-    setNotice((prev) => (prev?.kind === 'saved' ? null : prev));
   };
   const toggle = (key: string, channel: 'whatsapp' | 'email') =>
     edit((draft) => ({ ...draft, events: draft.events.map((e) => (e.key === key ? { ...e, [channel]: !e[channel] } : e)) }));
@@ -87,7 +86,7 @@ export function AlertSettingsPage() {
     try {
       const data = await call(api.PUT('/api/v1/me/alert-preferences', { body: buildPrefsBody(page.prefs, page.draft, phone) }));
       setPage(pageFrom(data));
-      setNotice({ kind: 'saved' });
+      toast.show('Your alert settings are saved.');
     } catch (error) {
       const e = asApiError(error);
       if (e.kind === 'unauthenticated') setSignedOut(true);
@@ -150,7 +149,6 @@ export function AlertSettingsPage() {
 
   const notices = notice && (
     <>
-      {notice.kind === 'saved' && <Callout kind="success">Your alert settings are saved.</Callout>}
       {notice.kind === 'stale' && (
         <Callout kind="warning" focusOnShow>
           Someone changed these settings since you opened them. This is the latest version; make your changes again.

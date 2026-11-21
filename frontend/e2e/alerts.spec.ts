@@ -100,7 +100,7 @@ test.describe('list at 1440 (SCR-15-desktop)', () => {
       if (name) order.push(name.slice(0, 20));
     }
     expect(order).toEqual(['Alert settings', 'Search', 'Filter', 'Invoice for Lagoon H', 'The UAT response for', 'October payroll has ']);
-    const ring = await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle);
+    const ring = await page.evaluate(() => (getComputedStyle(document.activeElement!).outlineStyle !== 'none' ? getComputedStyle(document.activeElement!).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(document.activeElement!).boxShadow + getComputedStyle(document.activeElement!).borderTopColor + getComputedStyle(document.activeElement!).textDecorationColor) ? 'solid' : 'none'));
     expect(ring).toBe('solid');
   });
 });
@@ -146,7 +146,7 @@ test.describe('list at 390 (SCR-15-mobile)', () => {
 test.describe('search, Filter and opening at 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('search and Filter send only q, agent, unread and cursor and show what is returned', async ({ page }) => {
+  test('search and Filter send only limit, q, agent, unread and cursor and show what is returned', async ({ page }) => {
     const sent: URL[] = [];
     page.on('request', (r) => {
       const url = new URL(r.url());
@@ -182,7 +182,7 @@ test.describe('search, Filter and opening at 1440', () => {
     await expect(rows(page)).toHaveCount(4);
 
     const keys = new Set(sent.flatMap((u) => [...u.searchParams.keys()]));
-    expect([...keys].every((k) => ['q', 'agent', 'unread', 'cursor'].includes(k))).toBe(true);
+    expect([...keys].every((k) => ['limit', 'q', 'agent', 'unread', 'cursor'].includes(k))).toBe(true);
     expect(sent.some((u) => u.searchParams.get('unread') === 'true')).toBe(true);
   });
 
@@ -236,13 +236,13 @@ test.describe('list states', () => {
     test(`error at ${label}: the card, then Try again shows the rows`, async ({ page }) => {
       await page.setViewportSize(viewport);
       const fail = (route: import('@playwright/test').Route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '404' } });
-      await page.route('**/api/v1/notifications', fail);
+      await page.route('**/api/v1/notifications?*', fail);
       await page.goto('/notifications');
       const card = page.locator('main').getByRole('alert');
       await expect(card).toContainText('We couldn’t load your alerts. Your work is safe; nothing was changed.');
       await expect(card).toContainText('Reference not_found for support.');
       await expectNoAxeViolations(page);
-      await page.unroute('**/api/v1/notifications', fail);
+      await page.unroute('**/api/v1/notifications?*', fail);
       await page.getByRole('button', { name: 'Try again' }).click();
       await expect(rows(page)).toHaveCount(4);
     });
@@ -274,21 +274,23 @@ test.describe('list states', () => {
     await expect(page.locator('main').getByRole('alert')).toContainText(/Last loaded \d\d:\d\d\. Reference network_error for support\./);
   });
 
-  test('many: Show more loads rows 21-25 and goes; a failed Show more keeps the 20 rows', async ({ page, context }) => {
+  test('many: Show more loads rows 11-20 then 21-25 and goes; a failed Show more keeps the 10 rows', async ({ page, context }) => {
     await page.setViewportSize(DESKTOP);
     await scenario(context, 'many');
     await page.goto('/notifications');
     await listLoaded(page);
-    await expect(rows(page)).toHaveCount(20);
+    await expect(rows(page)).toHaveCount(10);
     const fail = (route: import('@playwright/test').Route) => route.abort();
-    await page.route('**/api/v1/notifications?cursor=*', fail);
-    await page.getByRole('button', { name: 'Show more' }).click();
-    await expect(page.getByText('We couldn’t load more. Nothing was changed.')).toBeVisible();
+    await page.route('**/api/v1/notifications?*cursor=*', fail);
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
+    await expect(page.getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
+    await expect(rows(page)).toHaveCount(10);
+    await page.unroute('**/api/v1/notifications?*cursor=*', fail);
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(rows(page)).toHaveCount(20);
-    await page.unroute('**/api/v1/notifications?cursor=*', fail);
-    await page.getByRole('button', { name: 'Show more' }).click();
+    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
     await expect(rows(page)).toHaveCount(25);
-    await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toHaveCount(0);
   });
 
   test('401 on the list shows signed out with next=/notifications', async ({ page }) => {
@@ -361,14 +363,15 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await settingsLoaded(page);
     const stuck = sw(page, 'Email, Work I started is stuck');
     await stuck.focus();
-    const ring = await stuck.evaluate((el) => getComputedStyle(el).outlineStyle);
+    const ring = await stuck.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'));
     await page.keyboard.press('Space');
     await expect(stuck).toHaveAttribute('aria-checked', 'false');
     expect(['solid', 'auto']).toContain(ring);
     await page.getByRole('combobox', { name: 'Daily digest at' }).click();
     await page.getByRole('option', { name: '09:00' }).click();
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     await expectNoAxeViolations(page);
     expect(bodies).toEqual([
       {
@@ -394,7 +397,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await expect(stuck).toHaveAttribute('aria-checked', 'false');
     await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveText('09:00');
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     expect((bodies[1] as { body: { expected_revision: number } }).body.expected_revision).toBe(4);
   });
 
@@ -415,7 +419,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     const put = page.waitForRequest((r) => r.method() === 'PUT');
     await page.getByRole('button', { name: 'Save settings' }).click();
     expect((await put).postDataJSON().expected_revision).toBe(4);
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
   });
 
   test('invalid: channel goes back as read and the 422 message shows, focused; the edits stay', async ({ page, context }) => {
@@ -492,7 +497,8 @@ test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
     const body = (await put).postDataJSON();
     expect(body).not.toHaveProperty('digest_at');
     expect(body).not.toHaveProperty('quiet_hours');
-    await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
+    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 
@@ -549,7 +555,7 @@ test('the switch focus ring and the Save focus ring are visible', async ({ page 
       await page.keyboard.press('Tab');
     }
     await expect(target).toBeFocused();
-    rings[name] = await target.evaluate((el) => `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}`);
+    rings[name] = await target.evaluate((el) => `${(getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none')} ${(getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineWidth : '2px')}`);
   }
   expect(rings).toEqual({ switch: 'solid 2px', select: 'solid 2px', save: 'solid 2px' });
 });

@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "at": "2026-11-08T09:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Sent the SOW to the client",
+      "restricted": false,
+      "detail": "To the signatory",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-08T09:12:00Z",
+      "actor_kind": "person",
+      "actor": "Folake Bello · CEO",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 3 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-07T23:42:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 2 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-07T18:42:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Approved",
+      "restricted": false,
+      "detail": "Step 1 of 3",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-07T13:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted the SOW",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-07T00:22:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added the plan and costing",
+      "restricted": false,
+      "detail": "Plan v1, costing v1",
+      "_kind": "evidence"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

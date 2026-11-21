@@ -46,7 +46,7 @@ async function tabTo(page: Page, target: Locator) {
     if (await target.evaluate((el) => el === document.activeElement)) {
       return target.evaluate((el) => {
         const s = getComputedStyle(el);
-        return { style: s.outlineStyle, width: s.outlineWidth };
+        return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
       });
     }
   }
@@ -69,7 +69,7 @@ for (const [label, viewport] of [
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
         await expect(page.locator('h1')).toHaveCount(1);
         const size = await page.locator('main h1').evaluate((el) => getComputedStyle(el).fontSize);
-        const phoneSize = path.endsWith('/history') ? '20px' : path === '/work/W-1099' ? '24px' : '22px';
+        const phoneSize = path === '/work/W-1099' ? '24px' : '22px';
         expect(size).toBe(viewport === DESKTOP ? (path === '/work/W-1099' ? '33px' : '40px') : phoneSize);
         expect(await page.locator('main h1').evaluate((el) => el.classList.contains('shell-title'))).toBe(true);
       });
@@ -122,7 +122,7 @@ test.describe('focus outlines (AC 20)', () => {
     await go(page, '/work/W-1705/history', 'finance_lead');
     expect(await tabTo(page, page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { selected: true }))).toEqual(ring); // one tab stop: the open tab
     expect(await tabTo(page, page.getByRole('radio', { name: /^All ?7$/ }))).toEqual(ring);
-    expect(await tabTo(page, page.getByRole('combobox', { name: 'Rows per page' }))).toEqual(ring);
+    expect(await tabTo(page, page.getByRole('radio', { name: '10', exact: true }))).toEqual(ring);
   });
 
   test('phone: the disclosures show a ring and toggle', async ({ page }) => {
@@ -161,22 +161,20 @@ test.describe('history on the boards (AC 18)', () => {
     await page.setViewportSize(DESKTOP);
     await go(page, '/work/W-1705/history', 'finance_lead');
     await expect(page.getByRole('tablist', { name: 'Work item' }).getByRole('tab')).toHaveText(['Overview', 'History 7']);
-    await expect(page.getByRole('radio')).toHaveText(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1']);
+    await expect(page.getByRole('radio')).toHaveText(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1', '10', '20', '50']);
     await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(7);
     await expect(page.getByRole('table').locator('tbody tr').first().locator('time')).toHaveText('12 Nov 16:40');
     await expect(page.getByRole('complementary', { name: 'About history' })).toBeVisible();
   });
 
-  test('W-1705 at 390: HISTORY eyebrow, title and stacked entries', async ({ page }) => {
+  test('W-1705 at 390: the same header as Overview and stacked entries with the paging footer', async ({ page }) => {
     await page.setViewportSize(PHONE);
     await go(page, '/work/W-1705/history', 'finance_lead');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('History · INV-0412');
-    await expect(page.locator('main').getByText('HISTORY', { exact: true })).toBeVisible();
-    // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Lagoon Health · Milestone 2 invoice');
+    await expect(page.locator('main').getByText('HISTORY', { exact: true })).toHaveCount(0);
     const cards = page.getByRole('list', { name: 'History, newest first' }).getByRole('listitem');
-    await expect(cards).toHaveCount(5);
-    await page.getByRole('button', { name: '+ 2 earlier entries' }).click();
     await expect(cards).toHaveCount(7);
+    await expect(page.getByText('All 7 showing')).toBeVisible();
   });
 });
 

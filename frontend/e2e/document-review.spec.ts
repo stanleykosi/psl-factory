@@ -76,7 +76,7 @@ test.describe('desktop 1440', () => {
     await open(page);
     await expect(page.getByRole('button', { name: 'Approve v2' })).toBeEnabled();
     await page.getByRole('button', { name: 'Approve v2' }).click();
-    const done = page.getByRole('status').filter({ hasText: 'You approved v2' });
+    const done = page.locator('.psl-toast').filter({ hasText: 'You approved v2' });
     await expect(done).toHaveText(/^You approved v2 · Kemi Adebayo · 17 Nov 10:05\. Not sent to the client\.$/);
     await expect(page.getByRole('button', { name: /Approve|Return/ })).toHaveCount(0);
     await expect(page.getByText('Approved', { exact: true })).toBeVisible();
@@ -204,7 +204,7 @@ test.describe('desktop 1440', () => {
       await expect(page.getByText(/Statement of work|Scope/)).toHaveCount(0);
     }
     await page.unroute('**/api/v1/documents/**');
-    await setCookies(context, { psl_mock_persona: 'ceo' });
+    await setCookies(context, { psl_mock_persona: 'admin' }); // the CEO sees every project since D-150; Admin has no access to this one
     await open(page);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('You can’t open this document');
     await expect(page.getByText(/Scope|Lagoon/)).toHaveCount(0);

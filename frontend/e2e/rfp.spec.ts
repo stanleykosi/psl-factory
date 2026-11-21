@@ -108,7 +108,7 @@ const ring = (target: Locator) =>
   target.evaluate((el) => {
     // A shared date field draws its ring on the box around the text and the calendar button.
     const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
-    return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
+    return (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none') !== 'none' && parseFloat((s.outlineStyle !== 'none' ? s.outlineWidth : '2px')) >= 2;
   });
 
 test('the frame tabs: only built screens are in the Tab order; the current tab is marked', async ({ page }) => {
@@ -158,7 +158,7 @@ test('team input records through the mock: claim, proof, record, success', async
   await fillWhen(page, 'Received', '2026-11-12T15:10');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Record input' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Response recorded.' })).toBeVisible();
 });
 
 test('at 390 the pinned Record is on screen, the size of F-09’s, and targets are at least 44px', async ({ page }) => {

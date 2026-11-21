@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "at": "2026-11-06T15:00:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Verified",
+      "restricted": false,
+      "detail": "Records reread: 3 of 3 show the new unit"
+    },
+    {
+      "at": "2026-11-06T14:40:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Updated the records",
+      "restricted": false,
+      "detail": "3 staff",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-06T14:20:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Chose the business units",
+      "restricted": false,
+      "detail": "Note: \"Moves agreed with the unit heads.\"",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-06T14:05:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-06T14:00:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Listed the moves",
+      "restricted": false,
+      "detail": "3 staff",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-06T13:55:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From the business unit register"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

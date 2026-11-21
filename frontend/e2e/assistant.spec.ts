@@ -77,11 +77,12 @@ test('the composer is labelled by agent, the Talk to chips are pressed buttons, 
   await expect(page.getByRole('textbox', { name: 'Message Chidi' })).toBeVisible();
   await expect(chips.nth(1)).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('textbox', { name: 'Message Chidi' }).focus();
-  const ring = await page.locator('.cmp-composer__box').evaluate((el) => getComputedStyle(el).outlineStyle);
-  expect(ring).not.toBe('none');
+  // D-143: the box changes its own border, with no outer ring
+  const box = await page.locator('.cmp-composer__box').evaluate((el) => ({ ring: getComputedStyle(el).outlineStyle, border: getComputedStyle(el).borderTopColor }));
+  expect(box).toEqual({ ring: 'none', border: 'rgb(36, 89, 214)' });
   await chips.first().focus();
   await page.keyboard.press('Tab');
-  expect(await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle)).not.toBe('none');
+  expect(await page.evaluate(() => (getComputedStyle(document.activeElement!).outlineStyle !== 'none' ? getComputedStyle(document.activeElement!).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(document.activeElement!).boxShadow + getComputedStyle(document.activeElement!).borderTopColor + getComputedStyle(document.activeElement!).textDecorationColor) ? 'solid' : 'none'))).not.toBe('none');
 });
 
 test('sending from the home posts one conversation and one message, then opens the thread', async ({ page }) => {
@@ -93,6 +94,65 @@ test('sending from the home posts one conversation and one message, then opens t
   await expect(page.getByText('Sample answer from the contract mock. No agent ran.')).toBeVisible();
   expect((await log(page)).map((e) => e.operation)).toEqual(['E-CONVERSATION-NEW', 'E-MESSAGE']);
   await expect(page.getByRole('complementary', { name: 'Conversations' }).getByRole('link', { name: /^Draft the Kora SOW/ })).toBeVisible();
+});
+
+// D-160: the message is on the page the moment it is sent, with no skeleton and no page load.
+test('D-160: a first message shows at once under "Sending…", the thread opens with no skeleton and no reload, and the button is busy until the reply', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => {
+    (window as unknown as { skeletons: number }).skeletons = 0;
+    new MutationObserver(() => {
+      if (document.querySelector('.psl-skel')) (window as unknown as { skeletons: number }).skeletons += 1;
+    }).observe(document, { childList: true, subtree: true });
+  });
+  await ready(page, '/assistant');
+  await page.evaluate(() => {
+    (window as unknown as { sameDocument: boolean }).sameDocument = true;
+    (window as unknown as { skeletons: number }).skeletons = 0;
+  });
+  // hold the message POST for a moment so the page can be looked at while it is in flight
+  await page.route('**/api/v1/assistant/conversations/*/messages', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    await route.fallback();
+  });
+  await page.getByRole('textbox', { name: 'Message Tola' }).fill('Draft the Kora SOW [working]');
+  await page.getByRole('button', { name: 'Send' }).click();
+  const thread = page.getByRole('region', { name: 'Conversation' });
+  await expect(thread.getByText('Draft the Kora SOW [working]')).toBeVisible();
+  await expect(thread.getByText('Sending…')).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Message Tola' })).toHaveValue('');
+  await expect(page.getByRole('button', { name: 'Send' })).toHaveAttribute('aria-busy', 'true');
+  await expect(page).toHaveURL(/\/assistant\/CV-N1$/);
+  await expect(thread.getByText('Sending…')).toHaveCount(0);
+  // the mock's [working] run takes three polls: still busy after the write, free once the answer is there
+  await expect(page.getByRole('button', { name: 'Send' })).toHaveAttribute('aria-busy', 'true');
+  await expect(page.getByText('Sample answer from the contract mock. No agent ran.')).toBeVisible({ timeout: 25000 });
+  await expect(page.getByRole('button', { name: 'Send' })).not.toHaveAttribute('aria-busy', 'true');
+  await expect(thread.locator('.cmp-chat--person').getByText('Draft the Kora SOW [working]')).toHaveCount(1);
+  expect(await page.evaluate(() => (window as unknown as { skeletons: number }).skeletons)).toBe(0);
+  expect(await page.evaluate(() => (window as unknown as { sameDocument?: boolean }).sameDocument)).toBe(true);
+});
+
+// D-161 (proposal; the mock's upload): an image chosen, shown as a thumbnail, sent with no words, and still there after a reload.
+test('D-161: attach an image, send it with no text, and see it in the thread after a reload', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await ready(page, '/assistant/CV-2401');
+  await expect(page.getByRole('button', { name: 'Attach images' })).toBeVisible();
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+  await page.locator('input[type="file"]').setInputFiles({ name: 'floor.png', mimeType: 'image/png', buffer: png });
+  const thumbs = page.getByRole('list', { name: 'Images' });
+  await expect(thumbs.getByRole('img', { name: 'floor.png' })).toBeVisible();
+  await expect(thumbs.getByRole('status')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Send' }).click();
+  const sent = page.getByRole('region', { name: 'Conversation' }).getByRole('img', { name: 'floor.png' });
+  await expect(sent).toHaveAttribute('src', '/api/v1/assistant/uploads/F-1');
+  await expect(sent.locator('xpath=ancestor::a')).toHaveAttribute('target', '_blank');
+  await page.reload();
+  await expect(page.getByRole('region', { name: 'Conversation' }).getByRole('img', { name: 'floor.png' })).toHaveAttribute('src', '/api/v1/assistant/uploads/F-1');
+  // refused images say why, in the server's words
+  await page.locator('input[type="file"]').setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('hello') });
+  await expect(page.getByRole('alert').filter({ hasText: 'Attach an image file.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send' })).toHaveAttribute('aria-disabled', 'true');
 });
 
 test('the started draft: the drawer is the normal one, one POST, the thread shows "Started INV-0415." with focus on it, and a reload keeps it', async ({ page }) => {
@@ -255,4 +315,67 @@ test('CV-2404: the cant pose at 1440 (side panel) and 390 (inline card, 44px con
   expect((await log(page)).filter((e) => /post|send|start/i.test(e.operation))).toEqual([]);
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   expect(results.violations).toEqual([]);
+});
+
+for (const height of [500, 700, 800, 900]) {
+  test(`the conversation list loads the next page as it is scrolled to the end, without reloading the rows shown (D-138, window ${height}px)`, async ({ page }) => {
+  const all = Array.from({ length: 25 }, (_, i) => ({
+    conversation_id: `CV-S${i}`,
+    title: `Scroll chat ${i}`,
+    agent: 'tola',
+    status: 'idle',
+    updated_at: '2026-11-13T09:00:00Z',
+  }));
+  const listCalls: string[] = [];
+  await page.route('**/api/v1/assistant/conversations?*', async (route) => {
+    const url = new URL(route.request().url());
+    listCalls.push(url.search);
+    const limit = Number(url.searchParams.get('limit') ?? 10);
+    const offset = Number(/^o:(\d+)$/.exec(url.searchParams.get('cursor') ?? '')?.[1] ?? 0);
+    const body = { items: all.slice(offset, offset + limit), as_of: '2026-11-14T10:00:00Z', ...(offset + limit < all.length ? { next_cursor: `o:${offset + limit}` } : {}) };
+    await route.fulfill({ json: body });
+  });
+  await page.setViewportSize({ width: 1440, height });
+  await ready(page, '/assistant');
+  const links = page.locator('.as-row');
+  await expect(links).toHaveCount(10);
+  await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toHaveCount(0);
+  const first = await links.first().elementHandle();
+  await links.last().scrollIntoViewIfNeeded();
+  await expect(links).toHaveCount(20);
+  await links.last().scrollIntoViewIfNeeded();
+  await expect(links).toHaveCount(25);
+  expect(listCalls.filter((c) => c.includes('cursor='))).toHaveLength(2);
+  // the first row is the very same element: nothing already shown was reloaded
+  expect(await first!.evaluate((el) => el.isConnected)).toBe(true);
+  expect(await links.first().evaluate((el, h) => el === h, first)).toBe(true);
+});
+}
+
+test('desktop: only the thread scrolls; both side footers and the composer keep their place (D-140)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 520 });
+  await ready(page, '/assistant/CV-2404');
+  const scroller = page.locator('.as__scroll');
+  const pieces = [page.locator('.as__note'), page.locator('.as__cannot'), page.locator('.as__composer'), page.locator('.as__talk'), page.locator('.as__new')];
+  const place = async () => Promise.all(pieces.map(async (p) => (await p.boundingBox())!));
+  // the thread is longer than its window, so it has something to scroll, and it opens at the latest message
+  const m = await scroller.evaluate((el) => ({ over: el.scrollHeight > el.clientHeight, atEnd: Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) < 2 }));
+  expect(m.over).toBe(true);
+  expect(m.atEnd).toBe(true);
+  const before = await place();
+  await scroller.evaluate((el) => (el.scrollTop = 0));
+  await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBe(0);
+  const after = await place();
+  after.forEach((box, i) => {
+    expect(Math.abs(box.x - before[i].x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(box.y - before[i].y)).toBeLessThanOrEqual(1);
+  });
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight)).toBe(true);
+  // D-141: the visible content is as far from the composer's left edge as from its right
+  const composer = (await page.locator('.as__composer').boundingBox())!;
+  const card = (await page.locator('.cmp-chat--agent .cmp-chat__body').first().boundingBox())!;
+  expect(Math.abs(card.x - composer.x - (composer.x + composer.width - (card.x + card.width)))).toBeLessThanOrEqual(1);
+  // both footers sit inside the window
+  for (const box of before.slice(0, 3)) expect(box.y + box.height).toBeLessThanOrEqual(520);
 });

@@ -161,7 +161,7 @@ describe('settings (SCR-15-desktop-settings)', () => {
     });
     expect(checked('Email, Work I started is stuck')).toBe('false');
     fireEvent.click(sw('Email, Everything else'));
-    expect(screen.queryByText('Your alert settings are saved.')).toBeNull();
+    expect(screen.getAllByText('Your alert settings are saved.')).toHaveLength(1); // the first save's toast, not a second
     save();
     await until(() => expect(puts()).toHaveLength(2));
     expect(sent()[1].expected_revision).toBe(4);

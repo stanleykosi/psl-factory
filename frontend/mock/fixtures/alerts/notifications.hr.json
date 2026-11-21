@@ -1,0 +1,55 @@
+{
+  "items": [
+    {
+      "id": "N-0301",
+      "work_id": "W-4601",
+      "agent": "zainab",
+      "text": "Your November staff list is ready to confirm",
+      "at": "2026-11-18T09:05:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-18T09:05:00Z"
+    },
+    {
+      "id": "N-0302",
+      "work_id": "W-4602",
+      "agent": "zainab",
+      "text": "2 staff have no business unit; payroll matching is waiting on you",
+      "at": "2026-11-18T09:12:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-18T09:12:00Z"
+    },
+    {
+      "id": "N-0303",
+      "work_id": "W-4603",
+      "agent": "zainab",
+      "text": "Finance asked for Segun Alade’s last working day",
+      "at": "2026-11-18T10:24:00Z",
+      "read": false,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-18T10:24:00Z"
+    },
+    {
+      "id": "N-0304",
+      "work_id": "W-4608",
+      "agent": "zainab",
+      "text": "Finance matched the October staff list to payroll",
+      "at": "2026-11-09T12:00:00Z",
+      "read": true,
+      "delivered_via": [
+        "in_app"
+      ],
+      "delivered_at": "2026-11-09T12:00:00Z"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z",
+  "total": 4,
+  "unread_count": 3
+}

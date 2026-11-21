@@ -9,7 +9,7 @@
 import { useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { Button, Callout, Checkbox, DateField, FileUpload, Panel, Select, TextField, type FileState } from '@/components';
+import { Button, Callout, Checkbox, DateField, FileUpload, Panel, Select, TextField, useToast, type FileState } from '@/components';
 
 import { uploadEvidence } from './api';
 import type { RulesPage, RuleRow, SaveBody } from './contract-proposal';
@@ -63,6 +63,7 @@ export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }
   const row = rows.find((r) => r.component === selected) ?? rows[0];
   const [edits, setEdits] = useState<Edits>(() => startEdits(row));
   const current = edits.component === row.component ? edits : startEdits(row);
+  const toast = useToast();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [invalid, setInvalid] = useState<Set<RuleField>>(new Set());
   const [locked, setLocked] = useState(false);
@@ -78,8 +79,16 @@ export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }
   };
   const reloadedRow = (page: RulesPage | ApiError) => (page instanceof ApiError ? undefined : page.items.find((r) => r.component === row.component));
   // Shows the outcome in the panel, or hands it to the view when the re-read closes the panel.
+  // A save that went through is a toast (D-151); when the panel closes, the permission state stays as a Callout.
   const announce = (page: RulesPage | ApiError, next: Notice, rejected = false) => {
-    if (!(page instanceof ApiError) && !staysOpen(page)) {
+    const gone = !(page instanceof ApiError) && !staysOpen(page);
+    if (next.tone === 'success') {
+      toast.show(next.text);
+      if (gone) onEditorGone({ tone: 'warning', text: EDITOR_GONE });
+      else setNotice(null);
+      return;
+    }
+    if (gone) {
       onEditorGone({ ...next, text: [next.text, EDITOR_GONE, rejected ? NOT_SAVED : ''].join(' ').trim() });
       return;
     }

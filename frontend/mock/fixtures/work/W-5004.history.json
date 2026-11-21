@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "at": "2026-11-10T07:42:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Asked the CEO to decide",
+      "restricted": false,
+      "detail": "Escalation, second missed date",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T07:02:00Z",
+      "actor_kind": "person",
+      "actor": "Kemi Adebayo · PMO Lead",
+      "event": "Approved the draft",
+      "restricted": false,
+      "detail": "Needs the CEO",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-10T05:12:00Z",
+      "actor_kind": "agent",
+      "actor": "Tola · planning agent",
+      "event": "Drafted the message to the sponsor",
+      "restricted": false,
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-10T04:22:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Added the client’s complaint",
+      "restricted": false,
+      "detail": "Client email",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-10T03:22:00Z",
+      "actor_kind": "person",
+      "actor": "Tunde Bello · PM",
+      "event": "Started the escalation",
+      "restricted": false,
+      "_kind": "decision"
+    }
+  ],
+  "as_of": "2026-11-10T09:42:00Z"
+}

@@ -1,0 +1,80 @@
+{
+  "id": "W-4602",
+  "title": "2 staff with no business unit · November",
+  "line": "Fix staff records",
+  "reference": "HRR-0007",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Find the gaps",
+      "status": "done"
+    },
+    {
+      "name": "Choose business units",
+      "status": "current_person"
+    },
+    {
+      "name": "Update records",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4602",
+      "kind": "fix",
+      "title": "Choose a business unit for 2 staff",
+      "required_role": "HR",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Listed staff with no business unit in the November list",
+        "status": "done",
+        "source": "Staff list · November"
+      },
+      {
+        "text": "Suggested units from the project teams they worked on",
+        "status": "done",
+        "source": "Project teams · October"
+      }
+    ]
+  },
+  "next_step": "Next, HR chooses a business unit for Ifeoma Nwosu and Sani Garba. Payroll matching waits for this.",
+  "sample": true
+}

@@ -50,38 +50,82 @@ describe('DateField with a time', () => {
       </>
     );
   }
-  const date = () => screen.getByRole('textbox', { name: 'When they responded' });
-  const clock = () => screen.getByLabelText('When they responded, time') as HTMLInputElement;
+  const box = () => screen.getByLabelText('When they responded');
+  const out = () => document.querySelector('output')!.textContent;
+  const cell = (selector: string) => document.querySelector<HTMLElement>(`.cmp-dtpop ${selector}`)!;
+  const done = () => fireEvent.click(screen.getByRole('button', { name: 'Done' }));
 
-  it('the value stays empty until both the date and the time are given, then reads 2026-11-17T14:30', () => {
+  it('D-158: one dropdown; the value stays empty until the date, hour and minute are all picked, then reads 2026-11-17T14:30', () => {
     render(<When />);
-    fireEvent.change(date(), { target: { value: '17 Nov 2026' } });
-    fireEvent.blur(date());
-    expect(document.querySelector('output')!.textContent).toBe('empty');
-    fireEvent.change(clock(), { target: { value: '14:30' } });
-    expect(document.querySelector('output')!.textContent).toBe('2026-11-17T14:30');
-    fireEvent.change(clock(), { target: { value: '' } });
-    expect(document.querySelector('output')!.textContent).toBe('empty');
-    fireEvent.change(clock(), { target: { value: '09:05' } });
-    expect(document.querySelector('output')!.textContent).toBe('2026-11-17T09:05');
+    expect(box().textContent).toBe('Choose date and time');
+    fireEvent.click(box());
+    expect(screen.getByRole('dialog', { name: 'Choose a date and time' })).toBeTruthy();
+    expect(screen.queryByRole('textbox')).toBeNull();
+    fireEvent.click(cell('[data-iso="2026-11-17"]'));
+    expect(out()).toBe('empty');
+    fireEvent.click(cell('[aria-label="Hour"] [data-value="14"]'));
+    expect(out()).toBe('empty');
+    fireEvent.click(cell('[aria-label="Minute"] [data-value="30"]'));
+    expect(out()).toBe('2026-11-17T14:30');
+    expect(cell('[aria-label="Hour"] [data-value="14"]').getAttribute('aria-selected')).toBe('true');
+    fireEvent.click(cell('[aria-label="Hour"] [data-value="09"]'));
+    expect(out()).toBe('2026-11-17T09:30');
+    done();
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(box().textContent).toBe('17 Nov 2026, 09:30');
+    expect(document.activeElement).toBe(box());
   });
 
-  it('time first then the date also completes the value; a loaded value fills both', () => {
-    const { unmount } = render(<When />);
-    fireEvent.change(clock(), { target: { value: '16:20' } });
-    expect(document.querySelector('output')!.textContent).toBe('empty');
-    fireEvent.change(date(), { target: { value: '11/11/2026' } });
-    fireEvent.blur(date());
-    expect(document.querySelector('output')!.textContent).toBe('2026-11-11T16:20');
+  it('a loaded value shows in the box and the panel opens on it; Done with only a date asks for the time', () => {
+    const { unmount } = render(<When start="2026-04-10T11:00" />);
+    expect(box().textContent).toBe('10 Apr 2026, 11:00');
+    fireEvent.click(box());
+    expect(screen.getByRole('grid').getAttribute('aria-label')).toBe('April 2026');
+    expect(cell('[data-iso="2026-04-10"]').getAttribute('aria-selected')).toBe('true');
+    expect(cell('[aria-label="Minute"] [data-value="00"]').getAttribute('aria-selected')).toBe('true');
     unmount();
-    render(<When start="2026-04-10T11:00" />);
-    expect((date() as HTMLInputElement).value).toBe('10 Apr 2026');
-    expect(clock().value).toBe('11:00');
+    render(<When />);
+    fireEvent.click(box());
+    fireEvent.click(cell('[data-iso="2026-11-12"]'));
+    done();
+    expect(box().textContent).toBe('12 Nov 2026, --:--');
+    expect(screen.getByText('Choose the time too.')).toBeTruthy();
+    expect(box().getAttribute('aria-invalid')).toBe('true');
   });
 
-  it('without time the field has no time input and the value is the date, as before', () => {
+  it('Use now fills the date and the time and closes; Esc closes without changing anything', () => {
+    render(<When />);
+    fireEvent.click(box());
+    fireEvent.keyDown(cell('[aria-label="Hour"] [data-value="09"]'), { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(out()).toBe('empty');
+    fireEvent.click(box());
+    fireEvent.click(screen.getByRole('button', { name: 'Use now' }));
+    expect(out()).toMatch(/^\d{4}-\d\d-\d\dT\d\d:\d\d$/);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('the hour and minute lists move with the arrow keys and choose with Enter', () => {
+    render(<When start="2026-11-17T14:30" />);
+    fireEvent.click(box());
+    const fourteen = cell('[aria-label="Hour"] [data-value="14"]');
+    fourteen.focus();
+    fireEvent.keyDown(fourteen, { key: 'ArrowDown' });
+    expect(document.activeElement?.textContent).toBe('15');
+    fireEvent.keyDown(document.activeElement!, { key: 'Enter' });
+    expect(out()).toBe('2026-11-17T15:30');
+  });
+
+  it('the open panel passes the accessibility check', async () => {
+    render(<When start="2026-11-17T14:30" />);
+    fireEvent.click(box());
+    expect(await violations()).toEqual([]);
+  });
+
+  it('without time the field is the typed date field, as before', () => {
     render(<DateField label="Payment date" value="" onChange={() => {}} />);
-    expect(screen.queryByLabelText('Payment date, time')).toBeNull();
+    expect(screen.getByRole('textbox', { name: 'Payment date' })).toBeTruthy();
+    expect(screen.queryByRole('listbox', { name: 'Hour' })).toBeNull();
   });
 
   it('hideLabel keeps the label for assistive technology but does not draw it', async () => {

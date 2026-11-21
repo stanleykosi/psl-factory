@@ -12,6 +12,7 @@ import '@/styles/psl-bundle.css';
 import '@/styles/shell.css';
 
 import { AppShell } from '@/shell/AppShell';
+import { DemoBar } from '@/shell/DemoBar';
 
 export const metadata: Metadata = { title: 'PSL Factory' };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className="psl">
         <AppShell>{children}</AppShell>
+        <DemoBar />
       </body>
     </html>
   );

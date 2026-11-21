@@ -13,6 +13,7 @@ import { visibleDestinations } from '@/shell/destinations';
 import { NotOpenState } from '@/shell/FrameStates';
 
 import { AssistantContext } from './AssistantContext';
+import type { Pending } from './pending';
 import { ConversationList } from './ConversationList';
 import { LIST_NOTE } from './labels';
 import { useConversationList } from './useConversationList';
@@ -24,15 +25,16 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
   const phone = useIsPhone();
   const list = useConversationList();
   const [sheet, setSheet] = useState(false);
+  const [pending, setPending] = useState<Pending>();
   const showList = useCallback(() => setSheet(true), []);
   const agents = me.assistant_agents;
-  const value = useMemo(() => ({ me, agents: agents ?? [], list, showList }), [me, agents, list, showList]);
+  const value = useMemo(() => ({ me, agents: agents ?? [], list, pending, setPending, showList }), [me, agents, list, pending, showList]);
 
   if (!me.destinations.includes('assistant')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   const current = /^\/assistant\/([^/]+)/.exec(pathname)?.[1];
   const currentId = current ? decodeURIComponent(current) : undefined;
   const rows = (
-    <ConversationList state={list.state} currentId={currentId} onMore={() => void list.more()} onRetry={list.retry} pathname={pathname} onOpen={() => setSheet(false)} />
+    <ConversationList state={list.state} currentId={currentId} onMore={(limit) => void list.more(limit)} onRetry={list.retry} pathname={pathname} onOpen={() => setSheet(false)} />
   );
 
   return (
@@ -43,7 +45,7 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
             <NextLink href="/assistant" className={`${buttonClass('secondary', 'lg')} as__new`}>
               + New request
             </NextLink>
-            {rows}
+            <div className="as__listscroll">{rows}</div>
             <p className="as__note">{LIST_NOTE}</p>
           </aside>
         )}

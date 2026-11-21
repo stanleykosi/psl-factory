@@ -2,6 +2,7 @@
 // reads the raw reply because a 422 names fields, which ApiError does not carry.
 import { api, call } from '@/api/client';
 import { ApiError } from '@/api/errors';
+import type { PageSize } from '@/components';
 import type { paths } from '@/api/schema';
 
 export type ClientList = paths['/api/v1/clients']['get']['responses'][200]['content']['application/json'];
@@ -10,7 +11,8 @@ export type ClientDetail = paths['/api/v1/clients/{client_id}']['get']['response
 export type MoneyAmount = NonNullable<ClientRow['owed']>;
 export type FieldMessage = { name: string; message: string };
 
-export const fetchClients = (cursor?: string): Promise<ClientList> => call(api.GET('/api/v1/clients', { params: { query: cursor ? { cursor } : {} } }));
+export const fetchClients = (limit: PageSize, cursor?: string): Promise<ClientList> =>
+  call(api.GET('/api/v1/clients', { params: { query: cursor ? { limit, cursor } : { limit } } }));
 
 export const fetchClient = (clientId: string): Promise<ClientDetail> =>
   call(api.GET('/api/v1/clients/{client_id}', { params: { path: { client_id: clientId } } }));

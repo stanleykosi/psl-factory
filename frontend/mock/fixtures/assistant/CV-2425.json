@@ -1,0 +1,66 @@
+{
+  "conversation_id": "CV-2425",
+  "agent": "zainab",
+  "title": "Who joined or left in November?",
+  "status": "answered",
+  "context": {
+    "project": {
+      "case_id": "C-HR-STAFF",
+      "title": "Staff records for payroll"
+    },
+    "access": [
+      "HR · staff and business unit records",
+      "No payroll amounts (not set up yet)"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Who joined or left in November?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-18T11:20:00Z"
+    },
+    {
+      "role": "agent",
+      "steps": [
+        "Compared the November and October staff lists",
+        "Read the leaver and joiner notes"
+      ],
+      "sources": [],
+      "at": "2026-11-18T11:21:00Z",
+      "text": "Three joined and one left. Joiners: Chinedu Eze, Hauwa Bello and Folake Adeyemi. Leaver: Segun Alade, whose last working day is still blank. This is sample data from the HR stand-in.",
+      "step_details": [
+        {
+          "text": "Compared the November and October staff lists",
+          "state": "done",
+          "reference": {
+            "label": "STAFF LIST · NOVEMBER"
+          }
+        },
+        {
+          "text": "Read the leaver and joiner notes",
+          "state": "done",
+          "reference": {
+            "label": "JOINER AND LEAVER NOTES"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "STAFF LIST",
+          "label": "STAFF LIST · NOVEMBER",
+          "restricted": false,
+          "link": {
+            "work_id": "W-4601"
+          }
+        },
+        {
+          "kind": "LEAVER",
+          "label": "LEAVER · SEGUN ALADE",
+          "restricted": true
+        }
+      ]
+    }
+  ]
+}

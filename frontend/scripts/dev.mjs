@@ -6,7 +6,10 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const mockPort = process.env.MOCK_PORT ?? '4010';
-const env = { ...process.env, MOCK_PORT: mockPort, API_ORIGIN: process.env.API_ORIGIN ?? `http://127.0.0.1:${mockPort}` };
+const apiOrigin = process.env.API_ORIGIN ?? `http://127.0.0.1:${mockPort}`;
+// D-155: the live demo of the mock (answer delay, runs, the demo bar). Only here, and only against the mock: never in a build or against a real backend.
+const demo = apiOrigin === `http://127.0.0.1:${mockPort}` ? { MOCK_DEMO: '1', NEXT_PUBLIC_MOCK_DEMO: '1' } : {};
+const env = { ...process.env, ...demo, MOCK_PORT: mockPort, API_ORIGIN: apiOrigin };
 
 const children = [
   spawn(process.execPath, [join(root, 'mock', 'server.mjs')], { cwd: root, env, stdio: 'inherit' }),

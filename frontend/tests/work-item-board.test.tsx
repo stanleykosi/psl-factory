@@ -334,9 +334,9 @@ describe('read only (AC 14) and no role guesses (AC 15)', () => {
     await open('W-1705', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
     fireEvent.click(screen.getByRole('radio', { name: 'Decisions 2' }));
-    fireEvent.click(screen.getByRole('combobox', { name: 'Rows per page' }));
-    fireEvent.click(screen.getByRole('option', { name: '10' }));
-    await waitFor(() => expect(calls().filter((c) => c.url.pathname.endsWith('/history')).length).toBeGreaterThanOrEqual(3));
+    await waitFor(() => expect(screen.getByRole('radio', { name: '10' })).toBeTruthy());
+    fireEvent.click(screen.getByRole('radio', { name: '10' }));
+    await waitFor(() => expect(calls().filter((c) => c.url.pathname.endsWith('/history')).length).toBeGreaterThanOrEqual(2));
     for (const button of [...main().querySelectorAll('button')]) expect(allowed(button)).toBe(true);
     for (const call of calls()) expect(call.method).toBe('GET');
   });
@@ -426,7 +426,7 @@ describe('history on the boards (AC 18)', () => {
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
     const tabs = within(screen.getByRole('tablist', { name: 'Work item' })).getAllByRole('tab');
     expect(tabs.map((a) => a.textContent)).toEqual(['Overview', 'History 7']);
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1']);
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1', '10', '20', '50']);
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['WHEN', 'WHAT HAPPENED', 'VERSION']);
     const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(7);
@@ -443,25 +443,24 @@ describe('history on the boards (AC 18)', () => {
     expect(screen.getByRole('complementary', { name: 'About history' })).toBeTruthy();
   });
 
-  it('W-1705 at 390: HISTORY eyebrow, "History · INV-0412" and stacked entries', async () => {
+  it('W-1705 at 390: the same header as Overview, and stacked entries with the paging footer under the last card', async () => {
     phone();
     await open('W-1705', 'history');
     await waitFor(() => expect(screen.getByRole('list', { name: 'History, newest first' })).toBeTruthy());
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History · INV-0412');
-    expect(screen.getByText('HISTORY')).toBeTruthy();
-    // the phone board's three segments, and the paging control the contract keeps
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agents 2']);
-    expect(screen.getByRole('combobox', { name: 'Rows per page' })).toBeTruthy();
+    // History draws Overview's header: the item's own title, no "History · ref" line and no HISTORY bar
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Lagoon Health · Milestone 2 invoice');
+    expect(screen.queryByText('HISTORY')).toBeNull();
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agents 2', '10', '20', '50']);
+    expect(screen.getByRole('radiogroup', { name: 'Rows per page' })).toBeTruthy();
     expect(screen.getByRole('tablist', { name: 'Work item' })).toBeTruthy();
     const cards = within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem');
-    // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
-    expect(cards).toHaveLength(5);
+    expect(cards).toHaveLength(7);
     expect(cards[0].textContent).toContain('12 Nov 16:40 · ');
-    fireEvent.click(screen.getByRole('button', { name: '+ 2 earlier entries' }));
-    expect(within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem')).toHaveLength(7);
+    expect(screen.queryByRole('button', { name: /earlier entries/ })).toBeNull();
+    expect(screen.getByText('All 7 showing')).toBeTruthy();
   });
 
-  it('with counts the phone button reads "+ N earlier entries"; without counts "Show more" and no badges', async () => {
+  it('the phone footer says Show more with or without counts; no "earlier entries" button and no badges without counts', async () => {
     phone();
     const page = history('W-1705');
     serve(
@@ -473,7 +472,8 @@ describe('history on the boards (AC 18)', () => {
         <WorkItemView id="W-1705" tab="history" />
       </AppShell>,
     );
-    await waitFor(() => expect(screen.getByRole('button', { name: '+ 2 earlier entries' })).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Show more' })).toBeTruthy());
+    expect(screen.queryByRole('button', { name: /earlier entries/ })).toBeNull();
     view.unmount();
     serve(
       () => json(200, item('W-1004')),

@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "at": "2026-11-14T09:20:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Asked for documents",
+      "restricted": false,
+      "detail": "Email sent to the new joiner",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-14T09:12:00Z",
+      "actor_kind": "agent",
+      "actor": "Zainab · HR agent",
+      "event": "Prepared the checklist",
+      "restricted": false,
+      "detail": "ID, bank details, emergency contact",
+      "_kind": "agent_work"
+    },
+    {
+      "at": "2026-11-14T09:11:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Restricted",
+      "restricted": true,
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-14T09:10:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Added the joiner",
+      "restricted": false,
+      "detail": "Starts 1 December · Engineering",
+      "_kind": "decision"
+    },
+    {
+      "at": "2026-11-14T09:08:00Z",
+      "actor_kind": "person",
+      "actor": "Amaka Obi · HR",
+      "event": "Attached the offer details",
+      "restricted": false,
+      "detail": "offer_adaeze_okoro.pdf",
+      "_kind": "evidence"
+    },
+    {
+      "at": "2026-11-14T09:05:00Z",
+      "actor_kind": "factory",
+      "actor": "Factory",
+      "event": "Started the line",
+      "restricted": false,
+      "detail": "From the offer letter"
+    }
+  ],
+  "as_of": "2026-11-18T12:00:00Z"
+}

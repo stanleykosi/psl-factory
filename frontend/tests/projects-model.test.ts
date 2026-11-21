@@ -25,25 +25,25 @@ const view = (search: string) => parseProjectsView(new URLSearchParams(search));
 
 describe('projects view and query', () => {
   it('reads q, limit and the tab from the URL; an empty q, an invalid limit or an unknown status fall back to the defaults', () => {
-    expect(view('')).toEqual({ q: undefined, limit: 20, tab: 'active' });
-    expect(view('q=lagoon&limit=10')).toEqual({ q: 'lagoon', limit: 10, tab: 'active' });
-    expect(view('q=%20%20&limit=7')).toEqual({ q: undefined, limit: 20, tab: 'active' });
+    expect(view('')).toEqual({ q: undefined, limit: 10, tab: 'active' });
+    expect(view('q=lagoon&limit=20')).toEqual({ q: 'lagoon', limit: 20, tab: 'active' });
+    expect(view('q=%20%20&limit=7')).toEqual({ q: undefined, limit: 10, tab: 'active' });
     expect(view('limit=50&status=closed')).toEqual({ q: undefined, limit: 50, tab: 'closed' });
-    expect(view('limit=abc&status=all')).toEqual({ q: undefined, limit: 20, tab: 'all' });
-    expect(view('status=open')).toEqual({ q: undefined, limit: 20, tab: 'active' });
+    expect(view('limit=abc&status=all')).toEqual({ q: undefined, limit: 10, tab: 'all' });
+    expect(view('status=open')).toEqual({ q: undefined, limit: 10, tab: 'active' });
   });
 
-  it('writes status only when not Active, q only when set and limit only when not 20; never a cursor', () => {
-    expect(projectsSearch({ limit: 20, tab: 'active' })).toBe('');
-    expect(projectsSearch({ q: 'lagoon', limit: 20, tab: 'active' })).toBe('?q=lagoon');
-    expect(projectsSearch({ q: 'a b', limit: 10, tab: 'all' })).toBe('?status=all&q=a+b&limit=10');
+  it('writes status only when not Active, q only when set and limit only when not 10; never a cursor', () => {
+    expect(projectsSearch({ limit: 10, tab: 'active' })).toBe('');
+    expect(projectsSearch({ q: 'lagoon', limit: 10, tab: 'active' })).toBe('?q=lagoon');
+    expect(projectsSearch({ q: 'a b', limit: 20, tab: 'all' })).toBe('?status=all&q=a+b&limit=20');
     expect(projectsSearch({ limit: 50, tab: 'closed' })).toBe('?status=closed&limit=50');
   });
 
   it('always sends limit, status only off the default Active tab (TECH-2-2), q only with text and the cursor only when given', () => {
-    expect(buildProjectsQuery({ limit: 20, tab: 'active' })).toEqual({ limit: 20 });
-    expect(buildProjectsQuery({ q: '  ', limit: 10, tab: 'all' })).toEqual({ limit: 10, status: 'all' });
-    expect(buildProjectsQuery({ q: ' lagoon ', limit: 20, tab: 'closed' }, 'o20')).toEqual({ limit: 20, status: 'closed', q: 'lagoon', cursor: 'o20' });
+    expect(buildProjectsQuery({ limit: 10, tab: 'active' })).toEqual({ limit: 10 });
+    expect(buildProjectsQuery({ q: '  ', limit: 20, tab: 'all' })).toEqual({ limit: 20, status: 'all' });
+    expect(buildProjectsQuery({ q: ' lagoon ', limit: 10, tab: 'closed' }, 'o10')).toEqual({ limit: 10, status: 'closed', q: 'lagoon', cursor: 'o10' });
   });
 
   it('counts pieces of work and distinct lines, names the client and decodes the route segment once', () => {

@@ -316,7 +316,7 @@ describe('review state, approve and return (AC 13 to 15)', () => {
       fireEvent.click(button('Approve and send'));
       fireEvent.click(button('Approve and send'));
     });
-    await waitFor(() => expect(screen.getByRole('status', { name: '' }).textContent).toContain('Done'));
+    await waitFor(() => expect(document.querySelector('.psl-toast')?.textContent).toContain('Done'));
     expect(posts()).toHaveLength(1);
     expect(posts()[0].body).toMatchObject({ step: 'approve_send', expected_revision: 3 });
     expect(posts()[0].body!.idempotency_key).toMatch(UUID);

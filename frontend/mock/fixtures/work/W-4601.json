@@ -1,0 +1,93 @@
+{
+  "id": "W-4601",
+  "title": "November staff list · confirm for payroll",
+  "line": "Send the staff list for payroll",
+  "reference": "HRS-0011",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Read the staff list",
+      "status": "done"
+    },
+    {
+      "name": "Check business units",
+      "status": "done"
+    },
+    {
+      "name": "Confirm the list",
+      "status": "current_person"
+    },
+    {
+      "name": "Send to Finance",
+      "status": "not_started"
+    },
+    {
+      "name": "Finance matching",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4601",
+      "kind": "do",
+      "title": "Confirm the November staff list",
+      "required_role": "HR",
+      "you_can_act": true,
+      "revision": 1
+    }
+  ],
+  "agent": {
+    "name": "Zainab",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read hr_staff_november.xlsx (pay columns left out)",
+        "status": "done",
+        "source": "Staff list · November"
+      },
+      {
+        "text": "Compared it with the October list: 3 joiners, 1 leaver",
+        "status": "done",
+        "source": "Staff list · October"
+      },
+      {
+        "text": "Found 2 staff with no business unit",
+        "status": "done",
+        "source": "Business unit register"
+      }
+    ]
+  },
+  "next_step": "Next, HR confirms the November staff list. Zainab then sends it to Finance for payroll matching.",
+  "sample": true
+}

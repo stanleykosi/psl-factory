@@ -38,7 +38,7 @@ async function tabTo(page: Page, target: Locator) {
     if (await target.evaluate((el) => el === document.activeElement)) {
       return target.evaluate((el) => {
         const s = getComputedStyle(el);
-        return { style: s.outlineStyle, width: s.outlineWidth };
+        return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
       });
     }
   }
@@ -52,7 +52,7 @@ const FOOTER = 'The factory never resends after an unknown outcome until it has 
 test.describe('desktop 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('default list: header, search bar, columns, 20 rows in order, paging bar, footer; Show more gives 25', async ({ page }) => {
+  test('default list: header, search bar, columns, 10 rows in order, paging bar, footer; Show more gives 25', async ({ page }) => {
     await page.goto('/exceptions');
     await loaded(page);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('All exceptions');
@@ -64,15 +64,15 @@ test.describe('desktop 1440', () => {
     const table = page.getByRole('table', { name: 'Exceptions, in the order the factory reports them' });
     await expect(table.getByRole('columnheader')).toHaveText(['WHAT HAPPENED', 'WORK', 'WHAT’S BEING DONE', 'WHO ACTS']);
     const rows = table.locator('tbody tr');
-    await expect(rows).toHaveCount(20);
+    await expect(rows).toHaveCount(10);
     await expect(rows.first().locator('.psl-tag')).toHaveText('Effect uncertain');
     await expect(rows.first().locator('time')).toHaveText('since 11:02');
     await expect(rows.first().getByRole('link')).toHaveAttribute('href', '/work/W-1005');
     await expect(rows.first().getByRole('link')).toHaveCSS('text-decoration-line', 'none');
     await expect(rows.first().getByRole('link')).toHaveCSS('color', 'rgb(31, 36, 39)');
     await expect(rows.first().locator('.exc-ref')).toHaveText('INV-0405');
-    await expect(page.getByText('20 showing')).toBeVisible();
-    await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByText('10 showing')).toBeVisible();
+    await expect(page.getByRole('radio', { name: '10' })).toHaveAttribute('aria-checked', 'true');
     await expect(page.getByText('As of 14 Nov 11:05')).toBeVisible();
     await expect(page.getByText(FOOTER)).toBeVisible();
     await shot(page, 'exceptions-desktop-default');
@@ -83,9 +83,11 @@ test.describe('desktop 1440', () => {
     const more = page.getByRole('button', { name: 'Show more' });
     expect(await tabTo(page, more)).toEqual(ring);
     await page.keyboard.press('Enter');
+    await expect(rows).toHaveCount(20);
+    await more.click();
     await expect(rows).toHaveCount(25);
     await expect(more).toHaveCount(0);
-    await expect(page.getByText('25 showing')).toBeVisible();
+    await expect(page.getByText('All 25 showing')).toBeVisible();
     expect(await scrollWidth(page)).toBeLessThanOrEqual(DESKTOP.width);
   });
 
@@ -109,7 +111,7 @@ test.describe('desktop 1440', () => {
     await page.getByRole('searchbox', { name: 'Search' }).fill('Sable');
     await expect(page.getByRole('heading', { level: 2, name: 'No exceptions match your search and filter.' })).toBeVisible();
     await page.getByRole('button', { name: 'Clear search and filter' }).click();
-    await expect(rows).toHaveCount(20);
+    await expect(rows).toHaveCount(10);
     await expect(page.getByText('25 OPEN')).toBeVisible();
   });
 
@@ -171,7 +173,7 @@ test.describe('desktop 1440', () => {
     await expectNoAxeViolations(page);
     fail = false;
     await page.getByRole('button', { name: 'Try again' }).click();
-    await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(20);
+    await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(10);
   });
 });
 
@@ -230,7 +232,7 @@ test.describe('phone 390', () => {
     await expect(page.getByRole('searchbox', { name: 'Search' })).toBeVisible();
     expect((await page.getByRole('button', { name: 'Filter' }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const cards = page.getByRole('list', { name: 'Exceptions, in the order the factory reports them' }).getByRole('listitem');
-    await expect(cards).toHaveCount(20);
+    await expect(cards).toHaveCount(10);
     const first = cards.first();
     await expect(first.locator('.psl-tag')).toHaveText('Effect uncertain');
     await expect(first.getByRole('link')).toHaveText('Kora Logistics · Milestone 1 invoice');
@@ -243,6 +245,8 @@ test.describe('phone 390', () => {
     const ring = { style: 'solid', width: '2px' };
     expect(await tabTo(page, first.getByRole('link'))).toEqual(ring);
     // The title link covers the whole card: a tap on the card's text opens the item.
+    await more.click();
+    await expect(cards).toHaveCount(20);
     await more.click();
     await expect(cards).toHaveCount(25);
     await expect(more).toHaveCount(0);

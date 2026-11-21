@@ -1,13 +1,11 @@
 'use client';
 
-// SCR-02 History: read-only (INV-AUDIT). The only controls are the filter, rows per page, Show more and
-// Try again. Restricted entries show who and when only (INV-RESTRICTED).
-import { useState } from 'react';
-
-import { Button, Callout, EmptyState, formatDayTime, Panel, Segmented, Select, Table, Tag, type Column } from '@/components';
+// SCR-02 History: read-only (INV-AUDIT). The only controls are the filter, the paging footer (rows per page, Show
+// more) and Try again. Restricted entries show who and when only (INV-RESTRICTED).
+import { Callout, EmptyState, formatDayTime, Panel, Segmented, ShowMore, Table, Tag, usePagedRows, type Column } from '@/components';
 import { LoadingState } from '@/shell/FrameStates';
 
-import { ACTOR_TAGS, HISTORY_FILTERS, HISTORY_LIMITS, type HistoryKind, type HistoryLimit } from './labels';
+import { ACTOR_TAGS, HISTORY_FILTERS, type HistoryKind } from './labels';
 import type { BoardHistoryEntry, WorkItemPresentation } from './presentation';
 import { useWorkHistory } from './useWorkHistory';
 import { WorkErrorCard } from './WorkItemStates';
@@ -116,30 +114,23 @@ function HistoryCard({ entry, board }: { entry: BoardHistoryEntry; board: boolea
   );
 }
 
-// the phone board lists the five newest entries and "+ N earlier entries" for the rest
-const PHONE_BOARD_ROWS = 5;
-
 type HistoryProps = { id: string; revision: number; counts?: Counts; phone?: boolean };
 
 export function WorkItemHistory({ id, revision, counts, phone = false }: HistoryProps) {
-  const { state, kind, setKind, limit, setLimit, retry, showMore } = useWorkHistory(id, revision);
+  const { state, kind, setKind, retry, showMore } = useWorkHistory(id, revision);
   const ready = state.status === 'ready' ? state : undefined;
-  const [expanded, setExpanded] = useState(false);
+  const { rows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: Boolean(ready?.nextCursor),
+    busy: ready?.more === 'loading',
+    failed: ready?.more === 'failed',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: kind,
+  });
   const board = phone && counts !== undefined;
-  const hidden = board && !expanded && ready ? Math.max(0, ready.items.length - PHONE_BOARD_ROWS) : 0;
 
-  // On the desktop board the paging controls sit in the side column, under the callout, where the board draws its own.
+  // On the desktop board the as-of line sits in the side column, under the callout, where the board draws its own.
   const side = counts !== undefined && !phone;
-  const limitControl = (
-    <Select
-      fieldClassName="work-limit"
-      label="Rows per page"
-      placeholder="Rows per page"
-      value={String(limit)}
-      onChange={(value) => setLimit(Number(value) as HistoryLimit)}
-      options={HISTORY_LIMITS.map((n) => ({ value: String(n), label: String(n) }))}
-    />
-  );
   const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatDayTime(ready.asOf)}</p>;
 
   let body;
@@ -156,11 +147,14 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
     body = <EmptyState title="Nothing recorded for this filter yet.">Try another filter.</EmptyState>;
   } else if (phone) {
     body = (
-      <div className="work-hcards" role="list" aria-label="History, newest first">
-        {(hidden > 0 ? state.items.slice(0, PHONE_BOARD_ROWS) : state.items).map((entry, i) => (
-          <HistoryCard key={i} entry={entry} board={board} />
-        ))}
-      </div>
+      <>
+        <div className="work-hcards" role="list" aria-label="History, newest first">
+          {rows.map((entry, i) => (
+            <HistoryCard key={i} entry={entry} board={board} />
+          ))}
+        </div>
+        <ShowMore solo {...paging} />
+      </>
     );
   } else {
     body = (
@@ -168,40 +162,21 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
         className="work-history"
         caption="History, newest first"
         columns={historyColumns(counts !== undefined)}
-        rows={state.items}
+        rows={rows}
         rowKey={(entry) => `${state.items.indexOf(entry)}`}
         empty="Nothing recorded for this filter yet."
+        paging={paging}
       />
     );
   }
 
   return (
-    <div className="work-columns work-columns--history">
+    <div className="work-columns">
       <div className="work-column">
         <div className="work-historybar">
           <HistoryFilter kind={kind} onChange={setKind} counts={counts} phoneBoard={board} />
         </div>
         {body}
-        {/* rows per page, then Show more: the approved paging footer (D-PAGING r2), under the list */}
-        <div className="work-historyfoot">
-          {!side && limitControl}
-          {(ready?.nextCursor || hidden > 0) && (
-            <div className="psl-showmore">
-              {!board && <span>Showing {ready!.items.length}</span>}
-              <Button
-                kind="text"
-                busy={ready!.more === 'loading'}
-                busyLabel="Loading…"
-                onClick={() => {
-                  if (hidden > 0) setExpanded(true);
-                  else void showMore();
-                }}
-              >
-                {board ? `+ ${counts[kind] - (ready!.items.length - hidden)} earlier entries` : 'Show more'}
-              </Button>
-            </div>
-          )}
-        </div>
         {ready?.more === 'failed' && (
           <Callout kind="warning">We couldn&rsquo;t load more entries. Choose Show more to try again.</Callout>
         )}
@@ -218,12 +193,7 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
           Times are WAT. You see only entries on records you may open; restricted entries show as &ldquo;Restricted&rdquo;
           with who and when.
         </Callout>
-        {side && (
-          <div className="work-historymeta">
-            {limitControl}
-            {asOf}
-          </div>
-        )}
+        {side && <div className="work-historymeta">{asOf}</div>}
       </aside>
     </div>
   );

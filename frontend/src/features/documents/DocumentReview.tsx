@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
-import { Breadcrumb, Button, buttonClass, Callout, Loading, PageTitle, Tag, useIsPhone, type TagTone } from '@/components';
+import { Breadcrumb, Button, buttonClass, Callout, Loading, PageTitle, Tag, useIsPhone, useToast, type TagTone } from '@/components';
 import { When } from '@/features/decide/DecisionContent';
 import { cannotActCopy, UncertainNotice } from '@/features/decide/DecideStates';
 import { findDecisionTask } from '@/features/decide/format';
@@ -53,6 +53,30 @@ function DocumentNoAccess() {
 function ProjectBar({ caseId }: { caseId: string }) {
   const { state } = useProject(caseId);
   return <ProjectTabs base={`/projects/${encodeURIComponent(caseId)}`} current="documents" counts={state.status === 'ready' ? state.journey.tab_counts : undefined} />;
+}
+
+/** The approval is told once, as a toast (D-151); the panel then has nothing more to say. */
+function Approved({ doc, step }: { doc: DocumentView; step: { person?: unknown; decided_at?: string | null } }) {
+  const toast = useToast();
+  const told = useRef(false);
+  useEffect(() => {
+    if (told.current) return;
+    told.current = true;
+    toast.show(
+      <>
+        <strong>You approved v{doc.version}</strong>
+        {textOf(step.person) && <> · {String(step.person)}</>}
+        {step.decided_at && (
+          <>
+            {' · '}
+            <When at={step.decided_at} />
+          </>
+        )}
+        . Not sent to the client.
+      </>,
+    );
+  }, [toast, doc.version, step.person, step.decided_at]);
+  return null;
 }
 
 const READ_ONLY = 'This review isn’t open to you here.';
@@ -111,19 +135,7 @@ function ReviewNotice({ doc, review, taskId, reread }: { doc: DocumentView; revi
       );
     }
     if (!step) return <p className="docrev__plain">{READ_ONLY}</p>;
-    return (
-      <Callout kind="success">
-        <strong>You approved v{doc.version}</strong>
-        {textOf(step.person) && <> · {step.person}</>}
-        {step.decided_at && (
-          <>
-            {' · '}
-            <When at={step.decided_at} />
-          </>
-        )}
-        . Not sent to the client.
-      </Callout>
-    );
+    return <Approved doc={doc} step={step} />;
   }
   if (view.kind === 'stale') {
     return (

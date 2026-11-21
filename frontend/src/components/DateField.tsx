@@ -4,13 +4,15 @@
 // (17/11/2026 or 17 Nov 2026) or pick it from the calendar. The calendar marks today with an outline, the chosen
 // day filled ink, and days that are not allowed struck through; a typed day that is not allowed shows its reason.
 // Calendar keys: arrows move a day or a week, Home/End the start or end of the week, Page Up/Down a month, Enter
-// or Space chooses, Esc closes and returns focus to the calendar button. With `time` a 24-hour time sits beside the
-// date and the value is "2026-11-17T14:30"; it stays '' until both are given.
+// or Space chooses, Esc closes and returns focus to the calendar button. With `time` (D-158) the field is a dropdown:
+// one box that opens a panel with the calendar beside Hour (00-23) and Minute (00-59) lists, "Use now" and "Done".
+// Nothing is typed. The value is "2026-11-17T14:30"; it stays '' until the date, hour and minute are all chosen.
 import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
 
 import { FieldLabel, FieldMessage, useFieldIds, type FieldText } from './Field';
+import { Button } from './Button';
 import { IconButton } from './IconButton';
-import { cx, useOutsidePress } from './internal';
+import { cx, useKeepInView, useOutsidePress } from './internal';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -100,17 +102,11 @@ export type DateFieldProps = FieldText & {
   fieldClassName?: string;
 };
 
-export function DateField({ label, optional, hint, error, value: whole, onChange: emit, unavailable, today, time = false, hideLabel = false, disabled = false, id, fieldClassName }: DateFieldProps) {
-  // With a time, the date and the time are kept apart until both are there; the value is '' before that.
-  const [draftDate, setDraftDate] = useState('');
-  const [draftTime, setDraftTime] = useState('');
-  const value = time ? (whole ? whole.slice(0, 10) : draftDate) : whole;
-  const clock = time ? (whole ? whole.slice(11, 16) : draftTime) : '';
-  const onChange = (iso: string) => {
-    if (!time) return emit(iso);
-    setDraftDate(iso);
-    emit(iso && clock ? `${iso}T${clock}` : '');
-  };
+export function DateField(props: DateFieldProps) {
+  return props.time ? <DateTimeField {...props} /> : <DateOnlyField {...props} />;
+}
+
+function DateOnlyField({ label, optional, hint, error, value, onChange, unavailable, today, hideLabel = false, disabled = false, id, fieldClassName }: DateFieldProps) {
   const [text, setText] = useState(() => isoText(value));
   const [shownFor, setShownFor] = useState(value);
   const [typedError, setTypedError] = useState<string | undefined>(undefined);
@@ -201,38 +197,183 @@ export function DateField({ label, optional, hint, error, value: whole, onChange
       )}
     </div>
   );
-  const clockInput = time && (
-    <input
-      type="time"
-      className={cx('psl-input cmp-time', shown && 'is-error', disabled && 'is-disabled')}
-      aria-label={typeof label === 'string' ? `${label}, time` : 'Time'}
-      value={clock}
-      disabled={disabled}
-      onChange={(event) => {
-        setDraftTime(event.target.value);
-        emit(value && event.target.value ? `${value}T${event.target.value}` : '');
-      }}
-    />
-  );
-
   return (
     <div className={cx('psl-field', fieldClassName)}>
       <FieldLabel htmlFor={ids.control} id={ids.label} label={label} optional={optional} hidden={hideLabel} />
-      {time ? (
-        <div className="cmp-datetime">
-          {anchor}
-          {clockInput}
-        </div>
-      ) : (
-        anchor
-      )}
+      {anchor}
       <FieldMessage id={ids.message} hint={hint} error={shown} />
     </div>
   );
 }
 
-function Calendar({ popRef, value, today, unavailable, onPick, onClose }: {
-  popRef: RefObject<HTMLDivElement | null>;
+const HOURS = Array.from({ length: 24 }, (_, h) => pad(h));
+const MINUTES = Array.from({ length: 60 }, (_, m) => pad(m));
+
+/** D-158: a date and a time picked from one dropdown panel; nothing is typed. */
+function DateTimeField({ label, optional, hint, error, value: whole, onChange: emit, unavailable, today, hideLabel = false, disabled = false, id, fieldClassName }: DateFieldProps) {
+  // What is picked so far. A full value from outside fills all three; until all three are there the value is ''.
+  const [draft, setDraft] = useState({ date: '', hour: '', minute: '' });
+  const [loaded, setLoaded] = useState(whole);
+  if (whole !== loaded) {
+    setLoaded(whole);
+    if (whole) setDraft({ date: whole.slice(0, 10), hour: whole.slice(11, 13), minute: whole.slice(14, 16) });
+  }
+  const picked = whole ? { date: whole.slice(0, 10), hour: whole.slice(11, 13), minute: whole.slice(14, 16) } : draft;
+  const [open, setOpen] = useState(false);
+  const [missing, setMissing] = useState(false);
+  const partial = Boolean(picked.date || picked.hour || picked.minute) && !(picked.date && picked.hour && picked.minute);
+  const shown = error ?? (missing ? (picked.date ? 'Choose the time too.' : 'Choose the date too.') : undefined);
+  const ids = useFieldIds(id, { hint, error: shown });
+  const valueId = `${ids.control}-value`;
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const todayIso = today ?? toIso(todayYmd());
+
+  function set(next: typeof draft) {
+    setDraft(next);
+    const full = next.date && next.hour && next.minute ? `${next.date}T${next.hour}:${next.minute}` : '';
+    setLoaded(full);
+    if (full !== whole) emit(full);
+  }
+
+  function close() {
+    setOpen(false);
+    setMissing(partial);
+    buttonRef.current?.focus();
+  }
+
+  useOutsidePress([anchorRef], open, () => {
+    setOpen(false);
+    setMissing(partial);
+  });
+
+  function useNow() {
+    const now = new Date();
+    const next = { date: toIso({ y: now.getFullYear(), m: now.getMonth(), d: now.getDate() }), hour: pad(now.getHours()), minute: pad(now.getMinutes()) };
+    set(next);
+    setOpen(false);
+    setMissing(false);
+    buttonRef.current?.focus();
+  }
+
+  const text = picked.date || picked.hour || picked.minute ? `${picked.date ? isoText(picked.date) : 'DD Mmm YYYY'}, ${picked.hour || '--'}:${picked.minute || '--'}` : '';
+
+  return (
+    <div className={cx('psl-field', fieldClassName)}>
+      <FieldLabel htmlFor={ids.control} id={ids.label} label={label} optional={optional} hidden={hideLabel} />
+      <div ref={anchorRef} className="cmp-anchor">
+        <Button
+          ref={buttonRef}
+          kind="bare"
+          id={ids.control}
+          className={cx('psl-input psl-select cmp-dtfield', open && 'is-open', !text && 'is-placeholder', shown && 'is-error', disabled && 'is-disabled')}
+          aria-labelledby={`${ids.label} ${valueId}`}
+          aria-describedby={ids.describedBy}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-invalid={shown ? true : undefined}
+          disabled={disabled}
+          onClick={() => {
+            if (open) return close();
+            setMissing(false);
+            setOpen(true);
+          }}
+        >
+          <span id={valueId} className="cmp-dtfield__value">
+            {text || 'Choose date and time'}
+          </span>
+          <span className="psl-chev cmp-selectarrow" aria-hidden="true" />
+        </Button>
+        {open && (
+          // The panel only catches Esc for its own lists; it is not itself interactive.
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+          <div
+            className="psl-pop cmp-pop cmp-dtpop"
+            role="dialog"
+            aria-label="Choose a date and time"
+            onKeyDown={(event) => {
+              if (event.key !== 'Escape') return;
+              event.preventDefault();
+              event.stopPropagation();
+              close();
+            }}
+          >
+            <div className="cmp-dtpop__body">
+              <Calendar embedded value={picked.date} today={todayIso} unavailable={unavailable} onPick={(iso) => set({ ...picked, date: iso })} onClose={close} />
+              <TimeList label="Hour" values={HOURS} value={picked.hour} start="09" onPick={(hour) => set({ ...picked, hour })} />
+              <TimeList label="Min" name="Minute" values={MINUTES} value={picked.minute} start="00" onPick={(minute) => set({ ...picked, minute })} />
+            </div>
+            <div className="cmp-dtpop__foot">
+              <Button kind="text" size="sm" onClick={useNow}>
+                Use now
+              </Button>
+              <Button size="sm" onClick={close}>
+                Done
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+      <FieldMessage id={ids.message} hint={hint} error={shown} />
+    </div>
+  );
+}
+
+/** One scrolling list of a time part (hours or minutes); the chosen one is filled ink like the chosen day. */
+function TimeList({ label, name = label, values, value, start, onPick }: { label: string; name?: string; values: string[]; value: string; start: string; onPick: (value: string) => void }) {
+  const listRef = useRef<HTMLUListElement>(null);
+  const tabbable = value || start;
+
+  // Opens scrolled to the chosen value (or a sensible start), two rows down from the top.
+  useEffect(() => {
+    const list = listRef.current;
+    const row = list?.querySelector<HTMLElement>(`[data-value="${tabbable}"]`);
+    if (list && row) list.scrollTop = Math.max(0, row.offsetTop - row.offsetHeight * 2);
+    // Only when the panel opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function keys(event: KeyboardEvent<HTMLLIElement>, at: number) {
+    const rows = [...(listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])];
+    const to = { ArrowDown: at + 1, ArrowUp: at - 1, Home: 0, End: rows.length - 1 }[event.key];
+    if (to !== undefined) {
+      event.preventDefault();
+      rows[Math.min(Math.max(to, 0), rows.length - 1)]?.focus();
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onPick(values[at]);
+    }
+  }
+
+  return (
+    <div className="cmp-timelist">
+      <b className="cmp-timelist__head" aria-hidden="true">
+        {label}
+      </b>
+      <ul ref={listRef} className="cmp-timelist__rows" role="listbox" aria-label={name}>
+        {values.map((v, at) => (
+          <li
+            key={v}
+            role="option"
+            data-value={v}
+            className="psl-day"
+            tabIndex={v === tabbable ? 0 : -1}
+            aria-selected={v === value}
+            onClick={() => onPick(v)}
+            onKeyDown={(event) => keys(event, at)}
+          >
+            {v}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Calendar({ popRef, embedded = false, value, today, unavailable, onPick, onClose }: {
+  popRef?: RefObject<HTMLDivElement | null>;
+  /** Drawn inside the date-and-time panel rather than as its own popover. */
+  embedded?: boolean;
   value: string;
   today: string;
   unavailable?: (iso: string) => string | undefined;
@@ -240,6 +381,9 @@ function Calendar({ popRef, value, today, unavailable, onPick, onClose }: {
   onClose: () => void;
 }) {
   const [focus, setFocus] = useState<Ymd>(() => fromIso(value) ?? fromIso(today) ?? todayYmd());
+  const ownRef = useRef<HTMLDivElement>(null);
+  const boxRef = popRef ?? ownRef;
+  useKeepInView(boxRef, !embedded);
   const gridRef = useRef<HTMLDivElement>(null);
   const focusIso = toIso(focus);
 
@@ -281,7 +425,7 @@ function Calendar({ popRef, value, today, unavailable, onPick, onClose }: {
   }
 
   return (
-    <div ref={popRef} className="psl-pop psl-cal cmp-pop" role="dialog" aria-label="Choose a date">
+    <div ref={boxRef} className={embedded ? 'psl-cal cmp-dtpop__cal' : 'psl-pop psl-cal cmp-pop'} role={embedded ? undefined : 'dialog'} aria-label={embedded ? undefined : 'Choose a date'}>
       <div className="psl-cal__head">
         <IconButton bare icon="back" label="Previous month" onClick={() => setFocus(shiftMonth(focus, -1))} />
         <span aria-live="polite">

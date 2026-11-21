@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
-import { Button, Callout, EmptyState, groupDigits, Money as MoneyValue, PageTitle, ShowMore, Table, Tag, Unknown, useIsPhone, VisuallyHidden, type Column } from '@/components';
+import { EmptyState, groupDigits, Money as MoneyValue, PageTitle, ShowMore, Table, type ShowMoreProps, Tag, usePagedRows, Unknown, useIsPhone, VisuallyHidden, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
@@ -63,8 +63,8 @@ const COLUMNS: Column<ClientRow>[] = [
   { key: 'state', header: 'STATE', cell: (row) => <ContactTag row={row} /> },
 ];
 
-function ClientTable({ items }: { items: ClientRow[] }) {
-  return <Table className="clients__table" caption="Clients" columns={COLUMNS} rows={items} rowKey={(row) => row.client_id} empty="No clients to show yet." />;
+function ClientTable({ items, paging }: { items: ClientRow[]; paging: ShowMoreProps }) {
+  return <Table className="clients__table" caption="Clients" columns={COLUMNS} rows={items} rowKey={(row) => row.client_id} empty="No clients to show yet." paging={paging} />;
 }
 
 function ClientCards({ items }: { items: ClientRow[] }) {
@@ -93,19 +93,31 @@ export function ClientsList() {
   usePhoneBack({ label: 'Projects', href: '/projects' });
   const phone = useIsPhone();
   const { state, more, retry, showMore } = useClients();
+  const ready = state.status === 'ready' ? state : undefined;
+  const { rows: shownRows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: Boolean(ready?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+  });
   const rows = useRef<HTMLDivElement>(null);
   const focusRow = useRef<number | null>(null);
 
   useEffect(() => {
-    if (focusRow.current !== null && state.status === 'ready') {
+    if (focusRow.current !== null && shownRows.length > focusRow.current) {
       rows.current?.querySelectorAll<HTMLElement>('[data-client-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [state]);
+  }, [shownRows.length]);
 
-  const press = async () => {
-    const before = await showMore();
-    if (before !== undefined) focusRow.current = before;
+  // Show more: the keyboard moves to the first row it added.
+  const footer: ShowMoreProps = {
+    ...paging,
+    onMore: () => {
+      if (more !== 'error') focusRow.current = shownRows.length;
+      paging.onMore();
+    },
   };
 
   if (state.status === 'error' && state.error.kind === 'unauthenticated') return <SignedOutState pathname="/clients" />;
@@ -123,20 +135,16 @@ export function ClientsList() {
   } else {
     body = (
       <>
-        <div ref={rows}>{phone ? <ClientCards items={state.items} /> : <ClientTable items={state.items} />}</div>
-        {state.nextCursor && (
-          <div className="clients__more">
-            <ShowMore shown={state.items.length} hasMore busy={more === 'loading'} onMore={() => void press()} />
-            {more === 'error' && (
-              <Callout kind="problem">
-                We couldn’t load more clients. Nothing was changed.{' '}
-                <Button kind="secondary" size="sm" onClick={() => void press()}>
-                  Try again
-                </Button>
-              </Callout>
-            )}
-          </div>
-        )}
+        <div ref={rows}>
+          {phone ? (
+            <>
+              <ClientCards items={shownRows} />
+              <ShowMore solo {...footer} />
+            </>
+          ) : (
+            <ClientTable items={shownRows} paging={footer} />
+          )}
+        </div>
       </>
     );
   }

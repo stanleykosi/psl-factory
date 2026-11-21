@@ -1,0 +1,32 @@
+{
+  "$comment": "F-54 D-161 PROPOSAL G-SCR05-ATTACH (mock only; nothing is in the v7 contract). upload: POST /api/v1/assistant/uploads, multipart/form-data with one part named `file` (an image), CSRF as every write; answers 200 with `upload_reply`, 422 {code:'invalid', message:'Attach an image file.'} for a file that is not an image and 422 {code:'invalid', message:'Images up to 10 MB.'} over 10 MB. read: GET /api/v1/assistant/uploads/{file_id} serves the stored image to its owner only (404 otherwise). message_body_extra: the optional key E-MESSAGE would accept; `text` may be empty when `attachments` has at least one entry. message_extra: the optional key E-CONVERSATION would return on a person's message. The backend developer may change or refuse any of it: see delivery/BACKEND-HANDOFF.md G-SCR05-ATTACH.",
+  "upload_reply": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["file_id", "name", "size", "content_type"],
+    "properties": {
+      "file_id": { "type": "string", "minLength": 1 },
+      "name": { "type": "string", "minLength": 1 },
+      "size": { "type": "integer", "minimum": 0 },
+      "content_type": { "type": "string", "pattern": "^image/" }
+    }
+  },
+  "message_body_extra": {
+    "type": "object",
+    "properties": {
+      "attachments": {
+        "type": "array",
+        "items": { "type": "object", "additionalProperties": false, "required": ["file_id"], "properties": { "file_id": { "type": "string", "minLength": 1 } } }
+      }
+    }
+  },
+  "message_extra": {
+    "type": "object",
+    "properties": {
+      "attachments": {
+        "type": "array",
+        "items": { "$ref": "#/upload_reply" }
+      }
+    }
+  }
+}

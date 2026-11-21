@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { demoProject } from './demo-projects.mjs';
 import { caseVisible } from './projects.mjs';
 import { DEFAULT_PERSONA, PERSONAS, SCENARIO_BODIES } from './server.mjs';
 
@@ -50,6 +51,7 @@ function moneyTab(url, persona) {
   const caseId = decodeId(url.pathname.split('/')[4] ?? '');
   if (!caseVisible(caseId, persona)) return [404, SCENARIO_BODIES[404]];
   if (moneyIndex[caseId]?.status) return scripted(moneyIndex[caseId].status);
+  if (demoProject(caseId)) return [200, { items: [], as_of: new Date().toISOString(), money: [] }]; // D-164: no stages yet
   return Object.hasOwn(moneyBodies, caseId) ? [200, moneyBodies[caseId]] : [501, NOT_MOCKED];
 }
 

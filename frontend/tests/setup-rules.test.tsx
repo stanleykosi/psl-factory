@@ -309,20 +309,21 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(up.body).toEqual({ kind: 'rule_proof', filename: 'minutes.pdf', content_base64: btoa('x'.repeat(2048)), case_revision: 1 });
 
     fireEvent.click(saveButton());
-    await waitFor(() => expect(panel().getByRole('status').textContent).toBe('Saved as version 1.'));
+    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Saved as version 1.'));
     expect(saves()).toHaveLength(1);
     expect(saves()[0]).toMatchObject({ path: '/api/v1/setup/rules/presale.rfp_assigner', csrf: 'mock-csrf-admin' });
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14', reason: 'Agreed at the PSL leadership meeting', evidence_id: 'EV-1' });
     expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', 'v1 · since 14 Nov']);
     expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 7');
     expect(desktop().getByText(/^7 rules aren’t set yet/)).toBeTruthy();
-    // Rebuilt from the reloaded row: next version, its selection, Why and Proof cleared; focus on the callout.
+    // Rebuilt from the reloaded row: next version, its selection, Why and Proof cleared; the result is a toast.
     expect(saveButton().textContent).toBe('Save as version 2');
     expect((panel().getByRole('checkbox', { name: 'PMO Lead' }) as HTMLInputElement).checked).toBe(true);
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('');
     expect(panel().getByText('choose a file')).toBeTruthy();
-    // Focus moves in an effect after the outcome renders.
-    await waitFor(() => expect(document.activeElement).toBe(panel().getByRole('status')));
+    // The toast never takes focus (D-151), and the panel keeps no success callout.
+    expect(document.activeElement).not.toBe(screen.getByRole('status'));
+    expect(panel().queryByRole('status')).toBeNull();
   });
 
   it('a blank Why sends no reason, no upload sends no evidence_id, and a double click sends one PUT', async () => {
@@ -336,7 +337,7 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(saveButton().getAttribute('aria-busy')).toBe('true');
     await waitFor(() => expect(saves()).toHaveLength(1));
     await act(async () => release());
-    await waitFor(() => expect(panel().getByRole('status')).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole('status')).toBeTruthy());
     expect(saves()).toHaveLength(1);
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14' });
   });
@@ -348,6 +349,9 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: [] }, starts: '2026-11-14' });
   });
 });
+
+/** Every rule on screen: the footer starts at 10 rows, so these tests choose 50. */
+const showFifty = () => fireEvent.click(desktop().getByRole('radio', { name: '50' }));
 
 describe('save outcomes (AC 10, 11, 13, 14)', () => {
   it('409: shows the message in a focused alert, reloads the newer version, clears every edit, never re-applies', async () => {
@@ -441,6 +445,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
       return json(403, FORBIDDEN);
     };
     await open(<FinancePageView />);
+    showFifty();
     fireEvent.click(desktop().getByRole('button', { name: 'Set BU totals rules' }));
     fireEvent.click(saveButton());
     const text = `${FORBIDDEN.message} ${EDITOR_GONE} ${NOT_SAVED}`;
@@ -649,9 +654,11 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     };
     let failMore = true;
     await open();
+    expect(desktop().getAllByRole('row')).toHaveLength(11);
+    showFifty();
     expect(desktop().getAllByRole('row')).toHaveLength(51);
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(desktop().getByText('We couldn’t load more rules. Choose Show more to try again.')).toBeTruthy());
+    await waitFor(() => expect(desktop().getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
     expect(desktop().getAllByRole('row')).toHaveLength(51);
     failMore = false;
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
@@ -659,7 +666,8 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     expect(desktop().queryByRole('button', { name: 'Show more' })).toBeNull();
     // the button that was pressed is gone: focus goes to the end of the list instead of the page top (QA-3-1); the
     // focus moves after the rows render, so wait for it (it can land a tick later under a loaded parallel run)
-    await waitFor(() => expect(document.activeElement).toBe(desktop().getByText('All 55 rules are shown.')));
+    // the page draws a desktop and a phone copy; CSS shows one, so either copy may hold the focus here
+    await waitFor(() => expect(screen.getAllByText('All 55 rules are shown.')).toContain(document.activeElement));
     expect(desktop().getAllByRole('row')[55].textContent).toContain('Sample rule 55');
     expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 55');
   });
@@ -680,6 +688,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
     answers.rules = () => json(200, fixture('finance.desktop'));
     await open(<FinancePageView />);
     expect(reads()[0].query).toBe('?area=finance');
+    showFifty();
     expect(desktop().getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('SETUP / RULES / FINANCE');
     expect(desktop().getByRole('heading', { level: 1, name: 'Finance rules' })).toBeTruthy();
     expect(desktop().getByText('All 25 values are Not set. Real reviewers and approvers come from PSL; none are invented here.')).toBeTruthy();
@@ -726,6 +735,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
     delete page.not_set_count;
     answers.rules = () => json(200, page);
     await open(<FinancePageView />);
+    showFifty();
     expect(screen.queryAllByRole('button', { name: /^Set / })).toHaveLength(0);
     expect(desktop().getAllByRole('heading', { level: 2 }).at(-1)!.textContent).toBe('Other Finance rules');
     expect(desktop().getByText('Monthly')).toBeTruthy();
@@ -744,7 +754,8 @@ describe('finance and delivery views (AC 16, 17)', () => {
     expect(rowCells('Hypercare window')).toEqual(['Hypercare window', 'NOT SET', 'Hypercare']);
     expect(desktop().getByText(/^These are PSL’s decisions\. Until a rule is set/)).toBeTruthy();
     expect(desktop().getByText('Each rule is versioned. Changing one doesn’t change work already finished.')).toBeTruthy();
-    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell)')).toHaveLength(0);
+    // no controls but the paging footer's rows per page
+    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell):not(.psl-seg__opt)')).toHaveLength(0);
   });
 });
 

@@ -1,5 +1,5 @@
 // E-EXCEPTIONS in the contract mock: pages the rows of fixtures/E-EXCEPTIONS.json in file order by limit and an
-// "o:<offset>" cursor. "Leads; filtered by grants": the pm persona is refused, none sees an empty list (C8).
+// "o:<offset>" cursor. "Leads; filtered by grants": the pm and hr personas are refused, none sees an empty list (C8).
 // Cookie psl_mock_exceptions=empty gives an empty list to anyone allowed to see it; psl_mock_exceptions=board serves
 // the four sample rows drawn on the SCR-10 phone board (fixtures/E-EXCEPTIONS.board.json), for the design-fidelity check.
 // Sample data only.
@@ -35,7 +35,7 @@ function matches(row, q, what) {
 }
 
 export function exceptionsList({ url, persona, cookies }) {
-  if (persona === 'pm') return { status: 403, body: NOT_A_LEAD };
+  if (persona === 'pm' || persona === 'hr' || persona === 'hr_lead') return { status: 403, body: NOT_A_LEAD };
   if (persona === 'none' || cookies.psl_mock_exceptions === 'empty') {
     return { status: 200, body: { items: [], as_of: fixture.as_of, open_count: 0 } };
   }

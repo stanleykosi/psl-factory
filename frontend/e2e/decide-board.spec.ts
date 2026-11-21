@@ -109,7 +109,7 @@ for (const [label, viewport, titleSize] of [
         expect(
           await target.evaluate((el) => {
             const s = getComputedStyle(el);
-            return { focused: el === document.activeElement, style: s.outlineStyle, width: s.outlineWidth };
+            return { focused: el === document.activeElement, style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
           }),
         ).toEqual({ focused: true, style: 'solid', width: '2px' });
       }

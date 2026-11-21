@@ -5,12 +5,12 @@
 // CSS shows one; the phone is read-only as drawn (D-15).
 import { useState } from 'react';
 
-import { Callout, Link, PageTitle, Table, Tag } from '@/components';
+import { Callout, Link, PageTitle, Table, Tag, ShowMore } from '@/components';
 
 import type { RuleRow } from './contract-proposal';
 import { areaHref, isEditable, linkHref, valueText, versionText } from './format';
 import { type Notice, OutcomeNotice, SetRulePanel } from './SetRulePanel';
-import { RulesEmpty, RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
+import { RulesEmpty, RulesReadState, SetupFrame, SetupGate, PagingNotes, useSetupPaging, useSetupPhoneBack } from './SetupFrame';
 import { useSetupRules } from './useSetupRules';
 
 export function RulesPageView() {
@@ -48,13 +48,15 @@ function VersionCell({ row }: { row: RuleRow }) {
 
 function RulesView() {
   const { state, retry, refresh, loadMore, signOut } = useSetupRules();
+  const { items: pagedItems, paging, notes } = useSetupPaging(state, loadMore, 'rules');
   useSetupPhoneBack();
   // A save outcome whose panel closed because the re-read left no editable rule (QA-1-1); shown only while the panel
   // stays closed, so a later Show more that brings the panel back never keeps a stale "has closed" (TECH-2-1).
   const [closedNotice, setClosedNotice] = useState<Notice | null>(null);
   if (state.status !== 'ready') return <RulesReadState state={state} retry={() => void retry()} />;
 
-  const { page, items } = state;
+  const { page } = state;
+  const items = pagedItems;
   const editable = items.filter(isEditable);
   const notSet = page.not_set_count;
   const empty = items.length === 0;
@@ -87,8 +89,9 @@ function RulesView() {
                   rows={items}
                   rowKey={(row) => row.component}
                   empty="No rules to show."
+                  paging={paging}
                 />
-                <ShowMore state={state} onMore={() => void loadMore()} />
+                <PagingNotes notes={notes} />
               </section>
               {editable.length > 0 && (
                 <aside className="setup-aside" aria-label="Set a rule">
@@ -131,7 +134,8 @@ function RulesView() {
             })}
           </ul>
         )}
-        <ShowMore state={state} onMore={() => void loadMore()} />
+        <ShowMore solo {...paging} />
+        <PagingNotes notes={notes} />
       </div>
     </>
   );

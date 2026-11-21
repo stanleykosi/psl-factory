@@ -100,7 +100,7 @@ for (const [label, viewport] of [
       const registers = page.getByRole('tablist', { name: 'Register' }).getByRole('tab');
       await expect(registers).toHaveText(['Issues 3', 'Changes 2', 'Emergencies 0', 'RFPs 1']);
       await expect(page.getByRole('button', { name: /filter/i })).toHaveCount(0);
-      expect(requests.map((u) => u.search)).toEqual(['?limit=20&register=issues']);
+      expect(requests.map((u) => u.search)).toEqual(['?limit=10&register=issues']);
 
       await registers.nth(0).focus();
       await page.keyboard.press('End');
@@ -143,8 +143,11 @@ for (const [label, viewport] of [
       await loaded(page);
       const more = page.getByRole('button', { name: 'Show more' });
       await expect(more).toBeVisible();
-      await expect(page.getByText('20 showing')).toBeVisible();
+      await expect(page.getByText('10 showing')).toBeVisible();
       if (phone) await expectTouchTargets([more]);
+      await more.click();
+      await expect(page.getByText('20 showing')).toBeVisible();
+      expect(requests.at(-1)!.searchParams.get('cursor')).toBe('o10');
       await more.click();
       await expect(page.getByText('ISS-1025').first()).toBeAttached();
       expect(requests.at(-1)!.searchParams.get('cursor')).toBe('o20');

@@ -4,7 +4,9 @@
     {
       "personas": [
         "finance_lead",
-        "pm"
+        "pm",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -27,7 +29,9 @@
     {
       "personas": [
         "finance_lead",
-        "pm"
+        "pm",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -46,7 +50,9 @@
     {
       "personas": [
         "finance_lead",
-        "pm"
+        "pm",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -65,7 +71,9 @@
     {
       "personas": [
         "finance_lead",
-        "pm"
+        "pm",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -84,7 +92,9 @@
     {
       "personas": [
         "finance_lead",
-        "pm"
+        "pm",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "closed",
       "item": {
@@ -99,7 +109,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -117,7 +129,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -135,7 +149,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -153,7 +169,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -171,7 +189,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -189,7 +209,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -207,7 +229,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -225,7 +249,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -243,7 +269,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -261,7 +289,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -279,7 +309,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -297,7 +329,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -315,7 +349,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -333,7 +369,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -351,7 +389,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -369,7 +409,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -387,7 +429,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -405,7 +449,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "active",
       "item": {
@@ -423,7 +469,9 @@
     },
     {
       "personas": [
-        "finance_lead"
+        "finance_lead",
+        "ceo",
+        "pmo_lead"
       ],
       "status": "closed",
       "item": {

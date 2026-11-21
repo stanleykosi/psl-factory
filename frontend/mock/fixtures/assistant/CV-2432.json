@@ -1,0 +1,85 @@
+{
+  "conversation_id": "CV-2432",
+  "agent": "zainab",
+  "title": "Are the business unit moves safe to confirm?",
+  "status": "drafted",
+  "context": {
+    "project": {
+      "case_id": "C-HR-STAFF",
+      "title": "Staff records for payroll"
+    },
+    "access": [
+      "HR Lead · decisions on staff record changes and corrections",
+      "No payroll amounts (not set up yet)"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Are the four business unit moves safe to confirm?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-18T15:20:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "All four moves have the unit head’s agreement, and none changes who is on a project team this month. I drafted the confirmation for you to review. Nothing is released to Finance until you confirm it on the work item. This is sample data from the HR Lead stand-in.",
+      "steps": [
+        "Read the four moves",
+        "Checked each unit head’s reply"
+      ],
+      "sources": [],
+      "at": "2026-11-18T15:21:00Z",
+      "step_details": [
+        {
+          "text": "Read the four moves",
+          "state": "done",
+          "reference": {
+            "label": "BUSINESS UNIT REGISTER"
+          }
+        },
+        {
+          "text": "Checked each unit head’s reply",
+          "state": "done",
+          "reference": {
+            "label": "UNIT HEAD REPLIES"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "BUSINESS UNITS",
+          "label": "BUSINESS UNIT MOVES · HRM-0008",
+          "restricted": false,
+          "link": {
+            "work_id": "W-4613"
+          }
+        },
+        {
+          "kind": "REPLIES",
+          "label": "UNIT HEAD REPLIES",
+          "restricted": false
+        }
+      ],
+      "draft": {
+        "title": "Confirmation · business unit moves",
+        "status_label": "DRAFTED · NOT CONFIRMED",
+        "rows": [
+          {
+            "label": "Moves",
+            "value": "4 staff, effective 1 December"
+          },
+          {
+            "label": "Unit heads",
+            "value": "All four agreed in writing"
+          },
+          {
+            "label": "Template",
+            "value": "Staff records · TEST TEMPLATE"
+          }
+        ],
+        "next": "You confirm, then Finance can start payroll matching"
+      }
+    }
+  ]
+}

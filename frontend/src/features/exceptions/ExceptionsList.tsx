@@ -7,12 +7,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, Callout, EmptyState, formatDayTime, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tag, useIsPhone, type Column } from '@/components';
+import { Button, EmptyState, formatDayTime, ListToolbar, PageTitle, ShowMore, type ShowMoreProps, Table, usePagedRows, Tag, useIsPhone, type Column } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
 import { ExceptionsFilter } from './ExceptionsFilter';
-import { EXCEPTIONS_LIMITS, KIND_TAGS, sinceText } from './labels';
+import { KIND_TAGS, sinceText } from './labels';
 import type { ExceptionKind, ExceptionRow, ExceptionsLimit } from './types';
 import { useExceptions } from './useExceptions';
 
@@ -28,7 +28,7 @@ function KindTag({ row }: { row: ExceptionRow }) {
 }
 
 /** Desktop (SCR-10-desktop): the tag with "since" beneath, the title with its reference beneath, doing, who acts. */
-function ExceptionsTable({ rows, asOf }: { rows: ExceptionRow[]; asOf: string }) {
+function ExceptionsTable({ rows, asOf, paging }: { rows: ExceptionRow[]; asOf: string; paging?: ShowMoreProps }) {
   const columns: Column<ExceptionRow>[] = [
     {
       key: 'what',
@@ -57,7 +57,7 @@ function ExceptionsTable({ rows, asOf }: { rows: ExceptionRow[]; asOf: string })
     { key: 'doing', header: 'WHAT’S BEING DONE', cell: (row) => <span className="exc-doing">{row.doing}</span> },
     { key: 'who', header: 'WHO ACTS', cell: (row) => <span className="exc-who">{row.who_acts}</span> },
   ];
-  return <Table className="exc-tablewrap" caption={CAPTION} columns={columns} rows={rows} rowKey={(row) => `${row.work_id}:${row.what}:${row.since}`} empty="No exceptions." />;
+  return <Table className="exc-tablewrap" caption={CAPTION} columns={columns} rows={rows} rowKey={(row) => `${row.work_id}:${row.what}:${row.since}`} empty="No exceptions." paging={paging} />;
 }
 
 /** Phone (SCR-10-mobile): separate outlined cards (tag, title, what's being done); the title link covers the whole card. */
@@ -95,8 +95,17 @@ export type ExceptionsListProps = {
   seeAllHref?: string;
 };
 
-export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxRows, seeAllHref = '/exceptions' }: ExceptionsListProps) {
-  const { state, limit, setLimit, filters, setFilters, retry, showMore } = useExceptions({ limit: initialLimit });
+export function ExceptionsList({ limit: initialLimit = 10, compact = false, maxRows, seeAllHref = '/exceptions' }: ExceptionsListProps) {
+  const { state, filters, setFilters, retry, showMore } = useExceptions({ limit: initialLimit });
+  const ready = state.status === 'ready' ? state : null;
+  const { rows: pagedRows, paging } = usePagedRows({
+    items: ready?.items ?? [],
+    next: !compact && Boolean(ready?.nextCursor),
+    busy: ready?.more === 'loading',
+    failed: ready?.more === 'failed',
+    loadMore: (n) => void showMore(n),
+    resetKey: `${filters.q ?? ''}|${filters.what ?? ''}`,
+  });
   const pathname = usePathname() ?? '/exceptions';
   const phone = useIsPhone();
   const [filterOpen, setFilterOpen] = useState(false);
@@ -118,7 +127,6 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   };
 
   const narrowed = Boolean(filters.q || filters.what);
-  const ready = state.status === 'ready' ? state : null;
 
   let body;
   if (state.status === 'error') {
@@ -172,31 +180,12 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
         </>
       );
     } else {
-      const rows = compact && maxRows !== undefined ? state.items.slice(0, maxRows) : state.items;
+      const rows = compact && maxRows !== undefined ? state.items.slice(0, maxRows) : compact ? state.items : pagedRows;
       body = (
         <>
-          {phone ? <ExceptionsCards rows={rows} /> : <ExceptionsTable rows={rows} asOf={state.asOf} />}
-          {compact ? (
-            asOf
-          ) : (
-            <div className="exc-foot">
-              <ShowMore className="exc-shown" shown={state.items.length} hasMore={Boolean(state.nextCursor)} busy={state.more === 'loading'} onMore={() => void showMore()} />
-              <span className="exc-note">As of {formatDayTime(state.asOf)}</span>
-              <span className="exc-rows">
-                <span className="exc-rowslabel" aria-hidden="true">
-                  ROWS PER PAGE
-                </span>
-                <Segmented
-                  label="Rows per page"
-                  phone={phone}
-                  options={EXCEPTIONS_LIMITS.map((n) => ({ value: String(n), label: String(n) }))}
-                  value={String(limit)}
-                  onChange={(value) => setLimit(Number(value) as ExceptionsLimit)}
-                />
-              </span>
-            </div>
-          )}
-          {!compact && state.more === 'failed' && <Callout kind="problem">We couldn’t load more exceptions. Choose Show more to try again.</Callout>}
+          {phone ? <ExceptionsCards rows={rows} /> : <ExceptionsTable rows={rows} asOf={state.asOf} paging={compact ? undefined : paging} />}
+          {phone && !compact && <ShowMore solo {...paging} />}
+          {asOf}
           {seeAll}
           {!compact && (
             <p className="exc-footer">

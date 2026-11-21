@@ -11,8 +11,7 @@ import {
   miniSegments,
   parseView,
   resultCount,
-  shownText,
-  showMoreLabel,
+  queueTotal,
   stateTag,
   STATE_KEYS,
   STATES,
@@ -22,7 +21,7 @@ import {
   type WorkItem,
 } from '@/features/my-work/model';
 
-const view = (v: Partial<View> = {}): View => ({ queue: 'needs_me', limit: 20, ...v });
+const view = (v: Partial<View> = {}): View => ({ queue: 'needs_me', limit: 10, ...v });
 const item = (id: string, extra: Partial<WorkItem> = {}): WorkItem => ({
   id,
   title: id,
@@ -104,8 +103,8 @@ describe('view and query', () => {
   });
 
   it('builds the query: queue and limit always, q trimmed and never empty, cursor only when given', () => {
-    expect(buildWorkQuery(view())).toEqual({ queue: 'needs_me', limit: 20 });
-    expect(buildWorkQuery(view({ q: '  ' }))).toEqual({ queue: 'needs_me', limit: 20 });
+    expect(buildWorkQuery(view())).toEqual({ queue: 'needs_me', limit: 10 });
+    expect(buildWorkQuery(view({ q: '  ' }))).toEqual({ queue: 'needs_me', limit: 10 });
     expect(buildWorkQuery(view({ q: ' lagoon ', line: 'L', state: 'waiting', limit: 10 }), 'o10')).toEqual({
       queue: 'needs_me',
       limit: 10,
@@ -119,14 +118,14 @@ describe('view and query', () => {
   it('reads, sends and writes project and waiting_on (D-WORKLIST-FILTERS); an unknown waiting_on is ignored', () => {
     expect(parseView(new URLSearchParams('project=C-OJO&waiting_on=agent'))).toEqual(view({ project: 'C-OJO', waiting: 'agent' }));
     expect(parseView(new URLSearchParams('waiting_on=everyone'))).toEqual(view());
-    expect(buildWorkQuery(view({ project: 'C-OJO', waiting: 'agent' }))).toEqual({ queue: 'needs_me', limit: 20, project: 'C-OJO', waiting_on: 'agent' });
+    expect(buildWorkQuery(view({ project: 'C-OJO', waiting: 'agent' }))).toEqual({ queue: 'needs_me', limit: 10, project: 'C-OJO', waiting_on: 'agent' });
     expect(viewSearch(view({ project: 'C-OJO', waiting: 'me' }))).toBe('?project=C-OJO&waiting_on=me');
     expect(isNarrowed(view({ waiting: 'me' }))).toBe(true);
   });
 
   it('writes the URL without defaults', () => {
     expect(viewSearch(view())).toBe('');
-    expect(viewSearch(view({ queue: 'done', limit: 10, line: 'Prepare an invoice' }))).toBe('?queue=done&line=Prepare+an+invoice&limit=10');
+    expect(viewSearch(view({ queue: 'done', limit: 20, line: 'Prepare an invoice' }))).toBe('?queue=done&line=Prepare+an+invoice&limit=20');
   });
 });
 
@@ -141,13 +140,10 @@ describe('counts, footer and merging', () => {
     expect(resultCount(view(), null, 3, false)).toBe('3 ITEMS');
   });
 
-  it('shown text and Show more label', () => {
-    expect(shownText(view(), counts, 20, true)).toBe('20 of 24 showing');
-    expect(shownText(view(), counts, 24, false)).toBe('All 24 showing');
-    expect(shownText(view({ q: 'x' }), counts, 20, true)).toBe('20 showing');
-    expect(showMoreLabel(view(), counts, 20)).toBe('Show 4 more');
-    expect(showMoreLabel(view({ limit: 10 }), counts, 10)).toBe('Show 10 more');
-    expect(showMoreLabel(view({ q: 'x' }), counts, 10)).toBe('Show more');
+  it('the footer total is the queue count only when nothing narrows the list', () => {
+    expect(queueTotal(view(), counts)).toBe(24);
+    expect(queueTotal(view({ q: 'x' }), counts)).toBeUndefined();
+    expect(queueTotal(view(), null)).toBeUndefined();
   });
 
   it('line options come from filters.lines by key, in response order, keeping the applied key', () => {

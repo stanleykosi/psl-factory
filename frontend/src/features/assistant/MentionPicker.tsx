@@ -4,7 +4,7 @@
 // least one character and paused; only returned items can be chosen. A mention is a pointer the backend re-checks.
 import { useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
-import { Button, Loading, SampleLabel, SearchField, SEARCH_PAUSE_MS, useIsPhone } from '@/components';
+import { Button, Loading, SampleLabel, SearchField, SEARCH_PAUSE_MS, useIsPhone, useKeepInView } from '@/components';
 
 import { fetchMentions } from './api';
 import { MENTION_FAILED, NOTHING_TO_MENTION } from './labels';
@@ -19,6 +19,7 @@ export function MentionPicker({ onPick }: { onPick: (option: MentionOption) => v
   const [found, setFound] = useState<Found>({ status: 'idle' });
   const button = useRef<HTMLButtonElement>(null);
   const pop = useRef<HTMLDivElement>(null);
+  useKeepInView(pop, open);
   const popId = useId();
   const query = q.trim();
 

@@ -8,7 +8,8 @@
       "_personas": [
         "pm",
         "ceo",
-        "finance_lead"
+        "finance_lead",
+        "pmo_lead"
       ]
     },
     {
@@ -20,7 +21,8 @@
       "_personas": [
         "pm",
         "ceo",
-        "finance_lead"
+        "finance_lead",
+        "pmo_lead"
       ]
     },
     {
@@ -30,7 +32,88 @@
       "_parent": "P-0102",
       "_personas": [
         "pm",
-        "ceo"
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0911",
+      "label": "Milestone 2 · design signed",
+      "sample": true,
+      "_parent": "P-0103",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0912",
+      "label": "Milestone 2 · beta signed",
+      "sample": true,
+      "_parent": "P-0104",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0913",
+      "label": "Milestone 1 · prototype accepted",
+      "sample": true,
+      "_parent": "P-0105",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0914",
+      "label": "Milestone 3 · UAT signed",
+      "sample": true,
+      "_parent": "P-0106",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0915",
+      "label": "Milestone 2 · integration done",
+      "sample": true,
+      "_parent": "P-0107",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0916",
+      "label": "Milestone 1 · kickoff complete",
+      "sample": true,
+      "_parent": "P-0108",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0917",
+      "label": "Milestone 3 · go-live accepted",
+      "sample": true,
+      "_parent": "P-0109",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
+      ]
+    },
+    {
+      "value": "M-0918",
+      "label": "Milestone 1 · discovery signed",
+      "sample": true,
+      "_parent": "P-0110",
+      "_personas": [
+        "ceo",
+        "pmo_lead"
       ]
     }
   ]

@@ -12,6 +12,8 @@ import { setCsrfToken } from '@/api/client';
 import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 import type { Line, Lines } from '@/features/start-work/types';
 
+import { setWhen } from './controls';
+
 // @ts-expect-error plain ESM module without type declarations
 import { OPENAPI_PATH } from '../mock/server.mjs';
 // @ts-expect-error plain ESM module without type declarations
@@ -114,7 +116,9 @@ async function pick(field: string, option: string) {
   fireEvent.click(within(dialog()).getByRole('combobox', { name: field }));
   fireEvent.click(await within(dialog()).findByRole('option', { name: new RegExp(`^${option}`) }));
 }
-const text = (label: string, value: string) => fireEvent.change(within(dialog()).getByLabelText(label), { target: { value } });
+// A date and a time is picked from the shared dropdown (D-158); anything else is typed.
+const text = (label: string, value: string) =>
+  /^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(value) ? setWhen(label, value, within(dialog())) : fireEvent.change(within(dialog()).getByLabelText(label), { target: { value } });
 const radio = (group: string, name: string) => fireEvent.click(within(within(dialog()).getByRole('radiogroup', { name: group })).getByRole('radio', { name }));
 const fileInput = () => dialog().querySelector<HTMLInputElement>('[data-field="rfp_document"] input[type="file"]')!;
 const documentBox = () => within(dialog()).getByRole('group', { name: 'The RFP document' });

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, Segmented, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
+import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, useToast, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
 import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -17,15 +17,13 @@ import {
   buildWorkQuery,
   filterCount as countFilters,
   isNarrowed,
-  LIMITS,
   lineOptions,
   mergeRefresh,
   parseView,
   QUEUES,
   recordsText,
   resultCount,
-  shownText,
-  showMoreLabel,
+  queueTotal,
   stateTag,
   formatTime,
   viewSearch,
@@ -68,8 +66,9 @@ export function MyWork() {
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  // F-36: the polite notice after the assign panel's write has been read back
-  const [notice, setNotice] = useState<{ kind: 'done' | 'sent'; text: string }>();
+  // F-36: the assign panel's write went through but the list could not be read back; the confirmation itself is a toast (D-151)
+  const [notice, setNotice] = useState<string>();
+  const toast = useToast();
 
   const seq = useRef(0);
   const inFlight = useRef(0);
@@ -88,10 +87,11 @@ export function MyWork() {
     [router],
   );
 
-  const fetchPage = useCallback(async (v: View, cursor?: string) => {
+  // The first page is always 10 rows; the paging footer grows the list from there with the cursor.
+  const fetchPage = useCallback(async (v: View, cursor?: string, limit: Limit = DEFAULT_PAGE_SIZE) => {
     inFlight.current += 1;
     try {
-      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery(v, cursor) } }));
+      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
     } finally {
       inFlight.current -= 1;
     }
@@ -154,16 +154,14 @@ export function MyWork() {
     }
   }, [fetchPage, took]);
 
-  const showMore = async () => {
+  const showMore = async (limit: Limit) => {
     if (list.status !== 'ready' || !list.nextCursor) return;
     const mine = seq.current;
-    const before = list.items.length;
     setMore('loading');
     try {
-      const data = await fetchPage(view, list.nextCursor);
+      const data = await fetchPage(view, list.nextCursor, limit);
       if (mine !== seq.current) return;
       took(data);
-      focusRow.current = before;
       setList((prev) =>
         prev.status !== 'ready' ? prev : { ...prev, items: appendPage(prev.items, data.items), pages: prev.pages + 1, nextCursor: data.next_cursor },
       );
@@ -175,20 +173,44 @@ export function MyWork() {
     }
   };
 
+  // A new queue, search or filter reloads from page 1; a new rows-per-page choice only grows or trims the shown rows.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const reloadView = useMemo(() => view, [view.queue, view.q, view.line, view.project, view.state, view.waiting]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load(reloadView);
+  }, [reloadView, load]);
   useEffect(() => {
     viewRef.current = view;
-    // A new view (queue, search, filters or rows per page) reloads from page 1.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load(view);
-  }, [view, load]);
+  }, [view]);
+  const listReady = list.status === 'ready' ? list : undefined;
+  const { rows, paging: basePaging } = usePagedRows({
+    items: listReady?.items ?? [],
+    next: Boolean(listReady?.nextCursor),
+    busy: more === 'loading',
+    failed: more === 'error',
+    loadMore: (limit) => void showMore(limit),
+    resetKey: reloadView,
+    size: view.limit,
+    onSize: (limit) => navigate({ limit }),
+    total: queueTotal(view, counts),
+  });
+  // Show more: the keyboard moves to the first row it added (not when the rows grow from a rows-per-page choice).
+  const paging = {
+    ...basePaging,
+    onMore: () => {
+      if (more !== 'error') focusRow.current = rows.length;
+      basePaging.onMore();
+    },
+  };
 
   useEffect(() => {
     pollable.current = list.status === 'ready' && !signedOut;
-    if (focusRow.current !== null && list.status === 'ready') {
+    if (focusRow.current !== null && list.status === 'ready' && rows.length > focusRow.current) {
       panel.current?.querySelectorAll<HTMLElement>('[data-work-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [list, signedOut]);
+  }, [list, signedOut, rows.length]);
 
   // D-UPDATES: every 15 s while the tab is visible; on return, at once if the data is older than 15 s.
   const refreshRef = useRef(refresh);
@@ -263,7 +285,10 @@ export function MyWork() {
   };
   const assigned = async ({ reference, assignedTo, reread }: Assigned) => {
     const listed = await refresh(true);
-    setNotice(reread && listed ? { kind: 'done', text: `${reference} is now with ${assignedTo}.` } : { kind: 'sent', text: 'The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.' });
+    if (reread && listed) {
+      setNotice(undefined);
+      toast.show(`${reference} is now with ${assignedTo}.`);
+    } else setNotice('The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.');
     router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
     requestAnimationFrame(() => tabs.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus());
   };
@@ -360,36 +385,13 @@ export function MyWork() {
     body = (
       <>
         {!phone ? (
-          <WorkTable items={list.items} hrefFor={rowHref} />
-        ) : view.queue === 'waiting_on_others' ? (
-          <StartedCards items={list.items} />
+          <WorkTable items={rows} hrefFor={rowHref} paging={paging} />
         ) : (
-          <WorkCards items={list.items} hrefFor={rowHref} />
+          <>
+            {view.queue === 'waiting_on_others' ? <StartedCards items={rows} /> : <WorkCards items={rows} hrefFor={rowHref} />}
+            <ShowMore solo {...paging} />
+          </>
         )}
-        <div className="my-work__foot">
-          <div className="psl-showmore my-work__showmore">
-            <span>{shownText(view, counts, list.items.length, Boolean(list.nextCursor))}</span>
-            <span className="my-work__rows">
-              <span className="my-work__rowslabel" aria-hidden="true">
-                ROWS PER PAGE
-              </span>
-              <Segmented label="Rows per page" phone={phone} value={String(view.limit) as `${Limit}`} options={LIMITS.map((n) => ({ value: String(n) as `${Limit}`, label: String(n) }))} onChange={(n) => navigate({ limit: Number(n) as Limit })} />
-            </span>
-            {list.nextCursor && (
-              <Button kind="secondary" size="sm" className="my-work__more" busy={more === 'loading'} busyLabel="Loading…" onClick={() => void showMore()}>
-                {showMoreLabel(view, counts, list.items.length)}
-              </Button>
-            )}
-          </div>
-          {more === 'error' && (
-            <Callout kind="problem" className="my-work__morefail">
-              We couldn&rsquo;t load more. Your work is safe; nothing was changed.{' '}
-              <Button kind="secondary" size="sm" onClick={() => void showMore()}>
-                Try again
-              </Button>
-            </Callout>
-          )}
-        </div>
       </>
     );
   }
@@ -409,8 +411,8 @@ export function MyWork() {
       </div>
 
       {notice && (
-        <Callout kind={notice.kind === 'done' ? 'success' : 'warning'} className="my-work__notice">
-          {notice.text}
+        <Callout kind="warning" className="my-work__notice">
+          {notice}
         </Callout>
       )}
 

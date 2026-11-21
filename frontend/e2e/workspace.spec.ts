@@ -25,7 +25,7 @@ async function openItem(page: Page, id: string) {
 const ring = (target: Locator) =>
   target.evaluate((el) => {
     const s = getComputedStyle(el);
-    return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2;
+    return (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none') !== 'none' && parseFloat((s.outlineStyle !== 'none' ? s.outlineWidth : '2px')) >= 2;
   });
 
 /** Tabs forward until the target has keyboard focus. */
@@ -174,7 +174,8 @@ test('W-2001: a double click sends once (one send for that key on the mock), and
   await page.setViewportSize(DESKTOP);
   await openItem(page, 'W-2001');
   await page.getByRole('button', { name: 'Approve and send' }).dblclick();
-  await expect(page.getByRole('status').filter({ hasText: 'Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.' })).toBeVisible();
+  await expect(page.locator('.psl-callout--success')).toHaveCount(0);
   const recorded = await log(request);
   expect(recorded.entries).toHaveLength(1);
   expect(recorded.sends[recorded.entries[0].idempotency_key]).toBe(1);
@@ -185,7 +186,7 @@ test('W-2007: queued is announced as Waiting; the 409 re-bases the next press on
   await page.setViewportSize(DESKTOP);
   await openItem(page, 'W-2007');
   await page.getByRole('button', { name: 'Ask Tola to reassemble' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Waiting: Tola reassembles the report after the 16:00 records sync.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Waiting: Tola reassembles the report after the 16:00 records sync.' })).toBeVisible();
   await request.post(`${MOCK}/__mock/reset`);
   await page.reload();
   await expect(page.locator('.ws')).toBeAttached();
@@ -198,7 +199,7 @@ test('W-2007: queued is announced as Waiting; the 409 re-bases the next press on
   await page.waitForTimeout(1000);
   expect((await log(request)).entries).toHaveLength(1);
   await form.getByRole('button', { name: 'Edit your update' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Done: Edit your update.' })).toBeVisible();
+  await expect(page.locator('.psl-toast').filter({ hasText: 'Done: Edit your update.' })).toBeVisible();
   const [stale, done] = (await log(request)).entries;
   expect([stale.status, stale.expected_revision]).toEqual([409, 4]);
   expect([done.status, done.expected_revision]).toEqual([200, 5]);

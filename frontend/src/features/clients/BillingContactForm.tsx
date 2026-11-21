@@ -6,13 +6,12 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { Button, Callout, Panel, TextField } from '@/components';
+import { Button, Callout, Panel, TextField, useToast } from '@/components';
 
 import { saveBillingContact, type ClientDetail, type FieldMessage } from './api';
 import type { RefreshResult } from './useClient';
 
 type Notice =
-  | { kind: 'saved' }
   | { kind: 'saved_unread' }
   | { kind: 'stale'; unread?: boolean }
   | { kind: 'forbidden'; message: string }
@@ -42,6 +41,7 @@ function ReadOnlyValue({ id, label, value, set }: { id: string; label: string; v
 }
 
 export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }: Props) {
+  const toast = useToast();
   const contact = client.billing_contact;
   const [name, setName] = useState(contact.name ?? '');
   const [email, setEmail] = useState(contact.email ?? '');
@@ -72,7 +72,7 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invalidKey]);
 
-  const showsNotice = notice !== null && notice.kind !== 'invalid' && notice.kind !== 'saved';
+  const showsNotice = notice !== null && notice.kind !== 'invalid';
   useEffect(() => {
     // A failure notice is announced and takes focus once per press; its scroll-margin keeps it clear of the phone's Save bar.
     if (showsNotice) noticeBox.current?.focus();
@@ -129,7 +129,8 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
       const fresh = await reload();
       if (outcome.kind === 'saved') {
         if (fresh) seed(fresh.billing_contact);
-        return setNotice({ kind: fresh ? 'saved' : 'saved_unread' });
+        if (!fresh) return setNotice({ kind: 'saved_unread' });
+        return toast.show('Billing contact saved.');
       }
       if (fresh) showReloaded(fresh);
       if (outcome.kind === 'stale') setNotice({ kind: 'stale', unread: !fresh });
@@ -228,7 +229,6 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
           </Callout>
         </div>
       )}
-      {notice?.kind === 'saved' && <Callout kind="success">Billing contact saved.</Callout>}
       {unread && (
         <Button kind="secondary" className="clients__retry" busy={busy} busyLabel="Trying again…" onClick={() => void tryAgain()}>
           Try again
