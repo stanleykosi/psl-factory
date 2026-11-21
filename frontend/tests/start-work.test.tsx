@@ -389,7 +389,7 @@ describe('record options from E-LINE-OPTIONS', () => {
     expect(optionGets().at(-1)!.searchParams.get('parent')).toBe('P-0102');
   });
 
-  it('ceo: the project picker lists 10, Show more fetches the next pages, and search sends q', async () => {
+  it('ceo: the project picker lists 10 with no paging footer, reaching the end loads the next pages, and search sends q', async () => {
     persona = 'ceo';
     await openChooser();
     fireEvent.click(within(dialog()).getByRole('radio', { name: /Controlled change/ }));
@@ -397,13 +397,14 @@ describe('record options from E-LINE-OPTIONS', () => {
     fireEvent.click(within(dialog()).getByRole('combobox', { name: 'Project' }));
     await within(dialog()).findByRole('option', { name: 'Lagoon Health · patient app' });
     expect(within(dialog()).getAllByRole('option')).toHaveLength(10);
-    press('Show more');
+    expect(within(dialog()).queryByRole('radiogroup', { name: 'Rows per page' })).toBeNull();
+    expect(within(dialog()).queryByRole('button', { name: 'Show more' })).toBeNull();
+    fireEvent.keyDown(within(dialog()).getAllByRole('option').at(-1)!, { key: 'ArrowDown' });
     await waitFor(() => expect(within(dialog()).getAllByRole('option')).toHaveLength(20));
     expect(optionGets().at(-1)!.searchParams.get('cursor')).toBe('o:10');
-    press('Show more');
+    fireEvent.keyDown(within(dialog()).getAllByRole('option').at(-1)!, { key: 'ArrowDown' });
     await waitFor(() => expect(within(dialog()).getAllByRole('option')).toHaveLength(26));
     expect(optionGets().at(-1)!.searchParams.get('cursor')).toBe('o:20');
-    expect(within(dialog()).queryByRole('button', { name: 'Show more' })).toBeNull();
     fireEvent.change(within(dialog()).getByRole('searchbox', { name: 'Search Project' }), { target: { value: 'harm' } });
     await waitFor(() => expect(within(dialog()).getAllByRole('option').map((o) => o.textContent)).toEqual(['Harmattan Bank · mobile onboarding']));
     expect(optionGets().at(-1)!.searchParams.get('q')).toBe('harm');

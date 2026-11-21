@@ -76,6 +76,7 @@
 .sw-picker__value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .sw-picker__pop { margin-top: var(--space-1); display: flex; flex-direction: column; }
 .sw-picker__pop > .psl-search { margin: var(--space-2); }
+.sw-picker__end { height: 1px; padding: 0; list-style: none; }
 .sw-picker__pop > .sw-picker__loading, .sw-picker__empty, .sw-picker__error { margin: 0; padding: var(--space-2) var(--space-3); }
 
 /* what happens next: one line under a hairline (SCR-04-desktop); "Next:" on the phone (SCR-04-mobile) */
