@@ -5,7 +5,7 @@ import { api, call } from '@/api/client';
 import { ApiError, errorFromResponse } from '@/api/errors';
 import type { PageSize } from '@/components';
 
-import type { AgentName, MentionOptions, MessageBody, MessageResult, NewConversation } from './types';
+import type { AgentName, Attachment, MentionOptions, MessageBody, MessageResult, NewConversation } from './types';
 
 export const fetchConversations = (limit: PageSize, cursor?: string) =>
   call(api.GET('/api/v1/assistant/conversations', { params: { query: { limit, cursor } } }));
@@ -41,3 +41,16 @@ export const createConversation = (agent: AgentName) =>
 
 export const postMessage = (id: string, body: MessageBody) =>
   write<MessageResult>(() => api.POST('/api/v1/assistant/conversations/{conversation_id}/messages', { params: { path: { conversation_id: id } }, body }));
+
+/** PROPOSAL D-161: the image's address for a thumbnail or a new tab (GET, same session). */
+export const uploadHref = (fileId: string) => `/api/v1/assistant/uploads/${encodeURIComponent(fileId)}`;
+
+type UntypedPost = { POST: (path: string, init: { body: FormData; bodySerializer: (body: FormData) => FormData }) => Promise<{ response: Response; data?: unknown; error?: unknown }> };
+
+/** PROPOSAL D-161: one image, multipart, to the proposed endpoint (not in the v7 contract). Like the two writes it is never resent. */
+export const uploadImage = (file: File) =>
+  write<Attachment>(() => {
+    const form = new FormData();
+    form.append('file', file);
+    return (api as unknown as UntypedPost).POST('/api/v1/assistant/uploads', { body: form, bodySerializer: (body) => body });
+  });

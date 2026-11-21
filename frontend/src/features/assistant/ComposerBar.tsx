@@ -40,6 +40,9 @@ export function ComposerBar({ agent, send, pathname }: { agent: AgentName; send:
         chips={send.chips.map((chip) => ({ id: chipKey(chip), label: chipLabel(chip) }))}
         onRemoveChip={send.removeChip}
         toolbar={<MentionPicker onPick={send.addChip} />}
+        images={send.images}
+        onAttach={send.attach}
+        onRemoveImage={send.removeImage}
         heldMic
       />
       {send.notice && (

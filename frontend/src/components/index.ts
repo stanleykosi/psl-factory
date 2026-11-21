@@ -8,7 +8,7 @@ export { BusySquares, Button, buttonClass, type ButtonKind, type ButtonProps, ty
 export { Callout, type CalloutKind } from './Callout';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export { ChatMessage, type ChatMessageProps } from './ChatMessage';
-export { Composer, type ComposerChip } from './Composer';
+export { Composer, type ComposerChip, type ComposerImage } from './Composer';
 export { CountBadge } from './CountBadge';
 export { DateField, parseDate, type DateFieldProps } from './DateField';
 export { Dialog } from './Dialog';

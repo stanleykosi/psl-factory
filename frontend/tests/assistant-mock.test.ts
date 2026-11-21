@@ -308,3 +308,63 @@ describe('operations', () => {
     expect(ASSISTANT_OPERATIONS).toEqual(['E-CONVERSATIONS', 'E-CONVERSATION', 'E-CONVERSATION-NEW', 'E-MESSAGE', 'E-MENTION-OPTIONS']);
   });
 });
+
+// D-161 (PROPOSAL G-SCR05-ATTACH, not in v7): the image upload, its read-back, and `attachments` on E-MESSAGE.
+describe('images (proposal)', () => {
+  const upload = async (persona: string, name: string, type: string, size = 3, csrf: string | null = `mock-csrf-${persona}`) => {
+    const form = new FormData();
+    form.append('file', new File([new Uint8Array(size)], name, { type }));
+    const headers: Record<string, string> = { Cookie: `psl_mock_persona=${persona}` };
+    if (csrf) headers['X-CSRFToken'] = csrf;
+    const response = await fetch(`${base}/api/v1/assistant/uploads`, { method: 'POST', headers, body: form });
+    return { status: response.status, body: (await response.json()) as any };
+  };
+  const conversation = async () => (await call('POST', '/api/v1/assistant/conversations', { body: { agent: 'tola' } })).body.conversation_id as string;
+
+  it('answers file_id, name, size and content_type for an image', async () => {
+    const made = await upload('pm', 'plan.png', 'image/png', 1234);
+    expect(made.status).toBe(200);
+    expect(made.body).toEqual({ file_id: 'F-1', name: 'plan.png', size: 1234, content_type: 'image/png' });
+  });
+
+  it('refuses a file that is not an image and one over 10 MB, with the words the page shows', async () => {
+    expect(await upload('pm', 'notes.txt', 'text/plain')).toEqual({ status: 422, body: { code: 'invalid', message: 'Attach an image file.' } });
+    expect(await upload('pm', 'big.png', 'image/png', 10 * 1024 * 1024 + 1)).toEqual({ status: 422, body: { code: 'invalid', message: 'Images up to 10 MB.' } });
+    expect((await upload('pm', 'ten.png', 'image/png', 10 * 1024 * 1024)).status).toBe(200);
+  });
+
+  it('needs the CSRF token and a persona who may use the assistant', async () => {
+    expect((await upload('pm', 'a.png', 'image/png', 3, null)).status).toBe(403);
+    expect((await upload('admin', 'a.png', 'image/png')).status).toBe(403);
+  });
+
+  it('serves the image back to its owner only', async () => {
+    await upload('pm', 'a.png', 'image/png', 5);
+    const own = await fetch(`${base}/api/v1/assistant/uploads/F-1`, { headers: { Cookie: 'psl_mock_persona=pm' } });
+    expect(own.status).toBe(200);
+    expect(own.headers.get('content-type')).toBe('image/png');
+    expect((await own.arrayBuffer()).byteLength).toBe(5);
+    const other = await fetch(`${base}/api/v1/assistant/uploads/F-1`, { headers: { Cookie: 'psl_mock_persona=finance_lead' } });
+    expect(other.status).toBe(404);
+  });
+
+  it('E-MESSAGE takes attachments, with no text; E-CONVERSATION returns them, and it still matches v7 apart from them', async () => {
+    await upload('pm', 'floor.png', 'image/png', 9);
+    const id = await conversation();
+    const sent = await call('POST', `/api/v1/assistant/conversations/${id}/messages`, { body: { text: '', attachments: [{ file_id: 'F-1' }] } });
+    expect(sent.status).toBe(200);
+    const read = await get(`/api/v1/assistant/conversations/${id}`);
+    expect(read.status).toBe(200);
+    expect(read.body.messages[0]).toMatchObject({ role: 'person', text: '', attachments: [{ file_id: 'F-1', name: 'floor.png', size: 9, content_type: 'image/png' }] });
+  });
+
+  it('refuses an attachment that is unknown, someone else’s or malformed, and an empty message with none', async () => {
+    await upload('finance_lead', 'theirs.png', 'image/png');
+    const id = await conversation();
+    const path = `/api/v1/assistant/conversations/${id}/messages`;
+    for (const body of [{ text: 'x', attachments: [{ file_id: 'F-1' }] }, { text: 'x', attachments: [{ file_id: 'F-9' }] }, { text: 'x', attachments: [{}] }, { text: 'x', attachments: 'F-1' }, { text: '' }, { text: '', attachments: [] }]) {
+      const reply = await call('POST', path, { body });
+      expect(reply.status, JSON.stringify(body)).toBe(422);
+    }
+  });
+});

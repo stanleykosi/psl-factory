@@ -12,6 +12,11 @@
 // The two POSTs have no idempotency key in the contract, so the mock keeps a log of them (GET /__mock/assistant-log)
 // to prove one POST per press. A draft's start (simulates G-SCR05-1) is recognised only after the persona read the
 // draft's conversation; it sets `draft.started`, and a second start of the same draft is a 409.
+// Images (PROPOSAL D-161, G-SCR05-ATTACH; not in the v7 contract): POST /api/v1/assistant/uploads takes one image as
+// multipart and answers { file_id, name, size, content_type } (422 "Images up to 10 MB." over 10 MB, 422 "Attach an
+// image file." for anything that is not an image); GET /api/v1/assistant/uploads/{file_id} serves it back to its owner.
+// E-MESSAGE then accepts `attachments: [{ file_id }]` and the text may be empty when there is one, and E-CONVERSATION
+// returns them on the person's message, so they survive a reload. Those two replies are checked against v7 without them.
 // Live demo (D-155, demo.mjs): when the demo is on, every sent message makes the conversation working on the mock's clock, not
 // on reads: the agent's steps appear one at a time (each goes now -> done, DEMO_STEP_MS apart, a little under the 5 s poll so each read shows about one more), then the answer, its sources and
 // a result card arrive. The wording is placeholder text per agent. Reading only reads the clock; no timer runs.
@@ -24,6 +29,8 @@ import addFormats from 'ajv-formats';
 
 export const ASSISTANT_OPERATIONS = ['E-CONVERSATIONS', 'E-CONVERSATION', 'E-CONVERSATION-NEW', 'E-MESSAGE', 'E-MENTION-OPTIONS'];
 export const ASSISTANT_LOG_PATH = '/__mock/assistant-log';
+export const ASSISTANT_UPLOADS_PATH = '/api/v1/assistant/uploads';
+const MAX_IMAGE = 10 * 1024 * 1024;
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'assistant');
 const readJson = (name) => JSON.parse(readFileSync(join(dir, `${name}.json`), 'utf8'));
@@ -79,6 +86,28 @@ const strip = (row) => Object.fromEntries(Object.entries(row).filter(([key]) => 
 const fieldNames = (errors) => [...new Set(errors.map((e) => e.params.missingProperty ?? e.params.additionalProperty ?? (e.instancePath.split('/')[1] || 'body')))];
 const invalid = (names) => [422, { code: 'invalid', message: `Check these fields: ${names.join(', ')}.` }];
 
+/** The first part named `file` of a multipart body, or null. */
+function filePart(buffer, contentType) {
+  const found = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType ?? '');
+  if (!found) return null;
+  const boundary = Buffer.from(`--${found[1] ?? found[2]}`);
+  let at = buffer.indexOf(boundary);
+  while (at !== -1) {
+    const next = buffer.indexOf(boundary, at + boundary.length);
+    if (next === -1) return null;
+    const part = buffer.subarray(at + boundary.length + 2, next - 2);
+    const split = part.indexOf('\r\n\r\n');
+    if (split !== -1) {
+      const head = part.subarray(0, split).toString('utf8');
+      if (/name="file"/.test(head)) {
+        return { name: decode(/filename="([^"]*)"/.exec(head)?.[1] ?? ''), type: /content-type:\s*([^\r\n]+)/i.exec(head)?.[1]?.trim() ?? '', bytes: part.subarray(split + 4) };
+      }
+    }
+    at = next;
+  }
+  return null;
+}
+
 function canonical(value) {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
   if (value && typeof value === 'object') return `{${Object.keys(value).sort().map((k) => `${JSON.stringify(k)}:${canonical(value[k])}`).join(',')}}`;
@@ -112,7 +141,7 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
   const owners = { ...Object.fromEntries(index.items.map((row) => [row.conversation_id, row._persona])), 'CV-2406': 'pm' };
 
   // State, cleared by reset(): one record per conversation (the fixtures, then the ones made here).
-  let store, armed, started, startReplies, counter, hooks, log;
+  let store, armed, started, startReplies, counter, hooks, log, uploads, uploadCounter;
   function reset() {
     store = new Map(
       Object.entries(fixtures).map(([id, body]) => {
@@ -129,6 +158,8 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
     counter = 0;
     hooks = new Set();
     log = [];
+    uploads = new Map();
+    uploadCounter = 0;
   }
   reset();
 
@@ -259,8 +290,14 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
       return logPost({ operation: 'E-MESSAGE', conversation_id: id }, invalid(['body']));
     }
     const { request } = ops['E-MESSAGE'];
-    const entry = { operation: 'E-MESSAGE', conversation_id: id, text: body?.text, mentions: body?.mentions };
-    if (!request(body) || body.text.length > 4000) return logPost(entry, invalid(request(body) ? ['text'] : fieldNames(request.errors)));
+    // D-161: `attachments` is the mock's own; with one, the text may be empty. The rest is checked against v7 as before.
+    const { attachments, ...typed } = body && typeof body === 'object' ? body : {};
+    const entry = { operation: 'E-MESSAGE', conversation_id: id, text: body?.text, mentions: body?.mentions, ...(attachments ? { attachments } : {}) };
+    const files = Array.isArray(attachments) ? attachments : attachments === undefined ? [] : null;
+    const owned = files?.every((a) => typeof a?.file_id === 'string' && uploads.get(a.file_id)?.persona === persona);
+    if (!owned) return logPost(entry, invalid(['attachments']));
+    const checked = files.length > 0 && (typed.text === undefined || typed.text === '') ? { ...typed, text: 'x' } : typed;
+    if (!request(checked) || (typed.text ?? '').length > 4000) return logPost(entry, invalid(request(checked) ? ['text'] : fieldNames(request.errors)));
     const own = store.get(id);
     if (!own || own.persona !== persona) return logPost(entry, [404, NOT_FOUND]);
     for (const [token, status] of Object.entries(HOOKS)) {
@@ -270,8 +307,11 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
       }
     }
     const at = demo ? new Date(now()).toISOString() : NOW;
-    own.messages.push({ role: 'person', text: body.text, steps: [], sources: [], at });
-    if (own.title === 'New request') own.title = body.text.replace(/\s+/g, ' ').slice(0, 60);
+    own.messages.push({
+      role: 'person', text: typed.text ?? '', steps: [], sources: [], at,
+      ...(files.length > 0 ? { attachments: files.map((a) => { const { name, size, type } = uploads.get(a.file_id); return { file_id: a.file_id, name, size, content_type: type }; }) } : {}),
+    });
+    if (own.title === 'New request') own.title = typed.text?.replace(/\s+/g, ' ').slice(0, 60) || 'Images';
     own.at = at;
     if (demo) {
       // D-155: the run follows the mock's clock; the placeholder is replaced on each read by clockAt.
@@ -337,8 +377,27 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
     return reply;
   }
 
+  /** PROPOSAL D-161: one image, multipart. Answers [status, body]. */
+  function upload(buffer, contentType, persona, agents) {
+    if (agents.length === 0) return [403, { code: 'forbidden', message: 'Your role does not allow this.' }];
+    const part = filePart(buffer, contentType);
+    if (!part || part.name === '') return invalid(['file']);
+    if (!part.type.startsWith('image/')) return [422, { code: 'invalid', message: 'Attach an image file.' }];
+    if (part.bytes.length > MAX_IMAGE) return [422, { code: 'invalid', message: 'Images up to 10 MB.' }];
+    uploadCounter += 1;
+    const file = { file_id: `F-${uploadCounter}`, name: part.name, size: part.bytes.length, content_type: part.type };
+    uploads.set(file.file_id, { persona, name: part.name, size: file.size, type: part.type, bytes: part.bytes });
+    return [200, file];
+  }
+
   return {
     reset,
+    upload,
+    /** The stored image for its owner, or null. */
+    uploadRead: (fileId, persona) => {
+      const file = uploads.get(decode(fileId));
+      return file && file.persona === persona ? { type: file.type, bytes: file.bytes } : null;
+    },
     log: () => ({ entries: log.map((e) => ({ ...e })) }),
     draftStart,
     /** One reply for an assistant operation, validated against its v7 schema. */
@@ -353,7 +412,11 @@ export function createAssistantMock({ openapi, now = () => Date.now() }) {
         reply = body ? [200, body] : [404, NOT_FOUND];
       }
       const validate = ops[operationId].replies[String(reply[0])];
-      if (validate && !validate(reply[1])) return [500, { code: 'mock_invalid_reply', message: `The mock's ${operationId} ${reply[0]} reply does not match v7.` }];
+      // D-161: the reply as v7 knows it: no `attachments`, and the words an image-only message does not have.
+      const asV7 = operationId === 'E-CONVERSATION' && reply[0] === 200
+        ? { ...reply[1], messages: reply[1].messages.map(({ attachments, ...m }) => (m.text === '' ? { ...m, text: 'x' } : m)) }
+        : reply[1];
+      if (validate && !validate(asV7)) return [500, { code: 'mock_invalid_reply', message: `The mock's ${operationId} ${reply[0]} reply does not match v7.` }];
       return reply;
     },
   };

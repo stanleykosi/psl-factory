@@ -134,9 +134,9 @@ describe('default state (SCR-05-desktop)', () => {
     expect(await violations()).toEqual([]);
   });
 
-  it('draws no attach button, no shortcut prompts, and a held microphone', async () => {
+  it('draws the attach paperclip and a held microphone, and no shortcut prompts', async () => {
     await open('/assistant');
-    expect(screen.queryByRole('button', { name: /attach/i })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Attach images' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /create an invoice|draft a sow|ask about/i })).toBeNull();
     expect(screen.getByRole('button', { name: 'Speak your request' }).getAttribute('aria-disabled')).toBe('true');
   });
@@ -379,7 +379,7 @@ describe('thread (SCR-05-desktop-thread)', () => {
     expect(within(draft).getByText('Next: Finance review by a Finance Lead')).toBeTruthy();
     expect(within(draft).getByRole('button', { name: 'Start this invoice' })).toBeTruthy();
     // what the board draws and this feature leaves out, and what an agent never offers
-    expect(screen.queryByRole('button', { name: /edit draft|attach/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /edit draft/i })).toBeNull();
     expect(screen.queryByRole('button', { name: /approve|pay|send for/i })).toBeNull();
     const side = screen.getByRole('complementary', { name: 'Agent and context' });
     expect(within(side).getByText('Chidi has a draft ready for you to check.')).toBeTruthy();

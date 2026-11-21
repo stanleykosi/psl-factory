@@ -13,6 +13,7 @@ import { visibleDestinations } from '@/shell/destinations';
 import { NotOpenState } from '@/shell/FrameStates';
 
 import { AssistantContext } from './AssistantContext';
+import type { Pending } from './pending';
 import { ConversationList } from './ConversationList';
 import { LIST_NOTE } from './labels';
 import { useConversationList } from './useConversationList';
@@ -24,9 +25,10 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
   const phone = useIsPhone();
   const list = useConversationList();
   const [sheet, setSheet] = useState(false);
+  const [pending, setPending] = useState<Pending>();
   const showList = useCallback(() => setSheet(true), []);
   const agents = me.assistant_agents;
-  const value = useMemo(() => ({ me, agents: agents ?? [], list, showList }), [me, agents, list, showList]);
+  const value = useMemo(() => ({ me, agents: agents ?? [], list, pending, setPending, showList }), [me, agents, list, pending, showList]);
 
   if (!me.destinations.includes('assistant')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   const current = /^\/assistant\/([^/]+)/.exec(pathname)?.[1];

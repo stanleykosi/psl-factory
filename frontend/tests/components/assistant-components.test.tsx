@@ -189,6 +189,42 @@ describe('Composer', () => {
     expect(screen.getByRole('textbox').getAttribute('aria-invalid')).toBe('true');
   });
 
+  it('draws no paperclip unless a caller takes files; with one it is "Attach images", an image chooser for several files', () => {
+    const none = setup();
+    expect(screen.queryByRole('button', { name: 'Attach images' })).toBeNull();
+    none.unmount();
+    const onAttach = vi.fn();
+    const { container } = setup({ onAttach });
+    const attach = screen.getByRole('button', { name: 'Attach images' });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    expect([input.accept, input.multiple]).toEqual(['image/*', true]);
+    const click = vi.spyOn(input, 'click');
+    fireEvent.click(attach);
+    expect(click).toHaveBeenCalledOnce();
+    const file = new File(['x'], 'a.png', { type: 'image/png' });
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(onAttach).toHaveBeenCalledWith([file]);
+  });
+
+  it('draws each image as a thumbnail with its own remove button, busy while uploading, and the server’s words when refused', () => {
+    const onRemoveImage = vi.fn();
+    setup({
+      onAttach: vi.fn(),
+      onRemoveImage,
+      images: [
+        { id: 'a', name: 'ready.png', src: 'blob:a', state: 'ready' },
+        { id: 'b', name: 'busy.png', src: 'blob:b', state: 'uploading' },
+        { id: 'c', name: 'bad.txt', src: 'blob:c', state: 'error', error: 'Attach an image file.' },
+      ],
+    });
+    const items = within(screen.getByRole('list', { name: 'Images' })).getAllByRole('listitem');
+    expect(items.map((i) => i.getAttribute('aria-busy'))).toEqual([null, 'true', null]);
+    expect(within(items[1]).getByRole('status', { name: 'Uploading busy.png' })).toBeTruthy();
+    expect(within(items[2]).getByRole('alert').textContent).toBe('Attach an image file.');
+    fireEvent.click(screen.getByRole('button', { name: 'Remove busy.png' }));
+    expect(onRemoveImage).toHaveBeenCalledWith('b');
+  });
+
   it('the held microphone is focusable and disabled in words, has no handler, and sends or changes nothing', () => {
     const { onSend, onChange } = setup();
     const mic = screen.getByRole('button', { name: 'Speak your request' });

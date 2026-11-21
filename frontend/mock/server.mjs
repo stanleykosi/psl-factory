@@ -45,7 +45,7 @@ import { delegationsList, resetDelegations, saveDelegation } from './delegations
 import { workList } from './work-list.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
-import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, createAssistantMock } from './assistant.mjs';
+import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -256,7 +256,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
     const chunks = [];
     req.on('data', (chunk) => chunks.push(chunk));
     req.on('end', () => {
-      const raw = Buffer.concat(chunks).toString('utf8');
+      const rawBytes = Buffer.concat(chunks);
+      const raw = rawBytes.toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
       const method = (req.method ?? 'GET').toLowerCase();
       // D-155: in the live demo every answer to the API waits a realistic time (demo.mjs); off, there is no wait.
@@ -278,6 +279,19 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
+      // D-161 (proposal, not in v7): the assistant's image upload and its read-back.
+      if (url.pathname === ASSISTANT_UPLOADS_PATH || url.pathname.startsWith(`${ASSISTANT_UPLOADS_PATH}/`)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        if (method === 'post' && url.pathname === ASSISTANT_UPLOADS_PATH) {
+          if (req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+          return send(res, ...assistant.upload(rawBytes, req.headers['content-type'], persona, me[persona].assistant_agents ?? []));
+        }
+        const file = method === 'get' ? assistant.uploadRead(url.pathname.slice(ASSISTANT_UPLOADS_PATH.length + 1), persona) : null;
+        if (!file) return send(res, 404, NO_ROUTE);
+        res.writeHead(200, { 'Content-Type': file.type, 'Cache-Control': 'no-store' });
+        return res.end(file.bytes);
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).

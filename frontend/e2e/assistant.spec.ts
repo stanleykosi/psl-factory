@@ -96,6 +96,65 @@ test('sending from the home posts one conversation and one message, then opens t
   await expect(page.getByRole('complementary', { name: 'Conversations' }).getByRole('link', { name: /^Draft the Kora SOW/ })).toBeVisible();
 });
 
+// D-160: the message is on the page the moment it is sent, with no skeleton and no page load.
+test('D-160: a first message shows at once under "Sending…", the thread opens with no skeleton and no reload, and the button is busy until the reply', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => {
+    (window as unknown as { skeletons: number }).skeletons = 0;
+    new MutationObserver(() => {
+      if (document.querySelector('.psl-skel')) (window as unknown as { skeletons: number }).skeletons += 1;
+    }).observe(document, { childList: true, subtree: true });
+  });
+  await ready(page, '/assistant');
+  await page.evaluate(() => {
+    (window as unknown as { sameDocument: boolean }).sameDocument = true;
+    (window as unknown as { skeletons: number }).skeletons = 0;
+  });
+  // hold the message POST for a moment so the page can be looked at while it is in flight
+  await page.route('**/api/v1/assistant/conversations/*/messages', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    await route.fallback();
+  });
+  await page.getByRole('textbox', { name: 'Message Tola' }).fill('Draft the Kora SOW [working]');
+  await page.getByRole('button', { name: 'Send' }).click();
+  const thread = page.getByRole('region', { name: 'Conversation' });
+  await expect(thread.getByText('Draft the Kora SOW [working]')).toBeVisible();
+  await expect(thread.getByText('Sending…')).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Message Tola' })).toHaveValue('');
+  await expect(page.getByRole('button', { name: 'Send' })).toHaveAttribute('aria-busy', 'true');
+  await expect(page).toHaveURL(/\/assistant\/CV-N1$/);
+  await expect(thread.getByText('Sending…')).toHaveCount(0);
+  // the mock's [working] run takes three polls: still busy after the write, free once the answer is there
+  await expect(page.getByRole('button', { name: 'Send' })).toHaveAttribute('aria-busy', 'true');
+  await expect(page.getByText('Sample answer from the contract mock. No agent ran.')).toBeVisible({ timeout: 25000 });
+  await expect(page.getByRole('button', { name: 'Send' })).not.toHaveAttribute('aria-busy', 'true');
+  await expect(thread.locator('.cmp-chat--person').getByText('Draft the Kora SOW [working]')).toHaveCount(1);
+  expect(await page.evaluate(() => (window as unknown as { skeletons: number }).skeletons)).toBe(0);
+  expect(await page.evaluate(() => (window as unknown as { sameDocument?: boolean }).sameDocument)).toBe(true);
+});
+
+// D-161 (proposal; the mock's upload): an image chosen, shown as a thumbnail, sent with no words, and still there after a reload.
+test('D-161: attach an image, send it with no text, and see it in the thread after a reload', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await ready(page, '/assistant/CV-2401');
+  await expect(page.getByRole('button', { name: 'Attach images' })).toBeVisible();
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+  await page.locator('input[type="file"]').setInputFiles({ name: 'floor.png', mimeType: 'image/png', buffer: png });
+  const thumbs = page.getByRole('list', { name: 'Images' });
+  await expect(thumbs.getByRole('img', { name: 'floor.png' })).toBeVisible();
+  await expect(thumbs.getByRole('status')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Send' }).click();
+  const sent = page.getByRole('region', { name: 'Conversation' }).getByRole('img', { name: 'floor.png' });
+  await expect(sent).toHaveAttribute('src', '/api/v1/assistant/uploads/F-1');
+  await expect(sent.locator('xpath=ancestor::a')).toHaveAttribute('target', '_blank');
+  await page.reload();
+  await expect(page.getByRole('region', { name: 'Conversation' }).getByRole('img', { name: 'floor.png' })).toHaveAttribute('src', '/api/v1/assistant/uploads/F-1');
+  // refused images say why, in the server's words
+  await page.locator('input[type="file"]').setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('hello') });
+  await expect(page.getByRole('alert').filter({ hasText: 'Attach an image file.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send' })).toHaveAttribute('aria-disabled', 'true');
+});
+
 test('the started draft: the drawer is the normal one, one POST, the thread shows "Started INV-0415." with focus on it, and a reload keeps it', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await ready(page, '/assistant/CV-2401');
