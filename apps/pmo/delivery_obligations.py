@@ -28,6 +28,7 @@ def scan_delivery(actor,case_id,dossier_id):
         try:
             dossier_for(case,d.pk);evaluation=hypercare_inputs(d)
             if evaluation['qualified'] is True:return []
+            if 'issue_clearance' in evaluation:source['issue_clearance']=evaluation['issue_clearance']
             findings=evaluation['findings']
         except (ValidationError,PermissionDenied) as exc:findings=[str(exc)]
         kind='hypercare_due';snapshot={'source':source,'due_at':due.isoformat(),'findings':findings}

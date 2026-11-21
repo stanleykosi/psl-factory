@@ -90,9 +90,11 @@ def workbench(request,case_id):
     ).order_by('-pk')[:50])
     from .delivery import planning_inputs,readiness_inputs,dossier_for
     from .delivery_closure import hypercare_inputs
-    releases = release_observations(case, [d.pk for d in dossiers])
+    from .hypercare_issues import project_issue_clearance
+    releases = release_observations(case, [d.pk for d in dossiers], actor=request.user)
     for d in dossiers:
         d.release_observation = releases.get(d.pk)
+        d.issue_clearance = None
         d.go_live_head=latest_go_live(d,False);d.can_reaffirm_go_live=False
         if d.go_live_head and not d.records.filter(kind='closure').exists():
             try:
@@ -108,7 +110,9 @@ def workbench(request,case_id):
         d.checks={}
         d.lifecycle='Closure recorded; immutable archive index preserved' if d.records.filter(kind='closure').exists() else 'Release outcome recorded' if d.records.filter(kind='release_outcome').exists() else 'Planning and delivery evidence in progress'
         for key,fn in [('Planning',planning_inputs),('Release evidence',readiness_inputs),('Hypercare',hypercare_inputs)]:
-            try:dossier_for(case,d.pk);d.checks[key]={'state':'Source evidence available','details':fn(d)}
+            try:
+                dossier_for(case,d.pk);d.checks[key]={'state':'Source evidence available','details':fn(d)}
+                if key == 'Hypercare':d.issue_clearance = project_issue_clearance(request.user, d)
             except (ValidationError,PermissionDenied) as exc:d.checks[key]={'state':'Needs attention','details':str(exc)}
     return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':{k:v for k,v in SOURCE_OWNERS.items() if k not in CLIENT_KINDS and k != WORKAROUND_KIND},
         'can_view_client_testing':(case.pk, 'engagement.read') in active_case_grants(request.user, [case.pk], actions=('engagement.read',)),

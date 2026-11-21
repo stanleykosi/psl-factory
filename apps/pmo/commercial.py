@@ -1,10 +1,13 @@
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
+from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case, event, bump
 from apps.core.read_observation import observed_fact
 from apps.documents.controlled import baseline_manifest, create_version
-from apps.documents.models import Template, PublicationReceipt
+from apps.documents.models import Publication, PublicationReceipt, Template
+from apps.identity.services import require
 from apps.policy.services import decision_authority, active_component, reference_values
+from apps.workflows.models import HumanTask
 from .models import (Baseline, CommercialCase, CommercialRevision, CommercialDecision,
     CommercialDocumentBinding, ClientResponse, BaselineAdoption)
 from .services import subject
@@ -166,8 +169,40 @@ def decide_proposal(actor, case_id, revision_id, role, verdict, note, expected, 
     return result
 
 
+def sow_bindings(case):
+    from .models import RFPResponse
+
+    bids = RFPResponse.objects.filter(rfp__case=case, commercial_id__isnull=False).values('commercial_id')
+    return CommercialDocumentBinding.objects.filter(revision__dossier__case=case, version__document__case=case,
+        version__template__case=case, version__template__definition__document_type='sow', version__audience='client',
+    ).exclude(revision_id__in=bids)
+
+
+def returned_statement(version):
+    return (HumanTask.objects.filter(version=version, status='returned').exists()
+            and version.reviews.order_by('-pk').values_list('verdict', 'payload_sha256').first()
+                == ('return', version.payload_sha256))
+
+
+def _returned_predecessor(actor, case, revision, version_id):
+    for action in ('case.read', 'commercial.read', 'document.read'):
+        require(actor, case, action)
+    prior = sow_bindings(case).filter(version_id=version_id).select_related('version__document').first()
+    if (not prior or prior.revision_id != revision.previous_id or prior.version.document.current_id != version_id
+            or sow_bindings(case).filter(revision=revision).exists()):
+        raise ValidationError('Choose the current returned statement and its directly corrected commercial proposal.')
+    version = prior.version
+    if not returned_statement(version) or Publication.objects.filter(version__document_id=version.document_id).exists():
+        raise ValidationError('Only a returned statement without a prior delivery reservation can continue here.')
+    ids = {source['id'] for source in version.source_manifest}
+    if set(public_evidence(case.evidence.filter(pk__in=ids)).values_list('pk', flat=True)) != ids:
+        raise ValidationError('Authorized original statement sources are required.')
+    return version
+
+
 @transaction.atomic
-def draft_submission(actor, case_id, revision_id, template_id, expected, *, template_scope_id=None):
+def draft_submission(actor, case_id, revision_id, template_id, expected, *, template_scope_id=None,
+                     replaces_version_id=None):
     case = lock_case(actor, case_id, 'commercial.submit', expected)
     require_project_conversion(case)
     revision = current_revision(case, revision_id)
@@ -183,7 +218,10 @@ def draft_submission(actor, case_id, revision_id, template_id, expected, *, temp
         raise ValidationError('Select this case controlled SOW template')
     from adapters.commercial import LocalCommercialAdapter
     fields = LocalCommercialAdapter().submission_fields(case, revision)
-    version = create_version(actor, case.pk, template.pk, 'Commercial proposal '+str(revision.number), 'client', fields, case.revision, template_scope_id=template_scope_id)
+    previous = _returned_predecessor(actor, case, revision, replaces_version_id) if replaces_version_id is not None else None
+    title = previous.document.title if previous else 'Commercial proposal '+str(revision.number)
+    version = create_version(actor, case.pk, template.pk, title, 'client', fields, case.revision,
+                             previous.document_id if previous else None, template_scope_id=template_scope_id)
     CommercialDocumentBinding.objects.create(version=version, revision=revision, decision_ids=decisions)
     return version
 

@@ -261,6 +261,8 @@ urlpatterns += [path('staff/',staff_account_views.roster,name='staff_roster'),
                 path('staff/<int:person_id>/reactivate/',staff_account_views.reactivate,name='staff_account_reactivation'),
                 path('staff/delegation/<int:authority_id>/',staff_account_views.controls,name='staff_account_controls')]
 urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]
+from apps.pmo import sow_review
+urlpatterns += [path('projects/<uuid:case_id>/statement-of-work/<int:version_id>/', sow_review.show, name='design_sow_review')]
 urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
                 path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),
                 path('notifications/read/', alerts_views.mark_read, name='design_alert_read'),

@@ -1,5 +1,9 @@
 # Build progress log
 
+21 November 2026. Trial verified the native PDF release, exact pre-issue duplicate stop, original milestone handoff and independent Finance packet decision, reaching 219 states. Exact 285 Project and Commercial passed. Payroll test wording was corrected for 286 alongside the next grouped changes. The two passing 285 application scopes were submitted to the preview.
+
+21 November 2026. Hosted 284 applied Finance 0085 and its paired worker processed normally. Chidi's actual cited Finance answer joined the existing Project Management and HR answers, bringing the ledger to 215. Passing 284 application source is pushed at `1aaafb3f`.
+
 21 November 2026. Candidate 284 passed nineteen PostgreSQL checks and both original preservation probes. The paired preview web and worker were submitted from 17 verified paths. Candidate 285 is running the next grouped Statement of Work, Hypercare issue and Payroll return changes.
 
 21 November 2026. Verified and pushed candidate 283 application source at `c8aa7ebd`. Its preview migrated and the paired worker processed normally. Trial grouped the leadership, Planning, register, Money, linked milestone, client and escalation walkthroughs and recorded the independent draft-only Payroll review. The ledger reached 214. Candidate 284 checks the exact invoice stop and private release log.

@@ -153,6 +153,7 @@ def projection(actor,work):
     from apps.pmo.go_live_attestations import declaration_draft
     for receipt in current_receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
     from .stability_forms import observation_forms
+    from apps.pmo.hypercare_issues import project_issue_clearance
     logs = None
     if can_release:
         try:
@@ -162,6 +163,7 @@ def projection(actor,work):
         except PermissionDenied:
             pass
     return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
+        'issue_clearance': project_issue_clearance(actor, d) if observed['stability']['status'] == 'ready' else None,
         'private_release_logs': logs, 'can_attach_release_log': logs is not None,
         'observation_forms':observation_forms(actor,work),
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,

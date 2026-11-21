@@ -12,7 +12,7 @@ from apps.agents.models import AgentRun
 from .models import CommercialCase, CommercialRevision, ChangeRequest, ChangeVersion, ChangeAuthorization, ChangeDocumentBinding
 from .change_execution import record_execution, draft_change_document, close_change
 from .commercial_forms import ProposalForm, CommercialDecisionForm, SignaturePacketForm, SignatureContractForm, InternalSignatureExemptionForm
-from .commercial import SOURCE_KINDS, propose, decide_proposal, draft_submission, capture_response, adopt_signed
+from .commercial import SOURCE_KINDS, propose, decide_proposal, draft_submission, capture_response, adopt_signed, sow_bindings
 from .changes import log_change, assess_change, decide_change, authorize_change, CONTRIBUTORS, DECISION_ROLES
 
 
@@ -89,13 +89,15 @@ def workbench(request,case_id):
     from .models import RFPCase,RFPDisposition,RFPResponse
     rfp_workspace=RFPCase.objects.filter(case=case).first()
     converted=bool(rfp_workspace and RFPDisposition.objects.filter(rfp=rfp_workspace,kind='route_a').exists())
+    can_open_sow = request.user.grant_set.filter(case=case, action='document.read', active=True).exists()
+    sow_versions = sow_bindings(case).values_list('version_id', 'version__number', 'revision__number').order_by('-pk')[:15] if can_open_sow else []
     return render(request,'pmo/commercial.html',{'case':case,'form':form,'dossier':dossier,'rfp_workspace':rfp_workspace,'rfp_converted':converted,
         'is_rfp_proposal':bool(dossier and RFPResponse.objects.filter(commercial_id=dossier.current_id).exists()),
         'revisions':CommercialRevision.objects.filter(dossier__case=case).order_by('-number'),
         'signature_form': signature_form, 'signature_contract_form': contract_form,
         'exemption_form': exemption_form, 'signature_exemptions': BaselineSignatureExemption.objects.filter(case=case).order_by('-pk'),
         'signature_packets': signature_packets, 'client_responses': client_responses,
-        'decision_form':CommercialDecisionForm(auto_id='decision_%s'),
+        'decision_form':CommercialDecisionForm(auto_id='decision_%s'), 'sow_versions':sow_versions,
         'templates':Template.objects.filter(case=case,definition__document_type='sow'),
         'template_scopes':TemplateScope.objects.filter(case=case,document_type='sow',audience='client') if request.user.grant_set.filter(case=case,action='document.read',active=True).exists() else TemplateScope.objects.none(),
         'receipts':PublicationReceipt.objects.filter(publication__version__commercialdocumentbinding__revision__dossier__case=case),

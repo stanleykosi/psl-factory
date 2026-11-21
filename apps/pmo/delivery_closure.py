@@ -157,8 +157,19 @@ def hypercare_inputs(d):
             x,y=actual['value'],metric['threshold']
             ok={'lte':lambda:x<=y,'gte':lambda:x>=y,'eq':lambda:x==y}[metric['operator']]()
             if not ok:findings.append(owner+'/'+metric['key']+' fails the configured criterion')
-    return {'outcome_id':outcome.pk,'acceptance_id':accepted.pk,'policy_id':config.pk,'sources':sources,
-        'due_at':due.isoformat(),'qualified':None if unknown else not findings,'findings':findings}
+    result = {'outcome_id':outcome.pk,'acceptance_id':accepted.pk,'policy_id':config.pk,'sources':sources,
+              'due_at':due.isoformat(),'findings':findings}
+    if 'issue_clearance' in criteria:
+        from .hypercare_issues import issue_clearance
+        register, _ = issue_clearance(d, criteria['issue_clearance'])
+        result['issue_clearance'] = register
+        if register['status'] == 'unknown':
+            findings.append('Current project issue evidence needs review before checking stability.')
+            unknown = True
+        elif register['status'] == 'not_met':
+            findings.append('Current project issues fail the configured stability criterion.')
+    result['qualified'] = None if unknown else not findings
+    return result
 
 
 def guard_evaluate_hypercare(actor,case,dossier_id):
