@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Staff names and employment · 21 November 2026
+
+PSL chose the live HR system as Zainab’s source for checking staff names and employment dates. Both checks are on hold until it is connected.
+
 ## Finance document review · 21 November 2026
 
 Finance can upload a PDF, spreadsheet, Word or text file from its project records. Chidi proposes the figures, units and source locations. A Finance member or Finance lead reviews the original and approves or returns the file. Approved figures become available to Chidi and can be submitted to management accounts. [Checks](docs/design/finance-document-checks-2026-11-21.md)

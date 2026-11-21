@@ -1,4 +1,10 @@
 {
+  "zainab_hr_identity_and_employment_20261121": {
+    "decision": 5,
+    "status": "waiting_for_live_hr_connection",
+    "source": "Live HR system",
+    "checks": ["Official staff name", "Employment status on a given date"]
+  },
   "finance_document_review_20261121": {
     "decision": 4,
     "status": "implemented_and_browser_checked",

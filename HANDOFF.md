@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Decision 5 · Staff names and employment
+
+Wait for the live HR connection before enabling these checks in Zainab. PSL declined the temporary staff-list upload. HR can confirm individual questions in the meantime.
+
 ## Decision 4 · Finance document review
 
 Open the project’s **Finance records → Read and review Finance files**. Upload the original, check Chidi’s reading against it, and correct or return unclear figures. A Finance member or lead can approve the extraction. For a trial balance, choose **Use approved figures for management accounts** to start the existing accounting checks. [Checks and evidence](docs/design/finance-document-checks-2026-11-21.md)
@@ -26,7 +30,7 @@ The change uses current workspace permissions, accounts and business policies. R
 
 The clean role preview runs web `5bdf9f91-f8d5-4859-93ec-45c33d512c58` and worker `c0e9a5d3-7151-4c90-bde6-912db6eb6b65`. Both releases build on the clean role cutover below. The in-app browser verified the PMO Lead dashboard, its empty work and decision queues, and the new work desk. Local browser samples exercised the Finance and bid decisions without populating that workspace. The earlier October accounting sample is historical.
 
-The remaining owner decisions cover additional HR records, microphone use and external delivery destinations. Decisions 1 through 4 above cover department assistant access, bid sharing, payroll totals and Finance file review. [Frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md)
+The remaining owner decisions cover microphone use and external delivery destinations. Decision 5 settled the HR source. The live connection is pending. [Frontend handoff and evidence](docs/design/frontend-handoff-review-2026-11-21.md)
 
 ## Role navigation and workspace scope · 21 November 2026
 
