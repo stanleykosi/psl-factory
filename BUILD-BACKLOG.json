@@ -4,7 +4,7 @@
     "scope": "Consolidate role headings, team invitation links, scoped assignments and approvals into the existing My work entry. Remove the separate navigation destination.",
     "web": "87c5fc26-446c-45e1-8aec-36ca90868c4a",
     "worker": "02f03744-62d1-420b-a150-7c871cb16c02",
-    "checks": {"deployment": "906d53d1-cbbc-46c6-a33e-9c0ff0faa41d", "postgresql_passed": 8, "exit": 0},
+    "checks": {"deployment": "906d53d1-cbbc-46c6-a33e-9c0ff0faa41d", "postgresql_passed": 8, "local_postgresql_passed": 36, "exit": 0},
     "browser": ["legacy_page_redirect", "pmo_lead_heading", "team_invitation_form", "full_shared_navigation", "connected_work_client"],
     "database_schema_changed": false,
     "hod_decisions_deferred": true
