@@ -1,5 +1,11 @@
 # Build progress log
 
+21 November 2026. Trial completed the exact Normal change approvals and native authorization without a dispatch, bringing the ledger to 226. The corrected 287b package passed Django checks and was submitted for PostgreSQL. Candidate 288 retains the next exact costing, CTO and bank receipt implementation.
+
+21 November 2026. Trial verified exact Statement of Work approval and return, and the retained Hypercare issue hold and source correction. Reconciled the recovery request’s earlier browser evidence. The ledger reached 225. Candidate 287 failed before collecting tests because the URL overlay included the next bank receipt route. Its exact subset is being corrected and rerun.
+
+21 November 2026. In the same trial browser account, the live Chidi worker produced a cited handoff answer and editable draft. Trial saved and started work 248, then verified the persistent draft link and setup hold. The ledger reached 221. Passing 285 source was pushed at `bc94ba65`. Exact 286 Finance passed all six checks. The two independent Project and Commercial failures were diagnosed together for the next batch.
+
 21 November 2026. Trial verified the native PDF release, exact pre-issue duplicate stop, original milestone handoff and independent Finance packet decision, reaching 219 states. Exact 285 Project and Commercial passed. Payroll test wording was corrected for 286 alongside the next grouped changes. The two passing 285 application scopes were submitted to the preview.
 
 21 November 2026. Hosted 284 applied Finance 0085 and its paired worker processed normally. Chidi's actual cited Finance answer joined the existing Project Management and HR answers, bringing the ledger to 215. Passing 284 application source is pushed at `1aaafb3f`.
