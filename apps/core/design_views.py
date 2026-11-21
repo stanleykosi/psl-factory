@@ -166,6 +166,11 @@ def project(request, case_id, tab='journey'):
         from apps.finance.month_end import show
 
         return show(request, case, navigation)
+    if tab == 'hr':
+        from apps.finance.hr_workspace import destinations
+
+        return render(request, 'design/project_hr.html', {'case': case, 'tab': tab, 'tabs': navigation,
+                                                          'destinations': destinations(request.user, case)})
     if tab == 'money':
         from apps.finance.project_money import projection
 

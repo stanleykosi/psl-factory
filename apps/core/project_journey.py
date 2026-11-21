@@ -27,6 +27,7 @@ TABS = (
     ('month-end', 'Month-end', {'finance.read'}),
     ('registers', 'Registers', {'issue.read', 'change.read', 'rfp.read', 'emergency.read'}),
     ('actions', 'Actions', {'meeting.read'}),
+    ('hr', 'HR', {'hrfinance.read'}),
 )
 
 

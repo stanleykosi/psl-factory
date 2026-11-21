@@ -33,6 +33,7 @@ ROUTES = (
     ('projects/<uuid:case_id>', workspaces.project),
     ('projects/<uuid:case_id>/money', workspaces.money),
     ('projects/<uuid:case_id>/month-end', workspaces.close),
+    ('projects/<uuid:case_id>/hr', workspaces.hr),
     ('projects/<uuid:case_id>/<slug:tab>', workspaces.project_tab),
     ('clients/<uuid:case_id>', workspaces.client),
     ('clients/<uuid:case_id>/contacts', workspaces.save_contact),

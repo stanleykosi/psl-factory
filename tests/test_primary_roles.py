@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from datetime import timedelta
 from threading import Barrier
+from unittest.mock import patch
 from uuid import uuid4
 
 from django.contrib.auth import get_user_model
@@ -23,7 +24,7 @@ from apps.workflows.models import HumanTask
 from jsonschema import Draft202012Validator, FormatChecker
 
 
-NAMES = ['PMO Lead', 'Finance Lead', 'CEO', 'CTO', 'Admin']
+NAMES = ['PMO Lead', 'Finance Lead', 'CEO', 'CTO', 'HR', 'Admin']
 
 
 def fixture():
@@ -31,7 +32,7 @@ def fixture():
     root = users.create_superuser('role-bootstrap')
     admin = users.create_user('role-admin')
     value = {'format': 'psl.tenant-access/v3', 'create_cases': True, 'manage_access': True,
-             'kinds': ['project'], 'allowed_actions': ['case.read', *sorted(domain.actions(domain.FUNCTIONS))],
+             'kinds': ['project'], 'allowed_actions': ['case.read', 'agent.extract', *sorted(domain.actions(domain.FUNCTIONS))],
              'initial_actions': ['case.read'], 'classification': 'synthetic',
              'staff_lifecycle': {'invite_minutes': 30, 'allow_invite': True, 'allow_deactivation': True,
                                  'allow_roster': True, 'allow_profile_edit': True}}
@@ -73,7 +74,7 @@ class PrimaryRoleTests(TestCase):
         return domain.apply(self.admin, self.case.pk, person.pk, key, preview['fingerprint'],
                             'Reviewed exact role access', uuid4())
 
-    def test_five_primary_roles_and_existing_admin_scope(self):
+    def test_six_primary_roles_and_existing_admin_scope(self):
         self.assertTrue(domain.actions(domain.FUNCTIONS) <= set(ACTIONS))
         self.assertTrue(all(action.endswith('.read') or action == 'project.view'
                             for action in domain.actions(domain.FUNCTIONS)))
@@ -97,7 +98,8 @@ class PrimaryRoleTests(TestCase):
             domain.review(self.admin, self.case, self.admin.pk)
 
     def test_separate_role_accounts_use_only_their_workspace_reads(self):
-        expected = {'pmo-lead': 'meeting.read', 'finance-lead': 'finance.read', 'ceo': 'project.view', 'cto': 'delivery.read'}
+        expected = {'pmo-lead': 'meeting.read', 'finance-lead': 'finance.read', 'ceo': 'project.view',
+                    'cto': 'delivery.read', 'hr': 'hrfinance.read'}
         for key, person in self.people.items():
             with self.subTest(role=key):
                 row = self.assign(person, key)
@@ -131,7 +133,7 @@ class PrimaryRoleTests(TestCase):
         self.assertEqual(self.api(url, request).status_code, 409)
         self.assertEqual(self.api(url, {**request, 'name': 'Admin'}).status_code, 422)
         self.assertEqual(self.api(url, {**request, 'functions': ['finance.invoice.review']}).status_code, 422)
-        self.assertEqual(len(self.api(f'/setup/{self.other.pk}/primary-roles').json()['roles']), 5)
+        self.assertEqual(len(self.api(f'/setup/{self.other.pk}/primary-roles').json()['roles']), len(NAMES))
         self.assertContains(self.client.get(page), 'Project observer')
         self.assign(self.people['ceo'], 'project-observer')
         require(self.people['ceo'], self.case, 'report.read')
@@ -205,6 +207,67 @@ class PrimaryRoleTests(TestCase):
         self.assertIsNone(self.api(f'/me/workspaces/{self.case.pk}/primary-role').json()['role'])
         self.assertEqual(self.api(f'/setup/{self.case.pk}/primary-roles',
             {'name': 'Expired role', 'functions': ['workspace'], 'reason': 'Attempt after revocation'}).status_code, 403)
+
+    def test_hr_assignment_enables_only_its_scoped_project_destinations(self):
+        person = self.people['hr']
+        self.client.force_login(self.admin)
+        setup = f'/setup/{self.case.pk}/people/{person.pk}/primary-role'
+        reviewed = self.api(setup + '?role=hr').json()['preview']
+        body = {'role_key': 'hr', 'fingerprint': reviewed['fingerprint'], 'reason': 'Synthetic HR role review',
+                'operation': str(uuid4()), 'confirmed': True}
+        row = self.validate(self.api(setup, body), '/setup/{case_id}/people/{person_id}/primary-role', 'post')
+        self.assertEqual(row['added'], ['hrfinance.read'])
+
+        self.client.force_login(person)
+        url = f'/projects/{self.case.pk}/hr'
+        tab = reverse('design_project_tab', args=[self.case.pk, 'hr'])
+        summary = self.client.get(reverse('design_project', args=[self.case.pk]))
+        self.assertContains(summary, tab)
+        page = self.client.get(tab)
+        self.assertContains(page, 'Human resources')
+        self.assertIn('no-store', page['Cache-Control'])
+        links = self.validate(self.api(url), '/projects/{case_id}/hr')['destinations']
+        self.assertEqual([link['key'] for link in links], ['handoffs', 'questions'])
+        for link in links:
+            self.assertContains(page, link['django_url'])
+            self.assertEqual(self.client.get(link['django_url']).status_code, 200)
+        self.assertNotContains(page, 'Staff matching corrections')
+        self.assertEqual(self.client.get(reverse('design_hr_payroll_corrections', args=[self.case.pk])).status_code, 403)
+        self.assertEqual(self.api(f'/projects/{self.other.pk}/hr').status_code, 403)
+        for action in ('hrfinance.authorize', 'hrfinance.capture', 'hrfinance.respond', 'payroll.read', 'staff.authority'):
+            with self.assertRaises(PermissionDenied):
+                require(person, self.case, action)
+
+        intake.change_access(self.admin, self.case.pk, person.pk, 'agent.extract', True, 'Independent assistant access')
+        links = self.api(url).json()['destinations']
+        self.assertEqual(links[-1]['key'], 'assistant')
+        self.assertContains(self.client.get(links[-1]['django_url']), 'Zainab')
+        self.assign(person, None)
+        self.assertEqual(self.api(url).status_code, 403)
+        self.assertEqual(self.client.get(tab).status_code, 403)
+        require(person, self.case, 'agent.extract')
+
+    def test_preexisting_custom_hr_role_keeps_its_exact_definition(self):
+        person = self.people['ceo']
+        before_hr = {key: role for key, role in domain.BUILT_INS.items() if key != 'hr'}
+        with patch.dict(domain.BUILT_INS, before_hr, clear=True):
+            definition = domain.create_definition(self.admin, self.case.pk, 'HR', ['reporting'], 'Prior custom role')
+            old = self.assign(person, 'hr')
+        reviewed = domain.review(self.admin, self.case, person.pk)
+        alias = f'custom-role-{definition.pk}'
+        self.assertEqual(reviewed['current'], {'key': alias, 'name': 'HR', 'state': 'active'})
+        self.assertEqual(domain.own_role(person, self.case), reviewed['current'])
+        self.assertFalse(domain.proposal(reviewed, alias)['changed'])
+        self.assertEqual(old.definition_id, definition.pk)
+        self.assertEqual(StaffPrimaryRoleChange.objects.get(pk=old.pk).role_key, 'hr')
+
+        new = self.assign(person, 'hr')
+        self.assertIsNone(new.definition_id)
+        self.assertEqual(new.added, ['hrfinance.read'])
+        self.assertEqual(new.removed, ['report.read'])
+        self.assertEqual(domain.own_role(person, self.case)['key'], 'hr')
+        with self.assertRaises(ValidationError):
+            domain.create_definition(self.admin, self.case.pk, 'HR', ['reporting'], 'Conflicting role')
 
 
 class ConcurrentRoleTests(TransactionTestCase):

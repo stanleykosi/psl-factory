@@ -1,5 +1,7 @@
 # Build progress log
 
+21 November 2026. Added HR as the sixth built-in role and consolidated the existing HR-to-Finance handoff, staff matching corrections, staff-cost questions and Zainab entry point on each permitted project. Setup and its API use the same role catalogue. The new project API shares the Django destination checks. An older custom HR definition remains selectable and keeps its access history. Actual owners and disclosure rules remain deferred.
+
 21 November 2026. Added the five primary role choices to Setup and the live API contract. Admin role creation uses current workspace delegation. Existing staff can receive a reviewed workspace role and retain separate grants during changes. Added immutable definition and role-change history and verified the role, invitation and lifecycle flows in the corrected 68-check Railway gate.
 
 21 November 2026. Consolidated the Next.js cutover interface into a Django-owned API with 47 operations. Built native intake adapters for all 25 factory work definitions and mapped all 262 design states to their current API and Django routes. Connected exact Finance reviews, case and project reads, reviewed bid packs and minutes, department chats and drafts, and the eight file agents to existing services. The combined Railway gate passed 12 checks and both preservation probes. The screen map tracks outstanding typed detail and commands separately from the completed Django walkthroughs.

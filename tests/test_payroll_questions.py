@@ -122,6 +122,8 @@ class PayrollQuestionTests(TestCase):
                 'head':latest.pk if latest else 0,'reply':reply})
         self.assertRedirects(post(f['manager'],'dispatched'),url)
         self.assertContains(self.client.get(url),'Waiting for the assigned HR owner')
+        self.client.force_login(f['owner'])
+        self.assertContains(self.client.get(reverse('design_project_tab', args=[f['case'].pk, 'hr'])), url)
         self.assertRedirects(post(f['owner'],'answered','staff_basis_confirmed'),url)
         self.assertRedirects(post(f['manager'],'received'),url)
         self.assertContains(self.client.get(url),'This question is complete')

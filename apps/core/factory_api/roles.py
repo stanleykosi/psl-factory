@@ -25,13 +25,13 @@ def workspace(actor, case_id):
     return get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
 
 
-@endpoint(response=obj({'roles': array(ROLE, limit=5)}), summary='Read the five built-in primary roles')
+@endpoint(response=obj({'roles': array(ROLE, limit=len(domain.BUILT_INS))}), summary='Read the built-in primary roles')
 def built_ins(request):
     return {'roles': domain.built_ins()}
 
 
 @endpoint(response=obj({
-    'case_id': UUID, 'roles': array(ROLE, limit=domain.MAX_CUSTOM_ROLES + 5), 'can_create': BOOLEAN,
+    'case_id': UUID, 'roles': array(ROLE, limit=domain.MAX_CUSTOM_ROLES + len(domain.BUILT_INS)), 'can_create': BOOLEAN,
     'functions': array(obj({'key': FUNCTION, 'name': TEXT})), 'django_url': TEXT,
 }), summary='Read available workspace roles and administrator options')
 def catalogue(request, case_id):

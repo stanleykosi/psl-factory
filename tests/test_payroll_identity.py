@@ -91,7 +91,11 @@ class PayrollIdentityTests(TestCase):
         self.assertEqual(PayrollHRFollowup.objects.filter(run=match).count(), 1)
 
         self.client.force_login(self.hr_owner)
+        hr_workspace = reverse('design_project_tab', args=[self.case.pk, 'hr'])
+        queue_path = reverse('design_hr_payroll_corrections', args=[self.case.pk])
+        self.assertContains(self.client.get(hr_workspace), queue_path)
         hr_path = reverse('design_hr_payroll_correction', args=[self.case.pk, followup.pk])
+        self.assertContains(self.client.get(queue_path), hr_path)
         self.assertNotContains(self.client.get(hr_path), payroll_name)
         proof = add_evidence(self.hr_owner, self.case.pk, 'hr_correction_response',
                              'Fictional decision evidence for the supplied successor.', 'synthetic:payroll-name')
@@ -113,6 +117,11 @@ class PayrollIdentityTests(TestCase):
         self.assertNotContains(page, 'Recorded name check')
         self.assertFalse(hrfinance.correction_disposition(followup.record).get().payload['source_write'])
         self.assertEqual(set(Grant.objects.filter(case=self.case).values_list('user_id', 'action', 'active')), grants)
+
+        Grant.objects.filter(user=self.hr_owner, case=self.case, action='hrfinance.respond').update(active=False)
+        self.client.force_login(self.hr_owner)
+        self.assertNotContains(self.client.get(hr_workspace), queue_path)
+        self.assertEqual(self.client.get(hr_path).status_code, 403)
 
     def test_legacy_and_unset_rule_keep_matching_by_id_without_turning_membership_into_departure(self):
         self.client.force_login(self.reader)

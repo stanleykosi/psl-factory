@@ -20,18 +20,21 @@ Run these commands from the repository root. The first emits machine-readable Op
 
 ## Primary roles
 
-Setup starts with PMO Lead, Finance Lead, CEO, CTO and Admin. In **Setup → People**, open a person’s workspace and choose **Review primary role**. Preview the access added or removed, then confirm with a reason. A person can hold one primary role per workspace. Each role change preserves separately granted access and checks outstanding work before removal.
+Setup starts with PMO Lead, Finance Lead, CEO, CTO, HR and Admin. In **Setup → People**, open a person’s workspace and choose **Review primary role**. Preview the access added or removed, then confirm with a reason. A person can hold one primary role per workspace. Each role change preserves separately granted access and checks outstanding work before removal.
 
 An account has the Admin role in a workspace when its existing staff administration delegation is current there. The technical bootstrap administrator uses **Workspace delegation** and **Staff account controls** to review that authority. Admins can add a workspace role from the available access functions. Business approvals still follow the configured decision rules, including separate authority for restricted payroll, invoice release and technical release.
 
 | API operation | Use |
 | --- | --- |
-| `GET /api/v1/setup/primary-roles` | Read the five built-in roles |
+| `GET /api/v1/setup/primary-roles` | Read the built-in roles |
 | `GET /api/v1/setup/{case_id}/primary-roles` | Read the workspace catalogue and whether the signed-in person can add roles |
 | `POST /api/v1/setup/{case_id}/primary-roles` | Add a role under current Admin delegation |
 | `GET /api/v1/setup/{case_id}/people/{person_id}/primary-role?role=cto` | Preview an exact assignment. An empty role value previews removal |
 | `POST /api/v1/setup/{case_id}/people/{person_id}/primary-role` | Confirm the preview using its fingerprint and a stable request ID |
 | `GET /api/v1/me/workspaces/{case_id}/primary-role` | Read your role within the selected workspace |
+| `GET /api/v1/projects/{case_id}/hr` | Open the permitted HR handoff, correction, staff-cost question and Assistant destinations |
+
+The HR role opens the **HR** project tab with handoff metadata and staff-cost follow-up. Correction reviews, disclosures, private exports and Zainab still use their existing, separate permissions. Native HR-to-Finance and payroll services own the workflow and its commands. Staff accounts and access stay under Admin delegation.
 
 ## Workflow coverage
 

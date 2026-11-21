@@ -10,7 +10,7 @@ from apps.core import client_contacts, project_journey, workbench
 from apps.core.design_views import discoverable_work
 from apps.core.models import ClientContactRevision
 from apps.core.presentation import workspace_name
-from apps.finance import month_end, project_money
+from apps.finance import hr_workspace, month_end, project_money
 from apps.identity.services import active_case_grants, visible_cases
 from apps.policy.delegation_views import assignments
 from apps.workflows.factory_definitions import DEFINITIONS
@@ -102,6 +102,14 @@ SECTION_ITEM = obj({
     'severity': nullable(TEXT), 'owner': nullable(TEXT), 'django_url': TEXT,
 })
 SECTION = obj({'title': TEXT, 'items': array(SECTION_ITEM, limit=25), 'page': ID, 'has_more': BOOLEAN, 'django_url': TEXT})
+
+
+@endpoint(response=obj({'case_id': UUID, 'destinations': array(obj({
+    **LINK['properties'], 'description': TEXT,
+}))}), summary='Read the permitted HR handoff and follow-up destinations')
+def hr(request, case_id):
+    case = project_for(request.user, case_id)
+    return {'case_id': case.pk, 'destinations': hr_workspace.destinations(request.user, case)}
 
 
 @endpoint(response=obj({'case_id': UUID, 'tab': TEXT, 'sections': array(SECTION), 'as_of': DATETIME}),

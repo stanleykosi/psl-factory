@@ -1,4 +1,15 @@
 {
+  "hr_role_20261121": {
+    "status": "hosted_postgresql_and_browser_verified",
+    "built_in_roles": ["PMO Lead","Finance Lead","CEO","CTO","HR","Admin"],
+    "scope": "HR workspace metadata and entry points to the existing F35 handoff and F16/F17/F18 follow-up. Private reads, review, response, Assistant and staff administration retain their existing authorization.",
+    "api": "GET /api/v1/projects/{case_id}/hr",
+    "checks": "c021f7c0-e98e-4f88-98ee-9a9d0a7b7614",
+    "tests": {"roles_and_contract":10,"handoffs_and_matching":45,"questions_and_assistant":14,"preservation_probes":2,"exit":0},
+    "migration_required": false,
+    "preview": {"web":"d84836e4-7738-4aed-9aea-c20647382b32","worker":"59e2e914-c3e4-4124-977f-c9efcbfc9c78","contract_paths":46,"contract_operations":54,"browser":["setup_catalogue","authenticated_role_api","project_hr_tab","hr_api_link_parity","native_handoff","staff_cost_questions","assistant_entry","correction_hidden_without_authority","health"]},
+    "hod_decisions_deferred": true
+  },
   "primary_roles_20261121": {
     "status": "hosted_and_browser_catalogue_verified",
     "built_in_roles": ["PMO Lead","Finance Lead","CEO","CTO","Admin"],

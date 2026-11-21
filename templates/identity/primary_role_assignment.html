@@ -12,7 +12,7 @@
     <label for="primary-role-choice">Choose a role</label>
     <select id="primary-role-choice" name="role">
       <option value="">Remove primary role</option>
-      {% for role in roles %}<option value="{{ role.key }}"{% if selection == role.key %} selected{% endif %}>{{ role.name }}</option>{% endfor %}
+      {% for role in roles %}<option value="{{ role.key }}"{% if selection == role.key %} selected{% endif %}>{{ role.name }}{% if role.definition_id %} (workspace role){% endif %}</option>{% endfor %}
     </select>
     <button class="button secondary">Preview access</button>
   </form>

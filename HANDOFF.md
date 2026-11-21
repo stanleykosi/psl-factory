@@ -1,6 +1,14 @@
 # PSL Operations Factory handoff
 
-## Primary roles checkpoint · 21 November 2026
+## HR role and workspace checkpoint · 21 November 2026
+
+The built-in catalogue now includes HR alongside PMO Lead, Finance Lead, CEO, CTO and Admin. Admin assigns the role under **Setup → People → Review primary role** for an admitted project workspace. It grants `hrfinance.read`. The HR project tab and `GET /api/v1/projects/{case_id}/hr` open the native handoff and staff-cost question desks, with correction review and Zainab shown under their current permissions. Staff access stays under Admin delegation. Private source access, disclosure, correction review, Finance receipt and owner routing keep their existing checks. An older custom role named HR resolves by its definition ID and retains its prior audit and access history.
+
+Railway acceptance `c021f7c0-e98e-4f88-98ee-9a9d0a7b7614` passed 69 PostgreSQL tests, both preservation probes and the full map audit. No schema changes. Exact reviewed overlays are in `.runtime/design-hr-role-overlays.sha256`. The live API contract now has 54 operations across 46 paths. Use the [role and API guide](docs/design/frontend-api.md#primary-roles). Actual HR owners, recipients, disclosure fields, source and retention rules stay deferred to the HOD decisions.
+
+Preview web `d84836e4-7738-4aed-9aea-c20647382b32` and worker `59e2e914-c3e4-4124-977f-c9efcbfc9c78` are active. Codex read the six choices in Setup and the API, then opened the HR tab and its three permitted destinations in the existing synthetic payroll HR workspace. Correction approval was verified with a separately authorised synthetic owner in PostgreSQL. The hosted browser checks were read-only.
+
+## Initial primary roles checkpoint · 21 November 2026
 
 Setup and the API have five built-in roles. Scope each PMO Lead, Finance Lead, CEO or CTO assignment to an existing person’s project workspace under Setup → People. Admin comes from the current workspace staff administration delegation. Only Admin can add a role in that workspace. The role editor previews grant changes and preserves independently granted access, checks native handover before removal and records immutable history. Keep actual people and approval decisions deferred. Use the [roles guide and API](docs/design/frontend-api.md#primary-roles).
 

@@ -1,4 +1,5 @@
 """Primary workspace roles use native grants and leave approval authority to domain rules."""
+import re
 from uuid import UUID
 
 from django.contrib.auth import get_user_model
@@ -27,6 +28,7 @@ FUNCTIONS = {
     'meetings': ('Minutes and actions', frozenset({'meeting.read'})),
     'finance': ('Invoices, payments and Finance close', frozenset({'finance.read', 'payment.read'})),
     'finance_schedules': ('Financial schedules and fixed assets', frozenset({'schedules.read', 'ppe.read'})),
+    'hr_handoff': ('HR handoffs and staff-cost follow-up', frozenset({'hrfinance.read'})),
     'executive': ('Approved project summaries', frozenset({'project.view'})),
 }
 BUILT_INS = {
@@ -38,11 +40,14 @@ BUILT_INS = {
             ('executive', 'reporting')),
     'cto': ('CTO', 'Oversee technical readiness, releases, changes and incidents.',
             ('workspace', 'delivery', 'changes')),
+    'hr': ('HR', 'Follow up on HR disclosures, staff matching and staff-cost questions.',
+           ('hr_handoff',)),
     'admin': ('Admin', 'Manage staff access and roles within a current delegated workspace.',
               ()),
 }
-CATALOGUE_VERSION = 1
+CATALOGUE_VERSION = 2
 MAX_CUSTOM_ROLES = 50
+CUSTOM_ALIAS = re.compile(r'custom-role-[0-9]+(?:-[0-9]+)?')
 ACTION_LABELS = {
     'factory.read': 'View work and queues', 'engagement.read': 'View engagement records',
     'planning.read': 'View project plans', 'delivery.read': 'View delivery and release records',
@@ -51,6 +56,7 @@ ACTION_LABELS = {
     'meeting.read': 'View meeting minutes and actions', 'finance.read': 'View invoices and Finance close',
     'payment.read': 'View payment assessments', 'schedules.read': 'View financial schedules',
     'ppe.read': 'View fixed assets', 'project.view': 'View approved project summaries',
+    'hrfinance.read': 'View HR handoffs and staff-cost follow-up',
 }
 
 
@@ -61,10 +67,23 @@ def built_ins():
 
 
 def catalogue(case):
-    return [*built_ins(), *(
-        {'key': role.key, 'name': role.name, 'description': '', 'functions': role.functions, 'definition_id': role.pk}
-        for role in StaffRoleDefinition.objects.filter(case=case).order_by('name', 'pk')
-    )]
+    definitions = list(StaffRoleDefinition.objects.filter(case=case).order_by('name', 'pk'))
+    reserved = set(BUILT_INS) | {role.key for role in definitions}
+    entries = built_ins()
+    for role in definitions:
+        key = role.key
+        if key in BUILT_INS:
+            # A built-in may be added after an Admin created a role with the same key.
+            base = key = f'custom-role-{role.pk}'
+            suffix = 1
+            while key in reserved:
+                key = f'{base}-{suffix}'
+                suffix += 1
+            reserved.add(key)
+        details = 'Previously added for this workspace.' if key != role.key else ''
+        entries.append({'key': key, 'name': role.name, 'description': details, 'functions': role.functions,
+                        'definition_id': role.pk})
+    return entries
 
 
 def administrator(actor, case):
@@ -97,8 +116,8 @@ def create_definition(actor, case_id, name, functions, reason):
     intake.text(name, 80)
     intake.text(reason, 1000)
     key = '-'.join(part for part in slugify(name).replace('_', '-').split('-') if part)
-    if not key or len(key) > 50 or key in BUILT_INS:
-        raise ValidationError('Choose a unique role name distinct from the five primary roles.')
+    if not key or len(key) > 50 or key in BUILT_INS or CUSTOM_ALIAS.fullmatch(key):
+        raise ValidationError('Choose a unique role name distinct from the built-in roles.')
     if (not isinstance(functions, list) or not functions or len(functions) > len(FUNCTIONS)
             or any(not isinstance(item, str) or item not in FUNCTIONS for item in functions)
             or len(set(functions)) != len(functions)):
@@ -133,6 +152,18 @@ def description(key, name, state='active'):
     return {'key': key, 'name': name, 'state': state}
 
 
+def current_role(previous, roles, active):
+    if not previous or not previous.role_key:
+        return None
+    if previous.definition_id is not None:
+        role = next((item for item in roles if item['definition_id'] == previous.definition_id), None)
+    else:
+        role = next((item for item in roles if item['definition_id'] is None and item['key'] == previous.role_key), None)
+    complete = role is not None and actions(role['functions']) <= active
+    return description(role['key'] if role else previous.role_key, previous.role_name,
+                       'active' if complete else 'review_needed')
+
+
 def review(actor, case, person_id):
     config = administrator(actor, case)
     person = person_for(case, person_id)
@@ -146,11 +177,7 @@ def review(actor, case, person_id):
     managed = {key: value for key, value in (previous.managed_access if previous else {}).items()
                if key in active and heads.get(key) == value}
     roles = [item for item in catalogue(case) if item['key'] != 'admin']
-    current = None
-    if previous and previous.role_key:
-        role = next((item for item in roles if item['key'] == previous.role_key), None)
-        complete = bool(role and actions(role['functions']) <= active)
-        current = description(previous.role_key, previous.role_name, 'active' if complete else 'review_needed')
+    current = current_role(previous, roles, active)
     return {'case': case, 'person': person, 'authority': config, 'previous': previous, 'active': active,
             'heads': heads, 'managed': managed, 'roles': roles, 'current': current}
 
@@ -166,7 +193,7 @@ def proposal(reviewed, key):
     if set(added + removed) - allowed or targets - allowed:
         raise PermissionDenied('The selected role change exceeds your current delegation.')
     previous = reviewed['previous']
-    previous_key = previous.role_key or None if previous else None
+    previous_key = reviewed['current']['key'] if reviewed['current'] else None
     token = digest({
         'case': str(reviewed['case'].pk), 'revision': reviewed['case'].revision,
         'person': reviewed['person'].pk, 'authority': reviewed['authority'].pk,
@@ -229,7 +256,5 @@ def own_role(actor, case):
     previous = role_head(case, actor)
     if not previous or not previous.role_key:
         return None
-    role = next((item for item in catalogue(case) if item['key'] == previous.role_key), None)
     current = set(Grant.objects.filter(case=case, user=actor, active=True).values_list('action', flat=True))
-    valid = role and actions(role['functions']) <= current
-    return description(previous.role_key, previous.role_name, 'active' if valid else 'review_needed')
+    return current_role(previous, catalogue(case), current)
