@@ -7,7 +7,7 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import { FieldLabel, FieldMessage, useFieldIds, type FieldText } from './Field';
-import { cx, isTypeaheadKey, useOutsidePress, useTypeahead } from './internal';
+import { cx, isTypeaheadKey, useKeepInView, useOutsidePress, useTypeahead } from './internal';
 
 export type SelectOption = {
   value: string;
@@ -43,6 +43,7 @@ export function Select({ label, optional, hint, error, options, value, onChange,
   const [active, setActive] = useState(-1);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  useKeepInView(listRef, open);
   const typeahead = useTypeahead();
   const chosen = options.findIndex((o) => o.value === value);
 

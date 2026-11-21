@@ -12,7 +12,7 @@ import { Button } from './Button';
 import { CountBadge } from './CountBadge';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
-import { cx, useOutsidePress, usePhone } from './internal';
+import { cx, useKeepInView, useOutsidePress, usePhone } from './internal';
 import { SearchField } from './SearchField';
 
 export type FilterChip = { key: string; name: string; value: string; onRemove: () => void };
@@ -103,6 +103,7 @@ export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, o
 }) {
   const phone = usePhone();
   const ref = useRef<HTMLDivElement>(null);
+  useKeepInView(ref, true);
   // The anchor holds the Filter button too, so pressing it toggles rather than closing and reopening.
   const anchor = useRef<HTMLElement | null>(null);
   const opener = useRef<HTMLElement | null>(null);

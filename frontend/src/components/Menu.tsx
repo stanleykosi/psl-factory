@@ -12,7 +12,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode,
 import { Button, type ButtonKind, type ButtonSize } from './Button';
 import type { IconName } from './Icon';
 import { IconButton } from './IconButton';
-import { cx, isTypeaheadKey, useOutsidePress, useTypeahead } from './internal';
+import { cx, isTypeaheadKey, useOutsidePress, useTypeahead, useKeepInView } from './internal';
 
 export type MenuItem = {
   key: string;
@@ -98,6 +98,7 @@ export function Menu({ id, label, items, initial, onClose, triggerRef, header, a
     event.preventDefault();
   }
 
+  useKeepInView(menuRef, true);
   return (
     // Keys are handled once for the whole menu; each item is focusable.
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions

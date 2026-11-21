@@ -12,7 +12,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from 
 import { FieldLabel, FieldMessage, useFieldIds, type FieldText } from './Field';
 import { Button } from './Button';
 import { IconButton } from './IconButton';
-import { cx, useOutsidePress } from './internal';
+import { cx, useKeepInView, useOutsidePress } from './internal';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -381,6 +381,9 @@ function Calendar({ popRef, embedded = false, value, today, unavailable, onPick,
   onClose: () => void;
 }) {
   const [focus, setFocus] = useState<Ymd>(() => fromIso(value) ?? fromIso(today) ?? todayYmd());
+  const ownRef = useRef<HTMLDivElement>(null);
+  const boxRef = popRef ?? ownRef;
+  useKeepInView(boxRef, !embedded);
   const gridRef = useRef<HTMLDivElement>(null);
   const focusIso = toIso(focus);
 
@@ -422,7 +425,7 @@ function Calendar({ popRef, embedded = false, value, today, unavailable, onPick,
   }
 
   return (
-    <div ref={popRef} className={embedded ? 'psl-cal cmp-dtpop__cal' : 'psl-pop psl-cal cmp-pop'} role={embedded ? undefined : 'dialog'} aria-label={embedded ? undefined : 'Choose a date'}>
+    <div ref={boxRef} className={embedded ? 'psl-cal cmp-dtpop__cal' : 'psl-pop psl-cal cmp-pop'} role={embedded ? undefined : 'dialog'} aria-label={embedded ? undefined : 'Choose a date'}>
       <div className="psl-cal__head">
         <IconButton bare icon="back" label="Previous month" onClick={() => setFocus(shiftMonth(focus, -1))} />
         <span aria-live="polite">

@@ -49,3 +49,4 @@ export { Toast, ToastProvider, useToast, useToastWhen, MAX_TOASTS, TOAST_MS, typ
 export { Tooltip, TOOLTIP_DELAY_MS } from './Tooltip';
 export { ValidationSummary, type FieldProblem } from './ValidationSummary';
 export { VisuallyHidden } from './VisuallyHidden';
+export { useKeepInView } from './internal';
