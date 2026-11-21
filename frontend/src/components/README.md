@@ -23,7 +23,7 @@ Import from `@/components`. Tests are in `frontend/tests/components/` (render, s
 | `TextField` | TextField | | text-field.test.tsx |
 | `TextArea` | TextArea | | text-field.test.tsx |
 | `Select` | Select | | select.test.tsx |
-| `DateField` (`time` adds a time of day), `parseDate` | DateField | | date-field.test.tsx, conformance-options.test.tsx |
+| `DateField` (`time`: a pick-only date-and-time dropdown, D-158), `parseDate` | DateField | | date-field.test.tsx, conformance-options.test.tsx |
 | `MoneyField` | MoneyField | | money-field.test.tsx |
 | `Checkbox` | Checkbox | | checkbox-radio.test.tsx |
 | `RadioGroup` (radios and choice cards) | Radio | | checkbox-radio.test.tsx |
