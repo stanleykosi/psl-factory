@@ -45,9 +45,7 @@ def profile(work,*,recovery=False):
     elif value['provider']=='governed_factory_v1':
         from apps.agents.factory_coordinator import configured
         if not recovery:
-            _,coordination=configured(work)
-            if coordination['mode']=='authenticated_planner_v1' and value['lease_seconds']<10:
-                raise ValidationError('configuration_needed: provider planning requires a lease of at least ten seconds')
+            configured(work)
     else:raise ValidationError('Unsupported factory coordinator')
     return config,value
 
@@ -653,7 +651,7 @@ def run_once(work_id,provider=None,adapter=None):
                     work.status = 'waiting'
                     work.finding = {'waiting': 'Checking the source evidence.',
                                     'source_changed': 'Current source material and its reading permission are required.',
-                                    'unavailable': 'A specialist report is missing. Check the original reading and private file before continuing.',
+                                    'unavailable': 'A specialist report or coordinator check could not be verified. Check the current evidence before continuing.',
                                     'review': 'The source findings need a decision from the information reviewer.'}[state]
                     work.lease_until = None
                     work.save(update_fields=['status', 'finding', 'lease_until', 'budget_used'])
@@ -672,12 +670,12 @@ def run_once(work_id,provider=None,adapter=None):
                 activity,created=Activity.objects.get_or_create(work=work,key=key,defaults={'kind':'ACT03','plan_revision':work.plan_revision,'status':'running'})
                 number=(activity.attempts.aggregate(n=Max('number'))['n'] or 0)+1
                 context={'eligible':options,'evidence_ids':[e.pk for e in latest.values()],'missing':missing,'case_revision':work.case.revision}
-                request=coordinator.intent(work,context,activity,number) if value['provider']=='governed_factory_v1' else {}
+                request=coordinator.intent(work) if value['provider']=='governed_factory_v1' else {}
                 started=Attempt.objects.create(activity=activity,number=number,phase='started',fence=token,observation=observed,result=request)
                 if value['provider']=='governed_factory_v1':planning_attempt_id=started.pk
         if provider is None and value['provider']=='governed_factory_v1':
             from apps.agents.factory_coordinator import choose
-            answer,provider_name=choose(work,context,started,resuming=original is not None)
+            answer,provider_name=choose(work,context,started)
         else:
             answer=(provider or SyntheticFactoryCoordinator()).choose(context);provider_name='synthetic_factory_v1'
         with transaction.atomic():

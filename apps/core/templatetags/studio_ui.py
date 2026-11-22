@@ -73,12 +73,15 @@ def factory_background_status(context, work):
                     else '')
     from apps.agents.specialist_memory import sources_for
     from apps.agents.specialist_packets import review_for
+    from apps.agents.specialist_coordination import retry_candidate
     readings=sources_for(context['user'],[work.case_id],[work.definition],work_id=work.pk,review=True)
+    can_manage = can_control(context['user'], work)
     return {'work': work, 'job': job, 'readings':readings, 'source_review':review_for(work, context['user']),
+            'coordinator_retry': retry_candidate(work) if can_manage else None,
             'active': bool(job and job.status in ACTIVE),
             'watching':watching,'preserve_form':bool(request and request.method=='POST'),'work_query':return_query,
             'current_claim': bool(job and job.status == 'running' and job.available_at > timezone.now()),
-            'can_control': can_control(context['user'], work), 'csrf_token': context.get('csrf_token'),
+            'can_control': can_manage, 'csrf_token': context.get('csrf_token'),
             'can_continue': not work.cancel_requested and work.status not in TERMINAL | {'waiting_effect'}}
 
 

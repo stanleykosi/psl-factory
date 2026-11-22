@@ -75,6 +75,7 @@ urlpatterns = [
     path('cases/<uuid:case_id>/department-handoffs/', native_station_views.project, name='project_handoffs'),
     path('work/<int:work_id>/source-readings/<int:pk>/', specialist_views.report, name='specialist_report'),
     path('work/<int:work_id>/source-reviews/<int:pk>/resolve/', specialist_views.resolve_findings, name='resolve_source_findings'),
+    path('work/<int:work_id>/coordination/<int:pk>/retry/', specialist_views.retry_coordination, name='retry_specialist_coordination'),
     path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),
     path('cases/<uuid:case_id>/documents/templates/current/', template_views.workbench, name='template_current'),
     path('cases/<uuid:case_id>/documents/templates/current/sources/<int:source_id>/', template_views.source_detail, name='template_source_detail'),

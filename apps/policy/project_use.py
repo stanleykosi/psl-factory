@@ -80,6 +80,10 @@ class ProjectUseForm(forms.Form):
                     self.fields[key] = forms.BooleanField(required=False,
                         label="Share trial-balance import checks with the assigned specialists",
                         help_text="Includes column checks, finding counts, validated currency and period, and the file total. Account rows stay private.")
+                elif component == 'OPS.specialist_source_reading' and key == 'coordinate_specialists':
+                    self.fields[key] = forms.BooleanField(required=False,
+                        label="Allow the coordinator to route and check specialist work",
+                        help_text="OpenRouter receives the selected source excerpts and related specialist findings to check this work.")
                 elif spec['type'] == 'array':
                     self.fields[key] = forms.MultipleChoiceField(label=LABELS.get(key, key),
                         choices=[(item, item.replace('_', ' ').capitalize()) for item in spec['items']['enum']],
@@ -94,7 +98,8 @@ class ProjectUseForm(forms.Form):
         values = super().clean()
         if self.component == 'OPS.specialist_source_reading' and values.get('processes') and values.get('roles'):
             from apps.agents.specialists import validate_selection
-            validate_selection(values['processes'], values['roles'], values.get('source_kinds', ()))
+            validate_selection(values['processes'], values['roles'], values.get('source_kinds', ()),
+                               coordinate=values.get('coordinate_specialists', False))
             if values.get('finance_import_checks') and (
                 'F02' not in values['processes'] or 'native_station_projection' not in values.get('source_kinds', ())
             ):
@@ -103,8 +108,10 @@ class ProjectUseForm(forms.Form):
 
     def save(self, actor):
         data = self.cleaned_data.copy()
-        if self.component == 'OPS.specialist_source_reading' and not data.get('finance_import_checks'):
-            data.pop('finance_import_checks', None)
+        if self.component == 'OPS.specialist_source_reading':
+            for key in ('finance_import_checks', 'coordinate_specialists'):
+                if not data.get(key):
+                    data.pop(key, None)
         proof = 'evidence:' + str(data.pop('proof').pk)
         effective = data.pop('effective')
         value = {**self.fixed, **data}

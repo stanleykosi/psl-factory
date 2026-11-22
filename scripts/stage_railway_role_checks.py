@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import tarfile
 import tempfile
+from uuid import UUID
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,15 +16,19 @@ CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-sta
 GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface')
 
 
-def stage(revision, service, groups):
+def stage(revision, service, groups, coordinator_ticket=None):
     if groups and service != 'checks':
         raise ValueError('Test groups require the checks image.')
+    if coordinator_ticket and (service != 'checks' or groups):
+        raise ValueError('A live coordinator ticket requires a standalone checks image.')
     commit = subprocess.check_output(['git', 'rev-parse', '--verify', '--end-of-options', revision + '^{commit}'],
                                      cwd=ROOT, text=True).strip()
     parent = ROOT / '.runtime'
     parent.mkdir(exist_ok=True)
     destination = Path(tempfile.mkdtemp(prefix=f'role-{service}-{commit[:12]}-', dir=parent))
     paths = RUNTIME + (CHECKS if service == 'checks' else ())
+    if coordinator_ticket:
+        paths += ('scripts/railway-specialist-roles.py',)
     with tempfile.TemporaryFile() as archive:
         subprocess.run(['git', 'archive', '--format=tar', commit, '--', *paths], cwd=ROOT, stdout=archive, check=True)
         archive.seek(0)
@@ -38,6 +43,10 @@ def stage(revision, service, groups):
                            '\nCOPY docs/design/screen-state-inventory.csv docs/design/screen-state-inventory.csv')
         command = ('python manage.py check && python manage.py makemigrations --check --dry-run'
                    ' && exec python scripts/railway-native-stations.py --role-access ' + ' '.join(groups))
+        if coordinator_ticket:
+            before_command += '\nCOPY scripts/railway-specialist-roles.py scripts/railway-specialist-roles.py'
+            command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
+                       f'python scripts/railway-specialist-roles.py {coordinator_ticket} --coordinator')
     else:
         command = ('if [ "$PSL_SERVICE_ROLE" = worker ]; then exec sh /app/railway-worker.sh; fi; '
                    'python manage.py migrate --noinput && exec gunicorn config.wsgi:application '
@@ -56,5 +65,6 @@ if __name__ == '__main__':
     parser.add_argument('service', choices=('checks', 'app'))
     parser.add_argument('--revision', default='HEAD')
     parser.add_argument('--group', choices=GROUPS, action='append', default=[])
+    parser.add_argument('--coordinator-ticket', type=UUID)
     args = parser.parse_args()
-    print(stage(args.revision, args.service, args.group))
+    print(stage(args.revision, args.service, args.group, args.coordinator_ticket))

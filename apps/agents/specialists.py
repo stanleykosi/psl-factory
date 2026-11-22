@@ -33,7 +33,7 @@ SUPPORT = {
 }
 
 
-def validate_selection(processes, roles, source_kinds=()):
+def validate_selection(processes, roles, source_kinds=(), *, coordinate=False):
     from apps.workflows.native_station_contracts import PROCESSES, PROJECTION
     assigned = set()
     for process in processes:
@@ -41,7 +41,7 @@ def validate_selection(processes, roles, source_kinds=()):
         matching = {row["id"] for row in route["specialist_roles"]} if route else set()
         if not route or route["department"] == "BaaS" or not matching.intersection(roles):
             raise ValidationError("Each process needs a matching release specialist.")
-        if PROJECTION in source_kinds and process in PROCESSES and matching.difference(roles):
+        if (coordinate or (PROJECTION in source_kinds and process in PROCESSES)) and matching.difference(roles):
             missing = ", ".join(sorted(matching.difference(roles)))
             raise ValidationError(f"The department handoff for {process} also requires {missing}.")
         assigned.update(matching)

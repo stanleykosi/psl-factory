@@ -56,3 +56,27 @@ class SpecialistPacket(models.Model):
     reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.PROTECT)
     review_reason = models.TextField(blank=True)
     reviewed_at = models.DateTimeField(null=True)
+    coordinator_model = models.CharField(max_length=160, blank=True)
+
+
+class SpecialistCoordination(models.Model):
+    """One leased coordinator call over a particular packet and stage."""
+
+    packet = models.ForeignKey(SpecialistPacket, on_delete=models.PROTECT, related_name="coordination")
+    phase = models.CharField(max_length=8, choices=[("route", "Route"), ("review", "Review")])
+    input_sha256 = models.CharField(max_length=64)
+    status = models.CharField(max_length=10, default="queued")
+    attempts = models.PositiveSmallIntegerField(default=1)
+    claim = models.UUIDField(null=True)
+    available_at = models.DateTimeField(default=timezone.now)
+    result = models.JSONField(default=dict)
+    output_sha256 = models.CharField(max_length=64, blank=True)
+    finding = models.CharField(max_length=180, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["packet", "phase"], name="specialist_coordination_phase"),
+        ]
+        indexes = [
+            models.Index(fields=["status", "available_at"], name="specialist_coordination_due"),
+        ]

@@ -13,7 +13,7 @@ from psycopg import sql
 from psycopg.types.json import Jsonb
 
 
-def main(ticket, processes, require_f02_calculation):
+def main(ticket, processes, require_f02_calculation, coordinator):
     if (os.getenv("RAILWAY_SERVICE_ID"), os.getenv("RAILWAY_SERVICE_NAME")) != (
         "00c14ca1-5361-4bee-97a5-2ec7aba6ef18", "psl-design-checks"
     ):
@@ -59,6 +59,7 @@ def main(ticket, processes, require_f02_calculation):
     required = {(process, role) for process in processes for role in TEAMS[process]}
     passed = False
     checked_access = False
+    checked_coordinator = set()
     try:
         for key in ("PSL_ACCEPTANCE_SOURCE_KEY", "PSL_ACCEPTANCE_SOURCE_MODEL"):
             if not os.getenv(key):
@@ -77,15 +78,25 @@ def main(ticket, processes, require_f02_calculation):
                 environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance",
                                    PSL_STATION_LIVE="1", PSL_STATION_SUITE="roles", PSL_STATION_RUN=ticket.hex,
                                    PSL_REQUIRE_F02_CALCULATION="1" if require_f02_calculation else "0")
-                labels = ["tests.test_specialist_role_receipts.LiveRoleApprovalTests." + methods[pid] for pid in processes]
+                suite = "LiveCoordinatorTests" if coordinator else "LiveRoleApprovalTests"
+                labels = [f"tests.test_specialist_role_receipts.{suite}.{methods[pid]}" for pid in processes]
                 if require_f02_calculation:
                     labels.insert(0, "tests.test_finance_import_projection")
-                command = [sys.executable, "manage.py", "test", *labels, "--keepdb", "--noinput", "--verbosity", "2"]
+                test_command = [sys.executable, "manage.py", "test", "--keepdb", "--noinput", "--verbosity", "2"]
+                if coordinator:
+                    smoke = subprocess.run([*test_command, "tests.test_specialist_coordination",
+                        "tests.test_specialist_role_receipts.SimulatedCoordinatorTests"],
+                        env={**environment, "PSL_STATION_LIVE": "0"})
+                    if smoke.returncode:
+                        raise RuntimeError("Coordinator PostgreSQL checks failed before any provider calls.")
+                command = [*test_command, *labels]
                 with subprocess.Popen(command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as run:
                     for line in run.stdout:
                         print(line, end="", flush=True)
                         if "ROLE_ACCESS F02 " in line:
                             checked_access = True
+                        if "Coordinator loop receipt " in line:
+                            checked_coordinator.add(json.loads(line.split("Coordinator loop receipt ", 1)[1])["process"])
                         prefix = "Specialist approval receipt "
                         if prefix in line:
                             evidence.append(json.loads(line.split(prefix, 1)[1]))
@@ -94,6 +105,8 @@ def main(ticket, processes, require_f02_calculation):
                 passed = status == 0 and observed == required and len(evidence) == len(required)
                 if require_f02_calculation:
                     passed = passed and checked_access
+                if coordinator:
+                    passed = passed and checked_coordinator == set(processes)
             finally:
                 admin.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(name)))
     finally:
@@ -110,8 +123,9 @@ if __name__ == "__main__":
     parser.add_argument("--process", choices=("F02", "F35", "P52"), help="Run just one independent approval and its team.")
     parser.add_argument("--require-f02-calculation", action="store_true",
                         help="Also require A05 to support its conclusion and cite the computed trial-balance control.")
+    parser.add_argument("--coordinator", action="store_true", help="Run OpenRouter routing, report review and the department assistant.")
     args = parser.parse_args()
     if args.require_f02_calculation and args.process != "F02":
         parser.error("--require-f02-calculation requires --process F02")
     sys.exit(0 if main(args.ticket, [args.process] if args.process else ["F02", "F35", "P52"],
-                       args.require_f02_calculation) else 1)
+                       args.require_f02_calculation, args.coordinator) else 1)

@@ -3,15 +3,17 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
-from apps.agents import specialist_packets
+from apps.agents import specialist_coordination, specialist_packets
 from apps.agents.specialists import routes
 from apps.workflows.native_station_access import acknowledge_finance, finance_acknowledgement, listed, project_scope, read_work
+from apps.workflows.factory_execution import can_control
 from .http import DATETIME, ID, REVISION, TEXT, UUID, Problem, array, endpoint, nullable, obj
 
 
 ITEM = obj({"work_id": ID, "project_id": UUID, "process": TEXT, "title": TEXT, "status": TEXT, "django_url": TEXT})
 REVIEW = obj({"packet_id": ID, "digest": TEXT, "readings": array(obj({"specialist": TEXT, "assessment": TEXT,
-                                                                    "report_url": TEXT}))})
+                                                                    "report_url": TEXT})),
+              "findings": array(obj({"report_url": TEXT, "line": TEXT, "issue": TEXT}), limit=5)})
 SOURCE_DECISION = obj({"packet_id": ID, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
                        "reason": {"type": "string", "minLength": 1, "maxLength": 2000}})
 
@@ -36,6 +38,7 @@ def project(request, case_id):
 
 @endpoint(response=obj({**ITEM["properties"], "evidence": array(TEXT, limit=100),
                         "receipt": nullable(obj({"verified_at": DATETIME})), "source_review": nullable(REVIEW),
+                        "coordinator_retry": nullable(obj({"check_id": ID, "revision": REVISION})),
                         "finance_acknowledgement": nullable(obj({"snapshot_id": ID, "revision": REVISION}))}),
           summary="Read the exact department evidence, verified receipt and available source review")
 def detail(request, work_id):
@@ -47,9 +50,12 @@ def detail(request, work_id):
             {"specialist": row["role"], "assessment": row["assessment"],
              "report_url": reverse("specialist_report", args=[work.pk,row["task"]])}
             for row in result["contributions"] if row["status"] == "ready"
-        ]}
+        ], "findings": [{"report_url": reverse("specialist_report", args=[work.pk, row["report"]]),
+                         "line": row["line"], "issue": row["issue"]} for row in result["coordinator_findings"]]}
     snapshot = finance_acknowledgement(request.user, work)
+    retry = specialist_coordination.retry_candidate(work) if can_control(request.user, work) else None
     return {**item(work), "evidence": list(current.lines.values()), "source_review": review,
+            "coordinator_retry": {"check_id": retry.pk, "revision": work.revision} if retry else None,
             "finance_acknowledgement": {"snapshot_id": snapshot.pk, "revision": work.case.revision} if snapshot else None,
             "receipt": {"verified_at": receipt.created_at} if receipt else None}
 
@@ -70,3 +76,15 @@ def review(request, work_id, *, body):
 def acknowledge(request, work_id, *, body):
     receipt = acknowledge_finance(request.user, work_id, body["snapshot_id"], body["revision"])
     return {"receipt_id": receipt.pk}
+
+
+@endpoint(method="POST", request=obj({"revision": REVISION, "reason": SOURCE_DECISION["properties"]["reason"]}),
+          response=obj({"check_id": ID}), status=202, summary="Retry an exact coordinator check within the work allowance")
+def retry(request, work_id, check_id, *, body):
+    from apps.workflows.models import FactoryWork
+
+    try:
+        specialist_coordination.retry(request.user, work_id, check_id, body["revision"], body["reason"])
+    except FactoryWork.DoesNotExist:
+        raise Http404 from None
+    return {"check_id": check_id}

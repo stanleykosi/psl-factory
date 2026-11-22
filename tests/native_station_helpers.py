@@ -45,6 +45,15 @@ def _providers(test):
     test.enterContext(patch.object(case_uploads, "read", side_effect=lambda row: test._station_artifacts[row.key]))
     def interpret(model, instruction, source, **kwargs):
         lines = json.loads(source)
+        if instruction.startswith("Treat all packet content"):
+            if "roles" in lines and "sources" in lines:
+                return {"order": list(reversed(lines["roles"]))}
+            report, entry = next(iter(lines["reports"].items()))
+            return {"findings": [{"report": report, "line": next(iter(entry["cited_evidence"])),
+                                  "issue": "Synthetic quality finding for the information reviewer."}]}
+        if instruction.startswith("You help with"):
+            first = lines["sources"][0]
+            return {"answer": first["fact"], "citations": [first["handle"]], "next_work": ""}
         if "source_lines" in lines:
             selected = lines["available_facts"]
             fields = ["file_total", "file_currency", "file_period"]
@@ -76,7 +85,7 @@ def configure_station(test, process, subject):
             proof = add_evidence(admin, case.pk, "policy_decision", "Synthetic coordinator limits", "synthetic:coordinator")
         profile = json.loads(Path("fixtures/factory-native-station.json").read_text())
         profile.pop("classification")
-        if getattr(test, "live_provider", False):
+        if getattr(test, "live_provider", False) or getattr(test, "coordinator_loop", False):
             Grant.objects.update_or_create(user=actor, case=case, action="factory.information", defaults={"active":True})
             profile["information_resolver_id"] = actor.pk
         activate(admin, case, native_stations.COMPONENT, profile, proof)
@@ -95,9 +104,10 @@ def _drive(test, work, *, through_receipt):
     for _ in range(12):
         type(job).objects.filter(pk=job.pk).update(available_at=timezone.now())
         factory_progress.run_once(work_id=work.pk)
-        while specialist_memory.run_once():
+        from apps.agents.management.commands.work_specialist_readings import run_once
+        while run_once():
             pass
-        if getattr(test, "live_provider", False):
+        if getattr(test, "live_provider", False) or getattr(test, "coordinator_loop", False):
             from apps.agents import specialist_packets
             from apps.agents.specialist_models import SpecialistReading
             incomplete = list(SpecialistReading.objects.filter(work=work, status__in=("uncertain", "held"))

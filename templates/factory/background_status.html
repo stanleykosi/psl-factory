@@ -2,11 +2,18 @@
 {% if source_review %}<section class="card"><h2>Resolve source findings</h2>
 <p>Check the original evidence and the readings before continuing. Business approvals follow separately.</p>
 {% for conflict in source_review.disagreements %}<p>Different readings of {{ conflict.field }} in source {{ conflict.source }}.</p>{% endfor %}
+{% for finding in source_review.coordinator_findings %}<p>{{ finding.issue }} <a href="{% url 'specialist_report' work.pk finding.report %}">Check the reading</a> · Line {{ finding.line }}</p>{% endfor %}
 <ul>{% for row in source_review.contributions %}<li>Source {{ row.source }} · {% if row.status == 'ready' %}<a href="{% url 'specialist_report' work.pk row.task %}">{{ row.assessment }}</a>{% else %}Reading unavailable · {{ row.status }}{% endif %}</li>{% endfor %}</ul>
 <form action="{% url 'resolve_source_findings' work.pk source_review.packet %}" method="post">{% csrf_token %}
 <input type="hidden" name="digest" value="{{ source_review.digest }}">
 <label>Which evidence resolves the findings?<textarea name="reason" required maxlength="2000"></textarea></label>
 <button type="submit">Record source review</button></form></section>{% endif %}
+{% if coordinator_retry %}<section class="card"><h2>Coordinator check needs attention</h2>
+<p>Review the current source before requesting a fresh check.</p>
+<form action="{% url 'retry_specialist_coordination' work.pk coordinator_retry.pk %}" method="post">{% csrf_token %}
+<input type="hidden" name="revision" value="{{ work.revision }}">
+<label>Reason for retry <textarea name="reason" required maxlength="2000"></textarea></label>
+<button type="submit">Retry coordinator check</button></form></section>{% endif %}
 {% if job or can_control and can_continue %}
 <section class="card"{% if watching %} data-work-watch data-preserve-form="{{ preserve_form|yesno:'true,false' }}"{% endif %}>
   <h2>Background work</h2>

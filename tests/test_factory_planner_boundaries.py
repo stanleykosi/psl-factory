@@ -13,7 +13,7 @@ from apps.policy.services import transition
 from apps.workflows import factory
 from apps.workflows.models import FactoryAttempt,FactoryPlanningReceipt
 from apps.finance.models import FinanceRun
-from tests.factory_coordinator_helpers import gateway
+from tests.factory_coordinator_helpers import gateway, historical_request
 from tests.readiness_helpers import endpoint
 
 
@@ -47,8 +47,7 @@ class FactoryPlannerBoundaryTests(TestCase):
 
     def test_recovered_plan_is_retired_when_current_native_context_has_changed(self):
         with endpoint() as state:
-            f=gateway(state,prefix='context-boundary');work=f['work'];state['lose_planning_response']=True
-            factory.run_once(work.pk);work.refresh_from_db();spent=work.budget_used
+            f=gateway(state,prefix='context-boundary');work=f['work'];historical_request(f,state);spent=work.budget_used
             add_evidence(f['actor'],f['case'].pk,'factory_information','New source observation after uncertain planning','synthetic:context-change')
             self.assertTrue(factory.run_once(work.pk)) # Original receipt only.
             self.assertTrue(factory.run_once(work.pk)) # Retire stale choice, execute nothing.

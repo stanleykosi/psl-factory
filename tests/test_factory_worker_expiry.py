@@ -41,16 +41,26 @@ class FactoryWorkerExpiryTests(TransactionTestCase):
 
     def test_authenticated_receipt_survives_expiry_without_stale_worker_mutation_or_resend(self):
         from threading import Event
+        from datetime import timedelta
+        from unittest.mock import patch
+        from adapters.factory_planner import FactoryPlannerAdapter
         from tests.readiness_helpers import endpoint
-        from tests.factory_coordinator_helpers import gateway
+        from tests.factory_coordinator_helpers import gateway, historical_request
         with endpoint() as state:
             f=gateway(state,prefix='expired-gateway',lease_seconds=10);pk=f['work'].pk
-            entered=Event();release=Event();state.update(planning_entered=entered,planning_release=release)
+            historical_request(f,state)
+            entered=Event();release=Event();lookup=FactoryPlannerAdapter.lookup
+            def delayed(adapter,request,private):
+                entered.set()
+                if not release.wait(timeout=20):raise TimeoutError('Historical receipt lookup timed out')
+                return lookup(adapter,request,private)
             def advance():
                 close_old_connections()
                 try:return factory.run_once(pk)
                 finally:close_old_connections()
-            with ThreadPoolExecutor(max_workers=1) as pool:
+            with patch.object(FactoryPlannerAdapter,'lookup',delayed), patch(
+                'apps.agents.factory_coordinator.RECEIPT_LOOKUP_LEASE', timedelta(seconds=2)
+            ), ThreadPoolExecutor(max_workers=1) as pool:
                 first=pool.submit(advance)
                 try:
                     self.assertTrue(entered.wait(timeout=20))

@@ -193,7 +193,9 @@ def records(conversation, question=''):
     role_fact = f'The signed-in person heads {department}.' if head else f'The signed-in person is assigned to {department} on this project.'
     scope_fact = 'All department projects in this organisation.' if conversation.scope == 'department' else 'Only this project.'
     if persona == 'zainab':
-        return result + [{'label': 'Your role', 'fact': role_fact + ' ' + scope_fact, 'url': url},
+        from .specialist_memory import hr_outcome_sources
+
+        return hr_outcome_sources(conversation.actor, cases.values("pk")) + result + [{'label': 'Your role', 'fact': role_fact + ' ' + scope_fact, 'url': url},
                          {'label': 'HR connection', 'fact': 'The live HR system is not connected yet. '
                           'Only available handoff records can be checked here.', 'url': url}]
     from .specialist_memory import outcome_sources, sources_for

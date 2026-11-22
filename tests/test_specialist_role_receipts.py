@@ -5,6 +5,7 @@ import json
 import os
 from unittest import skipUnless
 from unittest.mock import patch
+from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -12,6 +13,7 @@ from django.test import TransactionTestCase
 
 from adapters import case_uploads
 from apps.agents.specialist_models import SpecialistReading
+from apps.agents.specialists import routes
 from apps.documents import controlled, delivery
 from apps.documents.models import PublicationReceipt
 from apps.finance import analysis, hrfinance
@@ -38,6 +40,8 @@ def nominate(owner, case, proof, assignments):
 
 
 class ApprovalScenarios:
+    coordinator_loop = False
+
     def open_station(self, process, source):
         work = start_station(self, process, source)
         if self.live_provider:
@@ -109,6 +113,60 @@ class ApprovalScenarios:
                 "verified_at": verified.created_at.isoformat(),
             }
             print("Specialist approval receipt " + json.dumps(statement, sort_keys=True), flush=True)
+        if self.coordinator_loop:
+            self.check_coordinator_reply(work, packet, verified, reviewer)
+
+    def check_coordinator_reply(self, work, packet, verified, reviewer):
+        from django.urls import reverse
+        from apps.agents import assistant
+        from apps.agents.specialist_packets import inspect
+
+        phases = {phase.phase: phase for phase in packet.coordination.all()}
+        self.assertEqual(set(phases), {"route", "review"})
+        for phase in phases.values():
+            self.assertEqual(phase.status, "ready", phase.finding)
+            self.assertTrue(phase.output_sha256)
+        self.assertCountEqual(phases["route"].result["order"], TEAMS[packet.process])
+        self.assertEqual(packet.coordinator_model, os.environ["OPENROUTER_MODEL"])
+        result = inspect(packet, work.execution_actor)
+        self.assertEqual(result["digest"], verified.handoff.packet_sha256)
+        if phases["review"].result["findings"]:
+            self.assertEqual(packet.reviewed_hash, result["digest"])
+            self.assertNotEqual(packet.reviewer_id, reviewer.pk)
+        persona, actor, question, route = {
+            "F02": ("chidi", work.actor, "Has the trial-balance mapping reached its verified receipt?", "factory_detail"),
+            "P52": ("tola", work.actor, "Did the reviewed document reach its receiving record?", "factory_detail"),
+            "F35": ("zainab", reviewer, "Did Finance acknowledge my authorised read-only HR handoff?", "hrfinance"),
+        }[packet.process]
+        Grant.objects.get_or_create(user=actor, case=work.case, action="agent.extract")
+        if persona == "chidi":
+            Grant.objects.get_or_create(user=actor, case=work.case, action="finance.read")
+        if persona == "tola":
+            Grant.objects.get_or_create(user=actor, case=work.case, action="planning.read")
+        self.client.force_login(actor)
+        base = "/api/v1/assistant/conversations"
+        created = self.client.post(base, {"agent": persona, "case_id": str(work.case_id),
+            "idempotency_key": str(uuid4())}, content_type="application/json")
+        self.assertEqual(created.status_code, 200, created.content)
+        conversation = f'{base}/{created.json()["conversation_id"]}'
+        evidence = self.client.get(conversation).json()["available_sources"]
+        exact_url = reverse(route, args=[work.case_id if persona == "zainab" else work.pk])
+        sources = [item for item in evidence if item["django_url"] == exact_url and (
+            persona == "zainab" or item["label"] == routes()[packet.process]["original_title"])]
+        self.assertEqual(len(sources), 1, evidence)
+        queued = self.client.post(conversation + "/messages", {"text": question,
+            "source_keys": [sources[0]["key"]], "idempotency_key": str(uuid4())}, content_type="application/json")
+        self.assertEqual(queued.status_code, 202, queued.content)
+        self.assertTrue(assistant.worker_once())
+        reply = self.client.get(conversation).json()["messages"][0]
+        self.assertEqual(reply["status"], "answered")
+        self.assertEqual([row["django_url"] for row in reply["sources"]], [exact_url])
+        self.assertRegex(reply["answer"], r"(?i)verifi|acknowledg|receiv")
+        self.assertContains(self.client.get(created.json()["django_url"]), reply["answer"])
+        print("Coordinator loop receipt " + json.dumps({"process": packet.process, "persona": persona,
+              "route": phases["route"].result["order"], "review_findings": len(phases["review"].result["findings"]),
+              "review_sha256": phases["review"].output_sha256, "receipt": verified.pk,
+              "assistant_message": reply["id"], "model": packet.coordinator_model}), flush=True)
 
     def test_f02_trial_balance_review_and_mapping(self):
         owner, case, proof, config, rules, source, _, _ = finance_analysis_helpers.fixture(review=False)
@@ -195,3 +253,18 @@ class SimulatedRoleApprovalTests(ApprovalScenarios, TransactionTestCase):
 @skipUnless(os.getenv("PSL_STATION_LIVE") == "1", "Explicit synthetic Railway checks service only.")
 class LiveRoleApprovalTests(ApprovalScenarios, TransactionTestCase):
     live_provider = True
+
+
+class SimulatedCoordinatorTests(SimulatedRoleApprovalTests):
+    coordinator_loop = True
+
+    def setUp(self):
+        self.enterContext(patch.dict(os.environ, {"PSL_OPENROUTER_COORDINATION": "1"}))
+
+
+@skipUnless(os.getenv("PSL_STATION_LIVE") == "1", "Explicit synthetic Railway checks service only.")
+class LiveCoordinatorTests(LiveRoleApprovalTests):
+    coordinator_loop = True
+
+    def setUp(self):
+        self.enterContext(patch.dict(os.environ, {"PSL_OPENROUTER_COORDINATION": "1"}))

@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+export PSL_OPENROUTER_COORDINATION=${PSL_OPENROUTER_COORDINATION:-1}
+
 until python manage.py migrate --check; do
     sleep 10
 done

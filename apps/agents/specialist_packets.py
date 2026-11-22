@@ -12,8 +12,8 @@ from apps.policy.services import resolve
 from apps.workflows import factory
 from apps.workflows.factory_progress import wake_waiting
 from apps.workflows.models import FactoryProgress, FactoryWork
-from . import specialist_memory as memory
-from .specialist_models import SpecialistPacket, SpecialistReading
+from . import specialist_coordination, specialist_memory as memory
+from .specialist_models import SpecialistCoordination, SpecialistPacket, SpecialistReading
 from .specialists import routes
 
 
@@ -39,6 +39,7 @@ def schedule(work, child, process, sources, profile):
         model = rule["model"]
     if not model or len(model) > 160:
         return None
+    coordinator_model = specialist_coordination.enabled_model(work, model)
     # The invoice snapshot can see other records in the project. Select only
     # configured inputs and the source attached to this native intake.
     assignments = []
@@ -49,8 +50,7 @@ def schedule(work, child, process, sources, profile):
                 grant = memory.permission(work, role, process, purpose, model)
             except PermissionDenied:
                 continue
-            key = digest(
-                [
+            identity = [
                     2,
                     work.pk,
                     work.execution_actor_id,
@@ -64,8 +64,10 @@ def schedule(work, child, process, sources, profile):
                     model,
                     work.policy_id,
                     grant,
-                ]
-            )
+            ]
+            if coordinator_model:
+                identity.append("openrouter-coordination/v1")
+            key = digest(identity)
             assignments.append((key, role, source, grant, digest(lines)))
     if not assignments:
         return None
@@ -76,10 +78,11 @@ def schedule(work, child, process, sources, profile):
         return packet
     existing = SpecialistReading.objects.in_bulk(keys, field_name="identity")
     count = len(assignments) - len(existing)
-    reserve = count * profile["tokens_per_call"]
+    coordinator_calls = 2 if coordinator_model else 0
+    reserve = (count + coordinator_calls) * profile["tokens_per_call"]
     if work.budget_used + reserve > min(work.budget_limit, profile["max_tokens"]):
         raise ValidationError("The work allowance cannot cover its complete source review.")
-    if count and task_count(work) + count > profile["max_children"]:
+    if task_count(work) + count + coordinator_calls > profile["max_children"]:
         raise ValidationError("The work reached its specialist task limit.")
     for key, role, source, grant, projection in assignments:
         if key not in existing:
@@ -97,18 +100,24 @@ def schedule(work, child, process, sources, profile):
                 identity=key,
                 model=model,
                 token_limit=profile["tokens_per_call"],
+                status="awaiting_route" if coordinator_model else "queued",
             )
-    packet = SpecialistPacket.objects.create(work=work, child=child, identity=packet_key, process=process)
+    packet = SpecialistPacket.objects.create(work=work, child=child, identity=packet_key, process=process,
+                                              coordinator_model=coordinator_model)
     packet.members.add(*existing.values())
+    if coordinator_model:
+        SpecialistCoordination.objects.create(packet=packet, phase="route",
+            input_sha256=specialist_coordination.roster_pin(packet, existing.values()))
     work.budget_used += reserve
     return packet
 
 
 def task_count(work):
-    return work.activities.count() + SpecialistReading.objects.filter(work=work).count()
+    return (work.activities.count() + SpecialistReading.objects.filter(work=work).count()
+            + 2 * SpecialistPacket.objects.filter(work=work).exclude(coordinator_model="").count())
 
 
-def inspect(packet, actor):
+def inspect(packet, actor, *, include_coordination=True):
     """Only checked excerpts are joined. A material objection always reaches a person."""
     members = list(packet.members.select_related("source", "work__case", "actor").order_by("role", "source_id"))
     if not members:
@@ -130,7 +139,7 @@ def inspect(packet, actor):
         if reading.work_id != packet.work_id or reading.process != packet.process:
             raise ValidationError("The source task is outside this handoff.")
         lines = memory.current(reading, actor, context=context)
-        if reading.status in ("queued", "reading", "storing"):
+        if reading.status in ("awaiting_route", "queued", "reading", "storing"):
             pending = True
         elif reading.status != "ready" or not reading.sha256 or not reading.size:
             unavailable = True
@@ -158,6 +167,28 @@ def inspect(packet, actor):
             }
         )
     fingerprint = digest([packet.identity, pins])
+    coordinator_findings = []
+    review_input = None
+    if include_coordination and packet.coordinator_model:
+        coordination = {entry.phase: entry for entry in packet.coordination.all()}
+        route = coordination.get("route")
+        review = coordination.get("review")
+        if route is None or route.status in {"held", "uncertain"}:
+            unavailable = True
+        elif route.status != "ready":
+            pending = True
+        elif not unavailable and not pending:
+            if review is None:
+                review_input = fingerprint
+                pending = True
+            elif review.input_sha256 != fingerprint or review.status in {"held", "uncertain"}:
+                unavailable = True
+            elif review.status != "ready":
+                pending = True
+            else:
+                coordinator_findings = review.result["findings"]
+                attention = attention or bool(coordinator_findings)
+                fingerprint = digest([fingerprint, route.output_sha256, review.output_sha256])
     reviewed = packet.reviewed_hash == fingerprint and packet.reviewer_id is not None
     if unavailable:
         state = "unavailable"
@@ -175,6 +206,8 @@ def inspect(packet, actor):
         "contributions": pins,
         "disagreements": [{"source": source, "field": field} for source, field in disagreements],
         "reviewer": packet.reviewer_id if reviewed else None,
+        "coordinator_findings": coordinator_findings,
+        "review_input": review_input,
     }
 
 
@@ -195,6 +228,9 @@ def join(work, actor, sources, profile):
             packet.save(update_fields=["superseded_by"])
             return "waiting", []
         if result["state"] != "ready":
+            if result["review_input"]:
+                SpecialistCoordination.objects.get_or_create(packet=packet, phase="review",
+                    defaults={"input_sha256": result["review_input"]})
             return result["state"], []
         results.append(result)
     return "ready", results

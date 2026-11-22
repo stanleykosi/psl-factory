@@ -60,7 +60,8 @@ def validate_envelope(case, envelope, runtime=False, *, budget=None):
             raise ValidationError('This permission needs a project workspace.')
         if envelope['component_id'] == 'OPS.specialist_source_reading':
             from apps.agents.specialists import validate_selection
-            validate_selection(value['processes'], value['roles'], value['source_kinds'])
+            validate_selection(value['processes'], value['roles'], value['source_kinds'],
+                               coordinate=value.get('coordinate_specialists', False))
         if envelope['component_id'] == 'OPS.winning_bid_reuse':
             from apps.pmo.models import RFPOutcome
             from apps.core.models import Case

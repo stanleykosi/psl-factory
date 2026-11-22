@@ -14,6 +14,7 @@ ROUTES = (
     ('me', workspaces.me),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
     ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
+    ('work/<int:work_id>/coordination/<int:check_id>/retry', handoffs.retry),
     ('projects/<uuid:case_id>/templates/replacements', documents.replace_template),
     ('lines', intake.lines),
     ('processes', intake.processes),

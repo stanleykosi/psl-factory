@@ -498,3 +498,39 @@ def outcome_sources(actor, cases, definitions):
             }
         )
     return native_results + result
+
+
+def hr_outcome_sources(actor, cases):
+    """Give HR the acknowledgement status for its own current disclosures."""
+    from apps.finance import hrfinance
+    from apps.finance.coordinator_operations import private_disclosure
+    from apps.workflows.native_station_models import NativeStationReceipt
+    from apps.workflows.native_stations import current_receipt, subject_for
+
+    receipts = NativeStationReceipt.objects.filter(
+        handoff__station__process="F35", handoff__station__work__case_id__in=cases,
+        handoff__station__work__status="verified",
+    ).select_related("handoff__station__work__case").order_by("-pk")[:6]
+    result = []
+    for receipt in receipts:
+        station = receipt.handoff.station
+        work = station.work
+        try:
+            require(actor, work.case, "case.read")
+            require(actor, work.case, "hrfinance.read")
+            _, contract = subject_for(station)
+            approval = hrfinance.authorized(contract)
+            if approval.actor_id != actor.pk:
+                continue
+            observed = private_disclosure(contract, work.execution_actor)
+            original = current_receipt(work, observed)
+        except (ObjectDoesNotExist, PermissionDenied, ValidationError):
+            continue
+        if original and original.pk == receipt.pk:
+            result.append({
+                "label": f"Finance acknowledgement of your HR disclosure #{contract.pk}",
+                "fact": f"Finance acknowledged the authorised read-only HR handoff on {receipt.created_at.isoformat()}.",
+                "record": {"field": "native_station_receipt", "pk": receipt.pk},
+                "url": reverse("hrfinance", args=[work.case_id]),
+            })
+    return result

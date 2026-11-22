@@ -10,6 +10,7 @@ from adapters import case_uploads
 from .specialist_memory import current
 from .specialist_models import SpecialistReading
 from . import specialist_packets
+from . import specialist_coordination
 
 
 @login_required
@@ -27,6 +28,21 @@ def resolve_findings(request, work_id, pk):
         raise Http404 from None
     except ValidationError as exc:
         messages.error(request, exc.messages[0])
+    return redirect("factory_detail", work_id=work_id)
+
+
+@login_required
+@require_POST
+def retry_coordination(request, work_id, pk):
+    try:
+        specialist_coordination.retry(request.user, work_id, pk, int(request.POST.get("revision", "0")),
+                                     request.POST.get("reason"))
+    except (PermissionDenied, specialist_packets.FactoryWork.DoesNotExist):
+        raise Http404 from None
+    except (ValidationError, ValueError) as exc:
+        messages.error(request, exc.messages[0] if isinstance(exc, ValidationError) else "Choose the current work revision.")
+    else:
+        messages.success(request, "Coordinator check queued.")
     return redirect("factory_detail", work_id=work_id)
 
 

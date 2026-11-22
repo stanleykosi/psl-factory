@@ -7,7 +7,11 @@ from threading import Event
 from django.core.management.base import BaseCommand, CommandError
 from django.db import close_old_connections, connections
 
-from apps.agents.specialist_memory import run_once
+from apps.agents import specialist_coordination, specialist_memory
+
+
+def run_once():
+    return specialist_coordination.run_once() or specialist_memory.run_once()
 
 
 class Command(BaseCommand):

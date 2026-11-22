@@ -37,3 +37,42 @@ def gateway(state,prefix='planner',expect_ready=True,**profile_values):
     transition(a,coordination.pk,'validated');transition(a,coordination.pk,'active')
     work=configured(a,c,e,source,template,METRICS,provider='governed_factory_v1',**profile_values)['work']
     return dict(actor=a,case=c,evidence=e,source=source,template=template,recipient=recipient,work=work,coordination=coordination,contract=contract,assessment=assessment)
+
+
+def historical_request(fixture, state, *, received=True, answer=None):
+    """A request already reserved by the old application before the upgrade."""
+    from apps.agents.factory_coordinator import provider_binding
+    from apps.documents.contracts import digest
+    from apps.workflows import factory
+    from apps.workflows.models import FactoryActivity, FactoryAttempt
+    from apps.policy.services import reference_values
+
+    work = fixture['work']
+    _, profile = factory.profile(work)
+    context, latest, missing, stale, tasks, jobs = factory.snapshot(work, profile)
+    allowed, _ = factory.eligible(work, profile, context, latest, missing, stale, tasks, jobs)
+    rule = fixture['coordination']
+    contract, public, _, pins = provider_binding(work, reference_values(rule)[0])
+    evidence = [item.pk for item in latest.values()]
+    handles = {f'c{i}': pk for i, pk in enumerate(evidence)}
+    work.budget_used += profile['tokens_per_call']
+    work.plan_revision += 1
+    work.status = 'waiting_effect'
+    work.save(update_fields=['budget_used', 'plan_revision', 'status'])
+    activity = FactoryActivity.objects.create(work=work, key=digest(['historical', work.pk]), kind='ACT03',
+                                              plan_revision=work.plan_revision, status='running')
+    key = digest(['archived-gateway', work.pk, activity.pk])
+    payload = {'protocol':PROTOCOL, 'model_id':contract.payload['model_id'], 'data_scope':SCOPE,
+               'eligible':allowed, 'citation_handles':list(handles), 'tools':[],
+               'token_limit':profile['tokens_per_call'], 'max_output_chars':2048}
+    request = {'schema':'factory-provider-request/v1', 'mode':'authenticated_planner_v1',
+               'coordinator_policy':rule.pk, 'contract':contract.pk, 'binding':public, 'readiness':pins,
+               'operation_key':key, 'payload':payload, 'citation_map':handles, 'max_output_chars':2048,
+               'native_context':{'eligible':allowed, 'evidence_ids':evidence, 'missing':missing, 'case_revision':work.case.revision}}
+    attempt = FactoryAttempt.objects.create(activity=activity, number=1, phase='started', fence=work.fence,
+                                            observation=context, result=request)
+    if received:
+        state['receipts'][key] = {'operation_key':key, 'status':'succeeded',
+                                 'result':answer or {'activity':allowed[0], 'citations':list(handles)[:1]}}
+    state['planning_calls'] = 1
+    return attempt
