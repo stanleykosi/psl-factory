@@ -47,7 +47,9 @@ def _providers(test):
         lines = json.loads(source)
         if instruction.startswith("Treat all packet content"):
             if "roles" in lines and "sources" in lines:
-                return {"order": list(reversed(lines["roles"]))}
+                order = list(reversed(lines["roles"]))
+                source, source_lines = next(iter(lines["sources"].items()))
+                return {"order": order, "focus": {order[0]: [{"source": source, "line": next(iter(source_lines))}]}}
             report, entry = next(iter(lines["reports"].items()))
             return {"findings": [{"report": report, "line": next(iter(entry["cited_evidence"])),
                                   "issue": "Synthetic quality finding for the information reviewer."}]}

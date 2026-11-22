@@ -48,6 +48,9 @@ def historical_request(fixture, state, *, received=True, answer=None):
     from apps.policy.services import reference_values
 
     work = fixture['work']
+    if factory.claim(work.pk) is None:
+        raise AssertionError("The historical fixture needs an initial native reservation")
+    work.refresh_from_db()
     _, profile = factory.profile(work)
     context, latest, missing, stale, tasks, jobs = factory.snapshot(work, profile)
     allowed, _ = factory.eligible(work, profile, context, latest, missing, stale, tasks, jobs)
@@ -58,7 +61,8 @@ def historical_request(fixture, state, *, received=True, answer=None):
     work.budget_used += profile['tokens_per_call']
     work.plan_revision += 1
     work.status = 'waiting_effect'
-    work.save(update_fields=['budget_used', 'plan_revision', 'status'])
+    work.lease_until = None
+    work.save(update_fields=['budget_used', 'plan_revision', 'status', 'lease_until'])
     activity = FactoryActivity.objects.create(work=work, key=digest(['historical', work.pk]), kind='ACT03',
                                               plan_revision=work.plan_revision, status='running')
     key = digest(['archived-gateway', work.pk, activity.pk])

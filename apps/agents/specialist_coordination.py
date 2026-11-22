@@ -105,11 +105,23 @@ def context(job, *, read_reports=True):
 def validated(phase, answer, payload):
     if not isinstance(answer, dict):
         raise ValidationError("The coordinator returned an invalid response.")
-    if phase == "route" and set(answer) == {"order"}:
+    if phase == "route" and "order" in answer and set(answer) <= {"order", "focus"}:
         order = answer["order"]
-        if isinstance(order, list) and all(isinstance(role, str) for role in order):
-            if len(order) == len(payload["roles"]) and set(order) == set(payload["roles"]):
-                return {"order": order}
+        focus = answer.get("focus", {})
+        if (isinstance(order, list) and all(isinstance(role, str) for role in order)
+                and len(order) == len(payload["roles"]) and set(order) == set(payload["roles"])
+                and isinstance(focus, dict) and set(focus) <= payload["roles"].keys()):
+            sources = payload.get("sources", {})
+            for choices in focus.values():
+                if (not isinstance(choices, list) or len(choices) > 3 or any(
+                    not isinstance(ref, dict) or set(ref) != {"source", "line"}
+                    or not isinstance(ref["source"], str) or not isinstance(ref["line"], str)
+                    or ref["line"] not in sources.get(ref["source"], {})
+                    for ref in choices
+                )):
+                    break
+            else:
+                return {"order": order, "focus": focus} if focus else {"order": order}
     if phase == "review" and set(answer) == {"findings"}:
         findings = answer["findings"]
         if isinstance(findings, list) and len(findings) <= 5:
@@ -155,8 +167,10 @@ def run_once():
         payload, members = context(job)
         if job.phase == "route":
             instruction = ('Prioritise all the assigned roles for this exact evidence. Return only '
-                           '{"order":["ROLE", "..."]}, listing each supplied role ID exactly once. '
-                           'Put prerequisite and uncertainty checks first. All roles will run.')
+                           '{"order":["ROLE","..."],"focus":{"ROLE":[{"source":"source key","line":"line key"}]}}. '
+                           'List each supplied role ID exactly once in order. Put prerequisite and uncertainty checks first. '
+                           'Use focus to point each role to at most three relevant source lines, using exact string keys '
+                           'or omitting the role when no line should be prioritised. All roles will run.')
         else:
             instruction = ('Check the specialists’ interpretations against their cited evidence for unsupported claims '
                            'or inconsistent readings. Return only {"findings":[{"report":"report key",'
@@ -178,6 +192,16 @@ def run_once():
     except (OSError, HTTPException, ValueError, KeyError, TypeError, IndexError):
         settle(job, "uncertain", finding="The original coordinator response could not be confirmed.")
     return True
+
+
+def focus_lines(reading, allowed):
+    route = SpecialistCoordination.objects.filter(
+        packet__members=reading, packet__superseded_by=None, phase="route", status="ready",
+    ).order_by("pk").values_list("result", flat=True).first()
+    if not route:
+        return []
+    return list(dict.fromkeys(ref["line"] for ref in route.get("focus", {}).get(reading.role, ())
+                              if ref["source"] == str(reading.source_id) and ref["line"] in allowed))
 
 
 def retry_candidate(work):

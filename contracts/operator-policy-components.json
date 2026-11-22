@@ -492,7 +492,7 @@
       "id": "OPS.factory_coordinator",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.factory_coordinator/v1",
-      "subject_scope": "Supplemental engineering planning mode, nominated principal and explicit opaque-metadata provider contract. No private evidence body, financial value, business approval, credential or real appointment is supplied.",
+      "subject_scope": "Accountable project principal for new OpenRouter coordination. Source disclosure is set in the project’s specialist source settings. Historical planning requests retain their original recorded binding for receipt lookup.",
       "current_value": null,
       "status": "UNCONFIGURED",
       "value_schema": {

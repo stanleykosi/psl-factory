@@ -312,6 +312,12 @@ def run_once():
             for x in routes()[job.process]["specialist_roles"]
             if x["id"] == job.role
         )
+        from .specialist_coordination import focus_lines
+
+        priorities = focus_lines(job, lines)
+        if priorities:
+            task += (" Start with evidence lines " + ", ".join(priorities)
+                     + ". Check the remaining evidence for details or contradictions.")
         handles = None
         if job.work.definition == "process-handoff/v1":
             from apps.workflows.native_station_contracts import registry

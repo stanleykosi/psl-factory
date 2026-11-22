@@ -163,8 +163,16 @@ class ApprovalScenarios:
         self.assertEqual([row["django_url"] for row in reply["sources"]], [exact_url])
         self.assertRegex(reply["answer"], r"(?i)verifi|acknowledg|receiv")
         self.assertContains(self.client.get(created.json()["django_url"]), reply["answer"])
+        if persona == "zainab":
+            from apps.agents.specialist_memory import hr_outcome_sources
+
+            other = get_user_model().objects.create_user("synthetic-unassigned-hr-reviewer")
+            for action in ("case.read", "hrfinance.read", "agent.extract"):
+                Grant.objects.create(case=work.case, user=other, action=action)
+            self.assertFalse(hr_outcome_sources(other, [work.case_id]))
         print("Coordinator loop receipt " + json.dumps({"process": packet.process, "persona": persona,
               "route": phases["route"].result["order"], "review_findings": len(phases["review"].result["findings"]),
+              "focus": phases["route"].result.get("focus", {}),
               "review_sha256": phases["review"].output_sha256, "receipt": verified.pk,
               "assistant_message": reply["id"], "model": packet.coordinator_model}), flush=True)
 

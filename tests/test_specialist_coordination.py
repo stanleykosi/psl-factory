@@ -14,12 +14,18 @@ from tests.test_rfp import fixture
 
 class CoordinatorBoundaries(TestCase):
     def test_model_cannot_add_or_remove_a_specialist_or_invent_a_citation(self):
-        route = {"roles": {"A01": "Intake", "A02": "Source"}}
+        route = {"roles": {"A01": "Intake", "A02": "Source"}, "sources": {"7": {"1": "Current source"}}}
         self.assertEqual(specialist_coordination.validated("route", {"order": ["A02", "A01"]}, route),
                          {"order": ["A02", "A01"]})
         for order in (["A01"], ["A01", "Admin"], ["A01", "A01"]):
             with self.assertRaises(ValidationError):
                 specialist_coordination.validated("route", {"order": order}, route)
+        focus = {"A01": [{"source": "7", "line": "1"}]}
+        self.assertEqual(specialist_coordination.validated("route", {"order": ["A02", "A01"], "focus": focus},
+                                                           route)["focus"], focus)
+        with self.assertRaises(ValidationError):
+            specialist_coordination.validated("route", {"order": ["A02", "A01"],
+                "focus": {"A01": [{"source": "8", "line": "1"}]}}, route)
         review = {"reports": {"5": {"cited_evidence": {"1": "Current source"}}}}
         for report, line in (("6", "1"), ("5", "2")):
             with self.assertRaises(ValidationError):
@@ -67,3 +73,6 @@ class CoordinatorBoundaries(TestCase):
         self.assertEqual(job.attempts, 2)
         self.assertEqual(work.budget_used - spent, job.packet.members.first().token_limit)
         self.assertFalse(job.packet.members.exclude(status="queued").exists())
+        first = job.packet.members.get(role=job.result["order"][0])
+        allowed = specialist_coordination.memory.current(first, owner)
+        self.assertEqual(specialist_coordination.focus_lines(first, allowed), [next(iter(allowed))])
