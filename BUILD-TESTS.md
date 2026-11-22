@@ -4,6 +4,10 @@
 
 The local PostgreSQL suite passed nine tests in 23.747 seconds and observed 27 successful schema-checked operations, including the 26 staff additions. It verified same-origin CSRF, an original synthetic recovery email and expired replay, password change, cross-team refusal, scoped invitation renewal, exact role admission, unchanged action deadline, and restored sign-in while prior roles and grants remain revoked. OpenAPI 3.1 validation, TypeScript generation and migration drift passed.
 
+Railway checks `8094ceaa-a2a4-48e6-bdd3-c318ff380086` on `af299509` passed all 17 PostgreSQL tests in 16.613 seconds. The schema audit recorded 28 successful operations, including all 26 additions, plus the expected rejected anonymous session read. Railway system checks and migration drift passed. [Staff API checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=8094ceaa-a2a4-48e6-bdd3-c318ff380086)
+
+Design acceptance web deployment `27a69446-038a-48b0-8e4e-70676c3edf54` served the exact 1.7.0 snapshot. Health and Django sign-in returned 200. The session bootstrap returned signed-out state, and `/api/v1/me` returned 401. The worker upload response timed out after submission. Railway had accepted deployment `c119c359-7421-4d50-993a-dfc2c923e223` from the same frozen revision and logs confirmed queue polling. [Hosted contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+
 ## OpenAPI recovery and release closeout · 22 November 2026
 
 The first four PostgreSQL checks passed locally in 94.300 seconds, including original payroll replacement, separately attested names, an idempotent stopped-work restart, and reminder policy through mailbox receipt. The first Go-live and contract batch passed six of seven cases in 165.418 seconds. The stability case reached verified work, then an assertion accidentally carried over from the preceding Django missing-configuration test expected no assessment. That assertion was restored to its original test and the stability test now checks the qualified result it produced.
