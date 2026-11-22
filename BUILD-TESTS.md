@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI payment exceptions and Emergency decisions · 22 November 2026
+
+The first local pair passed the payment exception and independent release test and exposed an assertion assuming the CTO role had a single permitted verdict in the synthetic case. The fixture supplied both approval and rejection. The revised test asserts the required rejection, then verifies that it remains recorded and that actual implementation remains independently capturable. Seven subsequent local PostgreSQL checks passed in 25.827 seconds, including incident intake, classification, refusal, ordinary follow-up and the generated contract. The full connected Railway suite is pending. OpenAPI 3.1 validation and TypeScript generation passed.
+
 ## OpenAPI cash and invoice corrections · 22 November 2026
 
 Six local PostgreSQL tests passed in 37.500 seconds, with schema-checked successful responses for the six added operations. They included short-payment rule drafting, unchanged debt after a decision, stale-balance refusal and a separate cash successor review and application. The first two transaction-level checks used a legacy fixture missing the now-required issuance identity. After updating the fixture to create a bound invoice, the credit reached delivery and exposed an incorrect API currency field lookup, which was corrected. OpenAPI 3.1 validation, TypeScript generation and migration drift passed.

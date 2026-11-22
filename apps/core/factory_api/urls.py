@@ -7,10 +7,10 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    accounts, agents, archive_files, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
-    delivery, documents,
+    accounts, agents, archive_files, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
+    delivery, documents, emergency,
     finance_operations, financial_corrections, go_live_replies, handoffs, hr_handoffs, hypercare,
-    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payroll_identity,
+    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payment_controls, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
@@ -101,6 +101,7 @@ ROUTES = (
     ('work/<int:work_id>/archive-files', archive_files.inventory, archive_files.reserve),
     ('work/<int:work_id>/archive-files/<int:job_id>/recovery', archive_files.recover),
     ('work/<int:work_id>/archive-files/rules', archive_files.draft_rules),
+    ('work/<int:work_id>/emergency', emergency.detail, emergency.command),
     ('work/<int:work_id>/stability', hypercare.detail, hypercare.observe),
     ('work/<int:work_id>/stability/criteria', hypercare.draft_criteria),
     ('work/<int:work_id>/stability/events', hypercare.events, hypercare.record_event),
@@ -123,6 +124,15 @@ ROUTES = (
     ('projects/<uuid:case_id>', workspaces.project),
     ('projects/<uuid:case_id>/money', workspaces.money),
     ('projects/<uuid:case_id>/financial-corrections', financial_corrections.options, financial_corrections.command),
+    ('projects/<uuid:case_id>/payment-controls', payment_controls.options, payment_controls.command),
+    ('projects/<uuid:case_id>/payment-controls/assessments/<int:assessment_id>', payment_controls.assessment),
+    ('projects/<uuid:case_id>/payment-controls/exceptions/<int:request_id>', payment_controls.exception),
+    ('projects/<uuid:case_id>/emergency-intake', emergency.incidents, emergency.request_change),
+    ('projects/<uuid:case_id>/emergency-intake/<int:version_id>', emergency.classification, emergency.classify),
+    ('projects/<uuid:case_id>/emergency-outcomes/<int:outcome_id>/followups', emergency.followups, emergency.followup_command),
+    ('projects/<uuid:case_id>/emergency-outcomes/<int:outcome_id>/followups/<int:followup_id>', emergency.followup_options),
+    ('projects/<uuid:case_id>/authority-recoveries', authority_recovery.collection, authority_recovery.command),
+    ('projects/<uuid:case_id>/authority-recoveries/<int:request_id>', authority_recovery.detail),
     ('projects/<uuid:case_id>/financial-corrections/<str:kind>/<int:record_id>', financial_corrections.detail),
     ('projects/<uuid:case_id>/cash-lots/<int:lot_id>', financial_corrections.lot_details),
     ('projects/<uuid:case_id>/month-end', workspaces.close),
@@ -280,7 +290,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.8.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.9.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

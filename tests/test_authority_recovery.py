@@ -68,6 +68,40 @@ class AuthorityRecoveryTests(RecoveryFixture,TestCase):
         followup=self.followup(outcome);self.assertEqual(followup.outcome_id,outcome.pk)
         self.assertFalse(ChangeExecutionEvent.objects.exists())
 
+    def test_api_records_fresh_authority_without_moving_historical_times(self):
+        outcome = self.outcome(self.authorized())
+        self.clocks()
+        self.reviewed(outcome)
+        self.recovery_policy()
+        Grant.objects.filter(case=self.case, user=self.actor, action='emergency.decide').update(active=False)
+        original_times = (outcome.authorization.created_at, outcome.implemented_at, outcome.created_at)
+        self.client.force_login(self.actor)
+        url = f'/api/v1/projects/{self.case.pk}/authority-recoveries'
+
+        def submit(action, **fields):
+            return self.client.post(url, {'action': action, 'revision': rev(self.case), **fields},
+                                    content_type='application/json')
+
+        response = submit('request', kind='emergency_outcome', target_id=outcome.pk, evidence_id=self.decision.pk,
+                          note='Review current authority for the original recorded outcome')
+        self.assertEqual(response.status_code, 201, response.content)
+        request_id = response.json()['id']
+        exact_url = f'{url}/{request_id}'
+        self.assertEqual(self.client.get(url).json()['records'][0]['id'], request_id)
+        self.assertEqual(submit('finalize', request_id=request_id).status_code, 422)
+        response = submit('decide', request_id=request_id, role='PMO Lead', verdict='approve',
+                          evidence_id=self.decision.pk, note='Review the preserved original evidence')
+        self.assertEqual(response.status_code, 201, response.content)
+        saved = submit('finalize', request_id=request_id)
+        self.assertEqual(saved.status_code, 201, saved.content)
+        self.assertEqual(self.client.get(exact_url).json()['current_finalization_id'], saved.json()['id'])
+        outcome.refresh_from_db()
+        self.assertEqual(original_times, (outcome.authorization.created_at, outcome.implemented_at, outcome.created_at))
+        Grant.objects.filter(case=self.case, user=self.actor, action='authority.decide').update(active=False)
+        history = self.client.get(exact_url).json()
+        self.assertEqual(history['recorded_finalization_id'], saved.json()['id'])
+        self.assertIsNone(history['current_finalization_id'])
+
     def test_absent_or_late_preauthorization_is_never_recoverable(self):
         self.recovery_policy();outcome=self.outcome()
         with self.assertRaisesMessage(ValidationError,'missing preauthorization'):self.request(outcome)
@@ -162,6 +196,36 @@ class EmergencyFollowupTests(RecoveryFixture,TestCase):
     ready=commercial.ChangeExecutionTests.ready
     change_template=commercial.ChangeExecutionTests.change_template
     publish_change=commercial.ChangeExecutionTests.publish_change
+
+    def test_api_links_exact_ordinary_revision_without_inheriting_emergency_authority(self):
+        from apps.pmo.changes import log_change
+
+        outcome = self.outcome()
+        proof = self.evidence('change_request', 'Synthetic follow-up change request')
+        url = f'/api/v1/projects/{self.case.pk}/emergency-outcomes/{outcome.pk}/followups'
+        self.client.force_login(self.actor)
+        options = self.client.get(url).json()
+        self.assertTrue(options['can_manage'])
+        response = self.client.post(url, {'action': 'create', 'revision': options['revision'],
+            'reference': 'EMG-API-FOLLOWUP', 'category': 'Normal', 'module': 'Service',
+            'description': 'Investigate the ordinary scope and cost', 'note': 'Separate approval required',
+            'evidence_id': proof.pk}, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        source = EmergencyFollowup.objects.get(pk=response.json()['id'])
+        version = log_change(self.actor, self.case.pk, source.version.change.reference, 'Normal', 'Service',
+                             'Revised follow-up scope', 'Owner reviewed the intake', proof.pk, rev(self.case))
+        exact = self.client.get(f'{url}/{source.pk}').json()
+        self.assertEqual(exact['current_version_id'], version.pk)
+        self.assertEqual(exact['recorded_closures'], [])
+        replacement = self.client.post(url, {'action': 'link_revision', 'revision': rev(self.case),
+            'followup_id': source.pk, 'version_id': version.pk, 'note': 'Link exact revised source'},
+            content_type='application/json')
+        self.assertEqual(replacement.status_code, 201, replacement.content)
+        [current, earlier] = self.client.get(url).json()['records']
+        self.assertEqual((current['supersedes_id'], earlier['id']), (source.pk, source.pk))
+        self.assertIsNone(current['closure_id'])
+        self.assertFalse(ChangeAuthorization.objects.exists())
+        self.assertFalse(ChangeExecutionEvent.objects.exists())
 
     def test_cost_followup_runs_ordinary_approval_signed_adoption_execution_publication_closure(self):
         from apps.pmo.changes import assess_change,decide_change,authorize_change,CONTRIBUTORS

@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI payment exceptions and Emergency decisions · 22 November 2026
+
+OpenAPI 1.9.0 lists 250 operations on 184 paths. Sixteen additions connect independent payment assessment and release checks, incident intake and Emergency decisions, actual implementation and retrospective evidence, ordinary follow-up and historical authority recovery. The Django and API actions use the same domain services. Thirty groups covering 179 states still have at least one API gap in the map. The 262-state API acceptance run remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI payment adjustments and cash successors · 22 November 2026
 
 OpenAPI 1.8.0 lists 234 operations on 174 paths. Six new operations cover short-payment decision evidence, corrections, verified cash lineage, and independent review and application. SCR-20 has mapped APIs. Thirty-one groups containing 184 states have at least one remaining group-level API gap. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

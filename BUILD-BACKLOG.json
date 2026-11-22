@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_payment_and_emergency_decisions_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.9.0",
+    "live_paths": 184,
+    "live_operations": 250,
+    "added_operations": 16,
+    "completed_groups": ["SCR-50"],
+    "screen_groups_with_remaining_json": 30,
+    "states_in_groups_with_remaining_json": 179,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Weekly and leadership report authoring", "Complete exact intake choices and bid responses", "Finance close and full Railway API acceptance"],
+    "owner_decisions": "Live payment and Emergency authority, limits and destinations remain deferred."
+  },
   "frontend_cutover_cash_corrections_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.8.0",

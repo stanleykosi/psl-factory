@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Payment exceptions and Emergency decisions · 22 November 2026
+
+OpenAPI 1.9.0 adds 16 operations. Payment assessment, independent human exception review and local release controls use `payment-controls` and exact assessment and exception resources. Start an Emergency request from the project `emergency-intake` resource, classify the same request, then use the work-scoped `emergency` resource for prescribed decisions and observed implementation. Follow the exact outcome into ordinary scope and cost follow-up or historical authority recovery. The decision desk provides API links for those specialist packets. [Contract](contracts/psl-factory.openapi.json)
+
+Run the `decisions-api` suite on Railway before promoting this revision. SCR-50 now maps its operational API actions. Thirty groups across 179 states still have a group-level API gap. Next, connect report authoring and delivery, broader intake choices, the commercial bid flow and Finance close. HOD decisions and live external actions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Payment adjustments and cash successors · 22 November 2026
 
 OpenAPI 1.8.0 adds six operations for exact short-payment treatment, credit and debit notes, voids, verified cash reversals and corrected successors. Review a proposed correction separately from its application or original delivery receipt. The verified-lot view follows the prior lot and successor IDs and scopes allocation details to readable invoices. The original Django forms still call the same native services. The screen map has 31 groups with gaps across 184 states. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)

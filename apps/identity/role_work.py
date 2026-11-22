@@ -250,8 +250,9 @@ def workspace_decisions(actor, page):
         work = item['work']
         focused = 'decision' in SCREENS.get(work.definition,{})
         url = reverse('factory_invoice_decision' if focused else 'factory_detail',args=[work.pk])
+        api_url = f'/api/v1/work/{work.pk}/emergency' if work.definition == 'pmo-emergency/v1' else f'/api/v1/work/{work.pk}'
         rows.append({'work_id':work.pk,'title':item.get('title') or DEFINITIONS[work.definition]['title'],
-                     'workspace':workspace_name(work.case),'state':item['state'],'url':url})
+                     'workspace':workspace_name(work.case),'state':item['state'],'url':url,'api_url':api_url})
     return rows, queue['candidates'].has_next(), queue['limited']
 
 
@@ -270,7 +271,12 @@ def approval_desks(actor, page):
     for case in cases[:DESK_PAGE_SIZE]:
         for index, (route, title, actions) in enumerate(APPROVAL_DESKS):
             if getattr(case,f'permissions_{index}') == len(actions)+1:
-                desks.append({'title':title,'workspace':workspace_name(case),'url':reverse(route,args=[case.pk])})
+                api_url = {
+                    'payment_controls': f'/api/v1/projects/{case.pk}/payment-controls',
+                    'emergencies': f'/api/v1/work?queue=decisions&line=pmo-emergency/v1&project={case.pk}',
+                }.get(route)
+                desks.append({'title':title,'workspace':workspace_name(case),'url':reverse(route,args=[case.pk]),
+                              'api_url':api_url})
     return desks,len(cases)>DESK_PAGE_SIZE
 
 

@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.db import connection
@@ -104,6 +105,31 @@ class EmergencyIncidentIntakeTests(TestCase):
         self.assertFalse(EmergencyAuthorization.objects.filter(profile=profile).exists())
         self.assertFalse(EmergencyOutcome.objects.filter(profile=profile).exists())
         self.assertFalse(Publication.objects.filter(factory_work=work).exists())
+
+    def test_api_incident_and_classification_pin_the_original_request(self):
+        url = f'/api/v1/projects/{self.case.pk}/emergency-intake'
+        options = self.client.get(url).json()
+        self.assertIn(self.sample['incident'], [row['id'] for row in options['incidents']])
+        request = {'revision': options['revision'], 'request_id': str(uuid4()), 'incident_id': self.sample['incident'],
+                   'module': self.sample['module'], 'plan': self.sample['plan']}
+        response = self.client.post(url, request, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        self.assertEqual(self.client.post(url, request, content_type='application/json').json(), response.json())
+        version_id = response.json()['version_id']
+        exact_url = f'{url}/{version_id}'
+        classification = self.client.get(exact_url).json()
+        self.assertEqual(classification['incident_id'], self.sample['incident'])
+        self.assertIn(self.sample['candidate'], [row['id'] for row in classification['candidates']])
+        command = {'revision': classification['revision'], 'candidate_id': self.sample['candidate'],
+                   'evidence_id': self.sample['classification'], 'p1': None, 'critical_production': None,
+                   'note': 'Source classification remains unknown'}
+        started = self.client.post(exact_url, command, content_type='application/json')
+        self.assertEqual(started.status_code, 201, started.content)
+        work = FactoryWork.objects.get(case=self.case)
+        self.assertEqual(self.client.get(exact_url).json()['work_id'], work.pk)
+        source, _ = factory_emergency.source(work, self.viewer)
+        self.assertEqual((source.p1, source.critical_production), (None, None))
+        self.assertFalse(EmergencyAuthorization.objects.filter(profile=source).exists())
 
     def test_exact_existing_native_profile_resumes_and_rejects_an_unrelated_selection(self):
         version, following = self.requested()

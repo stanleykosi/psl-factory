@@ -23,8 +23,8 @@ PINS = {'expected': REVISION, 'case_expected': REVISION}
                            'manage_url':nullable(TEXT)}), limit=50),
     'actions': array(CARD, limit=domain.SIZE), 'decisions': array(CARD, limit=domain.SIZE),
     'team_decisions': array(CARD, limit=domain.SIZE), 'limited': BOOLEAN,
-    'workspace_decisions':array(obj({'work_id':ID,'title':TEXT,'workspace':TEXT,'state':TEXT,'url':TEXT}),limit=8),
-    'approval_desks':array(obj({'title':TEXT,'workspace':TEXT,'url':TEXT}),limit=domain.DESK_PAGE_SIZE*len(domain.APPROVAL_DESKS)),
+    'workspace_decisions':array(obj({'work_id':ID,'title':TEXT,'workspace':TEXT,'state':TEXT,'url':TEXT,'api_url':TEXT}),limit=8),
+    'approval_desks':array(obj({'title':TEXT,'workspace':TEXT,'url':TEXT,'api_url':nullable(TEXT)}),limit=domain.DESK_PAGE_SIZE*len(domain.APPROVAL_DESKS)),
     'has_teams': BOOLEAN, 'page': ID, 'has_next': BOOLEAN, 'as_of': DATETIME,
 }), query={'page': {'type': 'integer', 'minimum': 1, 'maximum': 9999}},
     summary='Read workspace roles and exact current work and decision assignments')

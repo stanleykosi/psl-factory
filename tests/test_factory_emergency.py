@@ -85,19 +85,37 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
                  {'rules': [{'role': 'CTO', 'actions': ['reject']}]}, self.e['policy_decision'])
         self.start_work()
-        refusal = self.human('preauthorization_decision', role='CTO', authority_role='CTO', verdict='reject',
-                             evidence=self.decision.pk, note='Synthetic impact review refused the proposed rollback')
         self.client.force_login(self.actor)
+        api = f'/api/v1/work/{self.work.pk}/emergency'
+        current = self.client.get(api).json()
+        cto = next(option for option in current['options'] if option['role'] == 'CTO')
+        self.assertEqual(cto['authority_role'], 'CTO')
+        self.assertIn('reject', cto['verdicts'])
+
+        def command(action, **fields):
+            self.work.refresh_from_db()
+            return self.client.post(api, {'action': action, 'expected_revision': self.work.revision,
+                'case_revision': rev(self.case), 'profile_id': self.profile.pk, **fields}, content_type='application/json')
+
+        decision = {'role': 'CTO', 'authority_role': 'CTO', 'verdict': 'reject', 'evidence_id': self.decision.pk,
+                    'note': 'Synthetic impact review refused the proposed rollback'}
+        response = command('preauthorization_decision', **decision)
+        self.assertEqual(response.status_code, 201, response.content)
+        refusal_id = response.json()['record_id']
+        self.assertEqual(command('preauthorization_decision', **decision).status_code, 422)
+        self.assertNotIn('authorize', self.client.get(api).json()['actions'])
         url = reverse('factory_detail', args=[self.work.pk])
         page = self.client.get(url)
         self.assertContains(page, 'Emergency preauthorization refused')
-        self.assertContains(page, f'Decision {refusal.pk} remains in the history')
+        self.assertContains(page, f'Decision {refusal_id} remains in the history')
         self.assertNotContains(page, 'Check and record preauthorization')
         self.assertContains(page, 'Attest actual implementation evidence')
         with self.assertRaises(ValidationError):
             self.human('authorize')
-        actual = self.human('capture_outcome', implemented_at=timezone.now(), evidence=self.implementation.pk,
-                            note='Synthetic implementation occurred despite refusal')
+        response = command('capture_outcome', implemented_at=timezone.now().isoformat(), evidence_id=self.implementation.pk,
+                           note='Synthetic implementation occurred despite refusal')
+        self.assertEqual(response.status_code, 201, response.content)
+        actual = EmergencyOutcome.objects.get(pk=response.json()['record_id'])
         self.assertIsNone(actual.authorization_id)
         self.assertFalse(EmergencyAuthorization.objects.exists())
         self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=self.work).exists())

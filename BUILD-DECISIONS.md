@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Record a payment exception separately from independent release checks. Apply exact Emergency decision authority to an incident-linked current profile. Keep actual implementation capture available after a refusal and preserve original timestamps through current authority recovery. Apply remaining scope and cost through a distinct ordinary change.
+
 22 November 2026. Read short-payment decisions against the exact balance fingerprint. Use the existing Finance services for corrections, reversals, independent review and effect. Return the original correction and receipt references separately from reservation or approval, and keep fixed-charge allocation information behind its existing source boundary.
 
 22 November 2026. Admit anonymous requests only on the designated credential and invitation operations. Keep the same-origin CSRF requirement and Django session. Technical staff controls use native authority, full departure requires every affected workspace, and restored sign-in does not reactivate revoked access.
