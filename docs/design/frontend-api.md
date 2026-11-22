@@ -8,8 +8,10 @@ Run these from the repository root to refresh OpenAPI and export the complete in
 
 ```powershell
 .venv\Scripts\python.exe manage.py export_factory_api --output contracts/psl-factory.openapi.json
+New-Item -ItemType Directory -Path .runtime -Force | Out-Null
 .venv\Scripts\python.exe manage.py export_factory_api --coverage --output .runtime/psl-api-coverage.json
 Set-Location frontend
+npm ci
 npm exec --offline openapi-typescript -- ../contracts/psl-factory.openapi.json -o src/api/live-schema.d.ts
 ```
 

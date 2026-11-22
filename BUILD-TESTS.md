@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Live OpenAPI handoff · 22 November 2026
+
+The checked-in snapshot passed the official OpenAPI 3.1 document schema and generated TypeScript with openapi-typescript 7.13.0. The three contract tests passed locally and exercised route resolution to the exact declared handler, all 25 intake signatures, and the inventory of 262 design states and 108 processes.
+
+Railway checks deployment `a7a27a27-d79e-4235-99f3-7ad908f9327f` passed 24 PostgreSQL tests in 164.379 seconds, including request validation, scoped project choice and revision, case and work access, protected receipts and malformed multipart rejection. The runner observed and validated successful HTTP response bodies for 33 of the 73 operations in this suite. It verifies the schema for every registered operation through the static contract check. Django and migration drift checks passed. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=a7a27a27-d79e-4235-99f3-7ad908f9327f)
+
+Railway web deployment `bb7a57b5-7168-4f2d-99cb-9f9738bb7af5` returned the exact checked-in schema. Health returned HTTP 200 and the signed-out project picker returned 401. The merged frontend passed TypeScript checks and all 62 targeted Start work tests. The Next.js rewrite check exercised live routes and the mock reset guard in development and production modes. [Railway web](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/ac6b2ef8-4bd1-4dcf-9c28-5ef5b0de0de3?id=bb7a57b5-7168-4f2d-99cb-9f9738bb7af5)
+
 ## Management workspace access · 22 November 2026
 
 Railway checks deployment `d0071802-7357-4538-8af1-6c2b4ff11104` passed all 22 PostgreSQL tests in 275.688 seconds on revision `3b798055`. The tests used signed-in synthetic accounts to open sibling workspaces for all four management roles, verify company and sample boundaries, open 15 department source screens, start an eligible PMO engagement, reject protected HR source access and remove access when a role is revoked. The process directory retained all 108 entries and 25 Start work types. Existing checks verified private Finance acknowledgement and original PMO work and receipt access. Django and migration drift checks passed. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=d0071802-7357-4538-8af1-6c2b4ff11104)

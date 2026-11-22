@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Audited the live schema against Django, added Start work project choices and explicit error and multipart contracts, published the generated schema and reconciled the design coverage map. Integrated with the current frontend main while preserving its development-only mock reset alongside the Django proxy routes. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)
+
 22 November 2026. Removed the per-project workspace access barrier for PMO Lead, Finance Lead, CEO and CTO in their organisation. Extended the department leads’ existing preparation permissions to those projects and corrected process guides that still used the legacy project check. Deployed matching web and worker versions to Railway design acceptance. [Test results](BUILD-TESTS.md)
 
 22 November 2026. Connected the 63 automatic processes to their exact source actions and process-filtered project handoffs from Start work. Added matching API metadata and protected project selection. Released the web update on Railway design acceptance after source navigation checks and verified the hosted API contract. [Directory contract](docs/design/frontend-api.md#pmo-and-finance-process-access) · [Test runs](BUILD-TESTS.md)

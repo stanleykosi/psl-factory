@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Generate the published OpenAPI snapshot from the mounted Django handlers. The prototype v7 contract continues to serve its mock. Document a live operation only when it exists in Django. Keep native links and explicit gaps in the design map during the frontend migration. Reuse Start work's current project and command permissions in the API project picker.
+
 22 November 2026. PSL opened every project workspace in the current organisation to its PMO Lead, Finance Lead, CEO and CTO. Sample and operational projects have separate audiences. The department leads carry their existing department preparation rights across those workspaces. The role does not create project appointments, decision authority or protected source access. Team members, HR and Admin retain their existing scope.
 
 22 November 2026. Put entry-point guidance for the 63 source-triggered processes in Start work → Find a process. Each entry links to a native action and the project’s filtered Department handoffs. The same guide is returned by the process API. Source screens keep their existing project and command permissions. The handoff list checks the original record, evidence and current department access before showing an item. This navigation grants neither publication authority nor any new process intake.

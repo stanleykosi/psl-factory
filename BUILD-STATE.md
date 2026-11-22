@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Live frontend API contract · 22 November 2026
+
+OpenAPI 1.1.0 describes the 73 registered JSON operations across 63 paths. The versioned snapshot matches the Django registry and generates TypeScript types. Start work now supplies its submission URL and a scoped project picker with the current revision. Multipart fields, HTTP errors and path constraints have explicit contracts. [OpenAPI snapshot](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)
+
+Railway serves the matching OpenAPI 1.1.0 document. The inventory maps 262 design states in 59 groups and all 108 release processes. The map records native Django steps in 57 groups. Source selection, exact domain approvals and recovery, detailed Finance and payroll operations, and staff and policy setup still need additional JSON coverage for a full frontend replacement. HOD decisions remain deferred. [Hosted schema](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Screen map](contracts/factory-api-screen-map.json) · [Actual checks](BUILD-TESTS.md)
+
 ## Management workspace access · 22 November 2026
 
 PMO Lead, Finance Lead, CEO and CTO can open every project workspace in their organisation. The department leads can use their existing preparation permissions across those projects. **Projects**, **Find a process** and **Department handoffs** share that scope. If a source action requires separate permission, the guide still opens the workspace and its tracking view. Team, approval and protected-source checks continue to apply. [Role operating model](guide/11-FULL-PRODUCT.md#role-based-work-and-supervision)

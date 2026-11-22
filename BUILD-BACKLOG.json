@@ -1,4 +1,20 @@
 {
+  "live_openapi_handoff_20261122": {
+    "scope": "Live contract, typed Start work project choices and design-to-API inventory for the frontend developer",
+    "status": "live_contract_verified_full_json_cutover_open",
+    "live_paths": 63,
+    "live_operations": 73,
+    "native_release_processes": 108,
+    "design_states": 262,
+    "design_screen_groups": 59,
+    "screen_groups_with_native_steps": 57,
+    "passing_railway_postgres_tests": 24,
+    "checks_deployment": "a7a27a27-d79e-4235-99f3-7ad908f9327f",
+    "web_deployment": "bb7a57b5-7168-4f2d-99cb-9f9738bb7af5",
+    "contract": "contracts/psl-factory.openapi.json",
+    "next": "Build typed native source, decision, Finance and setup operations using the remaining entries in contracts/factory-api-screen-map.json.",
+    "owner_decisions": "HOD policy values and approval appointments remain deferred."
+  },
   "management_workspace_access_20261122": {
     "scope": "Organisation-wide project workspace access for PMO Lead, Finance Lead, CEO and CTO, with existing department and protected work permissions",
     "status": "verified_on_railway_design_acceptance",

@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Live OpenAPI handoff · 22 November 2026
+
+Use `main` for the frontend integration. Generate client types from `contracts/psl-factory.openapi.json` or the matching deployment’s `/api/v1/openapi.json`. The v7 design prototype stays on its mock contract. The live schema has 73 operations. Start work includes a scoped project picker, submitting against its chosen project revision. Automatic processes still use their source guides and authenticated handoffs. [Frontend handoff](docs/design/frontend-api.md)
+
+Run `python manage.py export_factory_api --coverage` for every design state, release process and prototype path comparison. The current map keeps native Django links for groups with missing JSON actions. Complete those remaining contracts incrementally with the existing services and exact authorisation. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Test ledger](BUILD-TESTS.md)
+
 ## Management workspace access · 22 November 2026
 
 Use `build/design-consolidation`. A current PMO Lead, Finance Lead, CEO or CTO can browse and open every project workspace in their organisation and data classification. PMO and Finance Leads can prepare work permitted by their own roles in any of those projects. The process directory explains when a source action requires a separate permission. The linked tracking page filters by process and checks original-record access. Individual approver appointments, protected HR and payroll sources, team invitations and owner policy controls keep their existing checks. [API contract](docs/design/frontend-api.md#pmo-and-finance-process-access)
