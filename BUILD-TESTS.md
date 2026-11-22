@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI issue ownership and controlled change · 22 November 2026
+
+Three local issue tests passed in 24.491 seconds with nine successful API operations. They checked exact owner and team responses, private message review, one delivered message and an open underlying issue. The Normal Change test passed in 183.853 seconds on local PostgreSQL. It checked the discipline decisions, native authorization, approved notice, actual execution, go-live and two signed receipt references. A follow-up run of six tests passed in 31.006 seconds and checked actual message timing, a Standard intake that waits on catalogue policy and generated contract consistency. Railway `change-api` results are pending.
+
 ## OpenAPI forecast and management accounts · 22 November 2026
 
 The first forecast test reached a query limit reading the published run. The detail now shares exact calculation checks within one read and keeps the query limit. The corrected local forecast and group disclosure tests passed in 157.645 seconds with five successful operations schema-checked. They covered the original Finance receipt, group oracle mismatch and separate review, observed actual, unmatched reason, verification and scoped match. Two local management-account tests passed in 302.236 seconds, covering corrected CSV, unit confirmation, a fresh successor and Django input through verified recipient receipt. A separate PostgreSQL test passed in 41.031 seconds and checked the original uncertain delivery, private evidence download and preservation of paused work.

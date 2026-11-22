@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Issue ownership and ordinary change · 22 November 2026
+
+OpenAPI 1.15.0 adds fourteen operations. Issue register and investigation expose exact owner and team responses and separate message review and delivery receipts. Reminder and escalation clocks depend on the original authorised evidence. Change intake can capture the current record while Standard procedure matching awaits a configured catalogue and mapped preapprovals. Normal Change goes from independent discipline impact to human authorization, implementation proof, controlled notice and go-live signature, retaining the original receipt. [Contract](contracts/psl-factory.openapi.json)
+
+Run the frozen `change-api` suite on Railway. Nineteen groups across 111 design states still have gaps. Continue with bid requirements and response, pricing and Security estimates, and the exact private submission file. Then address remaining project, cross-workflow and Finance groups. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## Forecast and management-account source recovery · 22 November 2026
 
 OpenAPI 1.14.0 adds reviewed forecast and actuals actions with distinct match, verification and disclosure decisions. The monthly view records unresolved comparisons and keeps the match history. Private observation files bind to the exact uncertain delivery and lookup checks the original operation. Management accounts exposes review stations and verified publication. A corrected CSV is tied to the exact returned work, and confirmation of the supplied units starts a distinct successor without carrying the return forward as approval. [Contract](contracts/psl-factory.openapi.json)

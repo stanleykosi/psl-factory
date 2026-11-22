@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Keep issue receipt timing separate from owner acknowledgement and resolution. Build signed Change closure from current server-side subject pins and actual signature evidence supplied by people. Keep Standard applicability dependent on the reviewed procedure and mapped preapprovals.
+
 22 November 2026. Use the work's selected scenario for actuals and keep review, group disclosure, matching and publication receipts separate. Allow a human delivery observation to attach private evidence without authorizing a new send. Keep a corrected accounts extract within the exact returned entity, period, currency and accounting basis. Require fresh source review on its successor.
 
 22 November 2026. Keep preparer changes on new native schedule and asset versions. Review an exported reporting adjustment separately before including it in an exact mapping. Serve protected PDFs from the current bound proof through the existing private storage adapter and return its declared media type. Record file units against the original supplied import and keep each confirmation linked to its own receipt.

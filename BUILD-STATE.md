@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI issue ownership and controlled change · 22 November 2026
+
+OpenAPI 1.15.0 defines 320 operations on 228 paths. Fourteen additions cover issue capture, team assignment, exact responses and reviewed message receipts, plus Standard and Normal Change intake, assessment, approval, authorized execution evidence, delivery and signed closure. The map covers SCR-30 and SCR-31. Nineteen groups covering 111 states still need API work. Full Railway API acceptance of the 262 design states remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI forecast and management accounts · 22 November 2026
 
 OpenAPI 1.14.0 defines 306 operations on 220 paths. Eleven additions expose current forecast and actuals records, separate group disclosure, exact uncertain delivery recovery and management-account review, corrected extract and publication receipt. The map covers SCR-53 and SCR-56 and leaves 21 groups across 124 states with API gaps. Full Railway API acceptance of the 262 design states remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_issues_change_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.15.0",
+    "live_paths": 228,
+    "live_operations": 320,
+    "added_operations": 14,
+    "completed_groups": ["SCR-30", "SCR-31"],
+    "screen_groups_with_remaining_json": 19,
+    "states_in_groups_with_remaining_json": 111,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Bid response, pricing and controlled submission", "Remaining cross-workflow, commercial and Finance groups", "Full Railway API acceptance"],
+    "owner_decisions": "Live Standard procedure catalogue, responsibility, recipient and timing decisions remain deferred."
+  },
   "frontend_cutover_forecast_accounts_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.14.0",

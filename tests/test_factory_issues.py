@@ -47,6 +47,31 @@ class FactoryIssueTests(TestCase):
         self.assertNotContains(page,'Record issue state</button>')
         self.assertNotContains(page,'Record source observation</button>')
         self.assertNotContains(page,'Investigate acknowledgement and root-cause gaps</button>')
+
+    def test_api_issue_register_capture_and_exact_owner_acknowledgement(self):
+        self.client.force_login(self.a)
+        url = f'/api/v1/projects/{self.c.pk}/issues'
+        submitted = self.client.post(url, {'case_revision': rev(self.c), 'reference': 'ISS-API-1',
+            'title': 'Synthetic issue for a known owner', 'kind': 'Delivery', 'owner_id': self.a.pk,
+            'next_action': 'Check the original evidence.', 'evidence_id': self.e['requirements'].pk,
+            'note': 'Synthetic issue intake.', 'severity': None, 'external_links': []},
+            content_type='application/json')
+        self.assertEqual(submitted.status_code, 201, submitted.content)
+        saved = submitted.json()
+        issue = f"{url}/{saved['issue_id']}"
+        values = {'case_revision': saved['case_revision'], 'action': 'update', 'state_id': saved['state_id'],
+                  'operation': 'acknowledge', 'evidence_id': self.e['requirements'].pk,
+                  'note': 'The named owner acknowledges.', 'next_action': 'Gather the original evidence.',
+                  'owner_id': None, 'severity': None, 'fix_id': None, 'root_cause_id': None}
+        updated = self.client.post(issue, values, content_type='application/json')
+        self.assertEqual(updated.status_code, 201, updated.content)
+        self.assertNotEqual(updated.json()['state_id'], saved['state_id'])
+        detail = self.client.get(issue)
+        self.assertEqual(detail.status_code, 200, detail.content)
+        self.assertIsNotNone(detail.json()['acknowledgement']['at'])
+        self.assertEqual(detail.json()['issue']['status'], 'Open')
+        replay = self.client.post(issue, values, content_type='application/json')
+        self.assertNotEqual(replay.status_code, 201)
     def test_scoped_investigation_owned_followup_verified_without_issue_closure(self):
         self.advance();self.assertEqual(self.work.status,'waiting',self.work.finding)
         attempt=FactoryAttempt.objects.get(activity__work=self.work,activity__kind='ACT04',phase='observed')

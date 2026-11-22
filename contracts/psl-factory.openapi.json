@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.14.0",
+    "version": "1.15.0",
     "description": "Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or GET /api/v1/me. Follow returned Django links for workflow steps that use native forms."
   },
   "security": [
@@ -36853,6 +36853,4854 @@
                       "configuration_id",
                       "reason",
                       "selection"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/change": {
+      "get": {
+        "summary": "Read current change impact, required decisions, notices, implementation and closure checkpoint",
+        "operationId": "changes_detail",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "change_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "change_version_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "category": {
+                      "type": "string",
+                      "enum": [
+                        "Standard",
+                        "Normal"
+                      ]
+                    },
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "finding": {
+                      "type": "string"
+                    },
+                    "next_action": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "authorization_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "authorization_choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "maxItems": 20
+                    },
+                    "impact": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "team": {
+                            "type": "string",
+                            "enum": [
+                              "Engineering",
+                              "QA",
+                              "Infra",
+                              "Security"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "assessment_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "summary": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "effort": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 32
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "team",
+                          "status",
+                          "assessment_id",
+                          "summary",
+                          "effort"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 4
+                    },
+                    "assessors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "Engineering",
+                          "QA",
+                          "Infra",
+                          "Security"
+                        ]
+                      }
+                    },
+                    "decisions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "Product",
+                              "Engineering",
+                              "Client",
+                              "Engineering Lead",
+                              "Security Manager"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "verdicts": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "approve",
+                                "return",
+                                "reject"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "role",
+                          "status",
+                          "verdicts"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "purpose": {
+                            "type": "string",
+                            "enum": [
+                              "notice",
+                              "go_live"
+                            ]
+                          },
+                          "verdicts": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "approve",
+                                "return",
+                                "reject"
+                              ]
+                            }
+                          },
+                          "receipt_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "purpose",
+                          "verdicts",
+                          "receipt_ids"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 2
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "can_close": {
+                      "type": "boolean"
+                    },
+                    "closure_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "can_restart": {
+                      "type": "boolean"
+                    },
+                    "can_authorize": {
+                      "type": "boolean"
+                    },
+                    "deployment_authorized": {
+                      "const": false
+                    },
+                    "jobs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "can_retry": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "can_retry"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 30
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "change_id",
+                    "change_version_id",
+                    "category",
+                    "stage",
+                    "finding",
+                    "next_action",
+                    "authorization_id",
+                    "authorization_choices",
+                    "impact",
+                    "assessors",
+                    "decisions",
+                    "documents",
+                    "evidence",
+                    "can_close",
+                    "closure_id",
+                    "can_restart",
+                    "can_authorize",
+                    "deployment_authorized",
+                    "jobs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record exact human impacts, decisions, authorization, execution, document review or signed closure",
+        "operationId": "changes_command",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "assess"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "contributor": {
+                        "type": "string",
+                        "enum": [
+                          "Engineering",
+                          "QA",
+                          "Infra",
+                          "Security"
+                        ]
+                      },
+                      "cost_impact": {
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "timeline_impact": {
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "client_facing": {
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "evidence": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "production_impact": {
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "scope_items": {
+                        "anyOf": [
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 240
+                            },
+                            "maxItems": 100
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "outputs": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "discipline": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 4000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "timeline": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 4000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "cost_resource": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 4000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "risk": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 4000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "dependency": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 4000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "discipline",
+                              "timeline",
+                              "cost_resource",
+                              "risk",
+                              "dependency"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "effort_person_days": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 32
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "proof_upload": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "contributor",
+                      "cost_impact",
+                      "timeline_impact",
+                      "client_facing",
+                      "evidence",
+                      "note",
+                      "production_impact",
+                      "scope_items",
+                      "outputs",
+                      "effort_person_days",
+                      "proof_upload"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "decide"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "Product",
+                          "Engineering",
+                          "Client",
+                          "Engineering Lead",
+                          "Security Manager"
+                        ]
+                      },
+                      "verdict": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      },
+                      "evidence": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "role",
+                      "verdict",
+                      "evidence",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "authorize"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "commercial": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "commercial"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "execution"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "plan_updated",
+                          "implemented",
+                          "testing_validated",
+                          "documentation_updated"
+                        ]
+                      },
+                      "evidence": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "scope_items": {
+                        "anyOf": [
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 240
+                            },
+                            "maxItems": 100
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "dossier_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "candidate_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "kind",
+                      "evidence",
+                      "note",
+                      "scope_items",
+                      "dossier_id",
+                      "candidate_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "document_review"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "verdict": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "version_id",
+                      "verdict",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "close"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "receipt_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "pm_signature_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "client_signature_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "operation_key": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "signed",
+                          "owner_applicability"
+                        ]
+                      },
+                      "pm_signature": {
+                        "type": "object",
+                        "properties": {
+                          "source_system": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "source_reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "decision_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "decision_version": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "signer_reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "signed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "source_system",
+                          "source_reference",
+                          "decision_id",
+                          "decision_version",
+                          "signer_reference",
+                          "signed_at"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "client_signature": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source_system": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "source_reference": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "decision_id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "decision_version": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "signer_reference": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "signed_at": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
+                            },
+                            "required": [
+                              "source_system",
+                              "source_reference",
+                              "decision_id",
+                              "decision_version",
+                              "signer_reference",
+                              "signed_at"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "receipt_id",
+                      "pm_signature_id",
+                      "client_signature_id",
+                      "note",
+                      "operation_key",
+                      "mode",
+                      "pm_signature",
+                      "client_signature"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "operate_delivery"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "job_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "cancel",
+                          "retry"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "job_id",
+                      "operation",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "restart"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "change_version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "change_version_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/ordinary-changes": {
+      "get": {
+        "summary": "Read existing ordinary changes and configured Standard procedures for intake",
+        "operationId": "changes_register",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "category": {
+                            "type": "string",
+                            "enum": [
+                              "Standard",
+                              "Normal"
+                            ]
+                          },
+                          "module": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "description": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version_id",
+                          "reference",
+                          "category",
+                          "module",
+                          "description"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "catalogue": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "module": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "roles": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "Product",
+                                "Engineering"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "module",
+                          "roles"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "catalogue_finding": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "case_revision",
+                    "records",
+                    "evidence",
+                    "catalogue",
+                    "catalogue_finding"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record an ordinary change, human Standard procedure preapproval or exact procedure match",
+        "operationId": "changes_intake",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "capture"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "reference": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "category": {
+                        "type": "string",
+                        "enum": [
+                          "Standard",
+                          "Normal"
+                        ]
+                      },
+                      "module": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "reference",
+                      "category",
+                      "module",
+                      "description",
+                      "reason",
+                      "evidence_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "preapprove"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "Product",
+                          "Engineering"
+                        ]
+                      },
+                      "verdict": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "key",
+                      "role",
+                      "verdict",
+                      "evidence_id",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "bind_standard"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "version_id",
+                      "key",
+                      "evidence_id",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/issues": {
+      "get": {
+        "summary": "Page readable project issues and exact owner and evidence choices",
+        "operationId": "issues_register",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "state_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "reference": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "Open",
+                              "In Progress",
+                              "Resolved",
+                              "Closed"
+                            ]
+                          },
+                          "severity": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "Critical",
+                                  "High",
+                                  "Medium",
+                                  "Low"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "owner_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "next_action": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "acknowledged_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "resolved_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "state_id",
+                          "reference",
+                          "title",
+                          "kind",
+                          "status",
+                          "severity",
+                          "owner_id",
+                          "next_action",
+                          "acknowledged_at",
+                          "resolved_at"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "next_before": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "owners": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "proofs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 40
+                    }
+                  },
+                  "required": [
+                    "case_revision",
+                    "issues",
+                    "next_before",
+                    "owners",
+                    "proofs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record an authoritative project issue and responsible owner",
+        "operationId": "issues_capture",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "issue_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "issue_id",
+                    "state_id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "reference": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 240
+                  },
+                  "kind": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "owner_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "next_action": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  },
+                  "severity": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "Critical",
+                          "High",
+                          "Medium",
+                          "Low"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "external_links": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "risk",
+                            "incident",
+                            "change"
+                          ]
+                        },
+                        "source_ref": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 240
+                        },
+                        "evidence_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "source_ref",
+                        "evidence_id"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "maxItems": 20
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "reference",
+                  "title",
+                  "kind",
+                  "owner_id",
+                  "next_action",
+                  "evidence_id",
+                  "note",
+                  "severity",
+                  "external_links"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/issues/{issue_id}": {
+      "get": {
+        "summary": "Read the exact current issue and source-bound owner acknowledgement without changing the issue",
+        "operationId": "issues_detail",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "issue": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "state_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "reference": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "Open",
+                            "In Progress",
+                            "Resolved",
+                            "Closed"
+                          ]
+                        },
+                        "severity": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "Critical",
+                                "High",
+                                "Medium",
+                                "Low"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "owner_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "next_action": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "acknowledged_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "resolved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "state_id",
+                        "reference",
+                        "title",
+                        "kind",
+                        "status",
+                        "severity",
+                        "owner_id",
+                        "next_action",
+                        "acknowledged_at",
+                        "resolved_at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "team": {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "team",
+                            "internal"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "assignment_id": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "can_record": {
+                          "type": "boolean"
+                        },
+                        "can_resolve": {
+                          "type": "boolean"
+                        },
+                        "finding": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "status",
+                        "assignment_id",
+                        "label",
+                        "can_record",
+                        "can_resolve",
+                        "finding"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "acknowledgement": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "basis": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "reply_id": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "at",
+                        "basis",
+                        "reply_id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "case_revision",
+                    "issue",
+                    "team",
+                    "acknowledgement"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record the exact issue update, closure log or authorised reopening",
+        "operationId": "issues_command",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "issue_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "issue_id",
+                    "state_id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "update"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "state_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "acknowledge",
+                          "start",
+                          "progress",
+                          "resolve",
+                          "manage"
+                        ]
+                      },
+                      "next_action": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "owner_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "severity": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "Critical",
+                              "High",
+                              "Medium",
+                              "Low"
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "fix_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "root_cause_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "state_id",
+                      "evidence_id",
+                      "note",
+                      "operation",
+                      "next_action",
+                      "owner_id",
+                      "severity",
+                      "fix_id",
+                      "root_cause_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "close_log"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "state_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "QA",
+                          "PM"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "state_id",
+                      "evidence_id",
+                      "note",
+                      "role"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "reopen"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "state_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "QA",
+                          "PM"
+                        ]
+                      },
+                      "next_action": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "state_id",
+                      "evidence_id",
+                      "note",
+                      "role",
+                      "next_action"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/issues/{issue_id}/assignment": {
+      "post": {
+        "summary": "Assign the issue to an internal owner or external team with its exact active recorder",
+        "operationId": "issues_assign",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "state_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "team",
+                      "internal"
+                    ]
+                  },
+                  "team_key": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "recorder_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "recorder_role": {
+                    "type": "string",
+                    "enum": [
+                      "HR",
+                      "PM",
+                      "Head of PMO",
+                      "CEO",
+                      "PMO Lead",
+                      "Product",
+                      "Product Owner",
+                      "Engineering",
+                      "Engineering Lead",
+                      "Security Manager",
+                      "Client",
+                      "QA",
+                      "PMO",
+                      "CTO",
+                      "Security Lead",
+                      "Finance",
+                      "BaaS",
+                      "Data",
+                      "Legal",
+                      "Support",
+                      "Reconciliation",
+                      "Process User",
+                      "Automation Team"
+                    ]
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "work_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "source_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "state_id",
+                  "mode",
+                  "team_key",
+                  "recorder_id",
+                  "recorder_role",
+                  "evidence_id",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/issues/{issue_id}/team-replies": {
+      "post": {
+        "summary": "Record a source-attested external team reply and requested issue transition",
+        "operationId": "issues_team_reply",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "issue_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "issue_id",
+                    "state_id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "state_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "assignment_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "operation_key": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "party": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "email",
+                      "whatsapp",
+                      "ticket",
+                      "meeting",
+                      "phone",
+                      "document"
+                    ]
+                  },
+                  "responded_at": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "source_ref": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 240
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "acknowledge",
+                      "start",
+                      "progress",
+                      "resolve"
+                    ]
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  },
+                  "next_action": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "fix_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "root_cause_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "resolution_role": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "state_id",
+                  "assignment_id",
+                  "operation_key",
+                  "party",
+                  "channel",
+                  "responded_at",
+                  "source_ref",
+                  "operation",
+                  "evidence_id",
+                  "note",
+                  "next_action",
+                  "fix_id",
+                  "root_cause_id",
+                  "resolution_role"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/issues/{issue_id}/messages": {
+      "get": {
+        "summary": "Read scoped owner message versions, human reviews and exact original receipt evidence",
+        "operationId": "issue_communications_index",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "state_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "draft_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "request",
+                              "reminder"
+                            ]
+                          },
+                          "body": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 3000
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "review_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "verdict": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "approve",
+                                  "return",
+                                  "reject"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "dispatch_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "receipt": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "delivered": {
+                                    "type": "boolean"
+                                  },
+                                  "delivered_at": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "format": "date-time"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "recorded_at": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
+                                  "source_evidence_id": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 9223372036854775807
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "reference": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "delivered",
+                                  "delivered_at",
+                                  "recorded_at",
+                                  "source_evidence_id",
+                                  "reference"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "finding": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "draft_id",
+                          "version",
+                          "kind",
+                          "body",
+                          "status",
+                          "review_id",
+                          "verdict",
+                          "dispatch_id",
+                          "receipt",
+                          "finding"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 20
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 35
+                    },
+                    "timing": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "last_receipt_id": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "reminder_due_at": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "escalation_due_at": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "reminder_overdue": {
+                              "type": "boolean"
+                            },
+                            "escalation_overdue": {
+                              "type": "boolean"
+                            },
+                            "escalation_target": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "finding": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "last_receipt_id",
+                            "reminder_due_at",
+                            "escalation_due_at",
+                            "reminder_overdue",
+                            "escalation_overdue",
+                            "escalation_target",
+                            "finding"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "case_revision",
+                    "state_id",
+                    "items",
+                    "evidence",
+                    "timing"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Prepare, review, release or recover this issue\u2019s exact owner message",
+        "operationId": "issue_communications_command",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "prepare"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "state_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "request",
+                          "reminder"
+                        ]
+                      },
+                      "operation_key": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "state_id",
+                      "kind",
+                      "operation_key"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "edit"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "state_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "request",
+                          "reminder"
+                        ]
+                      },
+                      "operation_key": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "draft_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "body": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 3000
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "state_id",
+                      "kind",
+                      "operation_key",
+                      "draft_id",
+                      "body",
+                      "evidence_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "review"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "draft_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "verdict": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "draft_id",
+                      "role",
+                      "verdict",
+                      "evidence_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "release"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "review_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "channel": {
+                        "type": "string",
+                        "enum": [
+                          "email",
+                          "whatsapp",
+                          "ticket"
+                        ]
+                      },
+                      "not_before": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "review_id",
+                      "role",
+                      "channel",
+                      "not_before"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "begin_manual"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "dispatch_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "dispatch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "attest"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "dispatch_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "source_evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reference": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "delivered": {
+                        "type": "boolean"
+                      },
+                      "delivered_at": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "checked": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "dispatch_id",
+                      "role",
+                      "source_evidence_id",
+                      "reference",
+                      "delivered",
+                      "delivered_at",
+                      "checked"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "lookup"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "dispatch_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "dispatch_id",
+                      "role"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "cancel"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "dispatch_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "dispatch_id",
+                      "role",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/issue-followup": {
+      "get": {
+        "summary": "Read the exact issue investigation and source-scoped owner response task",
+        "operationId": "issues_work_detail",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "issue": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "state_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "reference": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "Open",
+                            "In Progress",
+                            "Resolved",
+                            "Closed"
+                          ]
+                        },
+                        "severity": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "Critical",
+                                "High",
+                                "Medium",
+                                "Low"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "owner_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "next_action": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "acknowledged_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "resolved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "state_id",
+                        "reference",
+                        "title",
+                        "kind",
+                        "status",
+                        "severity",
+                        "owner_id",
+                        "next_action",
+                        "acknowledged_at",
+                        "resolved_at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "team": {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "team",
+                            "internal"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "assignment_id": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "can_record": {
+                          "type": "boolean"
+                        },
+                        "can_resolve": {
+                          "type": "boolean"
+                        },
+                        "finding": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "status",
+                        "assignment_id",
+                        "label",
+                        "can_record",
+                        "can_resolve",
+                        "finding"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "source_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "can_request_update": {
+                      "type": "boolean"
+                    },
+                    "response_task": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "revision": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2147483647
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "revision"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "next_action": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "finding": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "issue",
+                    "team",
+                    "source_id",
+                    "can_request_update",
+                    "response_task",
+                    "next_action",
+                    "finding"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Continue issue investigation with the exact assigned response or follow-up",
+        "operationId": "issues_work_command",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "request_update"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "background": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "background"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "respond"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "task_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "task_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "acknowledge",
+                          "start",
+                          "progress"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "next_action": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      },
+                      "team_reply": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "assignment_id": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              "operation_key": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "party": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "channel": {
+                                "type": "string",
+                                "enum": [
+                                  "email",
+                                  "whatsapp",
+                                  "ticket",
+                                  "meeting",
+                                  "phone",
+                                  "document"
+                                ]
+                              },
+                              "responded_at": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "source_ref": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 240
+                              }
+                            },
+                            "required": [
+                              "assignment_id",
+                              "operation_key",
+                              "party",
+                              "channel",
+                              "responded_at",
+                              "source_ref"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "task_id",
+                      "task_revision",
+                      "operation",
+                      "evidence_id",
+                      "note",
+                      "next_action",
+                      "team_reply"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "refresh",
+                          "restart"
+                        ]
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "reason"
                     ],
                     "additionalProperties": false
                   }

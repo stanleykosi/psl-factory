@@ -97,6 +97,42 @@ class IssueTeamTests(TestCase):
         self.assertContains(page, 'Sample Engineering responder')
         self.assertContains(page, 'Follow-up coordinator')
 
+    def test_api_issue_owner_assignment_exact_response_and_verified_investigation(self):
+        self.client.force_login(self.a)
+        root = f'/api/v1/projects/{self.c.pk}/issues'
+        listing = self.client.get(root)
+        self.assertEqual(listing.status_code, 200, listing.content)
+        current, = listing.json()['issues']
+        self.assertEqual(current['id'], self.issue.pk)
+        detail_path = f'{root}/{self.issue.pk}'
+        command = {'case_revision': listing.json()['case_revision'], 'state_id': current['state_id'], 'mode': 'team',
+                   'team_key': 'sample-engineering', 'recorder_id': self.a.pk, 'recorder_role': 'PM',
+                   'evidence_id': self.e['requirements'].pk, 'reason': 'Synthetic scoped owner assignment.',
+                   'work_id': self.work.pk, 'source_id': self.work.source_head_id}
+        assigned = self.client.post(detail_path + '/assignment', command, content_type='application/json')
+        self.assertEqual(assigned.status_code, 201, assigned.content)
+        self.assertTrue(factory_issues.sync_owner(self.work.pk))
+        factory.run_until_wait(self.work.pk)
+        work_path = f'/api/v1/work/{self.work.pk}/issue-followup'
+        response = self.client.get(work_path)
+        self.assertEqual(response.status_code, 200, response.content)
+        page = response.json()
+        self.assertTrue(page['team']['can_record'])
+        task = page['response_task']
+        reply = {'assignment_id': assigned.json()['id'], 'operation_key': str(uuid4()), 'party': 'Synthetic responder',
+                 'channel': 'email', 'responded_at': (timezone.now() - timedelta(minutes=1)).isoformat(),
+                 'source_ref': 'synthetic:email:api-1'}
+        updated = self.client.post(work_path, {'action': 'respond', 'expected_revision': page['expected_revision'],
+            'case_revision': page['case_revision'], 'task_id': task['id'], 'task_revision': task['revision'],
+            'operation': 'acknowledge', 'evidence_id': self.e['requirements'].pk, 'note': 'Actual sample response recorded.',
+            'next_action': 'Investigate the underlying issue.', 'team_reply': reply}, content_type='application/json')
+        self.assertEqual(updated.status_code, 200, updated.content)
+        factory.run_until_wait(self.work.pk)
+        self.work.refresh_from_db()
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        self.assertFalse(factory_issues.verify(self.work, self.a)['issue_resolution_verified'])
+        self.assertEqual(self.client.get(detail_path).json()['issue']['status'], 'Open')
+
     def test_missing_team_rules_hold_only_external_assignment_and_pending_owner_is_readable(self):
         transition(self.a, self.config.pk, 'revoked')
         with self.assertRaises(ValidationError):

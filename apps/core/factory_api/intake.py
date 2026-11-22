@@ -113,7 +113,8 @@ START_RESULT = obj({**WORK_RESULT['properties'], 'background': choice('queued', 
 WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1': 'weekly-report-intake',
                    'pmo-leadership-report/v1': 'leadership-report-intake', 'pmo-escalation/v1': 'escalation-register',
                    'engagement/v1': 'engagement-intake', 'finance-payroll/v1': 'payroll/requests',
-                   'finance-accounts/v1': 'accounting-intake', 'finance-ppe/v1': 'asset-registers'}
+                   'finance-accounts/v1': 'accounting-intake', 'finance-ppe/v1': 'asset-registers',
+                   'pmo-change/v1': 'ordinary-changes', 'pmo-issues/v1': 'issues'}
 
 
 def start_projects(actor, line):

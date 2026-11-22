@@ -93,6 +93,36 @@ class IssueMessageTests(TestCase):
         self.assertEqual(facts['reminder_due_at'],receipt.delivered_at+timedelta(hours=1))
         self.assertEqual(facts['escalation_due_at'],receipt.delivered_at+timedelta(hours=2))
 
+    def test_api_message_review_release_and_original_receipt_leave_issue_open(self):
+        self.client.force_login(self.a)
+        path = f'/api/v1/projects/{self.c.pk}/issues/{self.issue.pk}'
+        url = path + '/messages'
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        draft = self.client.post(url, {'action': 'prepare', 'case_revision': page.json()['case_revision'],
+            'state_id': page.json()['state_id'], 'kind': 'request', 'operation_key': str(uuid4())},
+            content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        approved = self.client.post(url, {'action': 'review', 'case_revision': draft.json()['case_revision'],
+            'draft_id': draft.json()['id'], 'role': 'PM', 'verdict': 'approve', 'evidence_id': self.e['requirements'].pk,
+            'reason': 'Reviewed the exact synthetic owner message.'}, content_type='application/json')
+        self.assertEqual(approved.status_code, 201, approved.content)
+        dispatched = self.client.post(url, {'action': 'release', 'case_revision': approved.json()['case_revision'],
+            'review_id': approved.json()['id'], 'role': 'PM', 'channel': 'email', 'not_before': None},
+            content_type='application/json')
+        self.assertEqual(dispatched.status_code, 201, dispatched.content)
+        dispatch_id = dispatched.json()['id']
+        self.assertTrue(messages.run_once(dispatch_id))
+        observed = self.client.get(url)
+        self.assertEqual(observed.status_code, 200, observed.content)
+        msg, = observed.json()['items']
+        self.assertEqual(msg['status'], 'Delivered')
+        self.assertEqual(msg['receipt']['id'], IssueMessageReceipt.objects.get(dispatch_id=dispatch_id).pk)
+        self.assertEqual(observed.json()['timing']['last_receipt_id'], msg['receipt']['id'])
+        self.assertIsNotNone(observed.json()['timing']['reminder_due_at'])
+        self.assertIsNone(self.client.get(path).json()['acknowledgement']['at'])
+        self.assertFalse(messages.run_once(dispatch_id))
+
     def test_exact_retries_return_original_records_and_conflicting_intents_are_refused(self):
         self.issue.refresh_from_db()
         op,revision=uuid4(),rev(self.c)

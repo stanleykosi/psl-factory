@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api')
 
 
 def run(group, token, role_access):
@@ -183,6 +183,14 @@ def run(group, token, role_access):
                    'tests.test_forecast_receipt_recovery.ForecastReceiptRecoveryTests.test_api_observation_stays_private_and_lookup_reconciles_only_original',
                    'tests.test_accounting_source_return.AccountingSourceReturnTests.test_api_source_return_upload_and_exact_unit_successor',
                    'tests.test_factory_accounting_intake.AccountingSuppliedIntakeTests.test_http_supplied_intake_to_reviewed_accounts_and_recipient_receipt']
+    elif group == 'change-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_factory_issues.FactoryIssueTests.test_api_issue_register_capture_and_exact_owner_acknowledgement',
+                   'tests.test_issue_teams.IssueTeamTests.test_api_issue_owner_assignment_exact_response_and_verified_investigation',
+                   'tests.test_issue_messages.IssueMessageTests.test_api_message_review_release_and_original_receipt_leave_issue_open',
+                   'tests.test_factory_change.FactoryChangeTests.test_api_normal_change_review_execution_and_signed_receipts',
+                   'tests.test_factory_change.FactoryChangeTests.test_api_standard_intake_only_catalogue_binding_waits_for_owner_configuration',
+                   'tests.test_factory_change.FactoryChangeTests.test_complete_native_flow_requires_human_assessment_review_execution_signatures_and_receipts']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

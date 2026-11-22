@@ -7,10 +7,10 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections, costing,
+    accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, changes, client_records, clients, closure, commands, corrections, costing,
     delivery, documents, emergency, engagements, escalations,
     finance_operations, financial_corrections, forecasting, go_live_replies, handoffs, hr_handoffs, hypercare,
-    intake, intake_sources, invoice_recovery, leadership_reports, meeting_records, minutes, notifications, payment_controls, payroll_identity,
+    intake, intake_sources, invoice_recovery, issue_communications, issues, leadership_reports, meeting_records, minutes, notifications, payment_controls, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
@@ -118,6 +118,14 @@ ROUTES = (
     ('work/<int:work_id>/forecast/observations', forecasting.observe_delivery),
     ('work/<int:work_id>/forecast/observations/<int:observation_id>', forecasting.delivery_proof),
     ('work/<int:work_id>/forecast/lifecycle', forecasting.lifecycle),
+    ('work/<int:work_id>/change', changes.detail, changes.command),
+    ('projects/<uuid:case_id>/ordinary-changes', changes.register, changes.intake),
+    ('projects/<uuid:case_id>/issues', issues.register, issues.capture),
+    ('projects/<uuid:case_id>/issues/<int:issue_id>', issues.detail, issues.command),
+    ('projects/<uuid:case_id>/issues/<int:issue_id>/assignment', issues.assign),
+    ('projects/<uuid:case_id>/issues/<int:issue_id>/team-replies', issues.team_reply),
+    ('projects/<uuid:case_id>/issues/<int:issue_id>/messages', issue_communications.index, issue_communications.command),
+    ('work/<int:work_id>/issue-followup', issues.work_detail, issues.work_command),
     ('work/<int:work_id>/payroll-recovery', payroll_sources.recovery),
     ('work/<int:work_id>/minutes', minutes.detail),
     ('work/<int:work_id>/minutes/action-options', minutes.action_options),
@@ -327,7 +335,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.14.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.15.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,
