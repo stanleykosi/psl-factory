@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## OpenAPI Delivery and restricted payroll · 22 November 2026
+
+OpenAPI 1.4.0 covers 173 operations on 133 paths. The 32 added operations connect Planning sources and approvals, release readiness, Go-live replies and milestone mapping, stability observations, archive receipts, Support replies, corrected closure and restricted payroll imports and working rows. Existing Django forms and API routes use the same workflow services. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
+Five further groups have their mapped JSON actions. The 44 remaining groups include 231 states with at least one group-level gap. Continue with the gaps in the screen map. HOD choices on live values, authority and destinations remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Backlog](BUILD-BACKLOG.json)
+
 ## OpenAPI project records and recovery · 22 November 2026
 
 OpenAPI 1.3.0 adds 26 operations for authorised source selection, private minutes upload and receipts, meeting and retrospective records, project commitments, client legal identity and organisation links, controlled report revisions and release receipts, opaque work access requests and invoice evidence and draft-stop recovery. The Django and JSON paths share their authority, source and revision checks. No migration is required. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)

@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Use focused Planning and Go-live read paths for API forms. Keep original source validation in the owning service and keep queue investigation outside a form read. Use the same native payroll Excel and CSV parser on both surfaces. Match working rows and publication independently to the reader’s current source and receipt authority.
+
 22 November 2026. Start work source choices return bounded metadata under the selected line’s current permissions. Ordinary evidence uses the public boundary, and restricted sources require their domain reader. Source admission and the selected revision are checked by the owning service when work starts. Report release and invoice recovery commands operate on exact recorded versions and retain original receipts.
 
 22 November 2026. Expose exact workflow commands through versioned JSON or multipart schemas backed by the same native services as Django. Use checked file links and explicit source revisions. Run Assistant and upload queues independently of operational effects and progression. PostgreSQL owns claims and durable receipts.

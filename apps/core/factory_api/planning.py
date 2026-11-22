@@ -46,9 +46,19 @@ def detail(request, case_id):
     case = get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
     domain.readable(actor, case)
     with limit_queries(1400, deadline=monotonic() + 10):
-        report = domain.report(actor, case.pk, include_display=False)
         grants = {action for _, action in active_case_grants(actor, [case.pk])}
-        collection = report.get('department_inputs') or {}
+        head = domain.latest(case, 'packet')
+        packet_value = None
+        collection = {}
+        finding = ''
+        if head:
+            try:
+                packet, data = domain.packet(case, head.pk)
+            except (ValidationError, PermissionDenied):
+                finding = 'Review the current scope, packet sources and recording authority.'
+            else:
+                packet_value = data['payload']
+                collection = planning_inputs.received_projection(case, packet, packet_value) or {}
         records = [row['record'] for row in collection.get('rows', []) if row['record']]
         visible_ids = set(public_evidence(case.evidence.filter(pk__in=[row['source'] for row in records]))
                           .values_list('pk', flat=True))
@@ -67,15 +77,21 @@ def detail(request, case_id):
                     continue
                 review_roles.append(role)
         readiness = None
-        if report.get('readiness_id') and 'delivery.read' in grants:
-            dossiers = DeliveryDossier.objects.filter(case=case, candidate_id=report['readiness_inputs']['candidate_id'])
-            handoffs = DeliverySource.objects.filter(dossier__in=dossiers, kind='scope_baseline', evidence_id=report['readiness_id'])
-            readiness = {'evidence_id': report['readiness_id'],
-                         'delivery_dossiers': [{'id': pk, 'label': label} for pk, label in
-                                               dossiers.order_by('-pk').values_list('pk', 'candidate__reference')[:25]],
-                         'source_ids': list(handoffs.order_by('-pk').values_list('pk', flat=True)[:25])}
-    return {'revision': case.revision, 'packet_id': report.get('current_packet_id'), 'packet': report.get('payload'),
-            'finding': report.get('finding') or collection.get('finding') or '', 'review_roles': review_roles,
+        if packet_value is not None and 'delivery.read' in grants:
+            ready = domain.latest(case, 'ready')
+            if ready:
+                try:
+                    pinned = domain.current_readiness(case, ready.pk)
+                except (ValidationError, PermissionDenied):
+                    finding = 'The recorded readiness needs review against the current sources.'
+                else:
+                    dossiers = DeliveryDossier.objects.filter(case=case, candidate_id=pinned['inputs']['candidate_id'])
+                    handoffs = DeliverySource.objects.filter(dossier__in=dossiers, kind='scope_baseline', evidence=ready)
+                    readiness = {'evidence_id': ready.pk, 'delivery_dossiers': [
+                        {'id': pk, 'label': label} for pk, label in dossiers.order_by('-pk').values_list('pk', 'candidate__reference')[:25]],
+                        'source_ids': list(handoffs.order_by('-pk').values_list('pk', flat=True)[:25])}
+    return {'revision': case.revision, 'packet_id': head.pk if head else None, 'packet': packet_value,
+            'finding': finding or collection.get('finding') or '', 'review_roles': review_roles,
             'can_record_input': bool(collection) and 'planning.coordinate' in grants,
             'effort_reviewed': collection.get('effort_reviewed', False),
             'departments': [{'department': row['department'], 'input': visible_facts.get(row['department'])}

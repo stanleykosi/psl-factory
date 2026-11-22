@@ -113,13 +113,18 @@ def commercial_context(case, rows, disposition):
 def required(case, packet, reader):
     planning.readable(reader, case)
     _, value = planning.packet(case, packet.pk)
-    if not value['payload'].get('collect_department_inputs'):
+    return _required(case, packet, value['payload'])
+
+
+def _required(case, packet, payload, rows=None):
+    if not payload.get('collect_department_inputs'):
         return None
     configuration, criteria = planning.criteria(case)
     rules = criteria.get('department_inputs')
     if rules is None:
         raise ValidationError('owner_needed: Review department input requirements and changed-effort handling.')
-    rows = heads(case, packet)
+    if rows is None:
+        rows = heads(case, packet)
     names = {row.department for row in rows}
     missing = set(rules['required_departments']) - names
     if missing:
@@ -182,11 +187,16 @@ def review(actor, case_id, packet_id, role, disposition, evidence_id, reason, ex
 def projection(actor, case, packet):
     planning.readable(actor, case)
     _, value = planning.packet(case, packet.pk)
-    if not value['payload'].get('collect_department_inputs'):
+    return received_projection(case, packet, value['payload'])
+
+
+def received_projection(case, packet, payload):
+    """Build received facts after the caller resolves the current authorised packet."""
+    if not payload.get('collect_department_inputs'):
         return None
     rows = heads(case, packet)
     try:
-        context = required(case, packet, actor)
+        context = _required(case, packet, payload, rows)
         finding = 'Current received inputs meet the configured collection checks.'
     except (ValidationError, PermissionDenied) as exc:
         context = None

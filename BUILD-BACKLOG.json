@@ -1,4 +1,23 @@
 {
+  "frontend_cutover_delivery_and_payroll_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.4.0",
+    "live_paths": 133,
+    "live_operations": 173,
+    "added_operations": 32,
+    "completed_groups": ["SCR-28", "SCR-43", "SCR-47", "SCR-48", "SCR-49"],
+    "screen_groups_with_remaining_json": 44,
+    "states_in_groups_with_remaining_json": 231,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": [
+      "Complete source-owner payroll corrections, private HR disclosures and scoped aggregate report history.",
+      "Finish specialist source decisions for change, Emergency and escalation, then complete the remaining bid and report journeys.",
+      "Finish Finance imports, schedules, Forecast and close, and staff and policy administration.",
+      "Verify all 262 states against the resulting API journeys on Railway."
+    ],
+    "owner_decisions": "HOD rule values, appointments and approved live destinations remain deferred."
+  },
   "frontend_cutover_project_records_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.3.0",

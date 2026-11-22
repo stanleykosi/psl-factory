@@ -23,6 +23,11 @@ LIVE_CASES = {
     "P02": "test_department_routing_from_source_to_receipt",
     "F35": "test_restricted_hr_handoff_to_named_finance_recipient",
 }
+PLANNING_API_TESTS = (
+    'tests.test_planning_department_inputs.PlanningDepartmentInputTests.test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review',
+    'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
+)
+API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api')
 
 
 def run(group, token, role_access):
@@ -83,12 +88,19 @@ def run(group, token, role_access):
             'tests.test_project_archive_files.ArchiveFileTests.test_store_rules_save_as_draft_and_bad_sources_do_not_reserve_effects',
             'tests.test_factory_minutes.FactoryMinutesTests.test_external_exact_quality_review_all_recipients_and_receipts',
             'tests.test_factory_minutes.FactoryMinutesTests.test_cited_extraction_human_confirmation_internal_minutes_and_action_owner',
-            'tests.test_planning_department_inputs.PlanningDepartmentInputTests.test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review',
-            'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
+            *PLANNING_API_TESTS,
             'tests.test_planning_workaround_walkthrough',
             'tests.test_go_live_replies.GoLiveReplyTests.test_client_changes_prepare_version_two_with_fresh_review_receipt_and_actual_signatures',
             'tests.test_go_live_milestone_walkthrough',
             'tests.test_handover_replies.HandoverReplyTests.test_configured_recorder_can_record_distinct_recipient_and_native_downstream_verifies',
+        ]
+    elif group == 'planning-api':
+        modules = list(PLANNING_API_TESTS)
+    elif group == 'payroll-api':
+        modules = [
+            'tests.test_factory_api.ContractTests', 'tests.test_payroll_api_cutover',
+            'tests.test_factory_payroll.FactoryPayrollTests.test_missing_hr_receipt_requires_exact_matcher_and_new_match',
+            'tests.test_factory_payroll.FactoryPayrollTests.test_withdrawal_preserves_original_receipt_and_requires_new_reviewed_sources',
         ]
     elif group == 'surface':
         required = set()
@@ -112,7 +124,7 @@ def run(group, token, role_access):
     if group == "accounts":
         modules.append("tests.test_finance_import_projection")
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
-    if group in ('directory', 'cutover', 'project-api', 'delivery-api'):
+    if group in API_GROUPS:
         cmd += ["--testrunner", "tests.api_contract_runner.ContractRunner"]
     observed = set()
     role_observed = set()
@@ -128,7 +140,7 @@ def run(group, token, role_access):
         print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
         if observed != required:
             return False
-    if role_access and group not in ('surface', 'directory', 'cutover', 'project-api', 'delivery-api'):
+    if role_access and group not in ('surface', *API_GROUPS):
         print(f"[{group}] Role reads checked for {len(role_observed)} processes; missing {sorted(required - role_observed)}.", flush=True)
         if role_observed != required:
             return False
@@ -164,7 +176,7 @@ def main():
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
     default_groups = (*SUITES, 'original', 'surface', 'directory') if options.role_access else tuple(SUITES)
-    available = (*default_groups, 'cutover', 'project-api', 'delivery-api') if options.role_access else default_groups
+    available = (*default_groups, *API_GROUPS[1:]) if options.role_access else default_groups
     groups = options.groups or default_groups
     if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")

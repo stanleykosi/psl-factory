@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## OpenAPI Delivery and restricted payroll · 22 November 2026
+
+The first combined local run revealed over-budget reads in Planning, stability and the archive, an oversized Go-live read in a separate run, and an enum serialisation mismatch. The initial snapshot comparison also ran while new routes were being generated. The revised reads use the narrow native dossier or packet context. Six local tests passed in 237.356 seconds, including the previously held stability and archive reads and the contract checks. Go-live reply and successor preparation passed on the next local run. The two final Planning tests passed in 188.344 seconds after the projection was narrowed.
+
+The first Railway Delivery API deployment `8f33d9c0-e2f4-43bb-a48d-2ddeec4b08a2` passed 18 of 19 tests in 609.286 seconds. The remaining test hit the Planning read limit. The audit validated 28 successful API operations in that batch. The final Planning projection cut redundant packet and UI reads and was then tested in the local run above. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=8f33d9c0-e2f4-43bb-a48d-2ddeec4b08a2)
+
+The initial payroll and contract batch passed six local PostgreSQL tests in 20.721 seconds with six schema-valid successful operations. It verified original CSV and Excel import, a held unknown amount, nominee-scoped authoring, page-sized private rows and revoked access. Held draft calculation remained separate from publication. Type generation and OpenAPI 3.1 schema validation passed.
+
 ## OpenAPI project records and recovery · 22 November 2026
 
 The isolated local PostgreSQL batch passed all 11 tests in 84.374 seconds. The response audit covered 33 of 141 operations, with 31 successful responses. It exercised original source selection and revocation, retrospective and action authoring, independent client link review, private minutes upload and original receipt readback, controlled report rework and publication, opaque access requests, invoice proof and the exact pre-issue stop. An earlier run exposed a test assertion using `id` where the contract returns `work_id`. The assertion was corrected and the flow passed. External effects used synthetic adapters. The OpenAPI 3.1 schema and TypeScript generation passed.

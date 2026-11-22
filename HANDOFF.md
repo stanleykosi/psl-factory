@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Delivery and restricted payroll APIs · 22 November 2026
+
+OpenAPI 1.4.0 adds 32 operations, for 173 operations on 133 paths. Use the Planning API for current packets, department facts and reviewed effort, plus the separate department-owner observation resource. Delivery readback includes the phase checklist, the original Planning return and workaround, captured gates, native readiness and actual release evidence. Go-live links client replies to the delivered version and uses the reviewed milestone mapping for the separate Finance handoff. Hypercare supports typed observations and criterion drafts. Archive copy recovery uses original job revisions. Support and closure preserve earlier reply and report history. [API contract](contracts/psl-factory.openapi.json)
+
+Payroll source owners use multipart imports under their current provider nomination. A private reader can page exact current input and working rows. An aggregate recipient keeps their separate receipt path. Use the restricted payroll work resource for hold handling, HR receipt, reviewed publication, withdrawal and a corrected successor. [Frontend handoff](docs/design/frontend-api.md)
+
+Five further groups now have the mapped JSON actions. The 44 remaining groups include 231 design states with at least one group-level gap. Treat the 262-state Django walkthrough record and the newer API journey evidence separately. Continue with private HR and payroll source corrections, specialist decisions, bid and report commands, broader Finance and Setup. Run the isolated Railway suites using `scripts/stage_railway_role_checks.py checks --revision HEAD --group delivery-api --group payroll-api`. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Project records, source selection and recovery APIs · 22 November 2026
 
 Build from `main`. OpenAPI 1.3.0 registers 141 operations across 111 paths. The snapshot and the expanded screen map are generated from the same live registry. Start work project choices link to `/api/v1/projects/{case_id}/intake-sources` for supported metadata choices. Keep the exact project revision at submission. Private minutes files use the multipart minutes intake and the existing storage and extraction service. Confirm cited suggestions with an authenticated person, then follow document review and original receipt readback.
