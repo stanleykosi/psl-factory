@@ -225,11 +225,15 @@ def run(group, token, role_access):
     elif group == 'final-api':
         modules = ['tests.test_factory_api.ContractTests',
                    'tests.test_factory_change.FactoryChangeTests.test_exact_work_human_commands_and_configuration_console',
+                   'tests.test_factory_console.FactoryConsoleTests.test_api_work_filters_match_native_queue_for_the_current_reader',
+                   'tests.test_factory_console.FactoryConsoleTests.test_queue_case_agent_information_review_receipts_and_return_context',
                    'tests.test_rfp_fresh_intake.FreshBidIntakeTests.test_api_retains_the_original_private_receipt_and_rechecks_download_authority',
                    'tests.test_design_client_documents.ClientAndTemplateDesignTests.test_api_first_template_catalogue_and_download',
                    'tests.test_design_consolidation.DesignConsolidationTests.test_template_catalog_reads_controlled_versions_and_revokes_access',
                    'tests.test_client_testing_pack.ClientTestingPackTests.test_api_separate_files_reviewed_receipt_reminder_successor_and_reply',
                    'tests.test_invoice_walkthrough_stations.InvoiceWalkthroughStationTests.test_browser_lookup_miss_then_original_witness_never_sends_another_issue',
+                   'tests.test_invoice_milestone_proof.InvoiceMilestoneProofTests.test_private_pdf_and_successor_unlock_only_exact_draft_and_finance_review',
+                   'tests.test_factory_invoice_draft_cancellation.InvoiceDraftCancellationTests.test_same_obligation_issued_invoice_is_linked_with_exact_cancellation_history',
                    'tests.test_hr_handoff_api', 'tests.test_railway_worker']
     elif group == 'surface':
         required = set()

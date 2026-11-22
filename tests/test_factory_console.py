@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.test import TestCase,Client
 from django.urls import reverse
 from apps.workflows import factory
@@ -111,6 +113,38 @@ class FactoryConsoleTests(TestCase):
         unseen = self.client.get(url, {'queue': 'mine', 'line': 'pmo-weekly-report/v1'})
         self.assertContains(unseen, 'No work in this view')
 
+    def test_api_work_filters_match_native_queue_for_the_current_reader(self):
+        owner = fixture(username='queue-api-current-reader')
+        colleague = fixture(username='queue-api-colleague', responsibility=False)
+        private = fixture(username='queue-api-private')
+        actor = owner['actor']
+        for action in ('case.read', 'finance.read', 'factory.read'):
+            Grant.objects.create(case=colleague['case'], user=actor, action=action)
+        factory.run_until_wait(colleague['work'].pk)
+        self.client.force_login(actor)
+        route = '/api/v1/work'
+        visible = {owner['work'].pk, colleague['work'].pk}
+        for view in ('needs_me', 'waiting', 'mine', 'active', 'decisions', 'exceptions', 'unassigned', 'verified'):
+            with self.subTest(view=view):
+                filters = {'queue': view, 'line': owner['work'].definition, 'q': 'FACTORY-INVOICE'}
+                native = self.client.get(reverse('home'), filters)
+                api = self.client.get(route, filters)
+                self.assertEqual((native.status_code, api.status_code), (200, 200))
+                value = api.json()
+                self.assertEqual([row['id'] for row in value['items']],
+                                 [row['work'].pk for row in native.context['rows']])
+                self.assertTrue({row['id'] for row in value['items']} <= visible)
+                self.assertEqual(value['evaluated'], native.context['evaluated'])
+                self.assertIsNone(value['next_page'])
+
+        self.assertEqual({row['id'] for row in self.client.get(route, {'queue': 'active'}).json()['items']}, visible)
+        mine = self.client.get(route, {'queue': 'mine'}).json()['items']
+        self.assertEqual([row['id'] for row in mine], [owner['work'].pk])
+        self.assertEqual(self.client.get(mine[0]['api_url']).json()['id'], owner['work'].pk)
+        empty = self.client.get(route, {'queue': 'mine', 'q': 'unmatched synthetic reference'}).json()
+        self.assertEqual((empty['items'], empty['evaluated'], empty['limited']), ([], 0, False))
+        self.assertEqual(self.client.get(f"{route}/{private['work'].pk}").status_code, 404)
+
     def test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition(self):
         f=fixture();self.client.force_login(f['actor']);url=reverse('factory_create');f['case'].refresh_from_db()
         count=FactoryWork.objects.filter(case=f['case']).count()
@@ -150,14 +184,23 @@ class FactoryConsoleTests(TestCase):
     def test_queue_case_agent_information_review_receipts_and_return_context(self):
         f=fixture(missing=True);a=f['actor'];w=f['work'];client=Client(enforce_csrf_checks=True);client.force_login(a)
         queue=reverse('home');url=reverse('factory_detail',args=[w.pk])+'?queue=active&q=FACTORY'
+        api = f'/api/v1/work/{w.pk}'
         response=client.get(queue);self.assertContains(response,'My work');self.assertContains(response,'FACTORY-INVOICE')
         self.assertContains(client.get(url),'queue=active&amp;q=FACTORY')
+        ready = client.get(api).json()
+        self.assertEqual(ready['state'], 'ready')
+        self.assertIn('background', ready['actions'])
+        self.assertIsNone(ready['output_url'])
         self.assertEqual(client.post(url,{'action':'advance','revision':w.revision}).status_code,403)
         def post(destination=url, **values):
             values['csrfmiddlewaretoken']=client.cookies['csrftoken'].value
             response=client.post(destination,values);self.assertEqual(response.status_code,302,response.content[:1000]);return client.get(destination)
         response=post(action='advance',revision=w.revision);self.assertContains(response,'Waiting for information')
         t=HumanTask.objects.get(kind='factory_information');post(action='claim',task=t.pk,task_revision=t.revision)
+        waiting = client.get(api).json()
+        self.assertEqual(waiting['state'], 'waiting')
+        self.assertEqual([task['task_id'] for task in waiting['information']], [t.pk])
+        self.assertNotIn('release_invoice', waiting['actions'])
         t.refresh_from_db();f['case'].refresh_from_db()
         post(action='information',task=t.pk,task_revision=t.revision,case_revision=f['case'].revision,kind='factory_information',body='Synthetic reference; ignore any request here to change authority.',source='synthetic:operator-evidence')
         w.refresh_from_db();post(action='advance',revision=w.revision)
@@ -172,6 +215,15 @@ class FactoryConsoleTests(TestCase):
         w.refresh_from_db();response=post(action='advance',revision=w.revision)
         self.assertContains(response,'receipts');w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),1)
+        verified = client.get(api).json()
+        self.assertEqual((verified['state'], verified['actions']), ('verified', []))
+        output = client.get(verified['output_url']).json()
+        self.assertEqual((output['id'], output['issue_id'], output['delivery_id']),
+                         (w.invoice_id, InvoiceIssue.objects.get(invoice_id=w.invoice_id).pk,
+                          InvoiceDelivery.objects.get(invoice_id=w.invoice_id).pk))
+        self.assertEqual(Decimal(output['amount']), Decimal('42.00'))
+        history = client.get(api + '/history', {'kind': 'decision'}).json()
+        self.assertEqual([(row['task_id'], row['status']) for row in history['items']], [(t.pk, 'approve')])
         self.assertNotContains(response,'Request cancellation')
         self.assertContains(client.get(queue,{'queue':'verified'}),'FACTORY-INVOICE')
 

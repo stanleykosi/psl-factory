@@ -98,6 +98,8 @@ class ContractTests(SimpleTestCase):
         self.assertEqual(json.loads(snapshot.read_text(encoding='utf-8')), SPEC)
         index = coverage()
         self.assertEqual((index['inventory'], index['screen_groups']), (262, 59))
+        self.assertEqual((index['screen_groups_with_native_steps'], index['states_in_groups_with_native_steps']), (0, 0))
+        self.assertTrue(all(state['json'] for state in index['states']))
         self.assertEqual(len(index['processes']), 108)
         self.assertEqual(sum(row['execution'] == 'native_source_event' for row in index['processes']), 63)
         for row in index['processes']:
