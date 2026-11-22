@@ -117,6 +117,12 @@
       "authorized_by": "design engineer (hunchoweb), 15 Nov 2026 \u2014 D-89",
       "reason": "Frame change only: the '+ Start' (Start work) button is drawn in the top bar on every phone screen board (253 boards on the main and Finance and Payroll canvases), matching the built app; nothing else on any board changed. The 13 Nov client approval (version 1794581312-b166) covers everything else; PSL sees this at the next design review.",
       "recorded_at": "2026-11-15T16:58:04Z"
+    },
+    {
+      "design_sha256": "06305ba6d0dc499acd054d6f493c4102efd6b7cc83bea6966753b6462029a27d",
+      "authorized_by": "design engineer (hunchoweb), 23 Nov 2026 \u2014 D-173",
+      "reason": "Delivery may continue on the current design version while the client re-approves it. Since the D-89 exception (15 Nov), the design changed only through the design engineer's own live changes: design tokens and shared components taking the boards' look (D-92a, D-93), focus as the control's own border (D-144), the toast host (D-151), dropdown active rows (D-156), the date-and-time dropdown (D-158), one-row project tabs and fact alignment (D-159), chat sending and image attachments (D-160, D-161), the earned-fact divider (D-163), the after-you-decide concept B for SCR-03 (D-166) and the phone toast above drawers (D-169); 18 commits under design/. No screen was added or removed. The 13 Nov client approval (version 1794581312-b166) still covers everything else, and PSL approval of these changes is still required.",
+      "recorded_at": "2026-11-22T23:52:01Z"
     }
   ]
 }
