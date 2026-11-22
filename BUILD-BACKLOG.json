@@ -5,6 +5,8 @@
     "live_paths": 196,
     "live_operations": 271,
     "added_operations": 9,
+    "railway_tests_passed": 9,
+    "railway_checks_deployment": "94ca14eb-4dbb-4746-a7f9-0d245a43ef52",
     "completed_groups": ["SCR-39", "SCR-41"],
     "screen_groups_with_remaining_json": 25,
     "states_in_groups_with_remaining_json": 156,
