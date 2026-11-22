@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI HR handoffs and payroll questions · 22 November 2026
+
+OpenAPI 1.5.0 covers 190 operations on 145 paths. The twelve additions cover Finance needs, reviewed HR disclosures, exact private export capture and readback, corrections and recipient receipts, and HR questions on aggregate payroll. The API and Django share source checks and current human authority. The 41 screen groups with outstanding API actions cover 223 states. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## OpenAPI Delivery and restricted payroll · 22 November 2026
 
 OpenAPI 1.4.0 covers 178 operations on 137 paths. The 37 added operations connect Planning sources and approvals, release readiness, Go-live replies and milestone mapping, stability observations, archive receipts, Support replies, corrected closure and restricted payroll imports and working rows. Setup exposes business appointment drafts and policy lifecycle actions. Received bids expose an exact original receipt with an authenticated download. Existing Django forms and API routes use the same workflow services. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

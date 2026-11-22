@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Use original multipart HR export bytes and the native per-period disclosure contract. Keep raw rows in a separate recipient-only resource. Aggregate reports and questions independently recheck the exact report, receipt authority and HR route. Question reads validate the report without fetching its amount payload, and one exact review verifies its full source lineage.
+
 22 November 2026. Use focused Planning and Go-live read paths for API forms. Keep original source validation in the owning service and keep queue investigation outside a form read. Use the same native payroll Excel and CSV parser on both surfaces. Match working rows and publication independently to the reader’s current source and receipt authority.
 
 22 November 2026. Expose business reviewer appointments independently of staff-role administration. Require a current project revision, the latest appointment draft reference and recorded owner evidence for a new proposal. Require the exact current policy state for validation, activation and revocation. Existing policy services control every transition.

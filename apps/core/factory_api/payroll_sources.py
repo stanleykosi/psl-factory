@@ -9,10 +9,11 @@ from adapters.forecast import KEY
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
+from apps.core.views import accessible_case
 from apps.finance import payroll as native, payroll_working
 from apps.finance.hrfinance_models import HRHandoffRecord
 from apps.finance.payroll_forms import commands
-from apps.finance.payroll_models import PayrollInput, PayrollRequest, PayrollRun
+from apps.finance.payroll_models import PayrollInput, PayrollPublication, PayrollReportReceipt, PayrollRequest, PayrollRun
 from apps.identity.services import active_case_grants, require, visible_cases
 from apps.policy.services import decision_authority
 from apps.workflows import factory_payroll
@@ -213,3 +214,36 @@ def operate(request, work_id, *, body):
     else:
         row = factory_payroll.human_action(*args, action, values)
     return recorded(work, row)
+
+
+AGGREGATE = obj({'id': ID, 'version': REVISION, 'period': TEXT, 'entity': TEXT, 'currency': TEXT,
+                 'by_business_unit': {'type': 'object', 'additionalProperties': TEXT}, 'eligible_total': TEXT,
+                 'receipt_id': nullable(ID), 'can_acknowledge': BOOLEAN, 'revision': REVISION})
+
+
+@endpoint(response=AGGREGATE, summary='Read a current aggregate payroll report and your own receipt')
+@transaction.atomic
+def report(request, case_id, publication_id):
+    actor = request.user
+    case = accessible_case(actor, case_id)
+    publication = get_object_or_404(PayrollPublication.objects.defer('payload'), request__case=case, pk=publication_id)
+    data = native.observe_publication(actor, publication.pk)
+    receipt_id = PayrollReportReceipt.objects.filter(publication=publication, actor=actor).values_list('pk', flat=True).first()
+    try:
+        native.recipient_access(actor, case, acknowledge=True)
+        can_acknowledge = receipt_id is None
+    except PermissionDenied:
+        can_acknowledge = False
+    case.refresh_from_db(fields=['revision'])
+    return {'id': publication.pk, 'version': publication.version, 'revision': case.revision,
+            **{key: data[key] for key in ('period', 'entity', 'currency', 'eligible_total')},
+            'by_business_unit': data['by_bu'], 'receipt_id': receipt_id, 'can_acknowledge': can_acknowledge}
+
+
+@endpoint(method='POST', request=obj({'revision': REVISION}), response=obj({'receipt_id': ID, 'revision': REVISION}),
+          summary='Acknowledge an exact current aggregate report as its named recipient')
+def receive_report(request, case_id, publication_id, *, body):
+    case = accessible_case(request.user, case_id)
+    receipt = native.receive_report(request.user, case.pk, publication_id, body['revision'])
+    case.refresh_from_db(fields=['revision'])
+    return {'receipt_id': receipt.pk, 'revision': case.revision}

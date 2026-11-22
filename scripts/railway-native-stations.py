@@ -27,7 +27,7 @@ PLANNING_API_TESTS = (
     'tests.test_planning_department_inputs.PlanningDepartmentInputTests.test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review',
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
-API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api')
+API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api')
 
 
 def run(group, token, role_access):
@@ -105,6 +105,11 @@ def run(group, token, role_access):
     elif group == 'setup-api':
         modules = ['tests.test_factory_api.ContractTests', 'tests.test_policy_reviews_api',
                    'tests.test_rfp_fresh_intake.FreshBidIntakeTests.test_api_retains_the_original_private_receipt_and_rechecks_download_authority']
+    elif group == 'hr-api':
+        modules = ['tests.test_factory_api.ContractTests', 'tests.test_hr_handoff_api',
+                   'tests.test_payroll_questions.PayrollQuestionTests.test_api_question_review_send_answer_and_exact_recipient_receipt',
+                   'tests.test_payroll_questions.PayrollQuestionTests.test_original_source_owner_revocation_holds_before_private_loading',
+                   'tests.test_payroll_question_reads']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

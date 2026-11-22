@@ -1,4 +1,22 @@
 {
+  "frontend_cutover_hr_handoffs_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.5.0",
+    "live_paths": 145,
+    "live_operations": 190,
+    "added_operations": 12,
+    "completed_groups": ["SCR-37"],
+    "screen_groups_with_remaining_json": 41,
+    "states_in_groups_with_remaining_json": 223,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": [
+      "Complete payroll source-owner corrections, side-by-side identity matching and previous aggregate receipts.",
+      "Finish specialist source decisions, remaining bid and report commands, Finance close and staff administration.",
+      "Verify all 262 states through the API journeys on Railway."
+    ],
+    "owner_decisions": "HOD rule values, named authorities, disclosure fields and approved live destinations remain deferred."
+  },
   "frontend_cutover_delivery_and_payroll_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.4.0",

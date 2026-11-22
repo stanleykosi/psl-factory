@@ -139,6 +139,61 @@ class PayrollQuestionTests(TestCase):
         question=record(f,self.publication);self.assertEqual(domain.projection(f['manager'],question)['state'],'owner_needed')
         self.assertEqual(native.read_publication(f['manager'],self.publication.pk)['by_bu'],{'BU-A':'250.00'})
 
+    def test_api_question_review_send_answer_and_exact_recipient_receipt(self):
+        f = self.f
+        case = f['case']
+        url = f'/api/v1/projects/{case.pk}/payroll/questions'
+        self.client.force_login(f['manager'])
+        report_url = f'/api/v1/projects/{case.pk}/payroll/reports/{self.publication.pk}'
+        report = self.client.get(report_url)
+        self.assertEqual(report.status_code, 200, report.content)
+        self.assertEqual(report.json()['by_business_unit'], {'BU-A': '250.00'})
+        self.assertNotContains(report, 'E001')
+        receipt = self.client.post(report_url, {'revision': rev(case)}, content_type='application/json')
+        self.assertEqual(receipt.status_code, 200, receipt.content)
+        self.assertEqual(self.client.get(report_url).json()['receipt_id'], receipt.json()['receipt_id'])
+        options = self.client.get(url, {'report': self.publication.pk})
+        self.assertTrue(options.json()['can_ask'], options.content)
+        source = {'report_id': self.publication.pk, 'topic': 'business_unit_basis', 'operation_key': str(uuid4())}
+        created = self.client.post(url, {'revision': rev(case), **source}, content_type='application/json')
+        self.assertEqual(created.status_code, 201, created.content)
+        item_url = f"{url}/{created.json()['question_id']}"
+        self.assertEqual(self.client.get(item_url).json()['item']['state'], 'owner_needed')
+
+        def submit(actor, action, head, code=200, **fields):
+            self.client.force_login(actor)
+            response = self.client.post(item_url, {'action': action, 'head': head, 'revision': rev(case), **fields},
+                                        content_type='application/json')
+            self.assertEqual(response.status_code, code, response.content)
+            return response.json()
+
+        submit(f['manager'], 'dispatched', 0, code=422)
+        routing(f)
+        dispatched = submit(f['manager'], 'dispatched', 0)
+        self.client.force_login(f['preparer'])
+        self.assertEqual(self.client.get(item_url).status_code, 404)
+        self.client.force_login(f['owner'])
+        admitted = self.client.get(item_url)
+        self.assertEqual(admitted.status_code, 200, admitted.content)
+        self.assertTrue(admitted.json()['item']['can_answer'])
+        self.assertNotContains(admitted, 'E001')
+        submit(f['owner'], 'answered', dispatched['head'], code=422, reply='not-a-defined-reply')
+        answered = submit(f['owner'], 'answered', dispatched['head'], reply='source_review_needed')
+        submit(f['manager'], 'received', 0, code=409)
+        received = submit(f['manager'], 'received', answered['head'])
+        self.assertEqual(received['state'], 'received')
+        self.assertContains(self.client.get(reverse('payroll_questions', args=[case.pk])), 'This question is complete')
+        with patch('apps.core.factory_api.payroll_questions.QUESTION_QUERIES', 0):
+            deferred = self.client.get(url, {'report': self.publication.pk}).json()
+        self.assertEqual(deferred['items'], [])
+        self.assertEqual(deferred['deferred_questions'], [created.json()['question_id']])
+        self.assertTrue(deferred['report_check_deferred'])
+        self.assertFalse(deferred['can_ask'])
+        Grant.objects.filter(case=case, user=f['manager'], action='payroll.report.read').update(active=False)
+        held = self.client.get(item_url).json()['item']
+        self.assertEqual(held['state'], 'held')
+        self.assertIsNone(held['reply'])
+
     def test_database_rejects_cross_case_spoofed_payloads_replies_and_history_mutation(self):
         f=self.f;routing(f);question=record(f,self.publication)
         for packet in [{**question.packet,'private_salary':'SECRET'},{**question.packet,'source_run_id':999999}]:

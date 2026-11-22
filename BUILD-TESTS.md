@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI HR handoffs and payroll questions · 22 November 2026
+
+The first combined local run passed the two HR disclosure tests and four contract checks. One payroll question test returned 503 on the assigned HR reader's exact view. The report read was validating its source lineage twice. The narrower path uses the exact review for lineage and authority checks and omits the aggregate amount payload for question metadata. The revised local suite passed all 11 tests in 80.797 seconds, with successful responses for all twelve new operations. It checked rejected and corrected HR exports, the distinct Finance recipient, exact aggregate receipt, scoped reply and original source-owner revocation. The existing Django two-report test deferred at its configured read limit after 1,116 queries, then opened the exact question separately.
+
 ## OpenAPI Delivery and restricted payroll · 22 November 2026
 
 The first combined local run revealed over-budget reads in Planning, stability and the archive, an oversized Go-live read in a separate run, and an enum serialisation mismatch. The initial snapshot comparison also ran while new routes were being generated. The revised reads use the narrow native dossier or packet context. Six local tests passed in 237.356 seconds, including the previously held stability and archive reads and the contract checks. Go-live reply and successor preparation passed on the next local run. The two final Planning tests passed in 188.344 seconds after the projection was narrowed.

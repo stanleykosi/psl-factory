@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## HR handoff and payroll question APIs · 22 November 2026
+
+OpenAPI 1.5.0 adds 12 operations. Read and act on a Finance need or exact HR disclosure through `hr-disclosures`. Upload the original UTF-8 export as multipart against its approved disclosure, and read named-recipient rows through a separate paged resource. Read the original approval and receipt and the corrected successor. Use `payroll/reports` for current aggregate-only totals and a recipient receipt, and `payroll/questions` for a participant-scoped review, dispatch, HR reply and acknowledgement. [Frontend handoff](docs/design/frontend-api.md)
+
+The 41 groups with remaining API actions cover 223 states. Continue with payroll source-owner corrections and side-by-side matching, then specialist source decisions, the remaining bid and report commands, Finance close and Setup. Run `scripts/stage_railway_role_checks.py checks --revision HEAD --group hr-api` for the connected suite. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Test ledger](BUILD-TESTS.md)
+
 ## Delivery and restricted payroll APIs · 22 November 2026
 
 OpenAPI 1.4.0 adds 37 operations, for 178 operations on 137 paths. Use the Planning API for current packets, department facts and reviewed effort, plus the separate department-owner observation resource. Delivery readback includes the phase checklist, the original Planning return and workaround, captured gates, native readiness and actual release evidence. Go-live links client replies to the delivered version and uses the reviewed milestone mapping for the separate Finance handoff. Hypercare supports typed observations and criterion drafts. Archive copy recovery uses original job revisions. Support and closure preserve earlier reply and report history. Setup supplies exact appointment drafts and policy lifecycle state tokens. Received bid readback follows the exact uploaded revision and rechecks both the reader and original document authority. [API contract](contracts/psl-factory.openapi.json)

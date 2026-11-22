@@ -43,9 +43,13 @@ def head(question):
     return question.events.order_by('-pk').first()
 
 
+class StaleQuestion(ValidationError):
+    """The response history has advanced since the submitted review."""
+
+
 def check_head(question,expected):
     latest=head(question)
-    if (latest.pk if latest else 0)!=expected:raise ValidationError('This question changed. Review it again.')
+    if (latest.pk if latest else 0)!=expected:raise StaleQuestion('This question changed. Review it again.')
     return latest
 
 

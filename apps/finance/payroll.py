@@ -358,25 +358,36 @@ def recipient_access(actor,case,*,acknowledge=False):
  if acknowledge:require(actor,case,'payroll.report.receive')
 
 
-def _publication_payload(actor,p,c):
- policy=active_component(REPORT,c);rules=reference_values(policy)[0]
- if actor.pk not in rules['recipient_ids']:raise PermissionDenied('Not a configured aggregate report recipient')
- source=exact(c,PayrollRun,p.run_id);run_current(source)
- require(p.actor,c,'payroll.publish')
- if current_review(source).pk!=p.review_id or policy.pk!=p.policy_ids[REPORT] or authority(p.actor,p.request,'publish')!={k:v for k,v in p.policy_ids.items() if k!=REPORT}:raise ValidationError('BU staff-cost report stale; prepare a reviewed versioned replacement')
- if PayrollPublication.objects.filter(request=p.request,version__gt=p.version).exists():raise ValidationError('BU report version replaced')
- return p.payload
+def _admitted_publication(actor, publication_id):
+    publication = PayrollPublication.objects.defer('payload', 'request__metadata').select_related('request').get(pk=publication_id)
+    case = Case.objects.select_for_update().get(pk=publication.request.case_id)
+    list(Grant.objects.select_for_update().filter(case=case).order_by('pk').values_list('pk', flat=True))
+    recipient_access(actor, case)
+    policy = active_component(REPORT, case)
+    if actor.pk not in reference_values(policy)[0]['recipient_ids']:
+        raise PermissionDenied('Not a configured aggregate report recipient')
+    require(publication.actor, case, 'payroll.publish')
+    source = exact(case, PayrollRun, publication.run_id)
+    pins = {key: value for key, value in publication.policy_ids.items() if key != REPORT}
+    # The exact review validates the same current working lineage before checking each reviewer.
+    if (current_review(source).pk != publication.review_id or policy.pk != publication.policy_ids[REPORT]
+            or authority(publication.actor, publication.request, 'publish') != pins):
+        raise ValidationError('BU staff-cost report stale; prepare a reviewed versioned replacement')
+    if PayrollPublication.objects.filter(request=publication.request, version__gt=publication.version).exists():
+        raise ValidationError('BU report version replaced')
+    return publication
+
+
+@transaction.atomic
+def admit_publication(actor, publication_id):
+    """Check the exact report without loading amounts for a metadata-only operation."""
+    _admitted_publication(actor, publication_id)
 
 
 @transaction.atomic
 def observe_publication(actor,publication_id):
- """Read an exact current aggregate without reserving or acknowledging a receipt."""
- p=PayrollPublication.objects.defer('payload','request__metadata').select_related('request').get(pk=publication_id)
- # Keep authority and the native source stable without entering a command scope.
- c=Case.objects.select_for_update().get(pk=p.request.case_id)
- list(Grant.objects.select_for_update().filter(case=c).order_by('pk').values_list('pk',flat=True))
- recipient_access(actor,c)
- return _publication_payload(actor,p,c)
+    """Read an exact current aggregate without reserving or acknowledging a receipt."""
+    return _admitted_publication(actor, publication_id).payload
 
 
 @transaction.atomic
@@ -387,7 +398,7 @@ def read_publication(actor,publication_id):
 @transaction.atomic
 def receive_report(actor,case_id,publication_id,expected):
  c=lock_case(actor,case_id,'case.read',expected);p=exact(c,PayrollPublication,publication_id)
- recipient_access(actor,c,acknowledge=True);read_publication(actor,p.pk)
+ recipient_access(actor,c,acknowledge=True);admit_publication(actor,p.pk)
  r,created=PayrollReportReceipt.objects.get_or_create(publication=p,actor=actor)
  if created:event(actor,c,'payroll.report_receipt',publication=p.pk,receipt=r.pk);bump(c)
  return r

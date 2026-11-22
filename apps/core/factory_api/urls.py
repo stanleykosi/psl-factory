@@ -9,8 +9,8 @@ from django.views.decorators.http import require_safe
 from . import (
     agents, archive_files, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
     delivery, documents,
-    finance_operations, go_live_replies, handoffs, hypercare,
-    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payroll_sources, planning, policy_reviews,
+    finance_operations, go_live_replies, handoffs, hr_handoffs, hypercare,
+    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
     role_work, roles, setup, support_replies, work, work_access, workspaces,
@@ -46,6 +46,14 @@ ROUTES = (
     ('work/<int:work_id>/department-handoff', handoffs.detail),
     ('work/<int:work_id>/department-handoff/source-review', handoffs.review),
     ('work/<int:work_id>/department-handoff/finance-acknowledgement', handoffs.acknowledge),
+    ('projects/<uuid:case_id>/hr-disclosures', hr_handoffs.options, hr_handoffs.operate),
+    ('projects/<uuid:case_id>/hr-disclosures/<int:contract_id>', hr_handoffs.detail),
+    ('projects/<uuid:case_id>/hr-disclosures/<int:contract_id>/exports', hr_handoffs.capture),
+    ('projects/<uuid:case_id>/hr-disclosures/snapshots/<int:snapshot_id>/rows', hr_handoffs.snapshot_rows),
+    ('projects/<uuid:case_id>/hr-disclosures/clarifications/<int:task_id>', hr_handoffs.scope_question),
+    ('projects/<uuid:case_id>/payroll/questions', payroll_questions.options, payroll_questions.ask),
+    ('projects/<uuid:case_id>/payroll/questions/<int:question_id>', payroll_questions.detail, payroll_questions.act),
+    ('projects/<uuid:case_id>/payroll/reports/<int:publication_id>', payroll_sources.report, payroll_sources.receive_report),
     ('work/<int:work_id>/history', work.history),
     ('work/<int:work_id>/background', work.background),
     ('work/<int:work_id>/actions', work.action),
@@ -238,7 +246,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.4.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.5.0',
             'description': 'Use the current same-origin Django session. For JSON writes, read the session CSRF token from '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,
