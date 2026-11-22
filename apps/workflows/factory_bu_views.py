@@ -117,7 +117,11 @@ def presentation(actor,work):
                        'verified_at':work.updated_at if receipt and work.status=='verified' else None}
             return row
         row.update(state='Restricted BU work',next_action='Current source-reader or aggregate-recipient permission required');row['bu']={'restricted':True};return row
-    try:state=bu.report(work,actor)
+    try:
+        selected = bu.source(work, actor)
+        state = bu.report(work, actor, selected)
+        row['bu_observation'] = state
+        row['bu_selection'] = selected
     except (PermissionDenied,ValidationError):state={'stage':'source','finding':'Source or authority changed. Select an exact source-owned replacement.','subjects':[],'result':None}
     row.update(next_action=state.get('finding') or 'Verify exact aggregate and recipient receipts',blocker=state.get('finding',''),readiness_changed=work.status=='verified' and state['stage']!='complete',can_advance=permitted(actor,work,'factory.execute') and work.status not in ['cancelled','verified','followup_needed'])
     stage = state['stage']
@@ -135,12 +139,12 @@ def presentation(actor,work):
     row['needs_me']=row['can_advance'] or row['bu']['can_review'];return row
 
 
-def investigation_progress(actor, work):
+def investigation_progress(actor, work, *, state=None):
     if work.cancel_requested or work.status in factory.TERMINAL or not work.lease_until or work.lease_until <= timezone.now():
         return None
     try:
         _, profile = factory.profile(work)
-        observation = bu.snapshot(work, profile, reader=actor)
+        observation = bu.snapshot(work, profile, reader=actor, state=state)
         choices, _ = bu.eligible(work, profile, *observation)
         if current_plan_step(work, observation[0]['hash'], choices) == 'ACT04':
             return {'label': 'Investigating the selected business-unit sources and exception rules.', 'watching': True}
@@ -215,7 +219,7 @@ def detail(request,work,focus=None):
             totals=result.payload['by_bu'];scope=result.metadata['scope']
         if not focus:
             if request.method in ('GET', 'HEAD'):
-                progress = investigation_progress(request.user, work)
+                progress = investigation_progress(request.user, work, state=row.get('bu_observation'))
             if progress is None:
                 investigation=work.activities.filter(kind='ACT04').order_by('-pk').first()
     from apps.policy.models import Configuration

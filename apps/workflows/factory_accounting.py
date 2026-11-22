@@ -341,12 +341,27 @@ def claim(actor,task_id,expected):
     task.claimed_by=actor;task.revision+=1;task.save(update_fields=['claimed_by','revision'])
     TaskEvent.objects.create(task=task,actor=actor,action='factory.accounting_claimed',data={'work':work.pk});return task
 
-def review_task(work,task,value,reader=None):
-    if task.kind!='factory_accounting_review' or work.cancel_requested or work.status in ['verified','cancelled','followup_needed']:raise ValidationError('Current running accounting review required')
-    state=snapshot(work,value,reader=reader)[0]
+def matching_review_task(work, task, value, state=None, *, reader=None):
+    if task.kind != 'factory_accounting_review' or work.cancel_requested or work.status in ('verified', 'cancelled', 'followup_needed'):
+        raise ValidationError('Current running accounting review required')
+    previous = task.context.get('packet')
+    if not isinstance(previous, dict):
+        raise ValidationError('STALE_VERSION: native accounting subject, policy or review changed')
+    if state is None:
+        state = snapshot(work, value, reader=reader)[0]
     for row in state['reviews']:
-        if not row['review']['valid'] and task.context.get('packet')==packet(work,row,value):return row
+        if row['review']['valid'] or (row['purpose'], row['subject'], row['id']) != (
+                previous.get('purpose'), previous.get('subject'), previous.get('target')):
+            continue
+        current = packet(work, row, value)
+        if previous == current:
+            return row, current
     raise ValidationError('STALE_VERSION: native accounting subject, policy or review changed')
+
+
+def review_task(work, task, value, reader=None):
+    row, _ = matching_review_task(work, task, value, reader=reader)
+    return row
 
 
 def review_routing_hold(work):

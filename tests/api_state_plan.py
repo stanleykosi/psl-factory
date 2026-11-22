@@ -33,12 +33,14 @@ def read_plan():
     ids = set()
     for row in rows:
         key = row['state_id']
-        responses = row['required_responses'].split()
+        responses = (row['required_responses'] or '').split()
         if (None in row or key in ids or key not in inventory or row['suite'] not in SUITES
-                or not TEST_LABEL.fullmatch(row['test']) or not responses
-                or not all(RESPONSE.fullmatch(item) for item in responses) or not row['behavior'].strip()):
+                or not TEST_LABEL.fullmatch(row['test'] or '') or not responses
+                or not all(RESPONSE.fullmatch(item) for item in responses) or not (row['behavior'] or '').strip()):
             raise ValueError(f'Invalid or duplicate state replay {key}.')
         ids.add(key)
+    if ids != set(inventory):
+        raise ValueError('Missing state replay assertions: ' + ', '.join(sorted(set(inventory) - ids)))
     return inventory, rows
 
 

@@ -204,7 +204,7 @@ class AccountingSuppliedIntakeTests(TestCase):
                                     ('corrected', None, 'source_units_needed')]:
             file, context = self.supplied(body=body, with_units=False)
             response = self.client.post(url, {'case_revision': rev(case), 'idempotency_key': key,
-                'reference': 'Sample corrected trial balance', 'evidence_id': file.pk,
+                'reference': 'Sample-corrected-trial-balance', 'evidence_id': file.pk,
                 'context': {**context, 'extracted_at': context['extracted_at'].isoformat()}},
                 content_type='application/json')
             self.assertEqual(response.status_code, 201, response.content)

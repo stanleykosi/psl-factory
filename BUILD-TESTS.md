@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Third named API replay · 22 November 2026
+
+Deployment `1404c62b-b711-4c04-95ee-50a899892881` ran the 85 remaining cases at `cd32ce8100f3cf6b60a3d98cfd985cd7aa8caf2f`. It added 69 passes and produced 16 failed states. Shared work and Commercial exited 0. Delivery and Finance have recorded failure traces. The adapted client testing, release, scoped issue register, independent escalation, closure and minutes cases passed the six-case local PostgreSQL check. Four local Django and API tests passed navigation, Assistant entry, session protection and native invoice decision. The published contract validates against OpenAPI 3.1 and generates TypeScript. [Per-state ledger](docs/design/api-state-replay-results.csv)
+
 ## Second named API replay · 22 November 2026
 
 Railway deployment `2421206a-3ca3-4533-88fb-0da1f937ea58` at revision `e8332288bf9df00168f0efe37c6eba25b235eb4f` exercised the pending cases from the 183-state manifest. The merged ledger records 177 passes, six failed states and 79 pending. Three failed states share the incorrect active delegation reader. The other failures were the expected status after template-access withdrawal and the nested action state in the minutes check. The new manifest contains 262 cases. [State results](docs/design/api-state-replay-results.csv)

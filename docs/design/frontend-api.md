@@ -26,6 +26,10 @@ npm exec --offline openapi-typescript -- ../contracts/psl-factory.openapi.json -
 - Submit multipart private files through the existing upload service. Fetch file and detailed source links through their authenticated Django URLs. Agent drafts keep the exact source or attempt pin through review, recovery and handoff.
 - Send initiation and Assistant requests with the same idempotency key for the same intent. Treat an accepted command as an acknowledgement. Refresh authorized work or receipt status for the business outcome. Explicit release and receipt reconciliation remain separate.
 - Read queue coverage and handle incomplete results and pages. Amounts are decimal strings where projected as money. Unknown values remain null.
+- Use a work item's optional `current_activity` label when present. Poll while `watching` is true and use the latest authorised result to clear an ended activity.
+- Use `received-bids/{case_id}/team-inputs` for the current named contributors, evidence choices, and dated inputs. For a returned invoice, submit its exact successor preparation to `work/{work_id}/invoice-preparation`, then wait for a fresh independent review. The eligibility-checked Finance task readback carries a recipient comparison when one is available.
+
+Compare each state with its recorded Railway replay in the [per-state ledger](api-state-replay-results.csv). Each row includes the case, the application revision and the required and observed API responses. The [assertion manifest](api-state-replay-plan.csv) describes how the state is verified.
 
 ## Primary roles
 

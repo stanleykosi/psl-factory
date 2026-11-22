@@ -105,7 +105,8 @@ def checked_result(work,actor,selected=None,current=True):
         expected={'payroll':p.pk,'reference':r.reference,'declared_sha256':digest([[x.payload['employee_id'],x.payload['component']] for x in rules]),'rule_ids':sorted(inputs['rule_ids'])} if inputs['mode']=='staff' else {'parent':p.pk,'reference':r.reference,'comparison':inputs['comparison']}
         if r.actor_id!=work.execution_actor.pk or r.reference!='factory-bu-'+str(work.pk) or r.metadata['intent']!=expected:raise ValidationError('Exact native BU working result differs')
         # Selected source already validates this reader's exact payroll/event scope.
-        if current:native.current(r)
+        if current:
+            native.current(r, checked_payroll=p if inputs['mode'] == 'staff' else None)
     return r
 
 def _verify_selected(work,actor,r,review):
@@ -137,8 +138,17 @@ def report(work,actor=None,selected=None):
         state['stage']='calculate';r=checked_result(work,actor,selected,current=False)
         if not r:raise ValidationError('Prepare exact native BU result')
         state['result']={'id':r.pk,'kind':r.kind,'status':r.metadata['status'],'codes':r.metadata['codes']};state['subjects'].append({'id':r.pk,'kind':r.kind})
-        state['stage']='result_review';approval=native.review_current(r)
-        if r.metadata.get('historical'):state['stage']='historical_review';native.review_current(r,'historical')
+        state['stage'] = 'result_review'
+        if inputs['mode'] == 'staff':
+            approval = native.review_after_staff_inputs(r, p, rules)
+        else:
+            approval = native.review_current(r)
+        if r.metadata.get('historical'):
+            state['stage'] = 'historical_review'
+            if inputs['mode'] == 'staff':
+                native.review_after_staff_inputs(r, p, rules, 'historical')
+            else:
+                native.review_current(r, 'historical')
         p=publication(work)
         if not p:
             state['stage']='disclosure_held';native.disclosure_for(r)
@@ -148,10 +158,12 @@ def report(work,actor=None,selected=None):
     except (ValidationError,PermissionDenied) as exc:state['finding']=finding(exc)
     return state
 
-def snapshot(work,value,reader=None):
+def snapshot(work,value,reader=None,*,state=None):
     from .factory import access
     actor=reader or work.execution_actor;access(actor,work.case,'factory.read' if reader else 'factory.execute',DEFINITION)
-    selected=source(work,actor);state=report(work,actor,selected);latest={KIND:work.source_head}
+    if state is None:
+        state = report(work, actor)
+    latest={KIND:work.source_head}
     missing=[k for k in value['required_evidence_kinds'] if k not in latest];stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     observed={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':state,'checks':{'stage':state['stage']}}
     observed['hash']=digest(observed);observed['work_revision']=work.revision

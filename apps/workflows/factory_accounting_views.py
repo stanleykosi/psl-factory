@@ -256,11 +256,12 @@ def _presentation(actor,work,*,include_progress=False):
     for task in tasks:
         task.exact_review=task.can_claim=task.can_decide=False;task.verdicts=[]
         task.label = 'Review ' + REVIEW_LABELS.get(task.context.get('purpose'), 'Finance evidence')
-        if value is None or task.status!='open':continue
+        if not current or task.status != 'open':
+            continue
         try:
-            row=service.review_task(work,task,value,reader=actor)
+            _, review_packet = service.matching_review_task(work, task, value, observed)
             task.exact_review=True
-            candidate=next((c for c in service.route(work,row,value) if c['id']==actor.pk),None)
+            candidate = next((row for row in review_packet['candidates'] if row['id'] == actor.pk), None)
         except (ValidationError,PermissionDenied):continue
         if candidate:
             task.can_claim=task.claimed_by_id is None;task.can_decide=task.claimed_by_id==actor.pk;task.verdicts=list(candidate['decisions'])

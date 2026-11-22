@@ -16,6 +16,17 @@ class StateReplayRunner(ContractRunner):
         if self.active_test is not None:
             self.responses[self.active_test][f'{identity}:{status}'] += 1
 
+    def report(self, row, passed):
+        observed = self.responses[row['test']]
+        missing = Counter(row['required_responses'].split()) - observed
+        status = 'passed' if passed and not missing else 'failed'
+        self.failed += status == 'failed'
+        print(MARKER + json.dumps({
+            **row, 'result': status, 'observed': sorted(observed.items()),
+            'missing': sorted(missing.items()), 'deployment': os.getenv('RAILWAY_DEPLOYMENT_ID', ''),
+            'revision': os.getenv('PSL_API_STATE_REVISION', ''),
+        }, separators=(',', ':')), flush=True)
+
     def get_resultclass(self):
         replay = self
 
@@ -30,6 +41,8 @@ class StateReplayRunner(ContractRunner):
 
             def stopTest(self, test):
                 replay.active_test = None
+                for row in replay.cases.pop(test.id(), ()):
+                    replay.report(row, test.id() in replay.passed)
                 super().stopTest(test)
 
         return CaseResult
@@ -45,17 +58,13 @@ class StateReplayRunner(ContractRunner):
         if not selected or set(test_labels) != {row['test'] for row in selected}:
             raise ValueError('The selected tests must equal the manifest for this replay suite.')
         self.responses = defaultdict(Counter)
-        self.passed = set()
-        result = super().run_tests(test_labels, **kwargs)
-        failed = 0
+        self.cases = defaultdict(list)
         for row in selected:
-            observed = self.responses[row['test']]
-            missing = Counter(row['required_responses'].split()) - observed
-            status = 'passed' if row['test'] in self.passed and not missing else 'failed'
-            failed += status == 'failed'
-            print(MARKER + json.dumps({
-                **row, 'result': status, 'observed': sorted(observed.items()),
-                'missing': sorted(missing.items()), 'deployment': os.getenv('RAILWAY_DEPLOYMENT_ID', ''),
-                'revision': os.getenv('PSL_API_STATE_REVISION', ''),
-            }, separators=(',', ':')), flush=True)
-        return max(result, failed)
+            self.cases[row['test']].append(row)
+        self.passed = set()
+        self.failed = 0
+        result = super().run_tests(test_labels, **kwargs)
+        for rows in self.cases.values():
+            for row in rows:
+                self.report(row, False)
+        return max(result, self.failed)

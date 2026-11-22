@@ -66,8 +66,10 @@ class AccountingRecoveryTests(TestCase):
         self.assertContains(self.client.get(url), 'Finance reviewer needed')
         self.assertContains(self.client.get(url), 'Claim Finance review')
         api = f'/api/v1/work/{work.pk}/accounting'
-        held = self.client.get(api).json()
-        self.assertEqual(held['state'], 'Finance reviewer needed')
+        held_response = self.client.get(api)
+        self.assertEqual(held_response.status_code, 200, held_response.content)
+        held = held_response.json()
+        self.assertEqual(self.client.get(f'/api/v1/work/{work.pk}').json()['state'], 'owner_needed')
         self.assertTrue(held['can_recheck_reviewers'])
         task = accounting.claim(a, task.pk, task.revision)
         accepted = accounting.decide(a, task.pk, task.revision, 'approve', e['finance_review'].pk,
@@ -83,7 +85,6 @@ class AccountingRecoveryTests(TestCase):
                                        'schema:psl/role-assignment/v1', {'role': 'Finance', 'user_id': reviewer.pk},
                                        e['policy_decision'].pk)
         activate(a, c, 'D05.role_principal_assignments', ['finance:human', reference.ref], e['policy_decision'])
-        recovery = reverse('factory_invoice_recovery', args=[work.pk])
         response = self.client.post(api, {'action': 'recheck_reviewers', 'expected_revision': work.revision},
                                     content_type='application/json')
         self.assertEqual(response.status_code, 200, response.content)
@@ -96,7 +97,9 @@ class AccountingRecoveryTests(TestCase):
         current = HumanTask.objects.get(case=c, status='open', context__purpose='source')
         self.assertEqual([candidate['id'] for candidate in current.context['packet']['candidates']], [reviewer.pk])
         self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=work).exists())
-        self.assertIn(current.pk, [item['id'] for item in self.client.get(api).json()['tasks']])
+        routed = self.client.get(api)
+        self.assertEqual(routed.status_code, 200, routed.content)
+        self.assertIn(current.pk, [item['id'] for item in routed.json()['tasks']])
 
     def test_return_requires_explicit_source_owned_recheck_preserving_history_and_allowance(self):
         from apps.documents.models import Publication
@@ -159,7 +162,7 @@ class AccountingRecoveryTests(TestCase):
             deliveries=0
             def deliver(self,job_id,fence):
                 active_pages.append(client.get(url))
-                active_readbacks.append(client.get(api).json())
+                active_readbacks.append(client.get(api))
                 self.deliveries+=1
                 raise TimeoutError('Synthetic connection lost before any inbox commit')
 
@@ -168,9 +171,10 @@ class AccountingRecoveryTests(TestCase):
         adapter=LostBeforeCommit();factory.run_until_wait(work.pk,adapter=adapter)
         work.refresh_from_db();self.assertEqual(work.status,'waiting_effect',work.finding);self.assertEqual(adapter.deliveries,1)
         self.assertContains(active_pages[0], 'Report delivery is in progress.')
-        self.assertEqual(active_readbacks[0]['current_activity'],
+        self.assertEqual(active_readbacks[0].status_code, 200, active_readbacks[0].content)
+        self.assertEqual(active_readbacks[0].json()['current_activity'],
                          {'label': 'Report delivery is in progress.', 'watching': True})
-        self.assertIsNone(active_readbacks[0]['output_url'])
+        self.assertIsNone(active_readbacks[0].json()['output_url'])
         uncertain = self.client.get(url)
         self.assertContains(uncertain, 'Delivery is uncertain. Check the original report receipts.')
         self.assertNotContains(uncertain, 'Report delivery is in progress.')
@@ -204,13 +208,14 @@ class FactoryAccountingTests(TestCase):
                 activity = selection['activity']
                 if activity in ('ACT04', 'ACT08', 'ACT09') and activity not in observed_phases:
                     observed_phases[activity] = client.get(url)
-                    activity_api[activity] = client.get(work_api).json()['current_activity']
+                    activity_api[activity] = client.get(work_api)
                 return selection
 
         self.assertNotContains(client.get(url), 'Investigating the accounting sources.')
         factory.run_until_wait(work.pk, provider=InspectNativeClaim())
         self.assertContains(observed_phases['ACT04'], 'Investigating the accounting sources.')
-        self.assertEqual(activity_api['ACT04']['label'], 'Investigating the accounting sources.')
+        self.assertEqual(activity_api['ACT04'].status_code, 200, activity_api['ACT04'].content)
+        self.assertEqual(activity_api['ACT04'].json()['current_activity']['label'], 'Investigating the accounting sources.')
         self.assertContains(observed_phases['ACT08'], 'Calculating the accounting figures.')
         self.assertNotIn('ACT09', observed_phases)
         task=HumanTask.objects.get(case=c,kind='factory_accounting_review',status='open')
@@ -223,7 +228,8 @@ class FactoryAccountingTests(TestCase):
         self.assertEqual(response.status_code,302)
         factory.run_until_wait(work.pk, provider=InspectNativeClaim());work.refresh_from_db()
         self.assertContains(observed_phases['ACT09'], 'Drafting the accounting report.')
-        self.assertEqual(activity_api['ACT09']['label'], 'Drafting the accounting report.')
+        self.assertEqual(activity_api['ACT09'].status_code, 200, activity_api['ACT09'].content)
+        self.assertEqual(activity_api['ACT09'].json()['current_activity']['label'], 'Drafting the accounting report.')
         self.assertEqual(work.status,'verified',work.finding)
         output=FinanceRun.objects.filter(case=c,kind='formula').latest('pk')
         self.assertEqual(output.result['company']['pbt']['value'],'609.99')

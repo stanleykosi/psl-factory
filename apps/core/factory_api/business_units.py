@@ -9,6 +9,7 @@ from adapters.bu import EXPORT
 from adapters.forecast import KEY
 from apps.core.models import Case
 from apps.core.read_budget import limit_queries
+from apps.core.read_observation import read_observation
 from apps.finance import bu as domain
 from apps.finance.models import BUReceipt, BUWork, FinanceRun, PayrollRun
 from apps.identity.services import active_case_grants, require
@@ -93,11 +94,13 @@ SUBJECT = obj({'id': ID, 'kind': choice('source', 'rule', 'event', 'staff'),
     'currency': nullable(TEXT), 'review_subjects': array(SUBJECT), 'proofs': array(PROOF, limit=35),
     'can_publish': BOOLEAN, 'can_correct': BOOLEAN, 'verified_at': nullable(DATETIME)}),
     summary='Read current scoped BU input, review or aggregate receipt without exposing private working rows')
+@read_observation
 def detail(request, work_id):
     actor = request.user
     work = require_line(actor, work_id, native.DEFINITION)
     with limit_queries(1500):
-        panel = presentation(actor, work)['bu']
+        observed = presentation(actor, work)
+        panel = observed['bu']
         if panel.get('restricted'):
             raise PermissionDenied
         common = {'expected_revision': work.revision, 'case_revision': work.case.revision,
@@ -124,7 +127,7 @@ def detail(request, work_id):
         result = panel.get('result')
         totals = scope = None
         if result and result['status'] == 'complete':
-            row = native.checked_result(work, actor)
+            row = native.checked_result(work, actor, selected=observed['bu_selection'])
             if row is not None:
                 totals, scope = row.payload['by_bu'], row.metadata['scope']
         response = {**result, 'totals': totals, 'scope': scope} if result else None

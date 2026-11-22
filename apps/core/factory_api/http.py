@@ -113,7 +113,7 @@ def multipart_body(request, schema):
 def validation_problem(exc):
     message = exc.messages[0]
     prefix, _, reason = message.partition(':')
-    if prefix in {'STALE_VERSION', 'CONFLICT', 'IDEMPOTENCY_CONFLICT'}:
+    if prefix in {'STALE_VERSION', 'STALE_EVIDENCE', 'CONFLICT', 'IDEMPOTENCY_CONFLICT'}:
         return error(409, prefix.lower(), reason.strip() or 'Reload and check the current record.')
     if message.startswith('Stale revision'):
         return error(409, 'stale_version', 'Reload and check the current record.')

@@ -12,6 +12,7 @@ from apps.core.presentation import workspace_name
 from apps.core.workbench import granted
 from apps.identity.services import active_case_grants
 from apps.core.read_budget import ReadLimit, limit_queries
+from apps.core.read_observation import read_observation
 from apps.workflows import (
     factory, factory_accounting, factory_change, factory_commercial, factory_emergency, factory_escalation,
     factory_forecast, factory_go_live, factory_handover, factory_leadership, factory_minutes, factory_planning,
@@ -154,6 +155,7 @@ def bound_work(actor, work_id):
     return get_object_or_404(factory_views.visible(actor, work_id=work_id))
 
 
+@read_observation
 def observed_work(actor, work_id):
     work = bound_work(actor, work_id)
     if work.definition == DEPARTMENT_HANDOFF:
@@ -166,10 +168,10 @@ def observed_work(actor, work_id):
     try:
         with limit_queries(1400, deadline=monotonic() + 8):
             row = factory_views.presentation(actor, work, include_progress=True)
-            if work.definition == 'finance-bu/v1' and not row['bu'].get('recipient_only'):
+            if work.definition == 'finance-bu/v1' and not (row['bu'].get('restricted') or row['bu'].get('recipient_only')):
                 from apps.workflows.factory_bu_views import investigation_progress
 
-                row['bu']['progress'] = investigation_progress(actor, work)
+                row['bu']['progress'] = investigation_progress(actor, work, state=row.get('bu_observation'))
     except ReadLimit:
         raise Problem(503, 'read_limited', 'The work details exceeded the current read limit. Try again.') from None
     protected = row.get(RESTRICTED_LINES.get(work.definition), {})

@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Recorded 246 state passes and targeted 16 remaining state failures. Kept stale invoice evidence as a conflict and reduced repeated lineage checks in the private Finance, Business Unit and Emergency reads. Streamed state evidence as each case completes. [Per-state ledger](docs/design/api-state-replay-results.csv)
+
 22 November 2026. Finished the 262-state assertion manifest, corrected the active delegation source, and wired dated bid team inputs, invoice preparation replacement, exact recipient comparison and authorised worker activity to existing domain services. [Replay plan](docs/design/api-state-replay-plan.csv)
 
 22 November 2026. Added isolated, schema-checked Railway replay and individual results for the 262 design states. Recorded the first 94 observations and added private notification receipts and exact pending bid readback. [State results](docs/design/api-state-replay-results.csv)

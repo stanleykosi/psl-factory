@@ -93,6 +93,7 @@ class ContractTests(SimpleTestCase):
         import json
         from django.conf import settings
         from apps.core.management.commands.export_factory_api import coverage
+        from tests.api_state_plan import read_plan
 
         snapshot = settings.BASE_DIR / 'contracts/psl-factory.openapi.json'
         self.assertEqual(json.loads(snapshot.read_text(encoding='utf-8')), SPEC)
@@ -100,6 +101,14 @@ class ContractTests(SimpleTestCase):
         self.assertEqual((index['inventory'], index['screen_groups']), (262, 59))
         self.assertEqual((index['screen_groups_with_native_steps'], index['states_in_groups_with_native_steps']), (0, 0))
         self.assertTrue(all(state['json'] for state in index['states']))
+        inventory, assertions = read_plan()
+        self.assertEqual(len(assertions), len(inventory))
+        operations = {entry['operationId']: entry['responses']
+                      for path in SPEC['paths'].values() for entry in path.values()}
+        for row in assertions:
+            for response in row['required_responses'].split():
+                name, status = response.split(':')
+                self.assertIn(status, operations[name], row['state_id'])
         self.assertEqual(len(index['processes']), 108)
         self.assertEqual(sum(row['execution'] == 'native_source_event' for row in index['processes']), 63)
         for row in index['processes']:

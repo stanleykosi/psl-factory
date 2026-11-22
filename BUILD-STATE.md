@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Focused API replay retest · 22 November 2026
+
+Railway verified 246 of 262 states. The 16 recorded failures are in stale invoice approval, accounting, Business Unit and Emergency. The current changes restore live accounting activity and remove repeated exact authority and source checks from bounded reporting reads. [Per-state ledger](docs/design/api-state-replay-results.csv)
+
 ## Full-inventory API replay checkpoint · 22 November 2026
 
 Railway has verified 177 of 262 states. The replay manifest defines exact assertions for all 262. The latest application changes fix active delegation lookup and expose bid team inputs, invoice source replacement, reviewer recipient comparison and scoped worker activity. The next acceptance batch covers the 85 unverified states on isolated PostgreSQL. [State results](docs/design/api-state-replay-results.csv)

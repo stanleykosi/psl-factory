@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Final API replay retest · 22 November 2026
+
+The third Railway run `1404c62b-b711-4c04-95ee-50a899892881` brought the ledger to 246 passing and 16 failed states. The remaining assertions cover stale invoice approval, active and verified accounting, Business Unit privacy and review, and the Emergency implementation and report. The next batch retests just those 16. Finance and Emergency source checks now reuse their exact validated facts within each read. Keep the 246 passing observations pinned to their Railway revisions. HOD choices remain deferred. [Per-state ledger](docs/design/api-state-replay-results.csv)
+
 ## Full-inventory API replay checkpoint · 22 November 2026
 
 The first two isolated Railway runs establish 177 passing, six failed and 79 pending states. Every state now has a named replay case in the manifest. OpenAPI 1.22.0 adds dated bid team input, source-owned invoice preparation replacement, Finance recipient comparison and authorised current worker activity. The next Railway batch should replay the 85 states without passing evidence. Reconcile its logs against the manifest before continuing and keep the Django walkthrough evidence separate. HOD choices remain deferred. [Replay plan](docs/design/api-state-replay-plan.csv) · [State results](docs/design/api-state-replay-results.csv)

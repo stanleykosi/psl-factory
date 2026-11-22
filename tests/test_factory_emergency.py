@@ -65,7 +65,9 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
         api = f'/api/v1/work/{self.work.pk}/emergency'
         def record(action, **fields):
-            current = self.client.get(api).json()
+            options = self.client.get(api)
+            self.assertEqual(options.status_code, 200, options.content)
+            current = options.json()
             result = self.client.post(api, {'action': action, 'profile_id': self.profile.pk,
                 'expected_revision': current['expected_revision'], 'case_revision': current['case_revision'],
                 **fields}, content_type='application/json')
@@ -89,7 +91,9 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         proof=self.finish_report();self.assertEqual(proof['retrospective_record'],retrospective)
         before=self.work.revision;self.assertContains(self.client.get(url),'Inspect the recorded retrospective outcome');self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
         self.assertTrue(self.work.activities.filter(kind='ACT04',status='succeeded').exists())
-        self.assertEqual(self.client.get(f'/api/v1/work/{self.work.pk}').json()['state'], 'verified')
+        readback = self.client.get(f'/api/v1/work/{self.work.pk}')
+        self.assertEqual(readback.status_code, 200, readback.content)
+        self.assertEqual(readback.json()['state'], 'verified')
 
     def test_current_cto_refusal_holds_preauthorization_and_preserves_actual_outcome_capture(self):
         from tests.document_helpers import artifact
@@ -145,7 +149,9 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         self.assertIsNotNone(version)
         self.client.force_login(self.actor)
         api = f'/api/v1/work/{self.work.pk}'
-        prepared = self.client.get(api + '/emergency').json()
+        readback = self.client.get(api + '/emergency')
+        self.assertEqual(readback.status_code, 200, readback.content)
+        prepared = readback.json()
         self.assertEqual(prepared['document_version_id'], version.pk)
         decision = self.client.post(api + '/reviews', {'kind': 'document',
             'expected_revision': prepared['expected_revision'], 'case_revision': prepared['case_revision'],

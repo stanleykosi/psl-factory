@@ -217,7 +217,7 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
         return rfp_presentation(actor,work)
     if work.definition=='finance-accounts/v1':
         from .factory_accounting_views import presentation as accounting_presentation
-        return accounting_presentation(actor,work)
+        return accounting_presentation(actor, work, include_progress=include_progress)
     from .factory_execution import available_actor,can_control
     execution_owner=available_actor(work);controlled=can_control(actor,work)
     execution_profile=None

@@ -91,7 +91,11 @@ def stable_retrospective(snapshot):
     result.pop('authority_recovery_id',None);return result
 
 def completed(work,data):
-    actual=outcome(work,data);current=native.retrospective_inputs(work.case,actual)
+    return completed_retrospective(work, outcome(work, data))
+
+
+def completed_retrospective(work, actual):
+    current = native.retrospective_inputs(work.case, actual)
     record=EmergencyRetrospectiveRecord.objects.filter(outcome=actual).first()
     if not record:raise ValidationError('Await native human reconciliation of the actual review-bound retrospective')
     if stable_retrospective(record.snapshot)!=stable_retrospective(current):raise ValidationError('Native retrospective source, decisions or timing changed; use source-owned recovery without rewriting history')
@@ -111,8 +115,14 @@ def principal(work,value,name):
     return u
 
 def published(work,actor=None):
+    _, data = source(work, actor)
+    return exact_publication(work, data, completed(work, data))
+
+
+def exact_publication(work, data, completion):
     from .factory import profile
-    _,data=source(work,actor);actual,record,current=completed(work,data);v=document(work)
+    actual, record, current = completion
+    v = document(work)
     if not v:raise ValidationError('Await exact controlled retrospective report')
     b=EmergencyDocumentBinding.objects.get(version=v)
     if b.outcome_id!=actual.pk or v.audience!=data['inputs']['audience'] or v.template_id!=data['inputs']['template_id']:raise ValidationError('Exact outcome, template and explicit report audience required')
@@ -124,7 +134,7 @@ def published(work,actor=None):
     if not receipts or {x.recipient_id for x in receipts}!=set(recipients) or any(x.payload!=v.payload or x.payload_sha256!=v.payload_sha256 for x in receipts):raise ValidationError('Every exact retrospective recipient receipt is required')
     return actual,record,current,v,p,receipts
 
-def report(work,actor=None):
+def report(work, actor=None, *, include_evidence=True):
     p,data=source(work,actor);auth=EmergencyAuthorization.objects.filter(pk=data['inputs']['authorization_id'],profile=p).first()
     result={'profile':p.pk,'change_version':p.version_id,'critical_production':p.critical_production,'p1':p.p1,'authorization':auth.pk if auth else None,'outcome':data['inputs']['outcome_id'],'stage':'preauthorization','finding':'','deployment_dispatched':False,'ordinary_change_closed':False}
     if not data['inputs']['outcome_id']:
@@ -140,13 +150,17 @@ def report(work,actor=None):
             result['stage']='implementation';result['finding']='Record actual past implementation evidence, then explicitly select that native outcome'
         except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
         return result
-    actual=outcome(work,data);result.update(stage='retrospective',implemented_at=actual.implemented_at.isoformat(),logged_at=actual.created_at.isoformat(),authorization_preceded_implementation=bool(actual.authorization_id and actual.authorization.created_at<=actual.implemented_at),timing=native.timing(work.case,actual))
-    evidence=LocalEmergencyEvidenceAdapter().read(work.case,actual);result['manifest']=evidence['manifest'];result['source_evidence_ids']=evidence['source_evidence_ids']
+    actual=outcome(work,data);result.update(stage='retrospective',implemented_at=actual.implemented_at.isoformat(),logged_at=actual.created_at.isoformat(),authorization_preceded_implementation=bool(actual.authorization_id and actual.authorization.created_at<=actual.implemented_at))
+    if include_evidence:
+        result['timing'] = native.timing(work.case, actual)
+        evidence = LocalEmergencyEvidenceAdapter().read(work.case, actual)
+        result.update(manifest=evidence['manifest'], source_evidence_ids=evidence['source_evidence_ids'])
     try:
-        _,record,current=completed(work,data);result.update(stage='report',retrospective_record=record.pk,retrospective_status=record.snapshot['status'],authority_recovery_id=current.get('authority_recovery_id'))
+        completion = completed_retrospective(work, actual)
+        _,record,current=completion;result.update(stage='report',retrospective_record=record.pk,retrospective_status=record.snapshot['status'],authority_recovery_id=current.get('authority_recovery_id'))
         if not data['inputs']['template_id'] or not data['inputs']['audience']:
             result['report_setup_needed'] = True
-        published(work,actor);result['stage']='complete'
+        exact_publication(work, data, completion);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
 
@@ -419,12 +433,13 @@ def restart(actor,work_id,expected,case_expected,reason):
     old=w.source_head_id;w.source_head=capture(actor,case,p,data['inputs'],'factory.emergency_source');w.cancel_requested=False;w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
     event(actor,case,'factory.emergency_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
-def projection(actor,work):
+@read_observation
+def projection(actor, work, *, include_worker=True):
     from .factory import access,profile
     from apps.policy.services import decision_authority
     access(actor,work.case,'factory.read',DEFINITION);p,data=source(work,actor,False);v=document(work)
     issue='';options=[];next_action='Review native Emergency prerequisites';current=True
-    try:source(work,actor);status=report(work,actor)
+    try:status=report(work,actor,include_evidence=include_worker)
     except (ValidationError,PermissionDenied) as exc:status={'stage':'source','finding':finding(exc)};issue=finding(exc);current=False
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'));receipts=list(PublicationReceipt.objects.filter(publication__version=v).order_by('pk')) if v else []
     idle=not (work.lease_until and work.lease_until>timezone.now());live=idle and not work.cancel_requested;verdicts=[]
@@ -435,13 +450,17 @@ def projection(actor,work):
                 try:decision_authority(actor,work.case,'PMO Lead',verdict);verdicts.append(verdict)
                 except (ValidationError,PermissionDenied):pass
         except (ValidationError,PermissionDenied):pass
-    try:
-        _,value=profile(work);state,*args=snapshot(work,value,reader=actor);options,next_action=eligible(work,value,state,*args)
-    except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
+    if include_worker and work.status != 'verified':
+        try:
+            _,value=profile(work);state,*args=snapshot(work,value,reader=actor);options,next_action=eligible(work,value,state,*args)
+        except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
     changed=False
     if work.status=='verified':
-        try:verify(work,actor);next_action='Inspect the recorded retrospective outcome and exact report receipts'
-        except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
+        if status['stage'] == 'complete':
+            next_action = 'Inspect the recorded retrospective outcome and exact report receipts'
+        else:
+            changed = True
+            issue = status['finding']
     can_correct=False;can_restart=False
     try:
         require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')

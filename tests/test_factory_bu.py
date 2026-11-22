@@ -154,7 +154,9 @@ class FactoryBUTests(TestCase):
         self.assertContains(page,'Small-group protection holds the whole report')
         self.assertNotContains(page,'Publish exact aggregate')
         self.assertFalse(BUReport.objects.exists())
-        api = self.client.get(f'/api/v1/work/{self.work.pk}/business-units').json()
+        projection = self.client.get(f'/api/v1/work/{self.work.pk}/business-units')
+        self.assertEqual(projection.status_code, 200, projection.content)
+        api = projection.json()
         self.assertFalse(api['can_publish'])
         self.assertEqual(api['result']['id'], bu.result(self.work).pk)
     def test_known_exception_omitted_holds_not_zero_or_previous_ratio(self):
@@ -219,7 +221,9 @@ class FactoryBUTests(TestCase):
         old = bu.result(self.work)
         self.client.force_login(f['reviewer'])
         url = f'/api/v1/work/{self.work.pk}'
-        plan = self.client.get(url + '/business-units').json()
+        opened = self.client.get(url + '/business-units')
+        self.assertEqual(opened.status_code, 200, opened.content)
+        plan = opened.json()
         body = {'kind': 'business_unit', 'work_id': old.pk, 'purpose': old.kind, 'verdict': 'return',
                 'operation_key': 'api-bu-return', 'evidence_id': f['e']['bu_review'].pk,
                 **{key: plan[key] for key in ('expected_revision', 'case_revision')}}

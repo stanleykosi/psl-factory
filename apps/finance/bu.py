@@ -163,6 +163,13 @@ def checked_staff_rules(payroll,rules):
    raise ValidationError('Exception review requires the exact matched payroll and original rule.')
   _own_review(rule,'rule',checked_payroll=payroll)
 
+def review_after_staff_inputs(work, payroll, rules, purpose=None):
+ """Check a staff result against the exact payroll and independently reviewed rules."""
+ if (work.kind != 'staff' or work.payroll_id != payroll.pk or work.parent_id
+         or sorted(work.metadata.get('rule_ids', [])) != sorted(rule.pk for rule in rules)):
+  raise ValidationError('Staff result does not match the checked payroll and exception rules.')
+ return _own_review(work, purpose, checked_payroll=payroll)
+
 @transaction.atomic
 def staff(actor,case_id,payroll_id,reference,key,declared,rule_ids,expected):
  c=locked(actor,case_id,'bu.staff',expected);p=pr.exact(c,PayrollRun,payroll_id)

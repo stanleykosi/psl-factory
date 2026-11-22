@@ -123,7 +123,7 @@ def detail(request, work_id):
     actor = request.user
     work = require_line(actor, work_id, workflow.DEFINITION)
     with limit_queries(900):
-        panel = workflow.projection(actor, work)
+        panel = workflow.projection(actor, work, include_worker=False)
         profile = panel['profile']
         status = panel['status']
         grants = {action for _, action in active_case_grants(actor, [work.case_id])}
