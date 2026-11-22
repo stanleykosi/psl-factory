@@ -2,12 +2,12 @@
   "frontend_cutover_delivery_and_payroll_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.4.0",
-    "live_paths": 136,
-    "live_operations": 177,
-    "added_operations": 36,
-    "completed_groups": ["SCR-28", "SCR-43", "SCR-44", "SCR-47", "SCR-48", "SCR-49"],
-    "screen_groups_with_remaining_json": 43,
-    "states_in_groups_with_remaining_json": 225,
+    "live_paths": 137,
+    "live_operations": 178,
+    "added_operations": 37,
+    "completed_groups": ["SCR-23", "SCR-28", "SCR-43", "SCR-44", "SCR-47", "SCR-48", "SCR-49"],
+    "screen_groups_with_remaining_json": 42,
+    "states_in_groups_with_remaining_json": 224,
     "remaining_detail": "contracts/factory-api-screen-map.json",
     "test_record": "BUILD-TESTS.md",
     "next": [

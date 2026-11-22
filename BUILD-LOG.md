@@ -1,6 +1,6 @@
 # Build progress log
 
-22 November 2026. Added OpenAPI 1.4.0 commands for Planning and Delivery, release stability, private archive recovery, Support and closure. Added source-owner payroll upload and exact private row paging, including HR receipt and publication follow-up commands. Added Setup appointment drafts and policy version review. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+22 November 2026. Added OpenAPI 1.4.0 commands for Planning and Delivery, release stability, private archive recovery, Support and closure. Added source-owner payroll upload and exact private row paging, including HR receipt and publication follow-up commands. Added Setup appointment drafts and policy version review, and exact original received bid readback. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Completed the 34-test Railway cutover run. Added 26 APIs for project records, exact source selection, private minutes, controlled report publication and scoped invoice and access recovery. Recorded PostgreSQL results and the remaining workflow actions in the cutover map. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)
 

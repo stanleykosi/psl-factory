@@ -104,6 +104,48 @@ class FreshBidIntakeTests(TestCase):
             self.assertFalse(self.client.get(url + '/organisations').json()['items'])
             self.assertEqual(self.client.post(url,{**self.command,'document':pdf_file()}).status_code,403)
 
+    def test_api_retains_the_original_private_receipt_and_rechecks_download_authority(self):
+        document = pdf_file()
+        original = document.read()
+        document.seek(0)
+        with patch('adapters.case_uploads.put'):
+            recorded = self.client.post('/api/v1/received-bids', {**self.command, 'document': document})
+        self.assertEqual(recorded.status_code, 200, recorded.content)
+        intake = RFPIntake.objects.get(pk=recorded.json()['receipt_id'])
+        case = intake.rfp.case
+        url = f'/api/v1/received-bids/{case.pk}/receipts/{intake.pk}'
+        exact = self.client.get(url)
+        self.assertEqual(exact.status_code, 200, exact.content)
+        self.assertTrue(exact.json()['current'])
+        download = exact.json()['original']['download_url']
+        self.assertEqual(exact.json()['original']['bytes'], len(original))
+        self.assertEqual(exact.json()['customer_instructions']['submission_target'], 'procurement@example.invalid')
+        self.assertNotContains(exact, PRIVATE_TEXT)
+
+        source = add_evidence(self.recorder, case.pk, 'rfp_intake', 'Later received version.', 'synthetic:successor')
+        successor = rfp.intake(self.recorder, case.pk, intake.rfp.reference, source.pk, self.received,
+                               'not_stated', None, None, 'The successor states no deadline.', rev(case))
+        history = self.client.get(url).json()
+        self.assertFalse(history['current'])
+        self.assertEqual(history['deadline_status'], 'unknown')
+        self.assertEqual(self.client.get(f'/api/v1/received-bids/{case.pk}/receipts/{successor.pk}').status_code, 404)
+
+        reader = get_user_model().objects.create_user('sample-original-bid-reader')
+        Grant.objects.bulk_create(Grant(case=case, user=reader, action=action) for action in ['case.read', 'rfp.read'])
+        self.client.force_login(reader)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        Grant.objects.create(case=case, user=reader, action='document.read')
+        self.assertEqual(self.client.get(url).status_code, 200)
+        uploader_grant = Grant.objects.filter(case=case, user=self.recorder, action='evidence.add')
+        uploader_grant.update(active=False)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.get(download).status_code, 403)
+        uploader_grant.update(active=True)
+        with patch('adapters.case_uploads.read', return_value=original):
+            response = self.client.get(download)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(b''.join(response.streaming_content), original)
+
     def test_start_work_records_one_new_workspace_with_exact_private_file(self):
         self.assertEqual(connection.vendor, 'postgresql')
         self.assertFalse(Grant.objects.filter(user=self.recorder).exists())

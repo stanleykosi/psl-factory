@@ -2,9 +2,9 @@
 
 ## OpenAPI Delivery and restricted payroll · 22 November 2026
 
-OpenAPI 1.4.0 covers 177 operations on 136 paths. The 36 added operations connect Planning sources and approvals, release readiness, Go-live replies and milestone mapping, stability observations, archive receipts, Support replies, corrected closure and restricted payroll imports and working rows. Setup exposes business appointment drafts and policy lifecycle actions. Existing Django forms and API routes use the same workflow services. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+OpenAPI 1.4.0 covers 178 operations on 137 paths. The 37 added operations connect Planning sources and approvals, release readiness, Go-live replies and milestone mapping, stability observations, archive receipts, Support replies, corrected closure and restricted payroll imports and working rows. Setup exposes business appointment drafts and policy lifecycle actions. Received bids expose an exact original receipt with an authenticated download. Existing Django forms and API routes use the same workflow services. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
-Six further groups have their mapped JSON actions. The 43 remaining groups include 225 states with at least one group-level gap. Continue with the gaps in the screen map. HOD choices on live values, authority and destinations remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Backlog](BUILD-BACKLOG.json)
+Seven further groups have their mapped JSON actions. The 42 remaining groups include 224 states with at least one group-level gap. Continue with the gaps in the screen map. HOD choices on live values, authority and destinations remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Backlog](BUILD-BACKLOG.json)
 
 ## OpenAPI project records and recovery · 22 November 2026
 

@@ -34,6 +34,7 @@ ROUTES = (
     ('processes', intake.processes),
     ('received-bids/organisations', received_bids.organisations),
     ('received-bids', received_bids.record),
+    ('received-bids/<uuid:case_id>/receipts/<int:receipt_id>', received_bids.receipt),
     ('received-bids/assignments', bid_assignments.pending),
     ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
     ('work', work.queue, intake.start),

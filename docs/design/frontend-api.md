@@ -63,7 +63,9 @@ The role dashboard supplies an `invite_url` for a team lead’s own position. It
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.4.0 describes 177 operations across 136 paths. The map records remaining JSON work in 43 groups covering 225 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.4.0 describes 178 operations across 137 paths. The map records remaining JSON work in 42 groups covering 224 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
+
+Use `GET /api/v1/received-bids/{case_id}/receipts/{receipt_id}` with the identifiers returned by received-bid intake. It identifies the exact version and gives the authenticated download link for the original. A later intake leaves the original receipt intact and changes its `current` indicator. Both reads enforce the owning bid service’s current access rules.
 
 The current API covers intake against exact native sources for all 25 existing factory work definitions. It also covers work and project readback, invoice and Accounting task claims and decisions, reviewed project and Finance document actions, minutes confirmation, bid pack and outcome handling, authorised receipt reconciliation, department chat, eight scoped file agents, client contacts, alerts and verified-channel preferences. Its invoice, Payroll and document commands use the same durable services and authority checks as the Django pages.
 

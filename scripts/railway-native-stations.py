@@ -103,7 +103,8 @@ def run(group, token, role_access):
             'tests.test_factory_payroll.FactoryPayrollTests.test_withdrawal_preserves_original_receipt_and_requires_new_reviewed_sources',
         ]
     elif group == 'setup-api':
-        modules = ['tests.test_factory_api.ContractTests', 'tests.test_policy_reviews_api']
+        modules = ['tests.test_factory_api.ContractTests', 'tests.test_policy_reviews_api',
+                   'tests.test_rfp_fresh_intake.FreshBidIntakeTests.test_api_retains_the_original_private_receipt_and_rechecks_download_authority']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',
