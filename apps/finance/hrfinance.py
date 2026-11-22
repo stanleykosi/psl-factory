@@ -83,9 +83,11 @@ def contract(actor,case_id,need_id,operation_key,evidence_id,expected):
  if e.pk!=rules['source_evidence_id']:raise ValidationError('Use the exact configured source-view contract evidence')
  for uid in p['recipient_ids']:
   from django.contrib.auth import get_user_model
+  from .hrfinance_recipient import recipient_scope
   u=get_user_model().objects.get(pk=uid)
-  for k in ['case.read','hrfinance.read','hrfinance.snapshot.read','hrfinance.receive']:require(u,c,k)
-  authority(u,c,'receive')
+  with recipient_scope(u,c,p['recipient_ids']):
+   for k in ['case.read','hrfinance.read','hrfinance.snapshot.read','hrfinance.receive']:require(u,c,k)
+   authority(u,c,'receive')
  auth=active_component(AUTHORITY,c)
  payload={**p,**{k:rules[k] for k in ['source_view','employee_key_semantics','effective_until_semantics','route','max_age_seconds','retention_seconds','retention_mode','correction_route']}}
  pins={DISCLOSURE:policy.pk,AUTHORITY:auth.pk}
@@ -156,12 +158,20 @@ def capture(actor,case_id,contract_id,operation_key,body,expected):
 
 @transaction.atomic
 def receive(actor,case_id,snapshot_id,operation_key,evidence_id,expected):
- c=locked(actor,case_id,'hrfinance.receive',expected);s=exact(c,HRReadSnapshot,snapshot_id);validate(KEY,operation_key);e=subject(c,evidence_id,'hr_disclosure_decision')
+ from .hrfinance_recipient import recipient_scope
+ from apps.core.models import Case
+ c=Case.objects.select_for_update().get(pk=case_id)
+ s=exact(c,HRReadSnapshot,snapshot_id)
+ with recipient_scope(actor,c,s.contract.payload['recipient_ids']):
+  return _receive(actor,c,s,operation_key,evidence_id,expected)
+
+def _receive(actor,c,s,operation_key,evidence_id,expected):
+ locked(actor,c.pk,'hrfinance.receive',expected);validate(KEY,operation_key);e=subject(c,evidence_id,'hr_disclosure_decision')
+ snapshot_access(actor,s);a=authority(actor,c,'receive')
  old=s.contract.records.filter(operation_key=operation_key).first()
  if old:
   if old.kind!='receipt' or old.snapshot_id!=s.pk or old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Receipt intent changed')
   return old
- read_snapshot(actor,s);a=authority(actor,c,'receive')
  from apps.workflows.native_stations import receive_advice
  receive_advice('F35',s.contract,actor,case=c)
  r=HRHandoffRecord.objects.create(contract=s.contract,snapshot=s,kind='receipt',operation_key=operation_key,payload={'sha256':s.sha256,'receipt_only':True,'hr_write':False},authority=a,evidence=e,actor=actor)

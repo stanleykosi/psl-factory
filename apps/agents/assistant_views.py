@@ -38,7 +38,7 @@ def department_records(request, persona, case_id):
         raise Http404
     cases = department_cases(request.user, PERSONA_ROLES[persona]).filter(pk=case_id)
     case = get_object_or_404(cases)
-    groups = registers(persona, cases)
+    groups = registers(persona, cases, request.user)
     selected = request.GET.get('group', groups[0].key if groups else '')
     group = next((item for item in groups if item.key == selected), None)
     if selected and group is None:

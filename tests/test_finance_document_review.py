@@ -87,7 +87,7 @@ class FinanceDocumentTests(TestCase):
         self.approve()
         self.assertEqual(approved.approved['full_control_total'], '325000')
         self.assertEqual([r['full_amount'] for r in approved.approved['rows']], ['250000','75000'])
-        group = next(g for g in registers('chidi', Case.objects.filter(pk=self.case.pk)) if g.key == 'finance_figure')
+        group = next(g for g in registers('chidi', Case.objects.filter(pk=self.case.pk), self.reviewer) if g.key == 'finance_figure')
         self.assertEqual(group.rows.count(), 2)
         self.assertIn('250000', group.source('chidi', group.matching_entries('Service').first())['fact'])
         result = service.handoff(self.reviewer, self.case, doc.pk, 'synthetic-company', 'accrual', 'complete')

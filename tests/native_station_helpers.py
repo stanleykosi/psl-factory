@@ -3,6 +3,7 @@
 import json
 import hashlib
 import os
+import re
 from pathlib import Path
 from unittest.mock import patch
 
@@ -25,8 +26,14 @@ def _providers(test):
         return
     if getattr(test, "live_provider", False):
         from django.db import connection
-        test.assertEqual((os.getenv("RAILWAY_SERVICE_NAME"), connection.settings_dict["NAME"]),
-                         ("psl-design-checks", "test_psl_specialist_loop"))
+        database = connection.settings_dict["NAME"]
+        test.assertEqual(os.getenv("RAILWAY_SERVICE_NAME"), "psl-design-checks")
+        if os.environ.get("PSL_STATION_SUITE") == "roles":
+            token = os.environ.get("PSL_STATION_RUN", "")
+            test.assertRegex(token, re.compile(r"\A[0-9a-f]{32}\Z"))
+            test.assertEqual(database, "test_psl_stations_roles_" + token)
+        else:
+            test.assertEqual(database, "test_psl_specialist_loop")
         test.assertEqual(os.getenv("PSL_STATION_LIVE"), "1")
         test.enterContext(patch.dict(os.environ, OPENROUTER_MODEL=os.environ["PSL_ACCEPTANCE_SOURCE_MODEL"],
                                      OPENROUTER_API_KEY=os.environ["PSL_ACCEPTANCE_SOURCE_KEY"]))
@@ -130,4 +137,7 @@ def finish_station(test, work, expected_receipt):
         test.assertEqual(hashlib.sha256(case_uploads.read(row)).hexdigest(), row.sha256)
     test.assertTrue(FactoryAttempt.objects.filter(activity__work=work, activity__kind="ACT13", phase="observed", result__station_receipt=receipt.pk).exists())
     print(f"Native station verified {station.process} -> {receipt.receiver_model}", flush=True)
+    if os.getenv("PSL_VERIFY_NATIVE_ROLES") == "1" and not getattr(test, "live_provider", False):
+        from tests.native_station_role_probe import verify_roles
+        verify_roles(test, work, expected_receipt)
     return receipt

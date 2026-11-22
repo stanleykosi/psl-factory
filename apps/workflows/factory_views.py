@@ -116,22 +116,23 @@ def intake(request):
         elif key.startswith('delivery-'):
             title = 'Delivery and closure'
         groups[title].append({**option, 'available': key in available})
-    response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
+    from .process_directory import entries
+    response=render(request,'factory/intake.html',{'options':options,'groups':groups,'processes':entries(available),'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
         'can_ask_tola': cases_for(request.user, 'tola').exists()})
     response['Cache-Control']='no-store';return response
 
 def work_grant_scope(actor, *, include_native=False):
     """Grant-level discovery scope. Protected native records may narrow it further."""
     from apps.agents.department_context import work_definitions
-    from apps.identity.factory_access import department_cases, role_cases
+    from apps.identity.factory_access import department_cases
     from apps.identity.models import Grant
     from apps.identity.services import visible_cases
 
     active(actor)
     scope=Q(pk__in=[])
     if include_native:
-        scope |= Q(definition='process-handoff/v1', case_id__in=role_cases(
-            actor, ['case.read','factory.read','agent.extract']).values('pk'))
+        from .native_station_access import candidates
+        scope |= Q(pk__in=candidates(actor).values('pk'))
     for persona, role in [('tola', 'pmo-lead'), ('chidi', 'finance-lead')]:
         scope |= Q(definition__in=work_definitions(persona), case_id__in=department_cases(actor, role).values('pk'))
     explicit = visible_cases(actor)
@@ -734,12 +735,13 @@ def index(request):
 def queue_context(actor, values, *, scope=None):
     from time import monotonic
     from django.core.paginator import Paginator
+    from apps.core.design_views import discoverable_work
     from apps.core.read_budget import ReadLimit, limit_queries
     from apps.core.read_observation import observation_scope
 
     params=work_queue_params(values)
     queue,q,line=params['queue'],params['q'],params.get('line','')
-    query=visible(actor) if scope is None else scope
+    query=discoverable_work(actor) if scope is None else scope
     known_lines = set(query.order_by().values_list('definition', flat=True).distinct())
     line_choices = sorted((key, value['title']) for key, value in DEFINITIONS.items() if key in known_lines)
     if line:query=query.filter(definition=line)
@@ -881,7 +883,7 @@ def create(request):
     if envelope == rfp_fresh_intake.LINE:
         from .factory_fresh_bid_views import create as log_bid
         return log_bid(request)
-    if envelope not in DEFINITIONS:raise Http404
+    if envelope not in {line for line, _, _, _ in INTAKES}:raise Http404
     if envelope=='rfp-response/v1':
         from .factory_rfp_views import create as create_rfp
         return create_rfp(request)

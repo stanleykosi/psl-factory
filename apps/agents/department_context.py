@@ -12,7 +12,6 @@ from apps.core.evidence_access import public_evidence
 from apps.core.models import Evidence
 from apps.identity.factory_access import PERSONA_ROLES, department_cases
 from apps.workflows.factory_definitions import DEFINITIONS
-from apps.workflows.models import FactoryWork
 
 
 @dataclass
@@ -81,10 +80,12 @@ def work_definitions(persona):
     return finance if persona == 'chidi' else set(DEFINITIONS) - finance - {'process-handoff/v1'} if persona == 'tola' else set()
 
 
-def registers(persona, cases):
+def registers(persona, cases, actor):
     if persona == 'zainab':
         return []
-    works = FactoryWork.objects.filter(case__in=cases, definition__in=work_definitions(persona))
+    from apps.core.design_views import discoverable_work
+
+    works = discoverable_work(actor).filter(case__in=cases, definition__in=work_definitions(persona))
     groups = [Register('work', 'Work in progress and completed work', works, '{definition} #{pk}',
                        'Recorded status: {status}. Last updated {updated_at}.')]
     if persona == 'tola':
@@ -199,7 +200,7 @@ def records(conversation, question=''):
     definitions = work_definitions(persona)
     result.extend(outcome_sources(conversation.actor,cases.values("pk"),definitions))
     result.extend(sources_for(conversation.actor,cases.values("pk"),definitions))
-    groups = registers(persona, cases)
+    groups = registers(persona, cases, conversation.actor)
     counts = []
     for group in groups:
         total = group.rows.count()

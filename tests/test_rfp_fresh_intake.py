@@ -82,6 +82,21 @@ class FreshBidIntakeTests(TestCase):
         for model in (Case, CaseIntake, RFPIntake, CaseUpload, Grant, Evidence):
             self.assertFalse(model.objects.exists(), model.__name__)
 
+    def test_api_and_form_share_the_original_file_receipt_and_delegation(self):
+        url = '/api/v1/received-bids'
+        orgs = self.client.get(url + '/organisations').json()['items']
+        self.assertEqual(orgs, [{'id':self.authority.pk,'organisation':self.authority.tenant}])
+        with patch('adapters.case_uploads.put') as put:
+            first = self.client.post(url, {**self.command, 'document':pdf_file()})
+            self.assertEqual(first.status_code,200,first.content)
+            second = self.client.post(self.url, {**self.command,'document':pdf_file()})
+            self.assertRedirects(second,first.json()['django_url'],fetch_redirect_response=False)
+            self.assertEqual(first.json()['receipt_id'], RFPIntake.objects.get().pk)
+            self.assertEqual(put.call_count,1)
+            self.client.force_login(self.administrator)
+            self.assertFalse(self.client.get(url + '/organisations').json()['items'])
+            self.assertEqual(self.client.post(url,{**self.command,'document':pdf_file()}).status_code,403)
+
     def test_start_work_records_one_new_workspace_with_exact_private_file(self):
         self.assertEqual(connection.vendor, 'postgresql')
         self.assertFalse(Grant.objects.filter(user=self.recorder).exists())

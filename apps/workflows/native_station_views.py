@@ -1,41 +1,48 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
-from django.views.decorators.http import require_safe
+from django.core.exceptions import ValidationError
+from django.contrib import messages
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods, require_safe
 from apps.agents.specialists import routes
-from apps.identity.factory_access import project_cases
-from apps.identity.services import require
-from .native_stations import DEFINITION, checked_work, current_receipt, readable
-from .models import FactoryWork
+from .native_station_access import acknowledge_finance, finance_acknowledgement, listed, project_scope, read_work
 
 
 @login_required
 @require_safe
 def project(request, case_id):
-    case = get_object_or_404(project_cases(request.user), pk=case_id)
-    require(request.user, case, "factory.read")
-    require(request.user, case, "agent.extract")
-    query = FactoryWork.objects.filter(definition=DEFINITION, case=case)
+    case = get_object_or_404(project_scope(request.user), pk=case_id)
     cursor = request.GET.get("before", "")
-    if cursor.isascii() and cursor.isdecimal() and len(cursor) <= 18:
-        query = query.filter(pk__lt=int(cursor))
-    candidates = list(query.select_related("native_station", "actor", "case").order_by("-pk")[:21])
-    rows = [(work, routes()[work.native_station.process]["original_title"]) for work in candidates[:20] if readable(request.user, work)]
+    before = int(cursor) if cursor.isascii() and cursor.isdecimal() and len(cursor) <= 18 else None
+    items, continuation = listed(request.user, case, before)
+    rows = [(work, routes()[work.native_station.process]["original_title"]) for work in items]
     response = render(request, "factory/project_handoffs.html", {
-        "case": case, "rows": rows, "cursor": candidates[19].pk if len(candidates) > 20 else None,
+        "case": case, "rows": rows, "cursor": continuation,
     })
     response["Cache-Control"] = "private, no-store"
     return response
 
 
+@require_http_methods(["GET", "HEAD", "POST"])
 def detail(request, work):
-    current = checked_work(work, request.user)
-    receipt = current_receipt(work, current)
+    work, current, receipt = read_work(request.user, work.pk)
+    if request.method == "POST":
+        if request.POST.get("action") != "acknowledge_finance":
+            raise Http404
+        try:
+            acknowledge_finance(request.user, work.pk, int(request.POST["snapshot_id"]), int(request.POST["revision"]))
+        except (KeyError, ValueError):
+            raise Http404 from None
+        except ValidationError:
+            messages.error(request, "The handoff changed. Check its current evidence before acknowledging it.")
+        return redirect("factory_detail", work_id=work.pk)
     response = render(request, "factory/department_handoff.html", {
         "work": work,
         "title": routes()[work.native_station.process]["original_title"],
         "lines": current.lines.values(),
         "received": receipt is not None,
         "recorded_at": receipt.created_at if receipt else None,
+        "finance_snapshot": finance_acknowledgement(request.user, work),
     })
     response["Cache-Control"] = "private, no-store"
     return response

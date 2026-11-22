@@ -63,7 +63,9 @@ def leads(actor):
 
 def authorized_leads(actor, actions):
     actions = frozenset(actions)
-    roles = [name for name, allowed in LEAD_ACTIONS.items() if actions <= allowed]
+    # A head can combine preparation rights with the department reads they
+    # already hold in their assigned workspace. No extra action is granted.
+    roles = [name for name, allowed in LEAD_ACTIONS.items() if actions <= (allowed | DEPARTMENT_READS.get(name, frozenset()))]
     return leads(actor).filter(role__in=roles)
 
 

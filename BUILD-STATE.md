@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Six-role release checks · 22 November 2026
+
+Start work and the JSON API share one 108-process directory. Submission uses the caller’s available workspaces and current intake authority. Local PostgreSQL verified directory parity for six admitted roles, including additional PMO and Finance members, and verified project-bound engagement intake and repeat submission of a private bid. The record-level Railway and live specialist evidence is tracked separately in the test ledger.
+
 ## Native department handoffs · 21 November 2026
 
 The remaining 34 PMO and 29 Finance processes now enter O01 from their own department records. Each produces a versioned source reading, an assigned specialist packet and a link to the actual downstream record. The 25 staff-facing Start work types remain the entry points for the original 45 IDs. The internal department-handoff definition covers the other 63. The process catalogue retains all 14 deferred BaaS IDs. Operational disclosure, named reviewers and business authority remain project decisions. [Routing book](docs/design/specialist-process-routes.md)

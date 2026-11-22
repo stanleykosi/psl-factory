@@ -43,7 +43,8 @@ class ContractTests(SimpleTestCase):
         self.assertNotIn('delivery', planning['django'])
 
     def test_contract_matches_mounted_routes_and_all_native_start_lines(self):
-        self.assertEqual(set(STARTS), set(DEFINITIONS))
+        from apps.workflows.native_station_contracts import DEFINITION as source_triggered
+        self.assertEqual(set(STARTS), set(DEFINITIONS) - {source_triggered})
         self.assertEqual(set(STARTS), set(INTAKE_GRANTS))
         for line, (starter, schema) in STARTS.items():
             common = {'case_id': None, 'key': None, 'expected': None}

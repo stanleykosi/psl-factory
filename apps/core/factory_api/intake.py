@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.identity.services import require, visible_cases
+from apps.core.workbench import granted
+from apps.workflows.process_directory import entries
 from apps.finance.schedules import DETAIL
 from apps.workflows import (
     factory, factory_accounting, factory_archive, factory_bu, factory_change, factory_closure, factory_commercial,
@@ -46,12 +47,20 @@ RFP_PAYLOAD = obj({
                          'disposition': choice('addressed', 'clarification', 'out_of_scope')}), limit=100),
 })
 
+
+def engagement_start(actor, *, case_id, key, reference, expected, **source):
+    if 'capture_id' in source:
+        return factory_engagement.start(actor, case_id, key, source['capture_id'], reference, expected)
+    return factory_engagement.receive(actor, case_id, key, source['route'], source['evidence_id'],
+                                      reference, expected, source.get('rfp_disposition'))
+
 STARTS = {
     'pmo-issues/v1': (factory_issues.start, obj({'issue_id': ID})),
     'pmo-leadership-report/v1': (factory_leadership.start, obj({'inputs': factory_leadership.INPUT})),
     'finance-ledger/v1': (factory_ledger.start, obj({'evidence_id': ID, 'predecessor_id': NID})),
     'finance-bu/v1': (factory_bu.start, obj({'inputs': factory_bu.INPUT})),
-    'engagement/v1': (factory_engagement.start, obj({'capture_id': ID})),
+    'engagement/v1': (engagement_start, {'oneOf': [obj({'capture_id': ID}),
+        obj({'route': choice('A', 'B', 'C'), 'evidence_id': ID, 'rfp_disposition': NID}, optional=('rfp_disposition',))]}),
     'pmo-minutes/v1': (factory_minutes.start, obj({'data': factory_minutes.SELECTION})),
     'pmo-escalation/v1': (factory_escalation.start, obj({'request_id': ID, 'template_id': NID})),
     'pmo-weekly-report/v1': (factory_reporting.start, obj({'inputs': factory_reporting.INPUT})),
@@ -95,11 +104,19 @@ START_INPUT = {'oneOf': [
 LINE = obj({'key': TEXT, 'title': TEXT, 'description': TEXT, 'can_submit_via_api': BOOLEAN, 'django_url': TEXT})
 
 
+@endpoint(response=obj({'items': array(obj({'process': TEXT, 'title': TEXT, 'department': choice('PMO', 'Finance'),
+    'line': nullable(TEXT), 'project_handoff': BOOLEAN, 'intake_available': BOOLEAN, 'intake_url': nullable(TEXT)}))}),
+    summary='Browse release processes and see which intakes are available in your workspaces')
+def processes(request):
+    available = {item['definition'] for item in factory_views.intake_options(request.user)}
+    return {'items': entries(available)}
+
+
 @endpoint(response=obj({'items': array(LINE), 'as_of': DATETIME}), summary='List available factory intake choices')
 def lines(request):
     return {'items': [
         {'key': item['definition'], 'title': item['title'], 'description': item['description'],
-         'can_submit_via_api': item['definition'] in STARTS,
+         'can_submit_via_api': item['definition'] in STARTS or item['definition'] == factory_views.rfp_fresh_intake.LINE,
          'django_url': reverse('factory_create') + '?definition=' + item['definition']}
         for item in factory_views.intake_options(request.user)
     ], 'as_of': timezone.now()}
@@ -109,10 +126,8 @@ def lines(request):
           response=obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')}),
           summary='Start the selected factory line using the current exact native sources')
 def start(request, *, body):
-    case = get_object_or_404(visible_cases(request.user), kind='project', pk=body['case_id'])
+    case = get_object_or_404(granted(request.user, INTAKE_GRANTS[body['line']]), kind='project', pk=body['case_id'])
     starter, _ = STARTS[body['line']]
-    for grant in INTAKE_GRANTS[body['line']]:
-        require(request.user, case, grant)
     inputs = dict(body['intake'])
     if body['line'] not in DERIVED_REFERENCES:
         inputs['reference'] = body['reference']

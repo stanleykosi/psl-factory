@@ -75,3 +75,17 @@ Keep the current Railway browser ledger as the Django functional baseline. Test 
 Set `API_ORIGIN` on the Next server to the Django server. When the browser uses a different origin from Django, set `PSL_FRONTEND_ORIGINS` on Django to that exact public frontend origin, including the port if present. Multiple approved origins can be separated with commas. Django still checks the session and the CSRF token on writes. Same-origin Railway use needs no additional origin.
 
 The separate frontend serves the signed-in work queue and Finance invoice review. The other work forms open through the same frontend proxy. A deployment with a separately reachable public Django site may set `NEXT_PUBLIC_FACTORY_ORIGIN` to use that site for the forms.
+
+## PMO and Finance process access
+
+`GET /api/v1/processes` returns the same 108 process entries as **Find a process** in Start work. Each entry identifies whether it continues from a department record and whether the signed-in person has a project where they can submit its intake. Project evidence and decisions are fetched separately under the current reader’s access. The JSON contract is served at `/api/v1/openapi.json`.
+
+| Operation | Use |
+| --- | --- |
+| `GET /api/v1/lines` | Find intakes available to this person. |
+| `POST /api/v1/work` | Start an available workflow on an authorised project. Engagement accepts an existing capture or the source evidence and route from the Django form. |
+| `GET /api/v1/received-bids/organisations` and `POST /api/v1/received-bids` | Select a current organisation delegation and submit a received bid with its original private file. Repeating the same intake uses its original receipt. |
+| `GET /api/v1/projects/{case_id}/department-handoffs` | Page through this person’s visible department work in a project. |
+| `GET /api/v1/work/{work_id}/department-handoff` | Read current source evidence, receipt and available decisions. |
+| `POST /api/v1/work/{work_id}/department-handoff/source-review` | Resolve a completed specialist packet as the named information reviewer. |
+| `POST /api/v1/work/{work_id}/department-handoff/finance-acknowledgement` | Acknowledge the exact HR-authorised snapshot as its named Finance recipient. |

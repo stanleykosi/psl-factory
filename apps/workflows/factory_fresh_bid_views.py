@@ -45,6 +45,13 @@ class ReceivedBidForm(forms.Form):
             self.add_error('document', 'Attach one bid document.')
         return data
 
+    def record(self, actor):
+        value = self.cleaned_data
+        context = rfp_intake_context.SourceContext(value['prospect_name'], value['submission_method'], value['submission_target'])
+        return rfp_fresh_intake.record(actor, value['authority'], value['start_key'], value['reference'],
+            value['received_at'], value['deadline_status'], value['deadline_at'], value['document'],
+            source_context=context, context_attested=value['context_attested'])
+
 
 @require_http_methods(['GET', 'HEAD', 'POST'])
 def create(request):
@@ -56,12 +63,8 @@ def create(request):
     bound = request.method == 'POST'
     form = ReceivedBidForm(authorities, request.POST if bound else None, request.FILES if bound else None)
     if bound and form.is_valid():
-        value = form.cleaned_data
-        context = rfp_intake_context.SourceContext(value['prospect_name'], value['submission_method'], value['submission_target'])
         try:
-            receipt = rfp_fresh_intake.record(request.user, value['authority'], value['start_key'], value['reference'],
-                value['received_at'], value['deadline_status'], value['deadline_at'], value['document'],
-                source_context=context, context_attested=value['context_attested'])
+            receipt = form.record(request.user)
         except ValidationError as exc:
             form.add_error(None, exc)
         else:

@@ -186,6 +186,12 @@ def milestone(source, actor):
 
 
 def private_disclosure(contract, actor):
+    from .hrfinance_recipient import recipient_scope
+    with recipient_scope(actor, contract.need.case, contract.payload["recipient_ids"]):
+        return _private_disclosure(contract, actor)
+
+
+def _private_disclosure(contract, actor):
     case = contract.need.case
     for action in ("case.read", "hrfinance.read", "hrfinance.snapshot.read", "hrfinance.receive"):
         require(actor, case, action)

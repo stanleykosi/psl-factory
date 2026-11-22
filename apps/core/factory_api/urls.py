@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
-from . import agents, assistant_drafts, commands, documents, intake, notifications, reviews, role_work, roles, work, workspaces
+from . import agents, assistant_drafts, commands, documents, handoffs, intake, notifications, received_bids, reviews, role_work, roles, work, workspaces
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
 
@@ -13,10 +13,17 @@ PREFIX = '/api/v1/'
 ROUTES = (
     ('me', workspaces.me),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
+    ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
     ('projects/<uuid:case_id>/templates/replacements', documents.replace_template),
     ('lines', intake.lines),
+    ('processes', intake.processes),
+    ('received-bids/organisations', received_bids.organisations),
+    ('received-bids', received_bids.record),
     ('work', work.queue, intake.start),
     ('work/<int:work_id>', work.detail),
+    ('work/<int:work_id>/department-handoff', handoffs.detail),
+    ('work/<int:work_id>/department-handoff/source-review', handoffs.review),
+    ('work/<int:work_id>/department-handoff/finance-acknowledgement', handoffs.acknowledge),
     ('work/<int:work_id>/history', work.history),
     ('work/<int:work_id>/background', work.background),
     ('work/<int:work_id>/actions', work.action),

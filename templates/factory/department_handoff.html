@@ -6,6 +6,9 @@
 <section class="card"><h2>Department handoff</h2>
 {% if received %}<p>The receiving record was verified on {{ recorded_at }}.</p>
 {% elif work.finding %}<p>{{ work.finding }}</p>{% else %}<p>Checking the source evidence.</p>{% endif %}
+{% if finance_snapshot %}<form method="post">{% csrf_token %}
+<input type="hidden" name="action" value="acknowledge_finance"><input type="hidden" name="snapshot_id" value="{{ finance_snapshot.pk }}"><input type="hidden" name="revision" value="{{ work.case.revision }}">
+<button type="submit">Acknowledge HR handoff</button></form>{% endif %}
 </section>
 {% factory_background_status work %}
 {% endblock %}

@@ -1,0 +1,98 @@
+"""Run synthetic OpenRouter acceptance for each specialist on an isolated Railway clone."""
+
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+from uuid import UUID
+
+import psycopg
+from psycopg import sql
+from psycopg.types.json import Jsonb
+
+
+def main(ticket):
+    if (os.getenv("RAILWAY_SERVICE_ID"), os.getenv("RAILWAY_SERVICE_NAME")) != (
+        "00c14ca1-5361-4bee-97a5-2ec7aba6ef18", "psl-design-checks"
+    ):
+        raise RuntimeError("The isolated Railway checks service is required.")
+    os.environ["DJANGO_SETTINGS_MODULE"] = "config.specialist_acceptance"
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    import django
+    django.setup()
+    from django.db import connection
+    from tests.test_specialist_role_receipts import TEAMS
+
+    params = connection.get_connection_params()
+    for key in ("cursor_factory", "context"):
+        params.pop(key, None)
+    template = connection.settings_dict["TEST"]["NAME"]
+    if template != "test_psl_specialist_loop":
+        raise RuntimeError("Unexpected acceptance template.")
+    name = "test_psl_stations_roles_" + ticket.hex
+    deployment = os.environ["RAILWAY_DEPLOYMENT_ID"]
+    with psycopg.connect(**{**params, "dbname": template}, autocommit=True) as state:
+        state.execute("CREATE SCHEMA IF NOT EXISTS specialist_acceptance")
+        state.execute("""CREATE TABLE IF NOT EXISTS specialist_acceptance.role_run(
+            ticket uuid PRIMARY KEY, deployment text NOT NULL UNIQUE, passed boolean, evidence jsonb)""")
+        if state.execute("SELECT EXISTS(SELECT 1 FROM auth_user)").fetchone()[0]:
+            raise RuntimeError("The synthetic template contains accounts.")
+        admitted = state.execute(
+            "INSERT INTO specialist_acceptance.role_run(ticket,deployment) VALUES(%s,%s) "
+            "ON CONFLICT DO NOTHING RETURNING ticket", (ticket, deployment),
+        ).fetchone()
+        if not admitted:
+            prior = state.execute(
+                "SELECT passed FROM specialist_acceptance.role_run WHERE ticket=%s", (ticket,),
+            ).fetchone()
+            print("This ticket has already run. No additional model calls.", flush=True)
+            return prior == (True,)
+    # PostgreSQL requires all template sessions to close before cloning.
+    evidence = []
+    required = {(process, role) for process, team in TEAMS.items() for role in team}
+    if {role for _, role in required} != {f"A{i:02}" for i in range(1, 9)}:
+        raise RuntimeError("Representative routes must cover all eight configured specialists.")
+    passed = False
+    try:
+        for key in ("PSL_ACCEPTANCE_SOURCE_KEY", "PSL_ACCEPTANCE_SOURCE_MODEL"):
+            if not os.getenv(key):
+                raise RuntimeError("The temporary Railway provider binding is incomplete.")
+        # Check the upload bucket's exact-key version-listing permission before
+        # buying a reading. Cleanup deletes only versions minted by this run.
+        from adapters import case_uploads
+        client, bucket = case_uploads.bucket()
+        try:
+            client.list_object_versions(Bucket=bucket, Prefix=f"synthetic-specialist-check/{ticket.hex}", MaxKeys=1)
+        finally:
+            client.close()
+        with psycopg.connect(**{**params, "dbname": "postgres"}, autocommit=True) as admin:
+            admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(sql.Identifier(name), sql.Identifier(template)))
+            try:
+                environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance",
+                                   PSL_STATION_LIVE="1", PSL_STATION_SUITE="roles", PSL_STATION_RUN=ticket.hex)
+                command = [sys.executable, "manage.py", "test", "tests.test_specialist_role_receipts.LiveRoleApprovalTests",
+                           "--keepdb", "--noinput", "--verbosity", "2"]
+                with subprocess.Popen(command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as run:
+                    for line in run.stdout:
+                        print(line, end="", flush=True)
+                        prefix = "Specialist approval receipt "
+                        if prefix in line:
+                            evidence.append(json.loads(line.split(prefix, 1)[1]))
+                    status = run.wait()
+                observed = {(row["process"], row["role"]) for row in evidence if row["mode"] == "openrouter"}
+                passed = status == 0 and observed == required and len(evidence) == len(required)
+            finally:
+                admin.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(name)))
+    finally:
+        with psycopg.connect(**{**params, "dbname": template}, autocommit=True) as state:
+            state.execute("UPDATE specialist_acceptance.role_run SET passed=%s,evidence=%s WHERE ticket=%s",
+                          (passed, Jsonb(evidence), ticket))
+    print(f"Specialist approval checks: passed={passed}; verified={len(evidence)} routes/roles.", flush=True)
+    return passed
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        raise SystemExit("Supply the unique UUID for this explicitly authorised acceptance run.")
+    sys.exit(0 if main(UUID(sys.argv[1])) else 1)

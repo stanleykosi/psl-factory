@@ -24,6 +24,15 @@
     {% endif %}{% endfor %}
     <div class="start-chooser-actions"><button class="button primary" type="submit">Next</button></div>
   </form>
+  <details class="card">
+    <summary>Find a process</summary>
+    {% regroup processes by department as departments %}
+    {% for department in departments %}<h2>{{ department.grouper }}</h2>
+    <ul>{% for process in department.list %}<li data-process="{{ process.process }}" data-startable="{{ process.intake_available|yesno:'true,false' }}">
+      {% if process.intake_available %}<a href="{{ process.intake_url }}">{{ process.title }}</a>{% else %}{{ process.title }}{% endif %}
+      {% if process.project_handoff %}<small>Continues from the department record.</small>{% elif not process.intake_available %}<small>Workspace access needed.</small>{% endif %}
+    </li>{% endfor %}</ul>{% endfor %}
+  </details>
   {% if can_ask_tola %}<p><a href="{% url 'assistant_start' 'tola' %}">Describe it to Tola</a> for help choosing a line.</p>{% endif %}
   {% if change_intakes %}<section class="card"><h2>Change requests awaiting classification</h2>{% for receipt in change_intakes %}<p><a href="{% url 'p56_intake_detail' receipt.case_id receipt.pk %}">Change request receipt #{{ receipt.pk }}</a> · received {{ receipt.created_at }}</p>{% endfor %}</section>{% endif %}
 </div>

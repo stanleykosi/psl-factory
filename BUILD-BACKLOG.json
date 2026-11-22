@@ -1,4 +1,11 @@
 {
+  "role_access_release_20261122": {
+    "scope": "108 PMO and Finance processes, six staff roles, eight specialist roles",
+    "status": "checking_authenticated_records_and_live_approvals",
+    "source": "guide/11-FULL-PRODUCT.md#role-based-work-and-supervision",
+    "test_record": "BUILD-TESTS.md",
+    "owner_decisions": "Operational nominations, disclosure, external recipients and financial or release policy remain project decisions."
+  },
   "native_department_handoffs_20261121": {
     "implementation": "63 source-event bindings across PMO and Finance; original 45 process bindings retained",
     "baseline_railway_receipts": 63,

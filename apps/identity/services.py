@@ -44,11 +44,10 @@ def visible_cases(actor):
 
 
 def legacy_projects(actor, cases):
-    from .factory_access import PERSONA_ROLES
     from .team_models import StaffMembership
 
     history = StaffMembership.objects.filter(user=actor)
-    return cases.filter(~Q(kind='project') | ~Q(Exists(history.filter(role__in=PERSONA_ROLES.values()))) |
+    return cases.filter(~Q(kind='project') | ~Q(Exists(history)) |
                         Q(pk__in=history.filter(active=True, role__in=['admin', 'cto', 'ceo']).values('case_id')))
 
 

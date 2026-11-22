@@ -88,13 +88,11 @@ def checked_work(work, actor):
 
 
 def readable(actor, work):
-    from .factory import access
+    from .native_station_access import read_work
+    from django.http import Http404
     try:
-        access(actor, work.case, "factory.read", DEFINITION)
-        current = checked_work(work, actor)
-        if work.status == "verified" and not current_receipt(work, current):
-            return False
-    except (ObjectDoesNotExist, PermissionDenied, ValidationError):
+        read_work(actor, work.pk)
+    except Http404:
         return False
     return True
 

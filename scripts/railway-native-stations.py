@@ -25,22 +25,45 @@ LIVE_CASES = {
 }
 
 
-def run(group, token):
-    module, required = SUITES[group]
+def run(group, token, role_access):
     environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance", PSL_STATION_SUITE=group, PSL_STATION_RUN=token, PYTHONUNBUFFERED="1")
-    modules = [module]
+    if group == 'original':
+        from apps.workflows.factory_processes import PROCESS_IDS
+        from apps.workflows.native_station_contracts import DEFINITION
+        required = {pid for line, processes in PROCESS_IDS.items() if line != DEFINITION for pid in processes}
+        modules = ['tests.test_original_process_role_access']
+    elif group == 'surface':
+        required = set()
+        modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',
+                   'tests.test_role_scoped_work', 'tests.test_finance_document_review',
+                   'tests.test_rfp_fresh_intake.FreshBidIntakeTests.test_api_and_form_share_the_original_file_receipt_and_delegation']
+    else:
+        module, required = SUITES[group]
+        modules = [module]
+        if role_access:
+            environment['PSL_VERIFY_NATIVE_ROLES'] = '1'
     if group == "pmo":
         modules += ["tests.test_native_station_controls", "tests.test_specialist_loop.SpecialistLoopTests"]
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
     observed = set()
+    role_observed = set()
     with subprocess.Popen(cmd, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as process:
         for line in process.stdout:
             print(f"[{group}] {line}", end="", flush=True)
             if "Native station verified " in line and " -> " in line:
                 observed.add(line.split("Native station verified ", 1)[1].split(" -> ", 1)[0])
+            if 'ROLE_ACCESS ' in line:
+                role_observed.add(line.split('ROLE_ACCESS ', 1)[1].split()[0])
         status = process.wait()
-    print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
-    return status == 0 and observed == required
+    if group in SUITES:
+        print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
+        if observed != required:
+            return False
+    if role_access and group != 'surface':
+        print(f"[{group}] Role reads checked for {len(role_observed)} processes; missing {sorted(required - role_observed)}.", flush=True)
+        if role_observed != required:
+            return False
+    return status == 0
 
 
 def live(params, database, processes):
@@ -65,13 +88,15 @@ def live(params, database, processes):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("groups", nargs="*", default=list(SUITES))
+    parser.add_argument("groups", nargs="*")
+    parser.add_argument('--role-access', action='store_true', help='Check admitted staff on the HTML and API for each process.')
     provider = parser.add_mutually_exclusive_group()
     provider.add_argument("--live", action="store_true", help="Also run both synthetic provider and storage checks.")
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
-    groups = options.groups
-    if not groups or set(groups) - SUITES.keys() or len(set(groups)) != len(groups):
+    available = (*SUITES, 'original', 'surface') if options.role_access else tuple(SUITES)
+    groups = options.groups or available
+    if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")
     os.environ["DJANGO_SETTINGS_MODULE"] = "config.specialist_acceptance"
     import django
@@ -102,7 +127,7 @@ def main():
                 admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(sql.Identifier(name), sql.Identifier(template)))
                 owned.append(name)
             with ThreadPoolExecutor(max_workers=len(groups)) as pool:
-                results = [pool.submit(run, group, token) for group in groups]
+                results = [pool.submit(run, group, token, options.role_access) for group in groups]
                 passed = all([result.result() for result in results])
         finally:
             for name in owned:
