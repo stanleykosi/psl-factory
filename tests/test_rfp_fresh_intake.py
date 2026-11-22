@@ -87,11 +87,18 @@ class FreshBidIntakeTests(TestCase):
         orgs = self.client.get(url + '/organisations').json()['items']
         self.assertEqual(orgs, [{'id':self.authority.pk,'organisation':self.authority.tenant}])
         with patch('adapters.case_uploads.put') as put:
+            invalid = self.client.post(url, {**self.command, 'definition': 'planning/v1', 'document': pdf_file()})
+            self.assertEqual(invalid.status_code, 422)
+            put.assert_not_called()
             first = self.client.post(url, {**self.command, 'document':pdf_file()})
             self.assertEqual(first.status_code,200,first.content)
             second = self.client.post(self.url, {**self.command,'document':pdf_file()})
             self.assertRedirects(second,first.json()['django_url'],fetch_redirect_response=False)
             self.assertEqual(first.json()['receipt_id'], RFPIntake.objects.get().pk)
+            typed = {key: value for key, value in self.command.items() if key not in {'definition', 'deadline_at'}}
+            replay = self.client.post(url, {**typed, 'context_attested': 'true', 'document': pdf_file()})
+            self.assertEqual(replay.status_code, 200, replay.content)
+            self.assertEqual(replay.json()['receipt_id'], first.json()['receipt_id'])
             self.assertEqual(put.call_count,1)
             self.client.force_login(self.administrator)
             self.assertFalse(self.client.get(url + '/organisations').json()['items'])
@@ -169,7 +176,9 @@ class FreshBidIntakeTests(TestCase):
         missing['initial_actions'].remove('document.read')
         successor = provision(self.administrator, self.recorder, missing)
         with patch('apps.pmo.rfp_intake_upload.read_file') as read, patch('adapters.case_uploads.put') as store:
-            self.assertNotContains(self.client.get(reverse('factory_intake')), 'Log a received bid')
+            chooser = self.client.get(reverse('factory_intake'))
+            self.assertContains(chooser, 'value="received-bid" required disabled')
+            self.assertNotIn(rfp_fresh_intake.LINE, {option['definition'] for option in chooser.context['options']})
             self.assertEqual(self.client.get(self.url).status_code, 403)
             for stale_scope in (self.authority, successor):
                 with self.assertRaises(PermissionDenied):

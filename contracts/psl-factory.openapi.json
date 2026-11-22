@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Use the current same-origin Django session. For JSON writes, read the session CSRF token from GET /api/v1/me. Follow returned Django links for workflow steps that use native forms."
   },
   "security": [
@@ -1578,7 +1578,8 @@
                   },
                   "reference": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "maxLength": 160
                   },
                   "received_at": {
                     "type": "string",
@@ -1593,12 +1594,22 @@
                     ]
                   },
                   "deadline_at": {
-                    "type": "string",
-                    "format": "date-time"
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ],
+                    "description": "Required for a stated deadline. Otherwise omit it or send the native form\u2019s empty value."
                   },
                   "prospect_name": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "maxLength": 160
                   },
                   "submission_method": {
                     "type": "string",
@@ -1614,11 +1625,26 @@
                     "minLength": 1
                   },
                   "context_attested": {
-                    "type": "boolean"
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string",
+                        "const": "on"
+                      }
+                    ]
                   },
                   "document": {
                     "type": "string",
-                    "format": "binary"
+                    "format": "binary",
+                    "description": "Original private Word or PDF file, up to 5 MiB."
+                  },
+                  "definition": {
+                    "type": "string",
+                    "const": "received-bid",
+                    "deprecated": true,
+                    "description": "The optional hidden identifier sent by the existing Django form."
                   }
                 },
                 "required": [

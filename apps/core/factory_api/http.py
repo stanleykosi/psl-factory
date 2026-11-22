@@ -91,9 +91,12 @@ def multipart_body(request, schema):
     names = (set(request.POST) | set(request.FILES)) - {'csrfmiddlewaretoken'}
     invalid = (names - set(expected)) | (set(schema['required']) - names)
     for name in names & set(expected):
-        binary = expected[name].get('format') == 'binary'
+        field = expected[name]
+        binary = field.get('format') == 'binary'
         values, other = (request.FILES, request.POST) if binary else (request.POST, request.FILES)
         if len(values.getlist(name)) != 1 or name in other:
+            invalid.add(name)
+        elif not binary and 'const' in field and values[name] != field['const']:
             invalid.add(name)
     if invalid:
         fields = [{'name': name, 'message': 'Send the declared field once in the correct part.'}

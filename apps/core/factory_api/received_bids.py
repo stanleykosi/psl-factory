@@ -14,11 +14,18 @@ def organisations(request):
                       rfp_fresh_intake.available(request.user).values_list('pk', 'tenant')]}
 
 
-@endpoint(method='POST', multipart=True, request=obj({'authority': ID, 'start_key': UUID, 'reference': TEXT,
-    'received_at': DATETIME, 'deadline_status': choice('unknown','stated','not_stated'), 'deadline_at': DATETIME,
-    'prospect_name': TEXT, 'submission_method': choice(*(v for v, _ in rfp_intake_context.METHODS)),
-    'submission_target': TEXT, 'context_attested': BOOLEAN, 'document': {'type':'string','format':'binary'}},
-    optional=('deadline_at','prospect_name','submission_method','submission_target','context_attested')),
+@endpoint(method='POST', multipart=True, request=obj({
+    'authority': ID, 'start_key': UUID, 'reference': {**TEXT, 'maxLength': 160},
+    'received_at': DATETIME, 'deadline_status': choice('unknown', 'stated', 'not_stated'),
+    'deadline_at': {'anyOf': [DATETIME, {'type': 'string', 'const': ''}],
+                    'description': 'Required for a stated deadline. Otherwise omit it or send the native form’s empty value.'},
+    'prospect_name': {**TEXT, 'maxLength': 160}, 'submission_method': choice(*(v for v, _ in rfp_intake_context.METHODS)),
+    'submission_target': TEXT,
+    'context_attested': {'anyOf': [BOOLEAN, {'type': 'string', 'const': 'on'}]},
+    'document': {'type': 'string', 'format': 'binary', 'description': 'Original private Word or PDF file, up to 5 MiB.'},
+    'definition': {'type': 'string', 'const': rfp_fresh_intake.LINE, 'deprecated': True,
+                   'description': 'The optional hidden identifier sent by the existing Django form.'},
+}, optional=('deadline_at', 'prospect_name', 'submission_method', 'submission_target', 'context_attested', 'definition')),
     response=obj({'receipt_id': ID, 'case_id': UUID, 'django_url': TEXT}), summary='Record the bid with its original private file')
 def record(request):
     scopes = list(rfp_fresh_intake.available(request.user).only('pk','tenant'))
