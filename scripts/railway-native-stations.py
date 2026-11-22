@@ -44,6 +44,8 @@ def run(group, token, role_access):
             environment['PSL_VERIFY_NATIVE_ROLES'] = '1'
     if group == "pmo":
         modules += ["tests.test_native_station_controls", "tests.test_specialist_loop.SpecialistLoopTests"]
+    if group == "accounts":
+        modules.append("tests.test_finance_import_projection")
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
     observed = set()
     role_observed = set()

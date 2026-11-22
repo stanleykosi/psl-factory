@@ -87,7 +87,6 @@ def service_obligation(request, actor):
 def receivable(receipt, actor):
     case = receipt.case
     require(actor, case, "finance.read")
-    require(actor, case, "finance.receivables")
     require(receipt.actor, case, "finance.cash.record")
     snapshot = models.ReceivableSnapshot.objects.filter(
         case=case, as_of=timezone.localdate(), manifest__reported_receipts__contains=[receipt.pk],

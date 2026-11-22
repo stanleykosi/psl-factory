@@ -13,7 +13,7 @@ from psycopg import sql
 from psycopg.types.json import Jsonb
 
 
-def main(ticket, processes):
+def main(ticket, processes, require_f02_calculation):
     if (os.getenv("RAILWAY_SERVICE_ID"), os.getenv("RAILWAY_SERVICE_NAME")) != (
         "00c14ca1-5361-4bee-97a5-2ec7aba6ef18", "psl-design-checks"
     ):
@@ -74,8 +74,11 @@ def main(ticket, processes):
             admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(sql.Identifier(name), sql.Identifier(template)))
             try:
                 environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance",
-                                   PSL_STATION_LIVE="1", PSL_STATION_SUITE="roles", PSL_STATION_RUN=ticket.hex)
+                                   PSL_STATION_LIVE="1", PSL_STATION_SUITE="roles", PSL_STATION_RUN=ticket.hex,
+                                   PSL_REQUIRE_F02_CALCULATION="1" if require_f02_calculation else "0")
                 labels = ["tests.test_specialist_role_receipts.LiveRoleApprovalTests." + methods[pid] for pid in processes]
+                if require_f02_calculation:
+                    labels.insert(0, "tests.test_finance_import_projection")
                 command = [sys.executable, "manage.py", "test", *labels, "--keepdb", "--noinput", "--verbosity", "2"]
                 with subprocess.Popen(command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as run:
                     for line in run.stdout:
@@ -100,5 +103,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("ticket", type=UUID, help="One-time UUID for this specific authorised run.")
     parser.add_argument("--process", choices=("F02", "F35", "P52"), help="Run just one independent approval and its team.")
+    parser.add_argument("--require-f02-calculation", action="store_true",
+                        help="Also require A05 to support its conclusion and cite the computed trial-balance control.")
     args = parser.parse_args()
-    sys.exit(0 if main(args.ticket, [args.process] if args.process else ["F02", "F35", "P52"]) else 1)
+    if args.require_f02_calculation and args.process != "F02":
+        parser.error("--require-f02-calculation requires --process F02")
+    sys.exit(0 if main(args.ticket, [args.process] if args.process else ["F02", "F35", "P52"],
+                       args.require_f02_calculation) else 1)

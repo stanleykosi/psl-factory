@@ -76,6 +76,10 @@ class ProjectUseForm(forms.Form):
                     self.fields[key] = forms.MultipleChoiceField(choices=[
                         (pid, f"{pid} · {route['original_title']}") for pid, route in routes().items()
                         if route['department'] != 'BaaS'])
+                elif component == 'OPS.specialist_source_reading' and key == 'finance_import_checks':
+                    self.fields[key] = forms.BooleanField(required=False,
+                        label="Share trial-balance import checks with the assigned specialists",
+                        help_text="Includes column checks, finding counts, validated currency and period, and the file total. Account rows stay private.")
                 elif spec['type'] == 'array':
                     self.fields[key] = forms.MultipleChoiceField(label=LABELS.get(key, key),
                         choices=[(item, item.replace('_', ' ').capitalize()) for item in spec['items']['enum']],
@@ -91,10 +95,16 @@ class ProjectUseForm(forms.Form):
         if self.component == 'OPS.specialist_source_reading' and values.get('processes') and values.get('roles'):
             from apps.agents.specialists import validate_selection
             validate_selection(values['processes'], values['roles'], values.get('source_kinds', ()))
+            if values.get('finance_import_checks') and (
+                'F02' not in values['processes'] or 'native_station_projection' not in values.get('source_kinds', ())
+            ):
+                self.add_error('finance_import_checks', 'Select the trial-balance import and its department source projection.')
         return values
 
     def save(self, actor):
         data = self.cleaned_data.copy()
+        if self.component == 'OPS.specialist_source_reading' and not data.get('finance_import_checks'):
+            data.pop('finance_import_checks', None)
         proof = 'evidence:' + str(data.pop('proof').pk)
         effective = data.pop('effective')
         value = {**self.fixed, **data}

@@ -56,7 +56,13 @@ def subject_for(station):
 def checked_observation(station, actor):
     with observation_scope():
         route, subject = subject_for(station)
-        result = route.observe(subject, actor)
+        if station.projection_version == 1:
+            result = route.observe(subject, actor)
+        else:
+            revision = route.revised_projection
+            if not revision or revision.version != station.projection_version or not revision.enabled(subject):
+                raise PermissionDenied("The selected source projection is no longer authorised.")
+            result = revision.observe(subject, actor)
     if not isinstance(result.case, Case) or not isinstance(result.source, Evidence) or result.source.case_id != result.case.pk:
         raise ValidationError("The department source must belong to this project.")
     if not actor.is_active:
@@ -124,6 +130,9 @@ def enroll(station_id):
     actor = route.owner(subject)
     if actor is None:
         raise PermissionDenied("The native source needs an accountable owner.")
+    revision = route.revised_projection
+    if revision and revision.enabled(subject):
+        station.projection_version = revision.version
     source = checked_observation(station, actor)
     access(actor, source.case, "factory.execute", DEFINITION)
     if not enabled_for(source.case, station.process):
@@ -136,7 +145,7 @@ def enroll(station_id):
     )
     station.work = work
     station.finding = ""
-    station.save(update_fields=["work", "finding"])
+    station.save(update_fields=["work", "finding", "projection_version"])
     set_progress(actor, work.pk, work.revision, True, initial=True)
     return work
 

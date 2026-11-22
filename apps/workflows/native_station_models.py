@@ -9,6 +9,7 @@ class NativeStation(models.Model):
     """Outbox entry created by the source transaction, including while policy is undecided."""
 
     process = models.CharField(max_length=3)
+    projection_version = models.PositiveSmallIntegerField(default=1)
     subject_model = models.CharField(max_length=100)
     subject_pk = models.CharField(max_length=100)
     available_at = models.DateTimeField(default=timezone.now)
@@ -16,7 +17,11 @@ class NativeStation(models.Model):
     finding = models.CharField(max_length=120, blank=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["process", "subject_model", "subject_pk"], name="native_station_subject")]
+        constraints = [
+            models.UniqueConstraint(fields=["process", "subject_model", "subject_pk"], name="native_station_subject"),
+            models.CheckConstraint(condition=models.Q(projection_version=1) | models.Q(process="F02", projection_version=2),
+                                   name="native_station_projection_version"),
+        ]
         indexes = [models.Index(fields=["available_at"], condition=models.Q(work__isnull=True), name="native_station_due")]
 
 

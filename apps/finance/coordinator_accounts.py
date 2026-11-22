@@ -3,20 +3,23 @@
 The coordinator reads bounded projections. Finance retains all calculations,
 adjustments, approvals, private payroll inputs and publication authority.
 """
+import csv
+from collections import Counter
 from functools import partial
+from io import StringIO
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 
 from apps.core.models import Evidence
 from apps.core.read_observation import read_observation
 from apps.identity.services import require
 from apps.policy.models import Configuration
 from apps.policy.services import reference_values, resolve
-from apps.workflows.native_station_contracts import Observation, Route
+from apps.workflows.native_station_contracts import Observation, ProjectionRevision, Route
 from . import analysis, bu, performance
 from .models import BUReceipt, FinanceAdjustment, FinancePeriod, FinanceRun, ImportValidation
 from .coordinator_accounts_performance import PERFORMANCE_ROUTES
-from .rules import number, total
+from .rules import decimal, number, total
 
 
 NOTE_METRICS = {
@@ -56,9 +59,11 @@ def current_mapping(runs, required_decision, subject_key):
 
 
 @read_observation
-def import_observation(source, actor):
+def import_observation(source, actor, *, detailed=False):
     case = source.case
     finance_access(actor, case)
+    if detailed and not import_checks_enabled(source):
+        raise PermissionDenied("This project has not authorised detailed trial-balance import checks.")
     require(source.actor, case, "finance.source")
     analysis.source_for(case, source.pk)
     if source.batch.source_sha256 != source.batch.evidence.sha256:
@@ -66,22 +71,81 @@ def import_observation(source, actor):
     receipt = None
     decision = analysis.current_review(case, "source", source=source)
     validation = ImportValidation.objects.filter(batch=source.batch).order_by("-pk").first()
-    validated = False
-    if validation and validation.status == "validated_source" and validation.policies:
+    current_rules = False
+    if validation and validation.policies:
         checks = {key: resolve(key, case) for key in validation.policies}
-        validated = all(check.status == "ACTIVE" and check.configuration.pk == validation.policies[key]
-                        for key, check in checks.items())
+        current_rules = all(check.status == "ACTIVE" and check.configuration.pk == validation.policies[key]
+                            for key, check in checks.items())
+    validated = bool(current_rules and validation.status == "validated_source")
     if validated and decision["valid"]:
         receipt = current_mapping(
             FinanceRun.objects.filter(case=case, source=source, kind="mapping"), decision, "source"
         )
-    return Observation(case, source.batch.evidence, numbered(
+    lines = numbered(
         f"Controlled trial-balance import {source.batch_id} contains {len(source.batch.rows)} source rows.",
         f"Validation {validation.pk if validation else 'missing'} uses the current import rules: {validated}.",
         f"Source context {source.pk} declares {source.accounting_basis} accounting and {source.completeness} coverage.",
         f"The source declares a control total of {source.control_total if source.control_total is not None else 'unknown'}.",
         f"Extraction time {source.extracted_at.isoformat()}. Source digest {source.batch.source_sha256}.",
-    ), receipt)
+    )
+    if detailed:
+        lines.update(_import_checks(source, validation, current_rules, validated))
+    return Observation(case, source.batch.evidence, lines, receipt)
+
+
+def import_checks_enabled(source):
+    from apps.agents.specialist_memory import COMPONENT
+    from apps.workflows.native_station_contracts import PROJECTION
+
+    permission = resolve(COMPONENT, source.case)
+    if permission.status != "ACTIVE":
+        return source.case.synthetic and permission.status == "MISSING"
+    value = permission.configuration.envelope["value"]
+    return ("F02" in value["processes"] and PROJECTION in value["source_kinds"]
+            and value.get("finance_import_checks", False))
+
+
+IMPORT_VALIDATION = ProjectionRevision(
+    2, import_checks_enabled, partial(import_observation, detailed=True), {
+        "A01": "Check the supplied header, file inventory and native row findings. "
+               "A resubmission requires an original comparison file.",
+        "A03": "Compare the stated and computed source controls. Distinguish a discrepancy "
+               "from an unknown value and cite the check you used.",
+        "A05": "Explain the computed file total, its reporting currency and period and its comparison with "
+               "the supplied control. Quote the actual amount in your summary if it is known. Assess the file "
+               "check on its own evidence. Account mapping and conversions are later tasks.",
+    },
+)
+
+
+def _import_checks(source, validation, current_rules, validated):
+    from adapters.finance_inputs import COLUMNS
+
+    rows = source.batch.rows
+    header = next(csv.reader(StringIO(source.batch.evidence.body)), [])
+    codes = Counter(issue.get("field") for issue in validation.findings) if current_rules else None
+    findings = (", ".join(f"{key}={codes[key]}" for key in COLUMNS) if codes is not None
+                else "unknown until the file has a current validation")
+    # Only a successfully validated file establishes a homogeneous currency
+    # and period. Never sum heterogeneous, missing or malformed amounts.
+    currency, period, actual = "unknown", "unknown", None
+    if validated and rows:
+        currency, period = rows[0]["currency"], rows[0]["period"]
+        actual = total(row["amount"] for row in rows)
+    supplied = source.control_total
+    compared = "unknown" if actual is None or supplied is None else (
+        "matches" if actual == decimal(supplied) else "differs"
+    )
+    # No account names, per-account values, HR rows or internal file contents
+    # leave the reader. These are checks on the one already selected import.
+    return {
+        "6": "Accepted input columns: " + (", ".join(COLUMNS) if header == COLUMNS else "unconfirmed") + ".",
+        "7": f"Current native row findings by column: {findings}.",
+        "8": f"Validated file currency: {currency}. Reporting period: {period}.",
+        "9": f"Sum of validated amounts as stated in the file: {number(actual) if actual is not None else 'unknown'}. "
+             f"Comparison with the source's declared control total: {compared}.",
+        "10": "This source check precedes mapping, adjustments and unit conversion. It grants no posting authority.",
+    }
 
 
 @read_observation
@@ -285,7 +349,7 @@ def has_standard_staff(work):
 
 
 ROUTES = (
-    Route("F02", "finance.FinanceSource", any_subject, author, import_observation),
+    Route("F02", "finance.FinanceSource", any_subject, author, import_observation, IMPORT_VALIDATION),
     Route("F04", "finance.FinanceAdjustment", any_subject, author, adjustment_observation),
     *(Route(pid, "finance.FinanceRun", partial(has_note, pid), author, partial(note_observation, pid)) for pid in NOTE_METRICS),
     *(Route(pid, "finance.FinanceRun", partial(has_allocation, pid), author, partial(allocation_observation, pid)) for pid in ALLOCATION_METRICS),

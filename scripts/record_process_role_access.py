@@ -37,12 +37,16 @@ def render(runs):
                 rows = re.findall(r'ROLE_ACCESS ([PF]\d{2}) ([^\n]+)', text)
                 if {pid for pid, _ in rows} != ids or f'Role reads checked for {len(ids)} processes; missing [].' not in text:
                     continue
+                receivers = dict(re.findall(r'Native station verified ([PF]\d{2}) -> ([\w.]+)', text))
+                if group != 'original' and set(receivers) != ids:
+                    continue
                 for pid, result in rows:
                     fields = dict(entry.split('=', 1) for entry in result.split() if '=' in entry)
                     states = tuple(fields[k] for k in ROLES)
                     if any(v not in ('read', 'restricted') for v in states):
                         raise ValueError(f'Unrecognised role outcome for {pid}')
-                    evidence[pid].add((fields.get('level', 'verified-receipt'), states))
+                    record = fields['line'] if group == 'original' else receivers[pid]
+                    evidence[pid].add((fields.get('level', 'verified-receipt'), record, states))
             sources[group] = run
             break
         else:
@@ -52,13 +56,13 @@ def render(runs):
     lines = ['# Role access on Railway', '',
              'Every row comes from an authenticated request to the Django page and its JSON API on an isolated Railway PostgreSQL database. Each account was admitted to a synthetic project. The two department member accounts test the difference between project access and team oversight. The Admin account has no business appointment.', '',
              'Read means both surfaces returned the tested record. A dash means access to that record was restricted on both. A read gives no approval or publication authority. Private records and appointments are checked independently. The evidence column identifies the stage tested. For source-triggered processes it is the completed receiving record. Multiple outcomes for an ID retain separate rows.', '',
-             'All eight accounts could discover all 108 processes. Starting work separately required the intake permissions for a project. [Release routes](specialist-process-routes.md) · [Approval and provider tests](../../BUILD-TESTS.md)', '',
+             'All eight accounts could discover all 108 processes. Starting work separately required the intake permissions for a project. For P34, for example, the row checks the Finance record receiving the completed PMO milestone. A PMO member can still consult the milestone in PMO. [Release routes](specialist-process-routes.md) · [Approval and provider tests](../../BUILD-TESTS.md)', '',
              '| Suite | Railway checks deployment |', '| --- | --- |']
     lines.extend(f'| {group} | `{run}` |' for group, run in sources.items())
-    lines += ['', '| Process | Evidence | ' + ' | '.join(ROLES.values()) + ' |', '| --- ' * (len(ROLES)+2) + '|']
+    lines += ['', '| Process | Evidence | Record checked | ' + ' | '.join(ROLES.values()) + ' |', '| --- ' * (len(ROLES)+3) + '|']
     for pid in sorted(expected, key=lambda key: (key.startswith('F'), key)):
-        for level, states in sorted(evidence[pid]):
-            cells = [pid, level.replace('_', ' ').replace('-', ' ')] + ['Read' if v == 'read' else '—' for v in states]
+        for level, record, states in sorted(evidence[pid]):
+            cells = [pid, level.replace('_', ' ').replace('-', ' '), f'`{record}`'] + ['Read' if v == 'read' else '—' for v in states]
             lines.append('| ' + ' | '.join(cells) + ' |')
     return '\n'.join(lines) + '\n'
 

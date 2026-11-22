@@ -9,7 +9,7 @@ from django.utils import timezone
 from apps.core.models import Evidence,Audit
 from apps.core.services import lock_case,add_evidence,event
 from apps.core.evidence_access import public_evidence
-from apps.core.read_observation import read_observation
+from apps.core.read_observation import observed_fact,read_observation
 from apps.identity.services import require
 from apps.identity.models import Grant
 from apps.documents.contracts import digest,validate
@@ -37,8 +37,13 @@ def input_rows(case,version,inputs):
     if inputs['authorization_id'] and not ChangeAuthorization.objects.filter(pk=inputs['authorization_id'],version=version).exists():raise ValidationError('Choose the authorization for this exact change revision')
 
 def source(work,actor=None,current=True):
-    require(actor or work.actor,work.case,'change.read');e=work.source_head
-    if not e or e.case_id!=work.case_id or e.kind!=KIND or e.sha256!=hashlib.sha256(e.body.encode()).hexdigest():raise ValidationError('Exact change intake required')
+    require(actor or work.actor,work.case,'change.read')
+    return checked_source(work,work.source_head_id,current)
+
+@observed_fact
+def checked_source(work,head_id,current):
+    e=work.source_head
+    if not e or e.pk!=head_id or e.case_id!=work.case_id or e.kind!=KIND or e.sha256!=hashlib.sha256(e.body.encode()).hexdigest():raise ValidationError('Exact change intake required')
     try:data=json.loads(e.body)
     except (TypeError,ValueError):raise ValidationError('Typed native change intake required') from None
     validate(SCHEMA,data)
@@ -73,8 +78,13 @@ def start(actor,case_id,key,version_id,inputs,reference,expected=None):
     event(actor,case,'factory.started',work=w.pk,definition=DEFINITION);return w
 
 def authorization(work,data):
-    if not data['inputs']['authorization_id']:raise ValidationError('Await human impact assessment, prescribed decisions and explicit native authorization selection')
-    return native.get_authorization(work.case,data['inputs']['authorization_id'])
+    authorization_id=data['inputs']['authorization_id']
+    if not authorization_id:raise ValidationError('Await human impact assessment, prescribed decisions and explicit native authorization selection')
+    return checked_authorization(work,authorization_id)
+
+@observed_fact
+def checked_authorization(work,authorization_id):
+    return native.get_authorization(work.case,authorization_id)
 
 def document(work,purpose):
     pk=Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,result__purpose=purpose,result__has_key='document_version').order_by('-pk').values_list('result__document_version',flat=True).first()
@@ -89,13 +99,18 @@ def principal(work,value,name):
     except PermissionDenied:raise ValidationError('owner_needed: Change principal lacks current project permissions') from None
     return u
 
+@observed_fact
+def checked_document_review(work,version_id):
+    version=current_version(work.case,version_id)
+    return validate_review(work.case,version)
+
 def published(work,purpose,actor=None):
     from .factory import profile
     _,data=source(work,actor);auth=authorization(work,data);v=document(work,purpose)
     if not v:raise ValidationError('Await exact controlled '+purpose+' document')
     b=ChangeDocumentBinding.objects.get(version=v)
     if b.authorization_id!=auth.pk or b.purpose!=purpose:raise ValidationError('Exact selected change authorization required')
-    current_version(work.case,v.pk);review=validate_review(work.case,v);policies,recipients,retention=publication_requirements(work.case,v)
+    review=checked_document_review(work,v.pk);policies,recipients,retention=publication_requirements(work.case,v)
     config,value=profile(work,recovery=True);principal(work,value,'preparer_id');user=principal(work,value,'executor_id')
     p=Publication.objects.filter(version=v,factory_work=work,factory_source=work.source_head,factory_policy=config,actor=user).first()
     if not p or p.policies!=policies or p.recipient_ids!=recipients or p.retention_days!=retention or p.review_id!=review.pk:raise ValidationError('Await current exact '+purpose+' publication')
@@ -138,7 +153,7 @@ def snapshot(work,value,reader=None):
     for purpose in ['notice','go_live']:
         d=document(work,purpose);review={'status':'unprepared'}
         if d:
-            try:current_version(work.case,d.pk);r=validate_review(work.case,d);review={'status':'ready','id':r.pk}
+            try:r=checked_document_review(work,d.pk);review={'status':'ready','id':r.pk}
             except (ValidationError,PermissionDenied) as exc:review={'status':'held','finding':finding(exc)}
         docs[purpose]={'id':d.pk if d else None,'review':review,'publication':Publication.objects.filter(version=d).values_list('pk',flat=True).first() if d else None}
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':native_state,'checks':{'stage':native_state['stage']},'documents':docs,'jobs':[(j.pk,j.status) for j in jobs]}
@@ -314,6 +329,7 @@ def close(actor,work_id,expected,case_expected,receipt_id,pm_signature_id,client
     result=native.close_change(actor,w.case_id,auth.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected,attestation=attestation,operation_key=operation_key)
     w.status='ready';w.finding='Actual closure assurance recorded; verify exact native result';w.revision+=1;w.save();return result
 
+@read_observation
 def projection(actor,work):
     from .factory import access,profile
     access(actor,work.case,'factory.read',DEFINITION);v,data=source(work,actor,False)

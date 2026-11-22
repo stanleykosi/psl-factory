@@ -29,12 +29,21 @@ class Observation:
 
 
 @dataclass(frozen=True)
+class ProjectionRevision:
+    version: int
+    enabled: Callable[[Model], bool]
+    observe: Callable[[Model, Model], Observation]
+    tasks: dict[str, str]
+
+
+@dataclass(frozen=True)
 class Route:
     process: str
     model: str
     matches: Callable[[Model], bool]
     owner: Callable[[Model], Model]
     observe: Callable[[Model, Model], Observation]
+    revised_projection: ProjectionRevision | None = None
 
 
 @lru_cache(maxsize=1)

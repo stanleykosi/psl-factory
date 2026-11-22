@@ -8,8 +8,10 @@
         "model":{"type":"string","minLength":1,"maxLength":160},
         "roles":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["A01","A02","A03","A04","A05","A06","A07","A08"]}},
         "processes":{"type":"array","minItems":1,"maxItems":108,"uniqueItems":true,"items":{"type":"string","pattern":"^[PF][0-9]{2}$"}},
-        "source_kinds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["engagement_source","product_input","requirements","plan","completion","factory_information","meeting_notes","report_input","weekly_client_sections","delivery_progress_observation","native_station_projection"]}}
-      }}
+        "source_kinds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["engagement_source","product_input","requirements","plan","completion","factory_information","meeting_notes","report_input","weekly_client_sections","delivery_progress_observation","native_station_projection"]}},
+        "finance_import_checks":{"type":"boolean"}
+      },"allOf":[{"if":{"required":["finance_import_checks"],"properties":{"finance_import_checks":{"const":true}}},
+                  "then":{"properties":{"processes":{"contains":{"const":"F02"}},"source_kinds":{"contains":{"const":"native_station_projection"}}}}}]}
     },
     {
       "id":"D06.import_unit_conversion","parent_decision_id":"D06",

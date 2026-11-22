@@ -327,6 +327,16 @@ class OriginalProcessRoleAccessTests(TestCase):
         f = fixture()
         work = f['work']
         roles = role_accounts(work.case)
+        milestone = f['handoff'].milestone
+        for role in ('pmo_head', 'pmo_member'):
+            self.client.force_login(roles[role])
+            project = self.client.get(f'/api/v1/projects/{work.case_id}/milestones')
+            self.assertEqual(project.status_code, 200, project.content[:400])
+            completions = [row for section in project.json()['sections'] for row in section['items']]
+            completion = next(row for row in completions if row['title'] == milestone.name)
+            self.assertEqual(completion['django_url'],
+                             reverse('department_records', args=['tola', work.case_id]) + f'?group=milestone&id={milestone.pk}')
+            self.assertContains(self.client.get(completion['django_url']), milestone.name)
         with TemporaryDirectory() as directory:
             adapter = MockFactoryInvoiceAdapter(directory)
             factory.run_until_wait(work.pk, adapter=adapter)
