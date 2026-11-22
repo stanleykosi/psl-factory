@@ -30,7 +30,7 @@
       "type": "apiKey",
       "name": "sessionid",
       "in": "cookie",
-      "description": "Django session cookie from the existing sign-in (D-AUTH, proposed)."
+      "description": "Django session cookie from POST /api/v1/session (D-AUTH, approved r3)."
     },
     "Csrf": {
       "type": "apiKey",
@@ -119,6 +119,14 @@
       "version": "2026-11-15",
       "classification": "private",
       "sha256": "9e326e8d32ed1d0b123af3c3636b916c231b85337446025a299facb99b93a1db"
+    },
+    {
+      "id": "S-DECISIONS-V7",
+      "title": "API style and sign-in approved as the backend built them (OpenAPI 1.22.0), 23 Nov 2026",
+      "path": "sources/decisions-2026-11-23.md",
+      "version": "2026-11-23",
+      "classification": "private",
+      "sha256": "b83c96160f39c21d43ff98a8904f08eca8cd44da92fd54301ccca34a3eeab022"
     }
   ],
   "requirements": [
@@ -373,7 +381,8 @@
       ],
       "evidence": [
         "S-BACKEND",
-        "S-DECISIONS-V2"
+        "S-DECISIONS-V2",
+        "S-DECISIONS-V7"
       ],
       "owner": "backend developer",
       "scope": "All /api/v1 endpoints",
@@ -403,6 +412,19 @@
           "evidence": [
             "S-DECISIONS-V2"
           ]
+        },
+        {
+          "revision": 3,
+          "status": "approved",
+          "choice": "Plain Django JSON views under /api/v1 (apps/core/factory_api) call the existing domain services; no new API framework. The contract is generated from the mounted routes and checked in at contracts/psl-factory.openapi.json, and the server also serves it at /api/v1/openapi.json. Lists page by page and next_page; errors are {code, message, fields?}.",
+          "rationale": "Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0, main 9bac3109). The views live in apps/core/factory_api rather than the apps/api package r1 proposed.",
+          "alternatives": [
+            "Add Django REST framework",
+            "Separate API service"
+          ],
+          "evidence": [
+            "S-DECISIONS-V7"
+          ]
         }
       ]
     },
@@ -415,6 +437,7 @@
       "evidence": [
         "S-BACKEND",
         "S-DECISIONS-V2",
+        "S-DECISIONS-V7",
         "S-SCOPE"
       ],
       "owner": "backend developer",
@@ -445,6 +468,19 @@
           ],
           "evidence": [
             "S-DECISIONS-V2"
+          ]
+        },
+        {
+          "revision": 3,
+          "status": "approved",
+          "choice": "The Django session cookie authenticates; writes send X-CSRFToken. Sign-in, sign-out and token refresh use GET and POST /api/v1/session and POST /api/v1/session/logout; the token rotates on sign-in, sign-out and password change. The Next.js app serves /api/v1 same-origin through its proxy; a separate frontend origin must be listed exactly in PSL_FRONTEND_ORIGINS.",
+          "rationale": "Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0, main 9bac3109).",
+          "alternatives": [
+            "Separate origins with CORS and credentials",
+            "Token or JWT login"
+          ],
+          "evidence": [
+            "S-DECISIONS-V7"
           ]
         }
       ]
