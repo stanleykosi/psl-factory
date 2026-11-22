@@ -1,8 +1,8 @@
 # Eight specialists through human approval and receipt
 
-On 22 November 2026, three synthetic cases on Railway exercised all eight specialist roles with the real OpenRouter model `deepseek/deepseek-v4.1-flash-1017`, PostgreSQL and private object storage. Each specialist cited source lines and wrote a private report. The test read back every file and checked its full digest.
+On 22 November 2026, three synthetic workflows on Railway exercised all eight specialist roles with the real OpenRouter model `deepseek/deepseek-v4.1-flash-1017`, PostgreSQL and private object storage. Each specialist cited source lines and wrote a private report. The test read back every file and checked its full digest. Subsequent trial-balance testing verified that A05 could explain the actual amount, currency and period from the source and that A03 could support the reconciliation. The final section records that result.
 
-**All nine readings returned `insufficient`.** The assigned information reviewer acknowledged the open questions. A different, authorised test principal then approved the exact Finance source, document version or HR disclosure through its business service. The coordinator verified the downstream record. The tests executed those human-role services programmatically. They demonstrate escalation and receipt verification on these limited inputs. They do not establish that the specialists resolved these cases independently.
+**The original nine readings returned `insufficient`.** The assigned information reviewer acknowledged the open questions. A different, authorised test principal then approved the exact Finance source, document version or HR disclosure through its business service. The coordinator verified the downstream record. The tests exercised those human-role services programmatically and established escalation and receipt verification on these limited inputs.
 
 | Process and evidence supplied | Information reviewer | Independent decision | Downstream record |
 | --- | --- | --- | --- |
@@ -35,3 +35,15 @@ Two earlier live invoice runs also recorded insufficient evidence across the inv
 The original Finance reading lacked the result of adding up the imported amounts, the currency, the period and the native validator's finding counts. A new source projection can supply those aggregate facts. The project owner opts in for operational use. Earlier enrolled work retains its original version. Invalid or mixed-period/currency inputs leave the combined amount unknown. Individual account names, row amounts and staff details stay private.
 
 Five PostgreSQL checks passed on Railway for the revised projection. In that run, the intake specialist A01 submitted a fact that failed the exact citation check. The coordinator held the new case before business approval. The five checks and one live case took 31.985 seconds, with one failure. The source reader was then revised to supply named, source-bound facts for this input. It derives each amount, currency and period from native validation and verifies every selected fact against its exact line and character span. [Revised input and initial hold](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=9a387f7f-544e-4352-9771-9218e7164ac7)
+
+### Verified result with source-bound facts
+
+On the final Railway run, **A05 reported that the validated file total of −109.99 NGN for October 2026 matched the declared control.** The test checked its own interpretation against the native calculation, and checked the exact source spans for `-109.99`, `NGN`, `2026-10` and the separate declared total. A03 also returned a supported conclusion citing both controls. A01 still reported insufficient evidence. Synthetic preparer 135 acknowledged the open finding, independent Finance reviewer 137 approved the file in review 12, and Finance mapping run 2 recorded that exact approval. [Final Railway evidence](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=26c053b8-44e8-4500-a5a0-b9692e98cc37)
+
+| Specialist | Assessment | Cited lines | Private report SHA-256 |
+| --- | --- | --- | --- |
+| A01 · Intake and case triage | Insufficient | 1, 4, 7, 9 | `3aa2e3a4555ec068719109090d31c5f8ba73f0cc766aa0f9d808550aa4a7b913` |
+| A03 · Exception investigation | Supported | 4, 9 | `f70010d1ffa9e0d6e190322cad94d688e97f9ab0c83fee8f308a60471876813f` |
+| A05 · Finance evidence and analysis | Supported | 9, 8, 4 | `293e614c87fa030115a4079d9022e0bae14e064ea065aade5fbb3bff22a3c72d` |
+
+The six projection and data-access regressions and the one live workflow passed in **64.174 seconds**. Through the authenticated page and API, the Finance head and assigned Finance member could read the finished mapping. The PMO head, PMO member, HR, Admin, CEO and CTO each received a restricted result. The private test-file versions were removed after readback, the isolated test database was dropped and both temporary model-provider references were verified absent.

@@ -2,9 +2,11 @@
 
 ## Department role acceptance · 22 November 2026
 
-The build branch adds a shared 108-process directory, subject-scoped department work and review APIs, original-authority HR acknowledgement, and role checks on the original intake and receiving records. The live specialist ledger covers all eight roles in three Railway workflows. All nine initial model readings raised evidence gaps. [Specialist receipts](docs/design/specialist-role-acceptance.md) · [API contract](docs/design/frontend-api.md) · [Test ledger](BUILD-TESTS.md)
+All 108 release processes passed authenticated Django and JSON access checks on Railway under the six staff roles and separate PMO and Finance member accounts. The evidence identifies the actual record each role could open, including 63 native downstream receipts. Start work lists every release process. Project scope, membership and source authority govern the work itself. Named evidence resolution, independent business decisions and Finance acknowledgement retain their own checks. [Role matrix](docs/design/role-process-acceptance.md) · [API contract](docs/design/frontend-api.md)
 
-Railway checks deployment `5b614961-9e3d-470c-98d2-23735250361b` tests the first integrated revision in five isolated databases. The build branch also contains a versioned trial-balance projection. Operational projects require explicit authorisation for the extra aggregate checks. Earlier stations retain the projection they were given. Continue from the latest test results below before promoting a release.
+All eight specialists ran against OpenRouter and private storage on three synthetic workflows. The initial metadata-only cases raised gaps. With the additional authorised trial-balance facts, two specialists verified the computed and declared totals; the intake specialist still requested more evidence. A separate Finance reviewer approved the mapping after the preparer acknowledged that gap. The final role probe used that exact completed mapping. The trial-balance setting requires an explicit opt-in on operational projects. Existing work retains its original source version. [Model responses and receipts](docs/design/specialist-role-acceptance.md) · [Test runs and deployment](BUILD-TESTS.md)
+
+Continue on `build/design-consolidation`. The approved deployment target for this checkpoint is Railway design acceptance. The 14 BaaS IDs remain in the catalogue for a later release. Operational reviewer appointments, external destinations, source disclosure and financial rules still need their owners. Reproduce the staff checks with `scripts/stage_railway_role_checks.py` and the design-acceptance instructions in the [Railway runbook](docs/runbooks/railway.md).
 
 ## Native department handoffs · 21 November 2026
 
