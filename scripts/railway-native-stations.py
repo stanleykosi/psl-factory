@@ -27,7 +27,7 @@ PLANNING_API_TESTS = (
     'tests.test_planning_department_inputs.PlanningDepartmentInputTests.test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review',
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
-API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api')
+API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api')
 
 
 def run(group, token, role_access):
@@ -102,6 +102,8 @@ def run(group, token, role_access):
             'tests.test_factory_payroll.FactoryPayrollTests.test_missing_hr_receipt_requires_exact_matcher_and_new_match',
             'tests.test_factory_payroll.FactoryPayrollTests.test_withdrawal_preserves_original_receipt_and_requires_new_reviewed_sources',
         ]
+    elif group == 'setup-api':
+        modules = ['tests.test_factory_api.ContractTests', 'tests.test_policy_reviews_api']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

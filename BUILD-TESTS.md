@@ -8,6 +8,8 @@ The first Railway Delivery API deployment `8f33d9c0-e2f4-43bb-a48d-2ddeec4b08a2`
 
 The initial payroll and contract batch passed six local PostgreSQL tests in 20.721 seconds with six schema-valid successful operations. It verified original CSV and Excel import, a held unknown amount, nominee-scoped authoring, page-sized private rows and revoked access. Held draft calculation remained separate from publication. Type generation and OpenAPI 3.1 schema validation passed.
 
+The two local payroll follow-up tests passed in 274.862 seconds. The assigned matcher acknowledged the exact authorised HR snapshot. A separately reviewed withdrawal retained the original recipient receipt, and the corrected successor required fresh reviews before publication. The local appointment and contract suite passed five tests in 4.218 seconds after correcting a test assertion to use the policy pin returned by native decision authority.
+
 ## OpenAPI project records and recovery · 22 November 2026
 
 The isolated local PostgreSQL batch passed all 11 tests in 84.374 seconds. The response audit covered 33 of 141 operations, with 31 successful responses. It exercised original source selection and revocation, retrospective and action authoring, independent client link review, private minutes upload and original receipt readback, controlled report rework and publication, opaque access requests, invoice proof and the exact pre-issue stop. An earlier run exposed a test assertion using `id` where the contract returns `work_id`. The assertion was corrected and the flow passed. External effects used synthetic adapters. The OpenAPI 3.1 schema and TypeScript generation passed.

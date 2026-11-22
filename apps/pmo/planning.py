@@ -246,10 +246,10 @@ def bridge(a,case_id,readiness_id,dossier_id):
     old=dossier.sources.filter(kind='scope_baseline',evidence_id=readiness_id).first()
     return old or capture_source(a,c.pk,dossier_id,'scope_baseline','psl:planning-readiness:'+str(readiness_id),readiness_id,{},None)
 
-def report(a,case_id,*,include_display=True):
+def report(a,case_id):
     c=Case.objects.get(pk=case_id);readable(a,c);out={'process_ids':['P17','P21','P25','P26','P63'],'effect_tools':[],'native_verified':False}
     from .engagement_details import planning_summary
-    if include_display:out['project_details']=planning_summary(a,c)
+    out['project_details']=planning_summary(a,c)
     current=latest(c,'packet');out['current_packet_id']=current.pk if current else None
     try:
         e,v=packet(c);out.update(packet_id=e.pk,packet_sha256=e.sha256,payload=v['payload'])
@@ -257,7 +257,7 @@ def report(a,case_id,*,include_display=True):
             from .planning_inputs import projection
             out['department_inputs']=projection(a,c,e)
         from .planning_sources import assessment,clarifications
-        if include_display:out['source_clarifications']=clarifications(c,e.pk)
+        out['source_clarifications']=clarifications(c,e.pk)
         out['source_correlation']=assessment(c,v['payload'])
         if v['protocol']!='planning-packet/v2':
             out['source_correlation']['complete']=False
