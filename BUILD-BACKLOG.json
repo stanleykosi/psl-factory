@@ -2,6 +2,8 @@
   "frontend_cutover_schedule_asset_accounting_intake_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.13.0",
+    "railway_tests_passed": 10,
+    "railway_checks_deployment": "cfdc7363-345b-41ca-bb42-e8ee9e1522c0",
     "live_paths": 212,
     "live_operations": 295,
     "added_operations": 16,
