@@ -1,5 +1,19 @@
 # Actual test execution ledger
 
+## OpenRouter coordinator and department assistants · 22 November 2026
+
+Railway `e32a1640-5a4b-4884-9de7-36628d7b7c02` passed the five PostgreSQL checks with simulated model responses in 82.673 seconds, then passed all three live workflow tests in 111.000 seconds. The coordinator used `deepseek/deepseek-v4.1-flash-1017` for routing and report review. The runs checked all eight specialist roles across nine private report files and three business receipts. Tola cited the controlled publication, Chidi cited the approved trial-balance mapping, and Zainab cited Finance’s acknowledgement of the HR-approved handoff. For the HR handoff, the live coordinator raised four findings for the information reviewer before the independent approval. The UI and API checks used authenticated requests to Django and test data in an isolated Railway PostgreSQL database. [Initial hosted checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=e32a1640-5a4b-4884-9de7-36628d7b7c02)
+
+Final Railway run `f1bd8eac-2dc1-4ac0-ac31-a4163fc3ed49` passed five PostgreSQL checks with simulated model responses in 64.503 seconds and all three live workflow tests in 95.933 seconds. The live coordinator selected approved source lines for every role and checked the nine reports read from private storage. A quality finding reached the assigned reviewer in the Finance and publication cases. A separate authorised test principal recorded each business approval. The three assistants cited their exact downstream receipt. The isolated database and its private test-file versions were removed, and both temporary model references were verified absent. [Final hosted checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=f1bd8eac-2dc1-4ac0-ac31-a4163fc3ed49)
+
+| Assistant | Native process and verified result | Specialist order chosen by OpenRouter | Further findings |
+| --- | --- | --- | --- |
+| Chidi | F02 trial-balance mapping, station receipt 6 | Intake, investigation, Finance analysis | 1 |
+| Zainab | F35 acknowledgement of HR-authorised Finance handoff, station receipt 7 | Document analysis, release preflight, workflow coordination | 0 |
+| Tola | P52 controlled publication, station receipt 8 | Quality review, document interpretation, management drafting | 1 |
+
+Application revision `8346a89c` is deployed to Railway design acceptance. Web `41e18fbf-1b00-482f-b11b-062bcac0c2dc` applied both agents migrations and returned 200 for health, sign-in and the API schema. Worker `f3c5049e-3b89-4aa9-aed9-75ec72fb0a4a` reported success and started two source readers. Six focused local PostgreSQL tests passed in 25.585 seconds for the OpenRouter configuration form, explicit source opt-in and revocation, model response validation and protected retry. The saved routing book still matches all 122 source processes.
+
 ## Role access and eight specialist approvals · 22 November 2026
 
 Five local PostgreSQL tests passed in 23.686 seconds. Authenticated HTML and JSON returned all 108 catalogue entries for PMO Lead, Finance Lead, HR, CEO, CTO and Admin, and for ordinary PMO and Finance members. The checks compared intake eligibility, sent the PMO engagement command, rejected another department and another organisation, checked the API schema and verified native bid-file receipt reuse across HTML and JSON. File storage was simulated for the bid test.

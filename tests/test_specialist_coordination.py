@@ -13,6 +13,38 @@ from tests.test_rfp import fixture
 
 
 class CoordinatorBoundaries(TestCase):
+    @patch.dict("os.environ", {"PSL_OPENROUTER_COORDINATION": "1"})
+    def test_operational_source_permission_is_explicit_and_revocable(self):
+        from types import SimpleNamespace
+        from django.utils import timezone
+        from apps.core.services import add_evidence
+        from apps.policy.project_use import ProjectUseForm
+        from apps.policy.services import transition
+        from tests.helpers import setup_case
+
+        actor, case = setup_case(username="operational-coordinator-scope", synthetic=False)
+        work = SimpleNamespace(case=case)
+        proof = add_evidence(actor, case.pk, "policy_decision", "Recorded synthetic policy test evidence", "test")
+        data = {"roles": ["A01", "A03", "A05"], "processes": ["F02"],
+                "source_kinds": ["native_station_projection"], "model": "scoped-test-model",
+                "effective": timezone.now().isoformat(), "proof": proof.pk}
+        component = specialist_coordination.memory.COMPONENT
+        self.assertFalse(specialist_coordination.enabled_model(work, data["model"]))
+        form = ProjectUseForm(actor, case, component, data)
+        self.assertTrue(form.is_valid(), form.errors)
+        rule = form.save(actor)
+        for state in ("validated", "active"):
+            transition(actor, rule.pk, state)
+        self.assertFalse(specialist_coordination.enabled_model(work, data["model"]))
+        form = ProjectUseForm(actor, case, component, {**data, "coordinate_specialists": True})
+        self.assertTrue(form.is_valid(), form.errors)
+        approved = form.save(actor)
+        for state in ("validated", "active"):
+            transition(actor, approved.pk, state)
+        self.assertEqual(specialist_coordination.enabled_model(work, data["model"]), data["model"])
+        transition(actor, approved.pk, "revoked")
+        self.assertFalse(specialist_coordination.enabled_model(work, data["model"]))
+
     def test_model_cannot_add_or_remove_a_specialist_or_invent_a_citation(self):
         route = {"roles": {"A01": "Intake", "A02": "Source"}, "sources": {"7": {"1": "Current source"}}}
         self.assertEqual(specialist_coordination.validated("route", {"order": ["A02", "A01"]}, route),

@@ -1,4 +1,15 @@
 {
+  "openrouter_coordinator_20261122": {
+    "scope": "Coordinator routing and quality review for the eight active specialists, with verified results available to Tola, Chidi and Zainab",
+    "status": "verified_on_railway_design_acceptance",
+    "initial_acceptance": "e32a1640-5a4b-4884-9de7-36628d7b7c02",
+    "final_acceptance": "f1bd8eac-2dc1-4ac0-ac31-a4163fc3ed49",
+    "application_revision": "8346a89c",
+    "passing_railway_postgres_controls": 5,
+    "passing_live_loops": 3,
+    "contract": "docs/design/coordinator-specialists.md",
+    "owner_decisions": "Project source disclosure, operational appointments and business approval policies remain deferred."
+  },
   "role_access_release_20261122": {
     "scope": "108 PMO and Finance processes, six staff roles, eight specialist roles",
     "status": "verified_on_railway_design_acceptance",

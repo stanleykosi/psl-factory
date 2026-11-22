@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenRouter coordinator · 22 November 2026
+
+The coordinator now orders the required specialists and can focus their reading on exact, permitted lines. It checks the team’s private reports and routes supported citations or questions to the native workflow. The retired planner’s original receipts remain available for historical reconciliation. Railway design acceptance runs `8346a89c` and verified the complete loop with Tola, Chidi and Zainab using DeepSeek V4.1 Flash, independent test decision principals and the original receiving records. [Coordinator contract](docs/design/coordinator-specialists.md) · [Test ledger](BUILD-TESTS.md)
+
 ## Six-role release checks · 22 November 2026
 
 Start work and the JSON API share one 108-process directory. Railway verified the actual records via both interfaces for six roles, including separate PMO and Finance member accounts. Of the 108, 63 were tested at their native receiving record, 25 at an observed process dispatch, 19 at intake and one at the investigation. Twenty-six sampled records required a separate appointment or private-source permission. [Process and role results](docs/design/role-process-acceptance.md)

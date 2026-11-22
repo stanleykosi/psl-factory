@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## OpenRouter coordinator · 22 November 2026
+
+Use `build/design-consolidation`. The OpenRouter coordinator routes each source packet to its required specialists, chooses which approved lines to read first and checks the team’s private reports. The native service checks authority and records each business decision and downstream receipt. The old planner is retired for new work. Its recorded requests still support original receipt lookup. [Coordinator contract](docs/design/coordinator-specialists.md)
+
+Railway design acceptance runs application revision `8346a89c`. Web `41e18fbf-1b00-482f-b11b-062bcac0c2dc` applied migrations `agents.0021` and `0022`. Worker `f3c5049e-3b89-4aa9-aed9-75ec72fb0a4a` started the two source readers. The coordinator and the other model workers share `OPENROUTER_MODEL`. For operational work, the owner enables coordination in the project’s specialist source settings with the exact model, processes, source types and complete teams. Staff authority, external destinations and financial decisions remain deferred. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/) · [Test runs](BUILD-TESTS.md)
+
+Final Railway checks `f1bd8eac-2dc1-4ac0-ac31-a4163fc3ed49` passed five PostgreSQL controls and three live model flows. Chidi cited the approved Finance mapping, Tola cited the controlled publication and Zainab cited Finance’s acknowledgement of her HR disclosure. Use the [Railway runbook](docs/runbooks/railway.md) to reproduce this with a new ticket. If a coordinator check ends without a verified response, its authorised operator can assess the source and request one new check from the work page or API within the recorded allowance.
+
 ## Department role acceptance · 22 November 2026
 
 All 108 release processes passed authenticated Django and JSON access checks on Railway under the six staff roles and separate PMO and Finance member accounts. The evidence identifies the actual record each role could open, including 63 native downstream receipts. Start work lists every release process. Project scope, membership and source authority govern the work itself. Named evidence resolution, independent business decisions and Finance acknowledgement retain their own checks. [Role matrix](docs/design/role-process-acceptance.md) · [API contract](docs/design/frontend-api.md)
