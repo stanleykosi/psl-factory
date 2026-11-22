@@ -79,8 +79,15 @@ class RFPLossProofTests(TestCase):
         self.assertContains(offered, reason['label'])
         self.assertContains(offered, 'Recorded debrief (optional)')
         self.assertNotContains(self.client.get(self.url, {'outcome': 'won'}), 'name="loss_reason"')
-        self.assertEqual(self.client.post(self.url, self.command(loss_reason=reason['key'],
-            loss_catalog=configuration.pk, debrief_version=version.pk)).status_code, 302)
+        root = f'/api/v1/work/{self.work.pk}'
+        outcome = self.client.get(root + '/bid-outcomes').json()
+        recorded = self.client.post(root + '/rfp-outcome', {
+            'expected_revision': outcome['expected_revision'], 'case_revision': outcome['case_revision'],
+            'submission_id': self.submission.pk, 'verdict': 'lost', 'observed_at': timezone.now().isoformat(),
+            'role': 'Client', 'evidence_id': self.proofs['rfp_outcome'].pk, 'note': 'Actual synthetic customer loss.',
+            'loss_reason_key': reason['key'], 'loss_catalog_id': configuration.pk, 'debrief_version_id': version.pk,
+        }, content_type='application/json')
+        self.assertEqual(recorded.status_code, 200, recorded.content)
         loss = RFPOutcome.objects.get(submission=self.submission)
         self.assertEqual(loss.loss_reason, {**reason, 'configuration': configuration.pk})
         self.assertEqual(loss.debrief_version_id, version.pk)
@@ -88,6 +95,8 @@ class RFPLossProofTests(TestCase):
         self.work.refresh_from_db()
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         self.assertEqual(RFPDisposition.objects.get(outcome=loss).lessons_id, self.proofs['rfp_lessons'].pk)
+        result = self.client.get(root + '/bid-outcomes').json()
+        self.assertEqual((result['handoff']['kind'], result['handoff']['outcome_id']), ('loss_archive', loss.pk))
         self.assertFalse(ActionItem.objects.filter(case=self.case).exists())
 
         self.meeting(version.meeting_id)

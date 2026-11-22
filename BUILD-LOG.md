@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Added isolated, schema-checked Railway replay and individual results for the 262 design states. Recorded the first 94 observations and added private notification receipts and exact pending bid readback. [State results](docs/design/api-state-replay-results.csv)
+
 22 November 2026. Verified successful Railway responses for all 186 added operations and 290 distinct operations across 59 groups. Corrected forecast receipt recovery and verified historical payroll planner receipts, native Change forms, private handovers and continued worker operation when model queues are blocked. The individual API state replay remains open. [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Closed the 41 tracked screen-group API implementation gaps and verified the deployed OpenAPI 1.20.0 snapshot. Added exact parity checks for the eight native work queue filters and readback from missing invoice evidence through the original issue and delivery. Recorded grouped Railway results and kept individual state replay evidence separate. [Actual tests](BUILD-TESTS.md)

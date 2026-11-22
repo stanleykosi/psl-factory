@@ -98,6 +98,46 @@ class RFPPendingDateTests(TestCase):
         self.assertEqual(recorded.followup_on, self.today)
         self.assertContains(self.client.get(reverse('rfp', args=[self.case.pk])), 'Customer expected decision')
 
+    def test_api_pending_date_and_unknown_reminder_remain_distinct(self):
+        self.client.force_login(self.actor)
+        root = f'/api/v1/work/{self.work.pk}'
+        url = root + '/bid-outcomes'
+
+        def record(verdict, **fields):
+            page = self.client.get(url, {'submission_id': self.submission.pk})
+            self.assertEqual(page.status_code, 200, page.content)
+            packet = page.json()
+            return self.client.post(root + '/rfp-outcome', {
+                'expected_revision': packet['expected_revision'], 'case_revision': packet['case_revision'],
+                'submission_id': self.submission.pk, 'observed_at': self.observed_at.isoformat(),
+                'verdict': verdict, 'role': 'Client', 'evidence_id': self.proof.pk,
+                'note': 'Sample customer observation.', **fields,
+            }, content_type='application/json')
+
+        refused = record('unknown', customer_expected_on=self.customer_date.isoformat())
+        self.assertEqual(refused.status_code, 422, refused.content)
+        self.assertFalse(self.submission.outcomes.exists())
+        saved = record('pending', customer_expected_on=self.customer_date.isoformat(),
+                       followup_on=self.today.isoformat())
+        self.assertEqual(saved.status_code, 200, saved.content)
+        pending = self.client.get(url).json()['outcome']
+        self.assertEqual(pending['result'], 'pending')
+        self.assertEqual(pending['customer_expected_on'], self.customer_date.isoformat())
+        self.assertEqual(pending['followup_on'], self.today.isoformat())
+        self.assertIsNone(pending['remind_at'])
+        reminder = self.observed_at + timedelta(days=1)
+        saved = record('unknown', evidence_id=None, remind_at=reminder.isoformat())
+        self.assertEqual(saved.status_code, 200, saved.content)
+        page = self.client.get(url).json()
+        outcome = page['outcome']
+        self.assertEqual(outcome['result'], 'unknown')
+        self.assertIsNone(outcome['customer_expected_on'])
+        self.assertIsNone(outcome['followup_on'])
+        self.assertEqual(self.submission.outcomes.get(pk=outcome['id']).remind_at, reminder)
+        self.assertIsNotNone(outcome['remind_at'])
+        self.assertIsNone(page['handoff'])
+        self.assertEqual(self.submission.outcomes.count(), 2)
+
     def test_exact_internal_reminder_is_due_only_for_current_pm_and_retires(self):
         peer = get_user_model().objects.create_user(username='sample-rfp-unassigned-reader')
         Grant.objects.bulk_create([Grant(case=self.case, user=peer, action=action)

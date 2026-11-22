@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Individual API state replay · 22 November 2026
+
+Railway verified 87 of 262 named API states. Seven cases need stronger API response evidence and 168 remain pending. The replay plan grows the explicit assertions to 183 states. OpenAPI 1.21.0 adds readback for private personal notification receipts and pending bid dates and supports an unsupported-by-evidence outcome remaining Unknown. [State results](docs/design/api-state-replay-results.csv) · [Actual tests](BUILD-TESTS.md)
+
 ## Screen API implementation and Railway acceptance · 22 November 2026
 
 Added the API actions recorded as missing in 41 screen groups. All 59 groups now resolve to mounted operations for the 262-state inventory, with no remaining group-level route gap. The Railway preview serves OpenAPI 1.20.0, with 376 operations across 266 paths, and its Django sign-in and worker polling checks passed. The contract is available on GitHub main. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)

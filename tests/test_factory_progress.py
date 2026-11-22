@@ -100,8 +100,10 @@ class FactoryProgressTests(TransactionTestCase):
         self.assertFalse(FactoryProgress.objects.filter(work=work).exists())
         self.assertFalse(InvoiceJob.objects.filter(invoice=work.invoice).exists())
 
-        self.assertEqual(self.client.post(url, request).status_code, 302)
-        self.assertEqual(self.client.post(url, request).status_code, 302)
+        api = f'/api/v1/work/{work.pk}'
+        body = {'action': 'release_invoice', 'expected_revision': work.revision}
+        for _ in range(2):
+            self.assertEqual(self.client.post(api + '/actions', body, content_type='application/json').status_code, 202)
         job = FactoryProgress.objects.get(work=work)
         self.assertEqual(job.status, 'queued')
         self.assertFalse(InvoiceIssue.objects.filter(invoice=work.invoice).exists())
@@ -109,7 +111,42 @@ class FactoryProgressTests(TransactionTestCase):
             self.assertEqual(self.drain(job), 'finished')
         self.assertEqual(InvoiceIssue.objects.filter(invoice=work.invoice).count(), 1)
         self.assertEqual(InvoiceDelivery.objects.filter(invoice=work.invoice).count(), 1)
+        result = self.client.get(api).json()
+        self.assertEqual(result['state'], 'verified')
+        receipt = self.client.get(result['output_url']).json()
+        self.assertEqual((receipt['issue_id'], receipt['delivery_id']),
+                         (InvoiceIssue.objects.get(invoice=work.invoice).pk,
+                          InvoiceDelivery.objects.get(invoice=work.invoice).pk))
         self.assertNotContains(self.client.get(url), 'Issue and send invoice')
+
+    def test_api_processing_lease_precedes_exact_invoice_review(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+        from apps.workflows import factory
+
+        data = fixture(username='api-current-invoice-processing')
+        work = data['work']
+        self.client.force_login(data['actor'])
+        url = f'/api/v1/work/{work.pk}'
+        accepted = self.client.post(url + '/background',
+            {'expected_revision': work.revision, 'enabled': True}, content_type='application/json')
+        self.assertEqual(accepted.status_code, 202, accepted.content)
+        test = self
+
+        class ObserveClaim(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                page = test.client.get(url)
+                test.assertEqual(page.status_code, 200, page.content)
+                test.assertEqual(page.json()['state'], 'processing')
+                test.assertNotIn('release_invoice', page.json()['actions'])
+                test.assertIsNone(page.json()['output_url'])
+                return super().choose(context)
+
+        self.assertTrue(factory.run_once(work.pk, provider=ObserveClaim()))
+        factory.run_until_wait(work.pk)
+        page = self.client.get(url).json()
+        task = HumanTask.objects.get(case=work.case, kind='factory_review', status='open')
+        self.assertIn(task.pk, [item['id'] for item in page['tasks']])
+        self.assertFalse(InvoiceIssue.objects.exists())
 
     def test_uncertain_send_stops_until_native_recovery(self):
         data = fixture()

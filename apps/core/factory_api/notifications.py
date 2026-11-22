@@ -2,15 +2,19 @@ from django.http import Http404
 from django.utils import timezone
 
 from apps.core import account_delivery, alerts
-from apps.core.alert_models import AlertPreference, AlertRead
+from apps.core.alert_models import AccountDelivery, AlertPreference, AlertRead
 
-from .http import BOOLEAN, DATETIME, REVISION, TEXT, array, choice, endpoint, obj
+from .http import BOOLEAN, DATETIME, REVISION, TEXT, array, choice, endpoint, nullable, obj
 
 
 ALERT = obj({'id': TEXT, 'title': TEXT, 'subject': {'type': 'string'}, 'detail': {'type': 'string'},
              'group': choice('action', 'update'), 'read': BOOLEAN, 'django_url': TEXT})
 PREFERENCES = obj({'revision': REVISION, 'email_requested': BOOLEAN, 'whatsapp_requested': BOOLEAN})
 STATUS = obj({**PREFERENCES['properties'], 'email_ready': BOOLEAN, 'whatsapp_ready': BOOLEAN})
+RECENT_DELIVERIES = obj({**STATUS['properties'], 'recent_deliveries': array(obj({
+    'channel': choice('email', 'whatsapp'), 'state': choice(*AccountDelivery.State.values),
+    'created_at': DATETIME, 'delivered_at': nullable(DATETIME), 'receipt': nullable(TEXT),
+}), limit=20)})
 
 
 @endpoint(response=obj({'items': array(ALERT), 'as_of': DATETIME}), summary='Read current personal alerts')
@@ -41,9 +45,14 @@ def preference_data(actor):
             'email_ready': 'email' in routes, 'whatsapp_ready': 'whatsapp' in routes}
 
 
-@endpoint(response=STATUS, summary='Read personal preferences and currently verified channels')
+@endpoint(response=RECENT_DELIVERIES, summary='Read personal preferences, verified channels and recent alert receipts')
 def preferences(request):
-    return preference_data(request.user)
+    recent = AccountDelivery.objects.filter(actor=request.user, purpose='alert').order_by('-created_at', '-pk')[:20]
+    return {**preference_data(request.user), 'recent_deliveries': [
+        {'channel': row.channel, 'state': row.state, 'created_at': row.created_at,
+         'delivered_at': row.delivered_at, 'receipt': row.receipt or None}
+        for row in recent
+    ]}
 
 
 @endpoint(method='POST', request=PREFERENCES, response=STATUS, summary='Save personal alert preferences')

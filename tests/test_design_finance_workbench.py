@@ -58,6 +58,10 @@ class DesignFinanceWorkbenchTests(TestCase):
         self.assertContains(page, 'Recorded billing preparation')
         self.assertContains(page, 'Unknown')
         self.assertNotContains(page, 'Applied NGN')
+        api = f'/api/v1/projects/{self.case.pk}/billing-invoices/{invoice.pk}'
+        before = self.client.get(api).json()
+        self.assertIsNone(before['paid'])
+        self.assertIsNone(before['issue_id'])
         issue = issue_identified(self.actor, self.case, invoice, self.evidence)
         receipt, lot = finance.receipt(self.actor, self.case)
         finance.assign(self.actor, self.case, receipt, self.coverage, self.evidence)
@@ -66,6 +70,10 @@ class DesignFinanceWorkbenchTests(TestCase):
         [line] = page.context['money']['selected']['invoices']
         self.assertEqual(line['paid'], Decimal('25.00'))
         self.assertEqual(line['owed'], invoice.amount - Decimal('25.00'))
+        readback = self.client.get(api).json()
+        self.assertEqual(Decimal(readback['paid']), Decimal('25.00'))
+        self.assertEqual(Decimal(readback['owed']), invoice.amount - Decimal('25.00'))
+        self.assertEqual(readback['issue_id'], issue.pk)
         self.assertContains(page, 'Applied receipt tx-cash-1')
         self.assertEqual(self.client.get(url, {'figure': 'invoice-900000000'}).status_code, 404)
         Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)

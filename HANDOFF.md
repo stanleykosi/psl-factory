@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Individual API state replay · 22 November 2026
+
+The first isolated Railway replay `bcd215a6-b1bd-41e9-9f64-d69cd2f2b1f3` recorded 87 passes, seven insufficient cases and 168 pending across the 262-state inventory. Match each planned assertion to its actor, observed operation and status before importing its result. OpenAPI 1.21.0 exposes private personal alert delivery receipts, pending bid dates and a nullable evidence field for unknown outcomes. Keep Django and the source command services in place. Continue from the replay plan and ledger, with HOD choices deferred. [Replay plan](docs/design/api-state-replay-plan.csv) · [State results](docs/design/api-state-replay-results.csv)
+
 ## Screen API coverage and Railway acceptance · 22 November 2026
 
 Use GitHub main and OpenAPI 1.20.0. All 41 tracked implementation gaps are closed in the screen inventory. Its 59 groups and 262 state IDs resolve to mounted API routes. Railway web `46036741-c181-4aab-8365-9eaf80cba180` and worker `b3c1dcff-ebfc-4eee-ae41-d2591460c47f` run application revision `0d777470`. It restores an uncertain forecast hold before checking the original delivery. Django sign-in, health and the exact deployed contract passed their checks. The worker reached native and specialist polling.

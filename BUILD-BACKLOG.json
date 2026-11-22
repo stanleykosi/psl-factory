@@ -1,4 +1,17 @@
 {
+  "named_api_state_replay_20261122": {
+    "status": "in_progress",
+    "states": 262,
+    "planned": 183,
+    "railway_passed": 87,
+    "railway_insufficient": 7,
+    "pending": 168,
+    "first_railway_deployment": "bcd215a6-b1bd-41e9-9f64-d69cd2f2b1f3",
+    "contract_version": "1.21.0",
+    "results": "docs/design/api-state-replay-results.csv",
+    "next": "Replay exact remaining outcomes and regressions on isolated Railway PostgreSQL.",
+    "hod_choices": "deferred"
+  },
   "frontend_cutover_client_testing_pack_20261122": {
     "status": "api_groups_verified_state_replays_pending",
     "contract_version": "1.20.0",

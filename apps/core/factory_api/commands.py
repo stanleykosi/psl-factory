@@ -96,7 +96,7 @@ def request_bid_review(request, work_id, *, body):
 
 @endpoint(method='POST', request=obj({
     **VERSIONS, 'submission_id': ID, 'verdict': choice('won', 'lost', 'pending', 'unknown'), 'observed_at': DATETIME,
-    'role': {**TEXT, 'maxLength': 64}, 'evidence_id': ID, 'note': {'type': 'string', 'maxLength': 4000},
+    'role': {**TEXT, 'maxLength': 64}, 'evidence_id': nullable(ID), 'note': {'type': 'string', 'maxLength': 4000},
     'selection_packet': {**TEXT, 'maxLength': 256}, 'selection_acknowledged': BOOLEAN,
     'award_amount': {**TEXT, 'maxLength': 64}, 'award_currency': {**TEXT, 'maxLength': 8},
     'customer_expected_on': {'type': 'string', 'format': 'date'}, 'followup_on': {'type': 'string', 'format': 'date'},

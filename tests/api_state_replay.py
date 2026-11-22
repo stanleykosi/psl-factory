@@ -6,7 +6,7 @@ import os
 import unittest
 
 from .api_contract_runner import ContractRunner
-from .api_state_plan import MARKER, read_plan
+from .api_state_plan import MARKER, pending_plan, read_plan
 
 
 class StateReplayRunner(ContractRunner):
@@ -39,6 +39,8 @@ class StateReplayRunner(ContractRunner):
             raise ValueError('State replays run one reporting process per isolated database.')
         suite = os.environ['PSL_DESIGN_TEST_GROUP']
         _, plan = read_plan()
+        if os.environ.get('PSL_API_REPLAY_PENDING') == '1':
+            plan = pending_plan(plan)
         selected = [row for row in plan if row['suite'] == suite]
         if not selected or set(test_labels) != {row['test'] for row in selected}:
             raise ValueError('The selected tests must equal the manifest for this replay suite.')

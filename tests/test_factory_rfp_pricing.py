@@ -71,10 +71,16 @@ class FactoryFinalCostingDecisionTests(TestCase):
         self.assertContains(page, 'Amounts come from the reviewed calculation for these inputs.')
         for item in run.result['values']:
             self.assertContains(page, item['value'])
-        result = self.client.post(url, {'action': 'commercial', 'target': response.commercial_id,
-            'role': 'CEO', 'verdict': 'approve', 'revision': work.revision, 'case_revision': rev(case),
-            'note': 'Reviewed the exact current bid and separately calculated amount.'})
-        self.assertEqual(result.status_code, 302)
+        root = f'/api/v1/work/{work.pk}'
+        pricing = self.client.get(root + '/bid-pricing').json()
+        self.assertEqual(pricing['commercial_revision_id'], response.commercial_id)
+        self.assertEqual({row['value'] for row in pricing['amounts']}, {item['value'] for item in run.result['values']})
+        result = self.client.post(root + '/reviews', {'kind': 'bid', 'subject': 'commercial',
+            'target_id': response.commercial_id, 'role': 'CEO', 'verdict': 'approve',
+            'expected_revision': pricing['expected_revision'], 'case_revision': pricing['case_revision'],
+            'evidence_id': None, 'note': 'Reviewed the exact current bid and separately calculated amount.'},
+            content_type='application/json')
+        self.assertEqual(result.status_code, 200, result.content)
         self.assertTrue(CommercialDecision.objects.filter(revision=response.commercial, role='CEO', verdict='approve').exists())
         self.assertNotContains(self.client.get(url), 'Final costing decision')
         self.assertFalse(RFPSubmission.objects.filter(response=response).exists())

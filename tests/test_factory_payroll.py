@@ -81,28 +81,50 @@ class FactoryPayrollTests(TestCase):
         self.client.force_login(f['reviewer'])
         page=self.client.get(url);self.assertContains(page,'Review payroll input',count=2)
         self.assertNotContains(page,'Exact subject ID')
+        work_api = f'/api/v1/work/{self.work.pk}'
+
         def approve_on_screen(kind,item):
             payload={'action':'review','kind':kind,'subject_id':item.pk,'evidence_id':f['e']['payroll_review'].pk,
                      'verdict':'approve','operation_key':f'http-{kind}-{item.pk}','revision':self.work.revision,
                      'case_revision':rev(f['case'])}
             self.assertContains(self.client.post(publication,payload),'Choose an available action on this page.')
-            self.assertEqual(self.client.post(url,payload).status_code,302)
+            response = self.client.post(work_api + '/reviews', {
+                'kind': 'payroll', 'subject': kind, 'subject_id': item.pk,
+                'expected_revision': self.work.revision, 'case_revision': rev(f['case']),
+                'verdict': 'approve', 'operation_key': payload['operation_key'],
+                'evidence_id': payload['evidence_id'], 'note': 'Synthetic independent payroll review.',
+            }, content_type='application/json')
+            self.assertEqual(response.status_code, 200, response.content)
+            self.assertEqual(item.reviews.get(verdict='approve').pk, response.json()['review_id'])
         for item in f['inputs']:approve_on_screen('input',item)
         for stage,title in [('combine','Review combined payroll'),('match','Review staff match'),('aggregate','Review payroll totals')]:
             self.advance();self.assertContains(self.client.get(url),title);approve_on_screen('run',payroll.run(self.work,stage))
         self.client.force_login(f['preparer']);self.assertContains(self.client.get(publication),'Publish exact reviewed aggregate')
-        self.assertEqual(self.client.post(publication,{'action':'publish','revision':self.work.revision,
-                         'case_revision':rev(f['case'])}).status_code,302)
+        saved = self.client.post(work_api + '/payroll-operations', {
+            'action': 'publish', 'expected_revision': self.work.revision, 'case_revision': rev(f['case']),
+        }, content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content)
         report=payroll.publication(self.work)
+        self.assertEqual(report.pk, saved.json()['record_id'])
+        self.assertFalse(PayrollReportReceipt.objects.filter(publication=report).exists())
         self.assertContains(self.client.get(recovery),'Waiting for payroll receipts')
         self.client.force_login(f['manager']);page=self.client.get(recovery)
         self.assertContains(page,'Acknowledge receipt as myself');self.assertNotContains(page,'Inspect restricted payroll input')
         self.assertEqual(self.client.get(url).status_code,403)
         FactoryWork.objects.filter(pk=self.work.pk).update(revision=self.work.revision+1,lease_until=timezone.now()+timedelta(minutes=1))
-        self.assertEqual(self.client.post(recovery,{'action':'receive','revision':self.work.revision,
-                         'case_revision':rev(f['case']),'publication_id':report.pk}).status_code,302)
+        readback = self.client.get(f'/api/v1/projects/{f["case"].pk}/payroll/reports/{report.pk}')
+        self.assertEqual(readback.status_code, 200, readback.content)
+        self.assertTrue(readback.json()['can_acknowledge'])
+        self.assertNotContains(readback, 'E001')
+        received = self.client.post(work_api + '/aggregate-receipt', {'publication_id': report.pk},
+                                    content_type='application/json')
+        self.assertEqual(received.status_code, 200, received.content)
+        self.assertEqual(PayrollReportReceipt.objects.get(publication=report, actor=f['manager']).pk,
+                         received.json()['receipt_id'])
         FactoryWork.objects.filter(pk=self.work.pk).update(lease_until=None)
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        receipt = self.client.get(work_api).json()
+        self.assertEqual((receipt['state'], receipt['aggregate']['receipt_id']), ('verified', received.json()['receipt_id']))
     def test_missing_hr_receipt_requires_exact_matcher_and_new_match(self):
         from unittest.mock import patch
         from tests import payroll_helpers
@@ -238,7 +260,10 @@ class FactoryPayrollTests(TestCase):
         self.assertEqual(published.status_code, 200, published.content)
         new = PayrollPublication.objects.get(pk=published.json()['record_id'])
         self.assertGreater(new.version,p.version)
-        payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':new.pk})
+        self.client.force_login(f['manager'])
+        receipt = self.client.post(f'/api/v1/work/{self.work.pk}/aggregate-receipt',
+                                   {'publication_id': new.pk}, content_type='application/json')
+        self.assertEqual(receipt.status_code, 200, receipt.content)
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertEqual(PayrollReportReceipt.objects.filter(publication__in=[p,new]).count(),2)
         self.client.force_login(f['manager'])

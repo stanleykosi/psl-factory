@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.20.0",
+    "version": "1.21.0",
     "description": "Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or GET /api/v1/me. Follow returned Django links for workflow steps that use native forms."
   },
   "security": [
@@ -43466,6 +43466,39 @@
                                 }
                               ]
                             },
+                            "customer_expected_on": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "followup_on": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "remind_at": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "comparison": {
                               "anyOf": [
                                 {
@@ -43542,6 +43575,9 @@
                             "observed_at",
                             "award_amount",
                             "award_currency",
+                            "customer_expected_on",
+                            "followup_on",
+                            "remind_at",
                             "comparison"
                           ],
                           "additionalProperties": false
@@ -58498,9 +58534,16 @@
                     "maxLength": 64
                   },
                   "evidence_id": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 9223372036854775807
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "note": {
                     "type": "string",
@@ -112509,7 +112552,7 @@
     },
     "/api/v1/me/alert-preferences": {
       "get": {
-        "summary": "Read personal preferences and currently verified channels",
+        "summary": "Read personal preferences, verified channels and recent alert receipts",
         "operationId": "notifications_preferences",
         "parameters": [],
         "responses": {
@@ -112536,6 +112579,65 @@
                     },
                     "whatsapp_ready": {
                       "type": "boolean"
+                    },
+                    "recent_deliveries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "email",
+                              "whatsapp"
+                            ]
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "queued",
+                              "uncertain",
+                              "delivered",
+                              "held"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "delivered_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "receipt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "channel",
+                          "state",
+                          "created_at",
+                          "delivered_at",
+                          "receipt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 20
                     }
                   },
                   "required": [
@@ -112543,7 +112645,8 @@
                     "email_requested",
                     "whatsapp_requested",
                     "email_ready",
-                    "whatsapp_ready"
+                    "whatsapp_ready",
+                    "recent_deliveries"
                   ],
                   "additionalProperties": false
                 }

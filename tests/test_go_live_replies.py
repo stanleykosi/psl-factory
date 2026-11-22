@@ -169,26 +169,29 @@ class GoLiveReplyTests(TestCase):
         with self.assertRaisesMessage(ValidationError,'declined this release'):
             accept(f)
         self.client.force_login(f.actor)
-        url=reverse('factory_work_response',args=[f.work.pk])
+        replies = f'/api/v1/work/{f.work.pk}/go-live-replies'
         api = f'/api/v1/work/{f.work.pk}/go-live-replies/decline'
         choices = self.client.get(api)
         self.assertEqual(choices.status_code, 200, choices.content)
         self.assertEqual(choices.json()['issues'][0]['reply_id'], response.pk)
         self.assertIn(f.actor.pk, {option['id'] for option in choices.json()['issues'][0]['owners']})
         f.work.refresh_from_db()
-        self.assertRedirects(self.client.post(url,{'action':'client_decline_issue','revision':f.work.revision,
-            'case_revision':rev(f.case),'reply_id':response.pk,'owner_id':f.actor.pk,
+        opened = self.client.post(replies,{'action':'link_decline_issue','expected_revision':f.work.revision,
+            'case_revision':rev(f.case),'reply_id':response.pk,'owner_id':f.actor.pk,'existing_issue_id':None,
             'title':'Synthetic client decline','next_action':'Investigate the exact reported integration failure.',
-            'note':'Actual synthetic client response linked to its delivered report.'}),url)
+            'note':'Actual synthetic client response linked to its delivered report.'}, content_type='application/json')
+        self.assertEqual(opened.status_code, 201, opened.content)
         link=GoLiveReplyIssue.objects.get(reply=response)
         again=go_live_replies.log_problem(f.actor,f.case.pk,response.pk,f.actor.pk,
             'Synthetic client decline','Investigate the exact reported integration failure.',
             'Reuse the original issue relation.',rev(f.case))
         self.assertEqual(again.pk,link.pk)
         f.work.refresh_from_db()
-        self.assertRedirects(self.client.post(url,{'action':'client_decline_candidate','revision':f.work.revision,
+        prepared = self.client.post(replies,{'action':'prepare_new_candidate','expected_revision':f.work.revision,
             'case_revision':rev(f.case),'reply_id':response.pk,'reference':'SAMPLE-REMEDIATED-CANDIDATE',
-            'requirements_id':f.e['requirements'].pk,'note':'Prepare a distinct candidate for its own release gates.'}),url)
+            'requirements_id':f.e['requirements'].pk,'note':'Prepare a distinct candidate for its own release gates.'},
+            content_type='application/json')
+        self.assertEqual(prepared.status_code, 201, prepared.content)
         successor=DeliveryDossier.objects.get(case=f.case,candidate__reference='SAMPLE-REMEDIATED-CANDIDATE')
         with self.assertRaisesMessage(ValidationError,'reviewed issue-fix handoff'):
             delivery.readiness_inputs(successor)
@@ -216,9 +219,12 @@ class GoLiveReplyTests(TestCase):
             go_live_replies.remediate(f.actor, f.case.pk, response.pk, None, unrelated_dossier.pk,
                 'PMO Lead', proof.pk, 'An unrelated candidate cannot receive this fix handoff.', rev(f.case))
         f.work.refresh_from_db()
-        self.assertRedirects(self.client.post(url,{'action':'client_decline_handoff','revision':f.work.revision,
-            'case_revision':rev(f.case),'reply_id':response.pk,'destination_id':successor.pk,'role':'PMO Lead',
-            'evidence_id':proof.pk,'note':'The fixed issue may proceed to a distinct candidate with all new release gates.'}),url)
+        completed = self.client.post(replies,{'action':'review_remediation','expected_revision':f.work.revision,
+            'case_revision':rev(f.case),'reply_id':response.pk,'previous_id':None,
+            'destination_id':successor.pk,'role':'PMO Lead',
+            'evidence_id':proof.pk,'note':'The fixed issue may proceed to a distinct candidate with all new release gates.'},
+            content_type='application/json')
+        self.assertEqual(completed.status_code, 201, completed.content)
         handoff=GoLiveRemediation.objects.get(reply=response)
         self.assertEqual(handoff.issue_state_id,state.pk)
         self.assertEqual(go_live_replies.projection(f.actor,original)['destinations'][0]['dossier_id'],successor.pk)

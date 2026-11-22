@@ -248,6 +248,9 @@ class FactoryApiTests(TestCase):
             'case_id': str(self.case.pk), 'agent': 'tola', 'idempotency_key': str(uuid4()),
         }), '/assistant/conversations', method='post')
         conversation_url = '/assistant/conversations/' + opened['conversation_id']
+        recent = self.client.get(BASE + '/assistant/conversations')
+        self.assertEqual(recent.status_code, 200, recent.content)
+        self.assertIn(opened['conversation_id'], str(recent.json()))
         source = next(item['key'] for item in self.client.get(BASE + conversation_url).json()['available_sources']
                       if item['label'] == 'Commercial requirements')
         body = {'text': 'What did the fictional requirements say?', 'source_keys': [source],
@@ -255,9 +258,16 @@ class FactoryApiTests(TestCase):
         for _ in range(2):
             self.check(self.post(conversation_url + '/messages', body),
                        '/assistant/conversations/{conversation_id}/messages', method='post', status=202)
-        with patch('adapters.openrouter.answer', return_value={
-            'answer': 'The source describes the fictional requirement.', 'citations': ['S1'], 'next_work': '',
-        }):
+        queued = self.client.get(BASE + conversation_url).json()['messages']
+        self.assertEqual([row['status'] for row in queued], ['queued'])
+
+        def answer(*args, **kwargs):
+            active = self.client.get(BASE + conversation_url).json()['messages']
+            self.assertEqual([row['status'] for row in active], ['running'])
+            self.assertIsNone(active[0]['answer'])
+            return {'answer': 'The source describes the fictional requirement.', 'citations': ['S1'], 'next_work': ''}
+
+        with patch('adapters.openrouter.answer', side_effect=answer):
             self.assertTrue(assistant.worker_once())
         response = self.check(self.client.get(BASE + conversation_url), '/assistant/conversations/{conversation_id}')
         self.assertEqual(len(response['messages']), 1)

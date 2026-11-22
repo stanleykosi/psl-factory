@@ -36,7 +36,22 @@ class PortalPricingTests(TestCase):
         with self.assertRaisesMessage(ValidationError, 'matching the exact approved pack'):
             rfp_portal.record(actor, case.pk, version.pk, wrong.pk, 'Sample operator check', rev(case))
         evidence = add_evidence(actor, case.pk, 'rfp_portal_receipt', json.dumps(receipt), 'synthetic:portal-receipt')
-        submission = rfp_portal.record(actor, case.pk, version.pk, evidence.pk, 'Sample operator check', rev(case))
+        from apps.pmo.models import RFPSubmission
+
+        self.client.force_login(actor)
+        api = f'/api/v1/work/{work.pk}'
+        portal = api + '/bid-pack/portal-receipt'
+        options = self.client.get(portal).json()
+        self.assertTrue(options['ready'])
+        self.assertEqual(options['version_id'], version.pk)
+        payload = {'case_revision': options['case_revision'], 'version_id': version.pk,
+                   'evidence_id': evidence.pk, 'attestation': 'Sample operator check'}
+        rejected = self.client.post(portal, {**payload, 'evidence_id': wrong.pk}, content_type='application/json')
+        self.assertEqual(rejected.status_code, 422, rejected.content)
+        saved = self.client.post(portal, payload, content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        submission = RFPSubmission.objects.get(pk=saved.json()['submission_id'])
+        self.assertEqual(self.client.get(portal).json()['receipt']['id'], submission.portal_receipt.pk)
         self.assertEqual(submission.receipt_ids, [])
         self.assertEqual(rfp_portal.record(actor, case.pk, version.pk, evidence.pk, 'Sample operator check', rev(case)), submission)
         moment = timezone.now()
@@ -60,6 +75,10 @@ class PortalPricingTests(TestCase):
         self.assertEqual(work.status, 'verified', work.finding)
         self.assertEqual(factory_rfp.verify(work)['portal_receipt'], submission.portal_receipt.pk)
         self.assertFalse(Publication.objects.exists())
+        decision = self.client.get(api + '/bid-outcomes', {'submission_id': submission.pk}).json()
+        self.assertEqual(decision['outcome']['id'], decision['handoff']['outcome_id'])
+        self.assertEqual(decision['outcome']['comparison']['quote_amount'], '100.00')
+        self.assertEqual(decision['outcome']['comparison']['quote_currency'], 'NGN')
         self.assertEqual(list(rfp_followup.reminders(actor)), [])
         self.assertIsNone(rfp_followup.panel(actor,case,pending))
         self.client.force_login(actor)

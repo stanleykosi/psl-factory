@@ -376,7 +376,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.20.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.21.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

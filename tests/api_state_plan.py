@@ -41,6 +41,14 @@ def read_plan():
     return inventory, rows
 
 
+def pending_plan(rows):
+    if not RESULTS.exists():
+        return rows
+    with RESULTS.open(encoding='utf-8', newline='') as stream:
+        earlier = {row['state_id']: row for row in csv.DictReader(stream) if row['result'] == 'passed'}
+    return [row for row in rows if any(earlier.get(row['state_id'], {}).get(field) != row[field] for field in FIELDS)]
+
+
 def record_results(logs, deployment):
     """Import a complete set of available case markers from an exact Railway deployment."""
     deployment = str(UUID(deployment))

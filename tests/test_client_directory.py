@@ -99,6 +99,9 @@ class ClientDirectoryTests(TestCase):
         history = self.client.get(url + '/history', params).json()['items']
         self.assertEqual([row['version'] for row in history], [2, 1])
         self.assertEqual(history[0], replacement.json())
+        current = self.client.get(f'/api/v1/clients/{self.first.pk}')
+        self.assertEqual(current.status_code, 200, current.content)
+        self.assertIn(replacement.json(), current.json()['contacts'])
         Grant.objects.filter(case=self.first, user=self.owner, action='finance.read').update(active=False)
         self.assertEqual(self.client.get(url + '/history', params).status_code, 403)
 

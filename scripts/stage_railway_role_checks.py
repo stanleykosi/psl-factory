@@ -17,7 +17,8 @@ CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-sta
 GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api', 'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api', 'final-api')
 
 
-def stage(revision, service, groups, coordinator_ticket=None, design_regression=False, replay_suites=()):
+def stage(revision, service, groups, coordinator_ticket=None, design_regression=False, replay_suites=(),
+          pending_replays=False):
     if groups and service != 'checks':
         raise ValueError('Test groups require the checks image.')
     if coordinator_ticket and (service != 'checks' or groups):
@@ -26,6 +27,8 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
         raise ValueError('The design regression uses a standalone checks image.')
     if replay_suites and (service != 'checks' or groups or coordinator_ticket or design_regression):
         raise ValueError('State replay uses a standalone checks image.')
+    if pending_replays and not replay_suites:
+        raise ValueError('Pending replays require a state replay suite.')
     commit = subprocess.check_output(['git', 'rev-parse', '--verify', '--end-of-options', revision + '^{commit}'],
                                      cwd=ROOT, text=True).strip()
     parent = ROOT / '.runtime'
@@ -38,6 +41,8 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
         paths += ('scripts/design_acceptance_batch.py',)
     if replay_suites:
         paths += ('docs/design/api-state-replay-plan.csv',)
+    if pending_replays:
+        paths += ('docs/design/api-state-replay-results.csv',)
     with tempfile.TemporaryFile() as archive:
         subprocess.run(['git', 'archive', '--format=tar', commit, '--', *paths], cwd=ROOT, stdout=archive, check=True)
         archive.seek(0)
@@ -65,6 +70,9 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
             before_command += ('\nCOPY scripts/design_acceptance_batch.py scripts/design_acceptance_batch.py'
                                '\nCOPY docs/design/api-state-replay-plan.csv docs/design/api-state-replay-plan.csv')
             suites = ' '.join(f'--suite {name}' for name in replay_suites)
+            if pending_replays:
+                before_command += '\nCOPY docs/design/api-state-replay-results.csv docs/design/api-state-replay-results.csv'
+                suites += ' --pending-replays'
             command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
                        f'env PSL_API_STATE_REVISION={commit} python scripts/design_acceptance_batch.py '
                        f'--state-replay --parallel-groups 3 {suites}')
@@ -90,5 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('--design-regression', action='store_true')
     parser.add_argument('--replay-suite', choices=('shared', 'commercial', 'project_delivery', 'finance_reporting'),
                         action='append', default=[])
+    parser.add_argument('--pending-replays', action='store_true')
     args = parser.parse_args()
-    print(stage(args.revision, args.service, args.group, args.coordinator_ticket, args.design_regression, args.replay_suite))
+    print(stage(args.revision, args.service, args.group, args.coordinator_ticket, args.design_regression,
+                args.replay_suite, args.pending_replays))

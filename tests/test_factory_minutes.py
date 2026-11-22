@@ -53,8 +53,23 @@ class FactoryMinutesTests(TestCase):
     def test_cited_extraction_human_confirmation_internal_minutes_and_action_owner(self):
         self.start();self.advance();r=flow.extraction(self.work);self.assertIsNotNone(r,self.work.finding)
         self.assertIn('Confirm the current delivery plan.',str(r.result));self.assertIsNone(r.result['proposals']['actions'][0]['owner_id']);self.assertFalse(Meeting.objects.filter(reference='FORMAL-1').exists())
-        self.confirm();self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.client.force_login(self.actor)
+        api = f'/api/v1/work/{self.work.pk}/minutes'
+        proposal = self.client.get(api).json()
+        self.assertEqual({entry['evidence_id'] for entry in proposal['suggestions']}, {self.notes.pk})
+        saved = self.client.post(api + '/confirmation', {
+            'expected_revision': proposal['expected_revision'], 'case_revision': proposal['case_revision'],
+            'extraction_id': proposal['extraction_id'], 'minutes': self.fields(),
+        }, content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         b=flow.document(self.work);self.assertIn('Review delivery plan and dependencies',str(b.version.payload));self.assertEqual(ActionItem.objects.get().current.status,'open');self.assertFalse(Publication.objects.exists());self.assertFalse(HumanTask.objects.filter(version=b.version).exists())
+        current = self.client.get(api).json()
+        self.assertEqual(current['document']['version_id'], b.version_id)
+        self.assertEqual(current['document']['audience'], 'internal')
+        self.assertIsNone(current['delivery'])
+        action = self.client.get(f'/api/v1/projects/{self.case.pk}/actions/{ActionItem.objects.get().pk}').json()
+        self.assertEqual(action['status'], 'open')
         self.assertFalse(flow.verify(self.work,self.actor)['actions_completed']);self.assertFalse(flow.verify(self.work,self.actor)['scope_changed'])
         self.client.force_login(self.actor);before=self.rows();response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Linked action-owner work');self.assertContains(response,'ACTION-1');self.assertEqual(before,self.rows())
         item=ActionItem.objects.get();change_action(self.actor,self.case.pk,item.pk,'complete',self.notes.pk,'Done by current owner',rev(self.case),1)
@@ -278,7 +293,11 @@ class FactoryMinutesTests(TestCase):
         self.assertTrue(HumanTask.objects.filter(version=b.version,status='open').exists())
         decision_url=f'/work/{self.work.pk}/decision/'
         self.assertContains(self.client.get(decision_url),'Approve exact outward minutes')
-        review_version(self.actor,self.case.pk,b.version_id,'approve','Checked exact outward minutes and recipients',rev(self.case))
+        self.work.refresh_from_db()
+        reviewed = self.client.post(api + '/reviews', {'kind': 'document', 'version_id': b.version_id,
+            'expected_revision': self.work.revision, 'case_revision': rev(self.case), 'verdict': 'approve',
+            'note': 'Checked exact outward minutes and recipients'}, content_type='application/json')
+        self.assertEqual(reviewed.status_code, 200, reviewed.content)
         self.assertNotContains(self.client.get(decision_url),'Approve exact outward minutes')
         factory.run_until_wait(self.work.pk, adapter=RefusedDelivery())
         panel = self.client.get(api + '/minutes').json()

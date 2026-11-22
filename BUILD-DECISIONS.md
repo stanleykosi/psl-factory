@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. A named API replay needs both a passing behavioral assertion and its required operation responses. Persist the exact test, revision, Railway deployment and response status for every result. Read personal notification receipts only for the current account. An Unknown bid outcome may carry no proof. Known dispositions continue through the domain service's evidence checks.
+
 22 November 2026. When an exact forecast delivery remains uncertain, restore its work hold before checking for the original receipt. Keep the historical planner available for receipt verification on previously reserved requests.
 
 22 November 2026. Keep Django forms and the JSON API on the same domain commands and permission checks. Count screen-map coverage, schema-verified API responses and completed state walkthroughs from their own evidence. A mapped route alone does not close a state replay.

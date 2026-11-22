@@ -171,13 +171,23 @@ class FactoryReportingTests(TestCase):
         parts = self.content_body['sections']
         initial = {'case_revision': options['case_revision'], 'draft_id': None, 'selection': selection,
                    'parts': parts, 'key': 'WEEKLY-API', 'reference': 'Weekly API test report', 'background': False}
+        reversed_window = {**selection, 'start_at': selection['end_at'], 'end_at': selection['start_at']}
+        invalid = self.client.post(intake, {'action': 'start', **initial, 'selection': reversed_window},
+                                   content_type='application/json')
+        self.assertEqual(invalid.status_code, 422, invalid.content)
+        self.assertFalse(FactoryWork.objects.filter(case=self.case, key='WEEKLY-API').exists())
         draft = post(intake, action='save_draft', **initial)['draft_id']
         self.assertEqual(self.client.get(intake).json()['draft']['id'], draft)
         started = post(intake, action='start', **dict(initial, draft_id=draft))
         self.work = FactoryWork.objects.get(pk=started['work_id'])
         detail = f'/api/v1/work/{self.work.pk}/weekly-report'
         self.advance()
-        old_version = self.review('return')
+        old_version = reporting.document(self.work)
+        reviews = f'/api/v1/work/{self.work.pk}/reviews'
+        returned = post(reviews, kind='document', version_id=old_version.pk, verdict='return',
+                        note='Return exact report for a clearer risk statement',
+                        expected_revision=self.work.revision, case_revision=rev(self.case))
+        self.assertIsNotNone(returned['review_id'])
         self.work.refresh_from_db()
         packet = self.client.get(detail).json()
         self.assertEqual(packet['document_version_id'], old_version.pk)
@@ -188,7 +198,14 @@ class FactoryReportingTests(TestCase):
         replacement = post(detail, action='save_draft', **fields)['draft_id']
         self.assertEqual(self.client.get(detail).json()['draft']['id'], replacement)
         post(detail, action='correct', **dict(fields, draft_id=replacement))
-        proof = self.finish()
+        self.advance()
+        reviewed = reporting.document(self.work)
+        approved = post(reviews, kind='document', version_id=reviewed.pk, verdict='approve',
+                        note='Independent review of the corrected exact report',
+                        expected_revision=self.work.revision, case_revision=rev(self.case))
+        self.assertIsNotNone(approved['review_id'])
+        self.advance()
+        proof = reporting.verify(self.work)
         delivered = self.client.get(detail).json()
         self.assertNotEqual(delivered['document_version_id'], old_version.pk)
         self.assertEqual([row['receipt_id'] for row in delivered['recipients']], proof['receipt_ids'])
@@ -211,6 +228,9 @@ class FactoryReportingTests(TestCase):
                 test.assertContains(test.client.get(detail), label)
                 test.assertNotContains(test.client.get(recovery), label)
                 test.assertIsNone(reporting.document(test.work))
+                api = test.client.get(f'/api/v1/work/{test.work.pk}')
+                test.assertEqual(api.json()['state'], 'processing')
+                test.assertIsNone(api.json()['output_url'])
                 return super().choose(context)
 
         self.assertNotContains(self.client.get(detail), label)
@@ -220,6 +240,8 @@ class FactoryReportingTests(TestCase):
         self.assertIsNotNone(version)
         self.assertTrue(HumanTask.objects.filter(version=version, status='open').exists())
         self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        review = self.client.get(f'/api/v1/work/{self.work.pk}/weekly-report').json()
+        self.assertEqual(review['document_version_id'], version.pk)
 
     def test_full_chain_has_useful_investigation_exact_human_review_and_receipt(self):
         self.start_work()

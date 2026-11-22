@@ -87,3 +87,14 @@ class FactoryRFPOutcomeConsoleTests(TestCase):
             'evidence':e['rfp_outcome'].pk,'note':'Unrelated target cannot be recorded'})
         self.assertEqual(invalid.status_code,200)
         self.assertEqual(RFPOutcome.objects.filter(submission__response__rfp__case=case).count(),2)
+        api = f'/api/v1/work/{work.pk}/bid-outcomes'
+        multiple = self.client.get(api).json()
+        self.assertEqual(multiple['submission_count'], 2)
+        self.assertEqual({item['id'] for item in multiple['submissions']}, {first.pk, second.pk})
+        self.assertTrue(multiple['selection_required'])
+        self.assertIsNone(multiple['handoff'])
+        for submission, verdict in ((first, 'won'), (second, 'lost')):
+            exact = self.client.get(api, {'submission_id': submission.pk}).json()
+            self.assertEqual(exact['outcome']['submission_id'], submission.pk)
+            self.assertEqual(exact['outcome']['result'], verdict)
+        self.assertEqual(self.client.get(api, {'submission_id': 999999999}).status_code, 404)

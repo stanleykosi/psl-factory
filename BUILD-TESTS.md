@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Named API state replay checkpoint · 22 November 2026
+
+Isolated Railway deployment `bcd215a6-b1bd-41e9-9f64-d69cd2f2b1f3` at revision `2b8b1c81202e31535e9608a9216e1fb3ff19347b` exercised 94 named assertions on PostgreSQL. Its ledger records 87 passing, seven insufficient and 168 pending states. The seven named failures record missing API observations or mismatched contract statuses. Local PostgreSQL passed three account-delivery and four RFP cases, including scoped receipt readback and no-policy conversion holds. Six local progress, Planning and Change cases passed. [State results](docs/design/api-state-replay-results.csv)
+
 ## Consolidated API acceptance checkpoint · 22 November 2026
 
 The 13 incremental Railway batches from OpenAPI 1.6.0 through 1.18.0 passed 141 PostgreSQL test executions. The 1.19.0 project and journey suites passed 42 more. Across those executions, 258 distinct current OpenAPI operations have schema-checked successful responses, including at least one mapped action in 56 of the 59 screen groups. These counts overlap at the case level.

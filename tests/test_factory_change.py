@@ -92,6 +92,7 @@ class FactoryChangeTests(TestCase):
                  evidence=self.source.pk, note='Recorded synthetic owner impact.', proof_upload=None,
                  effort_person_days=None, **native_tests.impact_fixture(team))
         self.assertEqual({item['role'] for item in read()['decisions']}, {'Product', 'Engineering'})
+        self.assertEqual(len([item for item in read()['impact'] if item['assessment_id']]), 4)
         for role in ('Product', 'Engineering'):
             send('decide', role=role, verdict='approve', evidence=self.source.pk, note='Reviewed the actual exact impact.')
         auth_id = send('authorize', commercial=None)
@@ -107,6 +108,7 @@ class FactoryChangeTests(TestCase):
         send('document_review', version_id=notice['id'], verdict='approve', note='Exact notice reviewed.')
         self.advance()
         self.assertEqual(read()['stage'], 'execution')
+        self.assertTrue(next(item for item in read()['documents'] if item['purpose'] == 'notice')['receipt_ids'])
         for kind, source_kind in [('plan_updated', 'plan'), ('implemented', 'change_implementation'),
                                   ('testing_validated', 'change_validation'), ('documentation_updated', 'document')]:
             proof = add_evidence(self.actor, self.case.pk, source_kind, 'Synthetic ' + kind, 'synthetic:change-api')
@@ -114,8 +116,10 @@ class FactoryChangeTests(TestCase):
                  scope_items=['CR-001/item-1'] if kind == 'implemented' else None, dossier_id=None, candidate_id=None)
         self.advance()
         go_live = next(item for item in read()['documents'] if item['purpose'] == 'go_live')
+        self.assertFalse(read()['deployment_authorized'])
         send('document_review', version_id=go_live['id'], verdict='approve', note='Exact go-live notice reviewed.')
         self.advance()
+        self.assertEqual(len(next(item for item in read()['documents'] if item['purpose'] == 'go_live')['receipt_ids']), 1)
         pm = add_evidence(self.actor, self.case.pk, 'signature', 'Synthetic PM proof', 'synthetic:PM')
         client = add_evidence(self.actor, self.case.pk, 'signature', 'Synthetic client proof', 'synthetic:client')
         receipt = PublicationReceipt.objects.get(publication__version_id=go_live['id'])
@@ -173,15 +177,26 @@ class FactoryChangeTests(TestCase):
         self.assertContains(page, 'Engineering Lead · Waiting')
         self.assertContains(page, 'Security Manager · Waiting')
         self.assertNotContains(page, 'Client · Reject')
+        api = f'/api/v1/work/{self.work.pk}/change'
+        projected = self.client.get(api).json()
+        decisions = {item['role']: item for item in projected['decisions']}
+        self.assertEqual(decisions['Client']['status'], 'Approved')
+        self.assertNotIn('reject', decisions['Client']['verdicts'])
+        for role in ('Engineering Lead', 'Security Manager'):
+            self.assertEqual(decisions[role]['status'], 'Waiting')
 
         artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
                  {'rules': [{'role': 'Client', 'actions': ['reject']}]}, self.e['policy_decision'])
         page = self.client.get(url)
         self.assertContains(page, 'Client · Reject')
-        posted = self.client.post(url, {'action': 'decide', 'decision_action': 'Client:reject',
-            'revision': self.work.revision, 'case_revision': rev(self.case), 'change_version': self.cv.pk,
-            'evidence': self.source.pk, 'note': 'The fictional client declined this exact revision.'})
-        self.assertEqual(posted.status_code, 302)
+        posted = self.client.post(api, {'action': 'decide', 'role': 'Client', 'verdict': 'reject',
+            'expected_revision': self.work.revision, 'case_revision': rev(self.case), 'change_version_id': self.cv.pk,
+            'evidence': self.source.pk, 'note': 'The fictional client declined this exact revision.'},
+            content_type='application/json')
+        self.assertEqual(posted.status_code, 201, posted.content)
+        refused = self.client.get(api).json()
+        self.assertEqual(next(item for item in refused['decisions'] if item['role'] == 'Client')['status'], 'Rejected')
+        self.assertFalse(refused['can_authorize'])
         page = self.client.get(url)
         self.assertContains(page, 'Client · Rejected')
         self.assertContains(page, 'Change rejected')

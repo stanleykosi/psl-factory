@@ -70,7 +70,19 @@ class FactoryLeadershipTests(TestCase):
         self.work = FactoryWork.objects.get(pk=started.json()['work_id'])
         detail = f'/api/v1/work/{self.work.pk}/leadership-report'
         self.advance()
-        old = self.review('return')
+        reviews = f'/api/v1/work/{self.work.pk}/reviews'
+
+        def review(verdict):
+            version = reporting.document(self.work)
+            response = self.client.post(reviews, {'kind': 'document', 'version_id': version.pk,
+                'verdict': verdict, 'note': 'Independent decision on the exact Leadership report.',
+                'expected_revision': self.work.revision, 'case_revision': rev(self.case)},
+                content_type='application/json')
+            self.assertEqual(response.status_code, 200, response.content)
+            self.assertIsNotNone(response.json()['review_id'])
+            return version
+
+        old = review('return')
         panel = self.client.get(detail).json()
         self.assertEqual(panel['editable_sections'], sections)
         self.assertEqual(panel['document_version_id'], old.pk)
@@ -79,7 +91,7 @@ class FactoryLeadershipTests(TestCase):
             'selection': selected, 'sections': sections, 'reason': 'Review requested clearer risk coverage'}, content_type='application/json')
         self.assertEqual(corrected.status_code, 200, corrected.content)
         self.advance()
-        new = self.review()
+        new = review('approve')
         self.advance()
         self.assertNotEqual(new.pk, old.pk)
         proof = reporting.verify(self.work, self.actor)
@@ -101,6 +113,9 @@ class FactoryLeadershipTests(TestCase):
             def choose(self, context):
                 test.assertEqual(context['eligible'], ['ACT09'])
                 test.assertContains(client.get(url), label)
+                active = client.get(f'/api/v1/work/{test.work.pk}').json()
+                test.assertEqual(active['state'], 'processing')
+                test.assertIsNone(active['output_url'])
                 return super().choose(context)
 
         self.assertNotContains(self.client.get(url), label)

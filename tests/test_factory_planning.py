@@ -28,6 +28,23 @@ def setup(configured=True,department_configured=True):
     return f
 
 class FactoryPlanningTests(TestCase):
+    def test_saved_planning_work_starts_background_and_waits_for_sources(self):
+        f = setup()
+        work = f['work']
+        self.client.force_login(f['a'])
+        url = f'/api/v1/work/{work.pk}'
+        page = self.client.get(url).json()
+        self.assertEqual(page['state'], 'ready')
+        self.assertIsNone(page['progress'])
+        accepted = self.client.post(url + '/background', {'expected_revision': page['revision'], 'enabled': True},
+                                    content_type='application/json')
+        self.assertEqual(accepted.status_code, 202, accepted.content)
+        factory.run_until_wait(work.pk)
+        held = self.client.get(url).json()
+        self.assertEqual(held['state'], 'waiting')
+        self.assertIn('department', held['blocker'].lower())
+        self.assertEqual(ApprovalRequest.objects.filter(case=f['c']).count(), 2)
+
     def test_missing_department_policy_retains_requests_and_holds_only_delivery(self):
         f=setup(department_configured=False);w=f['work']
         successor=planning.capture(f['a'],f['c'].pk,f['payload'],f['packet'].pk)
@@ -106,6 +123,11 @@ class FactoryPlanningTests(TestCase):
     def test_missing_profile_holds_execution_not_capture(self):
         f=setup(False);factory.run_until_wait(f['work'].pk);f['work'].refresh_from_db()
         self.assertEqual(f['work'].status,'configuration_needed');self.assertEqual(f['work'].budget_used,0)
+        self.client.force_login(f['a'])
+        held = self.client.get(f'/api/v1/work/{f["work"].pk}').json()
+        self.assertEqual(held['state'], 'setup_needed')
+        self.assertIsNone(held['output_url'])
+        self.assertEqual(f['work'].source_head_id, f['packet'].pk)
 
     def test_restricted_source_and_invented_reviewer_rejected(self):
         f=setup(False)

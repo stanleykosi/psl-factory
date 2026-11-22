@@ -83,6 +83,9 @@ class AccountDeliveryTests(TestCase):
                 headers['HTTP_X_CSRFTOKEN'] = csrf
             return client.post(url + path, payload, content_type='application/json', secure=True, **headers)
 
+        invalid = post('/session', {'username': WORK_EMAIL, 'password': 'incorrect-synthetic-password'})
+        self.assertEqual((invalid.status_code, invalid.json()['code']), (422, 'sign_in_failed'))
+        self.assertFalse(browser.get(url + '/session', secure=True).json()['signed_in'])
         self.assertEqual(post('/accounts/recovery/request', {'email': WORK_EMAIL}, with_token=False).status_code, 403)
         real = post('/accounts/recovery/request', {'email': WORK_EMAIL})
         missing = post('/accounts/recovery/request', {'email': 'missing@accounts.invalid'})
@@ -149,12 +152,23 @@ class AccountDeliveryTests(TestCase):
         preferences = reverse('design_alert_preferences')
         self.assertRedirects(self.client.post(preferences, {'revision': 1, 'email_requested': 'on', 'whatsapp_requested': 'on'}),
                              preferences)
+        api = '/api/v1/me/alert-preferences'
+        updated = self.client.post(api, {'revision': 2, 'email_requested': True, 'whatsapp_requested': True},
+                                   content_type='application/json')
+        self.assertEqual(updated.status_code, 200, updated.content)
+        self.assertTrue(updated.json()['email_ready'])
+        self.assertTrue(updated.json()['whatsapp_ready'])
         for _ in range(2):
             call_command('work_account_delivery')
         rows = AccountDelivery.objects.filter(actor=self.actor, purpose='alert', state='delivered')
         self.assertEqual(set(rows.values_list('channel', flat=True)), {'email', 'whatsapp'})
         self.assertEqual(rows.count(), 2)
         self.assertEqual(SampleAccountInbox.objects.count(), 2)
+        delivery = self.client.get(api)
+        self.assertEqual(delivery.status_code, 200, delivery.content)
+        self.assertEqual({row['channel']: (row['state'], row['receipt']) for row in delivery.json()['recent_deliveries']},
+                         {row.channel: ('delivered', row.receipt) for row in rows})
+        self.assertNotIn(WORK_EMAIL, delivery.content.decode())
         page = self.client.get(preferences)
         for row in rows:
             self.assertContains(page, row.receipt)
@@ -162,7 +176,21 @@ class AccountDeliveryTests(TestCase):
         self.assertNotContains(page, WORK_EMAIL)
         other = get_user_model().objects.create_user('other-alert-viewer')
         self.client.force_login(other)
+        self.assertEqual(self.client.get(api).json()['recent_deliveries'], [])
         self.assertNotContains(self.client.get(preferences), 'Delivery verified')
+
+    def test_api_personal_alert_retains_read_state_without_cross_account_access(self):
+        self.client.force_login(self.actor)
+        url = '/api/v1/notifications'
+        alert, = self.client.get(url).json()['items']
+        self.assertEqual(alert['title'], 'Assistant reply')
+        self.assertFalse(alert['read'])
+        marked = self.client.post(f"{url}/{alert['id']}/read", {}, content_type='application/json')
+        self.assertEqual(marked.status_code, 200, marked.content)
+        self.assertTrue(self.client.get(url).json()['items'][0]['read'])
+        self.client.force_login(get_user_model().objects.create_user('outside-alert-replay'))
+        self.assertEqual(self.client.get(url).json()['items'], [])
+        self.assertEqual(self.client.post(f"{url}/{alert['id']}/read", {}, content_type='application/json').status_code, 404)
 
     def test_opt_out_and_revoked_source_hold_queued_delivery(self):
         alerts.save_preferences(self.actor, 1, True, True)

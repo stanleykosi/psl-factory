@@ -50,6 +50,15 @@ class PayrollApiCutoverTests(TestCase):
             self.assertEqual(imported.status_code, 201, imported.content)
             self.assertTrue(imported.json()['input']['accepted'])
             self.assertNotIn('E002', imported.content.decode())
+        malformed = upload('unsupported.csv', b'Unsupported,Columns\na,b\n', 'unsupported-shape')
+        self.assertEqual(malformed.status_code, 201, malformed.content)
+        rejected = malformed.json()['input']
+        self.assertFalse(rejected['accepted'])
+        self.assertNotIn('a,b', malformed.content.decode())
+        corrected = upload('corrected-shape.csv', CSV, 'corrected-shape')
+        self.assertEqual(corrected.status_code, 201, corrected.content)
+        self.assertTrue(corrected.json()['input']['accepted'])
+        self.assertNotEqual(corrected.json()['input']['id'], rejected['id'])
         unknown = upload('needs-review.csv', b'Ref,Staff ID,Pay code,Total\nB1,E002,BASIC,\n', 'unknown-amount', total='')
         self.assertEqual(unknown.status_code, 201, unknown.content)
         source = unknown.json()['input']
