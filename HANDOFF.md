@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Income schedules, assets and accounting intake · 22 November 2026
+
+OpenAPI 1.13.0 adds sixteen operations. Finance schedule work reads the exact selected schedule, holds possible duplicate additions, and rebuilds returned rows with a fresh review. A reviewed adjustment export links to a distinct Finance decision before mapping. Asset work captures exact register and date evidence with private PDF upload and download, keeps opening-proof correction tied to the original return and exposes the current schedule and accounting note. Supplied accounting intake retains distinct import and unit-confirmation receipts and queues new work after the current source can be used. [Contract](contracts/psl-factory.openapi.json)
+
+Railway suite `close-api` covers these additions, private storage through a test adapter and the existing Django accounting journey. Twenty-three groups covering 142 design states still have at least one API gap. The screen map lists the specific controls. Continue with forecast decisions and actuals, the remaining accounts recovery and publication commands, and the other bid, operational and Finance groups. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Policy scopes, impact and exact intake sources · 22 November 2026
 
 OpenAPI 1.12.0 adds eight operations. Setup can create, validate and activate an exact organization, project, service or contract scope and apply it through an explicit owner-evidenced local draft. Impact records keep their actor-bound cursor and independent reassessment. Start work now lists exact invoice preparations, candidate changes and incident profiles and can read the selected forecast source inventory without its amounts. [Contract](contracts/psl-factory.openapi.json)

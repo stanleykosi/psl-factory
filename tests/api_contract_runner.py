@@ -44,9 +44,16 @@ class ContractRunner(DiscoverRunner):
             details = returns.get(status, returns['default'])
             if '$ref' in details:
                 details = components['responses'][details['$ref'].rsplit('/', 1)[1]]
-            if response.get('Content-Type') != 'application/json':
-                raise AssertionError(f'{identity} returned {status} with a non-JSON response.')
-            schema = details['content']['application/json']['schema']
+            media_type = response.get('Content-Type')
+            if media_type not in details['content']:
+                raise AssertionError(f'{identity} returned {status} with an undeclared media type.')
+            schema = details['content'][media_type]['schema']
+            if media_type != 'application/json':
+                if schema.get('format') != 'binary' or not response.get('Content-Disposition', '').startswith('attachment;'):
+                    raise AssertionError(f'{identity} returned {status} without the declared attachment.')
+                if response.status_code < 300:
+                    successful.add(identity)
+                return response
             if '$ref' in schema:
                 schema = components['schemas'][schema['$ref'].rsplit('/', 1)[1]]
             failures = Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(response.json())

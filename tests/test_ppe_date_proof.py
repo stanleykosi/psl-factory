@@ -45,6 +45,44 @@ class PPEAssetDateProofTests(TestCase):
             'revision': rev(self.case) if expected is None else expected,
             'file': SimpleUploadedFile('sample-date-explanation.pdf', content, content_type='application/pdf')}
 
+    def test_api_register_capture_date_proof_and_independent_basis_review(self):
+        url = f'/api/v1/projects/{self.case.pk}/asset-registers'
+        initial = self.client.get(url)
+        self.assertEqual(initial.status_code, 200, initial.content)
+        self.assertIn(self.original.pk, [row['id'] for row in initial.json()['registers']])
+        selection = {'case_revision': initial.json()['case_revision'], 'reference': 'asset-date-api',
+                     'evidence_id': self.original.evidence_id}
+        captured = self.client.post(url, selection, content_type='application/json')
+        self.assertEqual(captured.status_code, 201, captured.content)
+        created = captured.json()
+        body, file = pdf_file()
+        command = {'case_revision': created['case_revision'], 'asset_id': 'A1', 'delivery_date': '2026-10-02',
+                   'in_service_date': '2026-10-10', 'fraction_basis': ppe_dates.DERIVED,
+                   'evidence_id': self.sample['e']['ppe_event'].pk, 'file': file}
+        created = self.client.post(f"{url}/{created['id']}/dates", command)
+        self.assertEqual(created.status_code, 201, created.content)
+        successor = ScheduleWork.objects.get(pk=created.json()['id'])
+        ppe_helpers.review(self.sample, successor, 'register')
+        work = factory_ppe.start(self.maker, self.case.pk, 'DATE-API', successor.pk, None,
+                                 self.sample['parent'].pk, 'SAMPLE-DATED-ASSET', rev(self.case))
+        factory.run_until_wait(work.pk)
+        self.client.force_login(self.reviewer)
+        detail = self.client.get(f'/api/v1/work/{work.pk}/assets')
+        self.assertEqual(detail.status_code, 200, detail.content)
+        page = detail.json()
+        self.assertEqual(page['stage'], 'basis_review')
+        self.assertIn({'target_id': successor.pk, 'purpose': 'basis', 'verdicts': ['approve', 'return', 'reject']},
+                      page['review_options'])
+        fact, = page['date_attachment_ids']
+        proof = f'/api/v1/work/{work.pk}/assets/date-proofs/{fact}'
+        downloaded = self.client.get(proof)
+        self.assertEqual(downloaded.status_code, 200)
+        self.assertEqual(b''.join(downloaded.streaming_content), body)
+        self.assertIsNone(page['schedule'])
+        Grant.objects.filter(case=self.case, user=self.reviewer, action='ppe.report').update(active=False)
+        self.assertEqual(self.client.get(proof).status_code, 403)
+        self.assertIsNone(self.client.get(f'/api/v1/work/{work.pk}/assets').json()['register'])
+
     def test_pdf_is_pinned_to_exact_dates_and_remains_separate_from_finance_approval(self):
         self.assertEqual(connection.vendor, 'postgresql')
         original_decisions = list(self.original.reviews.values_list('pk', flat=True))

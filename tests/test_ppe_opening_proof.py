@@ -80,6 +80,44 @@ class PPEOpeningProofTests(TestCase):
                 'revision': self.work.revision, 'case_revision': rev(self.data['case']),
                 'reason': 'The exact private opening proof was supplied.', 'file': file}
 
+    def test_api_opening_proof_successor_and_current_approved_readback(self):
+        data = self.data
+        path = f'/api/v1/work/{self.work.pk}/assets'
+        detail = self.client.get(path)
+        self.assertEqual(detail.status_code, 200, detail.content)
+        view = detail.json()
+        self.assertEqual(view['opening_return'], {'target_id': self.original.pk, 'review_id': self.returning.pk})
+        payload, file = pdf_file()
+        command = {**view['opening_return'], 'expected_revision': view['expected_revision'],
+                   'case_revision': view['case_revision'], 'reason': 'Synthetic opening proof correction.', 'file': file}
+        proof = path + '/opening-proof'
+        response = self.client.post(proof, command)
+        self.assertEqual(response.status_code, 201, response.content)
+        self.work.refresh_from_db()
+        successor, _ = flow.source(self.work, data['actor'])
+        self.assertEqual(self.original.reviews.get().pk, self.returning.pk)
+        self.assertFalse(successor.reviews.exists())
+        self.assertTrue(self.client.get(path).json()['has_opening_attachment'])
+        download = self.client.get(proof)
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(b''.join(download.streaming_content), payload)
+        ppe_helpers.review(data, successor, 'register')
+        ppe_helpers.review(data, successor, 'basis')
+        from apps.workflows import factory
+        factory.run_until_wait(self.work.pk)
+        self.work.refresh_from_db()
+        schedule = flow.schedule(self.work)
+        self.assertIsNotNone(schedule, self.work.finding)
+        ppe_helpers.review(data, schedule)
+        factory.run_until_wait(self.work.pk)
+        reviewed = self.client.get(path)
+        self.assertEqual(reviewed.status_code, 200, reviewed.content)
+        page = reviewed.json()
+        self.assertEqual(page['stage'], 'complete')
+        self.assertEqual(page['schedule_id'], schedule.pk)
+        self.assertEqual(page['accounting_note_id'], data['parent'].pk)
+        self.assertFalse(page['schedule']['ledger_posted'])
+
     def test_private_upload_rebuilds_exact_register_and_requires_fresh_native_decisions(self):
         data = self.data
         paused = factory_progress.set_progress(data['actor'], self.work.pk, self.work.revision, False)

@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI income schedules, assets and accounting intake · 22 November 2026
+
+OpenAPI 1.13.0 defines 295 operations on 212 paths. Sixteen additions cover duplicate and returned schedule corrections, bounded inventory, reporting adjustment export and receiving review, versioned asset registers and PDF proof, and source import through unit confirmation and mapping. The map covers SCR-54 and SCR-55. Management accounts remains open for corrected file upload and publication, allocation and formula controls. Twenty-three groups covering 142 design states still need API work. The full 262-state Railway API acceptance remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI policy scopes, impact and exact intake sources · 22 November 2026
 
 OpenAPI 1.12.0 lists 279 operations on 201 paths. Eight new operations cover scope applications, policy reassessment and exact forecast intake. Existing intake options also provide scoped invoice, ordinary change and Emergency sources. Twenty-five groups covering 156 states still need API work. Full acceptance of all 262 states through the API remains pending. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)

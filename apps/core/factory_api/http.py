@@ -3,7 +3,7 @@ from functools import wraps
 from itertools import islice
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, RequestDataTooBig, ValidationError
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponseBase, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from jsonschema import Draft202012Validator, FormatChecker, validators
@@ -123,7 +123,7 @@ def validation_problem(exc):
 
 
 def endpoint(*, method='GET', request=None, response=None, status=200, summary, query=None,
-             required_query=(), path_parameters=None, multipart=False, authenticated=True):
+             required_query=(), path_parameters=None, multipart=False, authenticated=True, media_type='application/json'):
     """Describe one operation and apply the same request contract at runtime."""
     def decorate(fn):
         @never_cache
@@ -144,7 +144,13 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
                         multipart_body(http, request)
                     else:
                         kwargs['body'] = json_body(http, request)
-                return JsonResponse(fn(http, *args, **kwargs), status=status)
+                result = fn(http, *args, **kwargs)
+                if media_type != 'application/json':
+                    if (not isinstance(result, HttpResponseBase) or result['Content-Type'] != media_type
+                            or result.status_code != status):
+                        raise TypeError('The declared download response must match its media type and status.')
+                    return result
+                return JsonResponse(result, status=status)
             except Problem as exc:
                 return error(exc.status, exc.code, exc.message, fields=exc.fields)
             except (Http404, ObjectDoesNotExist):
@@ -159,6 +165,7 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
                 return validation_problem(exc)
         view.operation = {'method': method, 'request': request, 'response': response, 'status': status,
                           'summary': summary, 'query': query or {}, 'required_query': required_query,
-                          'path_parameters': path_parameters or {}, 'multipart': multipart, 'authenticated': authenticated}
+                          'path_parameters': path_parameters or {}, 'multipart': multipart, 'authenticated': authenticated,
+                          'media_type': media_type}
         return view
     return decorate

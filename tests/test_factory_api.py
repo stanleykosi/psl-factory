@@ -81,7 +81,8 @@ class ContractTests(SimpleTestCase):
                 self.assertEqual(operation_id(resolve(example).func.api_handlers[method.upper()]), operation['operationId'])
                 for code, response in operation['responses'].items():
                     if code.startswith('2'):
-                        Draft202012Validator.check_schema(response['content']['application/json']['schema'])
+                        for media in response['content'].values():
+                            Draft202012Validator.check_schema(media['schema'])
                 if 'requestBody' in operation:
                     for content in operation['requestBody']['content'].values():
                         Draft202012Validator.check_schema(content['schema'])

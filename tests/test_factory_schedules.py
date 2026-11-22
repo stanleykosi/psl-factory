@@ -302,6 +302,126 @@ class FactorySchedulesTests(TestCase):
         args=[f['actor'],self.work.pk,self.work.revision,rev(f['case']),s.pk,'additive',f['e']['finance_adjustment'].pk];a=flow.export(*args);args[3]=rev(f['case']);self.assertEqual(flow.export(*args).pk,a.pk)
         with self.assertRaises(ValidationError):analysis.map_source(f['actor'],f['case'].pk,f['source'].pk,[a.adjustment_id],rev(f['case']))
         analysis.review(f['reviewer'],f['case'].pk,'adjustment',a.adjustment_id,'Finance','approve',f['e']['finance_review'].pk,'Separate reporting adjustment approval',rev(f['case']));mapped=analysis.map_source(f['actor'],f['case'].pk,f['source'].pk,[a.adjustment_id],rev(f['case']));self.assertFalse(mapped.result['ledger_posted'])
+
+    def test_api_schedule_duplicate_correction_review_and_adjustment_handoff(self):
+        f = self.f
+        self.payload['rows'] = [dict(row(f, 'supplement', '20', 'additive',
+                                         lines=[{'account': 'sales', 'amount': '20'}]),
+                                     duplicate_state='not_assessed')]
+        self.start()
+        self.advance()
+        held = flow.schedule(self.work)
+        url = f'/api/v1/work/{self.work.pk}/finance-schedule'
+        review_url = f'/api/v1/work/{self.work.pk}/reviews'
+        self.client.force_login(f['actor'])
+
+        def post(target, values):
+            return self.client.post(target, values, content_type='application/json')
+
+        def read():
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200, response.content)
+            return response.json()
+
+        def revisions(view):
+            return {key: view[key] for key in ('expected_revision', 'case_revision')}
+
+        page = read()
+        self.assertEqual(page['duplicates'], ['supplement'])
+        self.assertEqual(page['result']['status'], 'held')
+        self.assertFalse(page['can_export'])
+        changes = {**revisions(page), 'action': 'resolve_duplicates', 'schedule_id': held.pk,
+                   'decisions': [{'key': 'supplement', 'treatment': 'separately_justified'}],
+                   'evidence_id': f['e']['finance_review'].pk, 'reason': 'Synthetic evidence supports a distinct amount.'}
+        self.assertNotEqual(post(url, dict(changes, schedule_id=held.pk + 1)).status_code, 201)
+        self.assertEqual(post(url, changes).status_code, 201)
+        self.advance()
+        page = read()
+        self.assertNotEqual(page['schedule_id'], held.pk)
+        self.assertEqual(page['result']['adjusted_total'], '-980')
+        verdict = {**revisions(page), 'kind': 'schedule', 'target_id': page['schedule_id'], 'verdict': 'approve',
+                   'evidence_id': f['e']['finance_review'].pk, 'note': 'Independent review of the corrected schedule.'}
+        self.assertEqual(post(review_url, verdict).status_code, 403)
+        self.client.force_login(f['reviewer'])
+        self.assertIn('approve', read()['review_verdicts'])
+        approval = post(review_url, verdict)
+        self.assertEqual(approval.status_code, 200, approval.content)
+        self.advance()
+        self.client.force_login(f['actor'])
+        approved = read()
+        self.assertTrue(approved['can_export'])
+        export = post(url, {**revisions(approved), 'action': 'export_adjustment',
+                            'schedule_id': approved['schedule_id'], 'kind': 'additive',
+                            'evidence_id': f['e']['finance_adjustment'].pk})
+        self.assertEqual(export.status_code, 201, export.content)
+        recorded = read()['exports'][0]
+        self.assertEqual(recorded['id'], export.json()['record_id'])
+        self.assertFalse(held.reviews.exists())
+        finance = f"/api/v1/projects/{f['case'].pk}"
+        adjustment_url = f"{finance}/accounting-adjustments/{recorded['adjustment_id']}"
+        mapping_url = f"{finance}/accounting-sources/{f['source'].pk}/mappings"
+        adjustment = self.client.get(adjustment_url)
+        self.assertEqual(adjustment.status_code, 200, adjustment.content)
+        self.assertIsNone(adjustment.json()['review_id'])
+        mapping = {'case_revision': adjustment.json()['case_revision'], 'adjustment_ids': [recorded['adjustment_id']]}
+        self.assertNotEqual(post(mapping_url, mapping).status_code, 201)
+        self.client.force_login(f['reviewer'])
+        decision = post(adjustment_url, {'case_revision': rev(f['case']), 'role': 'Finance', 'verdict': 'approve',
+                                         'evidence_id': f['e']['finance_review'].pk, 'note': 'Separate adjustment review.'})
+        self.assertEqual(decision.status_code, 201, decision.content)
+        self.client.force_login(f['actor'])
+        mapped = post(mapping_url, dict(mapping, case_revision=rev(f['case'])))
+        self.assertEqual(mapped.status_code, 201, mapped.content)
+        note = self.client.get(f"{finance}/accounting-mappings/{mapped.json()['id']}")
+        self.assertEqual(note.status_code, 200, note.content)
+        self.assertIn(f"adjustment:{recorded['adjustment_id']}:1", [item['source_line'] for item in note.json()['rows']])
+        self.assertFalse(note.json()['ledger_posted'])
+        Grant.objects.filter(case=f['case'], user=f['actor'], action='schedules.report').update(active=False)
+        redacted = read()
+        self.assertIsNone(redacted['result'])
+        self.assertIsNone(redacted['income'])
+        self.assertEqual(redacted['exports'], [])
+
+    def test_api_schedule_return_preparer_correction_and_inventory_selection(self):
+        f = self.f
+        self.payload['rows'].append(dict(row(f, 'timing', '0'), duplicate_state='separately_justified'))
+        self.start()
+        self.advance()
+        original = flow.schedule(self.work)
+        returned = flow.review(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), original.pk,
+                               'return', f['e']['finance_review'].pk, 'Confirm the timing relationship.')
+        url = f'/api/v1/work/{self.work.pk}/finance-schedule'
+        self.client.force_login(f['actor'])
+        current = self.client.get(url).json()
+        self.assertEqual(current['returned']['review_id'], returned.pk)
+        self.assertIsNone(current['result'])
+        change = {'action': 'resubmit_row', 'expected_revision': current['expected_revision'],
+                  'case_revision': current['case_revision'], 'schedule_id': original.pk,
+                  'return_id': returned.pk, 'row_key': 'timing', 'relationship': 'reclassification'}
+        self.client.force_login(f['reviewer'])
+        self.assertIsNone(self.client.get(url).json()['returned'])
+        self.assertEqual(self.client.post(url, change, content_type='application/json').status_code, 403)
+        self.client.force_login(f['actor'])
+        updated = self.client.post(url, change, content_type='application/json')
+        self.assertEqual(updated.status_code, 201, updated.content)
+        self.advance()
+        current = self.client.get(url).json()
+        self.assertNotEqual(current['schedule_id'], original.pk)
+        self.assertEqual(current['stage'], 'output_review')
+        self.assertIsNone(current['review_id'])
+
+        supplied = evidence(f, 'schedule_inventory', json.dumps(f['values']['inventory']))
+        selected = flow.start(f['actor'], f['case'].pk, 'INVENTORY-2', 'inventory', None, supplied.pk,
+                              None, 'selected-inventory', rev(f['case']))
+        factory.run_until_wait(selected.pk)
+        response = self.client.get(f'/api/v1/work/{selected.pk}/finance-schedule')
+        self.assertEqual(response.status_code, 200, response.content)
+        inventory = response.json()
+        self.assertEqual(inventory['inventory'], f['values']['inventory'])
+        self.assertEqual(inventory['result']['coverage'], 'partial')
+        self.assertFalse(inventory['result']['complete_inventory'])
+        self.assertIsNone(inventory['result']['adjusted_total'])
+
     def test_cancel_restart_forgery_and_source_scope(self):
         f=self.f;self.start();self.client.force_login(f['actor']);url='/work/'+str(self.work.pk)+'/'
         self.client.post(url,{'action':'advance','revision':self.work.revision,'approved_by':'Finance'});self.assertIsNone(flow.schedule(self.work))

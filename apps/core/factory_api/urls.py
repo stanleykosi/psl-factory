@@ -7,14 +7,14 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    accounts, agents, archive_files, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections, costing,
+    accounting, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections, costing,
     delivery, documents, emergency, engagements, escalations,
     finance_operations, financial_corrections, go_live_replies, handoffs, hr_handoffs, hypercare,
     intake, intake_sources, invoice_recovery, leadership_reports, meeting_records, minutes, notifications, payment_controls, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, scoped_policy, setup, short_payments, staff_access, support_replies, weekly_reports, work, work_access, workspaces,
+    role_work, roles, schedule_work, scoped_policy, setup, short_payments, staff_access, support_replies, weekly_reports, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -99,6 +99,17 @@ ROUTES = (
     ('work/<int:work_id>/support-replies', support_replies.options, support_replies.record_reply),
     ('work/<int:work_id>/aggregate-receipt', reviews.acknowledge_aggregate),
     ('work/<int:work_id>/payroll-operations', payroll_sources.work_options, payroll_sources.operate),
+    ('work/<int:work_id>/finance-schedule', schedule_work.detail, schedule_work.command),
+    ('projects/<uuid:case_id>/asset-registers', assets.registers, assets.capture),
+    ('projects/<uuid:case_id>/asset-registers/<int:register_id>/dates', assets.record_dates),
+    ('work/<int:work_id>/assets', assets.detail),
+    ('work/<int:work_id>/assets/opening-proof', assets.opening_file, assets.attach_opening),
+    ('work/<int:work_id>/assets/date-proofs/<int:fact_id>', assets.date_file),
+    ('projects/<uuid:case_id>/accounting-intake', accounting.intake_options, accounting.submit),
+    ('projects/<uuid:case_id>/accounting-intake/<int:receipt_id>', accounting.resume),
+    ('projects/<uuid:case_id>/accounting-adjustments/<int:adjustment_id>', accounting.adjustment, accounting.review_adjustment),
+    ('projects/<uuid:case_id>/accounting-sources/<int:source_id>/mappings', accounting.map_source),
+    ('projects/<uuid:case_id>/accounting-mappings/<int:mapping_id>', accounting.mapping),
     ('work/<int:work_id>/payroll-recovery', payroll_sources.recovery),
     ('work/<int:work_id>/minutes', minutes.detail),
     ('work/<int:work_id>/minutes/action-options', minutes.action_options),
@@ -293,7 +304,8 @@ def contract():
                              {'name': name, 'in': 'query', 'required': name in info['required_query'], 'schema': schema}
                              for name, schema in info['query'].items()
                          ], 'responses': {
-                             str(info['status']): {'description': 'Success', 'content': json_content(info['response'])},
+                             str(info['status']): {'description': 'Success',
+                                                   'content': {info['media_type']: {'schema': info['response']}}},
                              **{code: {'$ref': f'#/components/responses/Http{code}'} for code in sorted(errors)},
                              'default': {'description': 'Request or domain error',
                                          'content': json_content({'$ref': '#/components/schemas/Error'})},
@@ -307,7 +319,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.12.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.13.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.12.0",
+    "version": "1.13.0",
     "description": "Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or GET /api/v1/me. Follow returned Django links for workflow steps that use native forms."
   },
   "security": [
@@ -28996,6 +28996,4114 @@
                     "additionalProperties": false
                   }
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/finance-schedule": {
+      "get": {
+        "summary": "Read the exact schedule, scoped duplicate and returned rows, reviews and adjustment handoffs",
+        "operationId": "schedule_work_detail",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "schedule_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "income",
+                        "inventory"
+                      ]
+                    },
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "finding": {
+                      "type": "string"
+                    },
+                    "duplicates": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                      },
+                      "maxItems": 100
+                    },
+                    "returned": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "review_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "rows": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "key": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "relationship": {
+                                    "type": "string",
+                                    "enum": [
+                                      "disaggregation",
+                                      "reclassification",
+                                      "additive"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "relationship"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 100
+                            }
+                          },
+                          "required": [
+                            "review_id",
+                            "rows"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_verdicts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject",
+                          "revoke"
+                        ]
+                      }
+                    },
+                    "can_export": {
+                      "type": "boolean"
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 35
+                    },
+                    "exports": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "additive",
+                              "reclassification"
+                            ]
+                          },
+                          "adjustment_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "adjustment_id"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 20
+                    },
+                    "income": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "entity": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "period": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "report_line": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "source_unit": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "target_unit": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "rows": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 100,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "key": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "relationship": {
+                                    "enum": [
+                                      "disaggregation",
+                                      "reclassification",
+                                      "additive"
+                                    ]
+                                  },
+                                  "amount": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "unit": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "source_accounts": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "string",
+                                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                    }
+                                  },
+                                  "evidence_id": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                  },
+                                  "duplicate_state": {
+                                    "enum": [
+                                      "not_assessed",
+                                      "already_represented",
+                                      "separately_justified"
+                                    ]
+                                  },
+                                  "duplicate_resolution_evidence_id": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "adjustment_lines": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "account": {
+                                          "type": "string",
+                                          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                        },
+                                        "amount": {
+                                          "type": "string",
+                                          "maxLength": 64
+                                        }
+                                      },
+                                      "required": [
+                                        "account",
+                                        "amount"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "relationship",
+                                  "amount",
+                                  "unit",
+                                  "source_accounts",
+                                  "evidence_id",
+                                  "duplicate_state",
+                                  "duplicate_resolution_evidence_id",
+                                  "adjustment_lines"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "entity",
+                            "period",
+                            "currency",
+                            "report_line",
+                            "source_unit",
+                            "target_unit",
+                            "rows"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "inventory": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "workbook_evidence_id": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "minimum": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "coverage": {
+                              "enum": [
+                                "partial",
+                                "declared_complete"
+                              ]
+                            },
+                            "schedules": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 100,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "key": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "purpose": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 1000
+                                  },
+                                  "owner_id": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "dependencies": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "string",
+                                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                    }
+                                  },
+                                  "source_evidence_ids": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "integer",
+                                      "minimum": 1
+                                    }
+                                  },
+                                  "formula_evidence_ids": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "integer",
+                                      "minimum": 1
+                                    }
+                                  },
+                                  "manual_cell_evidence_ids": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "integer",
+                                      "minimum": 1
+                                    }
+                                  },
+                                  "consumer_refs": {
+                                    "type": "array",
+                                    "maxItems": 100,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "string",
+                                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                    }
+                                  },
+                                  "restricted": {
+                                    "type": "boolean"
+                                  },
+                                  "validation_package_id": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "gaps": {
+                                    "type": "array",
+                                    "maxItems": 50,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 1000
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "purpose",
+                                  "owner_id",
+                                  "dependencies",
+                                  "source_evidence_ids",
+                                  "formula_evidence_ids",
+                                  "manual_cell_evidence_ids",
+                                  "consumer_refs",
+                                  "restricted",
+                                  "validation_package_id",
+                                  "gaps"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "workbook_evidence_id",
+                            "coverage",
+                            "schedules"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "result": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "ready",
+                                "held"
+                              ]
+                            },
+                            "findings": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "adjusted_total": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "parent_amount": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "additive_total": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "reclassification_total": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "target_unit": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "coverage": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "partial",
+                                    "declared_complete"
+                                  ]
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "complete_inventory": {
+                              "anyOf": [
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "missing_required": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                              }
+                            },
+                            "included_schedules": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "key": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "included": {
+                                    "type": "boolean"
+                                  },
+                                  "gaps": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "included",
+                                  "gaps"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 100
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "findings",
+                            "adjusted_total",
+                            "parent_amount",
+                            "additive_total",
+                            "reclassification_total",
+                            "target_unit",
+                            "coverage",
+                            "complete_inventory",
+                            "missing_required",
+                            "included_schedules"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "schedule_id",
+                    "kind",
+                    "stage",
+                    "finding",
+                    "duplicates",
+                    "returned",
+                    "review_id",
+                    "review_verdicts",
+                    "can_export",
+                    "evidence",
+                    "exports",
+                    "income",
+                    "inventory",
+                    "result"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Correct an exact held or returned row or export a reviewed reporting adjustment",
+        "operationId": "schedule_work_command",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "resolve_duplicates"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "schedule_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "decisions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "treatment": {
+                              "type": "string",
+                              "enum": [
+                                "already_represented",
+                                "separately_justified"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "treatment"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "maxItems": 100
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "schedule_id",
+                      "decisions",
+                      "evidence_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "resubmit_row"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "schedule_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "return_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "row_key": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                      },
+                      "relationship": {
+                        "type": "string",
+                        "enum": [
+                          "disaggregation",
+                          "reclassification",
+                          "additive"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "schedule_id",
+                      "return_id",
+                      "row_key",
+                      "relationship"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "export_adjustment"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "schedule_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "additive",
+                          "reclassification"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "schedule_id",
+                      "kind",
+                      "evidence_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/asset-registers": {
+      "get": {
+        "summary": "Read the native asset register choices and supporting evidence in this project",
+        "operationId": "assets_registers",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "can_capture": {
+                      "type": "boolean"
+                    },
+                    "registers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "reference": {
+                            "type": "string",
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "reference",
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 40
+                    },
+                    "register_sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 40
+                    },
+                    "date_sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 40
+                    }
+                  },
+                  "required": [
+                    "case_revision",
+                    "can_capture",
+                    "registers",
+                    "register_sources",
+                    "date_sources"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Capture a versioned register from exact supplied asset evidence",
+        "operationId": "assets_capture",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "reference": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "reference",
+                    "version",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "reference": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "reference",
+                  "evidence_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/asset-registers/{register_id}/dates": {
+      "post": {
+        "summary": "Record a new register version for one asset date with an optional private PDF explanation",
+        "operationId": "assets_record_dates",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "register_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "reference": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "reference",
+                    "version",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "delivery_date": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "in_service_date": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "fraction_basis": {
+                    "type": "string",
+                    "enum": [
+                      "explicit_supplied_fraction",
+                      "reviewed_in_service_date"
+                    ]
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "evidence_id",
+                  "asset_id",
+                  "fraction_basis"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/assets": {
+      "get": {
+        "summary": "Read the exact current asset register, basis and depreciation review with protected proof references",
+        "operationId": "assets_detail",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "register_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "schedule_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "accounting_note_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "finding": {
+                      "type": "string"
+                    },
+                    "register": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "entity": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "provider": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "pattern": "^[A-Z]{3}$"
+                            },
+                            "unit": {
+                              "const": "major_currency"
+                            },
+                            "period_start": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            "period_end": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            "label_as_of": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            "extracted_at": {
+                              "type": "string"
+                            },
+                            "completeness": {
+                              "enum": [
+                                "complete",
+                                "partial",
+                                "unknown"
+                              ]
+                            },
+                            "opening_evidence_id": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "assets": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 100,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "asset_id": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "category": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "capitalisation": {
+                                    "enum": [
+                                      "capitalise",
+                                      "undecided"
+                                    ]
+                                  },
+                                  "classification_evidence_id": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                  },
+                                  "opening_cost": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "opening_accumulated": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "residual": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "life": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "fraction": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "dates": {
+                                    "type": "object",
+                                    "properties": {
+                                      "contract": {
+                                        "const": "psl/ppe-asset-dates/v1"
+                                      },
+                                      "delivery_date": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "in_service_date": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "fraction_basis": {
+                                        "enum": [
+                                          "explicit_supplied_fraction",
+                                          "reviewed_in_service_date"
+                                        ]
+                                      },
+                                      "support_evidence_id": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "evidence_id": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "contract",
+                                      "delivery_date",
+                                      "in_service_date",
+                                      "fraction_basis",
+                                      "support_evidence_id",
+                                      "evidence_id"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "required": [
+                                  "asset_id",
+                                  "category",
+                                  "capitalisation",
+                                  "classification_evidence_id",
+                                  "opening_cost",
+                                  "opening_accumulated",
+                                  "residual",
+                                  "life",
+                                  "fraction"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "events": {
+                              "type": "array",
+                              "maxItems": 100,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "event_id": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "asset_id": {
+                                    "type": "string",
+                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                                  },
+                                  "date": {
+                                    "type": "string",
+                                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "addition",
+                                      "disposal",
+                                      "reclassification"
+                                    ]
+                                  },
+                                  "cost_delta": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "accumulated_delta": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 64
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "evidence_id": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                  }
+                                },
+                                "required": [
+                                  "event_id",
+                                  "asset_id",
+                                  "date",
+                                  "kind",
+                                  "cost_delta",
+                                  "accumulated_delta",
+                                  "evidence_id"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "closing_controls": {
+                              "type": "object",
+                              "properties": {
+                                "cost": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 64
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "accumulated": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 64
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "book_value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 64
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "cost",
+                                "accumulated",
+                                "book_value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "entity",
+                            "provider",
+                            "currency",
+                            "unit",
+                            "period_start",
+                            "period_end",
+                            "label_as_of",
+                            "extracted_at",
+                            "completeness",
+                            "opening_evidence_id",
+                            "assets",
+                            "events",
+                            "closing_controls"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "schedule": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "ready",
+                                "held"
+                              ]
+                            },
+                            "findings": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "rows": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "asset_id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "category": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "closing_cost": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "charge": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "closing_accumulated": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "book_value": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "event_refs": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "findings": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "fraction_basis": {
+                                    "type": "string",
+                                    "enum": [
+                                      "explicit_supplied_fraction",
+                                      "reviewed_in_service_date"
+                                    ]
+                                  },
+                                  "used_fraction": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "asset_id",
+                                  "category",
+                                  "closing_cost",
+                                  "charge",
+                                  "closing_accumulated",
+                                  "book_value",
+                                  "event_refs",
+                                  "findings"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 100
+                            },
+                            "totals": {
+                              "type": "object",
+                              "properties": {
+                                "cost": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 256
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "accumulated": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 256
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "book_value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 256
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "charge": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 256
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "cost",
+                                "accumulated",
+                                "book_value",
+                                "charge"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "scope": {
+                              "type": "object",
+                              "properties": {
+                                "entity": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "currency": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "unit": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "period_start": {
+                                  "type": "string",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                "period_end": {
+                                  "type": "string",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                "label_as_of": {
+                                  "type": "string",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              },
+                              "required": [
+                                "entity",
+                                "currency",
+                                "unit",
+                                "period_start",
+                                "period_end",
+                                "label_as_of"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "coverage": {
+                              "const": "selected_supplied_population"
+                            },
+                            "native_source_verified": {
+                              "const": false
+                            },
+                            "ledger_posted": {
+                              "const": false
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "findings",
+                            "rows",
+                            "totals",
+                            "scope",
+                            "coverage",
+                            "native_source_verified",
+                            "ledger_posted"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "target_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "purpose": {
+                            "type": "string",
+                            "enum": [
+                              "register",
+                              "basis",
+                              "schedule"
+                            ]
+                          },
+                          "verdicts": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "approve",
+                                "return",
+                                "reject",
+                                "revoke"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "target_id",
+                          "purpose",
+                          "verdicts"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 3
+                    },
+                    "schedule_review_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 35
+                    },
+                    "opening_return": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "target_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "review_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            }
+                          },
+                          "required": [
+                            "target_id",
+                            "review_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "has_opening_attachment": {
+                      "type": "boolean"
+                    },
+                    "date_attachment_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "register_id",
+                    "schedule_id",
+                    "accounting_note_id",
+                    "stage",
+                    "finding",
+                    "register",
+                    "schedule",
+                    "review_options",
+                    "schedule_review_id",
+                    "review_evidence",
+                    "opening_return",
+                    "has_opening_attachment",
+                    "date_attachment_ids"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/assets/opening-proof": {
+      "get": {
+        "summary": "Download the currently selected private opening proof PDF",
+        "operationId": "assets_opening_file",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Attach private opening proof to the exact returned asset subject and resume with a successor",
+        "operationId": "assets_attach_opening",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "target_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "review_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "target_id",
+                  "review_id",
+                  "reason",
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/assets/date-proofs/{fact_id}": {
+      "get": {
+        "summary": "Download the private PDF for the selected exact asset date",
+        "operationId": "assets_date_file",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "fact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/accounting-intake": {
+      "get": {
+        "summary": "Read supplied trial balance and unit proof choices with the actor\u2019s own intake receipts",
+        "operationId": "accounting_intake_options",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 40
+                    },
+                    "extracts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 40
+                    },
+                    "submissions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "case_revision": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 2147483647
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "findings": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "batch_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "source_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "work_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "can_confirm_units": {
+                            "type": "boolean"
+                          },
+                          "successor_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "case_revision",
+                          "status",
+                          "findings",
+                          "batch_id",
+                          "source_id",
+                          "work_id",
+                          "can_confirm_units",
+                          "successor_id"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 30
+                    }
+                  },
+                  "required": [
+                    "case_revision",
+                    "sources",
+                    "extracts",
+                    "submissions"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Submit an exact supplied trial balance with its extraction context",
+        "operationId": "accounting_submit",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "batch_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "source_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "work_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "can_confirm_units": {
+                      "type": "boolean"
+                    },
+                    "successor_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision",
+                    "status",
+                    "findings",
+                    "batch_id",
+                    "source_id",
+                    "work_id",
+                    "can_confirm_units",
+                    "successor_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_.:-]{1,100}$"
+                  },
+                  "reference": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "entity": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                      },
+                      "period": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{3}$"
+                      },
+                      "accounting_basis": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "extracted_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "completeness": {
+                        "type": "string",
+                        "enum": [
+                          "complete",
+                          "partial",
+                          "unknown"
+                        ]
+                      },
+                      "control_total": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "source_evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "entity",
+                      "period",
+                      "currency",
+                      "accounting_basis",
+                      "extracted_at",
+                      "completeness",
+                      "control_total",
+                      "source_evidence_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "correction": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "work": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "head": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "decision": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          }
+                        },
+                        "required": [
+                          "work",
+                          "head",
+                          "decision"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "idempotency_key",
+                  "reference",
+                  "evidence_id",
+                  "context"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/accounting-intake/{receipt_id}": {
+      "post": {
+        "summary": "Resume a held import or create the exact source unit confirmation successor",
+        "operationId": "accounting_resume",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "receipt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "batch_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "source_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "work_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "can_confirm_units": {
+                      "type": "boolean"
+                    },
+                    "successor_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision",
+                    "status",
+                    "findings",
+                    "batch_id",
+                    "source_id",
+                    "work_id",
+                    "can_confirm_units",
+                    "successor_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "resume"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "confirm_units"
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "unit": {
+                        "type": "string",
+                        "enum": [
+                          "major_currency",
+                          "thousands_currency",
+                          "millions_currency"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "case_revision",
+                      "unit",
+                      "evidence_id",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/accounting-adjustments/{adjustment_id}": {
+      "get": {
+        "summary": "Read exact pending or reviewed Finance reporting adjustment and source context",
+        "operationId": "accounting_adjustment",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "adjustment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "source_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "reference": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "additive",
+                        "reclassification"
+                      ]
+                    },
+                    "lines": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "amount": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "account",
+                          "amount"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "evidence_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "review_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_verdict": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "approve",
+                            "return",
+                            "reject"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "source_id",
+                    "reference",
+                    "version",
+                    "kind",
+                    "lines",
+                    "evidence_id",
+                    "review_id",
+                    "review_verdict",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Review the current reporting adjustment independently of its source schedule",
+        "operationId": "accounting_review_adjustment",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "adjustment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "role": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "verdict": {
+                    "type": "string",
+                    "enum": [
+                      "approve",
+                      "return",
+                      "reject"
+                    ]
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "role",
+                  "verdict",
+                  "evidence_id",
+                  "note"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/accounting-sources/{source_id}/mappings": {
+      "post": {
+        "summary": "Prepare a current accounting note from exact reviewed source and adjustments",
+        "operationId": "accounting_map_source",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "adjustment_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "maxItems": 100
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "adjustment_ids"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/accounting-mappings/{mapping_id}": {
+      "get": {
+        "summary": "Read exact current accounting note rows and source evidence without ledger effects",
+        "operationId": "accounting_mapping",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mapping_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "after_row",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "source_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "entity": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "period": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "pattern": "^[A-Z]{3}$"
+                    },
+                    "unit": {
+                      "const": "major_currency"
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "amount": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 128
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "source_line": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "source_evidence_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "report_line": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "origin": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "account",
+                          "amount",
+                          "source_line",
+                          "source_evidence_id",
+                          "report_line",
+                          "origin"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "has_more_rows": {
+                      "type": "boolean"
+                    },
+                    "ledger_posted": {
+                      "const": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "source_id",
+                    "entity",
+                    "period",
+                    "currency",
+                    "unit",
+                    "status",
+                    "findings",
+                    "rows",
+                    "has_more_rows",
+                    "ledger_posted"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }

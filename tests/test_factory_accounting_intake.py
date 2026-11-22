@@ -166,6 +166,36 @@ class AccountingSuppliedIntakeTests(TestCase):
         self.assertEqual(repeated, current)
         self.assertEqual(Audit.objects.filter(action=intake.UNITS_CONFIRMED).count(), 1)
 
+    def test_api_supplied_import_unit_confirmation_preserves_original_and_queues_work(self):
+        actor, case, evidence, *_ = self.data
+        source_file, context = self.supplied(with_units=False)
+        context['extracted_at'] = context['extracted_at'].isoformat()
+        self.client.force_login(actor)
+        url = f'/api/v1/projects/{case.pk}/accounting-intake'
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertIn(source_file.pk, [proof['id'] for proof in page.json()['extracts']])
+        response = self.client.post(url, {'case_revision': page.json()['case_revision'], 'idempotency_key': 'intake-api',
+                                          'reference': 'Account-file-test', 'evidence_id': source_file.pk, 'context': context},
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        held = response.json()
+        self.assertEqual(held['status'], 'source_units_needed')
+        self.assertTrue(held['can_confirm_units'])
+        self.assertIsNone(held['work_id'])
+        confirm = {'case_revision': held['case_revision'], 'action': 'confirm_units', 'unit': 'major_currency',
+                   'evidence_id': evidence['finance_source'].pk, 'note': 'The synthetic file shows currency units.'}
+        response = self.client.post(f"{url}/{held['id']}", confirm, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        successor = response.json()
+        self.assertEqual(successor['status'], 'started')
+        self.assertEqual(successor['batch_id'], held['batch_id'])
+        self.assertEqual(FactoryWork.objects.get(pk=successor['work_id']).background_progress.status, 'queued')
+        receipts = {item['id']: item for item in self.client.get(url).json()['submissions']}
+        self.assertEqual(receipts[held['id']]['successor_id'], successor['id'])
+        self.assertFalse(receipts[held['id']]['can_confirm_units'])
+        self.assertEqual(receipts[held['id']]['status'], 'source_units_needed')
+
     def test_confirming_thousands_records_evidence_but_keeps_calculation_on_hold(self):
         a, c, evidence, *_ = self.data
         held, _, _ = self.submit(with_units=False)

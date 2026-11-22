@@ -112,7 +112,8 @@ LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, '
 START_RESULT = obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')})
 WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1': 'weekly-report-intake',
                    'pmo-leadership-report/v1': 'leadership-report-intake', 'pmo-escalation/v1': 'escalation-register',
-                   'engagement/v1': 'engagement-intake', 'finance-payroll/v1': 'payroll/requests'}
+                   'engagement/v1': 'engagement-intake', 'finance-payroll/v1': 'payroll/requests',
+                   'finance-accounts/v1': 'accounting-intake', 'finance-ppe/v1': 'asset-registers'}
 
 
 def start_projects(actor, line):
