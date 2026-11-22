@@ -4,7 +4,7 @@
 
 OpenAPI 1.1.1 describes the 73 registered JSON operations across 63 paths. The versioned snapshot matches the Django registry and generates TypeScript types. Start work now supplies its submission URL and a scoped project picker with the current revision. Multipart fields, HTTP errors and path constraints have explicit contracts. The received-bid contract preserves the existing Django form and its original-document replay. [OpenAPI snapshot](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)
 
-The inventory maps 262 design states in 59 groups and all 108 release processes. The map records native Django steps in 57 groups. Source selection, exact domain approvals and recovery, detailed Finance and payroll operations, and staff and policy setup still need additional JSON coverage for a full frontend replacement. HOD decisions remain deferred. [Hosted schema](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Screen map](contracts/factory-api-screen-map.json) · [Actual checks](BUILD-TESTS.md)
+Railway serves the exact OpenAPI 1.1.1 snapshot on `main` and passed the final 25-test PostgreSQL suite. The inventory maps 262 design states in 59 groups and all 108 release processes. The map records native Django steps in 57 groups. Source selection, exact domain approvals and recovery, detailed Finance and payroll operations, and staff and policy setup still need additional JSON coverage for a full frontend replacement. HOD decisions remain deferred. [Hosted schema](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Screen map](contracts/factory-api-screen-map.json) · [Actual checks](BUILD-TESTS.md)
 
 ## Management workspace access · 22 November 2026
 

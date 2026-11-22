@@ -2,7 +2,7 @@
 
 ## Live OpenAPI handoff · 22 November 2026
 
-Use `main` for the frontend integration. Generate client types from `contracts/psl-factory.openapi.json` or the matching deployment’s `/api/v1/openapi.json`. The v7 design prototype stays on its mock contract. The live schema has 73 operations. Start work includes a scoped project picker, submitting against its chosen project revision. Automatic processes still use their source guides and authenticated handoffs. [Frontend handoff](docs/design/frontend-api.md)
+Use `main` for the frontend integration. Generate client types from the OpenAPI 1.1.1 snapshot in `contracts/psl-factory.openapi.json` or the matching Railway deployment’s `/api/v1/openapi.json`. The v7 design prototype stays on its mock contract. The live schema has 73 operations. Start work includes a scoped project picker, submitting against its chosen project revision. Automatic processes still use their source guides and authenticated handoffs. [Frontend handoff](docs/design/frontend-api.md)
 
 Run `python manage.py export_factory_api --coverage` for every design state, release process and prototype path comparison. The current map keeps native Django links for groups with missing JSON actions. Complete those remaining contracts incrementally with the existing services and exact authorisation. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Test ledger](BUILD-TESTS.md)
 
