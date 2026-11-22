@@ -2,7 +2,11 @@
 
 ## OpenAPI cash and invoice corrections · 22 November 2026
 
-Six local PostgreSQL tests passed in 37.500 seconds, with schema-checked successful responses for the six added operations. They included short-payment rule drafting, unchanged debt after a decision, stale-balance refusal and a separate cash successor review and application. The first two transaction-level checks used a legacy fixture missing the now-required issuance identity. After updating the fixture to create a bound invoice, the credit reached delivery and exposed an incorrect API currency field lookup, which was corrected. OpenAPI 3.1 validation, TypeScript generation and migration drift passed. The isolated Railway suite is the next verification step.
+Six local PostgreSQL tests passed in 37.500 seconds, with schema-checked successful responses for the six added operations. They included short-payment rule drafting, unchanged debt after a decision, stale-balance refusal and a separate cash successor review and application. The first two transaction-level checks used a legacy fixture missing the now-required issuance identity. After updating the fixture to create a bound invoice, the credit reached delivery and exposed an incorrect API currency field lookup, which was corrected. OpenAPI 3.1 validation, TypeScript generation and migration drift passed.
+
+Railway checks deployment `58ad2b8b-4f4c-4d7a-a48e-41f6d7ab91b8` from `d3a53fac` passed all 11 PostgreSQL tests in 69.226 seconds, with successful schema-checked responses for all six new operations. The suite included the existing Django correction form and the API credit, verified delivery receipt, full cash reversal and verified successor flows. System checks and migration drift passed. [Money API checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=58ad2b8b-4f4c-4d7a-a48e-41f6d7ab91b8)
+
+Web deployment `a0402af4-f27e-4c97-87a0-3809682bf25c` served the exact 1.8.0 contract. Health and Django sign-in returned 200. Signed-out session bootstrap and rejection of the private account read worked. The matching worker deployment `82121aa2-9417-4d51-beaa-16ed580c4eca` polled its queues. [Hosted contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
 
 ## OpenAPI staff accounts and recovery · 22 November 2026
 

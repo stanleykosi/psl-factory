@@ -4,6 +4,8 @@
 
 OpenAPI 1.8.0 lists 234 operations on 174 paths. Six new operations cover short-payment decision evidence, corrections, verified cash lineage, and independent review and application. SCR-20 has mapped APIs. Thirty-one groups containing 184 states have at least one remaining group-level API gap. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
 
+Railway passed all 11 cash and invoice correction tests and served the exact generated snapshot. The web sign-in and worker queues passed hosted checks. [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI account and staff access · 22 November 2026
 
 OpenAPI 1.7.0 lists 228 operations on 170 paths. Same-origin credential, invitation and recovery commands use the current Django session and verification services. Staff administration includes exact roster and account readback, invitations and renewals, technical profile and delegation review, workspace departure and full deactivation or restoration. The screen map has 32 groups with API gaps across 186 states. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

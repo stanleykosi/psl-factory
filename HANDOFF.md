@@ -4,7 +4,7 @@
 
 OpenAPI 1.8.0 adds six operations for exact short-payment treatment, credit and debit notes, voids, verified cash reversals and corrected successors. Review a proposed correction separately from its application or original delivery receipt. The verified-lot view follows the prior lot and successor IDs and scopes allocation details to readable invoices. The original Django forms still call the same native services. The screen map has 31 groups with gaps across 184 states. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)
 
-Run the `money-api` check on the exact revision before rolling out the new contract. Continue with D13 payment assessment and Emergency source review for the decision desk, then the commercial, reporting and Finance workflows. HOD policies remain deferred. [Actual tests](BUILD-TESTS.md)
+The `money-api` suite passed all 11 Railway PostgreSQL tests. Design acceptance web and worker run `d3a53fac`, and the hosted contract matches the snapshot. Continue with D13 payment assessment and Emergency source review for the decision desk, then the commercial, reporting and Finance workflows. HOD policies remain deferred. [Actual tests](BUILD-TESTS.md)
 
 ## Account and staff access APIs · 22 November 2026
 
