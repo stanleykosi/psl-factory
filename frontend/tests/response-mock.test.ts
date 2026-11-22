@@ -109,7 +109,7 @@ describe('fixtures', () => {
   });
 
   it('the base is v7, E-RESPONSE and E-WORK-ACTION stay outside the M-1 list, and no fixtures/work/W-16 file exists', () => {
-    expect(OPENAPI_PATH).toMatch(/packages\/v7\/openapi\.json$/);
+    expect(OPENAPI_PATH.replaceAll('\\', '/')).toMatch(/packages\/v7\/openapi\.json$/);
     expect(M1_OPERATIONS).toEqual(expect.arrayContaining(['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE']));
     expect(M1_OPERATIONS).not.toContain('E-RESPONSE');
     expect(M1_OPERATIONS).not.toContain('E-WORK-ACTION');
