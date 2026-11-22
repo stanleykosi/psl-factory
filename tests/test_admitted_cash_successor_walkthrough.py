@@ -58,6 +58,14 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
             return self.client.post(sample['corrections_path'], {'action': action, 'revision': rev(case),
                                                               'successor': request.pk, 'role': 'Finance', **fields})
 
+        api_case = f'/api/v1/projects/{case.pk}'
+        api_corrections = f'{api_case}/financial-corrections'
+        api_exact = f'{api_corrections}/cash/{request.pk}'
+
+        def api_correct(action, **fields):
+            return self.client.post(api_corrections, {'action': action, 'revision': rev(case),
+                'record_id': request.pk, 'role': 'Finance', **fields}, content_type='application/json')
+
         def assert_money(paid, owed, *, applied):
             page = self.client.get(sample['money_path'])
             self.assertContains(page, seed.REFERENCE)
@@ -80,9 +88,13 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
         self.assertNotContains(page, 'Verify and accept corrected successor lot')
         self.assertEqual(Decimal(request.payload['amount']), Decimal('40.00'))
         self.assertEqual(correct('apply_successor').status_code, 403)
-        decision = correct('review', kind='cash', verdict='approve', evidence=sample['review_proof'],
-                           reason=seed.REVIEW_REASON)
-        self.assertRedirects(decision, sample['corrections_path'], fetch_redirect_response=False)
+        self.assertEqual(self.client.get(api_corrections).json()['actions'], ['review'])
+        exact = self.client.get(api_exact).json()
+        self.assertEqual(Decimal(exact['proposed_amount']), Decimal('40.00'))
+        self.assertIsNone(exact['successor_lot_id'])
+        decision = api_correct('review', kind='cash', verdict='approve', evidence_id=sample['review_proof'],
+                               reason=seed.REVIEW_REASON)
+        self.assertEqual(decision.status_code, 201, decision.content)
         approved = FinancialCorrectionReview.objects.get(successor=request)
         self.assertEqual((approved.actor_id, approved.snapshot['reversal']), (reviewer.pk, sample['original_reversal']))
         self.assertFalse(CashSuccessorAcceptance.objects.filter(request=request).exists())
@@ -97,6 +109,7 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
         verify_grant.update(active=False)
         self.assertEqual(self.client.get(sample['corrections_path']).context['commands'], [])
         self.assertEqual(correct('apply_successor').status_code, 403)
+        self.assertEqual(api_correct('apply_successor').status_code, 403)
         self.assertFalse(CashSuccessorAcceptance.objects.filter(request=request).exists())
         verify_grant.update(active=True)
 
@@ -107,19 +120,26 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
             reserve = next(command for command in forms if command['action'] == 'reserve')
             self.assertEqual(list(reserve['form'].fields['effect'].choices), [(effect, effect)])
             Grant.objects.filter(pk=grant.pk).update(active=False)
-        applied = correct('apply_successor')
-        self.assertRedirects(applied, sample['corrections_path'], fetch_redirect_response=False)
+        applied = api_correct('apply_successor')
+        self.assertEqual(applied.status_code, 201, applied.content)
         acceptance = CashSuccessorAcceptance.objects.get(request=request, review=approved, parent=original_lot)
         lot = acceptance.lot
         self.assertEqual((acceptance.actor_id, lot.amount, lot.receipt_id),
                          (maker.pk, Decimal('40.00'), original_lot.receipt_id))
         self.assertEqual(cash.cash_remaining(lot), Decimal('40.00'))
+        self.assertEqual(self.client.get(api_exact).json()['successor_lot_id'], lot.pk)
+        original = self.client.get(f'{api_case}/cash-lots/{original_lot.pk}').json()
+        self.assertEqual(original['successor_lot_id'], lot.pk)
+        self.assertTrue(original['reversed'])
         assert_money('0', '32.25', applied=False)
         tracked = self.client.post(sample['settlement_path'], {'action': 'allocate', 'revision': rev(case),
             'lot': lot.pk, 'issue': issue.pk, 'amount': seed.ALLOCATION_AMOUNT, 'operation_key': seed.ALLOCATION_KEY,
             'role': 'Finance', 'evidence': sample['allocation_proof']})
         self.assertRedirects(tracked, sample['settlement_path'], fetch_redirect_response=False)
         self.assertEqual(cash.cash_remaining(lot), Decimal('15.00'))
+        successor = self.client.get(f'{api_case}/cash-lots/{lot.pk}').json()
+        self.assertEqual(Decimal(successor['remaining']), Decimal('15.00'))
+        self.assertEqual(successor['allocations'][0]['invoice_id'], issue.pk)
         assert_money('25.00', '7.25', applied=True)
 
         history = self.client.get(sample['settlement_path'])
@@ -145,5 +165,6 @@ class AdmittedCashSuccessorWalkthroughTests(TestCase):
         self.assertContains(accepted_history, f'Review #{approved.pk}')
         self.assertContains(accepted_history, f'original lot #{original_lot.pk}')
         self.assertEqual(correct('apply_successor').status_code, 403)
+        self.assertEqual(self.client.get(f'{api_case}/cash-lots/{lot.pk}').status_code, 403)
         self.assertEqual(CashSuccessorAcceptance.objects.filter(request=request).count(), 1)
         self.assertEqual(seed.prepare(invitation.pk, maker.pk), sample)

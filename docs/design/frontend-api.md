@@ -2,6 +2,8 @@
 
 Generate the frontend client from the [checked-in live OpenAPI contract](../../contracts/psl-factory.openapi.json). A running Django deployment serves the same contract at `/api/v1/openapi.json`. The mounted routes and request schemas generate both copies. The design prototype and its mock server use the separate v7 contract. Where the method and path match, use the live request and response types for Django integration.
 
+For a short payment, read the exact invoice `short-payment` resource and send its current `position` fingerprint and `revision`. The decision leaves the receivable unchanged. For a legal note or cash correction, open the project's `financial-corrections` resource for available actions, then follow the exact correction ID for reviews and receipts. The `cash-lots` resource shows the prior lot, confirmed successor and readable allocations.
+
 ## Use the live API
 
 Run these from the repository root to refresh OpenAPI and export the complete inventory of design states, process entry points, and prototype operations without an exact live route.

@@ -20,6 +20,8 @@ from apps.agents.financial_corrections import investigate
 class FinancialCorrectionTests(TransactionTestCase):
     def setUp(self):
         identity = self._testMethodName in {
+            'test_api_exact_credit_receipt_and_reversed_cash_successor',
+            'test_full_correction_staff_ui_calls_real_services_and_preserves_one_debt',
             'test_pending_and_unknown_note_never_erase_proven_debt',
             'test_successor_after_full_reversal_counts_only_new_verified_lot',
             'test_timeout_after_applied_note_reconciles_before_revoked_executor',
@@ -202,6 +204,54 @@ class FinancialCorrectionTests(TransactionTestCase):
         from apps.policy.models import Configuration
         c=Configuration.objects.filter(case=self.c,component='D08.duplicate_correction_rules').order_by('-pk').first();self.assertEqual(c.states.order_by('-pk').first().state,'draft');self.assertEqual(c.envelope['value']['schema_ref'],'schema:psl/invoice-identity/v2')
         transition(self.a,c.pk,'validated');transition(self.a,c.pk,'active')
+
+    def test_api_exact_credit_receipt_and_reversed_cash_successor(self):
+        self.client.force_login(self.a)
+        url = f'/api/v1/projects/{self.c.pk}/financial-corrections'
+
+        def command(action, **fields):
+            response = self.client.post(url, {'action': action, 'revision': rev(self.c), **fields},
+                                        content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['id']
+
+        def approve(kind, record_id):
+            command('review', kind=kind, record_id=record_id, verdict='approve', role='Finance',
+                    evidence_id=self.e['review'].pk, reason='Reviewed this exact synthetic request')
+
+        source = evidence(self.a, self.c, 'invoice_credit_note', json.dumps({
+            'document_ref': 'API-CREDIT', 'invoice_reference': self.iss.invoice.reference,
+            'kind': 'credit', 'amount': '5', 'currency': 'NGN', 'amount_basis': 'gross_including_tax',
+        }))
+        note_id = command('invoice_note', issue_id=self.iss.pk, evidence_id=source.pk,
+                          allocation_evidence_id=None, reason='Capture this signed credit note')
+        approve('invoice', note_id)
+        for effect in ('adjust', 'adjust_deliver'):
+            command('invoice_effect', record_id=note_id, effect=effect, role='Finance')
+            invoice_delivery.run_once()
+        credit = self.client.get(f'{url}/invoice/{note_id}').json()
+        self.assertEqual(credit['delivery_receipt_id'], InvoiceCorrectionDelivery.objects.get().pk)
+        self.assertEqual({job['status'] for job in credit['jobs']}, {'confirmed'})
+        self.assertEqual(cash.open_amount(self.iss), Decimal('27.25'))
+
+        _, lot = receipt(self.a, self.c)
+        command('reverse_cash', target='lot', record_id=lot.pk, role='Finance',
+                evidence_id=self.e['cash_correction'].pk, reason='Original statement reversed')
+        updated = json.dumps(dict(cash.lot_payload(lot), amount='40'))
+        report = evidence(self.a, self.c, 'cash_report', updated)
+        verified = evidence(self.a, self.c, 'cash_verification', updated)
+        successor_id = command('cash_successor', parent_id=lot.pk, report_evidence_id=report.pk,
+                               verification_evidence_id=verified.pk, legal_evidence_id=self.e['cash_correction'].pk,
+                               reason='Capture the verified statement successor')
+        approve('cash', successor_id)
+        command('investigate', kind='cash', record_id=successor_id)
+        command('apply_successor', record_id=successor_id, role='Finance')
+        accepted = CashSuccessorAcceptance.objects.get(request_id=successor_id)
+        self.assertEqual(self.client.get(f'{url}/cash/{successor_id}').json()['successor_lot_id'], accepted.lot_id)
+        self.assertEqual(cash.cash_remaining(lot), Decimal('0'))
+        self.assertEqual(cash.cash_remaining(accepted.lot), Decimal('40'))
+        self.assertEqual(cash.open_amount(self.iss), Decimal('27.25'))
+
     def test_successor_review_checks_current_source_precision_before_approval(self):
         r,l=receipt(self.a,self.c);cash.reverse(self.a,self.c.pk,'lot',l.pk,'Finance',self.e['cash_correction'].pk,'Parent reversal',rev(self.c));s=successor(self.a,self.c,l,self.e,'40.001')
         with self.assertRaisesMessage(ValidationError,'precision'):review(self.a,self.c,s,self.e,'cash')

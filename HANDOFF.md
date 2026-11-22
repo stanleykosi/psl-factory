@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Payment adjustments and cash successors · 22 November 2026
+
+OpenAPI 1.8.0 adds six operations for exact short-payment treatment, credit and debit notes, voids, verified cash reversals and corrected successors. Review a proposed correction separately from its application or original delivery receipt. The verified-lot view follows the prior lot and successor IDs and scopes allocation details to readable invoices. The original Django forms still call the same native services. The screen map has 31 groups with gaps across 184 states. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)
+
+Run the `money-api` check on the exact revision before rolling out the new contract. Continue with D13 payment assessment and Emergency source review for the decision desk, then the commercial, reporting and Finance workflows. HOD policies remain deferred. [Actual tests](BUILD-TESTS.md)
+
 ## Account and staff access APIs · 22 November 2026
 
 OpenAPI 1.7.0 adds 26 operations. Read the CSRF token from `GET /api/v1/session` before the first same-origin credential or invitation write, and use the rotated token after sign-in. Credential recovery retains the verified channel and one-use native session flow. Staff invitation options return current reviewed authority and lead membership IDs. Whole-account and workspace-only departure retain their separate handover and review controls. [API contract](contracts/psl-factory.openapi.json)

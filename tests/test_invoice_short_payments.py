@@ -110,3 +110,34 @@ class InvoiceShortPaymentTests(TestCase):
             self.assertContains(self.client.get(sample['path']), label)
         self.assertFalse(InvoiceShortPaymentDecision.objects.exists())
         self.assertFalse(PaymentReminderDispatch.objects.exists())
+
+    def test_api_rule_draft_and_exact_review_leave_the_receivable_unchanged(self):
+        url = f'/api/v1/projects/{self.case.pk}/invoices/{self.issue.pk}/short-payment'
+        self.client.force_login(self.actor)
+        original = self.client.get(url).json()
+        self.assertEqual(original['treatments'], [])
+        self.assertEqual(original['allocations'][0]['id'], self.allocation.pk)
+        draft = self.client.post(url, {'action': 'draft_rule', 'revision': original['revision'],
+            'rule': {'reviewer_id': self.actor.pk, 'treatments': ['record_exception']},
+            'evidence_id': self.policy_proof.pk}, content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        self.assertEqual(self.client.get(url).json()['treatments'], [])
+        transition(self.actor, draft.json()['id'], 'validated')
+        transition(self.actor, draft.json()['id'], 'active')
+        current = self.client.get(url).json()
+        command = {'action': 'decide', 'revision': current['revision'], 'position': current['position'],
+                   'allocation_id': self.allocation.pk, 'treatment': 'record_exception', 'reason': 'Review unpaid balance'}
+        decision = self.client.post(url, command, content_type='application/json')
+        self.assertEqual(decision.status_code, 201, decision.content)
+        saved = self.client.get(url).json()
+        self.assertEqual(saved['balance'], original['balance'])
+        self.assertEqual(saved['history'][0]['id'], decision.json()['id'])
+        self.assertTrue(saved['history'][0]['current_position'])
+        self.assertFalse(PaymentReleaseReservation.objects.exists())
+        self.assertFalse(PaymentReminderDispatch.objects.exists())
+        cash.reverse(self.actor, self.case.pk, 'allocation', self.allocation.pk, 'Finance',
+                     self.proofs['cash_correction'].pk, 'Synthetic reversal', rev(self.case))
+        stale = self.client.post(url, {**command, 'revision': rev(self.case)}, content_type='application/json')
+        self.assertEqual(stale.status_code, 422, stale.content)
+        self.assertFalse(self.client.get(url).json()['history'][0]['current_position'])
+        self.assertEqual(InvoiceShortPaymentDecision.objects.count(), 1)

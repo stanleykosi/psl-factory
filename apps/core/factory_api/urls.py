@@ -9,12 +9,12 @@ from django.views.decorators.http import require_safe
 from . import (
     accounts, agents, archive_files, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
     delivery, documents,
-    finance_operations, go_live_replies, handoffs, hr_handoffs, hypercare,
+    finance_operations, financial_corrections, go_live_replies, handoffs, hr_handoffs, hypercare,
     intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, setup, staff_access, support_replies, work, work_access, workspaces,
+    role_work, roles, setup, short_payments, staff_access, support_replies, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -122,9 +122,13 @@ ROUTES = (
     ('projects', workspaces.projects),
     ('projects/<uuid:case_id>', workspaces.project),
     ('projects/<uuid:case_id>/money', workspaces.money),
+    ('projects/<uuid:case_id>/financial-corrections', financial_corrections.options, financial_corrections.command),
+    ('projects/<uuid:case_id>/financial-corrections/<str:kind>/<int:record_id>', financial_corrections.detail),
+    ('projects/<uuid:case_id>/cash-lots/<int:lot_id>', financial_corrections.lot_details),
     ('projects/<uuid:case_id>/month-end', workspaces.close),
     ('projects/<uuid:case_id>/month-end/receivables', finance_operations.capture_close),
     ('projects/<uuid:case_id>/invoices/<int:issue_id>/reminder', reminders.detail, reminders.draft),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/short-payment', short_payments.detail, short_payments.command),
     ('projects/<uuid:case_id>/invoices/<int:issue_id>/reminder/actions', reminders.command),
     ('setup/<uuid:case_id>/payment-reminder-rules', reminders.rule_options, reminders.draft_rule),
     ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments', bank_payments.options, bank_payments.report),
@@ -276,7 +280,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.7.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.8.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

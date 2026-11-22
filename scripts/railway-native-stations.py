@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api')
 
 
 def run(group, token, role_access):
@@ -131,6 +131,11 @@ def run(group, token, role_access):
         modules = ['tests.test_factory_api.ContractTests', 'tests.test_account_delivery', 'tests.test_staff_access_api',
                    'tests.test_role_scoped_work.RoleScopedWorkTests.test_api_team_invitation_renewal_admits_only_the_reviewed_role_and_team',
                    'tests.test_role_scoped_work.RoleScopedWorkTests.test_18_pmo_finance_and_hr_leads_invite_only_their_team_members']
+    elif group == 'money-api':
+        modules = ['tests.test_factory_api.ContractTests', 'tests.test_invoice_short_payments',
+                   'tests.test_admitted_cash_successor_walkthrough',
+                   'tests.test_financial_corrections.FinancialCorrectionTests.test_api_exact_credit_receipt_and_reversed_cash_successor',
+                   'tests.test_financial_corrections.FinancialCorrectionTests.test_full_correction_staff_ui_calls_real_services_and_preserves_one_debt']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

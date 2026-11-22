@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_cash_corrections_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.8.0",
+    "live_paths": 174,
+    "live_operations": 234,
+    "added_operations": 6,
+    "completed_groups": ["SCR-20"],
+    "screen_groups_with_remaining_json": 31,
+    "states_in_groups_with_remaining_json": 184,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Payment assessment and Emergency decision packets", "Commercial and reporting actions", "Finance close and full Railway API acceptance"],
+    "owner_decisions": "Live review assignments, correction methods, evidence rules and delivery destinations remain deferred."
+  },
   "frontend_cutover_staff_access_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.7.0",

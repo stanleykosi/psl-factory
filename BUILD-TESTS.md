@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI cash and invoice corrections · 22 November 2026
+
+Six local PostgreSQL tests passed in 37.500 seconds, with schema-checked successful responses for the six added operations. They included short-payment rule drafting, unchanged debt after a decision, stale-balance refusal and a separate cash successor review and application. The first two transaction-level checks used a legacy fixture missing the now-required issuance identity. After updating the fixture to create a bound invoice, the credit reached delivery and exposed an incorrect API currency field lookup, which was corrected. OpenAPI 3.1 validation, TypeScript generation and migration drift passed. The isolated Railway suite is the next verification step.
+
 ## OpenAPI staff accounts and recovery · 22 November 2026
 
 The local PostgreSQL suite passed nine tests in 23.747 seconds and observed 27 successful schema-checked operations, including the 26 staff additions. It verified same-origin CSRF, an original synthetic recovery email and expired replay, password change, cross-team refusal, scoped invitation renewal, exact role admission, unchanged action deadline, and restored sign-in while prior roles and grants remain revoked. OpenAPI 3.1 validation, TypeScript generation and migration drift passed.
