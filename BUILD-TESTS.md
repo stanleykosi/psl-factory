@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## API state replay completion · 22 November 2026
+
+Deployment `0921ddca-0118-4ead-8b50-2d9f3e154ed4` at `8439d3213bc41a86493b4f436409d896d559244d` passed all nine isolated PostgreSQL tests for the final 16 state assertions. Project delivery passed two tests in 80.751 seconds. Finance passed seven tests in 348.686 seconds. Both suite exit codes were zero. The merged ledger contains 262 passing states. Each passing record includes the stated operation responses, source revision and Railway deployment. The fixtures use synthetic data and exercise the mounted Django API and native workflow services.
+
+Two additional local PostgreSQL Emergency cases passed in 156.103 seconds. The two local accounting activity and delivery cases passed in 392.648 seconds. The small-group privacy and four contract checks passed in 147.028 seconds. Django system and migration drift checks, the official OpenAPI 3.1 schema and TypeScript generation passed.
+
+Railway web `033b8ceb-2c95-4eb2-8fbf-1570620e42ca` returned 200 for health, the Django sign-in form and the exact 1.22.0 schema. The gated account API returned 401 for an unsigned request. Railway worker `42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be` ran the existing background queues. [Per-state result ledger](docs/design/api-state-replay-results.csv)
+
 ## Third named API replay · 22 November 2026
 
 Deployment `1404c62b-b711-4c04-95ee-50a899892881` ran the 85 remaining cases at `cd32ce8100f3cf6b60a3d98cfd985cd7aa8caf2f`. It added 69 passes and produced 16 failed states. Shared work and Commercial exited 0. Delivery and Finance have recorded failure traces. The adapted client testing, release, scoped issue register, independent escalation, closure and minutes cases passed the six-case local PostgreSQL check. Four local Django and API tests passed navigation, Assistant entry, session protection and native invoice decision. The published contract validates against OpenAPI 3.1 and generates TypeScript. [Per-state ledger](docs/design/api-state-replay-results.csv)

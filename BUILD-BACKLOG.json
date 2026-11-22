@@ -1,17 +1,23 @@
 {
   "named_api_state_replay_20261122": {
-    "status": "in_progress",
+    "status": "verified",
     "states": 262,
     "planned": 262,
-    "railway_passed": 246,
-    "railway_failed": 16,
+    "railway_passed": 262,
+    "railway_failed": 0,
     "pending": 0,
     "first_railway_deployment": "bcd215a6-b1bd-41e9-9f64-d69cd2f2b1f3",
     "second_railway_deployment": "2421206a-3ca3-4533-88fb-0da1f937ea58",
     "third_railway_deployment": "1404c62b-b711-4c04-95ee-50a899892881",
+    "final_railway_deployment": "0921ddca-0118-4ead-8b50-2d9f3e154ed4",
+    "final_retest_tests": 9,
+    "final_retest_states": 16,
+    "hosted_revision": "8439d3213bc41a86493b4f436409d896d559244d",
+    "hosted_web": "033b8ceb-2c95-4eb2-8fbf-1570620e42ca",
+    "hosted_worker": "42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be",
     "contract_version": "1.22.0",
     "results": "docs/design/api-state-replay-results.csv",
-    "next": "Replay exact remaining outcomes and regressions on isolated Railway PostgreSQL.",
+    "next": "Use the published API contract and state ledger for the frontend cutover when scheduled.",
     "hod_choices": "deferred"
   },
   "frontend_cutover_client_testing_pack_20261122": {

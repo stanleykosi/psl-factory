@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## API state acceptance complete · 22 November 2026
+
+All 262 design states have passing Railway PostgreSQL API replay evidence. The last 16 state assertions passed in the targeted retest after the stale invoice conflict, live accounting, Business Unit and Emergency read fixes. Railway preview web and worker run the verified application revision `8439d321`. Preview health, the Django sign-in form, unauthenticated API denial and the exact OpenAPI 1.22.0 contract passed. HOD policies remain deferred. [State results](docs/design/api-state-replay-results.csv) · [Actual tests](BUILD-TESTS.md)
+
 ## Focused API replay retest · 22 November 2026
 
 Railway verified 246 of 262 states. The 16 recorded failures are in stale invoice approval, accounting, Business Unit and Emergency. The current changes restore live accounting activity and remove repeated exact authority and source checks from bounded reporting reads. [Per-state ledger](docs/design/api-state-replay-results.csv)

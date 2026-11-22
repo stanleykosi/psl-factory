@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## API replay complete · 22 November 2026
+
+All 262 named API state assertions passed on isolated Railway PostgreSQL across four successive runs. The final retest `0921ddca-0118-4ead-8b50-2d9f3e154ed4` passed all nine tests for the final 16 states at application revision `8439d3213bc41a86493b4f436409d896d559244d`. Each ledger row pins the exact scenario, observed HTTP operations, revision and deployment. The synthetic fixtures and original receipt checks do not authorize live provider effects or supply HOD decisions.
+
+Railway design acceptance web `033b8ceb-2c95-4eb2-8fbf-1570620e42ca` and worker `42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be` serve that application revision. The preview passed health, Django sign-in form, unauthenticated API denial and exact OpenAPI 1.22.0 snapshot checks. The worker polled its source, publication, archive, invoice and follow-up queues. Use the current contract and state ledger for the frontend cutover. HOD choices remain deferred. [OpenAPI](contracts/psl-factory.openapi.json) · [State results](docs/design/api-state-replay-results.csv)
+
 ## Final API replay retest · 22 November 2026
 
 The third Railway run `1404c62b-b711-4c04-95ee-50a899892881` brought the ledger to 246 passing and 16 failed states. The remaining assertions cover stale invoice approval, active and verified accounting, Business Unit privacy and review, and the Emergency implementation and report. The next batch retests just those 16. Finance and Emergency source checks now reuse their exact validated facts within each read. Keep the 246 passing observations pinned to their Railway revisions. HOD choices remain deferred. [Per-state ledger](docs/design/api-state-replay-results.csv)
