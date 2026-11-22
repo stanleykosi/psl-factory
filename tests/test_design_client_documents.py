@@ -147,3 +147,14 @@ class ClientAndTemplateDesignTests(TestCase):
             response = self.client.get(item['download_url'])
             self.assertEqual(response.status_code, 200, response.content if not response.streaming else '')
             self.assertEqual(b''.join(response.streaming_content), file)
+            replacement = self.client.post(url + '/replacements', {
+                'previous': item['id'], 'proof': self.proof.pk, 'request_key': uuid4(), 'revision': rev(self.case),
+                'file': SimpleUploadedFile('sample-v2.pdf', b'%PDF-1.4\nSAMPLE revised layout\n%%EOF\n'),
+            })
+            self.assertEqual(replacement.status_code, 200, replacement.content)
+            self.assertEqual(replacement.json()['version'], 2)
+            attached = TemplateFile.objects.get(template_id=replacement.json()['template_id'])
+            self.assertEqual(attached.previous_id, item['id'])
+            original = self.client.get(item['download_url'])
+            self.assertEqual(original.status_code, 200)
+            self.assertEqual(b''.join(original.streaming_content), file)

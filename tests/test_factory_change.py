@@ -249,7 +249,9 @@ class FactoryChangeTests(TestCase):
 
     def test_exact_work_human_commands_and_configuration_console(self):
         self.start();self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
-        self.assertContains(self.client.get(url),'Record your owner impact assessment')
+        page = self.client.get(url)
+        self.assertContains(page, 'Record an impact assessment')
+        self.assertContains(page, '<input type="hidden" name="action" value="assess">', html=True)
         response=self.client.post(url,{'action':'assess','revision':self.work.revision,'case_revision':rev(self.case),'change_version':self.cv.pk,'contributor':'QA','cost_impact':'unknown','timeline_impact':'false','client_facing':'false','evidence':self.source.pk,'note':'QA owner declares cost unknown'})
         self.assertEqual(response.status_code,302);self.assertIsNone(self.cv.assessments.get().cost_impact)
         with self.assertRaises(ValidationError):change.human_action(self.actor,self.work.pk,self.work.revision,rev(self.case),self.cv.pk+999,'authorize',{})

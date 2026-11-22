@@ -5,7 +5,7 @@
     "live_paths": 266,
     "live_operations": 376,
     "added_operations": 3,
-    "affected_groups": ["SCR-02", "SCR-16", "SCR-46"],
+    "affected_groups": ["SCR-02", "SCR-16", "SCR-44"],
     "screen_groups_with_remaining_json": 0,
     "inventory_by_state": 262,
     "test_record": "BUILD-TESTS.md",

@@ -4,7 +4,9 @@
 
 The first local pack test reached the native UUID guard. The API now converts the validated key to the service's UUID type. The corrected pack and contract run passed all five tests in 14.566 seconds with four successful API operations. It rejected reusing the same file, downloaded the two private originals, verified exact delivery, retained the original deadline through the reminder successor and accepted the client reply through the response API.
 
-Three precise state replay tests passed locally in 227.489 seconds. They covered an uncertain Accounting delivery found by lookup without resending, maker and other reviewer decision limits, stale review and opaque permission denial. A separate original-invoice test passed in 54.657 seconds with the actual unavailable receipt, guarded lookup miss, later readback of the original issue and delivery, and one issuance. The grouped Railway design regression is pending.
+Three precise state replay tests passed locally in 227.489 seconds. They covered an uncertain Accounting delivery found by lookup without resending, maker and other reviewer decision limits, stale review and opaque permission denial. A separate original-invoice test passed in 54.657 seconds with the actual unavailable receipt, guarded lookup miss, later readback of the original issue and delivery, and one issuance. After the final profile field change, the four contract tests passed in 9.363 seconds. Official OpenAPI schema validation and TypeScript generation passed.
+
+Railway web `b33da1c8-99d0-44ea-b46c-2984642ae99e` and worker `00775505-f22a-40bd-ab61-b40bc7f4e080` run `ba71110c`. The web returned the exact contract, health 200, Django sign-in 200, session 200 and anonymous user read 401. Worker logs reached native and specialist queue polling. GitHub confirmed `ba71110c` on main. The grouped Railway regression is running on the isolated checks service. [Regression deployment](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=aa5c5593-adfe-4f6d-8642-929a01b5b550)
 
 ## OpenAPI consolidated screen group API surface · 22 November 2026
 
@@ -12,7 +14,7 @@ The historical design ledger audit found 262 of 262 completed Django walkthrough
 
 Three local PostgreSQL tests passed in 28.219 seconds for exact private client testing through gate receipt, separate commercial document signature proof through the Finance intake receipt and current signed-stage change readback. Eleven local API and project integration tests passed in 56.245 seconds during the same increment. The later 21-test local run found an Assistant test call omitted its intake query. The corrected targeted test and four contract checks passed in 22.791 seconds. OpenAPI 3.1 JSON Schema validation and TypeScript generation passed.
 
-On Railway `4ce14ed6`, the `project-api` suite passed 15 tests in 134.015 seconds with 35 successful API operations. `journey-api` passed 27 in 237.843 seconds with 67 successful operations. Django system and migration drift checks passed. The `cutover` suite is pending. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=c2d7dcca-9629-4036-a331-34f57e45aaad)
+On Railway `4ce14ed6`, the `project-api` suite passed 15 tests in 134.015 seconds with 35 successful API operations. `journey-api` passed 27 in 237.843 seconds with 67 successful operations. Django system and migration drift checks passed. The 35-test `cutover` suite recorded no final result before the deployment was superseded. Its cases are being checked through the grouped regression and targeted evidence suite. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=c2d7dcca-9629-4036-a331-34f57e45aaad)
 
 ## OpenAPI Start work evidence, Setup and Planning clarification · 22 November 2026
 
