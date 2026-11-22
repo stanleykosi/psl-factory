@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Keep private testing pack and delivery proof as distinct original files. Bind the reply deadline and editable reminder to the reviewed delivery. Retain earlier dates when a current client reply stops the reminder.
+
 22 November 2026. Point each cross-workflow card to the resource that owns the source, receipt or decision. Recheck the requested information task and its authority before accepting source evidence. Keep separate client witness, proof inspection, independent review and use in an exact release gate or signed baseline. A scope change link preserves the reviewed amount and carries a null additional amount until the signed agreement supplies a figure.
 
 22 November 2026. Keep private payroll snapshot rows out of the Start work choices and recheck the named recipient. Keep validation acceptance scoped to the exact package and supporting evidence. Permit policy authoring with current owner-evidence references and separate activation. Route Planning clarification to its explicitly assigned owner and retain a source hold until current valid evidence supports a successor.

@@ -1,10 +1,18 @@
 # Actual test execution ledger
 
+## OpenAPI client testing pack and state replay · 22 November 2026
+
+The first local pack test reached the native UUID guard. The API now converts the validated key to the service's UUID type. The corrected pack and contract run passed all five tests in 14.566 seconds with four successful API operations. It rejected reusing the same file, downloaded the two private originals, verified exact delivery, retained the original deadline through the reminder successor and accepted the client reply through the response API.
+
+Three precise state replay tests passed locally in 227.489 seconds. They covered an uncertain Accounting delivery found by lookup without resending, maker and other reviewer decision limits, stale review and opaque permission denial. A separate original-invoice test passed in 54.657 seconds with the actual unavailable receipt, guarded lookup miss, later readback of the original issue and delivery, and one issuance. The grouped Railway design regression is pending.
+
 ## OpenAPI consolidated screen group API surface · 22 November 2026
 
 The historical design ledger audit found 262 of 262 completed Django walkthroughs with zero missing states. The contract inventory resolves all 262 states through their 59 screen groups. These are inventory checks. Fresh API state evidence comes from the Railway synthetic journeys.
 
-Three local PostgreSQL tests passed in 28.219 seconds for exact private client testing through gate receipt, separate commercial document signature proof through the Finance intake receipt and current signed-stage change readback. Eleven local API and project integration tests passed in 56.245 seconds during the same increment. OpenAPI 3.1 JSON Schema validation and TypeScript generation passed. Railway `journey-api` and cutover results are pending.
+Three local PostgreSQL tests passed in 28.219 seconds for exact private client testing through gate receipt, separate commercial document signature proof through the Finance intake receipt and current signed-stage change readback. Eleven local API and project integration tests passed in 56.245 seconds during the same increment. The later 21-test local run found an Assistant test call omitted its intake query. The corrected targeted test and four contract checks passed in 22.791 seconds. OpenAPI 3.1 JSON Schema validation and TypeScript generation passed.
+
+On Railway `4ce14ed6`, the `project-api` suite passed 15 tests in 134.015 seconds with 35 successful API operations. `journey-api` passed 27 in 237.843 seconds with 67 successful operations. Django system and migration drift checks passed. The `cutover` suite is pending. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=c2d7dcca-9629-4036-a331-34f57e45aaad)
 
 ## OpenAPI Start work evidence, Setup and Planning clarification · 22 November 2026
 

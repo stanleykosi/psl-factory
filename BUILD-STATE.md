@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI client testing pack and state replay · 22 November 2026
+
+OpenAPI 1.20.0 defines 376 operations on 266 paths. Reviewing exact state evidence surfaced the need for a testing pack receipt, reminder successor and private file operations alongside the existing client testing response. The complete screen map still resolves all 59 groups across 262 states. The latest test ledger records explicitly replayed cases and the broader regression. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI consolidated screen groups · 22 November 2026
 
 OpenAPI 1.19.0 defines 373 operations on 264 paths. The remaining eleven groups have mapped API paths for source queues, information and recovery, work decisions and outputs, Assistant source selection, project journey and registers, Money details, commercial witnesses, client testing and signed-stage links. The route inventory resolves all 59 groups across 262 states. Railway workflow regression and individual API state acceptance have their own evidence in the test ledger. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

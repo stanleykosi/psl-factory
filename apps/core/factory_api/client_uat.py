@@ -1,6 +1,7 @@
 """Client testing witness, independent proof review and exact gate evidence."""
 
 from io import BytesIO
+from uuid import UUID as parse_uuid
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
@@ -16,6 +17,7 @@ from apps.core.read_budget import limit_queries
 from apps.core.services import lock_case
 from apps.identity.services import require, visible_cases
 from apps.pmo import client_uat as domain
+from apps.pmo import client_testing_pack as testing_pack
 from apps.pmo.client_uat_models import ClientUATGateBinding
 from apps.pmo.client_uat_views import _contact_visible
 from apps.pmo.models import DeliveryDossier
@@ -186,3 +188,112 @@ def download(request, case_id, dossier_id, response_id, upload_id):
     except OSError:
         raise Problem(503, 'source_unavailable', 'The private file is temporarily unavailable.') from None
     return FileResponse(BytesIO(body), as_attachment=True, filename=file.name, content_type='application/octet-stream')
+
+
+PACK = obj({'id': ID, 'reference': TEXT, 'received_at': DATETIME, 'pack_url': nullable(TEXT), 'receipt_url': nullable(TEXT)})
+TIMING = obj({'id': ID, 'previous_id': nullable(ID), 'reply_due_at': DATETIME, 'remind_at': nullable(DATETIME)})
+SIDE = choice('pack', 'receipt')
+
+
+def pack_reader(actor, row):
+    if row.actor_id == actor.pk:
+        domain.witness(actor, row.dossier.case)
+    else:
+        testing_pack.review_context(actor, row)
+
+
+@endpoint(response=obj({'case_revision': REVISION, 'target_id': nullable(ID), 'pack': nullable(PACK),
+    'review_id': nullable(ID), 'timing': nullable(TIMING), 'latest_timing_id': nullable(ID),
+    'client_replied': BOOLEAN, 'reminder_due': BOOLEAN, 'stale': BOOLEAN,
+    'can_record': BOOLEAN, 'can_review': BOOLEAN, 'can_schedule': BOOLEAN}),
+    summary='Read the reviewed client testing pack proof and current response window')
+def pack_desk(request, case_id, dossier_id):
+    actor = request.user
+    dossier = scope(actor, case_id, dossier_id)
+    case = dossier.case
+    target = domain.head(dossier, contract.TARGET)
+    with limit_queries(650):
+        value = testing_pack.projection(actor, dossier, target)
+        row, review, timing = (value.get(key) for key in ('pack', 'review', 'timing'))
+        replied = value.get('client_replied', False)
+        file_urls = {}
+        try:
+            domain.witness(actor, case)
+        except (PermissionDenied, ValidationError):
+            can_record = False
+        else:
+            can_record = bool(target and not replied and not value.get('stale'))
+        can_review = False
+        if row:
+            try:
+                testing_pack.review_context(actor, row)
+            except (PermissionDenied, ValidationError):
+                pass
+            else:
+                can_review = not review
+            try:
+                pack_reader(actor, row)
+            except (PermissionDenied, ValidationError):
+                pass
+            else:
+                root = f'/api/v1/projects/{case.pk}/delivery/{dossier.pk}/client-testing/pack/{row.pk}'
+                file_urls = {'pack_url': f'{root}/pack', 'receipt_url': f'{root}/receipt'}
+    return {'case_revision': case.revision, 'target_id': target.pk if target and not value.get('stale') else None,
+            'pack': {'id': row.pk, 'reference': row.payload['reference'], 'received_at': row.payload['received_at'],
+                     'pack_url': file_urls.get('pack_url'), 'receipt_url': file_urls.get('receipt_url')} if row else None,
+            'review_id': review.pk if review else None, 'latest_timing_id': value.get('previous'),
+            'timing': {'id': timing.pk, 'previous_id': timing.payload['previous'], 'reply_due_at': timing.payload['reply_due_at'],
+                       'remind_at': timing.payload['remind_at']} if timing else None, 'client_replied': replied,
+            'reminder_due': not replied and value.get('reminder_due', False), 'stale': value.get('stale', False),
+            'can_record': can_record, 'can_review': can_review, 'can_schedule': bool(row and review and can_record)}
+
+
+PACK_ACTION = {'oneOf': [
+    obj({'action': {'const': 'record'}, 'case_revision': REVISION, 'target_id': ID, 'operation_key': UUID,
+         'pack_file_id': ID, 'receipt_file_id': ID, 'reference': testing_pack.PACK_SCHEMA['properties']['reference'], 'received_at': DATETIME}),
+    obj({'action': {'const': 'verify'}, 'case_revision': REVISION, 'target_id': ID, 'pack_id': ID, 'note': NOTE,
+         'checked': {'const': True}}),
+    obj({'action': {'const': 'schedule'}, 'case_revision': REVISION, 'target_id': ID, 'pack_id': ID,
+         'operation_key': UUID, 'previous_id': nullable(ID), 'reply_due_at': DATETIME, 'remind_at': nullable(DATETIME), 'reason': NOTE}),
+]}
+
+
+@endpoint(method='POST', request=PACK_ACTION, response=RESULT, status=201,
+    summary='Capture the exact delivered testing pack, confirm receipt proof or revise the current response reminder')
+def pack_command(request, case_id, dossier_id, *, body):
+    actor = request.user
+    dossier = scope(actor, case_id, dossier_id)
+    common = (actor, dossier.case_id, dossier.pk, body['case_revision'], body['target_id'])
+    if body['action'] == 'record':
+        row = testing_pack.record_pack(*common, parse_uuid(body['operation_key']), body['pack_file_id'], body['receipt_file_id'],
+                                       body['reference'], parse_datetime(body['received_at']))
+    elif body['action'] == 'verify':
+        row = testing_pack.confirm_pack(*common, body['pack_id'], body['note'])
+    else:
+        row = testing_pack.schedule(*common, body['pack_id'], body['previous_id'], parse_uuid(body['operation_key']),
+                                    parse_datetime(body['reply_due_at']), parse_datetime(body['remind_at']) if body['remind_at'] else None,
+                                    body['reason'])
+    dossier.case.refresh_from_db(fields=['revision'])
+    return {'case_revision': dossier.case.revision, 'record_ids': [row.pk]}
+
+
+@endpoint(response={'type': 'string', 'format': 'binary'}, media_type='application/octet-stream',
+    path_parameters={'side': SIDE}, summary='Download the exact current client testing pack or its original private delivery proof')
+def pack_download(request, case_id, dossier_id, pack_id, side):
+    from django.http import Http404
+
+    if side not in SIDE['enum']:
+        raise Http404
+    actor = request.user
+    dossier = scope(actor, case_id, dossier_id)
+    target = domain.head(dossier, contract.TARGET)
+    row = testing_pack.current_pack(actor, dossier, target) if target else None
+    if row is None or row.pk != pack_id:
+        raise Http404
+    pack_reader(actor, row)
+    file = testing_pack.files_for(row)[0 if side == 'pack' else 1]
+    try:
+        payload = case_uploads.read(file)
+    except OSError:
+        raise Problem(503, 'source_unavailable', 'The private file is temporarily unavailable.') from None
+    return FileResponse(BytesIO(payload), as_attachment=True, filename=file.name, content_type='application/octet-stream')

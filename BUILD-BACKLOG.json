@@ -1,4 +1,17 @@
 {
+  "frontend_cutover_client_testing_pack_20261122": {
+    "status": "mapped_api_surface_acceptance_pending",
+    "contract_version": "1.20.0",
+    "live_paths": 266,
+    "live_operations": 376,
+    "added_operations": 3,
+    "affected_groups": ["SCR-02", "SCR-16", "SCR-46"],
+    "screen_groups_with_remaining_json": 0,
+    "inventory_by_state": 262,
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Run grouped Railway design regression with API schema checks", "Verify current deployed contract and push", "Close remaining direct API state evidence"],
+    "owner_decisions": "Live reviewers, contact routes and external delivery remain deferred."
+  },
   "frontend_cutover_work_and_project_journeys_20261122": {
     "status": "mapped_api_surface_acceptance_pending",
     "contract_version": "1.19.0",

@@ -3,6 +3,7 @@
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import csv
+from functools import partial
 import json
 import os
 from pathlib import Path
@@ -35,12 +36,14 @@ SUITES = {
         'factory_invoice_recovery_priority', 'factory_payroll_restart', 'factory_bu', 'invoice_short_payments',
         'bu_walkthrough_stations', 'schedule_history_scope', 'late_invoice_receipt', 'invoice_walkthrough_stations',
         'month_end_overview', 'design_finance_workbench', 'schedule_followup_walkthrough', 'admitted_schedule_walkthrough',
+        'bank_receipt_capture',
     ),
     'shared': (
         'factory_console', 'factory_human_independence', 'factory_review_authority',
         'factory_progress', 'design_delegation', 'staff_accounts', 'staff_profiles',
         'staff_reactivation', 'ui_layout', 'design_batch_walkthrough', 'work_access_requests', 'product_intake',
         'department_assistant', 'design_consolidation', 'design_reminders_staff',
+        'factory_api', 'factory_api_project_records',
     ),
 }
 LEDGER_ROW = re.compile(r'^\| `(SCR-[^\x60]+)` \| [^\n]+ \| (.+) \|$', re.MULTILINE)
@@ -110,6 +113,8 @@ def main():
     parser.add_argument('--settings', help='Django settings module for the isolated test database.')
     parser.add_argument('--list', action='store_true', help='Print the selected test labels without running them.')
     parser.add_argument('--candidate-gate', action='store_true', help='Check the staged corrections and browser fixtures before deployment.')
+    parser.add_argument('--api-contract', action='store_true',
+                        help='Check every API response produced by the selected integration cases against the mounted OpenAPI contract.')
     parser.add_argument('--parallel-groups', type=int, choices=(2, 3, 4),
                         help='Run acceptance groups on separate PostgreSQL test databases on Railway.')
     args = parser.parse_args()
@@ -126,7 +131,7 @@ def main():
         if os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance':
             parser.error('The candidate gate requires the Railway design-acceptance environment.')
         env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': 'finance_reporting'}
-        return run_tests(labels, settings='config.design_batch_settings', env=env)
+        return run_tests(labels, settings='config.design_batch_settings', env=env, api_contract=args.api_contract)
     suites = list(dict.fromkeys(args.suite or SUITES))
     labels = list(dict.fromkeys(f'tests.test_{name}' for suite in suites for name in SUITES[suite]))
     missing = [label for label in labels if not (ROOT / (label.replace('.', '/') + '.py')).is_file()]
@@ -142,24 +147,26 @@ def main():
             parser.error('Parallel groups require the Railway design-acceptance environment.')
         scheduled = [name for name in PARALLEL_ORDER if name in suites]
         with ThreadPoolExecutor(max_workers=args.parallel_groups) as pool:
-            results = list(pool.map(run_group, scheduled))
+            results = list(pool.map(partial(run_group, api_contract=args.api_contract), scheduled))
         print('PSL_GROUPED_TEST_RESULTS=' + json.dumps(dict(zip(scheduled, results))), flush=True)
         return int(any(results))
-    return run_tests(labels, settings=args.settings)
+    return run_tests(labels, settings=args.settings, api_contract=args.api_contract)
 
 
-def run_tests(labels, *, settings=None, env=None):
+def run_tests(labels, *, settings=None, env=None, api_contract=False):
     command = [sys.executable, 'manage.py', 'test', *labels, '--keepdb', '--noinput', '--verbosity', '2']
     if settings:
         command.extend(['--settings', settings])
+    if api_contract:
+        command.extend(['--testrunner', 'tests.api_contract_runner.ContractRunner'])
     return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
 
 
-def run_group(name):
+def run_group(name, *, api_contract=False):
     env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': name}
     print(f'PSL_GROUP_STARTED={name}', flush=True)
     status = run_tests([f'tests.test_{module}' for module in SUITES[name]],
-                       settings='config.design_batch_settings', env=env)
+                       settings='config.design_batch_settings', env=env, api_contract=api_contract)
     print(f'PSL_GROUP_EXIT={name}:{status}', flush=True)
     return status
 

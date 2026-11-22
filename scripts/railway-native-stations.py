@@ -243,7 +243,7 @@ def run(group, token, role_access):
         modules += ["tests.test_native_station_controls", "tests.test_specialist_loop.SpecialistLoopTests"]
     if group == "accounts":
         modules.append("tests.test_finance_import_projection")
-    cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
+    cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "2"]
     if group in API_GROUPS:
         cmd += ["--testrunner", "tests.api_contract_runner.ContractRunner"]
     observed = set()

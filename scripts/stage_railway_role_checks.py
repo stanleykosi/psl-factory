@@ -17,11 +17,13 @@ CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-sta
 GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api', 'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api')
 
 
-def stage(revision, service, groups, coordinator_ticket=None):
+def stage(revision, service, groups, coordinator_ticket=None, design_regression=False):
     if groups and service != 'checks':
         raise ValueError('Test groups require the checks image.')
     if coordinator_ticket and (service != 'checks' or groups):
         raise ValueError('A live coordinator ticket requires a standalone checks image.')
+    if design_regression and (service != 'checks' or groups or coordinator_ticket):
+        raise ValueError('The design regression uses a standalone checks image.')
     commit = subprocess.check_output(['git', 'rev-parse', '--verify', '--end-of-options', revision + '^{commit}'],
                                      cwd=ROOT, text=True).strip()
     parent = ROOT / '.runtime'
@@ -30,6 +32,8 @@ def stage(revision, service, groups, coordinator_ticket=None):
     paths = RUNTIME + (CHECKS if service == 'checks' else ())
     if coordinator_ticket:
         paths += ('scripts/railway-specialist-roles.py',)
+    if design_regression:
+        paths += ('scripts/design_acceptance_batch.py',)
     with tempfile.TemporaryFile() as archive:
         subprocess.run(['git', 'archive', '--format=tar', commit, '--', *paths], cwd=ROOT, stdout=archive, check=True)
         archive.seek(0)
@@ -49,6 +53,10 @@ def stage(revision, service, groups, coordinator_ticket=None):
             before_command += '\nCOPY scripts/railway-specialist-roles.py scripts/railway-specialist-roles.py'
             command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
                        f'python scripts/railway-specialist-roles.py {coordinator_ticket} --coordinator')
+        if design_regression:
+            before_command += '\nCOPY scripts/design_acceptance_batch.py scripts/design_acceptance_batch.py'
+            command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
+                       'python scripts/design_acceptance_batch.py --parallel-groups 3 --api-contract')
     else:
         command = ('if [ "$PSL_SERVICE_ROLE" = worker ]; then exec sh /app/railway-worker.sh; fi; '
                    'python manage.py migrate --noinput && exec gunicorn config.wsgi:application '
@@ -68,5 +76,6 @@ if __name__ == '__main__':
     parser.add_argument('--revision', default='HEAD')
     parser.add_argument('--group', choices=GROUPS, action='append', default=[])
     parser.add_argument('--coordinator-ticket', type=UUID)
+    parser.add_argument('--design-regression', action='store_true')
     args = parser.parse_args()
-    print(stage(args.revision, args.service, args.group, args.coordinator_ticket))
+    print(stage(args.revision, args.service, args.group, args.coordinator_ticket, args.design_regression))

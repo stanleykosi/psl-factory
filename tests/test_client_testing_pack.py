@@ -29,6 +29,53 @@ class ClientTestingPackTests(ClientUATFixture, TestCase):
                                    self.pack_file.pk, self.receipt.pk, 'SAMPLE original receipt 24',
                                    timezone.now() - timedelta(hours=1))
 
+    def test_api_separate_files_reviewed_receipt_reminder_successor_and_reply(self):
+        self.rule()
+        target = self.target()
+        self.client.force_login(self.actor)
+        path = f'/api/v1/projects/{self.case.pk}/delivery/{self.d.pk}/client-testing/pack'
+
+        def command(action, status=201, **fields):
+            saved = self.client.post(path, {'action': action, 'case_revision': rev(self.case), 'target_id': target.pk, **fields},
+                                     content_type='application/json')
+            self.assertEqual(saved.status_code, status, saved.content)
+            return saved.json().get('record_ids', [None])[0]
+
+        actual = (timezone.now()-timedelta(hours=1)).isoformat()
+        common = {'operation_key': str(uuid4()), 'pack_file_id': self.pack_file.pk,
+                  'reference': 'SAMPLE client delivery #24', 'received_at': actual}
+        command('record', 422, receipt_file_id=self.pack_file.pk, **common)
+        pack_id = command('record', receipt_file_id=self.receipt.pk, **common)
+        waiting = self.client.get(path)
+        self.assertEqual(waiting.status_code, 200, waiting.content)
+        self.assertFalse(waiting.json()['can_schedule'])
+        for key, expected in [('pack_url', b'SAMPLE pack for delivery-build'),
+                              ('receipt_url', b'SAMPLE original delivery receipt')]:
+            download = self.client.get(waiting.json()['pack'][key])
+            self.assertEqual(download.status_code, 200)
+            self.assertEqual(b''.join(download.streaming_content), expected)
+        review = command('verify', pack_id=pack_id, checked=True, note='Checked the exact original delivery.')
+        self.assertEqual(self.client.get(path).json()['review_id'], review)
+        now = timezone.now()
+        deadline = (now + timedelta(days=3)).isoformat()
+        original = command('schedule', pack_id=pack_id, previous_id=None, operation_key=str(uuid4()),
+                           reply_due_at=deadline, remind_at=(now + timedelta(days=2)).isoformat(), reason='Exact deadline')
+        earlier = command('schedule', pack_id=pack_id, previous_id=original, operation_key=str(uuid4()),
+                          reply_due_at=deadline, remind_at=(now + timedelta(days=1)).isoformat(), reason='Earlier follow-up')
+        self.assertEqual(self.client.get(path).json()['timing']['id'], earlier)
+        replied = self.client.post(path.removesuffix('/pack'), {
+            'action': 'response', 'case_revision': rev(self.case), 'target_id': target.pk, 'previous_id': None,
+            'responded_at': timezone.now().isoformat(), 'outcome': 'changes_requested', 'genuine': True,
+            'note': 'SAMPLE response requested a change', 'workaround': None, 'source_reference': None,
+            'operation_key': str(uuid4()), 'proof_ids': [self.proof().pk],
+        }, content_type='application/json')
+        self.assertEqual(replied.status_code, 201, replied.content)
+        state = self.client.get(path).json()
+        self.assertTrue(state['client_replied'])
+        self.assertFalse(state['can_schedule'])
+        self.assertFalse(state['reminder_due'])
+        self.assertFalse(ClientUATGateBinding.objects.exists())
+
     def test_reviewed_receipt_controls_editable_reminder_and_reply_closes_wait(self):
         target = self.target()
         path = reverse('client_uat_pack', args=[self.case.pk, self.d.pk])

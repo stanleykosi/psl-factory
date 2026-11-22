@@ -234,6 +234,8 @@ ROUTES = (
     ('projects/<uuid:case_id>/validation-acceptance/<int:review_id>', validation_intake.receipt),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/closure-checklist', closure.checklist),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing', client_uat.desk, client_uat.command),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/pack', client_uat.pack_desk, client_uat.pack_command),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/pack/<int:pack_id>/<str:side>', client_uat.pack_download),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/files', client_uat.upload),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/<int:response_id>/files/<int:upload_id>', client_uat.download),
     ('projects/<uuid:case_id>/<slug:tab>', workspaces.project_tab),
@@ -374,7 +376,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.19.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.20.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

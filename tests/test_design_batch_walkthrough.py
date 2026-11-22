@@ -49,11 +49,17 @@ class DesignBatchWalkthroughTests(TestCase):
         self.assertContains(page, 'Check original delivery receipts')
         self.assertNotContains(page, 'Continue eligible accounting work')
         work = FactoryWork.objects.get(pk=sample['work'])
+        api = f'/api/v1/work/{work.pk}'
+        held = self.client.get(api)
+        self.assertEqual(held.status_code, 200, held.content)
+        self.assertEqual(held.json()['state'], 'effect_uncertain')
+        self.assertIn('reconcile', held.json()['actions'])
         # The job counts both the initial send and lookup reservation. The second
         # reservation must never call the delivery method.
         with patch.object(InternalPublicationAdapter, 'deliver', side_effect=AssertionError('A lookup must not send')):
-            response = self.client.post(recovery, {'action': 'reconcile', 'revision': work.revision})
-        self.assertEqual(response.status_code, 302)
+            response = self.client.post(f'{api}/actions', {'action': 'reconcile', 'expected_revision': work.revision},
+                                        content_type='application/json')
+        self.assertEqual(response.status_code, 202, response.content)
         job.refresh_from_db()
         self.assertEqual((job.status, job.attempts), ('confirmed', 2))
         self.assertEqual(receipts.get().pk, receipt.pk)
@@ -100,6 +106,13 @@ class DesignBatchWalkthroughTests(TestCase):
                 self.assertContains(page, label)
                 self.assertNotContains(page, 'Claim task')
                 self.assertNotContains(page, 'Approve exact packet')
+                work = FactoryWork.objects.get(pk=sample['work'])
+                task = HumanTask.objects.get(case=work.case, kind='factory_review', status='open')
+                readback = self.client.get(f'/api/v1/tasks/{task.pk}')
+                self.assertEqual(readback.status_code, 200, readback.content)
+                self.assertEqual(readback.json()['work_id'], work.pk)
+                self.assertFalse(readback.json()['task']['can_claim'])
+                self.assertFalse(readback.json()['task']['can_decide'])
         self.assertFalse(InvoiceReview.objects.exists())
         self.assertFalse(InvoiceJob.objects.exists())
 
@@ -197,6 +210,10 @@ class DesignBatchWalkthroughTests(TestCase):
         self.assertContains(self.client.get(sample['path']), work.invoice.reference)
         other = get_user_model().objects.create_user('synthetic-outside-invoice-reader')
         self.client.force_login(other)
+        api_denied = self.client.get(f'/api/v1/work/{work.pk}')
+        api_missing = self.client.get(f'/api/v1/work/{work.pk + 1000000}')
+        self.assertEqual((api_denied.status_code, api_denied.json()), (api_missing.status_code, api_missing.json()))
+        self.assertEqual(api_denied.status_code, 404)
         denied = self.client.get(sample['path'])
         nonexistent = self.client.get(reverse('factory_detail', args=[work.pk + 1000000]))
         self.assertContains(denied, 'Page unavailable', status_code=404)

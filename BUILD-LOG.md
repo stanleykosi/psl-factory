@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Added exact client testing pack, reviewed delivery proof and reply-window APIs. Paired existing decision, uncertain effect and original receipt walkthrough fixtures with current API readback. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Connected cross-workflow queue, decision, information and recovery resources with current project and outcome links. Added exact commercial and client testing proof, gate and signed-baseline controls, with contract stage and Finance source drill-downs. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Exposed authorised payroll and validation choices, human acceptance receipts, typed policy drafts and HR field lifecycle, and Planning source clarification. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

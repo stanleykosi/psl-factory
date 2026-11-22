@@ -1,7 +1,7 @@
 """Verify registered API responses produced by existing Django integration tests."""
 
-from unittest.mock import patch
 import json
+from unittest.mock import patch
 
 from django.test import Client
 from django.test.runner import DiscoverRunner

@@ -75,6 +75,8 @@ The project resource returns current station facts, work links and permitted Ass
 
 Commercial responses and client testing accept exact human witness records and private proof. They preserve separate human proof review, the signed baseline or testing gate, and the subsequent delivery and Finance controls. A reviewed signed agreement follows the same source, signature and policy services used by Django.
 
+A release work item links to the current client testing pack. The pack resource records separate private originals for the sent pack and its delivery proof. A reviewed receipt enables the current response deadline and reminder. A recorded reply clears the reminder and leaves its previous versions available to the owning workflow.
+
 Use `GET /api/v1/received-bids/{case_id}/receipts/{receipt_id}` with the identifiers returned by received-bid intake. It identifies the exact version and gives the authenticated download link for the original. A later intake leaves the original receipt intact and changes its `current` indicator. Both reads enforce the owning bid service’s current access rules.
 
 Use the exact HR disclosure and workspace revision for exports, approval or correction. The upload takes the original UTF-8 JSON file through multipart and returns status and finding codes. The disclosure history contains metadata. Only the exact authorised Finance recipient can open the snapshot row resource. A payroll report recipient can read and acknowledge a current aggregate, then send a defined question to the assigned HR owner and acknowledge their reply. These reads preserve the separate HR and Finance source permissions.

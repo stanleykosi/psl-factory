@@ -54,7 +54,8 @@ DETAIL = obj({
     'department_handoff_url': TEXT, 'panels': array(obj({'key': TEXT, 'url': TEXT})),
     'output_url': nullable(TEXT), 'information': array(obj({'task_id': ID, 'url': TEXT})),
     'available_control': array(choice('resume', 'cancel', 'adopt_profile')),
-}, optional=('department_handoff_url',))
+    'profile_adoption': obj({'configuration_id': ID, 'version': REVISION}),
+}, optional=('department_handoff_url', 'profile_adoption'))
 QUEUE = obj({
     'items': array(ITEM, limit=8), 'page': ID, 'next_page': nullable(ID), 'as_of': DATETIME,
     'limited': BOOLEAN, 'lines': array(obj({'key': TEXT, 'title': TEXT})),
@@ -66,7 +67,7 @@ PAGE = {'type': 'integer', 'minimum': 1, 'maximum': 10000}
 
 
 def state(work, row=None):
-    if row and row['state'] in {'Effect uncertain', 'Document delivery uncertain', 'Delivery uncertain'}:
+    if row and row['state'].casefold().endswith('uncertain'):
         return 'effect_uncertain'
     if work.lease_until and work.lease_until > timezone.now() and work.status not in factory.TERMINAL:
         return 'processing'
@@ -249,7 +250,8 @@ def panels_for(work, row):
         output = f"{case}/delivery/{work.request['dossier']}/closure-checklist"
         panels.append({'key': 'closure-checklist', 'url': output})
     if work.definition == 'delivery-release/v1' and type(work.request.get('dossier')) is int:
-        panels.append({'key': 'client-testing', 'url': f"{case}/delivery/{work.request['dossier']}/client-testing"})
+        testing = f"{case}/delivery/{work.request['dossier']}/client-testing"
+        panels += [{'key': 'client-testing', 'url': testing}, {'key': 'client-testing-pack', 'url': f'{testing}/pack'}]
     if work.definition == FINANCE_INVOICE and work.invoice_id:
         output = f'{case}/billing-invoices/{work.invoice_id}'
         panels.append({'key': 'invoice', 'url': output})
@@ -311,11 +313,13 @@ def detail(request, work_id):
         control.append('resume')
     if row.get('adoption'):
         control.append('adopt_profile')
+    adoption = row.get('adoption')
     return {
         **summary(row), 'revision': work.revision, 'case_revision': work.case.revision,
         'next_step': row.get('next_action') or 'Review the current work.', 'blocker': row.get('blocker') or '',
         'tasks': tasks, 'actions': actions, 'aggregate': aggregate, 'panels': panels, 'output_url': output,
         'available_control': control,
+        **({'profile_adoption': {'configuration_id': adoption['id'], 'version': adoption['revision']}} if adoption else {}),
         'information': [{'task_id': task.pk, 'url': f'/api/v1/work/{work.pk}/information/{task.pk}'}
                         for task in row.get('tasks', []) if work.definition == FINANCE_INVOICE
                         and task.kind in ('factory_information', 'factory_governance')],

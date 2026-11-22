@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Client testing response window and state replay · 22 November 2026
+
+OpenAPI 1.20.0 adds three operations for reviewed client testing pack delivery, its private original files and the current response deadline and reminder. Scope still follows the exact testing request, original recorder and authorised reviewer. A client's recorded reply clears the reminder. The work API now also reports the exact eligible profile adoption candidate and presents source-owned delivery uncertainty consistently.
+
+Local PostgreSQL passed the pack receipt, edited reminder and reply through the API. Earlier browser fixture tests now also check exact invoice uncertainty, lookup miss, original issue and delivery readback, restricted access and independent decision states through JSON on PostgreSQL. The full grouped Railway regression uses the schema-validating runner. The historical 262-state Django ledger and the fresh API workflow result remain separate. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## Consolidated screen group API surface · 22 November 2026
 
 OpenAPI 1.19.0 adds 17 operations. The final eleven mapped groups cover My work, work status, decisions, Assistant, project journey, exceptions, registers, Money, verified outcomes, human responses and signed-stage provenance. The 262-state route inventory resolves against the live API contract. Current project and work records link to their underlying JSON workflow resources. Commercial and client testing preserve private file boundaries and separate witness capture, human review, and effect authorization. Signed-stage prices remain unknown where the source is incomplete.
