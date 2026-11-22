@@ -10,6 +10,8 @@ Railway deployment `5bb381fb-ed68-450f-bafc-ffe41576d6a9` passed system checks a
 
 Railway deployment `f736209f-2bc4-4f92-ae3f-d3789dc0e328` on `a839c5ac` passed system checks, migration drift and all 15 tests in 91.367 seconds. The schema audit recorded 32 successful operations, including every new command. A final local PostgreSQL run added the exact superseded client coverage check and matched the Django fallback for inaccessible alternate invoice evidence. All eight tests passed in 59.707 seconds, with 17 schema-checked successful operations. OpenAPI validation and TypeScript generation passed against the final snapshot. [Verified checks deployment](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=f736209f-2bc4-4f92-ae3f-d3789dc0e328)
 
+Web deployment `fa07fea0-9ba0-4803-a85c-1a6cfcd9a235` on `1d180859` served the exact OpenAPI 1.3.0 snapshot. Health and Django sign-in returned 200. The signed-out session endpoint returned 401. Local migration drift passed against the isolated PostgreSQL test database. [Hosted schema](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+
 ## Workflow API cutover · 22 November 2026
 
 The Windows frontend verification passed 441 focused tests, then all 3,629 tests in 151 files. Both previously timed-out test files ran in the focused and full passes. TypeScript passed. The fixes cover shell-specific source checks, path separators, paging retries and test worker startup.
