@@ -4,7 +4,7 @@
 
 Added the API actions recorded as missing in 41 screen groups. All 59 groups now resolve to mounted operations for the 262-state inventory, with no remaining group-level route gap. The Railway preview serves OpenAPI 1.20.0, with 376 operations across 266 paths, and its Django sign-in and worker polling checks passed. The contract is available on GitHub main. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)
 
-The existing 262 scoped Django walkthroughs passed their ledger audit. Railway PostgreSQL acceptance for the new API journeys is recorded separately. Keep direct replay of each design state open until its current required actions, holds and receipts have repeatable evidence. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md)
+Railway PostgreSQL recorded successful responses for all 186 added operations and 290 operations overall. The original group regression passed 809 of 812 tests, and all three corrected cases passed in the 22-test retest. The final Go-live and Change batch passed 15 tests. The existing 262 scoped Django walkthroughs passed their ledger audit. Fresh API evidence for every individual design state remains open. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md)
 
 ## OpenAPI client testing pack and state replay · 22 November 2026
 
