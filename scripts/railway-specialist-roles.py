@@ -58,6 +58,7 @@ def main(ticket, processes, require_f02_calculation):
         raise RuntimeError("Representative routes must cover all eight configured specialists.")
     required = {(process, role) for process in processes for role in TEAMS[process]}
     passed = False
+    checked_access = False
     try:
         for key in ("PSL_ACCEPTANCE_SOURCE_KEY", "PSL_ACCEPTANCE_SOURCE_MODEL"):
             if not os.getenv(key):
@@ -83,12 +84,16 @@ def main(ticket, processes, require_f02_calculation):
                 with subprocess.Popen(command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as run:
                     for line in run.stdout:
                         print(line, end="", flush=True)
+                        if "ROLE_ACCESS F02 " in line:
+                            checked_access = True
                         prefix = "Specialist approval receipt "
                         if prefix in line:
                             evidence.append(json.loads(line.split(prefix, 1)[1]))
                     status = run.wait()
                 observed = {(row["process"], row["role"]) for row in evidence if row["mode"] == "openrouter"}
                 passed = status == 0 and observed == required and len(evidence) == len(required)
+                if require_f02_calculation:
+                    passed = passed and checked_access
             finally:
                 admin.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(name)))
     finally:

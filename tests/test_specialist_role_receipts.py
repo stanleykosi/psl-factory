@@ -130,6 +130,8 @@ class ApprovalScenarios:
         self.assertEqual(mapping.snapshot["source_review"]["id"], approval.pk)
         self.record(work, approval, mapping, reviewer, owner)
         if os.getenv("PSL_REQUIRE_F02_CALCULATION") == "1":
+            from tests.native_station_role_probe import verify_roles
+            verify_roles(self, work, mapping)
             reading = SpecialistReading.objects.get(work=work, role="A05")
             self.assertEqual(reading.disposition, "supported", "A05 left the import-control explanation open.")
             self.assertIn("9", reading.citation_lines, "A05 must cite the actual computed control.")
