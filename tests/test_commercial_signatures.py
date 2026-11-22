@@ -62,6 +62,34 @@ class CommercialSignatureTests(TestCase):
         with self.assertRaises(DatabaseError), transaction.atomic():
             CommercialSignatureUse.objects.all().delete()
 
+    def test_api_current_separate_signatures_then_exact_baseline_receipt(self):
+        contract(self.actor, self.case, self.e['policy_decision'])
+        prd = add_evidence(self.actor, self.case.pk, 'prd', 'SAMPLE exact product requirements', 'synthetic:prd')
+        prd_signature = add_evidence(self.actor, self.case.pk, 'signature', 'SAMPLE separate signature', 'synthetic:prd')
+        url = f'/api/v1/projects/{self.case.pk}/commercial-response'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(response.json()['responses'][0]['id'], self.response.pk)
+        action = {'action': 'adopt', 'response_id': self.response.pk, 'case_revision': rev(self.case)}
+        failed = self.client.post(url, action, content_type='application/json')
+        self.assertEqual(failed.status_code, 422, failed.content)
+        supplied = {kind: {'evidence_id': source.pk, 'party_ref': 'synthetic-client', 'method': 'synthetic-reviewed-file',
+                           'locator': kind + ': signature', 'human_verified': True}
+                    for kind, source in [('sow', self.e['signature']), ('prd', prd_signature)]}
+        response = self.client.post(url, {'action': 'signatures', 'response_id': self.response.pk, 'prd_id': prd.pk,
+            'case_revision': rev(self.case), 'signatures': supplied, 'note': 'SAMPLE human check of each document',
+            'operation_key': 'api-signature-packet', 'predecessor_id': None}, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        packet = response.json()['record_ids'][0]
+        action['case_revision'] = rev(self.case)
+        adopted = self.client.post(url, action, content_type='application/json')
+        self.assertEqual(adopted.status_code, 201, adopted.content)
+        data = self.client.get(url).json()
+        self.assertEqual(data['packet']['id'], packet)
+        self.assertTrue(data['adoption']['current'])
+        self.assertEqual(data['adoption']['id'], adopted.json()['record_ids'][0])
+        self.assertFalse(BaselineAdoption.objects.get(pk=data['adoption']['id']).signedbaselineintake.payload['invoice_created'])
+
     def test_unchanged_prd_reference_reuse_requires_explicit_owner_rule(self):
         original = self.packet(); first_adoption = self.adopt()
         from tests.test_commercial_changes import change_roles, impact_fixture

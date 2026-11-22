@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api')
 
 
 def run(group, token, role_access):
@@ -213,6 +213,15 @@ def run(group, token, role_access):
                    'tests.test_setup_disclosure.DisclosureSetupTests.test_focused_review_compares_reason_terms_and_uses_native_lifecycle',
                    'tests.test_planning_source_correlations.PlanningSourceCorrelationTests.test_api_clarification_routes_to_the_exact_owner_and_preserves_source_hold',
                    'tests.test_planning_source_correlations.PlanningSourceCorrelationTests.test_http_correction_owner_reassignment_disposition_and_currentness']
+    elif group == 'journey-api':
+        modules = ['tests.test_factory_api', 'tests.test_factory_api_project_records',
+                   'tests.test_commercial_client_response.CommercialClientResponseTests.test_api_private_witness_attachment_and_original_authority',
+                   'tests.test_commercial_signatures.CommercialSignatureTests.test_api_current_separate_signatures_then_exact_baseline_receipt',
+                   'tests.test_client_uat.ClientUATTests.test_api_client_testing_upload_response_review_and_gate_readback',
+                   'tests.test_client_uat.ClientUATTests.test_connected_client_proof_release_readiness_and_correction',
+                   'tests.test_change_milestone_link',
+                   'tests.test_factory_escalation.FactoryEscalationTests.test_api_client_escalation_requires_authority_and_returns_exact_communication_receipt',
+                   'tests.test_factory_human_independence.IndependentInformationTests']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

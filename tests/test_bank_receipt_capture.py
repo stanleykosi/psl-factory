@@ -81,6 +81,12 @@ class BankReceiptCaptureTests(TestCase):
             }, content_type='application/json')
             self.assertEqual(allocated.status_code, 201, allocated.content)
             self.assertEqual(cash.open_amount(self.issue), initial - 20)
+            invoice_url = f'/api/v1/projects/{self.case.pk}/billing-invoices/{self.issue.invoice_id}'
+            invoice = self.client.get(invoice_url)
+            self.assertEqual(invoice.status_code, 200, invoice.content)
+            self.assertEqual(invoice.json()['issue_id'], self.issue.pk)
+            self.assertEqual(Decimal(invoice.json()['owed']), initial - 20)
+            self.assertEqual(invoice.json()['payments_url'], url)
             checked = self.client.get(exact).json()
             self.assertEqual(Decimal(checked['remaining_cash']), 0)
             self.assertEqual(self.client.get(checked['verification_url']).status_code, 200)

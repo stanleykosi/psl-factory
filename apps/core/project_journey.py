@@ -183,7 +183,7 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
         page_key = route + '-page'
         window = Paginator(records, 25).get_page(pages.get(page_key) if pages else None)
         result={'title': title, 'action': action, 'url': reverse(route, args=[case.pk]), 'page': window, 'page_key': page_key,
-                'items': [present(record) for record in window]}
+                'items': [{**present(record), 'record_id': record.pk} for record in window]}
         group = {'case': 'milestone', 'issues': 'issue', 'escalations': 'escalation', 'changes': 'change',
                  'emergencies': 'emergency', 'rfp': 'bid'}.get(route)
         if project_reader and group:
@@ -240,7 +240,7 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
         result = section('Project actions', 'Manage actions and minutes', 'meetings', actions,
             lambda a: {'title': a.current.description, 'state': a.current.status.replace('_', ' ').capitalize(),
              'detail': (a.current.owner.get_full_name() or a.current.owner.username) if a.current.owner else 'Owner needed',
-             'due': a.current.due_at, 'show_due': True,
+             'due': a.current.due_at, 'show_due': True, 'assignment_id': a.role_assignment if scoped and not project_reader else None,
              'url': (reverse('department_records', args=['tola', case.pk]) + f'?group=action&id={a.pk}') if project_reader else
              reverse('role_work_detail', args=[a.role_assignment]) if scoped else
              reverse('design_project_action', args=[case.pk, a.pk])})
@@ -271,15 +271,17 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
             changes = ChangeRequest.objects.filter(case=case, current__isnull=False).filter(
                 Q(reference__icontains=query) | Q(current__module__icontains=query)).select_related('current').order_by('-pk')
             result.append(section('Changes', 'Open change requests', 'changes', changes, lambda change: {
-                'title': change.reference, 'state': f'Version {change.current.number}', 'detail': change.current.module}))
+                'title': change.reference, 'state': f'Version {change.current.number}', 'detail': change.current.module,
+                'version_id': change.current_id}))
         if 'emergency.read' in grants:
             emergencies = EmergencyProfile.objects.filter(version__change__case=case, version__change__reference__icontains=query,
                 version__change__current_id=F('version_id')).select_related('version__change').order_by('-pk')
             result.append(section('Emergency changes', 'Open emergency records', 'emergencies', emergencies, lambda emergency: {
-                'title': emergency.version.change.reference, 'state': 'Emergency evidence recorded', 'at': emergency.created_at}))
+                'title': emergency.version.change.reference, 'state': 'Emergency evidence recorded', 'at': emergency.created_at,
+                'version_id': emergency.version_id}))
         if 'rfp.read' in grants:
             bids = RFPCase.objects.filter(case=case, current_intake__isnull=False, reference__icontains=query).order_by('-pk')
             result.append(section('Bid requests', 'Open bid requests', 'rfp', bids, lambda bid: {
-                'title': bid.reference, 'state': 'Intake recorded'}))
+                'title': bid.reference, 'state': 'Intake recorded', 'receipt_id': bid.current_intake_id}))
         return result
     raise Http404

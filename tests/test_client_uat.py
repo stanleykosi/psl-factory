@@ -76,6 +76,44 @@ class ClientUATFixture(DeliveryFixture):
 class ClientUATTests(ClientUATFixture,TestCase):
     def setUp(self):self.setup_uat()
 
+    def test_api_client_testing_upload_response_review_and_gate_readback(self):
+        self.rule()
+        self.client.force_login(self.actor)
+        url = f'/api/v1/projects/{self.case.pk}/delivery/{self.d.pk}/client-testing'
+        start = self.client.get(url)
+        self.assertEqual(start.status_code, 200, start.content)
+        self.assertEqual(start.json()['contact_choices'][0]['id'], self.contact.pk)
+
+        def record(action, **fields):
+            response = self.client.post(url, {'action': action, 'case_revision': rev(self.case), **fields},
+                                        content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['record_ids'][0]
+
+        target = record('target', contact_id=self.contact.pk, sent_at=(timezone.now()-timedelta(hours=2)).isoformat(),
+                        previous_id=None, gate_id=start.json()['gate_id'], replace_existing=False, operation_key=str(uuid4()))
+        text = b'SAMPLE Client Witness approved delivery-build. SAMPLE source proof.'
+        uploaded = self.client.post(f'{url}/files', {'case_revision': rev(self.case),
+                                    'file': SimpleUploadedFile('client.txt', text)})
+        self.assertEqual(uploaded.status_code, 201, uploaded.content)
+        upload_id = uploaded.json()['id']
+        response_id = record('response', target_id=target, responded_at=(timezone.now()-timedelta(hours=1)).isoformat(),
+                             outcome='approved', genuine=True, note='Exact source', workaround=None,
+                             source_reference=None, proof_ids=[upload_id], previous_id=None, operation_key=str(uuid4()))
+        download = self.client.get(f'{url}/{response_id}/files/{upload_id}')
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(b''.join(download.streaming_content), text)
+        inspection = record('inspect', response_id=response_id)
+        review = record('review', response_id=response_id, inspection_id=inspection, verdict='confirm',
+                        proof_confirmed=True, note='SAMPLE checked exact source', operation_key=str(uuid4()))
+        binding = record('export', response_id=response_id, review_id=review, previous_binding_id=None, reason=None)
+        current = self.client.get(url)
+        self.assertEqual(current.status_code, 200, current.content)
+        self.assertEqual(current.json()['binding_id'], binding)
+        self.assertTrue(current.json()['binding_current'])
+        record('retract', response_id=response_id, reason='SAMPLE proof was withdrawn', operation_key=str(uuid4()))
+        self.assertFalse(self.client.get(url).json()['binding_current'])
+
     def test_connected_client_proof_release_readiness_and_correction(self):
         self.rule();self.plan();self.gates([k for k in delivery.UPSTREAM_GATES if k!='uat_client'])
         response=self.response();inspection=self.check(response)

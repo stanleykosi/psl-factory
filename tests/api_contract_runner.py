@@ -1,6 +1,7 @@
 """Verify registered API responses produced by existing Django integration tests."""
 
 from unittest.mock import patch
+import json
 
 from django.test import Client
 from django.test.runner import DiscoverRunner
@@ -69,5 +70,7 @@ class ContractRunner(DiscoverRunner):
             result = super().run_tests(test_labels, **kwargs)
         self.log(f'API responses checked for {len(exercised)}/{len(operations)} operations, '
                  f'{len(successful)} with a successful response.')
+        if not result:
+            self.log('PSL_API_OPERATIONS_PASSED=' + json.dumps(sorted(successful), separators=(',', ':')))
         self.log('Operations without success evidence: ' + ', '.join(sorted(operations.keys() - successful)))
         return result

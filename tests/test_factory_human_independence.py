@@ -123,6 +123,28 @@ class IndependentInvoiceReviewTests(TestCase):
 
 
 class IndependentInformationTests(TestCase):
+    def test_api_claim_and_supply_information_with_held_execution(self):
+        f = fixture(username='api-independent-information', provider='governed_factory_v1', missing=True)
+        policy = configure(f['actor'], f['case'], f['evidence']['policy_decision'])
+        factory.run_until_wait(f['work'].pk)
+        transition(f['actor'], policy.pk, 'revoked')
+        task = HumanTask.objects.get(case=f['case'], kind='factory_information', status='open')
+        self.client.force_login(f['actor'])
+        url = f'/api/v1/work/{f["work"].pk}/information/{task.pk}'
+        needed = self.client.get(url)
+        self.assertEqual(needed.status_code, 200, needed.content)
+        self.assertTrue(needed.json()['can_claim'])
+        claimed = self.client.post(url, {'action': 'claim', 'task_revision': needed.json()['task_revision']},
+                                   content_type='application/json')
+        self.assertEqual(claimed.status_code, 200, claimed.content)
+        result = self.client.post(url, {'action': 'provide', 'task_revision': claimed.json()['task_revision'],
+            'case_revision': rev(f['case']), 'kind': 'factory_information', 'content': 'SAMPLE owner supplied evidence',
+            'source': 'synthetic:owner'}, content_type='application/json')
+        self.assertEqual(result.status_code, 200, result.content)
+        self.assertEqual(TaskEvent.objects.get(task=task, action='factory.information_received').data['evidence'],
+                         result.json()['evidence_id'])
+        self.assertFalse(Invoice.objects.exists())
+
     def test_requested_information_can_be_supplied_with_planning_withdrawn(self):
         f=fixture(username='independent-information-human',provider='governed_factory_v1',missing=True)
         policy=configure(f['actor'],f['case'],f['evidence']['policy_decision']);factory.run_until_wait(f['work'].pk)

@@ -9,7 +9,7 @@ from django.views.decorators.http import require_safe
 from . import (
     accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery,
     bank_payments, bid_assignments, bid_delivery, bid_pricing, bid_responses, bid_submission, business_units, changes,
-    client_records, clients, closure, commands, corrections, costing,
+    client_records, client_uat, clients, closure, commands, commercial, corrections, costing,
     delivery, documents, emergency, engagements, escalations,
     finance_operations, financial_corrections, forecasting, go_live_replies, handoffs, hr_handoffs, hypercare,
     intake, intake_sources, invoice_recovery, issue_communications, issues, leadership_reports, ledger, meeting_records, minutes, notifications, payment_controls, payroll_identity,
@@ -17,7 +17,7 @@ from . import (
     project_operations, received_bids,
     reminders, reviews,
     role_work, roles, schedule_work, scoped_policy, setup, short_payments, staff_access, support_replies,
-    validation_intake, visibility_settings, weekly_reports, work, work_access, workspaces,
+    validation_intake, visibility_settings, weekly_reports, work, work_access, work_information, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -64,6 +64,7 @@ ROUTES = (
     ('received-bids/assignments', bid_assignments.pending),
     ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
     ('work', work.queue, intake.start),
+    ('work/source-queues', work.finance_sources),
     ('work/<int:work_id>', work.detail),
     ('work/<int:work_id>/access-request', work_access.status, work_access.request_access),
     ('work/<int:work_id>/invoice-milestone-proof', invoice_recovery.milestone_proof, invoice_recovery.attach_proof),
@@ -84,8 +85,10 @@ ROUTES = (
     ('projects/<uuid:case_id>/payroll/name-attestations', payroll_identity.attest),
     ('projects/<uuid:case_id>/payroll/name-checks/<int:comparison_id>', payroll_identity.detail, payroll_identity.route),
     ('work/<int:work_id>/history', work.history),
+    ('work/<int:work_id>/information/<int:task_id>', work_information.detail, work_information.command),
     ('work/<int:work_id>/background', work.background),
     ('work/<int:work_id>/actions', work.action),
+    ('work/<int:work_id>/control', work.control),
     ('work/<int:work_id>/reviews', reviews.review),
     ('work/<int:work_id>/corrections', corrections.correct),
     ('work/<int:work_id>/planning-exit', delivery.planning_exit, delivery.decide_planning_exit),
@@ -123,6 +126,7 @@ ROUTES = (
     ('work/<int:work_id>/forecast/lifecycle', forecasting.lifecycle),
     ('work/<int:work_id>/change', changes.detail, changes.command),
     ('projects/<uuid:case_id>/ordinary-changes', changes.register, changes.intake),
+    ('projects/<uuid:case_id>/change-versions/<int:version_id>', changes.version),
     ('projects/<uuid:case_id>/issues', issues.register, issues.capture),
     ('projects/<uuid:case_id>/issues/<int:issue_id>', issues.detail, issues.command),
     ('projects/<uuid:case_id>/issues/<int:issue_id>/assignment', issues.assign),
@@ -174,6 +178,10 @@ ROUTES = (
     ('projects', workspaces.projects),
     ('projects/<uuid:case_id>', workspaces.project),
     ('projects/<uuid:case_id>/money', workspaces.money),
+    ('projects/<uuid:case_id>/billing-invoices/<int:invoice_id>', workspaces.billing_invoice),
+    ('projects/<uuid:case_id>/commercial-response', commercial.desk, commercial.command),
+    ('projects/<uuid:case_id>/commercial-response/files', commercial.upload),
+    ('projects/<uuid:case_id>/commercial-response/<int:evidence_id>/files/<int:upload_id>', commercial.download),
     ('projects/<uuid:case_id>/financial-corrections', financial_corrections.options, financial_corrections.command),
     ('projects/<uuid:case_id>/payment-controls', payment_controls.options, payment_controls.command),
     ('projects/<uuid:case_id>/costing', costing.options, costing.command),
@@ -189,6 +197,7 @@ ROUTES = (
     ('projects/<uuid:case_id>/authority-recoveries', authority_recovery.collection, authority_recovery.command),
     ('projects/<uuid:case_id>/authority-recoveries/<int:request_id>', authority_recovery.detail),
     ('projects/<uuid:case_id>/escalation-register', escalations.register, escalations.prepare),
+    ('projects/<uuid:case_id>/escalation-register/<int:request_id>', escalations.request_record),
     ('projects/<uuid:case_id>/financial-corrections/<str:kind>/<int:record_id>', financial_corrections.detail),
     ('projects/<uuid:case_id>/cash-lots/<int:lot_id>', financial_corrections.lot_details),
     ('projects/<uuid:case_id>/month-end', workspaces.close),
@@ -215,6 +224,7 @@ ROUTES = (
     ('projects/<uuid:case_id>/actions/<int:item_id>', project_operations.action, project_operations.update_action),
     ('projects/<uuid:case_id>/change-milestone-link', project_operations.stage_options, project_operations.link_stage),
     ('projects/<uuid:case_id>/milestones/completions', project_operations.milestone_options, project_operations.record_milestone),
+    ('projects/<uuid:case_id>/milestones/<int:milestone_id>', project_operations.milestone),
     ('projects/<uuid:case_id>/planning', planning.detail, planning.command),
     ('projects/<uuid:case_id>/planning/department-inputs', planning.record_input),
     ('projects/<uuid:case_id>/planning/effort-review', planning.review_effort),
@@ -223,6 +233,9 @@ ROUTES = (
     ('projects/<uuid:case_id>/validation-intake/<int:package_id>', validation_intake.detail, validation_intake.command),
     ('projects/<uuid:case_id>/validation-acceptance/<int:review_id>', validation_intake.receipt),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/closure-checklist', closure.checklist),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing', client_uat.desk, client_uat.command),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/files', client_uat.upload),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/<int:response_id>/files/<int:upload_id>', client_uat.download),
     ('projects/<uuid:case_id>/<slug:tab>', workspaces.project_tab),
     ('clients', clients.directory),
     ('clients/groups/<str:group>', clients.group),
@@ -264,6 +277,7 @@ ROUTES = (
     ('assistant/conversations/<uuid:conversation_id>/messages', agents.message),
     ('assistant/turns/<uuid:turn_id>/transfer', agents.transfer),
     ('assistant/turns/<uuid:turn_id>/draft', assistant_drafts.read, assistant_drafts.save),
+    ('assistant/turns/<uuid:turn_id>/draft-options', assistant_drafts.source_options),
     ('assistant/turns/<uuid:turn_id>/start', assistant_drafts.start),
     ('cases/<uuid:case_id>/files', agents.uploads, agents.upload),
     ('cases/<uuid:case_id>/files/<int:upload_id>/drafts', agents.queue),
@@ -360,7 +374,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.18.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.19.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

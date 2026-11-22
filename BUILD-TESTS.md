@@ -1,8 +1,16 @@
 # Actual test execution ledger
 
+## OpenAPI consolidated screen group API surface · 22 November 2026
+
+The historical design ledger audit found 262 of 262 completed Django walkthroughs with zero missing states. The contract inventory resolves all 262 states through their 59 screen groups. These are inventory checks. Fresh API state evidence comes from the Railway synthetic journeys.
+
+Three local PostgreSQL tests passed in 28.219 seconds for exact private client testing through gate receipt, separate commercial document signature proof through the Finance intake receipt and current signed-stage change readback. Eleven local API and project integration tests passed in 56.245 seconds during the same increment. OpenAPI 3.1 JSON Schema validation and TypeScript generation passed. Railway `journey-api` and cutover results are pending.
+
 ## OpenAPI Start work evidence, Setup and Planning clarification · 22 November 2026
 
-Local PostgreSQL passed validation package creation through owner approval, supplied replay and acceptance receipt, including lost export authority. It passed HR field proposal, comparison and activation, typed rule drafting with stale-revision rejection, registered proof and reviewed policy activation, and exact minimal payroll start choices through live work creation. An initial payroll test expected a different success status than its documented API. The corrected test passed. The first Planning response contained an additional field and the screen map omitted its empty remaining marker. The corrected Planning and contract tests passed all five in 26.707 seconds. They covered current owner response, an unauthorized actor and the still-unresolved source. Railway `source-api` is pending.
+Local PostgreSQL passed validation package creation through owner approval, supplied replay and acceptance receipt, including lost export authority. It passed HR field proposal, comparison and activation, typed rule drafting with stale-revision rejection, registered proof and reviewed policy activation, and exact minimal payroll start choices through live work creation. An initial payroll test expected a different success status than its documented API. The corrected test passed. The first Planning response contained an additional field and the screen map omitted its empty remaining marker. The corrected Planning and contract tests passed all five in 26.707 seconds. They covered current owner response, an unauthorized actor and the still-unresolved source.
+
+The first Railway `source-api` deployment stopped at suite argument validation and ran zero tests. The corrected runner passed all 11 tests in 77.443 seconds on `c7eb729b`, covering 17 successful schema-checked operations. The hosted contract matched. Health, Django sign-in and session returned 200, an anonymous user read returned 401, and the worker reached queue polling. Web `cd5c8e06-dc5c-4c6f-8006-fd2ee1731822`, worker `5ad32d51-173b-4fe3-803e-c89872c3e3f4`. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=e7e7964a-51f4-4f63-b64c-0673b84dc8dc)
 
 ## OpenAPI business units and incumbent lineage · 22 November 2026
 

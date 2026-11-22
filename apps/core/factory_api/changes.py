@@ -10,7 +10,7 @@ from apps.core.views import accessible_case
 from apps.documents.models import PublicationReceipt
 from apps.identity.services import active_case_grants, require
 from apps.pmo import change_applicability, change_impacts, change_signatures, changes, standard_changes
-from apps.pmo.models import ChangeAuthorization, ChangeRequest
+from apps.pmo.models import ChangeAuthorization, ChangeRequest, ChangeVersion
 from apps.policy.change_validators import REUSABLE_ROLES
 from apps.policy.services import decision_authority
 from apps.workflows import factory_change as native
@@ -42,6 +42,18 @@ def case_for(actor, case_id):
     case = accessible_case(actor, case_id, source_action='change.read')
     require(actor, case, 'change.read')
     return case
+
+
+@endpoint(response=obj({'id': ID, 'change_id': ID, 'reference': TEXT, 'number': REVISION,
+    'category': choice('Standard', 'Normal', 'Emergency'), 'module': TEXT, 'description': TEXT,
+    'current': BOOLEAN, 'evidence_id': ID}), summary='Read a directly selected authorised change version and its source')
+def version(request, case_id, version_id):
+    case = case_for(request.user, case_id)
+    row = get_object_or_404(ChangeVersion.objects.select_related('change').filter(
+        change__case=case, evidence_id__in=public_evidence(case.evidence.all()).values('pk')), pk=version_id)
+    return {'id': row.pk, 'change_id': row.change_id, 'reference': row.change.reference, 'number': row.number,
+            'category': row.category, 'module': row.module, 'description': row.description,
+            'current': row.change.current_id == row.pk, 'evidence_id': row.evidence_id}
 
 
 @endpoint(response=obj({'case_revision': REVISION, 'records': array(obj({'id': ID, 'version_id': ID, 'reference': TEXT,

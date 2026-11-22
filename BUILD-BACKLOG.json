@@ -1,10 +1,26 @@
 {
+  "frontend_cutover_work_and_project_journeys_20261122": {
+    "status": "mapped_api_surface_acceptance_pending",
+    "contract_version": "1.19.0",
+    "live_paths": 264,
+    "live_operations": 373,
+    "added_operations": 17,
+    "completed_groups": ["SCR-01", "SCR-02", "SCR-03", "SCR-05", "SCR-07", "SCR-10", "SCR-11", "SCR-12", "SCR-14", "SCR-16", "SCR-38"],
+    "screen_groups_with_remaining_json": 0,
+    "states_in_groups_with_remaining_json": 0,
+    "inventory_by_state": 262,
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Railway API and Django workflow regressions", "Verify each remaining individual API state", "Publish exact verified checkpoint"],
+    "owner_decisions": "Live policies, signatures, appointments and external routes remain deferred."
+  },
   "frontend_cutover_intake_setup_planning_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.18.0",
     "live_paths": 250,
     "live_operations": 356,
     "added_operations": 15,
+    "railway_tests_passed": 11,
+    "railway_checks_deployment": "e7e7964a-51f4-4f63-b64c-0673b84dc8dc",
     "completed_groups": ["SCR-04", "SCR-13", "SCR-42"],
     "screen_groups_with_remaining_json": 11,
     "states_in_groups_with_remaining_json": 54,

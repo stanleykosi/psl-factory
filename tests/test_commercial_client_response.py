@@ -72,6 +72,31 @@ class CommercialClientResponseTests(CommercialClientFixture, TestCase):
         self.setup_client_response()
         self.client.force_login(self.actor)
 
+    def test_api_private_witness_attachment_and_original_authority(self):
+        self.configure()
+        url = f'/api/v1/projects/{self.case.pk}/commercial-response'
+        new = self.client.post(f'{url}/files', {'case_revision': rev(self.case),
+            'file': SimpleUploadedFile('SAMPLE-proof.txt', self.source + b'API')})
+        self.assertEqual(new.status_code, 201, new.content)
+        proof = new.json()['id']
+        evidence = self.client.post(url, {'case_revision': rev(self.case), 'action': 'witness',
+            'revision_id': self.proposal.pk, 'receipt_id': self.receipt.pk, 'client_name': 'Synthetic client representative',
+            'responded_at': timezone.now().isoformat(), 'outcome': 'signed', 'genuine': True, 'proof_ids': [proof],
+            'note': 'SAMPLE actual source received', 'operation_key': str(uuid4()), 'predecessor_id': None,
+            'party_ref': 'synthetic-client'}, content_type='application/json')
+        self.assertEqual(evidence.status_code, 201, evidence.content)
+        metadata = evidence.json()['record_ids'][0]
+        path = f'{url}/{metadata}/files/{proof}'
+        download = self.client.get(path)
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(b''.join(download.streaming_content), self.source + b'API')
+        desk = self.client.get(url).json()
+        self.assertEqual(desk['witness']['id'], metadata)
+        self.assertIsNone(desk['adoption'])
+        Grant.objects.filter(case=self.case, user=self.actor, action='commercial.response').update(active=False)
+        self.assertIsNone(self.client.get(url).json()['witness'])
+        self.assertEqual(self.client.get(path).status_code, 403)
+
     def test_exact_private_witness_dual_signatures_adoption_and_native_finance_receipt(self):
         self.configure()
         metadata, response = self.record(party_ref='synthetic-client')

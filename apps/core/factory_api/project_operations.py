@@ -7,7 +7,7 @@ from apps.core.evidence_access import public_evidence
 from apps.identity.services import require, visible_cases
 from apps.pmo import change_stage_links
 from apps.pmo.meetings import action_timing, change_action
-from apps.pmo.models import ChangeMilestoneLink
+from apps.pmo.models import ChangeMilestoneLink, Milestone
 from apps.pmo.project_action_views import ActionForm, action_options, load_action
 from apps.pmo.services import complete_milestone
 
@@ -161,3 +161,18 @@ def milestone_options(http, case_id):
     page = Paginator(proofs, 50).get_page(http.GET.get('page'))
     return {'revision': case.revision, 'proofs': [{'id': source.pk, 'label': f'Completion evidence · version {source.version}'}
                                                 for source in page], 'next_page': next_page(page)}
+
+
+@endpoint(response=obj({'id': ID, 'name': TEXT, 'completed_at': DATETIME, 'evidence_id': ID, 'proof_version': REVISION}),
+    summary='Read current permitted completion evidence for a directly selected project milestone')
+def milestone(http, case_id, milestone_id):
+    from apps.core.project_journey import MILESTONE_RECORD_ACTIONS
+    from apps.identity.factory_access import project_actions
+
+    case = project(http.user, case_id)
+    if not MILESTONE_RECORD_ACTIONS.intersection(project_actions(http.user, case)):
+        raise PermissionDenied
+    row = get_object_or_404(Milestone.objects.select_related('evidence').filter(case=case,
+                            evidence_id__in=public_evidence(case.evidence.all()).values('pk')), pk=milestone_id)
+    return {'id': row.pk, 'name': row.name, 'completed_at': row.completed_at,
+            'evidence_id': row.evidence_id, 'proof_version': row.evidence.version}

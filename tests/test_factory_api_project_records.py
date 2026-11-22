@@ -97,6 +97,10 @@ class ProjectRecordApiTests(TestCase):
         linked = self.client.get(path).json()
         self.assertEqual(linked['actions'][0]['id'], action['id'])
         self.assertEqual(linked['decisions'], data['decisions'])
+        actions = self.client.get(root + '/actions')
+        self.assertEqual(actions.status_code, 200, actions.content)
+        target = next(row for section in actions.json()['sections'] for row in section['items'] if row['record_id'] == action['id'])
+        self.assertEqual(self.client.get(target['api_url']).status_code, 200)
         hidden = add_evidence(self.actor, case.pk, INVOICE_MILESTONE_PROOF, 'Private test source', 'synthetic:private')
         self.post(root + '/actions/create', {**action_body, 'revision': rev(case),
                   'reference': 'SAMPLE-PRIVATE-ACTION', 'evidence_id': hidden.pk}, status=422)

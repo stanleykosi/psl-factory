@@ -131,7 +131,8 @@ def decorate(case, result, baseline, coverage, configuration):
                 if proof == link.original_plan_id:
                     version = plan.authorization.version
                     by_stage[link.stage].append({'reference': version.change.reference, 'number': version.number,
-                                                 'note': link.scope_note, 'plan_id': proof})
+                                                 'note': link.scope_note, 'plan_id': proof, 'link_id': link.pk,
+                                                 'version_id': version.pk})
     except ReadLimit:
         result['change_links_limited'] = True
         return

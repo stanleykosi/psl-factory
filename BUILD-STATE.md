@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI consolidated screen groups · 22 November 2026
+
+OpenAPI 1.19.0 defines 373 operations on 264 paths. The remaining eleven groups have mapped API paths for source queues, information and recovery, work decisions and outputs, Assistant source selection, project journey and registers, Money details, commercial witnesses, client testing and signed-stage links. The route inventory resolves all 59 groups across 262 states. Railway workflow regression and individual API state acceptance have their own evidence in the test ledger. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI Start work evidence, Setup and Planning clarification · 22 November 2026
 
 OpenAPI 1.18.0 defines 356 operations on 250 paths. The screen map covers SCR-04, SCR-13 and SCR-42 with exact authorised intake, Setup drafts and review, and Planning owner clarification. Eleven groups covering 54 states still need API work. The full Railway acceptance across 262 states remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

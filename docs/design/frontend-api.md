@@ -33,7 +33,7 @@ Setup starts with PMO Lead, Finance Lead, CEO, CTO, HR and Admin. In **Setup →
 
 An account has the Admin role in a workspace when its existing staff administration delegation is current there. The technical bootstrap administrator uses **Workspace delegation** and **Staff account controls** to review that authority. Admins can add a workspace role from the available access functions. Business approvals still follow the configured decision rules, including separate authority for restricted payroll, invoice release and technical release.
 
-The role dashboard exposes a delegated Admin position with mode `administrator` and a `manage_url` for its workspace. A staff-only Admin lands there after sign-in. Team leads land on their own team dashboard and retain their department’s invitation link. Business approval access continues to come from the exact workflow decision and current authority.
+The workspace role read returns a delegated Admin position with mode `administrator` and a `manage_url` for its workspace. My work shows the signed-in person’s role, scoped work and permitted team actions. Business approval access comes from the exact workflow decision and current authority.
 
 | API operation | Use |
 | --- | --- |
@@ -63,11 +63,17 @@ For an existing account, choose **Setup → People → Move to team scope** besi
 
 The Django role desk and JSON endpoints share the same checks. Team leads see members’ assignment and decision status. Only the eligible assignee receives a decision packet or can submit a verdict. The scoped desk handles Finance invoice and Accounting reviews, Finance schedules, HR corrections, Planning exit, closure, client escalation and supported controlled-document reviews. Use `workspace_decisions` for native factory decisions and `approval_desks` for specialist workspace links. Payment exceptions, Emergency authorisation and retrospectives, restricted payroll, bids, forecasts and department-owned approvals retain their native permissions and exact source rules. Issuance, publication and technical or customer sign-off each have their own authority checks. Invitation creation and acceptance use the established Django forms.
 
-The role dashboard supplies an `invite_url` for a team lead’s own position. It opens the authorised Django invitation form. A new invitation covers one workspace and one role. Pending links based solely on access profiles or individual functions require a new role invitation.
+Use the workspace’s JSON invitation resource at `/api/v1/setup/{case_id}/invitations` for current role and team choices. Submit the selected role and scope through that resource. Invitation preview and acceptance are available under `/api/v1/accounts/invitations`. A new invitation covers one workspace and one role.
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.7.0 describes 228 operations across 170 paths. The map records remaining JSON work in 32 groups covering 186 states. Some states share a workflow, and some still use a Django form for one action. Compare field shapes before migrating a call.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists the mounted JSON operations and corresponding Django routes. Many states share an API and differ by current source, role, or decision. Use the generated coverage export to review each state’s group and consult the [test ledger](../../BUILD-TESTS.md) for executed cases.
+
+My work returns scoped work links, confirmed and deferred coverage, and private staff-cost questions for the current participant. Read `work/source-queues` for the applicable source collections. Work details return links to the owning workflow’s panels and a current output link when the underlying work is verified. The information request supplies its own task revision, authorized actions and the currently requested evidence kinds. Submitted evidence, a human review and an effect receipt each have their own identities.
+
+The project resource returns current station facts, work links and permitted Assistant launch choices. A current Assistant turn provides `draft-options` for selecting exact sources before saving and starting work. Project register entries have native identities and API links. Money provides invoice, milestone, current change and cash-lot readbacks. A stage change link leaves any undocumented additional price unknown.
+
+Commercial responses and client testing accept exact human witness records and private proof. They preserve separate human proof review, the signed baseline or testing gate, and the subsequent delivery and Finance controls. A reviewed signed agreement follows the same source, signature and policy services used by Django.
 
 Use `GET /api/v1/received-bids/{case_id}/receipts/{receipt_id}` with the identifiers returned by received-bid intake. It identifies the exact version and gives the authenticated download link for the original. A later intake leaves the original receipt intact and changes its `current` indicator. Both reads enforce the owning bid service’s current access rules.
 

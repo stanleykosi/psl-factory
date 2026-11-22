@@ -83,6 +83,10 @@ class FactoryEscalationTests(TestCase):
                   'note': 'I reviewed this exact request', 'delegated': False, 'expected_revision': controls['expected_revision'],
                   'case_revision': controls['case_revision']}
         decision = write(detail, **fields)
+        record = self.client.get(f'{register}/{self.r.pk}')
+        self.assertEqual(record.status_code, 200, record.content)
+        self.assertEqual(record.json()['issue_id'], self.state.issue_id)
+        self.assertEqual(record.json()['decisions'][0]['verdict'], 'approve')
         self.advance()
         panel = self.client.get(detail).json()
         self.assertTrue(panel['can_request_communication_review'])

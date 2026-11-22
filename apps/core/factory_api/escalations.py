@@ -9,7 +9,7 @@ from apps.core.views import accessible_case
 from apps.identity.services import active_case_grants, require
 from apps.pmo import escalations as native
 from apps.pmo.issue_access import public_current_issues
-from apps.pmo.models import EscalationProfile, EscalationRequest
+from apps.pmo.models import EscalationDecision, EscalationProfile, EscalationRequest
 from apps.workflows import factory_escalation as factory
 
 from .commands import require_line
@@ -64,6 +64,24 @@ def register(request, case_id):
     return {'revision': case.revision, 'can_request': may_request, 'issues': primary[:20], 'profiles': profiles[:20],
             'requests': requests[:20], 'evidence': proof_rows(evidence.only('id', 'kind', 'version').order_by('-pk')[:35]) if may_request else [],
             'next_page': number + 1 if max(len(primary), len(profiles), len(requests)) > 20 and number < PAGE['maximum'] else None}
+
+
+@endpoint(response=obj({'id': ID, 'issue_id': ID, 'profile_id': ID, 'reference': TEXT,
+    'direction': DIRECTION, 'target': DESTINATION, 'recorded_at': DATETIME, 'decisions': array(DECISION, limit=25),
+    'start_options_url': TEXT}), summary='Read the exact escalation register record and recorded client decisions')
+def request_record(request, case_id, request_id):
+    actor = request.user
+    case = accessible_case(actor, case_id)
+    require(actor, case, 'issue.read')
+    proof = public_evidence(case.evidence.all())
+    row = get_object_or_404(EscalationRequest.objects.select_related('profile__state__issue').filter(
+        profile__state__issue_id__in=public_current_issues(case).values('pk'), evidence_id__in=proof.values('pk')), pk=request_id)
+    decisions = EscalationDecision.objects.filter(request=row).order_by('-pk')
+    issue = row.profile.state.issue
+    return {'id': row.pk, 'issue_id': issue.pk, 'profile_id': row.profile_id, 'reference': issue.reference,
+            'direction': row.direction, 'target': row.target, 'recorded_at': row.created_at,
+            'decisions': list(decisions.values('id', 'request_id', 'role', 'verdict', 'created_at')[:25]),
+            'start_options_url': f'/api/v1/lines/projects?line={factory.DEFINITION}'}
 
 
 @endpoint(method='POST', request={'oneOf': [obj({'action': {'const': action}, 'revision': REVISION, **fields})

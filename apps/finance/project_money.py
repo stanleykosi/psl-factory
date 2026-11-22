@@ -126,11 +126,14 @@ def build(case, records, baseline, cover, invoices, figure, budget, configuratio
                           'currency': invoice.currency, 'paid': paid, 'owed': owed, 'invoice': invoice,
                           'status': 'Delivered' if hasattr(invoice, 'invoicedelivery') else 'Issued' if paid is not None else 'Draft'})
             if key == figure:
-                sources = sources + [{'label': f'Invoice {invoice.reference} · version {invoice.version}', 'url': finance_url}]
+                sources = sources + [{'label': f'Invoice {invoice.reference} · version {invoice.version}', 'url': finance_url,
+                                      'record_kind': 'invoice', 'record_id': invoice.pk,
+                                      'issue_id': invoice.invoiceissue.pk if hasattr(invoice, 'invoiceissue') else None}]
                 sources += [{'label': f'Accepted {item.correction.kind} · {item.correction.reference}',
-                             'url': reverse('finance_corrections', args=[case.pk])} for item in corrections_used]
+                             'url': reverse('finance_corrections', args=[case.pk]), 'record_kind': 'correction',
+                             'record_id': item.correction_id} for item in corrections_used]
                 sources += [{'label': f'Applied receipt {item.lot.receipt.transaction_ref} · {invoice.currency} {item.amount:f}',
-                             'url': finance_url} for item in allocations]
+                             'url': finance_url, 'record_kind': 'cash-lot', 'record_id': item.lot_id} for item in allocations]
         has_figure = amount is not None or bool(sources)
         item = {'key': key, 'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
                 'due_date': due_date, 'contract_stage': contract_stage,
@@ -151,14 +154,15 @@ def build(case, records, baseline, cover, invoices, figure, budget, configuratio
                                                        if item.preparation.handoff_id]).order_by('-completed_at', '-pk').first()
             record = records.get(stage, {})
             sources = [{'label': f'Signed agreement · recorded signature {baseline.signed_id}', 'url': contract_url,
-                        'at': baseline.signed.created_at}]
+                        'at': baseline.signed.created_at, 'record_kind': 'agreement', 'record_id': baseline.signed_id}]
             if record:
                 sources.append({'label': f'Reviewed contract stage terms · version {configuration.revision}',
                                 'url': reverse('finance_billing', args=[case.pk]),
-                                'at': parse_datetime(configuration.envelope['effective_from'])})
+                                'at': parse_datetime(configuration.envelope['effective_from']),
+                                'record_kind': 'reviewed-terms', 'record_id': configuration.pk})
             if completion:
                 sources.append({'label': f'Completion proof · {completion.name}', 'url': reverse('case', args=[case.pk]),
-                                'at': completion.completed_at})
+                                'at': completion.completed_at, 'record_kind': 'milestone', 'record_id': completion.pk})
             amount = record.get('amount')
             reason = None
             if amount is None:
@@ -170,7 +174,8 @@ def build(case, records, baseline, cover, invoices, figure, budget, configuratio
     for invoice in invoices:
         if invoice.pk not in grouped_ids:
             add(f'invoice-{invoice.pk}', invoice.reference, invoice.amount, invoice.currency, None, [invoice],
-                [{'label': 'Recorded billing preparation', 'url': reverse('finance_billing', args=[case.pk])}])
+                [{'label': 'Recorded billing preparation', 'url': reverse('finance_billing', args=[case.pk]),
+                  'record_kind': 'preparation', 'record_id': invoice.preparation_id}])
     if figure and selected is None:
         raise Http404('The selected figure is unavailable for this project.')
     return {'rows': rows, 'selected': selected, 'finance_url': finance_url}

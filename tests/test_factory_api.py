@@ -177,6 +177,8 @@ class FactoryApiTests(TestCase):
         self.assertFalse(detail['tasks'])
         self.check(self.client.get(work_url + '/history'), '/work/{work_id}/history')
         self.check(self.client.get(f'{BASE}/work?queue=mine'), '/work')
+        finance = self.check(self.client.get(f'{BASE}/work/source-queues'), '/work/source-queues')
+        self.assertIn('accounting-intake', [source['key'] for row in finance['items'] for source in row['sources']])
         self.check(self.client.get(f'{BASE}/projects'), '/projects')
         self.check(self.client.get(f'{BASE}/projects/{self.case.pk}'), '/projects/{case_id}')
         self.check(self.client.get(f'{BASE}/projects/{self.case.pk}/documents'), '/projects/{case_id}/{tab}')
@@ -226,6 +228,8 @@ class FactoryApiTests(TestCase):
         self.assertEqual(decision['verdict'], 'approve')
         history = self.client.get(f'{BASE}/work/{work.pk}/history?kind=decision').json()
         self.assertIn('approve', [row['status'] for row in history['items']])
+        self.assertEqual(history['items'][0]['reason'], 'Reviewed the exact fictional invoice packet.')
+        self.assertEqual(history['items'][0]['evidence_id'], native['proof'].pk)
         self.assertFalse(InvoiceJob.objects.filter(invoice=work.invoice).exists())
         self.assertFalse(InvoiceIssue.objects.filter(invoice=work.invoice).exists())
 
@@ -273,6 +277,9 @@ class FactoryApiTests(TestCase):
         }):
             self.assertTrue(assistant.worker_once())
         draft_url = '/assistant/turns/' + key + '/draft'
+        options = self.check(self.client.get(BASE + draft_url + '-options'), '/assistant/turns/{turn_id}/draft-options')
+        choices = self.client.get(options['source_options_url'] + '&field=handoff_id').json()
+        self.assertIn(self.data['handoff'].pk, [row['id'] for row in choices['items']])
         payload = {
             'line': 'pmo-finance/v1', 'case_revision': rev(self.case), 'draft_version': None, 'background': False,
             'draft': {'reference': self.work.request['reference'], 'mode': 'completion', 'due_date': None,
@@ -292,6 +299,16 @@ class FactoryApiTests(TestCase):
             self.assertEqual(result['work_id'], self.work.pk)
         self.assertEqual(FactoryWork.objects.filter(case=self.case).count(), 1)
         self.assertFalse(InvoiceIssue.objects.filter(invoice__case=self.case).exists())
+
+    def test_api_cancel_preserves_existing_work_record(self):
+        self.client.force_login(self.actor)
+        path = f'/work/{self.work.pk}/control'
+        response = self.check(self.post(path, {'expected_revision': self.work.revision, 'action': 'cancel'}),
+                              '/work/{work_id}/control', method='post')
+        self.work.refresh_from_db()
+        self.assertTrue(self.work.cancel_requested)
+        self.assertEqual(response['work_id'], self.work.pk)
+        self.assertEqual(self.post(path, {'expected_revision': self.work.revision, 'action': 'resume'}).status_code, 422)
 
     @patch.dict(os.environ, {'OPENROUTER_MODEL': 'synthetic'})
     def test_private_file_review_and_exact_handoff(self):
