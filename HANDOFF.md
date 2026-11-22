@@ -4,7 +4,7 @@
 
 OpenAPI 1.10.0 adds twelve routes. Start work project choices link to `weekly-report-intake`, `leadership-report-intake` and `escalation-register` for the actions that precede work. Weekly drafts keep separate citations for the four sections and maintain private saved revisions through return and resubmission. Leadership reports keep selected source coverage and audience, and read the validated original receipts after the current review. Escalations separate client approval, communication review and original receipt recovery. [Contract](contracts/psl-factory.openapi.json)
 
-Run `report-api` on Railway before deploying this checkpoint. The map has 27 groups with API gaps across 162 states. The next connected work is engagement registration and fresh source choices, followed by signed commercial and bidding decisions, Planning costing and broader Finance. Full Railway API acceptance across the 262 design states remains open. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+The `report-api` suite passed all ten Railway PostgreSQL tests, and the current web and worker run `ea74248e`. The map has 27 groups with API gaps across 162 states at this checkpoint. Continue engagement registration and fresh source choices, then signed commercial and bidding decisions, Planning costing and broader Finance. Full Railway API acceptance across the 262 design states remains open. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
 
 ## Payment exceptions and Emergency decisions · 22 November 2026
 
