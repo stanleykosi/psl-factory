@@ -244,7 +244,12 @@ class PrimaryRoleTests(TestCase):
         self.assertContains(self.client.get(links[-1]['django_url']), 'Zainab')
         self.assign(person, None)
         self.assertEqual(self.api(url).status_code, 403)
-        self.assertEqual(self.client.get(tab).status_code, 403)
+        # The project still opens under its separate case grant. A withdrawn
+        # department tab disappears from navigation and from direct HTML URLs.
+        self.assertNotContains(self.client.get(reverse('design_project', args=[self.case.pk])), tab)
+        hidden = self.client.get(tab)
+        self.assertEqual(hidden.status_code, 404)
+        self.assertNotIn(b'HR handoffs', hidden.content)
         require(person, self.case, 'agent.extract')
 
     def test_preexisting_custom_hr_role_keeps_its_exact_definition(self):
