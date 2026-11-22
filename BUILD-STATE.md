@@ -6,6 +6,8 @@ OpenAPI 1.2.0 adds 42 registered operations and updates 37 screen groups. The ad
 
 The map retains remaining JSON work for 53 groups across 256 states. Major engineering gaps include source pickers, specialist decision packets and recovery commands, detailed payroll and Finance work, account administration and policy authoring. HOD decisions on values, approvers and live destinations are deferred. [Build backlog](BUILD-BACKLOG.json)
 
+The local PostgreSQL runs observed a schema-valid success for all 42 added operations. All 3,629 frontend tests passed. The worker now polls upload and Assistant queues separately from effects and workflow progression. [Test ledger](BUILD-TESTS.md)
+
 ## Live frontend API contract · 22 November 2026
 
 OpenAPI 1.1.1 describes the 73 registered JSON operations across 63 paths. The versioned snapshot matches the Django registry and generates TypeScript types. Start work now supplies its submission URL and a scoped project picker with the current revision. Multipart fields, HTTP errors and path constraints have explicit contracts. The received-bid contract preserves the existing Django form and its original-document replay. [OpenAPI snapshot](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)

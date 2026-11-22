@@ -10,6 +10,10 @@ The four-test PostgreSQL rerun passed in 46.260 seconds and checked ten successf
 
 The first Railway cutover check reached Django system checks and migration drift detection. The isolated test settings rejected the new suite name. The suite is now explicitly admitted on the checks service.
 
+The first Delivery run passed Go-live through two independently declared signatures and a verified outcome. Planning exit and Support receipt initially exhausted the read budget while building the broader dashboard projections. The narrowed endpoints rechecked their original evidence and authority. Both PostgreSQL reruns passed in 169.275 seconds with four successful request and response validations, including stale write protection.
+
+Across the local runs, the response validator exercised successful responses for all 42 added operations and 72 of the 115 total operations. The four contract tests passed, including the binding check for all 17 correction request variants. The closure correction ran end to end through a new review. The other correction variants were checked against their native service signatures. Django system checks, migration drift, OpenAPI 3.1 validation and TypeScript client generation passed. Storage and mail effects used synthetic fixtures and test adapters.
+
 ## Live OpenAPI handoff · 22 November 2026
 
 The checked-in snapshot passed the official OpenAPI 3.1 document schema and generated TypeScript with openapi-typescript 7.13.0. The three contract tests passed locally and exercised route resolution to the exact declared handler, all 25 intake signatures, and the inventory of 262 design states and 108 processes.
