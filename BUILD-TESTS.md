@@ -16,6 +16,8 @@ Across the local runs, the response validator exercised successful responses for
 
 The worker supervisor test passed on Ubuntu in 3.506 seconds. It deliberately blocked both model queues and observed the effects and native progression commands start within the same probe. Railway web `fc17c996-4477-44c6-85c8-82fd3f0f29a3` returned the exact checked-in OpenAPI 1.2.0 document, health 200, the Django sign-in page 200 and the signed-out session API 401. Worker `e6cd2c07-be4f-4969-924c-10f4e058069d` started source readers and polled the application queues on the matching application revision `649ebec3`.
 
+Railway cutover checks deployment `3223343f-ba9a-4664-935e-6ba219844a73` passed Django system checks and migration drift. It discovered 34 tests and started the isolated PostgreSQL suite. Final suite output was pending at the last read. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=3223343f-ba9a-4664-935e-6ba219844a73)
+
 ## Live OpenAPI handoff · 22 November 2026
 
 The checked-in snapshot passed the official OpenAPI 3.1 document schema and generated TypeScript with openapi-typescript 7.13.0. The three contract tests passed locally and exercised route resolution to the exact declared handler, all 25 intake signatures, and the inventory of 262 design states and 108 processes.
