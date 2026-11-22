@@ -1,8 +1,14 @@
 # Actual test execution ledger
 
+## OpenAPI bid response, pricing and submission · 22 November 2026
+
+Two local PostgreSQL bid pricing and Security request tests passed in 51.085 seconds. The adjusted bid retained the original decisions and required fresh review. The Security request required the reviewed route and produced one synthetic delivery receipt. The requirement draft through verified award and project route passed locally in 98.346 seconds using a synthetic model response and the same native work and publication services. The private PDF approval and Django regression passed locally in 161.723 seconds, including denial of a route that cannot carry the reviewed PDF. The Railway `bid-api` result is pending.
+
 ## OpenAPI issue ownership and controlled change · 22 November 2026
 
-Three local issue tests passed in 24.491 seconds with nine successful API operations. They checked exact owner and team responses, private message review, one delivered message and an open underlying issue. The Normal Change test passed in 183.853 seconds on local PostgreSQL. It checked the discipline decisions, native authorization, approved notice, actual execution, go-live and two signed receipt references. A follow-up run of six tests passed in 31.006 seconds and checked actual message timing, a Standard intake that waits on catalogue policy and generated contract consistency. Railway `change-api` results are pending.
+Three local issue tests passed in 24.491 seconds with nine successful API operations. They checked exact owner and team responses, private message review, one delivered message and an open underlying issue. The Normal Change test passed in 183.853 seconds on local PostgreSQL. It checked the discipline decisions, native authorization, approved notice, actual execution, go-live and two signed receipt references. A follow-up run of six tests passed in 31.006 seconds and checked actual message timing, a Standard intake that waits on catalogue policy and generated contract consistency.
+
+Railway `change-api` passed all 10 tests in 208.182 seconds on `c6d1ce91`, with 14 successful schema-checked operations. Django system and migration drift checks, OpenAPI schema validation and TypeScript generation passed. The first Railway upload could not create a code snapshot and ran no tests. The same frozen source passed after retry. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=3f7d75fb-925f-4a9c-9a77-a0ca9298b9c7)
 
 ## OpenAPI forecast and management accounts · 22 November 2026
 

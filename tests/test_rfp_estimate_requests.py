@@ -82,6 +82,34 @@ class RFPEstimateRequestTests(TestCase):
         with self.assertRaisesMessage(ValidationError, 'estimate is already recorded'):
             self.prepared()
 
+    def test_api_missing_estimate_review_and_synthetic_delivery_receipt(self):
+        self.client.force_login(self.actor)
+        url = f'/api/v1/work/{self.work.pk}/bid-pricing'
+        pricing = self.client.get(url)
+        self.assertEqual(pricing.status_code, 200, pricing.content)
+        self.assertTrue(pricing.json()['security_estimate_missing'])
+        estimate = f'/api/v1/work/{self.work.pk}/security-estimate'
+        page = self.client.get(estimate)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertEqual(page.json()['channels'], [])
+        created = self.client.post(estimate, {'action': 'prepare', 'case_revision': page.json()['case_revision']},
+                                   content_type='application/json')
+        self.assertEqual(created.status_code, 201, created.content)
+        self.configure()
+        selected = self.client.get(estimate).json()
+        values = {'action': 'review', 'case_revision': selected['case_revision'], 'draft_id': selected['draft_id'],
+                  'channel': 'email', 'due_on': timezone.localdate().isoformat(), 'body': 'Synthetic Security scope request.',
+                  'evidence_id': self.evidence.pk, 'attachment_id': None, 'model_turn_id': None}
+        reviewed = self.client.post(estimate, values, content_type='application/json')
+        self.assertEqual(reviewed.status_code, 201, reviewed.content)
+        self.assertFalse(RFPEstimateDispatch.objects.exists())
+        sent = self.client.post(estimate, {'action': 'release', 'case_revision': reviewed.json()['case_revision'],
+            'request_id': reviewed.json()['id']}, content_type='application/json')
+        self.assertEqual(sent.status_code, 201, sent.content)
+        receipt = RFPEstimateReceipt.objects.get(dispatch_id=sent.json()['id'])
+        self.assertEqual(self.client.get(estimate).json()['receipt']['reference'], receipt.reference)
+        self.assertFalse(rfp.root(self.case).current_intake.contributions.filter(team='Security').exists())
+
     def test_changed_destination_holds_original_and_manual_receipt_requires_matching_evidence(self):
         rule = self.configure('manual_receipt')
         draft = self.prepared()

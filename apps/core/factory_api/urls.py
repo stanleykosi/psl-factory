@@ -7,7 +7,9 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, changes, client_records, clients, closure, commands, corrections, costing,
+    accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery,
+    bank_payments, bid_assignments, bid_delivery, bid_pricing, bid_responses, bid_submission, changes,
+    client_records, clients, closure, commands, corrections, costing,
     delivery, documents, emergency, engagements, escalations,
     finance_operations, financial_corrections, forecasting, go_live_replies, handoffs, hr_handoffs, hypercare,
     intake, intake_sources, invoice_recovery, issue_communications, issues, leadership_reports, meeting_records, minutes, notifications, payment_controls, payroll_identity,
@@ -126,6 +128,12 @@ ROUTES = (
     ('projects/<uuid:case_id>/issues/<int:issue_id>/team-replies', issues.team_reply),
     ('projects/<uuid:case_id>/issues/<int:issue_id>/messages', issue_communications.index, issue_communications.command),
     ('work/<int:work_id>/issue-followup', issues.work_detail, issues.work_command),
+    ('work/<int:work_id>/bid-answers', bid_responses.answers, bid_responses.answer_command),
+    ('work/<int:work_id>/bid-outcomes', bid_responses.outcomes),
+    ('work/<int:work_id>/bid-pricing', bid_pricing.detail, bid_pricing.adjust),
+    ('work/<int:work_id>/security-estimate', bid_pricing.security, bid_pricing.security_command),
+    ('work/<int:work_id>/bid-submission', bid_submission.detail, bid_submission.queue),
+    ('work/<int:work_id>/bid-submission/pdf/<int:version_id>', bid_submission.pdf),
     ('work/<int:work_id>/payroll-recovery', payroll_sources.recovery),
     ('work/<int:work_id>/minutes', minutes.detail),
     ('work/<int:work_id>/minutes/action-options', minutes.action_options),
@@ -335,7 +343,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.15.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.16.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

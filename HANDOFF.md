@@ -1,10 +1,16 @@
 # PSL Operations Factory handoff
 
+## Bid responses, pricing and submission · 22 November 2026
+
+OpenAPI 1.16.0 adds ten operations. Requirement answer drafts start from exact citations and have human decisions, edits and restoration. Pricing uses the current reviewed calculation and applies bounded adjustments to successor work. Security estimates preserve reviewed wording, configured destination and original delivery evidence. The submission resource provides current private PDF download, approval and original receipt, and queues the existing publisher only when current controls permit it. Award comparison and verified conversion use the original submitted version. [Contract](contracts/psl-factory.openapi.json)
+
+Railway `bid-api` awaits results on the frozen increment. Sixteen groups across 97 design states still have API gaps. Continue with restricted business-unit and incumbent-reference views and controls, then the cross-workflow queues and project, signed commercial and Planning controls. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## Issue ownership and ordinary change · 22 November 2026
 
 OpenAPI 1.15.0 adds fourteen operations. Issue register and investigation expose exact owner and team responses and separate message review and delivery receipts. Reminder and escalation clocks depend on the original authorised evidence. Change intake can capture the current record while Standard procedure matching awaits a configured catalogue and mapped preapprovals. Normal Change goes from independent discipline impact to human authorization, implementation proof, controlled notice and go-live signature, retaining the original receipt. [Contract](contracts/psl-factory.openapi.json)
 
-Run the frozen `change-api` suite on Railway. Nineteen groups across 111 design states still have gaps. Continue with bid requirements and response, pricing and Security estimates, and the exact private submission file. Then address remaining project, cross-workflow and Finance groups. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+Railway `change-api` passed all ten tests. Nineteen groups across 111 design states had gaps at this checkpoint. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
 
 ## Forecast and management-account source recovery · 22 November 2026
 

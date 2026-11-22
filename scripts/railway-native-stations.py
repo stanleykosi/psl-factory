@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api')
 
 
 def run(group, token, role_access):
@@ -191,6 +191,12 @@ def run(group, token, role_access):
                    'tests.test_factory_change.FactoryChangeTests.test_api_normal_change_review_execution_and_signed_receipts',
                    'tests.test_factory_change.FactoryChangeTests.test_api_standard_intake_only_catalogue_binding_waits_for_owner_configuration',
                    'tests.test_factory_change.FactoryChangeTests.test_complete_native_flow_requires_human_assessment_review_execution_signatures_and_receipts']
+    elif group == 'bid-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_rfp_estimate_requests.RFPEstimateRequestTests.test_api_missing_estimate_review_and_synthetic_delivery_receipt',
+                   'tests.test_factory_rfp_pricing.FactoryBidAdjustmentTests.test_api_adjustment_recalculates_current_bid_without_reusing_old_human_decisions',
+                   'tests.test_rfp_answers.RFPAnswerTests.test_api_answer_review_and_verified_winning_handoff',
+                   'tests.test_rfp_submission_pack.RFPSubmissionPackTests.test_pack_draft_return_and_exact_review_preserve_legacy_snapshot']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

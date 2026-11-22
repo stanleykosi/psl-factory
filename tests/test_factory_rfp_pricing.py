@@ -125,3 +125,29 @@ class FactoryBidAdjustmentTests(TestCase):
         self.assertFalse(current.commercial.decisions.exists())
         self.assertFalse(current.reviews.exists())
         self.assertFalse(RFPSubmission.objects.filter(response__rfp=original.rfp).exists())
+
+    def test_api_adjustment_recalculates_current_bid_without_reusing_old_human_decisions(self):
+        from apps.workflows import factory, factory_rfp
+
+        work, original, run = factory_rfp_helpers.final_costing_wait(adjustable=True)
+        actor, case = work.actor, work.case
+        self.client.force_login(actor)
+        url = f'/api/v1/work/{work.pk}/bid-pricing'
+        factory_rfp_helpers.configure_sample_adjustment(actor, case, run)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, response.content)
+        page = response.json()
+        self.assertEqual(page['adjustment_run_id'], run.pk)
+        self.assertEqual(page['adjustment_targets'][0]['key'], 'adjustment')
+        versions = {key: page[key] for key in ('expected_revision', 'case_revision')}
+        values = {**versions, 'target': 'adjustment', 'amount': '5.25', 'reason': 'Reviewed synthetic change.'}
+        excess = self.client.post(url, dict(values, amount='7.01'), content_type='application/json')
+        self.assertNotEqual(excess.status_code, 200)
+        adjusted = self.client.post(url, values, content_type='application/json')
+        self.assertEqual(adjusted.status_code, 200, adjusted.content)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        current = factory_rfp.response_for(work)
+        self.assertEqual(current.commercial.previous_id, original.commercial_id)
+        self.assertFalse(current.commercial.decisions.exists())
+        self.assertIn({'key': 'cost', 'unit': 'NGN', 'value': '25.25'}, self.client.get(url).json()['amounts'])

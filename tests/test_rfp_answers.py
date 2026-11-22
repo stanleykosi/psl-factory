@@ -119,6 +119,51 @@ class RFPAnswerTests(TestCase):
         self.assertEqual(work.status, 'verified', work.finding)
         self.assertFalse(factory_rfp.verify(work)['signed_baseline_imported'])
 
+    def test_api_answer_review_and_verified_winning_handoff(self):
+        data = self.data
+        actor, case, work = data['actor'], data['case'], data['work']
+        self.client.force_login(actor)
+        url = f'/api/v1/work/{work.pk}/bid-answers'
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertTrue(page.json()['can_write'])
+        requested = self.client.post(url, {'action': 'suggest', 'key': 'R1', 'operation_key': str(uuid4()),
+            'expected_revision': page.json()['expected_revision'], 'case_revision': page.json()['case_revision']},
+            content_type='application/json')
+        self.assertEqual(requested.status_code, 201, requested.content)
+        suggestion = RFPAnswerSuggestion.objects.get(pk=requested.json()['record_ids'][0])
+        answer(suggestion)
+        current = self.client.get(url).json()
+        item = current['rows'][0]
+        self.assertTrue(item['can_review'])
+        wording = 'Synthetic reviewed API response citing the original requirement.'
+        reviewed = self.client.post(url, {'action': 'review', 'expected_revision': current['expected_revision'],
+            'case_revision': current['case_revision'], 'decisions': [decision(suggestion, verdict='edit', answer=wording)]},
+            content_type='application/json')
+        self.assertEqual(reviewed.status_code, 201, reviewed.content)
+        self.assertEqual(self.client.get(url).json()['rows'][0]['response'], wording)
+        work.refresh_from_db()
+        _, document = reviewed_document(data, work)
+        self.assertIn(wording, str(document.payload))
+        submission_api = f'/api/v1/work/{work.pk}/bid-submission'
+        ready = self.client.get(submission_api)
+        self.assertEqual(ready.status_code, 200, ready.content)
+        queued = self.client.post(submission_api, {key: ready.json()[key]
+            for key in ('expected_revision', 'case_revision', 'version_id')}, content_type='application/json')
+        self.assertEqual(queued.status_code, 202, queued.content)
+        factory.run_until_wait(work.pk)
+        submitted = factory_rfp.submission_for(work)
+        self.assertIsNotNone(submitted)
+        self.assertEqual(self.client.get(submission_api).json()['submission']['id'], submitted.pk)
+        rfp.outcome(actor, case.pk, submitted.pk, 'won', timezone.now(), 'Client',
+                    data['evidence']['rfp_outcome'].pk, 'Actual synthetic customer award.', rev(case))
+        factory.run_until_wait(work.pk)
+        report = self.client.get(f'/api/v1/work/{work.pk}/bid-outcomes')
+        self.assertEqual(report.status_code, 200, report.content)
+        self.assertEqual(report.json()['submissions'][0]['id'], submitted.pk)
+        self.assertEqual(report.json()['handoff']['kind'], 'route_a')
+        self.assertFalse(report.json()['handoff']['baseline_imported'])
+
     def test_bulk_review_is_atomic_and_independent_rows_survive_undo(self):
         data = self.data
         one, two = request(data), request(data, 'R2')

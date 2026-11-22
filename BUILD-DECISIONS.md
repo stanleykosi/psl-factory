@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Reuse exact current bid evidence for model suggestions and independently reviewed previous winning answers. Start fresh human decisions after adjusting the native costing source. Publication uses the configured publisher and registered client route. Release clients can read status and private approved pack files through the same boundaries used by Django.
+
 22 November 2026. Keep issue receipt timing separate from owner acknowledgement and resolution. Build signed Change closure from current server-side subject pins and actual signature evidence supplied by people. Keep Standard applicability dependent on the reviewed procedure and mapped preapprovals.
 
 22 November 2026. Use the work's selected scenario for actuals and keep review, group disclosure, matching and publication receipts separate. Allow a human delivery observation to attach private evidence without authorizing a new send. Keep a corrected accounts extract within the exact returned entity, period, currency and accounting basis. Require fresh source review on its successor.

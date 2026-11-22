@@ -97,8 +97,12 @@ def panel(actor, case, version):
 @never_cache
 def open_pdf(request, case_id, version_id):
     case = get_object_or_404(visible_cases(request.user), pk=case_id)
-    require(request.user, case, 'rfp.read')
-    require(request.user, case, 'document.read')
+    return pdf_response(request.user, case, version_id)
+
+
+def pdf_response(actor, case, version_id, *, as_attachment=False):
+    require(actor, case, 'rfp.read')
+    require(actor, case, 'document.read')
     artifact = get_object_or_404(
         RFPSubmissionArtifact.objects.select_related('binding__version').only(
             *METADATA, 'binding__version__number', 'binding__version__payload_sha256',
@@ -113,7 +117,7 @@ def open_pdf(request, case_id, version_id):
     if (artifact.payload_sha256 != version.payload_sha256 or len(data) != artifact.size
             or sha256(data).hexdigest() != artifact.sha256):
         raise Http404('The saved PDF no longer matches the exact pack.')
-    response = FileResponse(BytesIO(data), as_attachment=False, filename=f'bid-pack-v{version.number}.pdf',
+    response = FileResponse(BytesIO(data), as_attachment=as_attachment, filename=f'bid-pack-v{version.number}.pdf',
                             content_type='application/pdf')
     response.headers['X-Content-Type-Options'] = 'nosniff'
     return response

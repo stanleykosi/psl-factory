@@ -1,7 +1,23 @@
 {
+  "frontend_cutover_bid_lifecycle_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.16.0",
+    "live_paths": 234,
+    "live_operations": 330,
+    "added_operations": 10,
+    "completed_groups": ["SCR-26", "SCR-27", "SCR-40"],
+    "screen_groups_with_remaining_json": 16,
+    "states_in_groups_with_remaining_json": 97,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Restricted business-unit and incumbent-reference controls", "Remaining cross-workflow, commercial and project groups", "Full Railway API acceptance"],
+    "owner_decisions": "Live pricing limits, contacts, sending methods, and reviewers remain deferred."
+  },
   "frontend_cutover_issues_change_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.15.0",
+    "railway_tests_passed": 10,
+    "railway_checks_deployment": "3f7d75fb-925f-4a9c-9a77-a0ca9298b9c7",
     "live_paths": 228,
     "live_operations": 320,
     "added_operations": 14,

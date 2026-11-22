@@ -219,6 +219,19 @@ class RFPSubmissionPackTests(TestCase):
                            note='Reviewed the exact cover note, approved costing and declared file requirements.')
         self.assertEqual(approved.status_code, 302)
         self.assertEqual(exact.reviews.get().actor_id, self.reviewer.pk)
+        api_submission = f'/api/v1/work/{work.pk}/bid-submission'
+        summary = self.client.get(api_submission)
+        self.assertEqual(summary.status_code, 200, summary.content)
+        self.assertTrue(summary.json()['approval_recorded'])
+        self.assertEqual(summary.json()['file']['sha256'], successor_pdf.sha256)
+        download = self.client.get(f'{api_submission}/pdf/{exact.pk}')
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(b''.join(download.streaming_content), bytes(successor_pdf.content))
+        self.client.force_login(maker)
+        page = self.client.get(api_submission).json()
+        blocked = self.client.post(api_submission, {key: page[key] for key in ('expected_revision', 'case_revision', 'version_id')},
+                                   content_type='application/json')
+        self.assertNotEqual(blocked.status_code, 202)
         with self.assertRaisesMessage(ValidationError, 'submission route does not carry the verified PDF'):
             reserve_publication(maker, case.pk, exact.pk, rev(case))
         self.assertFalse(Publication.objects.exists())
