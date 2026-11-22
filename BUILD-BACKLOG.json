@@ -2,6 +2,8 @@
   "frontend_cutover_forecast_accounts_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.14.0",
+    "railway_tests_passed": 9,
+    "railway_checks_deployment": "cced9443-0f3e-474f-8248-b47ea44ae922",
     "live_paths": 220,
     "live_operations": 306,
     "added_operations": 11,

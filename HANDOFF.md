@@ -4,7 +4,7 @@
 
 OpenAPI 1.14.0 adds reviewed forecast and actuals actions with distinct match, verification and disclosure decisions. The monthly view records unresolved comparisons and keeps the match history. Private observation files bind to the exact uncertain delivery and lookup checks the original operation. Management accounts exposes review stations and verified publication. A corrected CSV is tied to the exact returned work, and confirmation of the supplied units starts a distinct successor without carrying the return forward as approval. [Contract](contracts/psl-factory.openapi.json)
 
-Run the `cash-api` Railway suite on the frozen implementation. Twenty-one groups across 124 states still have API gaps. Continue with issue ownership and messages, ordinary change, bid and commercial steps, and remaining Finance and cross-workflow reads and commands. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+Railway `cash-api` passed all nine PostgreSQL tests. Web and worker run `b9d08a66`, and the hosted contract matches. Twenty-one groups across 124 states still have API gaps. Continue with issue ownership and messages, ordinary change, bid and commercial steps, and remaining Finance and cross-workflow reads and commands. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
 
 ## Income schedules, assets and accounting intake · 22 November 2026
 
