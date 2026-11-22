@@ -135,10 +135,17 @@ class ApprovalScenarios:
             self.assertIn("9", reading.citation_lines, "A05 must cite the actual computed control.")
             summary = case_uploads.read(reading).decode().split("\n\nSource excerpts\n", 1)[0]
             self.assertIn(mapping.result["source_control"]["actual"], summary)
+            from apps.workflows.native_stations import checked_work
+            lines = checked_work(work, work.actor).lines
+            anchored = [
+                [fact["field"], fact["line"], lines[fact["line"]][fact["start"]:fact["end"]]]
+                for fact in reading.anchors
+            ]
+            self.assertIn(["total", "9", mapping.result["source_control"]["actual"]], anchored)
             print("Supported F02 calculation " + json.dumps({
                 "role": reading.role, "summary": summary.removeprefix("Working interpretation\n"),
                 "actual": mapping.result["source_control"]["actual"], "currency": mapping.result["currency"],
-                "period": mapping.result["period"], "sha256": reading.sha256,
+                "period": mapping.result["period"], "anchors": anchored, "sha256": reading.sha256,
             }), flush=True)
 
     def test_p52_approved_document_delivered_to_named_recipient(self):

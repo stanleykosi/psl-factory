@@ -15,7 +15,7 @@ from apps.core.read_observation import read_observation
 from apps.identity.services import require
 from apps.policy.models import Configuration
 from apps.policy.services import reference_values, resolve
-from apps.workflows.native_station_contracts import Observation, ProjectionRevision, Route
+from apps.workflows.native_station_contracts import Observation, ProjectionRevision, Route, SourceFact
 from . import analysis, bu, performance
 from .models import BUReceipt, FinanceAdjustment, FinancePeriod, FinanceRun, ImportValidation
 from .coordinator_accounts_performance import PERFORMANCE_ROUTES
@@ -88,9 +88,11 @@ def import_observation(source, actor, *, detailed=False):
         f"The source declares a control total of {source.control_total if source.control_total is not None else 'unknown'}.",
         f"Extraction time {source.extracted_at.isoformat()}. Source digest {source.batch.source_sha256}.",
     )
+    fact_handles = None
     if detailed:
-        lines.update(_import_checks(source, validation, current_rules, validated))
-    return Observation(case, source.batch.evidence, lines, receipt)
+        extra, fact_handles = _import_checks(source, validation, current_rules, validated)
+        lines.update(extra)
+    return Observation(case, source.batch.evidence, lines, receipt, fact_handles)
 
 
 def import_checks_enabled(source):
@@ -112,7 +114,8 @@ IMPORT_VALIDATION = ProjectionRevision(
         "A03": "Compare the stated and computed source controls. Distinguish a discrepancy "
                "from an unknown value and cite the check you used.",
         "A05": "Explain the computed file total, its reporting currency and period and its comparison with "
-               "the supplied control. Quote the actual amount in your summary if it is known. Assess the file "
+               "the supplied control. Quote the actual amount in your summary if it is known and select the "
+               "corresponding available fact names for the quantities you use. Assess the file "
                "check on its own evidence. Account mapping and conversions are later tasks.",
     },
 )
@@ -138,7 +141,7 @@ def _import_checks(source, validation, current_rules, validated):
     )
     # No account names, per-account values, HR rows or internal file contents
     # leave the reader. These are checks on the one already selected import.
-    return {
+    lines = {
         "6": "Accepted input columns: " + (", ".join(COLUMNS) if header == COLUMNS else "unconfirmed") + ".",
         "7": f"Current native row findings by column: {findings}.",
         "8": f"Validated file currency: {currency}. Reporting period: {period}.",
@@ -146,6 +149,15 @@ def _import_checks(source, validation, current_rules, validated):
              f"Comparison with the source's declared control total: {compared}.",
         "10": "This source check precedes mapping, adjustments and unit conversion. It grants no posting authority.",
     }
+    handles = {"import_reference": SourceFact("reference", "1", f"import {source.batch_id}")}
+    if supplied is not None:
+        handles["declared_total"] = SourceFact("total", "4", supplied)
+    if validated and rows:
+        handles["file_currency"] = SourceFact("currency", "8", currency)
+        handles["file_period"] = SourceFact("period", "8", period)
+    if actual is not None:
+        handles["file_total"] = SourceFact("total", "9", number(actual))
+    return lines, handles
 
 
 @read_observation

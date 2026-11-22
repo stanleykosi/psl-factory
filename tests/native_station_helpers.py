@@ -45,6 +45,14 @@ def _providers(test):
     test.enterContext(patch.object(case_uploads, "read", side_effect=lambda row: test._station_artifacts[row.key]))
     def interpret(model, instruction, source, **kwargs):
         lines = json.loads(source)
+        if "source_lines" in lines:
+            selected = lines["available_facts"]
+            fields = ["file_total", "file_currency", "file_period"]
+            if all(field in selected for field in fields):
+                amount = selected["file_total"]
+                return {"summary": "Synthetic file control: " + amount["value"], "quotes": [amount["line"]],
+                        "assessment": "supported", "facts": fields, "gaps": []}
+            lines = lines["source_lines"]
         return {"summary": next(iter(lines.values())), "quotes": [next(iter(lines))], "gaps": [], "assessment": "supported"}
     test.enterContext(patch.object(openrouter, "completion", side_effect=interpret))
 

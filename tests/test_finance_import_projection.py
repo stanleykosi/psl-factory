@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import DatabaseError, transaction
 from django.test import TestCase
 from django.utils import timezone
@@ -34,6 +34,31 @@ class FinanceImportProjectionTests(TestCase):
         Grant.objects.create(case=self.case, user=outsider, action="case.read")
         with self.assertRaises(PermissionDenied):
             import_observation(self.source, outsider, detailed=True)
+
+    def test_fact_handles_bind_exact_value_and_line_and_reject_invented_references(self):
+        from apps.agents.specialist_memory import validate_output
+        from apps.workflows.native_station_contracts import SourceFact
+
+        reading = import_observation(self.source, self.actor, detailed=True)
+        answer = {"summary": "The supplied control reconciles.", "assessment": "supported", "gaps": [],
+                  "quotes": ["1"], "facts": ["file_currency", "file_period", "file_total"]}
+        citations, anchors, _ = validate_output(answer, reading.lines, fact_handles=reading.fact_handles)
+        self.assertEqual(citations, ["1", "8", "9"])
+        actual = [(anchor["field"], anchor["line"], reading.lines[anchor["line"]][anchor["start"]:anchor["end"]])
+                  for anchor in anchors]
+        self.assertEqual(actual, [("currency", "8", "NGN"), ("period", "8", "2026-10"), ("total", "9", "-109.99")])
+        bound_citations, _, _ = validate_output({**answer, "quotes": []}, reading.lines, fact_handles=reading.fact_handles)
+        self.assertEqual(bound_citations, ["8", "9"])
+        for override in ({"facts": ["invented_total"]}, {"quotes": ["999"]}, {"facts": ["file_total", "file_total"]},
+                         {"facts": [{"field": "total", "line": "9", "value": "999"}]}):
+            with self.subTest(override=override), self.assertRaises(ValidationError):
+                validate_output({**answer, **override}, reading.lines, fact_handles=reading.fact_handles)
+        for invalid in (SourceFact("total", "999", "-109.99"), SourceFact("total", "9", "1234")):
+            with self.assertRaises(ValidationError):
+                validate_output({**answer, "facts": ["file_total"]}, reading.lines, fact_handles={"file_total": invalid})
+        with self.assertRaises(ValidationError):
+            validate_output({**answer, "quotes": ["8"], "facts": [{"field": "period", "line": "8", "value": "2026-10"}]},
+                            reading.lines)
 
     def test_incomplete_or_stale_validation_preserves_unknowns(self):
         c, a = self.case, self.actor

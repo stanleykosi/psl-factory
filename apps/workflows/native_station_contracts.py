@@ -21,11 +21,19 @@ PROCESSES = tuple("""
 
 
 @dataclass(frozen=True)
+class SourceFact:
+    field: str
+    line: str
+    value: str
+
+
+@dataclass(frozen=True)
 class Observation:
     case: Model
     source: Model
     lines: dict[str, str]
     receipt: Model | None = None
+    fact_handles: dict[str, SourceFact] | None = None
 
 
 @dataclass(frozen=True)
