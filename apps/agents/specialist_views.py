@@ -41,10 +41,10 @@ def report(request, work_id, pk):
         status="ready",
     )
     try:
-        current(reading, request.user)
+        check_report_reader(reading, request.user)
         data = case_uploads.read(reading)
         reading.work.refresh_from_db()
-        current(reading, request.user)
+        check_report_reader(reading, request.user)
     except (PermissionDenied, ValidationError):
         raise Http404 from None
     except OSError:
@@ -53,3 +53,14 @@ def report(request, work_id, pk):
     response["X-Content-Type-Options"] = "nosniff"
     response["Content-Disposition"] = f'inline; filename="work-{work_id}-source-reading-{pk}.txt"'
     return response
+
+
+def check_report_reader(reading, actor):
+    from apps.workflows.native_station_access import DEFINITION, review_scope
+
+    if reading.work.definition == DEFINITION:
+        review = specialist_packets.review_for(reading.work, actor)
+        if review and any(row["task"] == reading.pk for row in review["contributions"]):
+            with review_scope(reading.work, actor):
+                return current(reading, actor)
+    return current(reading, actor)

@@ -1,6 +1,6 @@
 from html.parser import HTMLParser
 
-from django.test import Client, TestCase
+from django.test import Client, TestCase, TransactionTestCase
 from django.urls import reverse
 
 from apps.core.services import add_evidence
@@ -76,3 +76,36 @@ class ProcessRoleDirectoryTests(TestCase):
         work = FactoryWork.objects.get(actor=actor,case=self.case,definition='engagement/v1')
         self.assertContains(self.client.get(reverse('factory_detail',args=[work.pk])),data['reference'])
         self.assertEqual(self.client.get(reverse('factory_create'),{'definition':'process-handoff/v1'}).status_code,404)
+
+
+class VerifiedDepartmentReadingTests(TransactionTestCase):
+    def test_verified_bid_reading_and_assistant_outcome_follow_the_receipt_reader(self):
+        from django.utils import timezone
+        from apps.agents.specialist_memory import outcome_sources, sources_for
+        from apps.agents.specialist_models import SpecialistReading
+        from apps.pmo import rfp
+        from tests.native_station_helpers import assert_waiting, finish_station, start_station
+        from tests.test_rfp import fixture
+
+        actor, case, proof, _, _ = fixture(record_intake=False)
+        intake = rfp.intake(actor, case.pk, 'ROLE-CHECK', proof['rfp_intake'].pk, timezone.now(),
+                           'not_stated', None, None, 'Synthetic invitation to bid', rev(case))
+        work = start_station(self, 'P45', intake)
+        users = role_accounts(case)
+        member = users['pmo_member']
+        assert_waiting(self, work)
+        report = SpecialistReading.objects.filter(work=work, status='ready').first()
+        url = reverse('specialist_report', args=[work.pk, report.pk])
+        self.client.force_login(member)
+        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertFalse(sources_for(member, [case.pk], ['planning/v1'], work_id=work.pk))
+        assignment = rfp.assign(actor, case.pk, actor, 'CEO', proof['policy_decision'].pk, 'Recorded appointment', rev(case))
+        finish_station(self, work, assignment)
+        self.assertEqual(self.client.get(url).status_code, 200)
+        citations = sources_for(member, [case.pk], ['planning/v1'], work_id=work.pk)
+        self.assertIn(url, [citation['url'] for citation in citations])
+        self.assertEqual(outcome_sources(member, [case.pk], ['planning/v1'])[0]['record']['field'], 'native_station_receipt')
+        outside = users['finance_head']
+        self.client.force_login(outside)
+        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertFalse(outcome_sources(outside, [case.pk], ['planning/v1']))

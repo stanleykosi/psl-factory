@@ -327,4 +327,5 @@ class FactoryBUPublishedTests(TestCase):
     def test_native_recipient_get_has_no_private_business_fields_and_is_read_only(self):
         f=self.f;self.client.force_login(f['manager']);before=self.rowsets();response=self.client.get(reverse('factory_detail',args=[self.work.pk]));self.assertEqual(response.status_code,200)
         self.assertEqual(before,self.rowsets());self.assertContains(response,'Inspect your aggregate report')
+        self.assertContains(response,'Received aggregate report');self.assertNotContains(response,self.work.request['reference'])
         for private in ['E900','E002','BASIC','standard_pool_ref','weight_0','Inspect restricted subject','source_id','payroll_id','rule_ids','comparison_id']:self.assertNotContains(response,private)

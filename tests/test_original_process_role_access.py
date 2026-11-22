@@ -34,12 +34,12 @@ def original_fixture(component, cls=None, method=None, *, class_data=False, **kw
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class OriginalProcessRoleAccessTests(TestCase):
-    def check_work(self, work, *processes, restricted=False, dispatched=False, investigation=None):
+    def check_work(self, work, *processes, restricted=False, dispatched=False, investigation=None, roles=None):
         self.assertTrue(work.case.synthetic)
         self.assertTrue(set(processes) <= set(PROCESS_IDS[work.definition]))
         ui = reverse('factory_detail', args=[work.pk])
         api = f'/api/v1/work/{work.pk}'
-        roles = role_accounts(work.case)
+        roles = roles or role_accounts(work.case)
         owner = Client()
         owner.force_login(work.actor)
         self.assertEqual(owner.get(ui).status_code, 200, work.definition)
@@ -251,6 +251,10 @@ class OriginalProcessRoleAccessTests(TestCase):
         f = FactoryPayrollTests()
         f.setUpTestData()
         f.pipeline()
+        self.client.force_login(f.f['manager'])
+        received = self.client.get(reverse('factory_detail', args=[f.work.pk]))
+        self.assertContains(received, 'Received aggregate report')
+        self.assertNotContains(received, f.work.request['reference'])
         self.check_work(f.work, 'F16', 'F17', 'F18', restricted=True, dispatched=True)
 
     def test_staff_cost_exception(self):
@@ -280,18 +284,37 @@ class OriginalProcessRoleAccessTests(TestCase):
     def test_invoice(self):
         from tempfile import TemporaryDirectory
         from adapters.factory_invoices import MockFactoryInvoiceAdapter
+        from apps.workflows.models import HumanTask
         from .factory_helpers import fixture
-        from .obligation_helpers import factory_approve_identified
+        from .obligation_helpers import factory_identified
 
         f = fixture()
         work = f['work']
+        roles = role_accounts(work.case)
         with TemporaryDirectory() as directory:
             adapter = MockFactoryInvoiceAdapter(directory)
             factory.run_until_wait(work.pk, adapter=adapter)
-            factory_approve_identified(f)
+            factory_identified(f)
+            task = HumanTask.objects.get(case=work.case, kind='factory_review', status='open')
+            task_url = f'/api/v1/tasks/{task.pk}'
+            self.client.force_login(roles['finance_member'])
+            refused = self.client.post(task_url + '/claim', {'expected_revision': task.revision},
+                                       content_type='application/json')
+            self.assertIn(refused.status_code, (403, 404, 422), refused.content[:400])
+            task.refresh_from_db()
+            self.assertIsNone(task.claimed_by_id)
+            self.client.force_login(work.actor)
+            claimed = self.client.post(task_url + '/claim', {'expected_revision': task.revision},
+                                       content_type='application/json')
+            self.assertEqual(claimed.status_code, 200, claimed.content[:400])
+            reviewed = self.client.post(task_url + '/decision', {
+                'expected_revision': claimed.json()['revision'], 'verdict': 'approve', 'evidence_id': f['proof'].pk,
+                'note': 'Reviewed the original synthetic Finance packet and its assigned authority.',
+            }, content_type='application/json')
+            self.assertEqual(reviewed.status_code, 200, reviewed.content[:400])
             factory.run_until_wait(work.pk, adapter=adapter)
         work.refresh_from_db()
-        self.check_work(work, 'P34', 'F29', 'F30', dispatched=True)
+        self.check_work(work, 'P34', 'F29', 'F30', dispatched=True, roles=roles)
 
     def test_unassigned_project_grants_cannot_escape_a_current_or_ended_appointment(self):
         from apps.identity.services import visible_cases

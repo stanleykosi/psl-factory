@@ -130,7 +130,11 @@ def read_context(work, actor, process):
         _, profile = factory.profile(work)
         shared = None
         for person in {actor, work.execution_actor}:
-            factory.access(person, work.case, "factory.read", work.definition)
+            # A department reader can reuse a verified output under the same
+            # exact source/receipt scope as its project page. The execution
+            # principal must still hold its original specialist authority.
+            if person == work.execution_actor or work.status != 'verified':
+                factory.access(person, work.case, "factory.read", work.definition)
             current_source = checked_work(work, person)
             if work.status == "verified" and not current_receipt(work, current_source):
                 raise PermissionDenied("The receiving record is unavailable to this reader.")
@@ -298,8 +302,11 @@ def run_once():
             '"gaps":[],"assessment":"supported","facts":[]}. Use only line keys present in the source. '
             "Even when evidence is insufficient, cite the line you examined and name the missing evidence in gaps. "
             "Use assessment supported, conflicting or insufficient. Facts may be empty. Include a fact only when "
-            "a source line explicitly states a reference, currency, total or due_date. For each such fact provide "
-            "field, line, and value copied verbatim. A reporting period or revision alone supplies none of these facts. "
+            "a source line explicitly states a reference, currency, total or due_date. Every fact must have exactly "
+            "three string fields: field (one of reference, currency, total, due_date), line (a key you also put in "
+            "quotes), and value (an exact contiguous substring from that line). Even numbers are JSON strings. "
+            "Preserve signs, spaces and decimal zeros. Omit any fact you cannot copy exactly. "
+            "A reporting period or revision alone supplies none of these facts. "
             "Use a short summary and short gaps. Never infer a decision or claim execution. Task: " + task,
             json.dumps(lines, ensure_ascii=False),
             max_tokens=min(job.token_limit, 700),
@@ -389,7 +396,7 @@ def outcome_sources(actor, cases, definitions):
     from apps.workflows.factory_views import visible
 
     allowed = visible(actor).filter(case_id__in=cases, definition__in=definitions, status="verified")
-    from apps.workflows.native_stations import DEFINITION, checked_work, projection_pin, receiver_identity
+    from apps.workflows.native_station_access import candidates, observe
     from apps.workflows.native_station_models import NativeStationReceipt
     from django.db.models import Q
 
@@ -398,19 +405,18 @@ def outcome_sources(actor, cases, definitions):
         if definition in definitions:
             subject |= Q(handoff__station__process__startswith=prefix)
     native_results = []
-    receipts = NativeStationReceipt.objects.filter(subject, handoff__station__work__case_id__in=cases).select_related(
+    receipts = NativeStationReceipt.objects.filter(subject, handoff__station__work__in=candidates(actor),
+        handoff__station__work__case_id__in=cases, handoff__station__work__status='verified').select_related(
         "handoff__station__work__case", "handoff__station__work__actor"
     ).order_by("-pk")[:6]
     for receipt in receipts:
         station = receipt.handoff.station
         work = station.work
         try:
-            factory.access(actor, work.case, "factory.read", DEFINITION)
-            current_source = checked_work(work, actor)
+            _, current_receipt = observe(actor, work)
         except (PermissionDenied, ValidationError, ObjectDoesNotExist):
             continue
-        if (work.status == "verified" and projection_pin(current_source) == receipt.handoff.projection_sha256
-                and receiver_identity(current_source) == [receipt.receiver_model, receipt.receiver_pk]):
+        if current_receipt and current_receipt.pk == receipt.pk:
             native_results.append({
                 "label": routes()[station.process]["original_title"],
                 "fact": f"The department receiver was verified on {receipt.created_at.isoformat()}.",

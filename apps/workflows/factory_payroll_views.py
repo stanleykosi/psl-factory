@@ -149,6 +149,7 @@ def presentation(actor,work):
     row={'work':work,'title':work.request['reference'],'owner':work.actor.get_full_name() or work.actor.username,'state':work.status,'next_action':'Review restricted payroll work','blocker':'','needs_me':False,'can_advance':False,'jobs':[],'tasks':[],'readiness_changed':False,'payroll':{}}
     try:q,data=payroll.source(work,actor,False)
     except (PermissionDenied,ValidationError):
+        row.update(title='Received aggregate report', owner='')
         p=payroll.publication(work)
         value=None
         if p:

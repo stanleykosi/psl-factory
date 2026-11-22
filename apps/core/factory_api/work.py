@@ -15,6 +15,7 @@ from apps.workflows import (
 )
 from apps.workflows.factory_definitions import DEFINITIONS
 from apps.workflows.models import FactoryAttempt, HumanTask
+from apps.workflows.native_station_contracts import DEFINITION as DEPARTMENT_HANDOFF
 from apps.workflows.screen_focus import SCREENS
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
@@ -46,7 +47,8 @@ DETAIL = obj({
     'progress': nullable(obj({'status': TEXT, 'updated_at': DATETIME})),
     'aggregate': nullable(obj({'report_id': ID, 'values': {'type': 'object', 'additionalProperties': {'type': ['string', 'number']}},
                                'currency': TEXT, 'period': TEXT, 'receipt_id': nullable(ID)})),
-})
+    'department_handoff_url': TEXT,
+}, optional=('department_handoff_url',))
 QUEUE = obj({
     'items': array(ITEM, limit=8), 'page': ID, 'next_page': nullable(ID), 'as_of': DATETIME,
     'limited': BOOLEAN, 'lines': array(obj({'key': TEXT, 'title': TEXT})),
@@ -112,6 +114,13 @@ def bound_work(actor, work_id):
 
 def observed_work(actor, work_id):
     work = bound_work(actor, work_id)
+    if work.definition == DEPARTMENT_HANDOFF:
+        # visible() rechecks this exact source, actor and current native receipt.
+        # The worker's execution permissions belong to the department service.
+        from .handoffs import item
+        from apps.core.templatetags.studio_ui import readable
+
+        return work, {'work': work, 'title': item(work)['title'], 'state': readable(work.status)}, {'handoff': True}
     try:
         with limit_queries(1400, deadline=monotonic() + 8):
             row = factory_views.presentation(actor, work, include_progress=True)
@@ -158,6 +167,13 @@ FOCUS_ROUTES = {
 @endpoint(response=DETAIL, summary='Read the current work, independent tasks and permitted actions')
 def detail(request, work_id):
     work, row, protected = observed_work(request.user, work_id)
+    if protected.get('handoff'):
+        return {
+            **summary(row), 'revision': None, 'case_revision': None,
+            'next_step': 'Open the department handoff to check its evidence and available decisions.',
+            'department_handoff_url': request.path.rstrip('/') + '/department-handoff',
+            'blocker': '', 'tasks': [], 'screens': [], 'actions': [], 'progress': None, 'aggregate': None,
+        }
     recipient = protected.get('recipient_only', False)
     aggregate = None
     if recipient and 'totals' in protected:
@@ -210,7 +226,7 @@ def history(request, work_id):
     if kind not in ('worker', 'decision', 'evidence'):
         raise Problem(422, 'invalid_filter', 'Choose a listed history filter.')
     items = []
-    if not protected.get('recipient_only'):
+    if not (protected.get('recipient_only') or protected.get('handoff')):
         from apps.core.templatetags.studio_ui import readable
         from apps.workflows.models import TaskEvent
 
@@ -239,7 +255,7 @@ def result(work):
           response=WORK_RESULT, status=202, summary='Continue or pause an existing background request')
 def background(request, work_id, *, body):
     work, _, protected = observed_work(request.user, work_id)
-    if protected.get('recipient_only'):
+    if protected.get('recipient_only') or protected.get('handoff'):
         raise Http404
     if work.revision != body['expected_revision']:
         raise ValidationError('STALE_VERSION: Open the current work item.')
@@ -252,6 +268,8 @@ def background(request, work_id, *, body):
           response=WORK_RESULT, status=202, summary='Check an original effect or explicitly request invoice release')
 def action(request, work_id, *, body):
     work = bound_work(request.user, work_id)
+    if work.definition == DEPARTMENT_HANDOFF:
+        raise Http404
     if body['action'] == 'release_invoice':
         operation = factory_progress.queue_invoice_release if work.definition == FINANCE_INVOICE else None
     else:

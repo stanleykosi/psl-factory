@@ -95,6 +95,9 @@ class NativeRoleAccess(TransactionTestCase):
         detail = client.get(api)
         self.assertEqual(detail.json()["finance_acknowledgement"], form)
         self.assertNotContains(detail, "private-staff")
+        raw = client.get(reverse("hrfinance_snapshot",args=[case.pk,snapshot.pk]))
+        self.assertIn(raw.status_code,(403,404))
+        self.assertNotIn(b"private-staff",raw.content)
         prototype = {"action":"acknowledge_finance",**form}
         for key in ("finance_head","hr","admin","ceo","cto","pmo_head","pmo_member"):
             other = self.client_for(users[key])
@@ -115,28 +118,25 @@ class NativeRoleAccess(TransactionTestCase):
         self.assertEqual(client.get(api).status_code,404)
         self.assertEqual(client.post(command,form,content_type="application/json").status_code,404)
 
-    def test_appointed_cto_resolves_exact_source_findings_without_granting_a_business_approval(self):
+    def test_appointed_member_resolves_exact_source_findings_without_granting_a_business_approval(self):
         import json
         from pathlib import Path
         from django.utils import timezone
         from apps.agents import specialist_memory, specialist_packets
-        from apps.identity.models import Grant
-        from apps.pmo.models import ApprovalRouteReceipt
+        from apps.pmo import planning
         from apps.workflows import factory_progress, native_stations
-        from tests import approval_helpers
         from tests.test_engagement_intake import activate as activate_station
 
-        f = approval_helpers.fixture()
-        case, actor, subject = f["case"], f["actor"], f["request"]
+        f = planning_helpers.fixture()
+        case, actor, subject = f["c"], f["a"], f["packet"]
         users = role_accounts(case)
-        reviewer = users["cto"]
-        for action in ("case.read","factory.read","agent.extract","approval.read","factory.information"):
-            Grant.objects.update_or_create(case=case,user=reviewer,action=action,defaults={"active":True})
+        reviewer = users["pmo_member"]
         rule = json.loads(Path("fixtures/factory-native-station.json").read_text())
         rule.pop("classification")
         rule["information_resolver_id"] = reviewer.pk
-        activate_station(actor,case,native_stations.COMPONENT,rule,f["e"]["policy_decision"])
-        work = start_station(self,"P02",subject)
+        proof = case.evidence.filter(kind="policy_decision").first()
+        activate_station(actor,case,native_stations.COMPONENT,rule,proof)
+        work = start_station(self,"P17",subject)
         api = f"/api/v1/work/{work.pk}/department-handoff"
         client = self.client_for(reviewer)
         with patch("adapters.openrouter.completion", return_value={"summary":"The source needs clarification.",
@@ -152,16 +152,14 @@ class NativeRoleAccess(TransactionTestCase):
         self.assertEqual(response.status_code,200,response.content)
         review = response.json()["source_review"]
         self.assertIsNotNone(review)
+        self.assertEqual(client.get(review["readings"][0]["report_url"]).status_code,200)
         self.assertContains(client.get(reverse("factory_detail",args=[work.pk])), "Resolve source findings")
         body = {"packet_id":review["packet_id"], "digest":review["digest"], "reason":"Checked the original account."}
         command = api+"/source-review"
         self.assertEqual(self.client_for(actor).post(command,body,content_type="application/json").status_code,404)
         bad = client.post(command,{**body,"digest":"f"*64},content_type="application/json")
         self.assertIn(bad.status_code,(409,422))
-        grant = Grant.objects.get(case=case,user=reviewer,action="factory.information")
-        Grant.objects.filter(pk=grant.pk).update(active=False)
-        self.assertEqual(client.post(command,body,content_type="application/json").status_code,404)
-        Grant.objects.filter(pk=grant.pk).update(active=True)
+        self.assertEqual(self.client_for(users["pmo_head"]).post(command,body,content_type="application/json").status_code,404)
         self.assertEqual(client.post(command,body,content_type="application/json").status_code,200)
-        self.assertFalse(ApprovalRouteReceipt.objects.filter(job__request=subject).exists())
+        self.assertIsNone(planning.latest(case,"ready"))
         self.assertIsNone(client.get(api).json()["receipt"])

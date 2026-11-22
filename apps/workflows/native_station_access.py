@@ -1,4 +1,5 @@
 """Staff visibility of department handoffs. Source and decision authority stay native."""
+from contextlib import contextmanager
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.db.models import Q
 from django.http import Http404
@@ -53,6 +54,28 @@ def read_work(actor, work_id):
     except (ObjectDoesNotExist, PermissionDenied, ValidationError):
         raise Http404 from None
     return work, current, receipt
+
+
+@contextmanager
+def review_scope(work, actor):
+    """The appointed person can inspect a pending packet for an already readable source."""
+    from apps.identity.factory_access import role_managed
+    from apps.identity.services import subject_actions
+    from . import factory
+
+    if work.definition != DEFINITION or not role_managed(actor):
+        yield
+        return
+    _, profile = factory.profile(work)
+    if (profile["information_resolver_id"] != actor.pk or work.cancel_requested
+            or work.status in factory.TERMINAL):
+        yield
+        return
+    if not candidates(actor).filter(pk=work.pk).exists():
+        raise PermissionDenied("The reviewer no longer has this project and department.")
+    observe(actor, work)
+    with subject_actions(actor, work.case, ("agent.extract", "factory.information")):
+        yield
 
 
 def listed(actor, case, before=None):

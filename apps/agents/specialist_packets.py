@@ -209,13 +209,15 @@ def review_for(work, actor):
     if not packet:
         return None
     try:
-        result = inspect(packet, actor)
-        if result["state"] != "review":
-            return None
-        factory.access(actor, work.case, "factory.information", work.definition)
-        _, profile = factory.profile(work)
-        if profile["information_resolver_id"] == actor.pk:
-            return result
+        from apps.workflows.native_station_access import review_scope
+        with review_scope(work, actor):
+            result = inspect(packet, actor)
+            if result["state"] != "review":
+                return None
+            factory.access(actor, work.case, "factory.information", work.definition)
+            _, profile = factory.profile(work)
+            if profile["information_resolver_id"] == actor.pk:
+                return result
     except (PermissionDenied, ValidationError):
         pass
     return None
@@ -224,6 +226,12 @@ def review_for(work, actor):
 @transaction.atomic
 def acknowledge(actor, work_id, packet_id, expected, reason):
     work = FactoryWork.objects.select_for_update(of=("self",)).get(pk=work_id)
+    from apps.workflows.native_station_access import review_scope
+    with review_scope(work, actor):
+        return _acknowledge(actor, work, packet_id, expected, reason)
+
+
+def _acknowledge(actor, work, packet_id, expected, reason):
     factory.access(actor, work.case, "factory.information", work.definition)
     _, profile = factory.profile(work)
     if (

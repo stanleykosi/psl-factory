@@ -140,12 +140,28 @@ def parents_reviewed(w):
  for pk in w.metadata.get('rule_ids',[]):review_current(exact(w.case,pk))
  if w.parent_id:review_current(exact(w.case,w.parent_id))
 
-def review_current(w,purpose=None):
+def _own_review(w,purpose,*,checked_payroll=None):
  purpose=purpose or w.kind;r=w.reviews.filter(purpose=purpose).order_by('-pk').first()
  if not r or r.verdict!='approve' or r.subject_sha256!=w.sha256:raise ValidationError('Exact current BU approval required')
- current(w);private_access(r.actor,w);require(r.actor,w.case,'bu.review')
+ current(w,checked_payroll=checked_payroll);private_access(r.actor,w,checked_payroll=checked_payroll);require(r.actor,w.case,'bu.review')
  if authority(r.actor,w,purpose)!=r.authority:raise ValidationError('Review authority changed')
- parents_reviewed(w);return r
+ return r
+
+def review_current(w,purpose=None):
+ review=_own_review(w,purpose)
+ parents_reviewed(w)
+ return review
+
+def checked_staff_rules(payroll,rules):
+ """Check one shared payroll lineage and each selected exception's own review."""
+ if payroll.kind!='match':
+  raise ValidationError('Staff allocation requires a matched payroll.')
+ pr.current_review(payroll)
+ for rule in rules:
+  if (rule.kind!='rule' or rule.payroll_id!=payroll.pk or
+      rule.case_id!=payroll.request.case_id or rule.parent_id or rule.metadata.get('rule_ids')):
+   raise ValidationError('Exception review requires the exact matched payroll and original rule.')
+  _own_review(rule,'rule',checked_payroll=payroll)
 
 @transaction.atomic
 def staff(actor,case_id,payroll_id,reference,key,declared,rule_ids,expected):

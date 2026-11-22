@@ -133,7 +133,13 @@ def validate_reference(component,target,case,runtime=False):
     for name in ['information_resolver_id','executor_id']+(['preparer_id'] if go_live else []):
         if not runtime and value[name] is not None:
             action='factory.information' if name=='information_resolver_id' else 'factory.execute'
-            if not get_user_model().objects.filter(pk=value[name],is_active=True).exists() or not Grant.objects.filter(case=case,user_id=value[name],action=action,active=True).exists():raise ValidationError('Configured principal requires an actual current same-case grant')
+            person = get_user_model().objects.filter(pk=value[name], is_active=True).first()
+            granted = Grant.objects.filter(case=case,user_id=value[name],action=action,active=True).exists()
+            if person and component == STATION_COMPONENT and name == 'information_resolver_id' and not granted:
+                from apps.identity.factory_access import department_cases
+                granted = any(department_cases(person, role).filter(pk=case.pk).exists()
+                              for role in ('pmo-lead', 'finance-lead'))
+            if not person or not granted:raise ValidationError('Configured principal requires current authority in this project')
             if planning and not Grant.objects.filter(case=case,user_id=value[name],action='planning.read',active=True).exists():raise ValidationError('Planning principals require current same-case planning access')
             if commercial and name=='executor_id' and not Grant.objects.filter(case=case,user_id=value[name],action='document.publish',active=True).exists():raise ValidationError('Commercial publisher requires current same-case document publication access')
             if archive and name=='executor_id':

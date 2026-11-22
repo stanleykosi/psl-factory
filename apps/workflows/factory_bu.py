@@ -132,8 +132,8 @@ def report(work,actor=None,selected=None):
     actor=actor or work.execution_actor;selected=selected or source(work,actor);p,rules,inputs=selected
     state={'stage':'source_review','finding':'','subjects':[{'id':x.pk,'kind':x.kind} for x in ([p] if inputs['mode']=='event' else rules)],'result':None,'publication':None,'receipt_ids':[]}
     try:
-        if inputs['mode']=='staff':payroll.current_review(p)
-        for x in ([p] if inputs['mode']=='event' else rules):native.review_current(x)
+        if inputs['mode']=='staff':native.checked_staff_rules(p,rules)
+        else:native.review_current(p)
         state['stage']='calculate';r=checked_result(work,actor,selected,current=False)
         if not r:raise ValidationError('Prepare exact native BU result')
         state['result']={'id':r.pk,'kind':r.kind,'status':r.metadata['status'],'codes':r.metadata['codes']};state['subjects'].append({'id':r.pk,'kind':r.kind})
