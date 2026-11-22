@@ -98,7 +98,14 @@ class PlanningWorkaroundWalkthroughTests(TestCase):
             self.assertContains(self.client.post(path, command | {'issue_state_id': sample['issue_state'] + 1}),
                                 'The linked issue changed.')
             self.assertFalse(dossier.sources.filter(kind=delivery_workarounds.KIND).exists())
-            self.assertRedirects(self.client.post(path, command), path, fetch_redirect_response=False)
+            api = f'/api/v1/work/{work.pk}/planning-exit'
+            options = self.client.get(api)
+            self.assertEqual(options.status_code, 200, options.content)
+            option = options.json()['workaround']
+            self.assertEqual(option, {key: command[key] for key in ('return_id', 'issue_state_id', 'response_id', 'review_id')})
+            linked = self.client.post(api + '/workaround', {**option, 'note': command['note'],
+                'expected_revision': work.revision, 'case_revision': rev(work.case)}, content_type='application/json')
+            self.assertEqual(linked.status_code, 201, linked.content)
             link = dossier.sources.get(kind=delivery_workarounds.KIND)
             self.assertEqual((link.actor_id, link.payload['return_id'], link.payload['review_id']),
                              (pm.pk, returned.pk, review.pk))

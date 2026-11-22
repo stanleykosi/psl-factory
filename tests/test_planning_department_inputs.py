@@ -120,6 +120,8 @@ class PlanningDepartmentInputTests(TestCase):
 
     def test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review(self):
         f = enhanced()
+        self.client.force_login(f['a'])
+        api = f"/api/v1/projects/{f['c'].pk}/planning"
         rows = {department: record(f, department) for department in DEPARTMENTS}
         observe(f)
         factory.run_until_wait(f['work'].pk)
@@ -127,11 +129,28 @@ class PlanningDepartmentInputTests(TestCase):
         self.assertEqual(f['work'].status, 'verified', f['work'].finding)
         initial = factory_planning.verified_output(f['work'])
         self.assertTrue(initial['verified'])
-        successor = record(f, previous=rows['Engineering'], days=Decimal('2.500'))
+        page = self.client.get(api)
+        self.assertEqual(page.status_code, 200, page.content)
+        ready = page.json()['readiness']
+        self.assertTrue(ready['source_ids'])
+        handoff = self.client.post(api, {'action': 'handoff', 'revision': page.json()['revision'],
+            'readiness_id': ready['evidence_id'], 'dossier_id': ready['delivery_dossiers'][0]['id']}, content_type='application/json')
+        self.assertEqual(handoff.status_code, 200, handoff.content)
+        self.assertIn(handoff.json()['record_id'], ready['source_ids'])
+        correction = {'revision': rev(f['c']), 'packet_id': f['packet'].pk, 'department': 'Engineering',
+            'previous_id': rows['Engineering'].pk, 'source_id': f['e']['plan'].pk, 'source_party': 'Synthetic department colleague',
+            'received_at': timezone.now().isoformat(), 'summary': 'Corrected synthetic effort.',
+            'effort_state': 'known', 'person_days': '2.500'}
+        recorded = self.client.post(api + '/department-inputs', correction, content_type='application/json')
+        self.assertEqual(recorded.status_code, 201, recorded.content)
+        successor = PlanningDepartmentInput.objects.get(pk=recorded.json()['record_id'])
+        self.assertEqual(self.client.post(api + '/department-inputs', correction, content_type='application/json').status_code, 409)
         with self.assertRaises(ValidationError):
             factory_planning.verified_output(f['work'])
-        planning_inputs.review(f['a'], f['c'].pk, f['packet'].pk, 'PM', 'retain_costing',
-            f['e']['policy_decision'].pk, 'Synthetic authorised decision to retain costing for this exact change.', rev(f['c']))
+        reviewed = self.client.post(api + '/effort-review', {'revision': rev(f['c']), 'packet_id': f['packet'].pk,
+            'role': 'PM', 'disposition': 'retain_costing', 'evidence_id': f['e']['policy_decision'].pk,
+            'reason': 'Synthetic authorised decision to retain costing for this exact change.'}, content_type='application/json')
+        self.assertEqual(reviewed.status_code, 201, reviewed.content)
         self.assertIn('review_id', planning_inputs.required(f['c'], f['packet'], f['a']))
         review = f['c'].evidence.filter(kind='planning_department_review').latest('pk')
         self.assertFalse(public_evidence(Evidence.objects.filter(pk=review.pk)).exists())

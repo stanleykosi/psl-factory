@@ -103,12 +103,15 @@ def prerequisites(d,data):
     return closure.handover_inputs(d,{k:data['inputs'][k] for k in FIELDS[1:]})
 
 
-def receipt_state(work,version,*,recipient=None):
+def receipt_state(work,version,*,recipient=None,exact_source=False,limit=None):
     p=Publication.objects.filter(version=version).first() if version else None
     receipts=PublicationReceipt.objects.filter(publication=p).order_by('pk') if p else PublicationReceipt.objects.none()
+    if recipient is not None or exact_source:
+        receipts = receipts.filter(publication__factory_work=work, publication__factory_source=work.source_head)
     if recipient is not None:
-        receipts = receipts.filter(recipient=recipient, publication__factory_work=work,
-                                   publication__factory_source=work.source_head)
+        receipts = receipts.filter(recipient=recipient)
+    if limit is not None:
+        receipts = receipts.select_related('recipient')[:limit]
     rows=[]
     for r in receipts:
         ack=DeliveryRecord.objects.select_related('actor').filter(dossier_id=work.request['dossier'],kind='handover',data__receipt_id=r.pk).order_by('-pk').first()

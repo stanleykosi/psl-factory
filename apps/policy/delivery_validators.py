@@ -14,23 +14,27 @@ METRIC={'type':'object','properties':{'key':{'type':'string','pattern':'^[a-z][a
     'required':['key','unit','owner','operator','threshold'],'additionalProperties':False}
 
 
-def validate_reference(component,target,case):
+def criteria_schema(*, include_issue_clearance=False):
     properties = {
         'clock':{'const':'elapsed_hours_since_release'},'minimum_hours':{'type':'number','minimum':0,'maximum':87600},
         'confirmation_owners':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['Engineering','Infrastructure']}},
         'metrics':{'type':'array','minItems':1,'maxItems':20,'items':METRIC},'financial_controls':{'const':'independent'}}
-    schema = HYPERCARE_V1
-    if target.schema_ref == HYPERCARE_V2:
-        schema = HYPERCARE_V2
+    if include_issue_clearance:
         issue = {
             'scope': {'const': 'project_issue_register'},
             'reader_id': {'type': 'integer', 'minimum': 1, 'maximum': 9223372036854775807},
-            'blocking_statuses': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'enum': ISSUE_STATUSES[:-1]}},
-            'blocking_severities': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'enum': ISSUE_SEVERITIES}},
+            'blocking_statuses': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'enum': list(ISSUE_STATUSES[:-1])}},
+            'blocking_severities': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'enum': list(ISSUE_SEVERITIES)}},
         }
         properties['issue_clearance'] = {'type': 'object', 'properties': issue, 'required': list(issue), 'additionalProperties': False}
-    c = typed(target, schema, {'type': 'object', 'properties': properties, 'required': list(properties), 'additionalProperties': False})
-    if schema == HYPERCARE_V2 and not get_user_model().objects.filter(pk=c['issue_clearance']['reader_id']).exists():
+    return {'type': 'object', 'properties': properties, 'required': list(properties), 'additionalProperties': False}
+
+
+def validate_reference(component,target,case):
+    issue_clearance = target.schema_ref == HYPERCARE_V2
+    c = typed(target, HYPERCARE_V2 if issue_clearance else HYPERCARE_V1,
+              criteria_schema(include_issue_clearance=issue_clearance))
+    if issue_clearance and not get_user_model().objects.filter(pk=c['issue_clearance']['reader_id']).exists():
         raise ValidationError('Choose an existing issue register reader for the proposed stability rule.')
     if not math.isfinite(c['minimum_hours']) or any(not math.isfinite(m['threshold']) for m in c['metrics']):
         raise ValidationError('Hypercare numeric criteria must be finite')

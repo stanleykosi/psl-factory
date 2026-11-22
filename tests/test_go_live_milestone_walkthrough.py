@@ -93,7 +93,11 @@ class GoLiveMilestoneWalkthroughSeedTests(TestCase):
 
         self.client.force_login(operator)
         self.assertContains(self.client.get(url), 'Milestone handoff settings')
-        self.assertRedirects(post('draft_milestone_mapping', **mapping_data), policy_url, fetch_redirect_response=False)
+        api = f'/api/v1/work/{work.pk}/go-live-milestone'
+        drafted = self.client.post(api, {'action': 'draft_mapping', 'expected_revision': work.revision,
+            'case_revision': rev(case), 'name': sample['milestone_name'], 'owner_decision_id': sample['owner_decision']},
+            content_type='application/json')
+        self.assertEqual(drafted.status_code, 201, drafted.content)
         configuration = Configuration.objects.get(case=case, component=seed.COMPONENT)
         self.assertEqual(configuration.states.latest('pk').state, 'draft')
         for action in ('validated', 'active'):
@@ -116,8 +120,10 @@ class GoLiveMilestoneWalkthroughSeedTests(TestCase):
         page = self.client.get(url)
         self.assertContains(page, 'Confirm milestone completion')
         self.assertEqual([item['pk'] for item in page.context['milestone_panel']['completion']['sources']], [evidence.pk])
-        self.assertRedirects(post('record_milestone', milestone_mapping=configuration.pk, acceptance=sample['acceptance'],
-                                  completion_evidence=evidence.pk), url, fetch_redirect_response=False)
+        completion = self.client.post(api, {'action': 'record_completion', 'expected_revision': work.revision,
+            'case_revision': rev(case), 'configuration_id': configuration.pk, 'acceptance_id': sample['acceptance'],
+            'evidence_id': evidence.pk}, content_type='application/json')
+        self.assertEqual(completion.status_code, 201, completion.content)
         self.assertContains(self.client.get(url), 'Milestone completed')
         recorded = Audit.objects.get(case=case, action=milestone.RECORDED)
         self.assertEqual(recorded.actor_id, pm.pk)

@@ -324,7 +324,7 @@ def projection(actor,work,*,decision_evidence_limit=None,decision_only=False):
         decision_evidence = list(evidence)
     if decision_only:
         return {'checks': observed, 'decision_packet': packet, 'allowed_verdicts': list(authorities),
-                'return_issues': return_issues, 'decision_evidence': decision_evidence}
+                'return_issues': return_issues, 'decision_evidence': decision_evidence, 'workaround_option': workaround_option}
     changed=False
     if work.status=='verified':
         try:verify(work,actor=actor)

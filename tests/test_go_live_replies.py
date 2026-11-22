@@ -95,13 +95,29 @@ class GoLiveReplyTests(TestCase):
         f=delivered(self.base)
         first=f.version
         original_receipt=f.receipt
-        response=reply(f)
+        source = f.evidence('client_feedback', 'Synthetic client response: add the fallback incident contact.')
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{f.work.pk}/go-live-replies'
+        panel = self.client.get(api)
+        self.assertEqual(panel.status_code, 200, panel.content)
+        self.assertEqual(panel.json()['capture'][0]['receipt_id'], original_receipt.pk)
+        submitted = self.client.post(api, {'action': 'record_reply',
+            **{key: panel.json()[key] for key in ('expected_revision', 'case_revision')},
+            'receipt_id': original_receipt.pk, 'previous_id': None, 'outcome': 'changes_requested',
+            'party': 'Sample client colleague', 'responded_at': timezone.now().isoformat(), 'channel': 'email',
+            'evidence_id': source.pk, 'note': source.body, 'role': 'PM', 'attested': True}, content_type='application/json')
+        self.assertEqual(submitted.status_code, 201, submitted.content)
+        response = go_live_replies.current_heads(f.d)[0]
+        self.assertEqual(response.pk, submitted.json()['record_id'])
+        self.assertEqual(self.client.get(api).json()['replies'][0]['evidence_id'], source.pk)
         with self.assertRaisesMessage(ValidationError,'corrected source versions'):
             accept(f)
         corrected=f.evidence('incident_reporting','Synthetic revised incident plan with the client-requested fallback contact.')
         f.work.refresh_from_db()
-        go_live.prepare_client_revision(f.actor,f.work.pk,f.work.revision,rev(f.case),
-            dict(f.inputs,incident_reporting=corrected.pk),'Prepare a reviewed successor for the exact supplied client request.')
+        revised = self.client.post(api + '/successor', {'expected_revision': f.work.revision,
+            'case_revision': rev(f.case), 'inputs': dict(f.inputs, incident_reporting=corrected.pk),
+            'reason': 'Prepare a reviewed successor for the exact supplied client request.'}, content_type='application/json')
+        self.assertEqual(revised.status_code, 200, revised.content)
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()
         second=go_live.document(f.work)

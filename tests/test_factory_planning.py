@@ -59,8 +59,14 @@ class FactoryPlanningTests(TestCase):
         page=self.client.get(url);self.assertContains(page,'Product Owner source review');self.assertNotContains(page,'Engineering Lead source review')
         w.refresh_from_db();revision=w.revision
         with self.assertRaises(PermissionDenied):factory_planning.observe_department(f['owners']['scope'],w.pk,revision,receipt.request_id,receipt.pk,wrong.pk)
-        response=self.client.post(url,{'action':'observe_department','revision':revision,'request':receipt.request_id,'receipt':receipt.pk,'evidence':proof.pk})
-        self.assertEqual(response.status_code,302)
+        api = f'/api/v1/work/{w.pk}/planning-owner-requests'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual([row['receipt_id'] for row in options.json()['requests']], [receipt.pk])
+        data = {'expected_revision': revision, 'request_id': receipt.request_id, 'receipt_id': receipt.pk, 'evidence_id': proof.pk}
+        self.assertEqual(self.client.post(api, data | {'evidence_id': wrong.pk}, content_type='application/json').status_code, 403)
+        response = self.client.post(api, data, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
         observation=receipt.observations.get();self.assertEqual(observation.actor_id,f['owners']['scope'].pk)
         self.assertEqual(observation.evidence_id,proof.pk);self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
         with self.assertRaises(ValidationError):factory_planning.observe_department(f['owners']['scope'],w.pk,revision,receipt.request_id,receipt.pk,proof.pk)

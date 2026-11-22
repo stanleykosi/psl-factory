@@ -258,6 +258,8 @@ class FactoryMinutesTests(TestCase):
         self.advance()
         panel = self.client.get(api + '/minutes').json()
         self.assertTrue(panel['can_confirm'])
+        options = self.client.get(api + '/minutes/action-options')
+        self.assertEqual(options.status_code, 200, options.content)
         self.assertEqual({row['evidence_id'] for row in panel['suggestions']}, {self.notes.pk})
         confirmed = self.client.post(api + '/minutes/confirmation', {
             **{key: panel[key] for key in ('case_revision', 'expected_revision', 'extraction_id')},

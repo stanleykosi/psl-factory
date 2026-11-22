@@ -337,7 +337,7 @@ def client_response_action(actor,work_id,expected,case_expected,action,data):
     access(actor,w.case,'factory.read',DEFINITION)
     if w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():
         raise ValidationError('The go-live work changed. Review the current report and client response.')
-    state=projection(actor,w)
+    state=reply_state(actor,w)
     available=panels(actor,w,state,data,action)
     if action=='client_reply':
         choices=available['corrections'] if data.get('outcome')=='withdrawn' else available['capture']
@@ -477,6 +477,33 @@ def _sign_off_readback(case, acceptance):
     return {'confirmed_at': acceptance.created_at, 'signatures': rows,
             'report_number': attestation['report']['number'], 'report_version_id': attestation['report']['version_id'],
             'receipt_id': acceptance.data['receipt_id']}
+
+
+@read_observation
+def reply_state(actor, work, *, include_milestone=False):
+    """Exact choices for client reply commands without a second worker projection."""
+    from .factory import access
+    from apps.pmo.go_live_replies import projection as reply_projection
+
+    access(actor, work.case, 'factory.read', DEFINITION)
+    dossier, _, _ = source(work, actor, current=False)
+    version = document(work)
+    receipts = []
+    if version and version.document.current_id == version.pk:
+        receipts = list(PublicationReceipt.objects.filter(publication__version=version,
+            publication__factory_work=work, publication__factory_source=work.source_head,
+            payload_sha256=version.payload_sha256).order_by('pk')[:100])
+    previous = native.latest_go_live(dossier, False)
+    acceptance = None
+    if include_milestone and previous and work.status == 'verified':
+        try:
+            exact_dossier, _, _, _, proved_receipts = published(work, actor)
+            acceptance = accepted_publication(exact_dossier, proved_receipts)
+        except (ValidationError, PermissionDenied):
+            pass
+    return {'dossier': dossier, 'client_responses': reply_projection(actor, dossier), 'receipts': receipts,
+            'previous_acceptance': previous, 'verified_acceptance_id': acceptance.pk if acceptance else None,
+            'sign_off': _sign_off_readback(work.case, acceptance) if acceptance else None}
 
 
 @read_observation

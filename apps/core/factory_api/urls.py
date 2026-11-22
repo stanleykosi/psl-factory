@@ -7,12 +7,12 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    agents, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, commands, corrections,
+    agents, archive_files, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
     delivery, documents,
-    finance_operations, handoffs,
-    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, project_operations, received_bids,
+    finance_operations, go_live_replies, handoffs, hypercare,
+    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, planning, project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, setup, work, work_access, workspaces,
+    role_work, roles, setup, support_replies, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -50,10 +50,24 @@ ROUTES = (
     ('work/<int:work_id>/reviews', reviews.review),
     ('work/<int:work_id>/corrections', corrections.correct),
     ('work/<int:work_id>/planning-exit', delivery.planning_exit, delivery.decide_planning_exit),
+    ('work/<int:work_id>/planning-owner-requests', planning.owner_requests, planning.observe),
+    ('work/<int:work_id>/planning-exit/workaround', delivery.link_workaround),
+    ('work/<int:work_id>/release-register', delivery.release_register, delivery.release_action),
+    ('work/<int:work_id>/closure-report', closure.replace_report),
     ('work/<int:work_id>/go-live-signoff', delivery.go_live, delivery.record_go_live),
+    ('work/<int:work_id>/go-live-replies', go_live_replies.detail, go_live_replies.command),
+    ('work/<int:work_id>/go-live-replies/successor', go_live_replies.prepare_successor),
+    ('work/<int:work_id>/go-live-milestone', go_live_replies.milestone),
     ('work/<int:work_id>/support-receipt', delivery.support_receipt, delivery.acknowledge_support),
+    ('work/<int:work_id>/support-replies', support_replies.options, support_replies.record_reply),
     ('work/<int:work_id>/aggregate-receipt', reviews.acknowledge_aggregate),
     ('work/<int:work_id>/minutes', minutes.detail),
+    ('work/<int:work_id>/minutes/action-options', minutes.action_options),
+    ('work/<int:work_id>/archive-files', archive_files.inventory, archive_files.reserve),
+    ('work/<int:work_id>/archive-files/<int:job_id>/recovery', archive_files.recover),
+    ('work/<int:work_id>/archive-files/rules', archive_files.draft_rules),
+    ('work/<int:work_id>/stability', hypercare.detail, hypercare.observe),
+    ('work/<int:work_id>/stability/criteria', hypercare.draft_criteria),
     ('work/<int:work_id>/minutes/delivery', minutes.operate),
     ('work/<int:work_id>/minutes/confirmation', commands.confirm_minutes),
     ('work/<int:work_id>/minutes/review-request', commands.request_minutes_review),
@@ -90,6 +104,10 @@ ROUTES = (
     ('projects/<uuid:case_id>/actions/<int:item_id>', project_operations.action, project_operations.update_action),
     ('projects/<uuid:case_id>/change-milestone-link', project_operations.stage_options, project_operations.link_stage),
     ('projects/<uuid:case_id>/milestones/completions', project_operations.milestone_options, project_operations.record_milestone),
+    ('projects/<uuid:case_id>/planning', planning.detail, planning.command),
+    ('projects/<uuid:case_id>/planning/department-inputs', planning.record_input),
+    ('projects/<uuid:case_id>/planning/effort-review', planning.review_effort),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/closure-checklist', closure.checklist),
     ('projects/<uuid:case_id>/<slug:tab>', workspaces.project_tab),
     ('clients', clients.directory),
     ('clients/groups/<str:group>', clients.group),
@@ -211,7 +229,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.3.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.4.0',
             'description': 'Use the current same-origin Django session. For JSON writes, read the session CSRF token from '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

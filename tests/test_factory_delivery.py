@@ -170,7 +170,17 @@ class FactoryDeliveryTests(TestCase):
         self.assertEqual(connection.vendor,'postgresql');f=setup();w=f.work
         factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'waiting',w.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').exists())
-        spent=w.budget_used;release_sources(f);factory.run_until_wait(w.pk);w.refresh_from_db()
+        spent=w.budget_used;release_sources(f)
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{w.pk}/release-register'
+        opened = self.client.get(api)
+        self.assertEqual(opened.status_code, 200, opened.content)
+        self.assertIsNone(opened.json()['release'])
+        versions = {key: opened.json()[key] for key in ('expected_revision', 'case_revision')}
+        prepared = self.client.post(api, {'action': 'prepare_readiness', **versions}, content_type='application/json')
+        self.assertEqual(prepared.status_code, 200, prepared.content)
+        self.assertEqual(self.client.post(api, {'action': 'prepare_readiness', **versions}, content_type='application/json').status_code, 409)
+        factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'verified',w.finding);self.assertGreater(w.budget_used,spent);self.assertEqual(w.budget_limit,20000)
         ready=factory_delivery.prepared(w);self.assertIsNotNone(ready)
         self.assertEqual(ready.snapshot,delivery.readiness_inputs(f.d))
@@ -178,6 +188,13 @@ class FactoryDeliveryTests(TestCase):
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').count(),1)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_outcome').exists())
         self.assertFalse(HumanTask.objects.filter(case=f.case,kind='factory_review').exists())
+        observed = self.client.post(api, {'action': 'observe_release', 'expected_revision': w.revision,
+            'case_revision': rev(f.case), 'readiness_id': ready.pk, 'released_at': timezone.now().isoformat(),
+            'reference': 'Synthetic actual release', 'evidence_id': f.e['requirements'].pk, 'note': 'Observed sample event',
+            'environment': 'synthetic acceptance', 'private_log_id': None}, content_type='application/json')
+        self.assertEqual(observed.status_code, 200, observed.content)
+        self.assertEqual(delivery.valid_release(f.d).pk, observed.json()['record_id'])
+        self.assertEqual(self.client.get(api).json()['release']['reference'], 'Synthetic actual release')
 
     def test_native_planning_decision_is_available_in_primary_ui_without_finance(self):
         f=setup();w=f.work

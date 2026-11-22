@@ -67,7 +67,19 @@ class HandoverReplyTests(TestCase):
         row = presentation(f.actor, f.work)
         self.assertTrue(row['needs_me'])
         self.assertIn('Support', row['next_action'])
-        actual = self.reply()
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{f.work.pk}/support-replies'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        packet = options.json()
+        self.assertTrue(packet['can_record'])
+        command = {**{key: packet[key] for key in ('expected_revision', 'case_revision')},
+            'receipt_id': receipt(f).pk, 'previous_id': None, 'status': 'received', 'evidence_id': f.reply_proof.pk,
+            'note': 'Synthetic Support reply proof reviewed.', 'party': 'SAMPLE Support lead', 'channel': 'email',
+            'responded_at': timezone.now().isoformat(), 'role': 'PM'}
+        issued = self.client.post(api, command, content_type='application/json')
+        self.assertEqual(issued.status_code, 201, issued.content)
+        actual = DeliveryRecord.objects.get(pk=issued.json()['record_id'])
         self.assertEqual(actual.actor_id, f.actor.pk)
         self.assertEqual(actual.data['recipient_id'], f.publisher.pk)
         self.assertEqual(actual.data['attestation']['party'], 'SAMPLE Support lead')
@@ -76,6 +88,9 @@ class HandoverReplyTests(TestCase):
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'verified', f.work.finding)
         self.assertEqual(handover.verify(f.work)['handover_ids'], [actual.pk])
+        reply = self.client.get(api).json()['receipts'][0]
+        self.assertEqual((reply['status'], reply['previous_id'], reply['reply']['party']),
+                         ('received', actual.pk, command['party']))
         self.client.force_login(f.actor)
         page = self.client.get(reverse('factory_detail', args=[f.work.pk]))
         self.assertContains(page, 'SAMPLE Support lead replied by Email')

@@ -116,9 +116,28 @@ class FactoryHypercareTests(TestCase):
         self.assertContains(self.client.post(url,values),'stability rule or source owner changed')
         self.assertEqual(DeliverySource.objects.filter(dossier=f.d).count(),count)
         values['configuration']=form.configuration_id
-        self.assertRedirects(self.client.post(url,values),url)
+        api = f'/api/v1/work/{f.work.pk}/stability'
+        before = self.client.get(api)
+        self.assertEqual(before.status_code, 200, before.content)
+        panel = before.json()
+        self.assertIsNone(panel['qualified'])
+        self.assertIn('Engineering', panel['observation_owners'])
+        draft = self.client.post(api + '/criteria', {'case_revision': panel['case_revision'], 'criteria': panel['criteria'],
+            'evidence_id': f.e['policy_decision'].pk, 'effective_from': timezone.now().isoformat()},
+            content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        self.assertNotEqual(draft.json()['configuration_id'], panel['configuration_id'])
+        panel = self.client.get(api).json()
+        observation = {**{key: panel[key] for key in ('expected_revision', 'case_revision', 'configuration_id')},
+            'owner': 'Engineering', 'observed_at': timezone.now().isoformat(), 'confirmed': True,
+            'reference': 'Corrected synthetic metrics', 'evidence_id': f.e['requirements'].pk,
+            'metrics': {'errors': 0}, 'verify_sample': True}
+        saved = self.client.post(api, observation, content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        self.assertEqual(self.client.post(api, observation, content_type='application/json').status_code, 409)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding)
+        self.assertTrue(self.client.get(api).json()['verified'])
         values.update(revision=f.work.revision,case_revision=rev(f.case),metric_0='2')
         self.assertRedirects(self.client.post(url,values),url)
         f.work.refresh_from_db()

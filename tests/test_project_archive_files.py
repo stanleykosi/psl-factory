@@ -64,7 +64,16 @@ class ArchiveFileTests(TestCase):
 
     def test_selected_files_through_worker_byte_receipts_native_handover_and_factory_verification(self):
         f = self.f
-        plan = reserve(f)
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{f.work.pk}/archive-files'
+        option = self.client.get(api)
+        self.assertEqual(option.status_code, 200, option.content)
+        keys = option.json()
+        self.assertTrue(keys['can_reserve'])
+        queued = self.client.post(api, {**{key: keys[key] for key in ('expected_revision', 'case_revision')},
+            'source_ids': keys['required_source_ids']}, content_type='application/json')
+        self.assertEqual(queued.status_code, 202, queued.content)
+        plan = f.work.file_archives.get(pk=queued.json()['plan_id'])
         with self.assertRaisesMessage(ValidationError, 'Confirm every reserved archive file'):
             delivery_closure.current_archive(f.d)
         factory.run_until_wait(f.work.pk)
@@ -93,6 +102,10 @@ class ArchiveFileTests(TestCase):
         self.assertTrue(result['verified'], result['finding'])
         self.assertEqual(result['confirmed'], 3)
         self.assertEqual(ArchiveCopyReceipt.objects.filter(file__plan=plan).count(), 3)
+        readback = self.client.get(api).json()
+        self.assertTrue(readback['verified'])
+        self.assertEqual({item['receipt']['id'] for item in readback['files']},
+                         set(ArchiveCopyReceipt.objects.filter(file__plan=plan).values_list('pk', flat=True)))
         self.assertEqual(delivery_closure.current_archive(f.d).pk, plan.archive_id)
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()
@@ -166,7 +179,10 @@ class ArchiveFileTests(TestCase):
         with self.assertRaises(ValidationError):
             archive_transfer.retry_missing(f.operator,job.pk,job.revision)
         stale = job.revision
-        archive_transfer.retry_missing(f.actor, job.pk, job.revision)
+        api = f'/api/v1/work/{f.work.pk}/archive-files/{job.pk}/recovery'
+        retried = self.client.post(api, {'revision': job.revision, 'action': 'retry'}, content_type='application/json')
+        self.assertEqual(retried.status_code, 200, retried.content)
+        self.assertEqual(retried.json()['state'], 'pending')
         with self.assertRaises(ValidationError):
             archive_transfer.retry_missing(f.actor, job.pk, stale)
         archive_transfer.run_once(job.pk)
@@ -260,11 +276,11 @@ class ArchiveFileTests(TestCase):
     def test_store_rules_save_as_draft_and_bad_sources_do_not_reserve_effects(self):
         f = self.f
         self.client.force_login(f.actor)
-        url = reverse('factory_detail', args=[f.work.pk])
-        page = self.client.post(url, {'action': 'archive_file_rules', 'revision': f.work.revision,
+        page = self.client.post(f'/api/v1/work/{f.work.pk}/archive-files/rules', {
             'case_revision': rev(f.case), 'adapter': 'synthetic_archive/v1', 'operator_id': f.actor.pk,
-            'max_files': 20, 'max_bytes': 1048576, 'lease_seconds': 30, 'evidence_id': f.e['policy_decision'].pk})
-        self.assertRedirects(page, url)
+            'max_files': 20, 'max_bytes': 1048576, 'lease_seconds': 30, 'evidence_id': f.e['policy_decision'].pk},
+            content_type='application/json')
+        self.assertEqual(page.status_code, 201, page.content)
         from apps.policy.models import Configuration
         draft = Configuration.objects.filter(case=f.case, component=COMPONENT).latest('pk')
         self.assertNotEqual(draft.pk, f.transfer_policy.pk)

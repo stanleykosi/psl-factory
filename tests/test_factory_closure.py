@@ -203,20 +203,28 @@ class FactoryClosureTests(TestCase):
 
     def test_corrected_report_requires_new_head_decision_and_preserves_native_history_and_budget(self):
         f=setup(base=self.base);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();first=closure.document(f.work);old=approve(f)
-        report=f.evidence('closure_report','Corrected synthetic PM closure report')
         self.client.force_login(f.actor)
-        api = f'/api/v1/work/{f.work.pk}/corrections'
-        body = {'line': closure.DEFINITION, 'expected_revision': f.work.revision, 'case_revision': rev(f.case),
-                'source': {'inputs': dict(f.inputs, report_evidence_id=report.pk)},
+        api = f'/api/v1/work/{f.work.pk}/closure-report'
+        body = {'expected_revision': f.work.revision, 'case_revision': rev(f.case),
+                'previous_evidence_id': f.inputs['report_evidence_id'], 'report_text': 'Corrected synthetic PM closure report',
+                'source_reference': 'Synthetic current final report',
                 'reason': 'Correct the PM report before finalisation'}
         corrected = self.client.post(api, body, content_type='application/json')
-        self.assertEqual(corrected.status_code, 200, corrected.content)
+        self.assertEqual(corrected.status_code, 201, corrected.content)
+        report_id = corrected.json()['report_evidence_id']
+        self.assertEqual(f.case.evidence.get(pk=report_id).body, body['report_text'])
         self.assertEqual(self.client.post(api, body, content_type='application/json').status_code, 409)
         spent=f.work.budget_used;factory.run_until_wait(f.work.pk);f.work.refresh_from_db();second=closure.document(f.work)
         self.assertNotEqual(first.pk,second.pk);self.assertEqual(f.work.status,'waiting',f.work.finding)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').exists());self.assertTrue(DeliveryRecord.objects.filter(pk=old.pk).exists())
         approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertGreater(f.work.budget_used,spent);self.assertEqual(f.work.budget_limit,20000)
+        checklist = self.client.get(f'/api/v1/projects/{f.case.pk}/delivery/{f.d.pk}/closure-checklist')
+        self.assertEqual(checklist.status_code, 200, checklist.content)
+        projection = checklist.json()
+        self.assertFalse(projection['ready_to_prepare'])
+        self.assertEqual(projection['recorded_closure_id'], DeliveryRecord.objects.get(dossier=f.d, kind='closure').pk)
+        self.assertEqual(next(row for row in projection['checks'] if row['key'] == 'report')['references'], [report_id])
 
     def test_foreign_private_boolean_and_raw_false_verified_requests_are_rejected(self):
         f=setup(base=self.base)
