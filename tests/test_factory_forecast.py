@@ -223,6 +223,11 @@ class ForecastFactoryTests(TestCase):
         self.assertEqual(response.status_code,302)
         job.refresh_from_db();self.assertEqual(job.status,'unknown')
         self.work.refresh_from_db();self.assertEqual(self.work.status,'waiting_effect')
+        api = self.client.get(f'/api/v1/work/{self.work.pk}')
+        self.assertEqual(api.status_code, 200, api.content)
+        self.assertEqual(api.json()['state'], 'effect_uncertain')
+        self.assertIn('reconcile', api.json()['actions'])
+        self.assertIsNone(api.json()['output_url'])
         self.assertFalse(PublicationReceipt.objects.filter(publication=job.publication).exists())
         self.assertEqual(Publication.objects.filter(factory_work=self.work).count(),1)
 

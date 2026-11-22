@@ -132,6 +132,7 @@ class PayrollRestartTests(TestCase):
         from apps.workflows.models import FactoryPlanningReceipt
         from apps.agents import factory_coordinator as coordinator
         from apps.finance.payroll_models import PayrollRun,PayrollPublication,PayrollReportReceipt
+        from tests.factory_coordinator_helpers import historical_request
         f=self.f;a=f['preparer'];case=f['case'];proof=lambda kind:add_evidence(a,case.pk,kind,'Synthetic opaque payroll planner evidence only','synthetic:payroll-planner')
         with endpoint() as state:
             state['contract_version']=PROTOCOL
@@ -144,11 +145,12 @@ class PayrollRestartTests(TestCase):
                 job=readiness_delivery.reserve(a,case.pk,contract.pk,'payroll-planner-'+kind,kind);readiness_delivery.run_once(case_id=case.pk);job.refresh_from_db();self.assertEqual(job.status,'confirmed')
             assessment=readiness.assess(a,case.pk,contract.pk,'payroll-planner-ready');self.assertTrue(assessment.result['capability_ready'])
             readiness.review(a,case.pk,assessment.pk,'confirm','payroll-planner-ready',proof('integration_review').pk);readiness.select(a,case.pk,contract.pk,proof('integration_selection').pk)
-            p=draft_operator_policy(a,case.pk,'OPS.factory_coordinator',{'mode':'authenticated_planner_v1','contract_id':contract.pk,'planner_id':a.pk,'data_scope':SCOPE,'max_output_chars':2048},f['e']['policy_decision'].pk,timezone.now())
-            transition(a,p.pk,'validated');transition(a,p.pk,'active')
+            legacy=draft_operator_policy(a,case.pk,'OPS.factory_coordinator',{'mode':'authenticated_planner_v1','contract_id':contract.pk,'planner_id':a.pk,'data_scope':SCOPE,'max_output_chars':2048},f['e']['policy_decision'].pk,timezone.now())
+            transition(a,legacy.pk,'validated');transition(a,legacy.pk,'active')
             profile=json.loads(Path('fixtures/factory-payroll.json').read_text());profile.pop('classification');profile['provider']='governed_factory_v1'
             p=draft_operator_policy(a,case.pk,'OPS.factory_payroll_execution',profile,f['e']['policy_decision'].pk,timezone.now());transition(a,p.pk,'validated');transition(a,p.pk,'active')
-            self.start();state['lose_planning_response']=True
+            self.start()
+            attempt = historical_request({'work': self.work, 'coordination': legacy}, state, received=False)
             self.assertFalse(factory.run_once(self.work.pk));self.work.refresh_from_db();self.assertEqual(self.work.status,'waiting_effect',self.work.finding)
             spent=self.work.budget_used;self.assertEqual(state['planning_calls'],1)
             new=capture(f,0,'uncertain-source-replacement',source_version='A-v2')
@@ -162,10 +164,15 @@ class PayrollRestartTests(TestCase):
             self.work.status='cancelled';self.work.save();before=self.rowsets()
             with self.assertRaisesMessage(ValidationError,'Reconcile the original planning response'):self.restart()
             self.assertEqual(before,self.rowsets());self.assertEqual(state['planning_calls'],1)
+            payload = attempt.result['payload']
+            key = attempt.result['operation_key']
+            state['receipts'][key] = {
+                'operation_key': key, 'status': 'succeeded',
+                'result': {'activity': payload['eligible'][0], 'citations': payload['citation_handles'][:1]},
+            }
             coordinator.reconcile(a,self.work.pk,self.work.revision);self.work.refresh_from_db()
             self.assertEqual(self.work.status,'cancelled');self.assertEqual(self.work.budget_used,spent);self.assertEqual(state['planning_calls'],1)
+            self.assertTrue(FactoryPlanningReceipt.objects.get(attempt=attempt).valid)
             self.assertEqual(FactoryPlanningReceipt.objects.count(),1);self.assertFalse(PayrollRun.objects.exists());self.assertFalse(PayrollPublication.objects.exists());self.assertFalse(PayrollReportReceipt.objects.exists())
-            for body in state['planning_inputs']:
-                self.assertEqual(set(body),{'protocol','model_id','data_scope','eligible','citation_handles','tools','token_limit','max_output_chars'})
-                for private in ['E001','E002','employee_id','BU-A',str(case.pk),a.username]:self.assertNotIn(private,json.dumps(body))
+            self.assertEqual(state.get('planning_inputs', []), [])
 

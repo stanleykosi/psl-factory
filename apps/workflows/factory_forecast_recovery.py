@@ -135,6 +135,12 @@ def reconcile(actor, work_id, expected, adapter=None, job_id=None):
             return finish_reconciliation(actor, work, job, jobs)
         if not needs_lookup(job):
             raise ValidationError('No original uncertain forecast delivery needs a receipt check.')
+        # Restore the hold on older work marked Ready while its original effect is uncertain.
+        if work.status == 'ready':
+            work.status = 'waiting_effect'
+            work.revision += 1
+            work.save(update_fields=['status', 'revision', 'updated_at'])
+            expected = work.revision
         event(actor, work.case, 'factory.reconciliation_requested', work=work.pk, publication_job=job.pk)
         pins = work.source_head_id, work.policy_id, work.execution_binding_id, work.cancel_requested
 

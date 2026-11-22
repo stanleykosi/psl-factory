@@ -12,6 +12,8 @@ The complete local `final-api` selection passed all 16 Django and PostgreSQL cas
 
 The two additional Support handover API cases passed on local PostgreSQL in 436.737 seconds, checking six successful operations. The recorded gap led to a revised runbook and a different delivery receipt. The exact accepted successor appeared as the verified outcome and the original gap remained. A direct recipient separately confirmed their exact original receipt and received no execution access.
 
+Finance ran 227 tests in 3551.194 seconds on the same Railway regression deployment, with two failures. A negative forecast receipt lookup left a legacy Ready state in place. The payroll recovery test tried to create a fresh request through the retired external planner. Recovery now holds the original forecast while checking for its receipt. The payroll test now loads an exact historical reservation and requires its valid receipt without a new planner request. The targeted Railway rerun remains recorded separately.
+
 ## OpenAPI client testing pack and state replay · 22 November 2026
 
 The first local pack test reached the native UUID guard. The API now converts the validated key to the service's UUID type. The corrected pack and contract run passed all five tests in 14.566 seconds with four successful API operations. It rejected reusing the same file, downloaded the two private originals, verified exact delivery, retained the original deadline through the reminder successor and accepted the client reply through the response API.
