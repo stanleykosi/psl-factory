@@ -3833,6 +3833,42 @@
       "w": 1440,
       "x": 11200,
       "y": 0
+    },
+    "SCR-07-journey-concepts.dc.html": {
+      "expand": "fill",
+      "h": 6340,
+      "page": "open",
+      "title": "Project page · hierarchy and 4 concepts",
+      "w": 1440,
+      "x": 12800,
+      "y": 0
+    },
+    "SCR-07-agentic-concepts.dc.html": {
+      "expand": "fill",
+      "h": 5540,
+      "page": "open",
+      "title": "Agent-led project page · references and 4 concepts",
+      "w": 1440,
+      "x": 14400,
+      "y": 0
+    },
+    "SCR-07-status-first-directions.dc.html": {
+      "expand": "fill",
+      "h": 5180,
+      "page": "open",
+      "title": "Status first · 4 visual directions",
+      "w": 1440,
+      "x": 16000,
+      "y": 0
+    },
+    "SCR-07-tabs-dark-band.dc.html": {
+      "expand": "fill",
+      "h": 7140,
+      "page": "open",
+      "title": "Project tabs · dark status band",
+      "w": 1440,
+      "x": 17600,
+      "y": 0
     }
   },
   "createdOnFiles": {
@@ -5085,7 +5121,11 @@
     "SCR-02-desktop-history.dc.html",
     "SCR-02-mobile-history.dc.html",
     "SCR-03-done-concepts.dc.html",
-    "UPLOAD-concepts.dc.html"
+    "UPLOAD-concepts.dc.html",
+    "SCR-07-journey-concepts.dc.html",
+    "SCR-07-agentic-concepts.dc.html",
+    "SCR-07-status-first-directions.dc.html",
+    "SCR-07-tabs-dark-band.dc.html"
   ],
   "pages": [
     {
