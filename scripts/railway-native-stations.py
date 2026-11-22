@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api')
 
 
 def run(group, token, role_access):
@@ -197,6 +197,13 @@ def run(group, token, role_access):
                    'tests.test_factory_rfp_pricing.FactoryBidAdjustmentTests.test_api_adjustment_recalculates_current_bid_without_reusing_old_human_decisions',
                    'tests.test_rfp_answers.RFPAnswerTests.test_api_answer_review_and_verified_winning_handoff',
                    'tests.test_rfp_submission_pack.RFPSubmissionPackTests.test_pack_draft_return_and_exact_review_preserve_legacy_snapshot']
+    elif group == 'private-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_factory_bu.FactoryBUTests.test_api_private_event_through_reviewed_aggregate_and_original_recipient',
+                   'tests.test_factory_bu.FactoryBUTests.test_focused_staff_reviews_publication_and_private_recipient_receipt',
+                   'tests.test_factory_ledger.FactoryLedgerTests.test_api_incumbent_observation_independent_review_and_private_readback',
+                   'tests.test_factory_ledger_observation_proof.LedgerObservationProofTests.test_api_private_proof_round_trip_remains_unverified',
+                   'tests.test_ledger_resolution.LedgerResolutionTests.test_api_duplicate_resolution_requires_independent_review_and_fresh_original_check']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

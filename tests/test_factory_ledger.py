@@ -49,6 +49,43 @@ class FactoryLedgerTests(TestCase):
         review(f,x,'reject');self.assertTrue(flow.projection(f['actor'],self.work)['readiness_changed'])
         with self.assertRaises(ValidationError):flow.verify(self.work,f['actor'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_api_incumbent_observation_independent_review_and_private_readback(self):
+        self.start()
+        self.advance()
+        f = self.f
+        lineage = flow.lineage(self.work)
+        values = {key: lineage.payload[key] for key in ('provider', 'realm', 'entity', 'source_reference',
+                  'target_reference', 'transaction_date', 'accounting_period', 'treatment_evidence_id')}
+        values.update(state='found', observed_at=(timezone.now() - timedelta(seconds=1)).isoformat(), incumbent_version='sync-api')
+        url = f'/api/v1/work/{self.work.pk}/incumbent-reference'
+        self.client.force_login(f['actor'])
+        saved = self.client.post(f"/api/v1/projects/{f['case'].pk}/incumbent-evidence", {
+            'case_revision': rev(f['case']), 'kind': 'quickbooks_verification', 'value': values},
+            content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertTrue(page.json()['can_observe'])
+        command = {key: page.json()[key] for key in ('expected_revision', 'case_revision', 'lineage_id')}
+        observed = self.client.post(url, {**command, 'action': 'observe', 'evidence_id': saved.json()['id'], 'outcome': 'found'},
+                                    content_type='application/json')
+        self.assertEqual(observed.status_code, 201, observed.content)
+        self.client.force_login(f['reviewer'])
+        current = self.client.get(url).json()
+        self.assertIn('approve', current['review_options'])
+        decision = self.client.post(url, {'action': 'review', 'check_id': observed.json()['record_id'],
+            'expected_revision': current['expected_revision'], 'case_revision': current['case_revision'],
+            'evidence_id': f['e'].pk, 'verdict': 'approve', 'reason': 'Independent review of this supplied reference.'},
+            content_type='application/json')
+        self.assertEqual(decision.status_code, 201, decision.content)
+        self.advance()
+        current = self.client.get(url)
+        self.assertEqual(current.status_code, 200, current.content)
+        self.assertEqual(current.json()['verified']['incumbent']['incumbent_version'], 'sync-api')
+        self.assertFalse(current.json()['verified']['posting_performed'])
+        Grant.objects.filter(case=f['case'], user=f['reviewer'], action='ledger.private.read').update(active=False)
+        self.assertIn(self.client.get(url).status_code, (403, 404))
     def test_private_reader_and_generic_disclosure_denied(self):
         self.accepted();f=self.f
         self.assertFalse(public_evidence(Evidence.objects.all()).filter(pk=self.work.source_head_id).exists());self.assertFalse(public_agent_runs(AgentRun.objects.all()).filter(process_id='F01').exists())

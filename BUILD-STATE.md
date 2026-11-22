@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI business units and incumbent lineage · 22 November 2026
+
+OpenAPI 1.17.0 defines 341 operations on 241 paths. Eleven additions cover private incumbent records, exact observation proof, independent duplicate review and correction, and business-unit intake, review and delivery receipts. The screen map covers SCR-57 and SCR-58 and leaves 14 groups across 84 states with API gaps. The full 262-state Railway API acceptance remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI bid response, pricing and submission · 22 November 2026
 
 OpenAPI 1.16.0 defines 330 operations on 234 paths. Ten additions expose source-owned requirement answers and outcome comparison, independent pricing adjustments and reviewed Security estimates, and exact private PDF and submission receipts. The screen map covers SCR-26, SCR-27 and SCR-40. Sixteen groups covering 97 design states still need API work. Full Railway API acceptance across all 262 states remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

@@ -1,10 +1,14 @@
 # PSL Operations Factory handoff
 
+## Business-unit and private incumbent controls · 22 November 2026
+
+OpenAPI 1.17.0 exposes current business-unit options and certified event intake, independent restricted aggregate review and a named recipient's receipt. Incumbent lineage retains typed source and observed verification evidence, current private proof, independent review and separate duplicate disposition. The API applies the same current native permission and source controls as Django. Local PostgreSQL, official schema and TypeScript checks passed. Railway `private-api` is pending. Fourteen groups across 84 design states have API gaps at this checkpoint. Continue payroll matching and validation intake plus Setup, then the cross-workflow queues, signed commercial and Planning actions. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## Bid responses, pricing and submission · 22 November 2026
 
 OpenAPI 1.16.0 adds ten operations. Requirement answer drafts start from exact citations and have human decisions, edits and restoration. Pricing uses the current reviewed calculation and applies bounded adjustments to successor work. Security estimates preserve reviewed wording, configured destination and original delivery evidence. The submission resource provides current private PDF download, approval and original receipt, and queues the existing publisher only when current controls permit it. Award comparison and verified conversion use the original submitted version. [Contract](contracts/psl-factory.openapi.json)
 
-Railway `bid-api` awaits results on the frozen increment. Sixteen groups across 97 design states still have API gaps. Continue with restricted business-unit and incumbent-reference views and controls, then the cross-workflow queues and project, signed commercial and Planning controls. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+Railway `bid-api` passed all eight tests. The web and worker run `6ce7abd2` and the hosted contract matches the snapshot. Sixteen groups across 97 design states had API gaps at this checkpoint. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
 
 ## Issue ownership and ordinary change · 22 November 2026
 

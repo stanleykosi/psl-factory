@@ -1,8 +1,14 @@
 # Actual test execution ledger
 
+## OpenAPI business units and incumbent lineage · 22 November 2026
+
+Local PostgreSQL verified five successful business-unit API responses from scoped choices through the recipient receipt in 70.922 seconds. Three incumbent tests passed in 47.194 seconds and covered independent review, exact private proof and current duplicate resolution. Five additional tests passed in 31.559 seconds, covering evidence capture and the four contract checks. The official schema and TypeScript generation passed. Railway `private-api` is pending.
+
 ## OpenAPI bid response, pricing and submission · 22 November 2026
 
-Two local PostgreSQL bid pricing and Security request tests passed in 51.085 seconds. The adjusted bid retained the original decisions and required fresh review. The Security request required the reviewed route and produced one synthetic delivery receipt. The requirement draft through verified award and project route passed locally in 98.346 seconds using a synthetic model response and the same native work and publication services. The private PDF approval and Django regression passed locally in 161.723 seconds, including denial of a route that cannot carry the reviewed PDF. The Railway `bid-api` result is pending.
+Two local PostgreSQL bid pricing and Security request tests passed in 51.085 seconds. The adjusted bid retained the original decisions and required fresh review. The Security request required the reviewed route and produced one synthetic delivery receipt. The requirement draft through verified award and project route passed locally in 98.346 seconds using a synthetic model response and the same native work and publication services. The private PDF approval and Django regression passed locally in 161.723 seconds, including denial of a route that cannot carry the reviewed PDF.
+
+Railway `bid-api` passed all eight tests in 150.167 seconds on `6ce7abd2` with 12 successful schema-checked operations. Django system and migration checks, official schema validation and TypeScript generation passed. Web deployment `cfb63e55-aea1-428a-9768-6948c604709c` returned the exact contract, health 200, Django sign-in 200, session 200 and an unauthenticated user read 401. Worker deployment `48236c99-adc1-43e1-a1b9-d2bb86c3ea82` reached queue polling. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=d9659cc8-221a-4f44-aa65-410a953c3da9)
 
 ## OpenAPI issue ownership and controlled change · 22 November 2026
 

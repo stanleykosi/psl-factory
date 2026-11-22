@@ -1,10 +1,26 @@
 {
+  "frontend_cutover_private_finance_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.17.0",
+    "live_paths": 241,
+    "live_operations": 341,
+    "added_operations": 11,
+    "completed_groups": ["SCR-57", "SCR-58"],
+    "screen_groups_with_remaining_json": 14,
+    "states_in_groups_with_remaining_json": 84,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Payroll matching and validation intake", "Setup policy drafts and field settings", "Cross-workflow navigation, signed commercial and Planning controls", "Full Railway API acceptance"],
+    "owner_decisions": "Live recipients, accounting authority and mapping rules remain deferred."
+  },
   "frontend_cutover_bid_lifecycle_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.16.0",
     "live_paths": 234,
     "live_operations": 330,
     "added_operations": 10,
+    "railway_tests_passed": 8,
+    "railway_checks_deployment": "d9659cc8-221a-4f44-aa65-410a953c3da9",
     "completed_groups": ["SCR-26", "SCR-27", "SCR-40"],
     "screen_groups_with_remaining_json": 16,
     "states_in_groups_with_remaining_json": 97,

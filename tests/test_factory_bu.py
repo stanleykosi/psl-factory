@@ -55,6 +55,55 @@ class FactoryBUTests(TestCase):
     def test_event_full_chain_selected_population_no_ledger_or_source_writes(self):
         p=self.pipeline('event');self.finish(p);value=bu.native.read_report(self.f['manager'],p.pk)
         self.assertTrue(value['conserved']);self.assertFalse(value['source_written']);self.assertEqual(value['coverage'],'selected_supplied_population_only');self.assertEqual(Decimal(value['company_source_total']),Decimal(value['allocated_total']))
+
+    def test_api_private_event_through_reviewed_aggregate_and_original_recipient(self):
+        from tests.bu_helpers import body
+
+        f = self.f
+        self.client.force_login(f['preparer'])
+        case = f['case']
+        intake = f'/api/v1/projects/{case.pk}/business-unit-intake'
+        value = json.loads(body(f))
+        scope = {key: value[key] for key in ('entity', 'period', 'currency')}
+        created = self.client.post(intake, {'case_revision': rev(case), 'reference': 'BU-event-api',
+            'operation_key': 'BU-test-1', 'scope': scope, 'export': value}, content_type='application/json')
+        self.assertEqual(created.status_code, 201, created.content)
+        self.assertTrue(created.json()['accepted'])
+        row = BUWork.objects.get(pk=created.json()['id'])
+        choices = self.client.get(intake)
+        self.assertEqual(choices.status_code, 200, choices.content)
+        self.assertIn(row.pk, [entry['id'] for entry in choices.json()['events']])
+        inputs = {'mode': 'event', 'payroll_id': None, 'source_id': row.pk, 'rule_ids': [], 'comparison': None}
+        self.work = bu.start(f['preparer'], case.pk, 'BU-event-api-work', inputs, 'BU event source', rev(case))
+        self.advance()
+        url = f'/api/v1/work/{self.work.pk}/business-units'
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertEqual(page.json()['stage'], 'source_review')
+        review(f, row)
+        self.advance()
+        prepared = bu.result(self.work)
+        self.assertIsNotNone(prepared)
+        review(f, prepared)
+        self.advance()
+        page = self.client.get(url).json()
+        self.assertTrue(page['can_publish'])
+        published = self.client.post(url, {'action': 'publish', 'expected_revision': page['expected_revision'],
+            'case_revision': page['case_revision']}, content_type='application/json')
+        self.assertEqual(published.status_code, 201, published.content)
+        report_id = published.json()['record_id']
+        self.client.force_login(f['manager'])
+        receipt = self.client.get(url)
+        self.assertEqual(receipt.status_code, 200, receipt.content)
+        self.assertTrue(receipt.json()['recipient_only'])
+        self.assertIsNone(receipt.json()['inputs'])
+        self.assertIsNone(receipt.json()['result'])
+        saved = self.client.post(f'/api/v1/work/{self.work.pk}/aggregate-receipt', {'publication_id': report_id},
+                                 content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content)
+        self.advance()
+        self.assertEqual(self.work.status, 'verified')
+        self.assertEqual(self.client.get(url).json()['receipt_id'], saved.json()['receipt_id'])
     def test_unreviewed_rule_wait_and_no_automatic_approval(self):
         self.start(approved=False);self.advance();self.assertEqual(bu.report(self.work)['stage'],'source_review');self.assertIsNone(bu.result(self.work));self.assertFalse(self.rule.reviews.exists())
         review(self.f,self.rule);self.advance();self.assertIsNotNone(bu.result(self.work))

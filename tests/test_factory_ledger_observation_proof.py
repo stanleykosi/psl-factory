@@ -17,6 +17,31 @@ from tests.helpers import rev
 
 
 class LedgerObservationProofTests(TestCase):
+    def test_api_private_proof_round_trip_remains_unverified(self):
+        trial = get_user_model().objects.create_user(sample.TRIAL)
+        with patch.dict('os.environ', {sample.GUARD: '1'}):
+            data = sample.prepare()
+        work = FactoryWork.objects.select_related('case').get(pk=data['work'])
+        self.client.force_login(trial)
+        url = f'/api/v1/work/{work.pk}/incumbent-reference'
+        payload = {'expected_revision': work.revision, 'case_revision': rev(work.case),
+                   'lineage_id': data['lineage'], 'evidence_id': data['observations']['multiple'], 'outcome': 'multiple',
+                   'file': SimpleUploadedFile(sample.PNG_NAME, sample.PNG_BYTES, content_type='image/png')}
+        with patch('adapters.case_uploads.put') as store:
+            submitted = self.client.post(url + '/observations', payload)
+        self.assertEqual(submitted.status_code, 201, submitted.content)
+        store.assert_called_once()
+        check_id = submitted.json()['record_id']
+        readback = self.client.get(url)
+        self.assertEqual(readback.status_code, 200, readback.content)
+        self.assertTrue(readback.json()['has_attachment'])
+        self.assertIsNone(readback.json()['verified'])
+        with patch('adapters.case_uploads.read', return_value=sample.PNG_BYTES):
+            response = self.client.get(f'{url}/observations/{check_id}')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(b''.join(response.streaming_content), sample.PNG_BYTES)
+        self.assertFalse(LedgerDecision.objects.filter(verification_id=check_id, verdict='approve').exists())
+
     def test_optional_empty_multipart_file_is_treated_as_no_attachment(self):
         trial = get_user_model().objects.create_user(sample.TRIAL)
         with patch.dict('os.environ', {sample.GUARD: '1'}):

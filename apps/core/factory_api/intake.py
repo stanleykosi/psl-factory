@@ -114,7 +114,8 @@ WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1
                    'pmo-leadership-report/v1': 'leadership-report-intake', 'pmo-escalation/v1': 'escalation-register',
                    'engagement/v1': 'engagement-intake', 'finance-payroll/v1': 'payroll/requests',
                    'finance-accounts/v1': 'accounting-intake', 'finance-ppe/v1': 'asset-registers',
-                   'pmo-change/v1': 'ordinary-changes', 'pmo-issues/v1': 'issues'}
+                   'pmo-change/v1': 'ordinary-changes', 'pmo-issues/v1': 'issues',
+                   'finance-bu/v1': 'business-unit-intake', 'finance-ledger/v1': 'incumbent-resolutions'}
 
 
 def start_projects(actor, line):
