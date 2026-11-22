@@ -234,6 +234,8 @@ def run(group, token, role_access):
                    'tests.test_invoice_walkthrough_stations.InvoiceWalkthroughStationTests.test_browser_lookup_miss_then_original_witness_never_sends_another_issue',
                    'tests.test_invoice_milestone_proof.InvoiceMilestoneProofTests.test_private_pdf_and_successor_unlock_only_exact_draft_and_finance_review',
                    'tests.test_factory_invoice_draft_cancellation.InvoiceDraftCancellationTests.test_same_obligation_issued_invoice_is_linked_with_exact_cancellation_history',
+                   'tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access',
+                   'tests.test_handover_replies.HandoverReplyTests.test_gaps_source_successor_and_exact_received_reply_preserve_original_history',
                    'tests.test_hr_handoff_api', 'tests.test_railway_worker']
     elif group == 'surface':
         required = set()

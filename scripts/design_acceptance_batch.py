@@ -153,20 +153,26 @@ def main():
     return run_tests(labels, settings=args.settings, api_contract=args.api_contract)
 
 
-def run_tests(labels, *, settings=None, env=None, api_contract=False):
+def run_tests(labels, *, settings=None, env=None, api_contract=False, log_group=None):
     command = [sys.executable, 'manage.py', 'test', *labels, '--keepdb', '--noinput', '--verbosity', '2']
     if settings:
         command.extend(['--settings', settings])
     if api_contract:
         command.extend(['--testrunner', 'tests.api_contract_runner.ContractRunner'])
-    return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
+    if log_group is None:
+        return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
+    with subprocess.Popen(command, cwd=ROOT, env=env, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='replace') as process:
+        for line in process.stdout:
+            print(f'[{log_group}] {line}', end='', flush=True)
+        return process.wait()
 
 
 def run_group(name, *, api_contract=False):
-    env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': name}
+    env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': name, 'PYTHONUTF8': '1'}
     print(f'PSL_GROUP_STARTED={name}', flush=True)
     status = run_tests([f'tests.test_{module}' for module in SUITES[name]],
-                       settings='config.design_batch_settings', env=env, api_contract=api_contract)
+                       settings='config.design_batch_settings', env=env, api_contract=api_contract, log_group=name)
     print(f'PSL_GROUP_EXIT={name}:{status}', flush=True)
     return status
 

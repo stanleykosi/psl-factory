@@ -4,7 +4,7 @@
 
 Use GitHub main and OpenAPI 1.20.0. All 41 tracked implementation gaps are closed in the screen inventory. Its 59 groups and 262 state IDs resolve to mounted API routes. Railway web `b33da1c8-99d0-44ea-b46c-2984642ae99e` and worker `00775505-f22a-40bd-ab61-b40bc7f4e080` run application revision `ba71110c`. Later changes to tests and build records are separate from the application revision. Django sign-in, health and the deployed contract passed their checks.
 
-Follow the isolated Railway deployment `aa5c5593-adfe-4f6d-8642-929a01b5b550` for the grouped regression. Commercial passed 152 tests. The `final-api` stage adds exact bid receipt, template replacement and Human Resources to Finance handoff checks, plus the corrected Change test, work queue and invoice variants, and the worker probe.
+Follow the isolated Railway deployment `aa5c5593-adfe-4f6d-8642-929a01b5b550` for the grouped regression. Commercial passed 152 tests and shared work passed 184. The `final-api` stage adds exact bid receipt, template replacement and Human Resources to Finance handoff checks, plus the corrected Change test, work queue and invoice variants, Support handover successors, and the worker probe. Local application and Linux worker results are in the test ledger.
 
 The historical 262-state Railway Django acceptance is preserved in the browser ledger. A fresh, individual API replay for all 262 states remains open. Use each state’s legal actors, required decisions, original receipts and retained successor history to match evidence across existing suites and exercise the specific branches without evidence. Keep the in-use Django pages working. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
 

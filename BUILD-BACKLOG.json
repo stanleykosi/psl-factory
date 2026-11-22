@@ -13,8 +13,9 @@
     "historic_django_walkthroughs": 262,
     "railway_grouped_regression": "aa5c5593-adfe-4f6d-8642-929a01b5b550",
     "railway_confirmed_commercial_tests": 152,
+    "railway_confirmed_shared_tests": 184,
     "test_record": "BUILD-TESTS.md",
-    "next": ["Record final results for delivery, Finance and shared Railway groups", "Run the exact final API and worker probes", "Close remaining direct API state evidence"],
+    "next": ["Record final results for delivery and Finance Railway groups", "Run the exact final API and worker probes", "Close remaining direct API state evidence"],
     "owner_decisions": "Live reviewers, contact routes and external delivery remain deferred."
   },
   "frontend_cutover_work_and_project_journeys_20261122": {

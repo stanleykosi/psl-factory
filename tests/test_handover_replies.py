@@ -110,27 +110,53 @@ class HandoverReplyTests(TestCase):
     def test_gaps_source_successor_and_exact_received_reply_preserve_original_history(self):
         f = self.f
         configure(f)
-        gaps = self.reply('gaps', note='Synthetic runbook needs an export restart instruction.')
+        self.client.force_login(f.actor)
+        work_url = f'/api/v1/work/{f.work.pk}'
+        reply_url = work_url + '/support-replies'
+
+        def record_current_reply(status, note):
+            response = self.client.get(reply_url)
+            self.assertEqual(response.status_code, 200, response.content)
+            options = response.json()
+            self.assertTrue(options['can_record'])
+            delivery = next(item for item in options['receipts'] if item['id'] == receipt(f).pk)
+            body = {key: options[key] for key in ('expected_revision', 'case_revision')}
+            body.update(receipt_id=delivery['id'], previous_id=delivery['previous_id'], status=status,
+                        evidence_id=f.reply_proof.pk, note=note, party='SAMPLE Support lead',
+                        channel='email', responded_at=timezone.now().isoformat(), role='PM')
+            saved = self.client.post(reply_url, body, content_type='application/json')
+            self.assertEqual(saved.status_code, 201, saved.content)
+            return saved.json()['record_id']
+
+        gaps = record_current_reply('gaps', 'Synthetic runbook needs an export restart instruction.')
         with self.assertRaises(ValidationError):
             handover.verify(f.work)
         previous_receipt = receipt(f)
         previous_document = handover.document(f.work)
         updated = f.evidence('support_document', 'SAMPLE runbook v2 includes the reviewed export restart instruction.')
         f.work.refresh_from_db()
-        handover.correct(f.actor, f.work.pk, f.work.revision, rev(f.case),
-            dict(f.inputs, support_document=updated.pk), 'Address the exact evidenced Support gap.')
+        correction = self.client.post(work_url + '/corrections', {
+            'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'line': f.work.definition,
+            'source': {'inputs': dict(f.inputs, support_document=updated.pk)},
+            'reason': 'Address the exact evidenced Support gap.',
+        }, content_type='application/json')
+        self.assertEqual(correction.status_code, 200, correction.content)
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()
         self.assertNotEqual(receipt(f).pk, previous_receipt.pk)
         current_document = handover.document(f.work)
         self.assertEqual(current_document.document_id, previous_document.document_id)
         self.assertEqual(current_document.number, previous_document.number + 1)
-        received = self.reply()
+        received = record_current_reply('received', 'Synthetic corrected handover received.')
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'verified', f.work.finding)
-        self.assertEqual(handover.verify(f.work)['handover_ids'], [received.pk])
-        self.assertTrue(DeliveryRecord.objects.filter(pk=gaps.pk, data__status='gaps').exists())
+        self.assertEqual(handover.verify(f.work)['handover_ids'], [received])
+        self.assertTrue(DeliveryRecord.objects.filter(pk=gaps, data__status='gaps').exists())
+        projected = self.client.get(work_url).json()
+        self.assertEqual((projected['state'], projected['output_url']), ('verified', work_url + '/support-receipt'))
+        current_reply = self.client.get(reply_url).json()['receipts'][0]
+        self.assertEqual((current_reply['previous_id'], current_reply['status']), (received, 'received'))
 
     def test_current_role_policy_source_permission_and_reply_predecessor_are_rechecked(self):
         f = self.f
