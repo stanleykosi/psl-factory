@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Management workspace access · 22 November 2026
+
+Use `build/design-consolidation`. A current PMO Lead, Finance Lead, CEO or CTO can browse and open every project workspace in their organisation and data classification. PMO and Finance Leads can prepare work permitted by their own roles in any of those projects. The process directory explains when a source action requires a separate permission. The linked tracking page filters by process and checks original-record access. Individual approver appointments, protected HR and payroll sources, team invitations and owner policy controls keep their existing checks. [API contract](docs/design/frontend-api.md#pmo-and-finance-process-access)
+
+Railway design acceptance runs `3b798055`. Web is `5638b51c-c360-4153-ab1b-5bbd3c08d7cb` and worker is `c5ddd5df-1c15-4005-902a-e9d730127c3f`. The matching checks deployment `d0071802-7357-4538-8af1-6c2b4ff11104` passed 22 PostgreSQL tests. Reproduce the checks using `scripts/stage_railway_role_checks.py checks --revision 3b798055 --group directory`. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/) · [Test ledger](BUILD-TESTS.md)
+
 ## Automatic process navigation · 22 November 2026
 
 Use `build/design-consolidation`. In Start work, open **Find a process**. All 63 automatic entries explain the source action and link to its screen and **Track in Department handoffs**. If several projects are accessible, the link opens a project picker. Tracking is filtered to the selected process and opens the same verified work detail and receipt. The 25 Start work types and separate received-bid intake use their existing flows. The matching API uses `guide` on `GET /api/v1/processes` and optional `process` on project handoffs. [Frontend contract](docs/design/frontend-api.md#pmo-and-finance-process-access)

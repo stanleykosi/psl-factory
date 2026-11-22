@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Management workspace access · 22 November 2026
+
+PMO Lead, Finance Lead, CEO and CTO can open every project workspace in their organisation. The department leads can use their existing preparation permissions across those projects. **Projects**, **Find a process** and **Department handoffs** share that scope. If a source action requires separate permission, the guide still opens the workspace and its tracking view. Team, approval and protected-source checks continue to apply. [Role operating model](guide/11-FULL-PRODUCT.md#role-based-work-and-supervision)
+
+Railway design acceptance serves `3b798055` on web deployment `5638b51c-c360-4153-ab1b-5bbd3c08d7cb` and worker deployment `c5ddd5df-1c15-4005-902a-e9d730127c3f`. All 22 Railway PostgreSQL tests passed. No schema migration was required. [Actual checks](BUILD-TESTS.md)
+
 ## Automatic process navigation · 22 November 2026
 
 Start work → **Find a process** now explains exactly which action or source receipt starts each of the 63 automatic processes. Each entry links to its native action and to the project’s **Department handoffs** filtered to that process. The 108-entry catalogue, the 25 Start work types and the separately delegated received-bid intake all remain available under their existing access rules. The API exposes the same guide and filter. [Frontend contract](docs/design/frontend-api.md#pmo-and-finance-process-access)

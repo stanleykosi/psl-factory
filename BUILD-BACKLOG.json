@@ -1,4 +1,15 @@
 {
+  "management_workspace_access_20261122": {
+    "scope": "Organisation-wide project workspace access for PMO Lead, Finance Lead, CEO and CTO, with existing department and protected work permissions",
+    "status": "verified_on_railway_design_acceptance",
+    "application_revision": "3b798055",
+    "checks_deployment": "d0071802-7357-4538-8af1-6c2b4ff11104",
+    "web_deployment": "5638b51c-c360-4153-ab1b-5bbd3c08d7cb",
+    "worker_deployment": "c5ddd5df-1c15-4005-902a-e9d730127c3f",
+    "passing_railway_postgres_tests": 22,
+    "test_record": "BUILD-TESTS.md",
+    "owner_decisions": "Native appointments, reviews, disclosure and external effects remain with their existing owners."
+  },
   "automatic_process_navigation_20261122": {
     "scope": "Source actions, screen links and project-scoped tracking for all source-triggered PMO and Finance processes",
     "status": "verified_on_railway_design_acceptance",

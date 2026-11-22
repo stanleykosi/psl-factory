@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Removed the per-project workspace access barrier for PMO Lead, Finance Lead, CEO and CTO in their organisation. Extended the department leads’ existing preparation permissions to those projects and corrected process guides that still used the legacy project check. Deployed matching web and worker versions to Railway design acceptance. [Test results](BUILD-TESTS.md)
+
 22 November 2026. Connected the 63 automatic processes to their exact source actions and process-filtered project handoffs from Start work. Added matching API metadata and protected project selection. Released the web update on Railway design acceptance after source navigation checks and verified the hosted API contract. [Directory contract](docs/design/frontend-api.md#pmo-and-finance-process-access) · [Test runs](BUILD-TESTS.md)
 
 22 November 2026. Replaced new external-planner dispatch with an OpenRouter coordinator for the embedded specialist team. It orders the required roles, chooses evidence to prioritise and checks the cited private reports. The backend keeps source authority, review, approvals and native receipts. Zainab can cite the acknowledgement of a handoff approved by her signed-in HR principal. Verified live loops for Tola, Chidi and Zainab on Railway, including a quality finding routed to the named reviewer. [Implementation and policy](docs/design/coordinator-specialists.md) · [Actual tests](BUILD-TESTS.md)

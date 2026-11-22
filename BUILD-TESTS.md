@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Management workspace access · 22 November 2026
+
+Railway checks deployment `d0071802-7357-4538-8af1-6c2b4ff11104` passed all 22 PostgreSQL tests in 275.688 seconds on revision `3b798055`. The tests used signed-in synthetic accounts to open sibling workspaces for all four management roles, verify company and sample boundaries, open 15 department source screens, start an eligible PMO engagement, reject protected HR source access and remove access when a role is revoked. The process directory retained all 108 entries and 25 Start work types. Existing checks verified private Finance acknowledgement and original PMO work and receipt access. Django and migration drift checks passed. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=d0071802-7357-4538-8af1-6c2b4ff11104)
+
+The first local run found an incompatible combination of project queries. After matching their uniqueness settings, the 10-test regression passed in 119.191 seconds. The final three management tests passed in 16.786 seconds. Three more local tests passed in 52.749 seconds and exercised independent native Invoice and Planning decisions and department-scoped staff invitations. The matching Railway web and worker deployments succeeded. Health, sign-in and the updated Start work script returned HTTP 200. The signed-out workspace API returned HTTP 401 and the source link redirected to sign-in.
+
 ## Automatic process navigation · 22 November 2026
 
 Railway checks deployment `c452ab3d-3656-4b31-a284-22ee86bc1714` ran revision `55418faa` and passed 18 PostgreSQL tests in 265.362 seconds. Authenticated Django and API checks covered 63 trigger and tracking links, 22 actual action screens, the 25 Start work types and the six staff roles with separate PMO and Finance member accounts. Two automatic works in one project demonstrated exact process filtering. Tests also checked a wrong department, an inaccessible project, a rejected filter and signed-out requests. Django system checks and migration drift checks passed. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=c452ab3d-3656-4b31-a284-22ee86bc1714)

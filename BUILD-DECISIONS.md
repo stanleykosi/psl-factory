@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. PSL opened every project workspace in the current organisation to its PMO Lead, Finance Lead, CEO and CTO. Sample and operational projects have separate audiences. The department leads carry their existing department preparation rights across those workspaces. The role does not create project appointments, decision authority or protected source access. Team members, HR and Admin retain their existing scope.
+
 22 November 2026. Put entry-point guidance for the 63 source-triggered processes in Start work → Find a process. Each entry links to a native action and the project’s filtered Department handoffs. The same guide is returned by the process API. Source screens keep their existing project and command permissions. The handoff list checks the original record, evidence and current department access before showing an item. This navigation grants neither publication authority nor any new process intake.
 
 22 November 2026. PSL selected OpenRouter as the coordinator’s model provider. The coordinator prioritises every required specialist and proposes a source focus for each. It checks their private findings against cited material before the handoff. The domain services continue to enforce source access, assignments, financial rules, human approvals and verification of the receiving record. Historical requests to the retired planning service can still be checked by original receipt. Each operational project’s source disclosure and named authority remain owner decisions.
