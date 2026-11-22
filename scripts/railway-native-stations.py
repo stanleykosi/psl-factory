@@ -61,7 +61,7 @@ def run(group, token, role_access):
             'tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance',
             'tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access',
         ]
-    elif group == 'project-records':
+    elif group == 'project-api':
         modules = [
             'tests.test_factory_api.ContractTests',
             'tests.test_factory_api_project_records', 'tests.test_work_access_requests',
@@ -93,7 +93,7 @@ def run(group, token, role_access):
     if group == "accounts":
         modules.append("tests.test_finance_import_projection")
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
-    if group in ('directory', 'cutover', 'project-records'):
+    if group in ('directory', 'cutover', 'project-api'):
         cmd += ["--testrunner", "tests.api_contract_runner.ContractRunner"]
     observed = set()
     role_observed = set()
@@ -109,7 +109,7 @@ def run(group, token, role_access):
         print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
         if observed != required:
             return False
-    if role_access and group not in ('surface', 'directory', 'cutover', 'project-records'):
+    if role_access and group not in ('surface', 'directory', 'cutover', 'project-api'):
         print(f"[{group}] Role reads checked for {len(role_observed)} processes; missing {sorted(required - role_observed)}.", flush=True)
         if role_observed != required:
             return False
@@ -145,7 +145,7 @@ def main():
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
     default_groups = (*SUITES, 'original', 'surface', 'directory') if options.role_access else tuple(SUITES)
-    available = (*default_groups, 'cutover', 'project-records') if options.role_access else default_groups
+    available = (*default_groups, 'cutover', 'project-api') if options.role_access else default_groups
     groups = options.groups or default_groups
     if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")
