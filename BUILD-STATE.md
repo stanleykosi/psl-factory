@@ -6,6 +6,8 @@ OpenAPI 1.4.0 covers 178 operations on 137 paths. The 37 added operations connec
 
 Seven further groups have their mapped JSON actions. The 42 remaining groups include 224 states with at least one group-level gap. Continue with the gaps in the screen map. HOD choices on live values, authority and destinations remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Backlog](BUILD-BACKLOG.json)
 
+Railway design acceptance serves the exact 1.4.0 contract. Isolated PostgreSQL checks recorded successful API responses for all 37 additions across the tested journeys. The prior 262-state Django walkthrough ledger passed its inventory audit. End-to-end API acceptance for the entire inventory is still pending. [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI project records and recovery · 22 November 2026
 
 OpenAPI 1.3.0 adds 26 operations for authorised source selection, private minutes upload and receipts, meeting and retrospective records, project commitments, client legal identity and organisation links, controlled report revisions and release receipts, opaque work access requests and invoice evidence and draft-stop recovery. The Django and JSON paths share their authority, source and revision checks. No migration is required. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)

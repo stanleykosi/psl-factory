@@ -6,6 +6,8 @@ OpenAPI 1.4.0 adds 37 operations, for 178 operations on 137 paths. Use the Plann
 
 Payroll source owners use multipart imports under their current provider nomination. A private reader can page exact current input and working rows. An aggregate recipient keeps their separate receipt path. Use the restricted payroll work resource for hold handling, HR receipt, reviewed publication, withdrawal and a corrected successor. [Frontend handoff](docs/design/frontend-api.md)
 
+Railway web `2caac9eb-e808-42ff-ba17-d1c09c85cdff` runs application revision `522415df`. The served contract matches the checked-in JSON. The isolated suites recorded successful responses for all 37 additions. The initial Planning read limit was fixed and both exact Planning tests passed on Railway. [Test ledger](BUILD-TESTS.md)
+
 Seven further groups now have the mapped JSON actions. The 42 remaining groups include 224 design states with at least one group-level gap. Treat the 262-state Django walkthrough record and the newer API journey evidence separately. Continue with private HR and payroll source corrections, specialist decisions, bid and report commands, broader Finance and Setup. Run the isolated Railway suites using `scripts/stage_railway_role_checks.py checks --revision HEAD --group delivery-api --group payroll-api --group setup-api`. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
 
 ## Project records, source selection and recovery APIs · 22 November 2026
