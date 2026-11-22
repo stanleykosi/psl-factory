@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from contextvars import ContextVar
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from apps.core.models import Case
 from .models import Grant
@@ -29,10 +30,13 @@ def require(actor, case, action):
         raise PermissionDenied('This record/action has no active grant')
     scope = _subject_actions.get()
     if scope and scope[:2] == (actor.pk, case.pk) and action in scope[2]:
-        return
-    if Grant.objects.filter(user=actor, case=case, action=action, active=True).exists():
-        if legacy_projects(actor, Case.objects.filter(pk=case.pk)).exists():
+        if get_user_model().objects.filter(pk=actor.pk, is_active=True).exists():
             return
+        raise PermissionDenied('This record/action has no active grant')
+    cases_with_grant = Case.objects.filter(pk=case.pk, grant__user=actor, grant__action=action,
+                                         grant__user__is_active=True, grant__active=True)
+    if legacy_projects(actor, cases_with_grant).exists():
+        return
     from .factory_access import role_cases
 
     if not role_cases(actor, [action]).filter(pk=case.pk).exists():
@@ -40,7 +44,8 @@ def require(actor, case, action):
 
 
 def visible_cases(actor):
-    return legacy_projects(actor, Case.objects.filter(grant__user=actor, grant__active=True, grant__action='case.read')).distinct()
+    return legacy_projects(actor, Case.objects.filter(grant__user=actor, grant__user__is_active=True,
+                           grant__active=True, grant__action='case.read')).distinct()
 
 
 def legacy_projects(actor, cases):

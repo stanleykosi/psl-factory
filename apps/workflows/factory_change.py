@@ -80,10 +80,6 @@ def start(actor,case_id,key,version_id,inputs,reference,expected=None):
 def authorization(work,data):
     authorization_id=data['inputs']['authorization_id']
     if not authorization_id:raise ValidationError('Await human impact assessment, prescribed decisions and explicit native authorization selection')
-    return checked_authorization(work,authorization_id)
-
-@observed_fact
-def checked_authorization(work,authorization_id):
     return native.get_authorization(work.case,authorization_id)
 
 def document(work,purpose):

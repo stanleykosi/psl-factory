@@ -37,6 +37,12 @@ def run(group, token, role_access):
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',
                    'tests.test_role_scoped_work', 'tests.test_role_guard', 'tests.test_primary_roles',
                    'tests.test_role_eligibility', 'tests.test_finance_document_review',
+                   'tests.test_factory_change.FactoryChangeTests.test_withdrawn_decision_authority_invalidates_selected_authorization',
+                   'tests.test_factory_payroll.FactoryPayrollTests.test_complete_native_path_requires_reviews_human_publication_and_actual_recipient_receipt',
+                   'tests.test_factory_payroll.FactoryPayrollTests.test_current_review_revocation_invalidates_verification',
+                   'tests.test_payroll.PayrollTests.test_recipient_grant_revocation_and_HR_approval_revocation_hold_use',
+                   'tests.test_payroll.PayrollTests.test_policy_and_retention_revocation_hold_current_read_and_report',
+                   'tests.test_payroll.PayrollTests.test_raw_rows_and_salary_values_are_private_to_named_readers',
                    'tests.test_rfp_fresh_intake.FreshBidIntakeTests.test_api_and_form_share_the_original_file_receipt_and_delegation']
     else:
         module, required = SUITES[group]

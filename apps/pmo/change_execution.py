@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case, event, bump
 from apps.documents.controlled import create_version
 from apps.documents.models import Template, PublicationReceipt
@@ -12,8 +13,22 @@ from .services import subject
 
 
 def validate_authorization(case, authorization):
+    change = authorization.version.change
+    if change.case_id != case.pk:
+        raise ValidationError('Change authorization must belong to this case')
+    return checked_authorization_flags(change, authorization.pk)
+
+
+@observed_fact
+def checked_authorization_flags(change, authorization_id):
+    """One exact signed baseline and decision chain for this read-only observation."""
     from .models import Baseline
     from .signatures import assert_current_signed_baseline
+    case = change.case
+    authorization = (ChangeAuthorization.objects.select_related('version__change__case', 'commercial')
+                     .filter(pk=authorization_id, version__change=change).first())
+    if not authorization:
+        raise ValidationError('Change authorization must belong to this case')
     if Baseline.objects.filter(case=case,signed__isnull=False).exists():
         assert_current_signed_baseline(case)
     else:

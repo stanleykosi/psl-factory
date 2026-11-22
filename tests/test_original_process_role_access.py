@@ -34,6 +34,33 @@ def original_fixture(component, cls=None, method=None, *, class_data=False, **kw
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class OriginalProcessRoleAccessTests(TestCase):
+    def test_active_legacy_grant_and_project_scope_are_checked_together(self):
+        from django.contrib.auth import get_user_model
+        from django.core.exceptions import PermissionDenied
+        from apps.core.models import Case
+        from apps.identity.services import require, subject_actions, visible_cases
+
+        case = Case.objects.create(tenant='role-query', title='Role check', kind='project', synthetic=True)
+        other = Case.objects.create(tenant='other', title='Second project', kind='project', synthetic=True)
+        support = Case.objects.create(tenant='role-query', title='Support', kind='support', synthetic=True)
+        user = get_user_model().objects.create_user('legacy-native-source')
+        for selected in (case, support):
+            Grant.objects.create(user=user, case=selected, action='case.read')
+            with self.assertNumQueries(1):
+                require(user, selected, 'case.read')
+        Grant.objects.create(user=user, case=other, action='case.read', active=False)
+        Grant.objects.create(user=user, case=other, action='evidence.add')
+        with self.assertRaises(PermissionDenied):
+            require(user, other, 'case.read')
+        self.assertEqual(set(visible_cases(user)), {case, support})
+        get_user_model().objects.filter(pk=user.pk).update(is_active=False)
+        self.assertTrue(user.is_active)  # Keep the object from before the change.
+        with self.assertRaises(PermissionDenied):
+            require(user, case, 'case.read')
+        with subject_actions(user, case, ['case.read']), self.assertRaises(PermissionDenied):
+            require(user, case, 'case.read')
+        self.assertFalse(visible_cases(user).exists())
+
     def test_source_triggered_work_uses_its_department_detail_and_own_commands(self):
         from . import planning_helpers
         from .native_station_helpers import start_station

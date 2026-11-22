@@ -93,7 +93,10 @@ def checked_run(work,kind,q,data):
     if not r:return None
     parent=run(work,'combine' if kind=='match' else 'match') if kind!='combine' else None
     intent={'input_ids':sorted(data['inputs']['input_ids'])} if kind=='combine' else {'parent_id':parent.pk if parent else None,**({'hr_snapshot_id':data['inputs']['hr_snapshot_id']} if kind=='match' else {})}
-    if r.request_id!=q.pk or r.metadata['intent']!=intent or r.parent_id!=(parent.pk if parent else None):raise ValidationError('Native working result differs from exact factory-selected sources')
+    if (r.request_id!=q.pk or r.metadata['intent']!=intent or r.parent_id!=(parent.pk if parent else None)
+        or sorted(r.metadata['input_ids'])!=sorted(data['inputs']['input_ids'])
+        or kind=='match' and r.hr_snapshot_id!=data['inputs']['hr_snapshot_id']):
+        raise ValidationError('Native working result differs from exact factory-selected sources')
     return r
 
 def reviewed_draft_run(work, request, data, combined, approval_id):
@@ -110,8 +113,14 @@ def publication(work):return PayrollPublication.objects.defer('payload').filter(
 def verify(work,actor=None):
     actor=actor or work.execution_actor;q,data=source(work,actor);a=checked_run(work,'aggregate',q,data);p=publication(work)
     if not a or not p or a.request_id!=q.pk or p.run_id!=a.pk:raise ValidationError('Await exact reviewed aggregate publication')
-    for stage in ['combine','match']:checked_run(work,stage,q,data)
-    native.run_access(actor,a);review=native.current_review(a)
+    if any(not checked_run(work,stage,q,data) for stage in ('combine','match')):
+        raise ValidationError('Exact reviewed payroll source chain required')
+    review=native.current_review(a)
+    native.run_reader(actor,a)
+    return checked_receipts(work,q,a,p,review)
+
+def checked_receipts(work,q,a,p,review):
+    if p.request_id!=q.pk or p.run_id!=a.pk:raise ValidationError('Await exact reviewed aggregate publication')
     policy=active_component(REPORT,work.case);rules=reference_values(policy)[0]
     require(p.actor,work.case,'payroll.publish')
     if p.review_id!=review.pk or p.policy_ids!={**native.authority(p.actor,q,'publish'),REPORT:policy.pk} or PayrollPublication.objects.filter(request=q,version__gt=p.version).exists():raise ValidationError('Publication or authority changed; prepare source-owned replacement')
@@ -127,21 +136,43 @@ def report(work,actor=None):
     actor=actor or work.execution_actor;q,data=source(work,actor);state={'request':q.pk,'inputs':data['inputs'],'stage':'input_review','finding':'','runs':{},'working_runs':{},'publication':None,'receipt_ids':[]}
     available={}
     try:
-        for stage in ['combine','match','aggregate']:
-            r=checked_run(work,stage,q,data)
+        # The final approval validates the original inputs, all three exact runs,
+        # their reviewers and every policy pin. The reader must also qualify for
+        # each private source. Earlier or withdrawn approvals use the staged
+        # checks below so the correct pending decision is still visible.
+        stages=('combine','match','aggregate')
+        final_review=None
+        if run(work,'aggregate'):
+            try:
+                selected={stage:checked_run(work,stage,q,data) for stage in stages}
+                if not all(selected.values()):raise ValidationError('Incomplete payroll working chain')
+                final=selected['aggregate']
+                final_review=native.current_review(final)
+                native.run_reader(actor,final)
+            except (ValidationError,PermissionDenied):
+                final_review=None
+            else:
+                available=selected
+        for stage in stages:
+            r=available.get(stage) if final_review else checked_run(work,stage,q,data)
             if r:
-                native.run_access(actor,r);available[stage]=r
+                if not final_review:native.run_access(actor,r)
+                available[stage]=r
                 state['working_runs'][stage]={'id':r.pk,'sha256':r.sha256,'status':r.metadata['status'],'codes':r.metadata['codes']}
-        for pk in data['inputs']['input_ids']:native.current_review(native.exact(work.case,PayrollInput,pk))
-        for stage in ['combine','match','aggregate']:
+        if not final_review:
+            for pk in data['inputs']['input_ids']:native.current_review(native.exact(work.case,PayrollInput,pk))
+        for stage in stages:
             state['stage']=stage;r=available.get(stage)
             if not r:raise ValidationError('Prepare native '+stage+' working result')
             state['runs'][stage]=state['working_runs'][stage]
-            state['stage']=stage+'_review';native.current_review(r)
+            state['stage']=stage+'_review'
+            if not final_review:
+                decision=native.current_review(r)
+                if stage=='aggregate':final_review=decision
         state['stage']='publish';p=publication(work)
         if not p:raise ValidationError('Await actual Finance publication decision')
-        state['publication']=p.pk;state['stage']='receipt';state['receipt_ids']=list(p.receipts.values_list('pk',flat=True)) if hasattr(p,'receipts') else list(PayrollReportReceipt.objects.filter(publication=p).values_list('pk',flat=True))
-        verify(work,actor);state['stage']='complete'
+        state['publication']=p.pk;state['stage']='receipt';state['receipt_ids']=list(PayrollReportReceipt.objects.filter(publication=p).order_by('pk').values_list('pk',flat=True))
+        checked_receipts(work,q,available['aggregate'],p,final_review);state['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:
         state['finding']=finding(exc)
         combined = available.get('combine')

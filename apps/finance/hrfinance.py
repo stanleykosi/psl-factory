@@ -5,6 +5,7 @@ from uuid import uuid4
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,bump,event
 from apps.identity.services import require
 from apps.identity.models import Grant
@@ -53,6 +54,13 @@ def current_contract(c):
  return c
 
 def authorized(c):
+ return checked_disclosure_approval(c.need,c.pk)
+
+@observed_fact
+def checked_disclosure_approval(need,contract_id):
+ """Reuse the exact signed disclosure, leaving each snapshot and reader check current."""
+ c=HRDisclosure.objects.select_related('need__case').filter(need=need,pk=contract_id).first()
+ if not c:raise ValidationError('Current HR disclosure approval required')
  current_contract(c);r=c.records.filter(kind__in=['approve','return','revoke']).order_by('-pk').first()
  if not r or r.kind!='approve':raise ValidationError('Current HR disclosure approval required')
  require(r.actor,c.need.case,'hrfinance.authorize')
