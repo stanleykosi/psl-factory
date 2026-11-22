@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. A staff member can look up every release process. The project, department membership and current source owner determine which real records they can open. Reading a verified department report rechecks its source and receiving record. Resolving an evidence question requires the appointed reviewer and the current packet digest. The downstream approval still uses the original department service. HR disclosure and Finance acknowledgement refer to the person and snapshot named in the original HR authority.
+
 21 November 2026. O01 uses the source-backed role assignments and native process observations to select specialist teams. A PostgreSQL lease protects each model call. The factory compares cited fields, verifies private file readback and waits for every contributor before a dependent action. An unresolved finding needs a reason from the configured reviewer. An uncertain provider call cannot be automatically resent. Selecting a role or supplying a document grants no model permission. The project owner can authorize the specific model, processes, roles and source projections through versioned project settings.
 
 21 November 2026. Decision 7. Staff receive work alerts inside PSL Factory. PSL will connect WhatsApp and email later.

@@ -4,7 +4,7 @@
 <header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1><p class="lede">Project journey</p></div>{% if not department_links %}<a class="button secondary" href="{% url 'case' case.pk %}">Open project record</a>{% endif %}</header>
 {% include 'design/project_tabs.html' %}
 {% for persona, label in department_links %}<p><a href="{% url 'department_records' persona case.pk %}">{{ label }}</a></p>{% endfor %}
-{% if 'factory.read' in actions and 'agent.extract' in actions %}<p><a href="{% url 'project_handoffs' case.pk %}">Department handoffs</a></p>{% endif %}
+{% department_handoffs_available user case as can_read_handoffs %}{% if can_read_handoffs %}<p><a href="{% url 'project_handoffs' case.pk %}">Department handoffs</a></p>{% endif %}
 {% if engagement %}<p>Project manager <strong>{{ engagement.manager|default_if_none:'Not recorded' }}</strong> · Route {{ engagement.route }} · <a href="{% url 'engagement' case.pk %}">{{ engagement.reference }}</a></p>{% endif %}
 {% if 'engagement.read' in actions or 'finance.read' in actions %}<p><a href="{% url 'design_client_project' case.pk %}">Client contacts</a></p>{% endif %}
 <dl class="workspace-summary project-progress-summary" aria-label="Project progress">

@@ -16,7 +16,8 @@ from .native_station_contracts import DEFINITION, PROCESSES
 def legacy_cases(actor):
     projects = visible_cases(actor)
     for action in ("agent.extract", "factory.read"):
-        projects = projects.filter(pk__in=Grant.objects.filter(user=actor, active=True, action=action).values("case_id"))
+        projects = projects.filter(pk__in=Grant.objects.filter(user=actor, user__is_active=True,
+                                                               active=True, action=action).values("case_id"))
     return projects
 
 

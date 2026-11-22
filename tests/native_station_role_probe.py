@@ -6,6 +6,14 @@ from django.urls import reverse
 from apps.workflows.native_station_contracts import registry
 from tests.process_role_helpers import role_accounts
 
+# These sources require the department's ordinary read capability. Their
+# fixtures have an exact working downstream receipt. A regression that silently
+# makes both the domain service and the API reject all staff must fail here.
+DEPARTMENT_READS = frozenset("""
+    P08 P09 P22 P23 P24 P27 P29 P30 P31 P38 P45 P51 P54 P55 P56 P58 P63
+    F02 F04 F05 F06 F08 F10 F11 F14 F15 F19 F24 F25 F26 F27 F33 F34
+""".split())
+
 
 def verify_roles(test, work, received):
     projects = test.__dict__.setdefault("_station_role_projects", {})
@@ -24,8 +32,9 @@ def verify_roles(test, work, received):
     results = {}
     for key, actor, client in projects[work.case_id]:
         expected = False
-        if (route.process.startswith("P") and key.startswith("pmo_")) or (
-                route.process.startswith("F") and key.startswith("finance_")):
+        own_department = ((route.process.startswith("P") and key.startswith("pmo_"))
+                          or (route.process.startswith("F") and key.startswith("finance_")))
+        if own_department:
             try:
                 current = route.observe(source, actor)
                 expected = current.receipt == received
@@ -34,6 +43,11 @@ def verify_roles(test, work, received):
         public = client.get(f"/api/v1/work/{work.pk}/department-handoff")
         page = client.get(reverse("factory_detail", args=[work.pk]))
         context = f"{route.process}: {key}"
+        hr_basis = route.process == "F19" and bool(source.snapshot.get("hr_basis_access"))
+        if own_department and route.process in DEPARTMENT_READS and not hr_basis:
+            test.assertTrue(expected, f"Ordinary department read unexpectedly denied for {context}")
+        if route.process in {"P05", "F35"}:
+            test.assertFalse(expected, f"A recipient-specific receipt reached an unnamed account for {context}")
         test.assertEqual(public.status_code, 200 if expected else 404, context)
         test.assertEqual(any(t.name == "factory/department_handoff.html" for t in page.templates), expected, context)
         if expected:

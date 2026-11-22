@@ -49,6 +49,8 @@ class NativeRoleAccess(TransactionTestCase):
                     self.assertIsNone(details.json()["receipt"])
                     self.assertIsNone(details.json()["finance_acknowledgement"])
         member = users["pmo_member"]
+        project_page = self.client_for(member).get(reverse("design_project",args=[case.pk]))
+        self.assertContains(project_page, reverse("project_handoffs",args=[case.pk]))
         from apps.identity import teams
         membership = StaffMembership.objects.get(case=case, user=member, active=True)
         teams.revoke(membership.invitation.authority.user, case.pk, membership.pk,
@@ -112,6 +114,10 @@ class NativeRoleAccess(TransactionTestCase):
         record = contract.records.get(kind="receipt",actor=named)
         self.assertEqual(accepted.json(),{"receipt_id":record.pk})
         self.assertEqual(client.post(command,form,content_type="application/json").json(),accepted.json())
+        self.assertRedirects(client.post(reverse("factory_detail",args=[work.pk]),
+                             {"action":"acknowledge_finance",**form}), reverse("factory_detail",args=[work.pk]),
+                             fetch_redirect_response=False)
+        self.assertEqual(contract.records.filter(kind="receipt",actor=named).count(),1)
         self.assertEqual(record.snapshot_id,snapshot.pk)
         self.assertIsNone(client.get(api).json()["finance_acknowledgement"])
         hrfinance.decide(owner,case.pk,contract.pk,"revoke","withdraw-disclosure",proof["hr_disclosure_decision"].pk,rev(case))

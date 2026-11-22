@@ -89,3 +89,5 @@ The separate frontend serves the signed-in work queue and Finance invoice review
 | `GET /api/v1/work/{work_id}/department-handoff` | Read current source evidence, receipt and available decisions. |
 | `POST /api/v1/work/{work_id}/department-handoff/source-review` | Resolve a completed specialist packet as the named information reviewer. |
 | `POST /api/v1/work/{work_id}/department-handoff/finance-acknowledgement` | Acknowledge the exact HR-authorised snapshot as its named Finance recipient. |
+
+For a source-triggered process, the ordinary work detail returns `department_handoff_url`. Follow that link for the permitted evidence and decisions. A missing source, a withdrawn appointment or an unavailable original receipt can change what the same account sees on its next request.

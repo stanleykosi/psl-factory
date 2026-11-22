@@ -49,6 +49,12 @@ def factory_coordination_status(context,work):
     return {'planning':state,'csrf_token':context.get('csrf_token')}
 
 
+@register.simple_tag
+def department_handoffs_available(user, case):
+    from apps.workflows.native_station_access import project_scope
+    return case.kind == "project" and project_scope(user).filter(pk=case.pk).exists()
+
+
 @register.inclusion_tag('factory/background_status.html', takes_context=True)
 def factory_background_status(context, work):
     from django.utils import timezone
