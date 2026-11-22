@@ -10,6 +10,8 @@ Local PostgreSQL passed an exact comparison of eight queue filters, privately sc
 
 The complete local `final-api` selection passed all 16 Django and PostgreSQL cases in 220.167 seconds and checked 25 successful API operations. Its worker supervisor test was skipped on Windows and passed independently on Linux in 3.018 seconds. The probe kept both model queues blocked and confirmed that the native outbox and factory progress consumers still ran. The suite also covered the exact received bid and revocation, versioned project template upload and replacement, original private file evidence, and the named Finance recipient’s acknowledgement of a reviewed Human Resources export.
 
+The two additional Support handover API cases passed on local PostgreSQL in 436.737 seconds, checking six successful operations. The recorded gap led to a revised runbook and a different delivery receipt. The exact accepted successor appeared as the verified outcome and the original gap remained. A direct recipient separately confirmed their exact original receipt and received no execution access.
+
 ## OpenAPI client testing pack and state replay · 22 November 2026
 
 The first local pack test reached the native UUID guard. The API now converts the validated key to the service's UUID type. The corrected pack and contract run passed all five tests in 14.566 seconds with four successful API operations. It rejected reusing the same file, downloaded the two private originals, verified exact delivery, retained the original deadline through the reminder successor and accepted the client reply through the response API.
