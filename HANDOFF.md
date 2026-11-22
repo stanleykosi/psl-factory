@@ -4,6 +4,8 @@
 
 OpenAPI 1.5.0 adds 12 operations. Read and act on a Finance need or exact HR disclosure through `hr-disclosures`. Upload the original UTF-8 export as multipart against its approved disclosure, and read named-recipient rows through a separate paged resource. Read the original approval and receipt and the corrected successor. Use `payroll/reports` for current aggregate-only totals and a recipient receipt, and `payroll/questions` for a participant-scoped review, dispatch, HR reply and acknowledgement. [Frontend handoff](docs/design/frontend-api.md)
 
+Railway web `eaeb5042-a3bb-4cec-b4a6-5e0d7541977e` and worker `63995c22-c580-4657-bc30-2004cf0017f4` run revision `6b9291ee`. The served OpenAPI matches the checked-in snapshot. The HR suite passed all 11 PostgreSQL tests and checked all 12 additions. The prior 262-state Django ledger is a separate acceptance record. [Actual tests](BUILD-TESTS.md)
+
 The 41 groups with remaining API actions cover 223 states. Continue with payroll source-owner corrections and side-by-side matching, then specialist source decisions, the remaining bid and report commands, Finance close and Setup. Run `scripts/stage_railway_role_checks.py checks --revision HEAD --group hr-api` for the connected suite. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Test ledger](BUILD-TESTS.md)
 
 ## Delivery and restricted payroll APIs · 22 November 2026
