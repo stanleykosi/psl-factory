@@ -13,8 +13,8 @@ RUNTIME = ('Dockerfile', 'adapters', 'apps', 'config', 'contracts', 'fixtures', 
            'reference', 'legacy_ui', 'requirements.lock', 'requirements.deploy.txt',
            'SOURCE-MANIFEST.json', 'scripts/railway-worker.sh')
 CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-state-inventory.csv',
-          'architecture/packages/v7/openapi.json')
-GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api', 'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api', 'final-api')
+          'docs/design/api-state-replay-plan.csv', 'architecture/packages/v7/openapi.json')
+GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory', 'cutover', 'api-only', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api', 'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api', 'final-api')
 
 
 def stage(revision, service, groups, coordinator_ticket=None, design_regression=False, replay_suites=(),
@@ -39,8 +39,6 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
         paths += ('scripts/railway-specialist-roles.py',)
     if design_regression or replay_suites:
         paths += ('scripts/design_acceptance_batch.py',)
-    if replay_suites:
-        paths += ('docs/design/api-state-replay-plan.csv',)
     if pending_replays:
         paths += ('docs/design/api-state-replay-results.csv',)
     with tempfile.TemporaryFile() as archive:
@@ -56,6 +54,7 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
         before_command += '\nENV PSL_DJANGO_UI=1'
         before_command += ('\nCOPY tests tests\nCOPY scripts/railway-native-stations.py scripts/railway-native-stations.py'
                            '\nCOPY docs/design/screen-state-inventory.csv docs/design/screen-state-inventory.csv'
+                           '\nCOPY docs/design/api-state-replay-plan.csv docs/design/api-state-replay-plan.csv'
                            '\nCOPY architecture/packages/v7/openapi.json architecture/packages/v7/openapi.json')
         command = ('python manage.py check && python manage.py makemigrations --check --dry-run'
                    ' && exec python scripts/railway-native-stations.py --role-access ' + ' '.join(groups))
@@ -68,8 +67,7 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
             command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
                        'python scripts/design_acceptance_batch.py --parallel-groups 3 --api-contract')
         if replay_suites:
-            before_command += ('\nCOPY scripts/design_acceptance_batch.py scripts/design_acceptance_batch.py'
-                               '\nCOPY docs/design/api-state-replay-plan.csv docs/design/api-state-replay-plan.csv')
+            before_command += '\nCOPY scripts/design_acceptance_batch.py scripts/design_acceptance_batch.py'
             suites = ' '.join(f'--suite {name}' for name in replay_suites)
             if pending_replays:
                 before_command += '\nCOPY docs/design/api-state-replay-results.csv docs/design/api-state-replay-results.csv'

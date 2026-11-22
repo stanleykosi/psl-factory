@@ -4,6 +4,10 @@
 
 37 local PostgreSQL tests passed in 77.127 seconds. They covered API-only sign-in and CSRF, private upload and download scope, the signed inbox rejection, retired page and form requests, contract parity, local archived pages and account delivery. Django system checks and migration drift checks passed in API-only mode. Private object storage calls used controlled test doubles. The existing 262-state ledger retains its original deployments and revisions.
 
+Railway web `380f1e05-7879-40fd-87e9-afc726dcccdf` at `ba17acd9` returned 200 for health, session bootstrap and OpenAPI, 401 for anonymous account access, and JSON 404 for the former home, login, work, invitation, recovery and static URLs. OpenAPI matched both checked-in snapshots. Worker `42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be` continued polling its queues.
+
+Railway cutover checks `0e1cec96-f84a-4a3b-a6f9-daba1087b188` passed 38 of 39 tests in 605.254 seconds. The contract parity check errored because the checks image omitted `docs/design/api-state-replay-plan.csv`. The checks image now includes that fixture for every group.
+
 ## Next.js handoff validation · 22 November 2026
 
 The Railway preview returned 200 for health and Django sign-in. Its OpenAPI 1.22.0 document matched the GitHub main snapshot exactly, with 268 paths and 379 operations. Four contract tests passed in 10.561 seconds. TypeScript generation passed. The handoff crosswalk resolved all 262 passing states to present design files, mounted operations and the original Railway evidence across 59 groups. The Next.js design integration is a separate acceptance step and has no new run in this handoff.

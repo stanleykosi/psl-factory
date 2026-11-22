@@ -27,7 +27,7 @@ PLANNING_API_TESTS = (
     'tests.test_planning_department_inputs.PlanningDepartmentInputTests.test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review',
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
-API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
+API_GROUPS = ('directory', 'cutover', 'api-only', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
               'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api', 'final-api')
 
 
@@ -67,6 +67,8 @@ def run(group, token, role_access):
             'tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance',
             'tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access',
         ]
+    elif group == 'api-only':
+        modules = ['tests.test_api_only_surface', 'tests.test_factory_api.ContractTests']
     elif group == 'project-api':
         modules = [
             'tests.test_factory_api.ContractTests',

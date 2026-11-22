@@ -1,10 +1,12 @@
 {
   "django_frontend_separation_20261122": {
-    "status": "implemented_local_verified",
+    "status": "deployed",
     "archive": "legacy_ui/",
     "backend_routes": "config/urls.py",
     "verification": "tests/test_api_only_surface.py",
-    "next": "Verify the API-only Railway rollout, then connect the Next.js frontend from the published handoff.",
+    "railway_web_deployment": "380f1e05-7879-40fd-87e9-afc726dcccdf",
+    "railway_revision": "ba17acd9",
+    "next": "Connect the Next.js frontend from the published handoff.",
     "hod_choices": "deferred"
   },
   "nextjs_frontend_handoff_20261122": {

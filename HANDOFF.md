@@ -4,6 +4,8 @@
 
 Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and six-role permissions. Run the backend in API-only mode and implement the replacement pages under `frontend/`. The archived Django page routes, templates and assets live in [`legacy_ui/`](legacy_ui/README.md). Its local preview uses `PSL_DJANGO_UI=1`. Use the API for sign-in, recovery and invitations and connect authenticated downloads through the frontend proxy. HOD policy choices remain deferred.
 
+Railway design acceptance web `380f1e05-7879-40fd-87e9-afc726dcccdf` runs `ba17acd9`. Health, session bootstrap and OpenAPI passed on the hosted backend. The former page and static URLs return JSON 404. Worker `42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be` continues polling. The next implementation belongs in the Next.js frontend. [Live contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
+
 ## API replay complete · 22 November 2026
 
 All 262 named API state assertions passed on isolated Railway PostgreSQL across four successive runs. The final retest `0921ddca-0118-4ead-8b50-2d9f3e154ed4` passed all nine tests for the final 16 states at application revision `8439d3213bc41a86493b4f436409d896d559244d`. Each ledger row pins the exact scenario, observed HTTP operations, revision and deployment. The synthetic fixtures and original receipt checks do not authorize live provider effects or supply HOD decisions.
