@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Finished the 262-state assertion manifest, corrected the active delegation source, and wired dated bid team inputs, invoice preparation replacement, exact recipient comparison and authorised worker activity to existing domain services. [Replay plan](docs/design/api-state-replay-plan.csv)
+
 22 November 2026. Added isolated, schema-checked Railway replay and individual results for the 262 design states. Recorded the first 94 observations and added private notification receipts and exact pending bid readback. [State results](docs/design/api-state-replay-results.csv)
 
 22 November 2026. Verified successful Railway responses for all 186 added operations and 290 distinct operations across 59 groups. Corrected forecast receipt recovery and verified historical payroll planner receipts, native Change forms, private handovers and continued worker operation when model queues are blocked. The individual API state replay remains open. [Actual tests](BUILD-TESTS.md)

@@ -141,13 +141,14 @@ class AdmittedInvoiceReviewFixtureTests(TestCase):
                                     'coverage': sample['coverage'], 'kind': 'usage', 'usage': usage.pk})
         self.assertRedirects(response, sample['billing'], fetch_redirect_response=False)
         next_prep = BillingPreparation.objects.get(case=case, usage=usage)
-        replacement = {'action': 'replace_preparation', 'revision': work.revision,
-            'preparation': next_prep.pk, 'reference': sample['reference'], 'due_date': sample['due_date'],
+        api = f'/api/v1/work/{work.pk}'
+        replacement = {'expected_revision': work.revision,
+            'preparation_id': next_prep.pk, 'reference': sample['reference'], 'due_date': sample['due_date'] or None,
             'reason': seed.CORRECTION_REASON}
         self.client.force_login(reviewer)
-        self.assertEqual(self.client.post(sample['recovery'], replacement).status_code, 403)
+        self.assertEqual(self.client.post(api + '/invoice-preparation', replacement, content_type='application/json').status_code, 403)
         self.client.force_login(maker)
-        self.assertEqual(self.client.post(sample['recovery'], replacement).status_code, 302)
+        self.assertEqual(self.client.post(api + '/invoice-preparation', replacement, content_type='application/json').status_code, 200)
         binding = FactoryInvoicePreparationBinding.objects.get(work=work, preparation=next_prep)
         self.assertEqual(binding.payload['previous_invoice'], original.pk)
         work.refresh_from_db()
@@ -168,8 +169,14 @@ class AdmittedInvoiceReviewFixtureTests(TestCase):
         self.assertEqual(current.context['packet']['invoice'], successor.pk)
         self.assertNotEqual(assigned_alerts(reviewer)[0]['key'], alert['key'])
         self.assertContains(self.client.get(alerts_url, {'unread': '1'}), sample['decision'])
-        self.assertEqual(task_action(current, 'claim').status_code, 302)
-        self.assertEqual(decide(current, 'approve', seed.APPROVE_REASON).status_code, 302)
+        exact_task = f'/api/v1/tasks/{current.pk}'
+        claim = self.client.post(exact_task + '/claim', {'expected_revision': current.revision}, content_type='application/json')
+        self.assertEqual(claim.status_code, 200, claim.content)
+        approved = self.client.post(exact_task + '/decision', {'expected_revision': claim.json()['revision'],
+            'verdict': 'approve', 'evidence_id': sample['review_proof'], 'note': seed.APPROVE_REASON},
+            content_type='application/json')
+        self.assertEqual(approved.status_code, 200, approved.content)
+        self.assertEqual(self.client.get(exact_task).json()['invoice_packet']['invoice_id'], successor.pk)
         self.assertEqual(InvoiceReview.objects.get(invoice=successor).actor_id, reviewer.pk)
         self.assertEqual(InvoiceReview.objects.get(invoice=original).pk, returned.pk)
         history = self.client.get(sample['settlement'])

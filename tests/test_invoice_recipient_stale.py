@@ -49,6 +49,8 @@ class InvoiceRecipientStaleTests(TestCase):
         for value in [seed.EARLIER_LABEL, seed.CURRENT_LABEL, seed.EARLIER_EMAIL, seed.CURRENT_EMAIL, 'recipient_id']:
             self.assertNotContains(page, value)
         self.assertNotContains(page, 'The invoice recipient changed')
+        task_api = f'/api/v1/tasks/{first.pk}'
+        self.assertNotIn('recipient_change', self.client.get(task_api).json())
 
         self.client.force_login(reviewer)
         page = self.client.get(decision)
@@ -58,6 +60,11 @@ class InvoiceRecipientStaleTests(TestCase):
         self.assertNotContains(page, seed.CURRENT_EMAIL)
         self.assertNotContains(page, 'Claim task')
         self.assertNotContains(page, 'Issue and send invoice')
+        stale = self.client.get(task_api).json()
+        self.assertEqual(stale['recipient_change'], {'earlier': seed.EARLIER_LABEL, 'current': seed.CURRENT_LABEL})
+        self.assertFalse(stale['task']['can_claim'])
+        self.assertEqual(self.client.post(task_api + '/claim', {'expected_revision': first.revision},
+                                          content_type='application/json').status_code, 409)
         claim = {'action': 'claim', 'task': first.pk, 'task_revision': first.revision}
         self.assertContains(self.client.post(decision, claim), 'STALE_EVIDENCE')
         self.assertFalse(InvoiceReview.objects.filter(invoice=invoice).exists())
@@ -80,12 +87,14 @@ class InvoiceRecipientStaleTests(TestCase):
         page = self.client.get(decision)
         self.assertNotContains(page, 'The invoice recipient changed')
         self.assertContains(page, seed.CURRENT_LABEL)
-        response = self.client.post(decision, {'action': 'claim', 'task': fresh.pk, 'task_revision': fresh.revision})
-        self.assertRedirects(response, decision, fetch_redirect_response=False)
+        exact = f'/api/v1/tasks/{fresh.pk}'
+        response = self.client.post(exact + '/claim', {'expected_revision': fresh.revision}, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
         fresh.refresh_from_db()
-        response = self.client.post(decision, {'action': 'decide', 'task': fresh.pk, 'task_revision': fresh.revision,
-            'verdict': 'approve', 'reason': seed.APPROVAL_REASON, 'evidence': sample['review_proof']})
-        self.assertRedirects(response, decision, fetch_redirect_response=False)
+        response = self.client.post(exact + '/decision', {'expected_revision': fresh.revision,
+            'verdict': 'approve', 'note': seed.APPROVAL_REASON, 'evidence_id': sample['review_proof']},
+            content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
         review = InvoiceReview.objects.get(invoice=invoice, actor=reviewer)
         self.assertEqual(review.publication_packet, packet)
         self.assertFalse(InvoiceJob.objects.filter(invoice__case=case).exists())

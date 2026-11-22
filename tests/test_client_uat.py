@@ -97,9 +97,20 @@ class ClientUATTests(ClientUATFixture,TestCase):
                                     'file': SimpleUploadedFile('client.txt', text)})
         self.assertEqual(uploaded.status_code, 201, uploaded.content)
         upload_id = uploaded.json()['id']
-        response_id = record('response', target_id=target, responded_at=(timezone.now()-timedelta(hours=1)).isoformat(),
-                             outcome='approved', genuine=True, note='Exact source', workaround=None,
-                             source_reference=None, proof_ids=[upload_id], previous_id=None, operation_key=str(uuid4()))
+        fields = {'action': 'response', 'case_revision': rev(self.case), 'target_id': target,
+                  'responded_at': (timezone.now() - timedelta(hours=1)).isoformat(),
+                  'outcome': 'approved_with_workaround', 'genuine': True, 'note': 'Exact source',
+                  'workaround': 'Synthetic staged activation of the tested path.',
+                  'source_reference': None, 'proof_ids': [upload_id], 'previous_id': None, 'operation_key': str(uuid4())}
+        future = self.client.post(url, {**fields, 'responded_at': (timezone.now() + timedelta(days=1)).isoformat()},
+                                  content_type='application/json')
+        self.assertEqual(future.status_code, 422, future.content)
+        incomplete = self.client.post(url, {**fields, 'workaround': None}, content_type='application/json')
+        self.assertEqual(incomplete.status_code, 422, incomplete.content)
+        self.assertIsNone(self.client.get(url).json()['response_id'])
+        saved = self.client.post(url, fields, content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        response_id = saved.json()['record_ids'][0]
         download = self.client.get(f'{url}/{response_id}/files/{upload_id}')
         self.assertEqual(download.status_code, 200)
         self.assertEqual(b''.join(download.streaming_content), text)
@@ -111,6 +122,7 @@ class ClientUATTests(ClientUATFixture,TestCase):
         self.assertEqual(current.status_code, 200, current.content)
         self.assertEqual(current.json()['binding_id'], binding)
         self.assertTrue(current.json()['binding_current'])
+        self.assertEqual(current.json()['outcome'], fields['outcome'])
         record('retract', response_id=response_id, reason='SAMPLE proof was withdrawn', operation_key=str(uuid4()))
         self.assertFalse(self.client.get(url).json()['binding_current'])
 

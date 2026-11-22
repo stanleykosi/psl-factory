@@ -92,7 +92,10 @@ class FactoryEscalationTests(TestCase):
         self.assertTrue(panel['can_request_communication_review'])
         write(detail, action='request_communication_review', version_id=panel['document_version_id'],
               expected_revision=panel['expected_revision'], case_revision=panel['case_revision'])
-        self.review()
+        reviewed = write(f'/api/v1/work/{self.w.pk}/reviews', kind='document', version_id=panel['document_version_id'],
+            verdict='approve', note='Independent review of the exact client communication.',
+            expected_revision=self.w.revision, case_revision=rev(self.c))
+        self.assertIsNotNone(reviewed['review_id'])
         proof = self.finish()
         delivered = self.client.get(detail).json()
         self.assertEqual([item['id'] for item in delivered['receipts']], proof['receipt_ids'])
@@ -126,6 +129,9 @@ class FactoryEscalationTests(TestCase):
         self.client.force_login(self.a)
         url = reverse('factory_detail', args=[self.w.pk])
         self.assertNotContains(self.client.get(url), 'Decline client communication')
+        api = f'/api/v1/work/{self.w.pk}/escalation'
+        initial = self.client.get(api).json()
+        self.assertFalse(any('reject' in row['verdicts'] for row in initial['client_decisions']))
         values = {'action': 'decision', 'revision': self.w.revision, 'case_revision': rev(self.c),
                   'request': self.r.pk, 'role': 'Head of PMO', 'verdict': 'reject',
                   'note': 'The synthetic dependency can be handled internally.'}
@@ -135,7 +141,12 @@ class FactoryEscalationTests(TestCase):
         artifact(self.a,self.c,'D05.decision_action_matrix','schema:psl/decision-actions/v1',
                  {'rules':[{'role':'Head of PMO','actions':['reject']}]},self.owner)
         self.assertContains(self.client.get(url), 'Decline client communication', count=1)
-        self.assertEqual(self.client.post(url, {**values, 'case_revision': rev(self.c)}).status_code, 302)
+        options = self.client.get(api).json()
+        declined = self.client.post(api, {'action': 'decide_client_action', 'request_id': self.r.pk,
+            'role': 'Head of PMO', 'verdict': 'reject', 'note': values['note'], 'delegated': False,
+            'expected_revision': options['expected_revision'], 'case_revision': options['case_revision']},
+            content_type='application/json')
+        self.assertEqual(declined.status_code, 200, declined.content)
         page = self.client.get(url)
         self.assertContains(page, 'Not escalated')
         self.assertContains(page, 'No recorded communication receipt.')
@@ -144,6 +155,9 @@ class FactoryEscalationTests(TestCase):
         self.advance()
         self.assertIsNone(domain.document(self.w))
         self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        result = self.client.get(api).json()
+        self.assertEqual(result['history'][-1]['id'], declined.json()['record_id'])
+        self.assertEqual(result['receipts'], [])
     def test_returned_document_requires_deliberate_successor_without_resetting_history(self):
         artifact(self.a,self.c,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['return']}]},self.owner)
         self.start();self.decision();self.advance();old=domain.document(self.w);self.review('return');self.advance();spent=self.w.budget_used

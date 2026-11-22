@@ -63,6 +63,7 @@ ROUTES = (
     ('received-bids/<uuid:case_id>/receipts/<int:receipt_id>', received_bids.receipt),
     ('received-bids/assignments', bid_assignments.pending),
     ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
+    ('received-bids/<uuid:case_id>/team-inputs', bid_responses.team_inputs, bid_responses.record_team_input),
     ('work', work.queue, intake.start),
     ('work/source-queues', work.finance_sources),
     ('work/<int:work_id>', work.detail),
@@ -96,6 +97,7 @@ ROUTES = (
     ('work/<int:work_id>/planning-exit/workaround', delivery.link_workaround),
     ('work/<int:work_id>/release-register', delivery.release_register, delivery.release_action),
     ('work/<int:work_id>/closure-report', closure.replace_report),
+    ('work/<int:work_id>/invoice-preparation', invoice_recovery.replace_preparation),
     ('work/<int:work_id>/go-live-signoff', delivery.go_live, delivery.record_go_live),
     ('work/<int:work_id>/go-live-replies', go_live_replies.detail, go_live_replies.command),
     ('work/<int:work_id>/go-live-replies/successor', go_live_replies.prepare_successor),
@@ -376,7 +378,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.21.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.22.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

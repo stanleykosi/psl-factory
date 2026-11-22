@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Full-inventory API replay checkpoint · 22 November 2026
+
+The first two isolated Railway runs establish 177 passing, six failed and 79 pending states. Every state now has a named replay case in the manifest. OpenAPI 1.22.0 adds dated bid team input, source-owned invoice preparation replacement, Finance recipient comparison and authorised current worker activity. The next Railway batch should replay the 85 states without passing evidence. Reconcile its logs against the manifest before continuing and keep the Django walkthrough evidence separate. HOD choices remain deferred. [Replay plan](docs/design/api-state-replay-plan.csv) · [State results](docs/design/api-state-replay-results.csv)
+
 ## Individual API state replay · 22 November 2026
 
 The first isolated Railway replay `bcd215a6-b1bd-41e9-9f64-d69cd2f2b1f3` recorded 87 passes, seven insufficient cases and 168 pending across the 262-state inventory. Match each planned assertion to its actor, observed operation and status before importing its result. OpenAPI 1.21.0 exposes private personal alert delivery receipts, pending bid dates and a nullable evidence field for unknown outcomes. Keep Django and the source command services in place. Continue from the replay plan and ledger, with HOD choices deferred. [Replay plan](docs/design/api-state-replay-plan.csv) · [State results](docs/design/api-state-replay-results.csv)

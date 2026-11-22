@@ -69,7 +69,7 @@ class FactoryMinutesTests(TestCase):
         self.assertEqual(current['document']['audience'], 'internal')
         self.assertIsNone(current['delivery'])
         action = self.client.get(f'/api/v1/projects/{self.case.pk}/actions/{ActionItem.objects.get().pk}').json()
-        self.assertEqual(action['status'], 'open')
+        self.assertEqual(action['current']['status'], 'open')
         self.assertFalse(flow.verify(self.work,self.actor)['actions_completed']);self.assertFalse(flow.verify(self.work,self.actor)['scope_changed'])
         self.client.force_login(self.actor);before=self.rows();response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Linked action-owner work');self.assertContains(response,'ACTION-1');self.assertEqual(before,self.rows())
         item=ActionItem.objects.get();change_action(self.actor,self.case.pk,item.pk,'complete',self.notes.pk,'Done by current owner',rev(self.case),1)

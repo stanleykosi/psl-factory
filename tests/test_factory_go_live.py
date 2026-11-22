@@ -205,9 +205,14 @@ class FactoryGoLiveTests(TestCase):
         self.assertContains(page,'Review the exact client report');self.assertNotContains(page,'Record actual sign-off for this report')
         from apps.workflows.factory_progress import set_progress
         from apps.workflows.models import FactoryProgress
+        reviews = f'/api/v1/work/{f.work.pk}/reviews'
         progress = set_progress(f.actor, f.work.pk, f.work.revision, True)
         FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='review-pending')
-        review(f)
+        f.work.refresh_from_db()
+        approved = self.client.post(reviews, {'kind': 'document', 'expected_revision': f.work.revision,
+            'case_revision': rev(f.case), 'version_id': v.pk, 'verdict': 'approve',
+            'note': 'Synthetic independent review of the exact outward Go-live report'}, content_type='application/json')
+        self.assertEqual(approved.status_code, 200, approved.content)
         progress.refresh_from_db()
         self.assertEqual(progress.observation, '')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();p=Publication.objects.get(factory_work=f.work)
@@ -251,6 +256,7 @@ class FactoryGoLiveTests(TestCase):
         decision=DeliveryRecord.objects.get(dossier=f.d,kind='go_live')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         proof=go_live.verify(f.work);self.assertEqual(proof['acceptance'],decision.pk);self.assertNotEqual(proof['pm_signature'],proof['client_signature'])
+        self.assertEqual(self.client.get(f'/api/v1/work/{f.work.pk}').json()['state'], 'verified')
         self.assertFalse(proof['sign_off_inferred']);self.assertFalse(proof['deployment_authorized']);self.assertFalse(proof['financial_release_granted']);self.assertFalse(proof['external_authenticity_verified'])
         from unittest.mock import patch
         with patch.object(go_live,'published',wraps=go_live.published) as observed:

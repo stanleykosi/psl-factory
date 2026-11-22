@@ -5,6 +5,7 @@ import csv
 import json
 from pathlib import Path
 import re
+from tempfile import NamedTemporaryFile
 from uuid import UUID
 
 
@@ -33,7 +34,7 @@ def read_plan():
     for row in rows:
         key = row['state_id']
         responses = row['required_responses'].split()
-        if (key in ids or key not in inventory or row['suite'] not in SUITES
+        if (None in row or key in ids or key not in inventory or row['suite'] not in SUITES
                 or not TEST_LABEL.fullmatch(row['test']) or not responses
                 or not all(RESPONSE.fullmatch(item) for item in responses) or not row['behavior'].strip()):
             raise ValueError(f'Invalid or duplicate state replay {key}.')
@@ -76,7 +77,7 @@ def record_results(logs, deployment):
         observed[key] = row
     if not observed:
         raise ValueError('No state replay evidence found in the deployment logs.')
-    with RESULTS.open('w', encoding='utf-8', newline='') as output:
+    with NamedTemporaryFile('w', encoding='utf-8', newline='', dir=RESULTS.parent, delete_on_close=False) as output:
         writer = csv.DictWriter(output, RESULT_FIELDS, lineterminator='\n')
         writer.writeheader()
         counts = Counter()
@@ -93,4 +94,6 @@ def record_results(logs, deployment):
                 result = {**plan, 'result': 'pending'}
             writer.writerow(result)
             counts[result['result']] += 1
+        output.close()
+        Path(output.name).replace(RESULTS)
     return dict(counts)

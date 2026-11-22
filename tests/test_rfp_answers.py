@@ -172,24 +172,45 @@ class RFPAnswerTests(TestCase):
         with self.assertRaises(ValidationError):
             self.save([decision(one), decision(two, disposition='invented')])
         self.assertFalse(RFPAnswerReview.objects.exists())
-        saved = self.save([decision(one), decision(two)])
         work = data['work']
+        self.client.force_login(data['actor'])
+        url = f'/api/v1/work/{work.pk}/bid-answers'
+        def record(action, **fields):
+            current = self.client.get(url).json()
+            return self.client.post(url, {'action': action, 'expected_revision': current['expected_revision'],
+                'case_revision': current['case_revision'], **fields}, content_type='application/json')
+        applied = record('review', decisions=[decision(one), decision(two)])
+        self.assertEqual(applied.status_code, 201, applied.content)
+        saved = [RFPAnswerReview.objects.get(pk=pk) for pk in applied.json()['record_ids']]
+        accepted = self.client.get(url).json()['rows']
+        self.assertEqual([row['review_verdict'] for row in accepted], ['accept', 'accept'])
         work.refresh_from_db()
-        rfp_answers.undo(data['actor'], work.pk, saved[0].pk, work.revision, rev(data['case']))
+        undone = record('undo', review_id=saved[0].pk)
+        self.assertEqual(undone.status_code, 201, undone.content)
         work.refresh_from_db()
         matrix = factory_rfp.inputs(work)['matrix']
         self.assertEqual(matrix[0]['response'], one.row['response'])
         self.assertEqual(matrix[1]['response'], 'SAMPLE second suggestion.')
         self.assertEqual(RFPAnswerReview.objects.count(), 3)
+        self.assertEqual([row['review_verdict'] for row in self.client.get(url).json()['rows']], ['undo', 'accept'])
         with self.assertRaises(ValidationError):
             rfp_answers.undo(data['actor'], work.pk, saved[0].pk, work.revision, rev(data['case']))
 
     def test_replace_keeps_private_reason_and_original_answer_out_of_native_wording(self):
         suggestion = request(self.data)
         answer(suggestion, 'SAMPLE original suggestion not adopted.')
-        self.save([decision(suggestion, verdict='replace', answer='SAMPLE own answer.',
-            disposition='clarification', note='SAMPLE internal rejection explanation.')])
         work = self.data['work']
+        self.client.force_login(self.data['actor'])
+        url = f'/api/v1/work/{work.pk}/bid-answers'
+        current = self.client.get(url).json()
+        saved = self.client.post(url, {'action': 'review', 'expected_revision': current['expected_revision'],
+            'case_revision': current['case_revision'],
+            'decisions': [decision(suggestion, verdict='replace', answer='SAMPLE own answer.',
+                disposition='clarification', note='SAMPLE internal rejection explanation.')]}, content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        row = self.client.get(url).json()['rows'][0]
+        self.assertEqual((row['response'], row['suggested_answer'], row['review_verdict']),
+                         ('SAMPLE own answer.', 'SAMPLE original suggestion not adopted.', 'replace'))
         work.refresh_from_db()
         self.assertNotIn('internal rejection', work.source_head.body)
         self.assertNotIn('not adopted', work.source_head.body)

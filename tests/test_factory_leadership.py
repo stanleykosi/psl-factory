@@ -48,6 +48,10 @@ class FactoryLeadershipTests(TestCase):
         self.assertEqual(self.work.status,'verified',self.work.finding)
         v=reporting.document(self.work);self.assertFalse(v.reviews.exists());self.assertFalse(HumanTask.objects.filter(version=v).exists())
         self.assertIsNone(Publication.objects.get(version=v).review_id);self.assertEqual(len(reporting.verify(self.work,self.actor)['receipt_ids']),1)
+        self.client.force_login(self.actor)
+        projection = self.client.get(f'/api/v1/work/{self.work.pk}/leadership-report').json()
+        self.assertEqual([item['receipt_id'] for item in projection['recipients']],
+                         reporting.verify(self.work, self.actor)['receipt_ids'])
     def test_monthly_human_themes_and_exact_role(self):
         artifact(self.actor,self.case,'OPS.leadership_review_authority','schema:psl/leadership-review-authority/v1',{'role':'Head of PMO'},self.owner)
         self.start_work();self.advance();v=reporting.document(self.work);self.assertEqual(HumanTask.objects.get(version=v).required_role,'Head of PMO')

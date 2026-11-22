@@ -36,16 +36,21 @@ def check_investigation_progress(test, actor, work, label):
     client = test.client
     client.force_login(actor)
     url = reverse('factory_detail', args=[work.pk])
+    api = f'/api/v1/work/{work.pk}'
 
     class ObserveInvestigation(SyntheticFactoryCoordinator):
         def choose(self, context):
             test.assertEqual(context['eligible'], ['ACT04'])
             test.assertContains(client.get(url), label)
+            active = client.get(api).json()
+            test.assertEqual(active['state'], 'processing')
+            test.assertEqual(active['current_activity'], {'label': label, 'watching': True})
             return super().choose(context)
 
     test.assertNotContains(client.get(url), label)
     test.assertTrue(factory.run_once(work.pk, provider=ObserveInvestigation()))
     test.assertNotContains(client.get(url), label)
+    test.assertNotIn('current_activity', client.get(api).json())
 
 
 def envelope(case, component, value, evidence):

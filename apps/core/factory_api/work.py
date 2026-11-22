@@ -55,7 +55,8 @@ DETAIL = obj({
     'output_url': nullable(TEXT), 'information': array(obj({'task_id': ID, 'url': TEXT})),
     'available_control': array(choice('resume', 'cancel', 'adopt_profile')),
     'profile_adoption': obj({'configuration_id': ID, 'version': REVISION}),
-}, optional=('department_handoff_url', 'profile_adoption'))
+    'current_activity': obj({'label': TEXT, 'watching': BOOLEAN}),
+}, optional=('department_handoff_url', 'profile_adoption', 'current_activity'))
 QUEUE = obj({
     'items': array(ITEM, limit=8), 'page': ID, 'next_page': nullable(ID), 'as_of': DATETIME,
     'limited': BOOLEAN, 'lines': array(obj({'key': TEXT, 'title': TEXT})),
@@ -165,6 +166,10 @@ def observed_work(actor, work_id):
     try:
         with limit_queries(1400, deadline=monotonic() + 8):
             row = factory_views.presentation(actor, work, include_progress=True)
+            if work.definition == 'finance-bu/v1' and not row['bu'].get('recipient_only'):
+                from apps.workflows.factory_bu_views import investigation_progress
+
+                row['bu']['progress'] = investigation_progress(actor, work)
     except ReadLimit:
         raise Problem(503, 'read_limited', 'The work details exceeded the current read limit. Try again.') from None
     protected = row.get(RESTRICTED_LINES.get(work.definition), {})
@@ -225,7 +230,7 @@ STATION_PANELS = {
     'finance-payroll/v1': ('payroll-operations', 'payroll-recovery'),
     'finance-bu/v1': ('business-units',),
     'finance-ledger/v1': ('incumbent-reference',),
-    FINANCE_INVOICE: ('invoice-milestone-proof', 'invoice-draft-stop'),
+    FINANCE_INVOICE: ('invoice-milestone-proof', 'invoice-draft-stop', 'invoice-preparation'),
     ACCOUNTING: ('accounting',),
     'rfp-response/v1': ('bid-answers', 'bid-pricing', 'bid-submission', 'bid-outcomes', 'security-estimate'),
 }
@@ -314,6 +319,9 @@ def detail(request, work_id):
     if row.get('adoption'):
         control.append('adopt_profile')
     adoption = row.get('adoption')
+    activity = next((row[key]['progress'] for key in (
+        'accounting', 'bu', 'escalation', 'forecast', 'ledger', 'ppe', 'reporting', 'schedules',
+    ) if row.get(key) and row[key].get('progress')), None)
     return {
         **summary(row), 'revision': work.revision, 'case_revision': work.case.revision,
         'next_step': row.get('next_action') or 'Review the current work.', 'blocker': row.get('blocker') or '',
@@ -326,6 +334,7 @@ def detail(request, work_id):
         'screens': [{'key': key, 'django_url': reverse(FOCUS_ROUTES[key], args=[work.pk])}
                     for key in SCREENS.get(work.definition, {})],
         'progress': {'status': progress.status, 'updated_at': progress.updated_at} if progress else None,
+        **({'current_activity': activity} if activity else {}),
     }
 
 
@@ -461,7 +470,8 @@ PACKET = obj({
 
 
 @endpoint(response=obj({'task': TASK, 'work_id': ID, 'label': TEXT, 'invoice_packet': nullable(PACKET),
-                        'review_evidence': array(obj({'id': ID, 'version': ID, 'source': TEXT, 'sha256': TEXT}))}),
+    'review_evidence': array(obj({'id': ID, 'version': ID, 'source': TEXT, 'sha256': TEXT})),
+    'recipient_change': obj({'earlier': nullable(TEXT), 'current': nullable(TEXT)})}, optional=('recipient_change',)),
           summary='Read the exact current Finance task and permitted invoice packet')
 def task(request, task_id):
     work, _ = review_task(request.user, task_id)
@@ -470,10 +480,13 @@ def task(request, task_id):
     if selected is None:
         raise Http404
     fields = None
+    recipient_change = None
     if work.definition == FINANCE_INVOICE:
         from apps.workflows.factory_invoice_review import context
 
-        context(request.user, row)
+        invoice_context = context(request.user, row)
+        if selected.can_read_invoice_destination and invoice_context:
+            recipient_change = invoice_context['recipient_change']
         packet = selected.display_packet
         if packet and work.invoice_id and 'preparation' in packet:
             fields = {'invoice_id': packet['invoice'], 'version': packet['version'], 'sha256': packet['payload_hash'],
@@ -490,7 +503,8 @@ def task(request, task_id):
         proofs = list(public_evidence(Evidence.objects.filter(case=work.case, kind='invoice_review'))
                       .order_by('-pk').values('id', 'version', 'source', 'sha256'))
     return {'task': info, 'work_id': work.pk, 'review_evidence': proofs,
-            'label': getattr(selected, 'label', 'Finance review'), 'invoice_packet': fields}
+            'label': getattr(selected, 'label', 'Finance review'), 'invoice_packet': fields,
+            **({'recipient_change': recipient_change} if recipient_change is not None else {})}
 
 
 @endpoint(method='POST', request=obj({'expected_revision': REVISION}),

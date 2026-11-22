@@ -47,6 +47,11 @@ class DesignDelegationTests(TestCase):
         active = self.client.get(url + '/delegations')
         self.assertEqual(active.status_code, 200, active.content)
         self.assertEqual(active.json()['items'], [])
+        transition(actor, stored.pk, 'validated')
+        transition(actor, stored.pk, 'active')
+        [assignment] = self.client.get(url + '/delegations').json()['items']
+        self.assertEqual((assignment['role'], assignment['principal_id'], assignment['delegate_id']),
+                         ('PM', actor.pk, delegate.pk))
         Grant.objects.filter(case=case, user=actor, action='policy.configure').update(active=False)
         self.assertEqual(self.client.get(url + '/rules').status_code, 200)
         self.assertEqual(self.client.post(url + '/delegations/drafts', data, content_type='application/json').status_code, 403)

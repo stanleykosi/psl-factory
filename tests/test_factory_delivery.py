@@ -95,6 +95,9 @@ class FactoryDeliveryTests(TestCase):
             'evidence': f.e['plan'].pk, 'note': 'Review this exact issue fix first', 'blocking_issue': state.issue_id,
         }), url)
         returned = delivery.latest(f.d, 'planning_decision')
+        api = f'/api/v1/work/{f.work.pk}/planning-exit'
+        held = self.client.get(api).json()
+        self.assertNotIn('approve', held['verdicts'])
         self.assertEqual(returned.data['blocking_issue'], {'issue': state.issue_id, 'state': state.pk})
         self.assertContains(self.client.get(url), 'Delivery returned')
         self.assertNotContains(self.client.get(url), 'Approve exact Planning exit')
@@ -105,8 +108,13 @@ class FactoryDeliveryTests(TestCase):
         resolved = update_issue(f.actor, f.case.pk, state.issue_id, ack.pk, 'resolve', f.e['requirements'].pk,
                                 'Owner recorded the exact fix', rev(f.case), fix_id=fix.pk)
         self.assertContains(self.client.get(url), 'Approve exact Planning exit')
-        approval = delivery.decide_planning(f.actor, f.case.pk, f.d.pk, 'approve', f.e['plan'].pk,
-                                           'Reviewed current native fix', rev(f.case))
+        current = self.client.get(api).json()
+        self.assertIn('approve', current['verdicts'])
+        recorded = self.client.post(api, {**{key: current[key] for key in ('expected_revision', 'case_revision', 'packet')},
+            'verdict': 'approve', 'evidence_id': f.e['plan'].pk, 'note': 'Reviewed current native fix'},
+            content_type='application/json')
+        self.assertEqual(recorded.status_code, 200, recorded.content)
+        approval = DeliveryRecord.objects.get(pk=recorded.json()['record_id'])
         self.assertEqual(approval.parent_id, returned.pk)
         self.assertEqual(approval.data['issue_remedy'], {'issue': state.issue_id, 'state': resolved.pk, 'fix': fix.pk})
         self.assertEqual(delivery.approved_plan(f.d), approval)
@@ -170,12 +178,19 @@ class FactoryDeliveryTests(TestCase):
         self.assertEqual(connection.vendor,'postgresql');f=setup();w=f.work
         factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'waiting',w.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').exists())
-        spent=w.budget_used;release_sources(f)
+        spent=w.budget_used
         self.client.force_login(f.actor)
         api = f'/api/v1/work/{w.pk}/release-register'
+        held = self.client.get(api).json()
+        self.assertEqual(held['readiness_ids'], [])
+        self.assertTrue(any(item['status'] != 'current' for phase in held['phases'] for item in phase['checks']))
+        release_sources(f)
         opened = self.client.get(api)
         self.assertEqual(opened.status_code, 200, opened.content)
         self.assertIsNone(opened.json()['release'])
+        self.assertEqual(len(opened.json()['phases']), 4)
+        self.assertTrue(opened.json()['current_scope'])
+        self.assertTrue(all(phase['checks'] for phase in opened.json()['phases']))
         versions = {key: opened.json()[key] for key in ('expected_revision', 'case_revision')}
         prepared = self.client.post(api, {'action': 'prepare_readiness', **versions}, content_type='application/json')
         self.assertEqual(prepared.status_code, 200, prepared.content)
@@ -184,6 +199,9 @@ class FactoryDeliveryTests(TestCase):
         self.assertEqual(w.status,'verified',w.finding);self.assertGreater(w.budget_used,spent);self.assertEqual(w.budget_limit,20000)
         ready=factory_delivery.prepared(w);self.assertIsNotNone(ready)
         self.assertEqual(ready.snapshot,delivery.readiness_inputs(f.d))
+        current = self.client.get(api).json()
+        self.assertIn(ready.pk, current['readiness_ids'])
+        self.assertIsNone(current['release'])
         proof=factory_delivery.verify(w);self.assertFalse(proof['deployment_authorized']);self.assertFalse(proof['financial_release_granted']);self.assertFalse(proof['external_authenticity_verified'])
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').count(),1)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_outcome').exists())
@@ -233,6 +251,10 @@ class FactoryDeliveryTests(TestCase):
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'owner_needed',f.work.finding)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').exists())
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{f.work.pk}'
+        self.assertEqual(self.client.get(api).json()['state'], 'owner_needed')
+        self.assertNotIn('approve', self.client.get(api + '/planning-exit').json()['verdicts'])
         self.assertEqual(FactoryWork.objects.filter(case=f.case).count(),1)
 
     def test_idempotent_intake_forged_source_and_false_completion_guards(self):

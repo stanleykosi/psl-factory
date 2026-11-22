@@ -92,6 +92,11 @@ class ArchiveFileTests(TestCase):
             self.assertContains(page, 'Wait for the selected file receipts')
             self.assertNotContains(page, '<p role="status">Confirm the original file receipts')
             self.assertContains(page, 'data-work-watch')
+            copying = self.client.get(api).json()
+            [active] = [row for row in copying['files'] if row['job']['state'] == 'leased']
+            self.assertEqual(active['id'], file.pk)
+            self.assertIsNone(active['receipt'])
+            self.assertFalse(copying['verified'])
             return copy_to_store(adapter, file, data)
 
         copy_to_store = SyntheticObjectArchive.copy

@@ -102,6 +102,7 @@ class FactoryLedgerTests(TestCase):
         decision = reverse('factory_invoice_decision', args=[self.work.pk])
         label = 'Investigating the supplied ledger reference.'
         self.assertNotContains(self.client.get(path), label)
+        api = f'/api/v1/work/{self.work.pk}'
 
         class ObserveInvestigation(SyntheticFactoryCoordinator):
             def choose(provider, context):
@@ -109,6 +110,7 @@ class FactoryLedgerTests(TestCase):
                 page = self.client.get(path)
                 self.assertContains(page, label)
                 self.assertContains(page, 'data-work-watch')
+                self.assertEqual(self.client.get(api).json()['current_activity'], {'label': label, 'watching': True})
                 self.assertNotContains(self.client.get(decision), label)
                 for actor, action in ((reader, 'ledger.private.read'), (f['actor'], 'agent.ledger')):
                     grant = Grant.objects.filter(case=f['case'], user=actor, action=action)
@@ -116,6 +118,11 @@ class FactoryLedgerTests(TestCase):
                     grant.update(active=False)
                     try:
                         self.assertNotIn(label, self.client.get(path).content.decode())
+                        reduced = self.client.get(api)
+                        if reduced.status_code == 200:
+                            self.assertNotIn('current_activity', reduced.json())
+                        else:
+                            self.assertIn(reduced.status_code, (403, 404))
                     finally:
                         grant.update(active=True)
                 self.assertContains(self.client.get(path), label)
@@ -124,6 +131,7 @@ class FactoryLedgerTests(TestCase):
 
         self.assertTrue(factory.run_once(self.work.pk, provider=ObserveInvestigation()))
         self.assertNotContains(self.client.get(path), label)
+        self.assertNotIn('current_activity', self.client.get(api).json())
         self.assertTrue(self.work.activities.filter(kind='ACT04', status='succeeded').exists())
         self.assertFalse(LedgerLineage.objects.filter(case=f['case']).exists())
 
@@ -169,9 +177,18 @@ class FactoryLedgerTests(TestCase):
         self.assertEqual(self.client.post(observe,{**command,'outcome':'found'}).status_code,302)
         check=w.checks.get();self.client.force_login(f['reviewer'])
         self.assertContains(self.client.get(decision),'Independent Finance decision')
-        self.assertEqual(self.client.post(decision,{'action':'review','revision':self.work.revision,
-                         'case_revision':rev(f['case']),'target':check.pk,'evidence':f['e'].pk,
-                         'verdict':'reject','reason':'Sample evidence does not establish the reference.'}).status_code,302)
+        url = f'/api/v1/work/{self.work.pk}/incumbent-reference'
+        panel = self.client.get(url).json()
+        response = self.client.post(url, {'action': 'review', 'expected_revision': panel['expected_revision'],
+            'case_revision': panel['case_revision'], 'check_id': check.pk, 'evidence_id': f['e'].pk,
+            'verdict': 'reject', 'reason': 'Sample evidence does not establish the reference.'},
+            content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        rejected = self.client.get(url).json()
+        self.assertEqual(rejected['stage'], 'rejected')
+        self.assertEqual(rejected['latest_decision']['id'], response.json()['record_id'])
+        self.assertEqual(rejected['latest_decision']['reason'], 'Sample evidence does not establish the reference.')
+        self.assertEqual(rejected['review_options'], [])
         self.assertContains(self.client.get(decision),'Sample evidence does not establish the reference.')
         self.assertNotContains(self.client.get(decision),'Approve supplied reference')
         with self.assertRaisesMessage(ValidationError,'Supply fresh evidence'):
@@ -180,6 +197,7 @@ class FactoryLedgerTests(TestCase):
             ledger.verify(f['actor'],f['case'].pk,w.pk,proof.pk,rev(f['case']))
         fresh=verify(f,w,{'incumbent_version':'sync-2'});review(f,fresh)
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(self.client.get(url).json()['check_id'], fresh.pk)
     def test_cancellation_no_capture_and_unknown_command(self):
         self.start();f=self.f;factory.manage(f['actor'],self.work.pk,self.work.revision,'cancel');self.advance();self.assertEqual(self.work.status,'cancelled');self.assertEqual(LedgerLineage.objects.count(),0)
         with self.assertRaises(ValidationError):flow.command(f['reviewer'],self.work.pk,self.work.revision,rev(f['case']),'review',1,f['e'].pk,'approve')

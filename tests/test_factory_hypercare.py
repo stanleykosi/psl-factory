@@ -81,6 +81,10 @@ class FactoryHypercareTests(TestCase):
         self.client.force_login(f.actor)
         url = reverse('factory_detail', args=[f.work.pk])
         self.assertContains(self.client.get(url), 'The factory is checking release stability against the recorded observations.')
+        api = f'/api/v1/work/{f.work.pk}'
+        in_progress = self.client.get(api).json()
+        self.assertEqual(in_progress['progress']['status'], 'running')
+        self.assertIsNone(self.client.get(api + '/stability').json()['assessment_id'])
         enrolled.available_at = timezone.now() - timedelta(seconds=1)
         enrolled.save(update_fields=['available_at'])
         self.assertContains(self.client.get(url), 'The background step is waiting to be checked again.')
@@ -88,6 +92,7 @@ class FactoryHypercareTests(TestCase):
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'verified', f.work.finding)
         self.assertNotContains(self.client.get(url), 'The factory is checking release stability against the recorded observations.')
+        self.assertTrue(self.client.get(api + '/stability').json()['verified'])
 
     def test_typed_observation_uses_current_rule_unknown_metrics_and_source_permissions(self):
         f=setup();f.accepted();f.criteria();f.observations(errors=2)
@@ -312,18 +317,29 @@ class FactoryHypercareTests(TestCase):
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'verified', f.work.finding)
         self.assertTrue(factory_hypercare.assessed(f.work).snapshot['qualified'])
+        assessment = self.client.get(root).json()
+        self.assertTrue(assessment['verified'])
+        self.assertTrue(assessment['qualified'])
+        self.assertEqual(assessment['assessment_id'], factory_hypercare.assessed(f.work).pk)
 
     def test_unknown_and_negative_observations_are_recorded_without_false_qualification(self):
         f=setup();f.accepted();f.criteria();f.observations(errors=None,confirmed=None)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();row=factory_hypercare.assessed(f.work)
         self.assertEqual(f.work.status,'waiting',f.work.finding);self.assertIsNone(row.snapshot['qualified']);spent=f.work.budget_used
+        self.client.force_login(f.actor)
+        url = f'/api/v1/work/{f.work.pk}/stability'
+        self.assertIsNone(self.client.get(url).json()['qualified'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=f.work.pk).update(status='verified')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.budget_used,spent)
         f.observations(errors=2,availability=99,confirmed=True);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'waiting',f.work.finding);self.assertIs(factory_hypercare.assessed(f.work).snapshot['qualified'],False)
+        unmet = self.client.get(url).json()
+        self.assertIs(unmet['qualified'], False)
+        self.assertFalse(unmet['verified'])
         f.observations();factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding);self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').count(),3)
         self.assertEqual(f.work.budget_limit,20000)
+        self.assertTrue(self.client.get(url).json()['qualified'])
 
     def test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled(self):
         f=setup();f.release()
@@ -348,10 +364,16 @@ class FactoryHypercareTests(TestCase):
         f=setup();f.accepted();f.observations();factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'configuration_needed',f.work.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').exists())
         self.assertTrue(DeliveryRecord.objects.filter(dossier=f.d,kind='release_outcome').exists())
+        self.client.force_login(f.actor)
+        url = f'/api/v1/work/{f.work.pk}/stability'
+        held = self.client.get(url).json()
+        self.assertIsNone(held['configuration_id'])
+        self.assertFalse(held['verified'])
         f.criteria();self.client.force_login(f.actor);page=self.client.get(reverse('factory_detail',args=[f.work.pk]))
         self.assertContains(page,'Prerequisites need recheck');self.assertNotContains(page,'A current stability period, confirmation and metric rule is required.')
         factory.manage(f.actor,f.work.pk,f.work.revision,'resume');factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding)
+        self.assertTrue(self.client.get(url).json()['verified'])
 
     def test_new_form_keeps_one_candidate_allowance_and_unregistered_approval_is_rejected(self):
         f=setup();same=factory_hypercare.start(f.actor,f.case.pk,'NEW-FORM',f.d.pk,'Same hypercare intent',rev(f.case));self.assertEqual(same.pk,f.work.pk)

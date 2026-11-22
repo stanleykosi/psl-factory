@@ -266,8 +266,16 @@ class FactoryRFPTests(TestCase):
     def test_return_requires_explicit_source_successor_and_fresh_native_decisions(self):
         f=self.data;work=helpers.start(f);factory.run_until_wait(work.pk);work.refresh_from_db()
         old=factory_rfp.response_for(work)
-        rfp.review(f['actor'],f['case'].pk,old.pk,'Engineering Lead','return',f['evidence']['policy_decision'].pk,
-            'Clarify the quoted requirement coverage',rev(f['case']))
+        self.client.force_login(f['actor'])
+        url = f'/api/v1/work/{work.pk}'
+        body = {'kind': 'bid', 'subject': 'response', 'role': 'Engineering Lead',
+                'evidence_id': f['evidence']['policy_decision'].pk}
+        def review_response(target, verdict, note):
+            work.refresh_from_db()
+            return self.client.post(url + '/reviews', {**body, 'target_id': target, 'verdict': verdict, 'note': note,
+                'expected_revision': work.revision, 'case_revision': rev(f['case'])}, content_type='application/json')
+        returned = review_response(old.pk, 'return', 'Clarify the quoted requirement coverage')
+        self.assertEqual(returned.status_code, 200, returned.content)
         factory.run_until_wait(work.pk);work.refresh_from_db()
         self.assertEqual(RFPResponse.objects.count(),1);self.assertNotEqual(work.status,'verified')
         payload=deepcopy(f['payload']);payload['matrix'][0]['response']='Revised cited coverage after actual review'
@@ -279,6 +287,11 @@ class FactoryRFPTests(TestCase):
         self.assertEqual(revised.reviews.count(),0);self.assertEqual(revised.commercial.decisions.count(),0)
         self.assertTrue(RFPReview.objects.filter(response=old,verdict='return').exists())
         self.assertGreater(work.budget_used,spent)
+        self.assertEqual(self.client.get(url + '/bid-answers').json()['rows'][0]['response'],
+                         payload['matrix'][0]['response'])
+        approved = review_response(revised.pk, 'approve', 'Review the exact corrected coverage')
+        self.assertEqual(approved.status_code, 200, approved.content)
+        self.assertTrue(revised.reviews.filter(role='Engineering Lead', verdict='approve').exists())
 
     def test_uncertain_publication_reconciles_exact_receipts_before_cancellation(self):
         f=self.data;work=helpers.start(f);response,document=helpers.reviewed_document(f,work)

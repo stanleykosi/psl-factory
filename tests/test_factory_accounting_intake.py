@@ -196,6 +196,24 @@ class AccountingSuppliedIntakeTests(TestCase):
         self.assertFalse(receipts[held['id']]['can_confirm_units'])
         self.assertEqual(receipts[held['id']]['status'], 'source_units_needed')
 
+    def test_api_malformed_extract_stays_in_history_while_corrected_file_needs_units(self):
+        actor, case, *_ = self.data
+        self.client.force_login(actor)
+        url = f'/api/v1/projects/{case.pk}/accounting-intake'
+        for key, body, expected in [('malformed', 'wrong,columns\n1,2', 'quarantined'),
+                                    ('corrected', None, 'source_units_needed')]:
+            file, context = self.supplied(body=body, with_units=False)
+            response = self.client.post(url, {'case_revision': rev(case), 'idempotency_key': key,
+                'reference': 'Sample corrected trial balance', 'evidence_id': file.pk,
+                'context': {**context, 'extracted_at': context['extracted_at'].isoformat()}},
+                content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            self.assertEqual(response.json()['status'], expected)
+            self.assertIsNone(response.json()['work_id'])
+        self.assertCountEqual([row['status'] for row in self.client.get(url).json()['submissions']],
+                              ['quarantined', 'source_units_needed'])
+        self.assertFalse(FinanceRun.objects.exists())
+
     def test_confirming_thousands_records_evidence_but_keeps_calculation_on_hold(self):
         a, c, evidence, *_ = self.data
         held, _, _ = self.submit(with_units=False)

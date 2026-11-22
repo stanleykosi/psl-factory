@@ -18,7 +18,7 @@ from apps.workflows import factory,factory_bu as bu
 from apps.workflows.models import FactoryWork,FactoryAttempt,FactoryProgress
 from apps.finance.bu_models import BUReport,BUReceipt,BUWork
 from tests.bu_helpers import fixture,rule,review,source,policy
-from tests.helpers import rev
+from tests.helpers import check_investigation_progress, rev
 
 class FactoryBUTests(TestCase):
     @classmethod
@@ -154,6 +154,9 @@ class FactoryBUTests(TestCase):
         self.assertContains(page,'Small-group protection holds the whole report')
         self.assertNotContains(page,'Publish exact aggregate')
         self.assertFalse(BUReport.objects.exists())
+        api = self.client.get(f'/api/v1/work/{self.work.pk}/business-units').json()
+        self.assertFalse(api['can_publish'])
+        self.assertEqual(api['result']['id'], bu.result(self.work).pk)
     def test_known_exception_omitted_holds_not_zero_or_previous_ratio(self):
         self.start();self.inputs['rule_ids']=[]
         bu.correct(self.f['preparer'],self.work.pk,self.work.revision,rev(self.f['case']),self.inputs,'Explicit changed exclusion selection');self.work.refresh_from_db();self.advance()
@@ -210,9 +213,19 @@ class FactoryBUTests(TestCase):
     def test_returned_result_can_rebuild_reviewed_successor_preserving_old_result(self):
         f = self.f
         self.start()
+        check_investigation_progress(self, f['preparer'], self.work,
+                                     'Investigating the selected business-unit sources and exception rules.')
         self.advance()
         old = bu.result(self.work)
-        returned = review(f, old, 'return')
+        self.client.force_login(f['reviewer'])
+        url = f'/api/v1/work/{self.work.pk}'
+        plan = self.client.get(url + '/business-units').json()
+        body = {'kind': 'business_unit', 'work_id': old.pk, 'purpose': old.kind, 'verdict': 'return',
+                'operation_key': 'api-bu-return', 'evidence_id': f['e']['bu_review'].pk,
+                **{key: plan[key] for key in ('expected_revision', 'case_revision')}}
+        decision = self.client.post(url + '/reviews', body, content_type='application/json')
+        self.assertEqual(decision.status_code, 200, decision.content)
+        returned = old.reviews.get(verdict='return')
         spent = self.work.budget_used
         original_due = timezone.now() + timedelta(minutes=2)
         progress = FactoryProgress.objects.create(work=self.work, requested_by=f['preparer'], status='waiting',
@@ -230,6 +243,12 @@ class FactoryBUTests(TestCase):
         self.assertNotEqual(replacement.pk, old.pk)
         self.assertFalse(replacement.reviews.exists())
         self.assertTrue(old.reviews.filter(pk=returned.pk, verdict='return').exists())
+        current = self.client.get(url + '/business-units').json()
+        self.assertEqual(current['result']['id'], replacement.pk)
+        approved = self.client.post(url + '/reviews', {**body, 'work_id': replacement.pk, 'verdict': 'approve',
+            'operation_key': 'api-bu-successor', **{key: current[key] for key in ('expected_revision', 'case_revision')}},
+            content_type='application/json')
+        self.assertEqual(approved.status_code, 200, approved.content)
     def test_primary_intake_form_is_typed_and_rejects_extra_fields(self):
         f=self.f;self.client.force_login(f['preparer']);url=reverse('factory_create')+'?definition='+bu.DEFINITION+'&case='+str(f['case'].pk)
         response=self.client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Exceptions to exclude');self.assertNotContains(response,'JSON')

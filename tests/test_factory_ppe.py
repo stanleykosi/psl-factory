@@ -36,7 +36,19 @@ class FactoryPPETests(TestCase):
         f=self.f;self.start()
         check_investigation_progress(self, f['actor'], self.work, 'Investigating the asset register and supporting records.')
         self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['status'],'ready');self.assertNotEqual(self.work.status,'verified')
-        review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        api = f'/api/v1/work/{self.work.pk}'
+        self.client.force_login(f['reviewer'])
+        scheduled = self.client.get(api + '/assets').json()
+        option = next(item for item in scheduled['review_options']
+                      if item['target_id'] == s.pk and item['purpose'] == 'schedule')
+        self.assertIn('approve', option['verdicts'])
+        approved = self.client.post(api + '/reviews', {'kind': 'asset', 'target_id': s.pk, 'purpose': 'schedule',
+            'verdict': 'approve', 'evidence_id': f['e']['finance_review'].pk, 'note': 'Review exact depreciation schedule',
+            'expected_revision': scheduled['expected_revision'], 'case_revision': scheduled['case_revision']},
+            content_type='application/json')
+        self.assertEqual(approved.status_code, 200, approved.content)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(self.client.get(api + '/assets').json()['schedule_review_id'], approved.json()['review_id'])
         proof=flow.verify(self.work,f['actor']);self.assertEqual(proof['ledger'],f['parent'].pk);self.assertFalse(proof['ledger_posted']);self.assertEqual(proof['full_owner_oracle_acceptance'],'unresolved')
         self.client.force_login(f['actor']);before=self.rows()
         response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Full owner-oracle acceptance remains unresolved');self.assertIn('no-store',response['Cache-Control'])
@@ -62,6 +74,7 @@ class FactoryPPETests(TestCase):
                                    for action in ('case.read', 'factory.read', 'finance.read', 'ppe.read')])
         self.client.force_login(reader)
         self.assertNotContains(self.client.get(path), label)
+        api = f'/api/v1/work/{self.work.pk}'
 
         class ObserveCalculation(SyntheticFactoryCoordinator):
             def choose(provider, context):
@@ -69,6 +82,7 @@ class FactoryPPETests(TestCase):
                 self.assertIsNone(flow.schedule(self.work))
                 page = self.client.get(path)
                 self.assertContains(page, label)
+                self.assertEqual(self.client.get(api).json()['current_activity']['label'], label)
                 self.assertContains(page, 'data-work-watch')
                 self.assertNotContains(self.client.get(decision), label)
 
@@ -89,6 +103,7 @@ class FactoryPPETests(TestCase):
 
         self.assertTrue(factory.run_once(self.work.pk, provider=ObserveCalculation()))
         self.assertNotContains(self.client.get(path), label)
+        self.assertNotIn('current_activity', self.client.get(api).json())
         self.work.refresh_from_db()
         schedule = flow.schedule(self.work)
         self.assertIsNotNone(schedule, self.work.finding)

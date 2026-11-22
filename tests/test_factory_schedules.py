@@ -349,6 +349,8 @@ class FactorySchedulesTests(TestCase):
         self.advance()
         self.client.force_login(f['actor'])
         approved = read()
+        self.assertEqual(approved['review_id'], approval.json()['review_id'])
+        self.assertEqual(approved['stage'], 'complete')
         self.assertTrue(approved['can_export'])
         export = post(url, {**revisions(approved), 'action': 'export_adjustment',
                             'schedule_id': approved['schedule_id'], 'kind': 'additive',
@@ -467,13 +469,30 @@ class FactorySchedulesTests(TestCase):
         self.assertNotEqual(successor.pk, original.pk)
         review(f,successor);self.advance()
         self.assertEqual(self.work.status, 'verified')
-        review(f,successor,'revoke')
         self.client.force_login(f['reviewer'])
+        api = f'/api/v1/work/{self.work.pk}'
+        def decide(verdict):
+            self.work.refresh_from_db()
+            result = self.client.post(api + '/reviews', {'kind': 'schedule', 'target_id': successor.pk,
+                'expected_revision': self.work.revision, 'case_revision': rev(f['case']), 'verdict': verdict,
+                'evidence_id': f['e']['finance_review'].pk, 'note': 'Review the exact corrected schedule'},
+                content_type='application/json')
+            self.assertEqual(result.status_code, 200, result.content)
+        decide('revoke')
+        withdrawn = self.client.get(api + '/finance-schedule').json()
+        self.assertEqual(withdrawn['schedule_id'], successor.pk)
+        self.assertEqual(withdrawn['stage'], 'withdrawn')
+        self.assertFalse(withdrawn['can_export'])
         page=self.client.get(decision)
         self.assertContains(page, 'Approval withdrawn')
         self.assertContains(page, 'Restore exact approval')
         self.assertNotContains(page, 'Approve exact schedule')
         self.assertEqual(original.reviews.get().verdict, 'return')
+        decide('approve')
+        self.advance()
+        restored = self.client.get(api + '/finance-schedule').json()
+        self.assertEqual(restored['schedule_id'], successor.pk)
+        self.assertEqual(restored['stage'], 'complete')
     def test_af13_grant_withdrawal_invalidates_native_and_sql_without_private_report_grant(self):
         f=self.f;self.start(inventory=True,accepted=True);self.advance();s=flow.schedule(self.work);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         Grant.objects.filter(case=f['case'],user=f['reviewer'],action='validation.accept').update(active=False)

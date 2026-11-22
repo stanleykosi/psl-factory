@@ -63,20 +63,33 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
             self.human('preauthorization_decision',role=role,authority_role='Engineering Lead',verdict='approve',evidence=self.decision.pk,note='Actual prescribed human preauthorization decision')
         auth=self.human('authorize');self.select(auth);self.advance();self.assertEqual(emergency.report(self.work)['stage'],'implementation')
         self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
+        api = f'/api/v1/work/{self.work.pk}/emergency'
+        def record(action, **fields):
+            current = self.client.get(api).json()
+            result = self.client.post(api, {'action': action, 'profile_id': self.profile.pk,
+                'expected_revision': current['expected_revision'], 'case_revision': current['case_revision'],
+                **fields}, content_type='application/json')
+            self.assertEqual(result.status_code, 201, result.content)
+            return result.json()['record_id']
         response_url=reverse('factory_work_response',args=[self.work.pk]);self.assertContains(self.client.get(response_url),'Timestamp time zone:')
         decision_url=reverse('factory_invoice_decision',args=[self.work.pk])
         self.assertNotContains(self.client.get(decision_url),'Timestamp time zone:')
         fields={'action':'capture_outcome','revision':self.work.revision,'case_revision':rev(self.case),'profile':self.profile.pk,'implemented_at':timezone.now().isoformat(),'evidence':self.implementation.pk,'note':'Human records actual external implementation, not a dispatch request'}
         self.assertContains(self.client.post(decision_url,fields),'Choose an available action on this page')
         self.assertFalse(EmergencyOutcome.objects.exists())
-        response=self.client.post(response_url,fields)
-        self.assertEqual(response.status_code,302);actual=EmergencyOutcome.objects.get(profile=self.profile);self.assertGreaterEqual(actual.implemented_at,auth.created_at)
+        recorded = record('capture_outcome', implemented_at=fields['implemented_at'],
+                          evidence_id=self.implementation.pk, note=fields['note'])
+        actual=EmergencyOutcome.objects.get(pk=recorded, profile=self.profile);self.assertGreaterEqual(actual.implemented_at,auth.created_at)
         self.select(auth,actual);self.clocks()
-        self.human('record_review',evidence=self.review_evidence.pk,note='Actual human post-implementation review')
-        for role in ['Product','Engineering Lead']:self.human('retrospective_decision',role=role,verdict='approve',evidence=self.decision.pk,note='Actual review-bound retrospective decision')
-        record=self.human('reconcile_retrospective');proof=self.finish_report();self.assertEqual(proof['retrospective_record'],record.pk)
+        record('record_review', evidence_id=self.review_evidence.pk, note='Actual human post-implementation review')
+        for role in ['Product', 'Engineering Lead']:
+            record('retrospective_decision', role=role, verdict='approve', evidence_id=self.decision.pk,
+                   note='Actual review-bound retrospective decision')
+        retrospective = record('reconcile_retrospective')
+        proof=self.finish_report();self.assertEqual(proof['retrospective_record'],retrospective)
         before=self.work.revision;self.assertContains(self.client.get(url),'Inspect the recorded retrospective outcome');self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
         self.assertTrue(self.work.activities.filter(kind='ACT04',status='succeeded').exists())
+        self.assertEqual(self.client.get(f'/api/v1/work/{self.work.pk}').json()['state'], 'verified')
 
     def test_current_cto_refusal_holds_preauthorization_and_preserves_actual_outcome_capture(self):
         from tests.document_helpers import artifact
@@ -130,12 +143,21 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         self.advance()
         version = emergency.document(self.work)
         self.assertIsNotNone(version)
-        self.review_report()
+        self.client.force_login(self.actor)
+        api = f'/api/v1/work/{self.work.pk}'
+        prepared = self.client.get(api + '/emergency').json()
+        self.assertEqual(prepared['document_version_id'], version.pk)
+        decision = self.client.post(api + '/reviews', {'kind': 'document',
+            'expected_revision': prepared['expected_revision'], 'case_revision': prepared['case_revision'],
+            'version_id': version.pk, 'verdict': 'approve', 'note': 'Review the exact Emergency retrospective report'},
+            content_type='application/json')
+        self.assertEqual(decision.status_code, 200, decision.content)
         self.advance()
         self.client.force_login(self.actor)
         url = reverse('factory_detail', args=[self.work.pk])
         self.assertContains(self.client.get(url), 'Report delivery needs setup. No configured recipients for the intended audience')
         self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        self.assertEqual(self.client.get(api + '/emergency').json()['receipt_ids'], [])
         approved = version.reviews.get(verdict='approve')
         receiver, _ = Grant.objects.get_or_create(case=self.case, user=self.actor, action='document.receive:internal')
         self.assertTrue(receiver.active)
@@ -149,6 +171,8 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         publication = Publication.objects.get(factory_work=self.work)
         self.assertEqual((publication.version_id, publication.review_id), (version.pk, approved.pk))
         self.assertEqual(PublicationReceipt.objects.get(publication=publication).recipient_id, self.actor.pk)
+        self.assertEqual(self.client.get(api + '/emergency').json()['receipt_ids'],
+                         [PublicationReceipt.objects.get(publication=publication).pk])
 
     def test_replace_policy_is_explicit_and_report_never_grants_deployment_or_ordinary_closure(self):
         auth,actual,record=self.ready_work('replace');self.assertEqual(auth.snapshot['glpi'],[]);proof=self.finish_report();self.assertEqual(proof['retrospective_status'],record.snapshot['status'])

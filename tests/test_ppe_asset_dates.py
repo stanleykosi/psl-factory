@@ -69,10 +69,20 @@ class PPEAssetDateTests(TestCase):
         self.assertNotIn('dates', original.payload['assets'][0])
         self.assertFalse(dated.result['date_basis_ambiguous'])
         self.assertTrue(ppe_dates.needs_review(dated))
-        ppe_helpers.review(self.f, dated, 'register')
-
         work = factory_ppe.start(self.maker, self.case.pk, 'date-basis-work', dated.pk,
                                  None, self.f['parent'].pk, 'date-basis-work', rev(self.case))
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.client.force_login(self.reviewer)
+        api = f'/api/v1/work/{work.pk}'
+        pending = self.client.get(api + '/assets').json()
+        self.assertEqual(pending['register_id'], dated.pk)
+        self.assertIn(dated.pk, [row['target_id'] for row in pending['review_options'] if row['purpose'] == 'register'])
+        approved = self.client.post(api + '/reviews', {'kind': 'asset', 'target_id': dated.pk, 'purpose': 'register',
+            'verdict': 'approve', 'evidence_id': self.f['e']['finance_review'].pk, 'note': 'Review the exact current register',
+            'expected_revision': pending['expected_revision'], 'case_revision': pending['case_revision']},
+            content_type='application/json')
+        self.assertEqual(approved.status_code, 200, approved.content)
         factory.run_until_wait(work.pk)
         work.refresh_from_db()
         self.assertEqual(factory_ppe.report(work, self.reviewer)['stage'], 'basis_review')

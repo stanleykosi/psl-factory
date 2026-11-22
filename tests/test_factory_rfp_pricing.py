@@ -81,6 +81,9 @@ class FactoryFinalCostingDecisionTests(TestCase):
             'evidence_id': None, 'note': 'Reviewed the exact current bid and separately calculated amount.'},
             content_type='application/json')
         self.assertEqual(result.status_code, 200, result.content)
+        after = self.client.get(root + '/bid-pricing').json()
+        self.assertEqual(len(after['approvals']), 3)
+        self.assertTrue(all(row['status'] == 'Approved' and row['recorded_at'] for row in after['approvals']))
         self.assertTrue(CommercialDecision.objects.filter(revision=response.commercial, role='CEO', verdict='approve').exists())
         self.assertNotContains(self.client.get(url), 'Final costing decision')
         self.assertFalse(RFPSubmission.objects.filter(response=response).exists())

@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Second named API replay · 22 November 2026
+
+Railway deployment `2421206a-3ca3-4533-88fb-0da1f937ea58` at revision `e8332288bf9df00168f0efe37c6eba25b235eb4f` exercised the pending cases from the 183-state manifest. The merged ledger records 177 passes, six failed states and 79 pending. Three failed states share the incorrect active delegation reader. The other failures were the expected status after template-access withdrawal and the nested action state in the minutes check. The new manifest contains 262 cases. [State results](docs/design/api-state-replay-results.csv)
+
 ## Named API state replay checkpoint · 22 November 2026
 
 Isolated Railway deployment `bcd215a6-b1bd-41e9-9f64-d69cd2f2b1f3` at revision `2b8b1c81202e31535e9608a9216e1fb3ff19347b` exercised 94 named assertions on PostgreSQL. Its ledger records 87 passing, seven insufficient and 168 pending states. The seven named failures record missing API observations or mismatched contract statuses. Local PostgreSQL passed three account-delivery and four RFP cases, including scoped receipt readback and no-policy conversion holds. Six local progress, Planning and Change cases passed. [State results](docs/design/api-state-replay-results.csv)

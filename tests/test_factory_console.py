@@ -145,6 +145,20 @@ class FactoryConsoleTests(TestCase):
         self.assertEqual((empty['items'], empty['evaluated'], empty['limited']), ([], 0, False))
         self.assertEqual(self.client.get(f"{route}/{private['work'].pk}").status_code, 404)
 
+        overview = self.client.get('/api/v1/overview').json()
+        native = self.client.get(reverse('design_overview')).context
+        self.assertEqual(overview['lines'], native['lines'])
+        self.assertTrue(overview['as_of'])
+        self.assertEqual(overview['lines'][0]['total'], 2)
+        self.assertEqual({row['id'] for row in self.client.get(route, {
+            'queue': 'active', 'line': overview['lines'][0]['key'],
+        }).json()['items']}, visible)
+        exceptions = self.client.get(route, {'queue': 'exceptions', 'line': owner['work'].definition}).json()
+        self.assertEqual([row['id'] for row in exceptions['items']], [colleague['work'].pk])
+        held = self.client.get(exceptions['items'][0]['api_url']).json()
+        self.assertEqual(held['state'], 'owner_needed')
+        self.assertEqual(held['output_url'], None)
+
     def test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition(self):
         f=fixture();self.client.force_login(f['actor']);url=reverse('factory_create');f['case'].refresh_from_db()
         count=FactoryWork.objects.filter(case=f['case']).count()

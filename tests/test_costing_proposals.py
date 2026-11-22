@@ -78,6 +78,21 @@ class CostingProposalTests(TestCase):
         self.assertIsNone(result.rule_id)
         self.assertEqual(run(data, key='after-withdrawal').result['values'][0]['value'], '20.00')
 
+    def test_proposer_withdraws_through_api_without_activating_new_costing(self):
+        data = self.data
+        proposal = self.proposal()
+        self.client.force_login(data['actor'])
+        exact = f"/api/v1/projects/{data['case'].pk}/costing/proposals/{proposal.pk}"
+        self.assertEqual(self.client.get(exact).json()['verdicts'], ['withdraw'])
+        withdrawn = self.client.post(exact, {'revision': rev(data['case']), 'verdict': 'withdraw',
+            'reason': 'Withdraw the synthetic proposal while preparing authentic source evidence',
+            'evidence_id': data['review_evidence'].pk}, content_type='application/json')
+        self.assertEqual(withdrawn.status_code, 201, withdrawn.content)
+        current = self.client.get(exact).json()
+        self.assertEqual(current['recorded_verdict'], 'withdraw')
+        self.assertFalse(current['active_successor'])
+        self.assertEqual(run(data, key='after-api-withdrawal').result['values'][0]['value'], '20.00')
+
     def test_independent_review_records_exact_native_source_with_original_preparer_and_fresh_owner_checks(self):
         data = self.data
         proposal = self.proposal()

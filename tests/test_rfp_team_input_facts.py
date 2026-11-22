@@ -56,6 +56,23 @@ class RFPTeamInputFactTests(TestCase):
         self.assertEqual((unknown.received_at, unknown.person_days), (self.received, None))
         previous.refresh_from_db()
         self.assertIsNone(previous.received_at)
+        api = f'/api/v1/received-bids/{self.case.pk}/team-inputs'
+        initial = self.client.get(api).json()
+        engineering = next(item for item in initial['choices'] if item['team'] == 'Engineering')
+        self.assertIn(self.evidence['engineering_estimate'].pk, [row['id'] for row in engineering['proofs']])
+        facts = {'revision': initial['revision'], 'team': 'Engineering', 'received_at': self.received.isoformat(),
+                 'source_party': 'Sample named Engineering contributor', 'summary': 'Exact sample work with zero person-days.',
+                 'person_days': '0', 'attested': True}
+        self.assertEqual(self.client.post(api, {**facts, 'evidence_id': self.evidence['security_estimate'].pk},
+                                          content_type='application/json').status_code, 422)
+        supplied = self.client.post(api, {**facts, 'evidence_id': self.evidence['engineering_estimate'].pk},
+                                    content_type='application/json')
+        self.assertEqual(supplied.status_code, 201, supplied.content)
+        zero = RFPContribution.objects.get(pk=supplied.json()['id'])
+        items = {row['team']: row for row in self.client.get(api).json()['items']}
+        self.assertEqual(items['Engineering'], supplied.json())
+        self.assertEqual(items['Engineering']['person_days'], '0.000')
+        self.assertIsNone(items['Security']['person_days'])
         current = response(self.actor, self.case, self.evidence)
         self.assertEqual(current.snapshot['inputs']['Engineering']['id'], zero.pk)
         self.assertEqual(current.snapshot['inputs']['Security']['id'], unknown.pk)

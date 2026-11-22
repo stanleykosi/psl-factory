@@ -51,10 +51,21 @@ class FactoryRoutingTests(TransactionTestCase):
         from .obligation_helpers import factory_approve_identified
         f=fixture(responsibility=False);configure(f,process_owner_id=None);w=f['work'];a=f['actor']
         factory.run_until_wait(w.pk);w.refresh_from_db();task=HumanTask.objects.get(kind='factory_governance')
-        task=factory.claim_task(a,task.pk,task.revision)
-        with self.assertRaises(ValidationError):routing.recheck(a,task.pk,task.revision,'Not yet configured')
+        self.client.force_login(a)
+        work_url = f'/api/v1/work/{w.pk}'
+        held = self.client.get(work_url).json()
+        self.assertEqual(held['state'], 'owner_needed')
+        url = held['information'][0]['url']
+        self.assertEqual(self.client.get(url).json()['task_id'], task.pk)
+        def command(action, **fields):
+            task.refresh_from_db()
+            return self.client.post(url, {'action': action, 'task_revision': task.revision, **fields},
+                                    content_type='application/json')
+        self.assertEqual(command('claim').status_code, 200)
+        self.assertEqual(command('recheck', reason='Not yet configured').status_code, 422)
         configure(f);spent=w.budget_used
-        routing.recheck(a,task.pk,task.revision,'Actual reviewed nominations now configured')
+        result = command('recheck', reason='Actual reviewed nominations now configured')
+        self.assertEqual(result.status_code, 200, result.content)
         self.assertFalse(InvoiceReview.objects.exists());self.assertFalse(InvoiceJob.objects.exists())
         self.assertFalse(TaskEvent.objects.get(action='factory.owners_rechecked').data['approval_granted'])
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertGreater(w.budget_used,spent)
@@ -62,6 +73,7 @@ class FactoryRoutingTests(TransactionTestCase):
         with tempfile.TemporaryDirectory() as directory:factory.run_until_wait(w.pk,adapter=MockFactoryInvoiceAdapter(directory))
         w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),1)
+        self.assertEqual(self.client.get(work_url).json()['state'], 'verified')
 
     def test_changed_assignment_invalidates_claim_and_exact_approval_without_erasing_history(self):
         from .obligation_helpers import factory_approve_identified, identified

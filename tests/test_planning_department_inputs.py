@@ -144,6 +144,12 @@ class PlanningDepartmentInputTests(TestCase):
         recorded = self.client.post(api + '/department-inputs', correction, content_type='application/json')
         self.assertEqual(recorded.status_code, 201, recorded.content)
         successor = PlanningDepartmentInput.objects.get(pk=recorded.json()['record_id'])
+        after = self.client.get(api).json()
+        self.assertCountEqual([row['department'] for row in after['departments']], DEPARTMENTS)
+        engineering = next(item['input'] for item in after['departments'] if item['department'] == 'Engineering')
+        self.assertEqual((engineering['id'], engineering['version'], engineering['person_days']),
+                         (successor.pk, 2, '2.500'))
+        self.assertIsNone(after['readiness'])
         self.assertEqual(self.client.post(api + '/department-inputs', correction, content_type='application/json').status_code, 409)
         with self.assertRaises(ValidationError):
             factory_planning.verified_output(f['work'])
@@ -160,6 +166,9 @@ class PlanningDepartmentInputTests(TestCase):
         f['work'].refresh_from_db()
         self.assertEqual(f['work'].status, 'verified', f['work'].finding)
         self.assertGreater(f['work'].budget_used, spent)
+        renewed = self.client.get(api).json()
+        self.assertTrue(renewed['effort_reviewed'])
+        self.assertNotEqual(renewed['readiness']['evidence_id'], ready['evidence_id'])
         self.client.force_login(f['a'])
         page=self.client.get(reverse('factory_detail',args=[f['work'].pk]))
         self.assertContains(page,'Changed effort reviewed')

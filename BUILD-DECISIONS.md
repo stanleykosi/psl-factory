@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Present live worker activity using the scope-checked Django projection. Invoice replacement invokes the native same-obligation command, with no release effect. The exact invoice recipient comparison stays restricted to current eligible reviewers. Bid team inputs append to the current intake through the existing team authority checks and retain missing historical values as null.
+
 22 November 2026. A named API replay needs both a passing behavioral assertion and its required operation responses. Persist the exact test, revision, Railway deployment and response status for every result. Read personal notification receipts only for the current account. An Unknown bid outcome may carry no proof. Known dispositions continue through the domain service's evidence checks.
 
 22 November 2026. When an exact forecast delivery remains uncertain, restore its work hold before checking for the original receipt. Keep the historical planner available for receipt verification on previously reserved requests.

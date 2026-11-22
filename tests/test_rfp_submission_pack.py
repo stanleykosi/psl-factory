@@ -188,6 +188,7 @@ class RFPSubmissionPackTests(TestCase):
         successor = packs.current(response)
         self.assertEqual(saved.json()['pack_id'], successor.pk)
         self.assertIsNone(self.client.get(api_url).json()['decision'])
+        self.assertEqual(self.client.get(api_url).json()['cover_note'], 'Revised cover note.')
         self.assertEqual((successor.number, successor.supersedes_id), (2, pack.pk))
         self.assertEqual(pack.cover_note, first_note)
         self.assertContains(command('submission_pack', **revised), 'pack changed')
@@ -209,7 +210,9 @@ class RFPSubmissionPackTests(TestCase):
         self.assertNotEqual(successor_pdf.sha256, artifact.sha256)
         self.assertEqual(requirement_findings(successor, successor_pdf), [])
         self.assertFalse(HumanTask.objects.filter(version=exact).exists())
-        self.assertEqual(command('submission_pack_review', pack=successor.pk, version=exact.pk).status_code, 302)
+        request = self.client.post(api_url + '/review-request', {'expected_revision': work.revision,
+            'case_revision': rev(case), 'pack_id': successor.pk, 'version_id': exact.pk}, content_type='application/json')
+        self.assertEqual(request.status_code, 200, request.content)
         self.client.force_login(self.reviewer)
         self.assertContains(self.client.get(decision_url), 'Revised cover note.')
         self.assertContains(self.client.get(decision_url), 'Matches the recorded file requirements.')

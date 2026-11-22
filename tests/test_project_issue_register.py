@@ -78,6 +78,14 @@ class ProjectIssueRegisterTests(TestCase):
         filtered = self.client.get(self.url, {'q': 'REGISTER', 'severity': 'High', 'owner': self.actor.pk, 'state': 'Open'})
         self.assertContains(filtered, 'Sample open issue')
         self.assertNotContains(filtered, 'Sample team issue')
+        listing = f'/api/v1/projects/{self.case.pk}/registers'
+        response = self.client.get(listing, {'q': 'REGISTER', 'severity': 'High', 'owner': self.actor.pk, 'state': 'Open'})
+        self.assertEqual(response.status_code, 200, response.content)
+        [record] = [item for section in response.json()['sections'] for item in section['items']]
+        self.assertEqual((record['record_id'], record['severity']), (known.issue_id, 'High'))
+        linked = self.client.get(record['api_url']).json()
+        self.assertEqual(linked['issue']['id'], known.issue_id)
+        self.assertEqual(linked['issue']['status'], 'Open')
 
     def test_private_and_foreign_proofs_are_excluded_before_filters_search_and_pagination(self):
         hidden_owner = get_user_model().objects.create_user('unknown-register-private-owner')

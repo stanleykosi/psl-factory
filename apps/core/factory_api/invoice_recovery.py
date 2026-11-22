@@ -1,4 +1,5 @@
-"""Exact invoice proof and a separate pre-issue draft stop."""
+"""Exact invoice proof, source replacement and a separate pre-issue draft stop."""
+from datetime import date
 from uuid import UUID as parse_uuid
 
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -9,6 +10,7 @@ from django.utils import timezone
 from apps.core.evidence_access import INVOICE_MILESTONE_PROOF
 from apps.identity.services import require
 from apps.workflows import factory, factory_invoice_cancellation as cancellation, factory_invoice_information as information
+from apps.workflows import factory_invoice_intake as intake
 from apps.workflows.models import HumanTask
 
 from .commands import require_line
@@ -22,6 +24,18 @@ FILE = obj({'id': ID, 'name': TEXT})
 TASK = obj({'id': ID, 'revision': REVISION, 'milestone': TEXT, 'can_claim': BOOLEAN, 'can_supply': BOOLEAN,
             'files': array(FILE, limit=50)})
 ISSUED = obj({'id': ID, 'reference': TEXT, 'issued_at': DATETIME})
+
+
+@endpoint(method='POST', request=obj({'expected_revision': REVISION, 'preparation_id': ID,
+    'reference': {**TEXT, 'maxLength': 100}, 'due_date': nullable({'type': 'string', 'format': 'date'}), 'reason': NOTE}),
+    response=WORK_RESULT, summary='Select an exact source-owned successor for the current unissued invoice obligation')
+def replace_preparation(request, work_id, *, body):
+    work = require_line(request.user, work_id, FINANCE_INVOICE)
+    due_date = date.fromisoformat(body['due_date']) if body['due_date'] else None
+    intake.replace(request.user, work.pk, body['preparation_id'], body['reference'], due_date,
+                   body['expected_revision'], body['reason'])
+    work.refresh_from_db(fields=['status', 'revision', 'lease_until'])
+    return result(work)
 
 
 def proof_payload(work, proof):

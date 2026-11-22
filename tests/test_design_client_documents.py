@@ -159,4 +159,4 @@ class ClientAndTemplateDesignTests(TestCase):
             self.assertEqual(original.status_code, 200)
             self.assertEqual(b''.join(original.streaming_content), file)
             Grant.objects.filter(case=self.case, user=self.actor, action='document.read').update(active=False)
-            self.assertEqual(self.client.get(item['download_url']).status_code, 404)
+            self.assertEqual(self.client.get(item['download_url']).status_code, 403)

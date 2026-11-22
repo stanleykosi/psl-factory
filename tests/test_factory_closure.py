@@ -163,10 +163,19 @@ class FactoryClosureTests(TestCase):
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Head of PMO closure decision');self.assertContains(page,'PM performance summary, risks and resolutions')
         self.assertNotContains(page,'Continue eligible work');self.assertEqual(page['Cache-Control'],'no-store')
+        work_api = f'/api/v1/work/{f.work.pk}'
+        self.assertEqual(self.client.get(work_api).json()['state'], 'waiting')
         projects = reverse('workspace_overview')
         self.assertIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'active'}).context['cases'])
         self.assertNotIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'closed'}).context['cases'])
-        decision=approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        decision_response = self.client.post(work_api + '/reviews', {'kind': 'closure',
+            'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'version_id': v.pk,
+            'evidence_id': f.e['requirements'].pk, 'verdict': 'approve',
+            'note': 'Synthetic Head of PMO reviewed the exact report and current native prerequisites'},
+            content_type='application/json')
+        self.assertEqual(decision_response.status_code, 200, decision_response.content)
+        decision = DeliveryRecord.objects.get(dossier=f.d, kind='closure_decision')
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding);proof=closure.verify(f.work)
         self.assertTrue(proof['verified']);self.assertEqual(proof['decision'],decision.pk)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').count(),1)
@@ -180,10 +189,20 @@ class FactoryClosureTests(TestCase):
         self.assertEqual(result['recorded_closure_id'],proof['closure'])
         self.assertIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'closed'}).context['cases'])
         self.assertNotIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'active'}).context['cases'])
+        active = self.client.get('/api/v1/projects', {'status': 'active'}).json()
+        closed = self.client.get('/api/v1/projects', {'status': 'closed'}).json()
+        self.assertNotIn(str(f.case.pk), [row['case_id'] for row in active['items']])
+        self.assertIn(str(f.case.pk), [row['case_id'] for row in closed['items']])
+        self.assertEqual(self.client.get(work_api).json()['state'], 'verified')
+        checklist = self.client.get(f'/api/v1/projects/{f.case.pk}/delivery/{f.d.pk}/closure-checklist').json()
+        self.assertEqual(checklist['recorded_closure_id'], proof['closure'])
 
     def test_unknown_intake_and_missing_profile_capture_correct_and_continue_with_same_allowance(self):
         f=setup(known=False,profile=False,base=self.base);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'configuration_needed');self.assertEqual(f.work.budget_used,0)
+        self.client.force_login(f.actor)
+        work_api = f'/api/v1/work/{f.work.pk}'
+        self.assertEqual(self.client.get(work_api).json()['state'], 'setup_needed')
         closure.correct(f.actor,f.work.pk,f.work.revision,rev(f.case),f.known_inputs,'Declare the actual synthetic source records')
         configure(f,owner=False);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertIsNotNone(closure.document(f.work))
         approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'owner_needed',f.work.finding)
@@ -191,6 +210,7 @@ class FactoryClosureTests(TestCase):
         p=configure(f,tokens=40000);factory.adopt_profile(f.actor,f.work.pk,f.work.revision,p.pk,'Explicit current finaliser configuration adoption')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(f.work.budget_limit,20000);self.assertGreater(f.work.budget_used,spent)
+        self.assertEqual(self.client.get(work_api).json()['state'], 'verified')
 
     def test_configured_document_review_is_native_and_head_decision_does_not_get_inferred(self):
         f=setup(review=True,base=self.base);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();v=closure.document(f.work)

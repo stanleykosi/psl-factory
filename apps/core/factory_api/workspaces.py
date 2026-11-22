@@ -13,7 +13,7 @@ from apps.core.presentation import workspace_name
 from apps.identity.factory_access import project_actions, project_cases
 from apps.finance import hr_workspace, month_end, project_money
 from apps.identity.services import active_case_grants
-from apps.policy.delegation_views import assignments
+from apps.policy.role_assignments import invoice_delegation_source
 from apps.workflows.factory_definitions import DEFINITIONS
 from apps.workflows.factory_views import intake_options
 
@@ -381,7 +381,7 @@ def close_payload(month, data, as_of):
 })), 'as_of': DATETIME, 'django_url': TEXT}), summary='Read the currently accessible delegation assignments')
 def delegations(request, case_id):
     case = project_for(request.user, case_id)
-    rows = assignments(request.user, case)
+    _, rows = invoice_delegation_source(request.user, case)
     return {'items': [{key: row[key] for key in ('role', 'principal_id', 'delegate_id', 'valid_from', 'valid_until')}
                       for row in rows], 'as_of': timezone.now(),
             'django_url': reverse('design_delegation', args=[case.pk])}

@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Full-inventory API replay checkpoint · 22 November 2026
+
+Railway has verified 177 of 262 states. The replay manifest defines exact assertions for all 262. The latest application changes fix active delegation lookup and expose bid team inputs, invoice source replacement, reviewer recipient comparison and scoped worker activity. The next acceptance batch covers the 85 unverified states on isolated PostgreSQL. [State results](docs/design/api-state-replay-results.csv)
+
 ## Individual API state replay · 22 November 2026
 
 Railway verified 87 of 262 named API states. Seven cases need stronger API response evidence and 168 remain pending. The replay plan grows the explicit assertions to 183 states. OpenAPI 1.21.0 adds readback for private personal notification receipts and pending bid dates and supports an unsupported-by-evidence outcome remaining Unknown. [State results](docs/design/api-state-replay-results.csv) · [Actual tests](BUILD-TESTS.md)

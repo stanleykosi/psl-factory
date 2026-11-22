@@ -97,7 +97,23 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(w.status,'waiting',w.finding);self.assertIn('department',w.finding)
         used=w.budget_used;factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.budget_used,used)
         self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
-        observe(f);factory.run_until_wait(w.pk);w.refresh_from_db()
+        self.client.force_login(f['a'])
+        planning_api = f"/api/v1/projects/{f['c'].pk}/planning"
+        self.assertIsNone(self.client.get(planning_api).json()['readiness'])
+        owner_api = f'/api/v1/work/{w.pk}/planning-owner-requests'
+        receipts = []
+        for name in ('scope', 'estimates'):
+            receipt, proof = supplied_observation(f, name)
+            receipts.append(receipt.pk)
+            self.client.force_login(f['owners'][name])
+            panel = self.client.get(owner_api).json()
+            [item] = panel['requests']
+            self.assertEqual(item['receipt_id'], receipt.pk)
+            self.assertEqual(self.client.post(owner_api, {'expected_revision': panel['expected_revision'],
+                'request_id': receipt.request_id, 'receipt_id': receipt.pk, 'evidence_id': proof.pk},
+                content_type='application/json').status_code, 201)
+        self.assertEqual(len(set(receipts)), 2)
+        factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(DeliveryDossier.objects.filter(case=f['c']).count(),1)
         self.assertEqual(DeliverySource.objects.filter(dossier__case=f['c']).count(),1)
@@ -108,6 +124,9 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(ApprovalRequest.objects.filter(case=f['c']).count(),2)
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job__request__case=f['c']).count(),2)
         self.assertTrue(all(not r.payload['approval_granted'] for r in ApprovalRouteReceipt.objects.filter(job__request__case=f['c'])))
+        self.client.force_login(f['a'])
+        ready = self.client.get(planning_api).json()['readiness']
+        self.assertEqual(ready['source_ids'], list(DeliverySource.objects.filter(dossier__case=f['c']).values_list('pk', flat=True)))
 
     def test_successor_packet_keeps_business_identity_and_spent_allowance(self):
         f=setup();w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db();spent=w.budget_used

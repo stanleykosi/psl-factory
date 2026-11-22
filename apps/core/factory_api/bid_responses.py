@@ -1,18 +1,23 @@
 """Requirement answers and the actual submitted-bid outcome handoff."""
 
+from datetime import datetime
+
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import OuterRef, Subquery
 from django.shortcuts import get_object_or_404
 
 from apps.agents.rfp_answer_models import RFPAnswerReview, RFPAnswerSuggestion
+from apps.core.evidence_access import public_evidence, restricted
 from apps.core.read_budget import limit_queries
-from apps.identity.services import require
-from apps.pmo import rfp_answers, rfp_outcomes, rfp_pricing, winning_answers
-from apps.pmo.models import RFPDisposition, RFPOutcome, RFPSubmission
+from apps.core.views import accessible_case
+from apps.identity.services import active_case_grants, require
+from apps.pmo import rfp, rfp_answers, rfp_outcomes, rfp_pricing, winning_answers
+from apps.pmo.models import RFPCase, RFPDisposition, RFPOutcome, RFPSubmission
 from apps.workflows import factory_rfp as native
 
 from .commands import require_line
-from .http import BOOLEAN, DATETIME, ID, TEXT, UUID, array, choice, endpoint, nullable, obj
+from .delivery import PROOF, proof_rows
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
 from .work import WORK_RESULT, result
 
@@ -26,6 +31,55 @@ ROW = obj({'key': KEY, 'evidence_id': nullable(ID), 'response': nullable(PROSE),
            'suggestion_id': nullable(ID), 'suggested_answer': nullable(PROSE), 'review_id': nullable(ID),
            'review_verdict': nullable(ANSWER_REVIEW), 'can_review': BOOLEAN, 'can_undo': BOOLEAN})
 PRIOR = obj({'token': TEXT, 'label': TEXT})
+TEAM = choice(*rfp.TEAMS)
+DAYS = {'type': 'string', 'pattern': r'^\d{1,9}(\.\d{1,3})?$'}
+TEAM_INPUT = obj({'id': ID, 'intake_id': ID, 'team': TEAM, 'evidence_id': ID,
+    'received_at': nullable(DATETIME), 'source_party': nullable({'type': 'string'}), 'summary': nullable({'type': 'string'}),
+    'person_days': nullable(DAYS)})
+
+
+def team_input(row):
+    return {**{key: getattr(row, key) for key in ('id', 'intake_id', 'team', 'evidence_id',
+                                                 'received_at', 'source_party', 'summary')},
+            'person_days': str(row.person_days) if row.person_days is not None else None}
+
+
+def team_case(actor, case_id):
+    case = accessible_case(actor, case_id, source_action='rfp.read')
+    require(actor, case, 'rfp.read')
+    return case
+
+
+@endpoint(response=obj({'revision': REVISION, 'intake_id': ID, 'items': array(TEAM_INPUT, limit=4),
+    'choices': array(obj({'team': TEAM, 'proofs': array(PROOF, limit=40)}), limit=4)}),
+    summary='Read the current bid team inputs and allowed original proofs')
+def team_inputs(request, case_id):
+    actor = request.user
+    case = team_case(actor, case_id)
+    bid = get_object_or_404(RFPCase.objects.select_related('current_intake'), case=case, current_intake__isnull=False)
+    current = bid.current_intake
+    rows = (current.contributions.filter(team__in=rfp.TEAMS).select_related('evidence')
+            .defer('evidence__body').order_by('team', '-pk').distinct('team'))
+    actions = active_case_grants(actor, [case.pk])
+    proofs = public_evidence(case.evidence.all()).only('kind', 'version').order_by('-pk')
+    return {'revision': case.revision, 'intake_id': current.pk,
+            'items': [team_input(row) for row in rows if not restricted(row.evidence)],
+            'choices': [{'team': team, 'proofs': proof_rows(proofs.filter(kind=kind)[:40])}
+                        for team, kind in rfp.TEAMS.items() if (case.pk, f'rfp.contribute:{team}') in actions]}
+
+
+@endpoint(method='POST', request=obj({'revision': REVISION, 'team': TEAM, 'evidence_id': ID, 'received_at': DATETIME,
+    'source_party': {**TEXT, 'maxLength': 160}, 'summary': {**TEXT, 'maxLength': 4000},
+    'person_days': nullable(DAYS), 'attested': BOOLEAN}), response=TEAM_INPUT, status=201,
+    summary='Record actual named-team evidence, time and exact known or unknown person-days')
+def record_team_input(request, case_id, *, body):
+    actor = request.user
+    case = team_case(actor, case_id)
+    facts = {key: body[key] for key in ('source_party', 'summary', 'person_days', 'attested')}
+    row = rfp.record_team_input(actor, case.pk, body['team'], body['evidence_id'], body['revision'],
+                                received_at=datetime.fromisoformat(body['received_at']), **facts)
+    row.refresh_from_db(fields=['person_days'])
+    return team_input(row)
 
 
 def answer_row(actor, work, row, suggestion, anchors, writable, readable_source):
