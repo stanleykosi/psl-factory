@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Next.js handoff validation · 22 November 2026
+
+The Railway preview returned 200 for health and Django sign-in. Its OpenAPI 1.22.0 document matched the GitHub main snapshot exactly, with 268 paths and 379 operations. Four contract tests passed in 10.561 seconds. TypeScript generation passed. The handoff crosswalk resolved all 262 passing states to present design files, mounted operations and the original Railway evidence across 59 groups. The Next.js design integration is a separate acceptance step and has no new run in this handoff.
+
+The repository handoff copies of the OpenAPI contract and screen map matched the canonical files by SHA-256. All relative guide links resolved, and every crosswalk operation matched one of the 379 operations in the included contract.
+
 ## API state replay completion · 22 November 2026
 
 Deployment `0921ddca-0118-4ead-8b50-2d9f3e154ed4` at `8439d3213bc41a86493b4f436409d896d559244d` passed all nine isolated PostgreSQL tests for the final 16 state assertions. Project delivery passed two tests in 80.751 seconds. Finance passed seven tests in 348.686 seconds. Both suite exit codes were zero. The merged ledger contains 262 passing states. Each passing record includes the stated operation responses, source revision and Railway deployment. The fixtures use synthetic data and exercise the mounted Django API and native workflow services.

@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Next.js will use the generated live Django contract for connected pages and retain the v7 client for prototype fixtures during integration. My work uses the existing route and presents role data inline. Django owns workspace and record permission checks, business decisions and background workflow state.
+
 22 November 2026. Reuse a single read's exact Finance review subjects and route packet. Keep independent current checks inside mutations. Match a staff result to its checked payroll and exact reviewed exceptions before reusing the source review. Emergency readback reuses completed retrospective evidence and excludes worker planning from the human API panel.
 
 22 November 2026. Present live worker activity using the scope-checked Django projection. Invoice replacement invokes the native same-obligation command, with no release effect. The exact invoice recipient comparison stays restricted to current eligible reviewers. Bid team inputs append to the current intake through the existing team authority checks and retain missing historical values as null.

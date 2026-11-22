@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Next.js developer handoff
+
+Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and the six-role permissions for My work, workspace visibility, invitations and decisions. Keep Django serving Railway during incremental frontend integration. HOD policy choices remain deferred.
+
 ## API replay complete · 22 November 2026
 
 All 262 named API state assertions passed on isolated Railway PostgreSQL across four successive runs. The final retest `0921ddca-0118-4ead-8b50-2d9f3e154ed4` passed all nine tests for the final 16 states at application revision `8439d3213bc41a86493b4f436409d896d559244d`. Each ledger row pins the exact scenario, observed HTTP operations, revision and deployment. The synthetic fixtures and original receipt checks do not authorize live provider effects or supply HOD decisions.

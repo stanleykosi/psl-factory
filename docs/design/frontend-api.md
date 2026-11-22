@@ -1,5 +1,7 @@
 # Factory API for the frontend cutover
 
+Start with the [Next.js handoff](../../handoffs/nextjs/README.md) for the accepted Railway baseline, screen mapping, six-role permissions and cutover order.
+
 Generate the frontend client from the [checked-in live OpenAPI contract](../../contracts/psl-factory.openapi.json). A running Django deployment serves the same contract at `/api/v1/openapi.json`. The mounted routes and request schemas generate both copies. The design prototype and its mock server use the separate v7 contract. Where the method and path match, use the live request and response types for Django integration.
 
 For a short payment, read the exact invoice `short-payment` resource and send its current `position` fingerprint and `revision`. The decision leaves the receivable unchanged. For a legal note or cash correction, open the project's `financial-corrections` resource for available actions, then follow the exact correction ID for reviews and receipts. The `cash-lots` resource shows the prior lot, confirmed successor and readable allocations.
@@ -65,7 +67,7 @@ For an existing account, choose **Setup → People → Move to team scope** besi
 | `POST /api/v1/role-work/{assignment_id}/actions` | Start or complete the native action as its current assignee |
 | `POST /api/v1/role-work/{assignment_id}/decision` | Record a native decision using the reviewed version token |
 
-The Django role desk and JSON endpoints share the same checks. Team leads see members’ assignment and decision status. Only the eligible assignee receives a decision packet or can submit a verdict. The scoped desk handles Finance invoice and Accounting reviews, Finance schedules, HR corrections, Planning exit, closure, client escalation and supported controlled-document reviews. Use `workspace_decisions` for native factory decisions and `approval_desks` for specialist workspace links. Payment exceptions, Emergency authorisation and retrospectives, restricted payroll, bids, forecasts and department-owned approvals retain their native permissions and exact source rules. Issuance, publication and technical or customer sign-off each have their own authority checks. Invitation creation and acceptance use the established Django forms.
+My work and the JSON endpoints share the same checks. Team leads see members’ assignment and decision status. Only the eligible assignee receives a decision packet or can submit a verdict. The scoped desk handles Finance invoice and Accounting reviews, Finance schedules, HR corrections, Planning exit, closure, client escalation and supported controlled-document reviews. Use `workspace_decisions` for native factory decisions and `approval_desks` for specialist workspace links. Payment exceptions, Emergency authorisation and retrospectives, restricted payroll, bids, forecasts and department-owned approvals retain their native permissions and exact source rules. Issuance, publication and technical or customer sign-off each have their own authority checks.
 
 Use the workspace’s JSON invitation resource at `/api/v1/setup/{case_id}/invitations` for current role and team choices. Submit the selected role and scope through that resource. Invitation preview and acceptance are available under `/api/v1/accounts/invitations`. A new invitation covers one workspace and one role.
 
@@ -85,7 +87,7 @@ Use `GET /api/v1/received-bids/{case_id}/receipts/{receipt_id}` with the identif
 
 Use the exact HR disclosure and workspace revision for exports, approval or correction. The upload takes the original UTF-8 JSON file through multipart and returns status and finding codes. The disclosure history contains metadata. Only the exact authorised Finance recipient can open the snapshot row resource. A payroll report recipient can read and acknowledge a current aggregate, then send a defined question to the assigned HR owner and acknowledge their reply. These reads preserve the separate HR and Finance source permissions.
 
-The current API covers intake against exact native sources for all 25 existing factory work definitions. It also covers work and project readback, invoice and Accounting task claims and decisions, reviewed project and Finance document actions, minutes confirmation, bid pack and outcome handling, authorised receipt reconciliation, department chat, eight scoped file agents, client contacts, alerts and verified-channel preferences. Its invoice, Payroll and document commands use the same durable services and authority checks as the Django pages.
+The current API covers intake against exact native sources for all 25 existing factory work definitions. It also covers work and project readback, invoice and Accounting task claims and decisions, reviewed project and Finance document actions, minutes confirmation, bid pack and outcome handling, authorised receipt reconciliation, department chat, client contacts, alerts and verified-channel preferences. The eight specialists run in the background through the coordinator. Read their progress and verified results through the owning workflow.
 
 | Journey | How the frontend uses the API |
 | --- | --- |
@@ -110,15 +112,15 @@ Prioritize the next cutover in this order.
 
 1. Shared navigation, work queues, project directory and project tabs, using current scope and pagination. Keep native links for controlled record and proof readback.
 2. Exact Finance review and recovery, minutes and bid packs, and current-source Assistant conversations. Use the typed draft and start endpoints to require the saved version during handoff.
-3. Finish JSON projections for detailed domain records and their scoped commands. The map tracks remaining release evidence, Go-live client replies, change and incident authority, planning and costing detail, Finance imports and payment corrections, private HR and Payroll records, reports and publication receipts.
-4. Finish account and staff administration and policy Setup. Retain the native Django forms for these steps until equivalents have permission, concurrency and browser parity. HOD-owned values remain deferred.
+3. Connect the mapped JSON projections and scoped commands for delivery, release, Change, Finance and HR. Verify independent decisions, action holds and original receipts against the state ledger.
+4. Connect account and staff administration and policy Setup. Use Django forms during the transition and test permission, concurrency and browser parity before switching navigation. HOD-owned values remain deferred.
 
 Keep the current Railway browser ledger as the Django functional baseline. Test newly migrated screens against live API responses with synthetic data and the ordinary test roles before switching their navigation.
 ### Connecting a separate frontend host
 
-Set `API_ORIGIN` on the Next server to the Django server. When the browser uses a different origin from Django, set `PSL_FRONTEND_ORIGINS` on Django to that exact public frontend origin, including the port if present. Multiple approved origins can be separated with commas. Django still checks the session and the CSRF token on writes. Same-origin Railway use needs no additional origin.
+Set `API_ORIGIN` on the Next server to the Django server and keep browser requests same-origin through the Next proxy. If Django sees a separate public frontend origin, configure `PSL_FRONTEND_ORIGINS` with the exact approved origin, including any port. Django uses that setting for CSRF checks. Preserve the session cookie and current CSRF token on authenticated writes.
 
-The separate frontend serves the signed-in work queue and Finance invoice review. The other work forms open through the same frontend proxy. A deployment with a separately reachable public Django site may set `NEXT_PUBLIC_FACTORY_ORIGIN` to use that site for the forms.
+The Next.js prototype includes the design pages and a mock-backed client. Connect each live route using the Django contract. Native forms can open through the frontend proxy. A deployment with a separately reachable public Django site may set `NEXT_PUBLIC_FACTORY_ORIGIN` for those form links.
 
 ## PMO and Finance process access
 

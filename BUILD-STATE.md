@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Next.js handoff prepared
+
+The [frontend handoff folder](handoffs/nextjs/README.md) includes the OpenAPI 1.22.0 snapshot, the map for all 59 screen groups, the 262-state crosswalk and the six-role access model. The Railway preview serves the verified contract.
+
 ## API state acceptance complete · 22 November 2026
 
 All 262 design states have passing Railway PostgreSQL API replay evidence. The last 16 state assertions passed in the targeted retest after the stale invoice conflict, live accounting, Business Unit and Emergency read fixes. Railway preview web and worker run the verified application revision `8439d321`. Preview health, the Django sign-in form, unauthenticated API denial and the exact OpenAPI 1.22.0 contract passed. HOD policies remain deferred. [State results](docs/design/api-state-replay-results.csv) · [Actual tests](BUILD-TESTS.md)

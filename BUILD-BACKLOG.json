@@ -1,4 +1,15 @@
 {
+  "nextjs_frontend_handoff_20261122": {
+    "status": "published",
+    "guide": "handoffs/nextjs/README.md",
+    "contract": "handoffs/nextjs/psl-factory.openapi.json",
+    "contract_version": "1.22.0",
+    "screen_map": "handoffs/nextjs/factory-api-screen-map.json",
+    "groups": 59,
+    "states": 262,
+    "next": "Connect the existing Next.js prototype one journey at a time while Django serves the current workflow.",
+    "hod_choices": "deferred"
+  },
   "named_api_state_replay_20261122": {
     "status": "verified",
     "states": 262,
