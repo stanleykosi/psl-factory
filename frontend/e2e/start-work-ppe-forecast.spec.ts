@@ -100,8 +100,8 @@ for (const [label, viewport, phone] of [
       await openLine(page, phone, ASSETS);
       await expect(dialog(page).locator('[data-field]')).toHaveCount(3);
       await expect(dialog(page).locator('input[type="file"]')).not.toHaveAttribute('accept');
-      const pickFile = proof(page).getByRole('button', { name: 'Choose a file' });
-      if (phone) await atLeast44(pickFile, 'Choose a file');
+      const pickFile = proof(page).locator('label.psl-drop');
+      if (phone) await atLeast44(pickFile, 'Drop zone');
       await expectNoAxeViolations(page, 'assets empty');
       await fillAssets(page);
       await choose(page, 'ppe_register_oct.xlsx', 98304);
@@ -127,7 +127,7 @@ for (const [label, viewport, phone] of [
       const log = recordWrites(page);
       await openLine(page, phone, FORECAST);
       await expect(dialog(page).locator('input[type="file"]')).toHaveCount(0);
-      await expect(dialog(page).getByText('Choose a file')).toHaveCount(0);
+      await expect(dialog(page).getByText('choose a file')).toHaveCount(0);
       await expect(dialog(page).getByText('All 3 accepted')).toBeVisible();
       // Audience starts on the option the line's data names; Months and As of start empty
       await expect(dialog(page).getByRole('radio', { checked: true })).toHaveText('Management');

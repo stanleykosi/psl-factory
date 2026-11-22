@@ -23,7 +23,7 @@ async function expectTargets(targets: Locator[]) {
   }
 }
 
-test('response form at 390: the shared Select, DateField, radios, checkbox and file button are 44px targets', async ({ page }) => {
+test('response form at 390: the shared Select, DateField, radios, checkbox and file zone are 44px targets', async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto('/work/W-1605/respond?task=T-1605');
   await loaded(page);
@@ -32,7 +32,7 @@ test('response form at 390: the shared Select, DateField, radios, checkbox and f
     page.getByRole('button', { name: /^When they responded / }),
     page.getByRole('radio', { name: 'Approved' }).locator('xpath=ancestor::label'),
     page.getByRole('checkbox').locator('xpath=ancestor::label'),
-    page.getByRole('button', { name: 'Take a photo or choose a file' }),
+    page.getByText(/Take a photo or/).locator('xpath=ancestor::label'),
   ]);
 });
 
@@ -68,11 +68,11 @@ test('My work filters at 390: the line checkboxes, the Show-all link and the thr
   ]);
 });
 
-test('proof chip "×", "Choose a file" and Clear search are 44px targets at 390', async ({ page }) => {
+test('proof file zone, Remove and Clear search are 44px targets at 390', async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto('/work/W-2101/respond?task=T-2101');
   await loaded(page);
-  await expectTargets([page.getByRole('button', { name: 'Choose a file' })]);
+  await expectTargets([page.getByText('choose a file').locator('xpath=ancestor::label')]);
   await page.getByRole('radio', { name: 'Security, missing' }).click();
   await page.locator('input[type="file"]').setInputFiles({ name: 'proof.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(2048) });
   await expectTargets([page.getByRole('button', { name: 'Remove proof.pdf' })]);

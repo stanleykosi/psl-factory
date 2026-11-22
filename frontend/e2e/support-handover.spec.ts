@@ -95,7 +95,7 @@ for (const [label, viewport] of [
       await expect(panel.getByRole('button', { name: 'Remove support-reply-10apr.pdf' })).toBeVisible();
       if (phone) {
         await expectTouchTargets(await panel.locator('button, input[type="time"], .psl-radio, .resp-attest').all());
-        const box = (await panel.locator('.resp-chip__remove').boundingBox())!;
+        const box = (await panel.getByRole('button', { name: /^Remove / }).boundingBox())!;
         expect([box.width >= 44, box.height >= 44]).toEqual([true, true]);
         const bar = (await panel.locator('.psl-actionbar').boundingBox())!;
         expect(bar.y + bar.height).toBeGreaterThan(viewport.height - 4);

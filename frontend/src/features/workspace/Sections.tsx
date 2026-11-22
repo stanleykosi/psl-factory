@@ -112,12 +112,12 @@ function Attachment({ item }: { item: Item }) {
   const file = itemAttachment(item);
   if (!file) return null;
   return (
-    <span className="ws-attachment">
+    <span className="psl-file ws-attachment">
       <Icon name="clip" />
-      <span>
+      <span className="psl-file__name">
         <strong>{file.label}</strong>
         <span className="cmp-sr"> · </span>
-        <span className="ws-attachment__meta">Uploaded · {formatSize(file.sizeBytes)}</span>
+        <small>Uploaded · {formatSize(file.sizeBytes)}</small>
       </span>
     </span>
   );
