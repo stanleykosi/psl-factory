@@ -37,6 +37,24 @@ def run(group, token, role_access):
                    'tests.test_native_station_role_access', 'tests.test_factory_api',
                    'tests.test_rfp_fresh_intake.FreshBidIntakeTests.test_api_and_form_share_the_original_file_receipt_and_delegation',
                    'tests.test_role_scoped_work.RoleScopedWorkTests.test_role_accounts_keep_the_full_factory_shell_and_scoped_destinations']
+    elif group == 'cutover':
+        modules = [
+            'tests.test_factory_api', 'tests.test_railway_worker',
+            'tests.test_bank_receipt_capture.BankReceiptCaptureTests.test_api_report_verify_allocate_and_private_readback',
+            'tests.test_rfp_assignment_queue.RFPAssignmentQueueTests.test_api_assigns_current_bid_to_named_manager_and_prevents_repeat',
+            'tests.test_design_consolidation.DesignConsolidationTests.test_api_project_action_assignment_completion_and_history',
+            'tests.test_design_consolidation.DesignConsolidationTests.test_template_catalog_reads_controlled_versions_and_revokes_access',
+            'tests.test_change_milestone_link.ChangeMilestoneLinkTests.test_api_links_signed_stage_and_retains_native_evidence',
+            'tests.test_design_client_documents.ClientAndTemplateDesignTests.test_api_first_template_catalogue_and_download',
+            'tests.test_client_directory.ClientDirectoryTests.test_api_directory_contact_proof_and_versioned_readback',
+            'tests.test_design_delegation.DesignDelegationTests.test_api_readback_and_idempotent_delegation_draft',
+            'tests.test_month_end_overview.MonthEndOverviewTests.test_api_capture_current_as_of_and_read_company_close',
+            'tests.test_design_reminders_staff.PaymentReminderTests.test_api_schedules_checked_attachment_and_reads_verified_mailbox_receipt',
+            'tests.test_rfp_messages.BidMessageTests.test_api_bid_followup_review_release_and_verified_receipt',
+            'tests.test_rfp_pdf_portal.RFPReviewedPDFPortalTests.test_manual_pdf_receipt_binds_exact_approved_artifact_through_verified_outcome',
+            'tests.test_factory_closure.FactoryClosureTests.test_corrected_report_requires_new_head_decision_and_preserves_native_history_and_budget',
+            'tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_reading_finance_user_can_comment_on_exact_other_review_without_any_decision',
+        ]
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',
@@ -59,7 +77,7 @@ def run(group, token, role_access):
     if group == "accounts":
         modules.append("tests.test_finance_import_projection")
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
-    if group == 'directory':
+    if group in ('directory', 'cutover'):
         cmd += ["--testrunner", "tests.api_contract_runner.ContractRunner"]
     observed = set()
     role_observed = set()
@@ -75,7 +93,7 @@ def run(group, token, role_access):
         print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
         if observed != required:
             return False
-    if role_access and group not in ('surface', 'directory'):
+    if role_access and group not in ('surface', 'directory', 'cutover'):
         print(f"[{group}] Role reads checked for {len(role_observed)} processes; missing {sorted(required - role_observed)}.", flush=True)
         if role_observed != required:
             return False
@@ -110,7 +128,7 @@ def main():
     provider.add_argument("--live", action="store_true", help="Also run both synthetic provider and storage checks.")
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
-    available = (*SUITES, 'original', 'surface', 'directory') if options.role_access else tuple(SUITES)
+    available = (*SUITES, 'original', 'surface', 'directory', 'cutover') if options.role_access else tuple(SUITES)
     groups = options.groups or available
     if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")

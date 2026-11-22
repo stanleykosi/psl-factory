@@ -204,7 +204,14 @@ class FactoryClosureTests(TestCase):
     def test_corrected_report_requires_new_head_decision_and_preserves_native_history_and_budget(self):
         f=setup(base=self.base);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();first=closure.document(f.work);old=approve(f)
         report=f.evidence('closure_report','Corrected synthetic PM closure report')
-        closure.correct(f.actor,f.work.pk,f.work.revision,rev(f.case),dict(f.inputs,report_evidence_id=report.pk),'Correct the PM report before finalisation')
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{f.work.pk}/corrections'
+        body = {'line': closure.DEFINITION, 'expected_revision': f.work.revision, 'case_revision': rev(f.case),
+                'source': {'inputs': dict(f.inputs, report_evidence_id=report.pk)},
+                'reason': 'Correct the PM report before finalisation'}
+        corrected = self.client.post(api, body, content_type='application/json')
+        self.assertEqual(corrected.status_code, 200, corrected.content)
+        self.assertEqual(self.client.post(api, body, content_type='application/json').status_code, 409)
         spent=f.work.budget_used;factory.run_until_wait(f.work.pk);f.work.refresh_from_db();second=closure.document(f.work)
         self.assertNotEqual(first.pk,second.pk);self.assertEqual(f.work.status,'waiting',f.work.finding)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').exists());self.assertTrue(DeliveryRecord.objects.filter(pk=old.pk).exists())

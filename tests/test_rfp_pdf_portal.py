@@ -110,8 +110,15 @@ class RFPReviewedPDFPortalTests(TestCase):
         self.assertFalse(RFPSubmission.objects.exists())
 
         exact = receipt_proof(fields, 'matching-pdf')
-        self.assertEqual(command(response_url, 'portal_receipt', target=version.pk, evidence=exact.pk,
-                                 note=attestation).status_code, 302)
+        api = f'/api/v1/work/{work.pk}/bid-pack/portal-receipt'
+        ready = self.client.get(api)
+        self.assertEqual(ready.status_code, 200, ready.content)
+        self.assertTrue(ready.json()['ready'])
+        recorded = self.client.post(api, {'case_revision': ready.json()['case_revision'], 'version_id': version.pk,
+                                          'evidence_id': exact.pk, 'attestation': attestation},
+                                    content_type='application/json')
+        self.assertEqual(recorded.status_code, 201, recorded.content)
+        self.assertEqual(self.client.get(api).json()['receipt'], recorded.json())
         submission = RFPSubmission.objects.get(version=version)
         self.assertEqual(submission.portal_receipt.evidence_id, exact.pk)
         self.assertEqual(submission.portal_receipt.review_id, review.pk)

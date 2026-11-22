@@ -29,6 +29,14 @@ SPEC = contract()
 
 
 class ContractTests(SimpleTestCase):
+    def test_every_correction_contract_matches_the_native_command_signature(self):
+        from apps.core.factory_api.corrections import CORRECTIONS, correction_fields
+
+        self.assertEqual(len(CORRECTIONS), 17)
+        for line, command in CORRECTIONS.items():
+            with self.subTest(line=line):
+                signature(command).bind(None, 1, 1, 1, reason='Synthetic reason', **dict.fromkeys(correction_fields(line)))
+
     def test_weekly_update_and_planning_screen_entries_have_their_own_workflows(self):
         import json
         from django.conf import settings
@@ -103,6 +111,25 @@ class FactoryApiTests(TestCase):
         cls.data = fixture(username='api-synthetic-finance')
         cls.actor, cls.case, cls.work = (cls.data[key] for key in ('actor', 'case', 'work'))
         cls.outsider, cls.other_case = setup_case(username='api-other-operator')
+
+    def test_milestone_completion_queues_exact_finance_handoff(self):
+        from apps.finance.models import Handoff
+        from apps.workflows.services import run_once
+        from tests.helpers import signed
+
+        actor, case = setup_case(username='api-milestone-operator')
+        proof = signed(actor, case)['completion']
+        self.client.force_login(actor)
+        url = f'{BASE}/projects/{case.pk}/milestones/completions'
+        options = self.client.get(url).json()
+        self.assertIn(proof.pk, [row['id'] for row in options['proofs']])
+        body = {'revision': options['revision'], 'evidence_id': proof.pk, 'name': 'Synthetic completion'}
+        saved = self.client.post(url, body, content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        self.assertTrue(run_once(case_id=case.pk))
+        handoff = Handoff.objects.get(milestone_id=saved.json()['id'])
+        self.assertEqual(handoff.milestone.evidence_id, proof.pk)
+        self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
 
     def post(self, url, body, client=None, **headers):
         return (client or self.client).post(BASE + url, body, content_type='application/json', **headers)

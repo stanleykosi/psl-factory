@@ -89,6 +89,9 @@ class IndependentInvoiceReviewTests(TestCase):
                    'comment': body}
         for _ in range(2):
             self.assertEqual(self.client.post(url, payload).status_code, 302)
+        api = f'/api/v1/tasks/{self.task.pk}/comments'
+        self.assertEqual(self.client.post(api, {'revision': self.task.revision, 'body': body},
+                                          content_type='application/json').status_code, 200)
         self.assertEqual(TaskEvent.objects.filter(task=self.task, action='factory.invoice_comment').count(), 1)
         self.assertFalse(InvoiceReview.objects.exists())
         self.assertFalse(InvoiceJob.objects.exists())

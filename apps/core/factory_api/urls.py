@@ -6,7 +6,11 @@ from django.http import JsonResponse
 from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
-from . import agents, assistant_drafts, commands, documents, handoffs, intake, notifications, received_bids, reviews, role_work, roles, work, workspaces
+from . import (
+    agents, assistant_drafts, bank_payments, bid_assignments, bid_delivery, clients, commands, corrections, documents,
+    finance_operations, handoffs,
+    intake, notifications, project_operations, received_bids, reminders, reviews, role_work, roles, setup, work, workspaces,
+)
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
 
@@ -17,11 +21,14 @@ ROUTES = (
     ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
     ('work/<int:work_id>/coordination/<int:check_id>/retry', handoffs.retry),
     ('projects/<uuid:case_id>/templates/replacements', documents.replace_template),
+    ('projects/<uuid:case_id>/templates', documents.catalogue, documents.first_template),
     ('lines', intake.lines),
     ('lines/projects', intake.projects),
     ('processes', intake.processes),
     ('received-bids/organisations', received_bids.organisations),
     ('received-bids', received_bids.record),
+    ('received-bids/assignments', bid_assignments.pending),
+    ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
     ('work', work.queue, intake.start),
     ('work/<int:work_id>', work.detail),
     ('work/<int:work_id>/department-handoff', handoffs.detail),
@@ -31,25 +38,49 @@ ROUTES = (
     ('work/<int:work_id>/background', work.background),
     ('work/<int:work_id>/actions', work.action),
     ('work/<int:work_id>/reviews', reviews.review),
+    ('work/<int:work_id>/corrections', corrections.correct),
     ('work/<int:work_id>/aggregate-receipt', reviews.acknowledge_aggregate),
     ('work/<int:work_id>/minutes/confirmation', commands.confirm_minutes),
     ('work/<int:work_id>/minutes/review-request', commands.request_minutes_review),
     ('work/<int:work_id>/bid-pack', commands.bid_pack, commands.save_bid_pack),
     ('work/<int:work_id>/bid-pack/review-request', commands.request_bid_review),
+    ('work/<int:work_id>/bid-pack/portal-receipt', bid_delivery.portal, bid_delivery.record_portal),
+    ('work/<int:work_id>/bid-outcomes/<int:outcome_id>/followup', bid_delivery.followup, bid_delivery.followup_command),
     ('work/<int:work_id>/rfp-outcome', commands.bid_outcome),
     ('tasks/<int:task_id>', work.task),
     ('tasks/<int:task_id>/claim', work.claim),
     ('tasks/<int:task_id>/decision', work.decision),
+    ('tasks/<int:task_id>/comments', corrections.invoice_comment),
     ('overview', workspaces.overview),
+    ('payments', finance_operations.payments),
+    ('month-end', finance_operations.company_close),
     ('projects', workspaces.projects),
     ('projects/<uuid:case_id>', workspaces.project),
     ('projects/<uuid:case_id>/money', workspaces.money),
     ('projects/<uuid:case_id>/month-end', workspaces.close),
+    ('projects/<uuid:case_id>/month-end/receivables', finance_operations.capture_close),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/reminder', reminders.detail, reminders.draft),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/reminder/actions', reminders.command),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments', bank_payments.options, bank_payments.report),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments/<int:receipt_id>', bank_payments.detail),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments/<int:receipt_id>/reported-amount', bank_payments.supply_amount),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments/<int:receipt_id>/verification', bank_payments.verify),
+    ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments/<int:receipt_id>/allocations', bank_payments.allocate),
     ('projects/<uuid:case_id>/hr', workspaces.hr),
+    ('projects/<uuid:case_id>/actions/<int:item_id>', project_operations.action, project_operations.update_action),
+    ('projects/<uuid:case_id>/change-milestone-link', project_operations.stage_options, project_operations.link_stage),
+    ('projects/<uuid:case_id>/milestones/completions', project_operations.milestone_options, project_operations.record_milestone),
     ('projects/<uuid:case_id>/<slug:tab>', workspaces.project_tab),
+    ('clients', clients.directory),
+    ('clients/groups/<str:group>', clients.group),
     ('clients/<uuid:case_id>', workspaces.client),
     ('clients/<uuid:case_id>/contacts', workspaces.save_contact),
+    ('clients/<uuid:case_id>/contacts/history', clients.contact_history),
+    ('clients/<uuid:case_id>/contacts/options', clients.contact_options),
     ('setup/<uuid:case_id>/delegations', workspaces.delegations),
+    ('setup/<uuid:case_id>/delegations/options', setup.delegation_options),
+    ('setup/<uuid:case_id>/delegations/drafts', setup.draft_delegation),
+    ('setup/<uuid:case_id>/rules', setup.rules),
     ('setup/primary-roles', roles.built_ins),
     ('setup/<uuid:case_id>/primary-roles', roles.catalogue, roles.create),
     ('setup/<uuid:case_id>/people/<int:person_id>/primary-role', roles.review, roles.apply),
@@ -155,7 +186,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.1.1',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.2.0',
             'description': 'Use the current same-origin Django session. For JSON writes, read the session CSRF token from '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

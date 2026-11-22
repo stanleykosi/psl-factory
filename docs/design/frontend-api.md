@@ -63,16 +63,26 @@ The role dashboard supplies an `invite_url` for a team lead’s own position. It
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists the mapped JSON operations, working Django routes and remaining steps. The current map records Django steps in 57 groups covering 260 states. A group can have usable JSON for some actions and require Django for others. The live schema publishes 73 GET and POST operations across 63 paths. Of the 51 design-prototype operations, 21 have an exact method and path match. Compare their field shapes before migrating a call.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists the mapped JSON operations, working Django routes and remaining steps. OpenAPI 1.2.0 describes 109 operations across 90 paths. The map records remaining JSON work in 53 groups covering 256 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
 
 The current API covers intake against exact native sources for all 25 existing factory work definitions. It also covers work and project readback, invoice and Accounting task claims and decisions, reviewed project and Finance document actions, minutes confirmation, bid pack and outcome handling, authorised receipt reconciliation, department chat, eight scoped file agents, client contacts, alerts and verified-channel preferences. Its invoice, Payroll and document commands use the same durable services and authority checks as the Django pages.
+
+| Journey | How the frontend uses the API |
+| --- | --- |
+| Milestones and changes | Read eligible proof or signed-stage plan choices, submit the exact current revision, then read the resulting milestone or project handoff. |
+| Actions and templates | Read current owners, deadlines and evidence with scoped history. Use the exact action revision to update an action. Send template sections as repeated multipart fields. Fetch selected files from the returned authenticated download URL. |
+| Received bids | Read the assignment queue, then the exact bid and approved nominees. After assignment the bid moves to the chosen project manager's work. |
+| Portal submission and follow-up | Use the exact approved pack to record a portal receipt. Save and review customer wording before reserving a follow-up. Use the recorded receipt to show actual delivery. |
+| Payments and reminders | Keep reported payments, verified cash and allocations separate. A reminder reservation and a verified delivery receipt are separate records. Attach a checked private PDF from the current user's uploads. |
+| Finance close and client directory | Page through authorised workspaces and contact groups. Use current-day receivables capture and read the resulting snapshot. |
+| Delegation and corrections | Save a delegation as a draft for separate review. Correction requests require the exact work and case revisions plus a source selection whose shape depends on the line. |
 
 Prioritize the next cutover in this order.
 
 1. Shared navigation, work queues, project directory and project tabs, using current scope and pagination. Keep native links for controlled record and proof readback.
 2. Exact Finance review and recovery, minutes and bid packs, and current-source Assistant conversations. Use the typed draft and start endpoints to require the saved version during handoff.
-3. Closed JSON projections for detailed domain records and their scoped commands. The map tracks remaining release and Go-live attestations, change and incident authority, planning and costing detail, Finance imports, payments and corrections, private HR and Payroll records, reports and publication receipts.
-4. Account and staff administration, template intake and policy Setup. Retain the native Django forms until equivalents have permission, concurrency and browser parity. HOD-owned values remain deferred.
+3. Finish JSON projections for detailed domain records and their scoped commands. The map tracks remaining release and Go-live attestations, change and incident authority, planning and costing detail, Finance imports and payment corrections, private HR and Payroll records, reports and publication receipts.
+4. Finish account and staff administration and policy Setup. Retain the native Django forms for these steps until equivalents have permission, concurrency and browser parity. HOD-owned values remain deferred.
 
 Keep the current Railway browser ledger as the Django functional baseline. Test newly migrated screens against live API responses with synthetic data and the ordinary test roles before switching their navigation.
 ### Connecting a separate frontend host

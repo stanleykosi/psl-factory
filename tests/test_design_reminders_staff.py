@@ -56,6 +56,52 @@ class PaymentReminderTests(TestCase):
         activate(self.actor, config)
         return config
 
+    def test_api_schedules_checked_attachment_and_reads_verified_mailbox_receipt(self):
+        self.activate_delivery('synthetic_mailbox', attachment_required=True, schedule_days_ahead=2)
+        actor, case, issue = self.actor, self.case, self.issue
+        self.client.force_login(actor)
+        url = f'/api/v1/projects/{case.pk}/invoices/{issue.pk}/reminder'
+        options = self.client.get(url).json()
+        self.assertEqual(options['recipient']['email'], 'billing@example.invalid')
+        writer, file = PdfWriter(), BytesIO()
+        writer.add_blank_page(width=240, height=150)
+        writer.write(file)
+        pdf = file.getvalue()
+        upload = CaseUpload.objects.create(case=case, actor=actor, key='api-invoice-pdf', name='Synthetic invoice.pdf',
+                                           sha256=sha256(pdf).hexdigest(), size=len(pdf))
+        body = {'subject': 'Sample scheduled reminder', 'message': 'Reviewed exact synthetic invoice.',
+                'attachment_id': upload.pk, 'revision': options['revision']}
+
+        def post(path, data):
+            return self.client.post(path, data, content_type='application/json')
+
+        self.assertEqual(post(url, body).status_code, 422)
+        with patch('adapters.case_uploads.read', return_value=pdf):
+            saved = post(url, {**body, 'attachment_checked': True})
+            self.assertEqual(saved.status_code, 201, saved.content)
+            draft = saved.json()
+            planned = (timezone.now() + timedelta(minutes=5)).replace(microsecond=0)
+            release = post(url + '/actions', {'action': 'send', 'draft_id': draft['id'], 'revision': rev(case),
+                                               'scheduled_for': planned.isoformat()})
+            self.assertEqual(release.status_code, 200, release.content)
+            dispatch = release.json()['dispatch']
+            self.assertIsNone(dispatch['receipt'])
+            self.assertIsNone(reminders.run_mailbox(dispatch['id']))
+            with patch('apps.finance.reminders.timezone.now', return_value=planned + timedelta(seconds=1)):
+                reminders.deliver_to_mailbox(dispatch['id'])
+            check = {'action': 'check_mailbox', 'dispatch_id': dispatch['id']}
+            verified = post(url + '/actions', check).json()['receipt']
+            self.assertTrue(verified['delivered'])
+            self.assertEqual(post(url + '/actions', check).json()['receipt'], verified)
+            history = self.client.get(url).json()['history'][0]
+            self.assertEqual(history['dispatch']['receipt'], verified)
+            message = self.client.get(history['mailbox_download_url'])
+            parsed = BytesParser(policy=policy.default).parsebytes(b''.join(message.streaming_content))
+            self.assertEqual(next(parsed.iter_attachments()).get_payload(decode=True), pdf)
+        self.assertEqual(PaymentReminderReceipt.objects.count(), 1)
+        Grant.objects.filter(case=case, user=actor, action='finance.reminder.read').update(active=False)
+        self.assertEqual(self.client.get(url).status_code, 403)
+
     def test_edited_exact_reminder_reaches_synthetic_inbox_once(self):
         self.client.force_login(self.actor)
         url = reverse('design_payment_reminder', args=[self.case.pk, self.issue.pk])

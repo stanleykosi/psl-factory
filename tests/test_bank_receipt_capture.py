@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 from io import BytesIO
 from unittest.mock import patch
 
@@ -51,6 +52,44 @@ class BankReceiptCaptureTests(TestCase):
         fields={'action':'verify','revision':rev(self.case),'role':'Finance','confirmed':'on','locator':locator}
         if file:fields['file']=file
         return self.client.post(receipt_url,fields)
+
+    def test_api_report_verify_allocate_and_private_readback(self):
+        url = f'/api/v1/projects/{self.case.pk}/invoices/{self.issue.pk}/payments'
+        initial = cash.open_amount(self.issue)
+        options = self.client.get(url).json()
+        self.assertTrue(options['can_report'])
+        with (patch('adapters.case_uploads.put', side_effect=self.objects.__setitem__),
+              patch('adapters.case_uploads.read', side_effect=lambda proof: self.objects[proof.key])):
+            receipt = self.client.post(url, {
+                'revision': options['revision'], 'customer': options['customer'], 'amount': '20', 'currency': 'NGN',
+                'amount_basis': 'gross_including_tax', 'received_at': self.at, 'source': 'synthetic-bank',
+                'transaction_ref': 'TEST-BANK-API-20', 'locator': 'api-statement', 'file': pdf_file('bank.pdf'),
+            })
+            self.assertEqual(receipt.status_code, 201, receipt.content)
+            exact = f"{url}/{receipt.json()['receipt_id']}"
+            reported = self.client.get(exact).json()
+            self.assertIsNone(reported['verified_lot_id'])
+            self.assertIn('Finance', reported['verification_roles'])
+            checked = self.client.post(exact + '/verification', {
+                'revision': reported['revision'], 'role': 'Finance', 'confirmed': 'on',
+            })
+            self.assertEqual(checked.status_code, 201, checked.content)
+            self.assertEqual(cash.open_amount(self.issue), initial)
+            allocated = self.client.post(exact + '/allocations', {
+                'revision': checked.json()['revision'], 'role': 'Finance', 'amount': '20',
+                'key': 'api-bank-allocation', 'reason': 'Matched the sample transfer to this invoice.',
+            }, content_type='application/json')
+            self.assertEqual(allocated.status_code, 201, allocated.content)
+            self.assertEqual(cash.open_amount(self.issue), initial - 20)
+            checked = self.client.get(exact).json()
+            self.assertEqual(Decimal(checked['remaining_cash']), 0)
+            self.assertEqual(self.client.get(checked['verification_url']).status_code, 200)
+            reader = get_user_model().objects.create_user(username='api-bank-read-only')
+            Grant.objects.bulk_create(Grant(case=self.case, user=reader, action=action)
+                                      for action in ('case.read', 'finance.read'))
+            self.client.force_login(reader)
+            self.assertIsNone(self.client.get(exact).json()['report_url'])
+            self.assertEqual(self.client.get(checked['verification_url']).status_code, 403)
 
     def test_report_verify_and_apply_retains_shortfall_and_private_statement(self):
         initial=cash.open_amount(self.issue)

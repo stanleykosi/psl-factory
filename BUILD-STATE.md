@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Frontend API cutover increment · 22 November 2026
+
+OpenAPI 1.2.0 adds 36 registered operations and updates 35 screen groups. The added paths cover project actions, milestones, signed change links, bid assignment, portal receipts, bid follow-up, templates, client contact history, payments and bank receipts, reminders, receivables and Finance close, rules and delegation drafts, invoice comments and 17 typed workflow source corrections. The same Django services own permissions, versions and operational effects. [Frontend handoff](docs/design/frontend-api.md) · [Screen map](contracts/factory-api-screen-map.json)
+
+The map retains remaining JSON work for 53 groups across 256 states. Major engineering gaps include source pickers, specialist decision packets and recovery commands, detailed payroll and Finance work, account administration and policy authoring. HOD decisions on values, approvers and live destinations are deferred. [Build backlog](BUILD-BACKLOG.json)
+
 ## Live frontend API contract · 22 November 2026
 
 OpenAPI 1.1.1 describes the 73 registered JSON operations across 63 paths. The versioned snapshot matches the Django registry and generates TypeScript types. Start work now supplies its submission URL and a scoped project picker with the current revision. Multipart fields, HTTP errors and path constraints have explicit contracts. The received-bid contract preserves the existing Django form and its original-document replay. [OpenAPI snapshot](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)

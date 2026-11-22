@@ -1,13 +1,18 @@
+from urllib.parse import parse_qs, urlsplit
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
-from apps.core.read_budget import ReadBudget, ReadLimit
+from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.documents import controlled, design_review, template_catalog, template_uploads
+from apps.documents.contracts import FIELDS, PMO_DOCUMENT_TYPES
+from apps.documents.models import TemplateFile
 from apps.documents.template_access import visible_templates
+from apps.documents.template_lists import LIST_PAGE, LIST_QUERY_LIMIT, template_page
 from apps.identity.services import active_case_grants, require, visible_cases
 from apps.workflows.models import HumanTask
-from .http import BOOLEAN, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, obj
+from .http import BOOLEAN, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
 
 
 def report(actor, case_id, version_id):
@@ -73,3 +78,58 @@ def replace_template(request, case_id):
     except OSError:
         raise Problem(503, 'storage_unavailable', 'Check the upload with the same request key before retrying.') from None
     return {'template_id': version.pk, 'version': version.version, 'django_url': reverse('design_project_tab', args=[case.pk,'templates'])}
+
+
+UPLOAD_GRANTS = ('document.read', 'document.template', 'evidence.add')
+BINARY = {'type': 'string', 'format': 'binary'}
+TEMPLATE_RESULT = obj({'template_id': ID, 'version': ID, 'django_url': TEXT})
+SECTIONS = array(choice(*sorted(FIELDS)), limit=len(FIELDS))
+CURSOR = {**TEXT, 'maxLength': 512}
+
+
+@endpoint(response=obj({
+    'revision': REVISION, 'can_upload': BOOLEAN, 'cursor': nullable(CURSOR),
+    'items': array(obj({'id': ID, 'name': TEXT, 'version': ID, 'download_url': nullable(TEXT)}), limit=LIST_PAGE),
+    'proofs': array(obj({'id': ID, 'kind': TEXT, 'version': ID}), limit=25),
+}), query={'templates': CURSOR}, summary='Browse the visible template catalogue and first-version upload evidence')
+def catalogue(request, case_id):
+    actor = request.user
+    case = get_object_or_404(visible_cases(actor), kind='project', pk=case_id)
+    require(actor, case, 'document.read')
+    with limit_queries(LIST_QUERY_LIMIT):
+        versions, link = template_page(request, case)
+        attached = set(TemplateFile.objects.filter(case=case, template_id__in=[row.pk for row in versions])
+                       .values_list('template_id', flat=True))
+        grants = {action for _, action in active_case_grants(actor, [case.pk], actions=UPLOAD_GRANTS)}
+        can_upload = grants.issuperset(UPLOAD_GRANTS)
+        proofs = ([{'id': row.pk, 'kind': row.kind, 'version': row.version}
+                   for row in template_catalog.recent_proofs(case)] if can_upload else [])
+    return {'revision': case.revision, 'can_upload': can_upload,
+            'cursor': parse_qs(urlsplit(link).query)['templates'][0] if link else None, 'proofs': proofs,
+            'items': [{'id': row.pk, 'name': row.name, 'version': row.version,
+                       'download_url': reverse('design_template_download', args=[case.pk, row.pk]) if row.pk in attached else None}
+                      for row in versions]}
+
+
+@endpoint(method='POST', multipart=True, request=obj({
+    'name': {**TEXT, 'maxLength': 160}, 'document_type': choice(*sorted(PMO_DOCUMENT_TYPES)),
+    'required': {**SECTIONS, 'minItems': 1}, 'internal': SECTIONS, 'client': SECTIONS, 'management': SECTIONS,
+    'proof': ID, 'revision': REVISION, 'request_key': UUID, 'file': BINARY,
+}, optional=('internal', 'client', 'management')), response=TEMPLATE_RESULT, status=201,
+          summary='Register the first version of a private project template with owner evidence')
+def first_template(request, case_id):
+    actor = request.user
+    case = get_object_or_404(visible_cases(actor), kind='project', pk=case_id)
+    for action in UPLOAD_GRANTS:
+        require(actor, case, action)
+    form = template_catalog.NewTemplateForm(request.POST, request.FILES)
+    form.fields['proof'].queryset = template_catalog.recent_proofs(case)
+    if not form.is_valid():
+        raise Problem(422, 'invalid_input', 'Check the template fields, file and owner evidence.',
+                      fields=[{'name': key, 'message': messages[0]} for key, messages in form.errors.items()])
+    try:
+        version = template_uploads.submit(actor, case, **form.cleaned_data)
+    except OSError as exc:
+        raise Problem(503, 'storage_unavailable', 'Check the upload with the same request key before retrying.') from exc
+    return {'template_id': version.pk, 'version': version.version,
+            'django_url': reverse('design_project_tab', args=[case.pk, 'templates'])}

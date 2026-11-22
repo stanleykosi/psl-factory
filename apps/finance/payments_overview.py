@@ -78,7 +78,8 @@ def case_scope(actor, case, budget):
 def observation(invoice, scope, as_of, budget):
     issue = getattr(invoice, 'invoiceissue', None)
     coverage = invoice.preparation.coverage
-    row = {'reference': invoice.reference, 'workspace': invoice.case.title, 'customer': coverage.customer,
+    row = {'invoice_id': invoice.pk, 'issue_id': issue.pk if issue else None, 'case_id': invoice.case_id,
+           'reference': invoice.reference, 'workspace': invoice.case.title, 'customer': coverage.customer,
            'contract': coverage.contract, 'currency': invoice.currency, 'basis': invoice.amount_basis,
            'records': scope['settlement'] + f'#invoice-{invoice.pk}', 'record_payment': None,
            'age_days': None, 'paid': None, 'owed': None, 'face': None}
@@ -166,19 +167,11 @@ def page(actor, cases, search, state, before, as_of):
         return rows, [], seen, True
 
 
-@login_required
-@require_safe
-@never_cache
-def show(request):
-    actor = request.user
+def read_page(actor, search, state, token):
     cases = granted(actor, ['finance.read'])
     if not cases.exists():
         raise PermissionDenied
-    search = request.GET.get('q', '').strip()[:100]
-    submitted_state = request.GET.get('state', '')
-    state = submitted_state if submitted_state in dict(STATES) else ''
     filters = {'q': search, 'state': state}
-    token = request.GET.get('page')
     before = None
     if token:
         try:
@@ -191,10 +184,20 @@ def show(request):
             raise Http404('Choose an available payments page.') from error
     as_of = timezone.localdate()
     rows, totals, ending, limited = page(actor, cases, search, state, before, as_of)
-    next_url = None
-    if ending is not None:
-        key = signing.dumps({'actor': actor.pk, 'filters': filters, 'before': ending}, salt=CURSOR_SALT)
-        next_url = '?' + urlencode({**filters, 'page': key})
+    key = (signing.dumps({'actor': actor.pk, 'filters': filters, 'before': ending}, salt=CURSOR_SALT)
+           if ending is not None else None)
+    return rows, totals, key, limited, as_of
+
+
+@login_required
+@require_safe
+@never_cache
+def show(request):
+    search = request.GET.get('q', '').strip()[:100]
+    submitted_state = request.GET.get('state', '')
+    state = submitted_state if submitted_state in dict(STATES) else ''
+    rows, totals, key, limited, as_of = read_page(request.user, search, state, request.GET.get('page'))
+    next_url = '?' + urlencode({'q': search, 'state': state, 'page': key}) if key else None
     return render(request, 'design/payments_overview.html', {
         'rows': rows, 'totals': totals, 'next_url': next_url, 'limited': limited,
         'as_of': as_of, 'search': search, 'states': STATES, 'state': state,

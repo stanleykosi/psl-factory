@@ -22,6 +22,22 @@ from tests.helpers import rev
 
 
 class MonthEndOverviewTests(TestCase):
+    def test_api_capture_current_as_of_and_read_company_close(self):
+        actor, case, *_ = settlement_helpers.fixture()
+        self.client.force_login(actor)
+        month = timezone.localdate().strftime('%Y-%m')
+        initial = self.client.get('/api/v1/month-end', {'month': month}).json()
+        self.assertEqual(initial['workspaces'][0]['workspace']['case_id'], str(case.pk))
+        url = f'/api/v1/projects/{case.pk}/month-end/receivables'
+        body = {'month': month, 'revision': rev(case)}
+        recorded = self.client.post(url, body, content_type='application/json')
+        self.assertEqual(recorded.status_code, 201, recorded.content)
+        display = self.client.get(f'/api/v1/projects/{case.pk}/month-end', {'month': month}).json()
+        self.assertEqual(display['receivables']['snapshot_id'], recorded.json()['id'])
+        self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
+        Grant.objects.filter(case=case, user=actor, action='finance.read').update(active=False)
+        self.assertEqual(self.client.get('/api/v1/month-end', {'month': month}).json()['workspaces'], [])
+
     def test_current_leased_and_waiting_work_links_feed_bounded_counts(self):
         first = factory_helpers.fixture(username='month-close-operator')
         other = factory_helpers.fixture(username='month-close-other-operator')

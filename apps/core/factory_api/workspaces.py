@@ -248,14 +248,17 @@ def save_contact(request, case_id, *, body):
 MONTH = {'type': 'string', 'pattern': '^[1-9][0-9]{3}-(0[1-9]|1[0-2])$'}
 
 
-@endpoint(response=obj({
+CLOSE = obj({
     'month': MONTH, 'as_of': DATETIME, 'workspace': WORKSPACE, 'stations': array(LINK),
     'cash': array(obj({'currency': TEXT, 'basis': TEXT, 'amount': TEXT})), 'cash_unavailable': BOOLEAN,
     'periods': array(obj({'entity': TEXT, 'currency': TEXT, 'at': DATETIME, 'status': TEXT,
                           'values': array(obj({'label': TEXT, 'value': MONEY, 'unit': TEXT}))})),
     'receivables': obj({'status': TEXT, 'cutoff': nullable(DATES), 'captured_date': nullable(DATES),
-                        'snapshot_id': nullable(ID)}),
-}), query={'month': MONTH}, summary='Read the reviewed month-end facts and capture dates for a workspace')
+                        'snapshot_id': nullable(ID)}), 'can_capture': BOOLEAN,
+})
+
+
+@endpoint(response=CLOSE, query={'month': MONTH}, summary='Read the reviewed month-end facts and capture dates for a workspace')
 def close(request, case_id):
     from apps.identity.services import require
 
@@ -264,9 +267,12 @@ def close(request, case_id):
     _, month = month_end.selection(request)
     if month is None:
         raise Problem(422, 'invalid_filter', 'Choose a reporting month.')
-    data = month_end.workspace_close(request.user, case, month)
+    return close_payload(month, month_end.workspace_close(request.user, case, month), timezone.now())
+
+
+def close_payload(month, data, as_of):
     receivables = data['receivables']
-    return {'month': month, 'as_of': timezone.now(), 'workspace': workspace(case),
+    return {'month': month, 'as_of': as_of, 'workspace': workspace(data['case']),
             'stations': [{'key': str(index), 'title': label, 'django_url': url}
                          for index, (url, label) in enumerate(data['stations'], start=1)],
             'cash': [{'currency': currency, 'basis': basis, 'amount': str(amount)}
@@ -276,7 +282,8 @@ def close(request, case_id):
                 for figure in row['values']
             ]} for row in data['periods']],
             'receivables': {'status': receivables['status'], 'cutoff': receivables.get('cutoff'),
-                            'captured_date': receivables.get('date'), 'snapshot_id': receivables.get('pk')}}
+                            'captured_date': receivables.get('date'), 'snapshot_id': receivables.get('pk')},
+            'can_capture': data.get('can_capture', False)}
 
 
 @endpoint(response=obj({'items': array(obj({

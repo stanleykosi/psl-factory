@@ -50,6 +50,24 @@ class ChangeMilestoneLinkTests(TestCase):
         self.client.force_login(reader)
         return reader
 
+    def test_api_links_signed_stage_and_retains_native_evidence(self):
+        url = f'/api/v1/projects/{self.case.pk}/change-milestone-link'
+        options = self.client.get(url).json()
+        self.assertTrue(options['can_link'])
+        self.assertEqual(options['plans'][0]['id'], self.plan.pk)
+        body = {'revision': options['revision'], 'stage': 'completion', 'plan_event_id': self.plan.pk,
+                'scope_note': 'Exact sample scope'}
+        result = self.client.post(url, body, content_type='application/json')
+        self.assertEqual(result.status_code, 200, result.content)
+        link = ChangeMilestoneLink.objects.get(pk=result.json()['id'])
+        self.assertEqual(link.signed_id, self.e['signature'].pk)
+        self.assertContains(self.client.get(self.milestones), 'Exact sample scope')
+        self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
+        self.reader('finance.read', 'change.read')
+        self.assertFalse(self.client.get(url).json()['can_link'])
+        self.assertEqual(self.client.post(url, {**body, 'revision': rev(self.case)},
+                                          content_type='application/json').status_code, 403)
+
     def test_signed_amount_and_exact_source_survive_native_link_and_are_scoped(self):
         form = self.client.get(self.form)
         self.assertContains(form, 'Go-live')

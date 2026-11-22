@@ -53,15 +53,14 @@ class ActionForm(forms.Form):
         return values
 
 
-@login_required
-@require_http_methods(['GET', 'HEAD', 'POST'])
-@never_cache
-def show(request, case_id, item_id):
-    actor = request.user
+def load_action(actor, case_id, item_id):
     case = get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
     require(actor, case, 'meeting.read')
     item = get_object_or_404(ActionItem.objects.select_related('current__owner'), case=case, pk=item_id, current__isnull=False)
-    state = item.current
+    return case, item
+
+
+def action_options(actor, case, state):
     grants = {action for _, action in active_case_grants(actor, [case.pk])}
     choices = []
     closed = state.status in {'completed', 'cancelled'}
@@ -72,13 +71,24 @@ def show(request, case_id, item_id):
             choices.append(('start', 'Start action'))
         if state.status in {'open', 'in_progress'}:
             choices.append(('complete', 'Complete action'))
+    return choices, 'action.manage' in grants, not closed and state.owner_id is not None
+
+
+@login_required
+@require_http_methods(['GET', 'HEAD', 'POST'])
+@never_cache
+def show(request, case_id, item_id):
+    actor = request.user
+    case, item = load_action(actor, case_id, item_id)
+    state = item.current
+    choices, manages, has_open_owner = action_options(actor, case, state)
     posted = request.POST if request.method == 'POST' else None
     changing_owner = posted is not None and posted.get('operation') == 'reassign'
-    if changing_owner and 'action.manage' not in grants:
+    if changing_owner and not manages:
         require(actor, case, 'action.manage')
     form = ActionForm(case, state, choices, posted if not changing_owner else None) if choices else None
     reassign_form = None
-    if 'action.manage' in grants and not closed and state.owner_id:
+    if manages and has_open_owner:
         reassign_form = ActionForm(case, state, [('reassign', 'Change owner')],
                                    posted if changing_owner else None, owner_only=True)
         if not changing_owner and not reassign_form.fields['owner'].queryset.exists():

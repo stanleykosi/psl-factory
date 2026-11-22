@@ -326,7 +326,6 @@ def month_overview(actor, entries, month):
 
 @login_required
 @require_POST
-@transaction.atomic
 def capture(request, case_id):
     case = get_object_or_404(granted(request.user, ['finance.read']), pk=case_id)
     form = MonthForm(request.POST)
@@ -337,14 +336,22 @@ def capture(request, case_id):
         messages.error(request, 'Choose the current month to capture today’s receivables.')
         return redirect(destination)
     try:
-        case = lock_case(request.user, case.pk, 'finance.receivables', int(request.POST.get('revision', '')))
-        case_access(request.user, case)
-        receivables.snapshot(request.user, case.pk, today, case.revision)
+        capture_today(request.user, case.pk, form.cleaned_data['month'], int(request.POST.get('revision', '')))
     except (ValidationError, ValueError) as exc:
         messages.error(request, exc.messages[0] if isinstance(exc, ValidationError) else 'Reload the close view before capturing.')
     else:
         messages.success(request, 'Today’s receivables were captured.')
     return redirect(destination + '?month=' + today.strftime('%Y-%m'))
+
+
+@transaction.atomic
+def capture_today(actor, case_id, month, revision):
+    today = timezone.localdate()
+    if month != today.strftime('%Y-%m'):
+        raise ValidationError('Choose the current month to capture today’s receivables.')
+    case = lock_case(actor, case_id, 'finance.receivables', revision)
+    case_access(actor, case)
+    return receivables.snapshot(actor, case.pk, today, case.revision)
 
 
 @login_required

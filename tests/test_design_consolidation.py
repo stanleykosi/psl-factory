@@ -186,6 +186,33 @@ class DesignConsolidationTests(TestCase):
         foreign = reverse('design_project_action', args=[self.other.pk, item.pk])
         self.assertEqual(self.client.get(foreign).status_code, 404)
 
+    def test_api_project_action_assignment_completion_and_history(self):
+        from django.utils import timezone
+        from apps.pmo.meetings import create_action
+
+        self.client.force_login(self.actor)
+        item = create_action(self.actor, self.case.pk, 'API-SCREEN-ACTION', 'Check sample evidence', self.actor.pk,
+                             None, self.template_owner.pk, 'Synthetic action', rev(self.case))
+        url = f'/api/v1/projects/{self.case.pk}/actions/{item.pk}'
+        options = self.client.get(url).json()
+        self.assertIn('assign', options['operations'])
+        due = timezone.now().replace(microsecond=0).isoformat()
+        body = {'operation': 'assign', 'owner': self.actor.pk, 'due_at': due, 'evidence': self.template_owner.pk,
+                'reason': 'Sample deadline', 'revision': options['revision'], 'action_revision': options['current']['revision']}
+        response = self.client.post(url, body, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        assigned = response.json()
+        self.assertEqual(assigned['current']['deadline'], due.replace('+00:00', 'Z'))
+        self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
+        completed = self.client.post(url, {
+            'operation': 'complete', 'evidence': self.template_owner.pk, 'reason': 'Verified the exact evidence',
+            'revision': assigned['revision'], 'action_revision': assigned['current']['revision'],
+        }, content_type='application/json')
+        self.assertEqual(completed.json()['current']['status'], 'completed')
+        self.assertEqual([state['revision'] for state in self.client.get(url).json()['history']], [3, 2, 1])
+        Grant.objects.filter(case=self.case, user=self.actor, action='meeting.read').update(active=False)
+        self.assertEqual(self.client.get(url).status_code, 403)
+
     def test_project_action_reassignment_preserves_progress_and_rejects_another_stale_owner(self):
         from datetime import timedelta
         from django.db import connection
@@ -281,7 +308,7 @@ class DesignConsolidationTests(TestCase):
         self.assertContains(response, reverse('template_current', args=[self.case.pk]))
         self.assertEqual(self.client.get(url, {'templates': 'invalid'}).status_code, 400)
         Grant.objects.filter(case=self.case, user=self.actor, action='document.read').update(active=False)
-        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.get(url).status_code, 404)
 
     @patch.dict(os.environ, {'OPENROUTER_MODEL': 'synthetic', 'OPENROUTER_API_KEY': 'synthetic'})
     def test_department_chat_does_not_offer_a_manual_specialist_dispatch(self):

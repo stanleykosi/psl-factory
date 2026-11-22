@@ -14,6 +14,32 @@ from tests.helpers import rev, setup_case
 
 
 class DesignDelegationTests(TestCase):
+    def test_api_readback_and_idempotent_delegation_draft(self):
+        actor, case = setup_case()
+        delegate, _ = setup_case(username='api-delegation-recipient')
+        Grant.objects.create(case=case, user=delegate, action='case.read')
+        now = timezone.now()
+        proof = add_evidence(actor, case.pk, 'policy_decision', 'Synthetic draft decision', 'synthetic:test')
+        roles = draft_roles(actor, case.pk, [{'role': 'PM', 'user_id': user.pk} for user in (actor, delegate)], proof.pk, now)
+        transition(actor, roles.pk, 'validated')
+        transition(actor, roles.pk, 'active')
+        self.client.force_login(actor)
+        url = f'/api/v1/setup/{case.pk}'
+        rules = self.client.get(url + '/rules')
+        self.assertEqual(rules.status_code, 200, rules.content)
+        self.assertTrue(rules.json()['items'])
+        options = self.client.get(url + '/delegations/options', {'role': 'PM'}).json()
+        self.assertEqual({row['id'] for row in options['people']}, {actor.pk, delegate.pk})
+        data = {'principal': actor.pk, 'delegate': delegate.pk, 'role': 'PM', 'revision': options['revision'],
+                'starts': now.isoformat(), 'ends': (now + timedelta(days=1)).isoformat(), 'effective': now.isoformat(),
+                'evidence': proof.pk, 'source_configuration': options['source_configuration'], 'submission_key': str(uuid4())}
+        response = self.client.post(url + '/delegations/drafts', data, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        stored = Configuration.objects.get(pk=response.json()['configuration_id'])
+        self.assertEqual(list(stored.states.values_list('state', flat=True)), ['draft'])
+        self.assertEqual(self.client.post(url + '/delegations/drafts', data, content_type='application/json').json(), response.json())
+        self.assertNotEqual(resolve('D05.delegation_rules', case).status, 'ACTIVE')
+
     def test_typed_draft_records_exact_people_without_activating_authority(self):
         actor, case = setup_case()
         delegate, _ = setup_case(username='synthetic-delegation-recipient')

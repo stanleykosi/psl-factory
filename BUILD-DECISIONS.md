@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Expose exact workflow commands through versioned JSON or multipart schemas backed by the same native services as Django. Use checked file links and explicit source revisions. Run Assistant and upload queues independently of operational effects and progression. PostgreSQL owns claims and durable receipts.
+
 22 November 2026. Generate the published OpenAPI snapshot from the mounted Django handlers. The prototype v7 contract continues to serve its mock. Document a live operation only when it exists in Django. Keep native links and explicit gaps in the design map during the frontend migration. Reuse Start work's current project and command permissions in the API project picker.
 
 22 November 2026. PSL opened every project workspace in the current organisation to its PMO Lead, Finance Lead, CEO and CTO. Sample and operational projects have separate audiences. The department leads carry their existing department preparation rights across those workspaces. The role does not create project appointments, decision authority or protected source access. Team members, HR and Admin retain their existing scope.

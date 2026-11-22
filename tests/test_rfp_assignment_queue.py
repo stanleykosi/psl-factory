@@ -56,6 +56,26 @@ class RFPAssignmentQueueTests(TestCase):
         return {'intake': self.intake.pk, 'revision': rev(self.case), 'candidate': candidate.pk, 'role': 'CEO',
                 'evidence': self.intake.evidence_id, 'reason': 'Reviewed the fictional appointment.', **fields}
 
+    def test_api_assigns_current_bid_to_named_manager_and_prevents_repeat(self):
+        url = f'/api/v1/received-bids/{self.case.pk}/assignment'
+        self.client.force_login(self.grant_only)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.client.force_login(self.assigner)
+        pending = self.client.get('/api/v1/received-bids/assignments')
+        self.assertEqual(pending.json()['items'][0]['intake_id'], self.intake.pk)
+        options = self.client.get(url)
+        self.assertNotContains(options, 'Private sample intake note.')
+        self.assertEqual({person['id'] for person in options.json()['nominees']}, {self.manager.pk, self.successor.pk})
+        body = self.post_data(self.manager)
+        result = self.client.post(url, body, content_type='application/json')
+        self.assertEqual(result.status_code, 201, result.content)
+        assignment = result.json()
+        self.assertEqual(self.client.get(url).json()['assignment'], assignment)
+        self.assertTrue(any(row['kind'] == 'assigned_rfp' and row['record_id'] == assignment['id']
+                            for row in work(self.manager)['rows']))
+        self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
+        self.assertFalse(self.client.get('/api/v1/received-bids/assignments').json()['items'])
+
     def test_scoped_chooser_and_native_assigned_work_handoff(self):
         self.assertEqual(connection.vendor, 'postgresql')
         url = reverse('rfp_assignment', args=[self.case.pk])

@@ -7,6 +7,8 @@ from django.http import Http404, JsonResponse
 from django.views.decorators.cache import never_cache
 from jsonschema import Draft202012Validator, FormatChecker, validators
 
+from apps.core.read_budget import ReadLimit
+
 
 MAX_JSON_BYTES = 256 * 1024
 FORMATS = FormatChecker()
@@ -94,7 +96,9 @@ def multipart_body(request, schema):
         field = expected[name]
         binary = field.get('format') == 'binary'
         values, other = (request.FILES, request.POST) if binary else (request.POST, request.FILES)
-        if len(values.getlist(name)) != 1 or name in other:
+        count = len(values.getlist(name))
+        repeated = not binary and field.get('type') == 'array'
+        if name in other or (repeated and count > field.get('maxItems', 100)) or (not repeated and count != 1):
             invalid.add(name)
         elif not binary and 'const' in field and values[name] != field['const']:
             invalid.add(name)
@@ -145,6 +149,8 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
                 return error(413, 'request_too_large', 'The request exceeds the application size limit.')
             except PermissionDenied:
                 return error(403, 'forbidden', 'You do not have permission for this action.')
+            except ReadLimit:
+                return error(503, 'read_limited', 'The source needs a closer review. Check its current record.')
             except ValidationError as exc:
                 return validation_problem(exc)
         view.operation = {'method': method, 'request': request, 'response': response, 'status': status,

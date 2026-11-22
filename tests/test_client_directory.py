@@ -80,6 +80,28 @@ class ClientDirectoryTests(TestCase):
         self.assertEqual(get(q='Same Display Name')[1], {self.second.pk: 'unknown'})
         self.assertEqual(get(q=self.first.title, billing='recorded')[1], {self.first.pk: 'recorded'})
 
+    def test_api_directory_contact_proof_and_versioned_readback(self):
+        self.client.force_login(self.owner)
+        url = f'/api/v1/clients/{self.first.pk}/contacts'
+        directory = self.client.get('/api/v1/clients', {'q': 'Same Display Name'})
+        self.assertNotContains(directory, 'example.invalid')
+        self.assertCountEqual([row['case_id'] for row in directory.json()['projects']],
+                              [str(case.pk) for case in (self.first, self.second, self.hidden)])
+        options = self.client.get(url + '/options', {'purpose': 'billing'}).json()
+        self.assertEqual(options['customers'], ['C1'])
+        replacement = self.client.post(url, {
+            'purpose': 'billing', 'customer': 'C1', 'client_name': 'Same Display Name', 'name': 'Billing successor',
+            'email': 'successor@example.invalid', 'role': 'Accounts', 'evidence_id': options['proofs'][0]['id'],
+            'expected_revision': options['revision'],
+        }, content_type='application/json')
+        self.assertEqual(replacement.status_code, 200, replacement.content)
+        params = {'purpose': 'billing', 'customer': 'C1'}
+        history = self.client.get(url + '/history', params).json()['items']
+        self.assertEqual([row['version'] for row in history], [2, 1])
+        self.assertEqual(history[0], replacement.json())
+        Grant.objects.filter(case=self.first, user=self.owner, action='finance.read').update(active=False)
+        self.assertEqual(self.client.get(url + '/history', params).status_code, 403)
+
     def test_search_and_billing_filter_paginate_without_per_project_billing_queries(self):
         for index in range(26):
             self.make_case(f'Sample directory page {index:02}')

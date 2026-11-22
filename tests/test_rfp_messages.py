@@ -62,6 +62,31 @@ class BidMessageTests(TestCase):
         page=self.client.get(reverse('factory_work_response',args=[self.work.pk]))
         self.assertContains(page,'Prepare a follow-up draft')
 
+    def test_api_bid_followup_review_release_and_verified_receipt(self):
+        actor, case = self.data['actor'], self.data['case']
+        self.client.force_login(actor)
+        url = f'/api/v1/work/{self.work.pk}/bid-outcomes/{self.outcome.pk}/followup'
+        self.assertIsNone(self.client.get(url).json()['draft_id'])
+
+        def submit(action, **fields):
+            response = self.client.post(url, {'action': action, 'case_revision': rev(case), **fields},
+                                        content_type='application/json')
+            self.assertEqual(response.status_code, 200, response.content)
+            return response.json()['record_id']
+
+        draft_id = submit('draft')
+        verified_text = 'Reviewed synthetic bid follow-up'
+        review_id = submit('review', draft_id=draft_id, prior_review_id=None, message=verified_text)
+        updated = self.client.get(url).json()
+        self.assertEqual(updated['message'], verified_text)
+        dispatch_id = submit('send', review_id=review_id, route=updated['routes'][0]['key'])
+        self.assertTrue(rfp_messages.run_once(dispatch_id))
+        self.assertFalse(rfp_messages.run_once(dispatch_id))
+        retrieved = self.client.get(url).json()['history'][0]
+        self.assertTrue(retrieved['delivered'])
+        self.assertEqual(retrieved['id'], dispatch_id)
+        self.assertEqual(RFPFollowupMailbox.objects.get(dispatch_id=dispatch_id).payload['body'], verified_text)
+
     def test_bounded_worker_scan_wraps_and_omits_verified_originals(self):
         dispatch=self.release()
         self.assertEqual(rfp_messages.next_batch(limit=1),[dispatch.pk])

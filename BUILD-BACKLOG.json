@@ -1,4 +1,24 @@
 {
+  "frontend_cutover_workflows_20261122": {
+    "status": "partial_json_cutover",
+    "contract": "contracts/psl-factory.openapi.json",
+    "contract_version": "1.2.0",
+    "live_paths": 90,
+    "live_operations": 109,
+    "added_operations": 36,
+    "screen_groups_with_new_operations": 35,
+    "screen_groups_with_remaining_json": 53,
+    "states_in_groups_with_remaining_json": 256,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": [
+      "Typed source selection for Start work and Assistant and exact access and cancellation workflows.",
+      "Release and Go-live attestations, Emergency, change, escalation, Planning and costing authority and recovery.",
+      "Finance source imports, private Payroll and HR projections, corrections and reviewed publication effects.",
+      "Staff invitations, account recovery, protected contact commands and reviewed policy configuration."
+    ],
+    "owner_decisions": "HOD rule values, appointments and approved live destinations remain deferred."
+  },
   "live_openapi_handoff_20261122": {
     "scope": "Live contract, typed Start work project choices and design-to-API inventory for the frontend developer",
     "status": "live_contract_verified_full_json_cutover_open",

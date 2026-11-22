@@ -129,3 +129,21 @@ class ClientAndTemplateDesignTests(TestCase):
         self.assertEqual(first.template.version, 1)
         self.assertEqual(first.template.definition, {'document_type': 'status_report', 'required_fields': ['executive_summary'],
                          'audience_fields': {'internal': ['executive_summary', 'status']}})
+
+    def test_api_first_template_catalogue_and_download(self):
+        self.client.force_login(self.actor)
+        url = f'/api/v1/projects/{self.case.pk}/templates'
+        catalogue = self.client.get(url).json()
+        self.assertTrue(catalogue['can_upload'])
+        file = b'%PDF-1.4\nSynthetic API template\n%%EOF\n'
+        fields = {'name': 'Synthetic API layout', 'document_type': 'status_report',
+                  'required': ['executive_summary'], 'internal': ['executive_summary', 'status'],
+                  'proof': self.proof.pk, 'request_key': uuid4(), 'revision': catalogue['revision']}
+        with patch('adapters.case_uploads.put') as put, patch('apps.documents.template_catalog.read', return_value=file):
+            result = self.client.post(url, {**fields, 'file': SimpleUploadedFile('sample.pdf', file)})
+            self.assertEqual(result.status_code, 201, result.content)
+            put.assert_called_once()
+            item = next(row for row in self.client.get(url).json()['items'] if row['id'] == result.json()['template_id'])
+            response = self.client.get(item['download_url'])
+            self.assertEqual(response.status_code, 200, response.content if not response.streaming else '')
+            self.assertEqual(b''.join(response.streaming_content), file)
