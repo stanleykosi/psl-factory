@@ -70,6 +70,58 @@ class AccountDeliveryTests(TestCase):
         self.client.post(reverse('factory_recovery_token'), {'token': account_delivery.recovery_token(row)})
         self.assertContains(self.client.get(reverse('factory_recovery_confirm')), 'This link has expired')
 
+    def test_same_origin_api_recovers_signs_in_and_updates_account_preferences(self):
+        url = '/api/v1'
+        browser = Client(enforce_csrf_checks=True)
+        session = browser.get(url + '/session', secure=True)
+        csrf = session.json()['csrf_token']
+        self.assertFalse(session.json()['signed_in'])
+
+        def post(path, payload, *, client=browser, with_token=True):
+            headers = {'HTTP_ORIGIN': 'https://testserver'}
+            if with_token:
+                headers['HTTP_X_CSRFTOKEN'] = csrf
+            return client.post(url + path, payload, content_type='application/json', secure=True, **headers)
+
+        self.assertEqual(post('/accounts/recovery/request', {'email': WORK_EMAIL}, with_token=False).status_code, 403)
+        real = post('/accounts/recovery/request', {'email': WORK_EMAIL})
+        missing = post('/accounts/recovery/request', {'email': 'missing@accounts.invalid'})
+        self.assertEqual((real.status_code, missing.status_code), (202, 202))
+        self.assertEqual(real.json(), missing.json())
+        call_command('work_account_delivery')
+        original = AccountDelivery.objects.get()
+        self.assertTrue(SampleAccountInbox.objects.filter(delivery=original).exists())
+        code = account_delivery.recovery_token(original)
+        self.assertTrue(post('/accounts/recovery/link', {'token': code}).json()['ready'])
+        recovery = url + '/accounts/recovery/password'
+        self.assertTrue(browser.get(recovery, secure=True).json()['ready'])
+        self.assertFalse(self.client.get(recovery).json()['ready'])
+        self.assertEqual(post('/accounts/recovery/password', {'new_password1': 'weak', 'new_password2': 'weak'}).status_code, 422)
+        password = 'Synthetic!Rainfield.54.account'
+        confirmed = post('/accounts/recovery/password', {'new_password1': password, 'new_password2': password})
+        self.assertEqual(confirmed.status_code, 200, confirmed.content)
+        self.assertFalse(post('/accounts/recovery/link', {'token': code}).json()['ready'])
+
+        signed_in = post('/session', {'username': WORK_EMAIL, 'password': password, 'next_url': 'https://external.invalid'})
+        self.assertEqual(signed_in.status_code, 200, signed_in.content)
+        self.assertTrue(signed_in.json()['signed_in'])
+        self.assertNotIn('external.invalid', signed_in.json()['next_url'])
+        csrf = signed_in.json()['csrf_token']
+        self.assertTrue(browser.get(url + '/me/onboarding', secure=True).json()['admitted'])
+        account = browser.get(url + '/me/account', secure=True).json()
+        self.assertEqual(account['email'], WORK_EMAIL)
+        self.assertTrue(account['alerts']['whatsapp_ready'])
+        updated = post('/me/alert-preferences', {'revision': account['alerts']['revision'],
+                                               'email_requested': False, 'whatsapp_requested': True})
+        self.assertEqual(updated.status_code, 200, updated.content)
+        after = 'Sample!Current87.Forest.Test'
+        changed = post('/me/account/password', {'old_password': password, 'new_password1': after, 'new_password2': after})
+        self.assertEqual(changed.status_code, 200, changed.content)
+        self.assertTrue(changed.json()['signed_in'])
+        csrf = changed.json()['csrf_token']
+        self.assertFalse(post('/session/logout', {}).json()['signed_in'])
+        self.assertEqual(browser.get(url + '/me', secure=True).status_code, 401)
+
     def test_secure_recovery_post_uses_same_origin_and_csrf(self):
         secure = Client(enforce_csrf_checks=True)
         url = reverse('password_reset')

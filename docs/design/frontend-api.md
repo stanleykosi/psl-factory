@@ -15,8 +15,8 @@ npm ci
 npm exec --offline openapi-typescript -- ../contracts/psl-factory.openapi.json -o src/api/live-schema.d.ts
 ```
 
-- Serve the future frontend and Django API on the same origin. Keep ordinary Django login, recovery and invitations during the cutover. The Django session and staff lifecycle checks apply to both clients.
-- Read `GET /api/v1/me` after sign-in. Send its `csrf_token` in `X-CSRFToken` on writes, with the session cookie. The token belongs to the current session. Private responses are marked `no-store`.
+- Serve the future frontend and Django API on the same origin. Native Django login, recovery and invitations remain available, and the API uses the same services and session.
+- Read `GET /api/v1/session` before the first sign-in or recovery action, and use the refreshed `csrf_token` returned by sign-in. Send the current token in `X-CSRFToken` on writes, with the session cookie. Private responses are marked `no-store`.
 - Use the site origin as the client base URL. The OpenAPI paths already include `/api/v1`. Handle the declared HTTP statuses and use the JSON error `code` and optional `fields` for application errors.
 - Use the current server-issued record identifiers and revisions. Treat a conflict as a request to reload, inspect the current record and make a fresh decision. A permission response or an unavailable record stops that operation.
 - Submit multipart private files through the existing upload service. Fetch file and detailed source links through their authenticated Django URLs. Agent drafts keep the exact source or attempt pin through review, recovery and handoff.
@@ -63,7 +63,7 @@ The role dashboard supplies an `invite_url` for a team lead’s own position. It
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.6.0 describes 202 operations across 152 paths. The map records remaining JSON work in 35 groups covering 198 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.7.0 describes 228 operations across 170 paths. The map records remaining JSON work in 32 groups covering 186 states. Some states share a workflow, and some still use a Django form for one action. Compare field shapes before migrating a call.
 
 Use `GET /api/v1/received-bids/{case_id}/receipts/{receipt_id}` with the identifiers returned by received-bid intake. It identifies the exact version and gives the authenticated download link for the original. A later intake leaves the original receipt intact and changes its `current` indicator. Both reads enforce the owning bid service’s current access rules.
 

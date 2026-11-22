@@ -27,10 +27,15 @@ from .team_models import StaffMembership
 @require_safe
 @never_cache
 def roster(request):
-    cases=domain.manageable_cases(request.user)
     search=request.GET.get('q','').strip()[:120]
     status=request.GET.get('status','all')
     if status not in ['all','active','inactive']:status='all'
+    data=roster_projection(request.user,search,status,request.GET.get('page'),request.GET.get('invitations_page'))
+    return render(request,'identity/staff_roster.html',data)
+
+
+def roster_projection(actor,search,status,people_page,invitations_page):
+    cases=domain.manageable_cases(actor)
     people=get_user_model().objects.filter(Q(grant__case__in=cases)|Q(staffmembership__case__in=cases)).distinct()
     if search:people=people.filter(Q(username__icontains=search)|Q(first_name__icontains=search)|
                                     Q(last_name__icontains=search)|Q(email__icontains=search))
@@ -38,7 +43,7 @@ def roster(request):
     first_scope=Grant.objects.filter(case__in=cases,user_id=OuterRef('pk'),active=True).order_by('case__title','case_id')
     people=people.annotate(first_profile_case=Subquery(first_scope.values('case_id')[:1]))
     page=Paginator(people.only('id','username','first_name','last_name','email','is_active','is_staff',
-                              'is_superuser','last_login','password').order_by('username','pk'),25).get_page(request.GET.get('page'))
+                              'is_superuser','last_login','password').order_by('username','pk'),25).get_page(people_page)
     counts=dict(Grant.objects.filter(case__in=cases,user_id__in=[u.pk for u in page],active=True).values(
         'user_id').annotate(count=Count('case_id',distinct=True)).values_list('user_id','count'))
     from .staff_profiles import binding_labels
@@ -54,7 +59,7 @@ def roster(request):
         user.managed_workspace_count=counts.get(user.pk,0)+len(scoped)
         user.first_profile_label=(scope_label(scoped[0].role,scoped[0].mode) if scoped
                                   else labels.get((user.first_profile_case,user.pk),'No current access'))
-        user.departure_available=(user.is_active and not scoped and user.pk!=request.user.pk
+        user.departure_available=(user.is_active and not scoped and user.pk!=actor.pk
                                   and not(user.is_staff or user.is_superuser))
         user.reactivation_available=not user.is_active and not(user.is_staff or user.is_superuser)
     later=StaffInvitation.objects.filter(case_id=OuterRef('case_id'),username=OuterRef('username'),number__gt=OuterRef('number'))
@@ -62,9 +67,9 @@ def roster(request):
         superseded=Exists(later)).filter(superseded=False)
     if search:pending=pending.filter(Q(name__icontains=search)|Q(username__icontains=search)|Q(email__icontains=search))
     invitations=Paginator(pending.select_related('case').only('id','case_id','case__title','name','username','email',
-        'profile_label','role_scope','expires_at','number').order_by('-pk'),25).get_page(request.GET.get('invitations_page'))
-    return render(request,'identity/staff_roster.html',{'people':page,'search':search,'status':status,
-        'invitations':invitations,'observed_at':timezone.now(),'available':cases.exists()})
+        'profile_label','role_scope','expires_at','number').order_by('-pk'),25).get_page(invitations_page)
+    return {'people':page,'search':search,'status':status,
+            'invitations':invitations,'observed_at':timezone.now(),'available':cases.exists()}
 
 
 class DepartureForm(forms.Form):

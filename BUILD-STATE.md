@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI account and staff access · 22 November 2026
+
+OpenAPI 1.7.0 lists 228 operations on 170 paths. Same-origin credential, invitation and recovery commands use the current Django session and verification services. Staff administration includes exact roster and account readback, invitations and renewals, technical profile and delegation review, workspace departure and full deactivation or restoration. The screen map has 32 groups with API gaps across 186 states. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI payroll recovery, reminder settings and release closeout · 22 November 2026
 
 OpenAPI 1.6.0 lists 202 operations on 152 paths. Twelve additional operations and extended commands cover versioned payroll import replacement, same-staff identity checks and HR correction, the original receipt after withdrawal and protected restart. Reminder delivery settings and Go-live response settings can be drafted and reviewed separately. Independently started stability work accepts an observed release and the exact PM and client signatures. The screen map records 35 groups covering 198 states with remaining API actions. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

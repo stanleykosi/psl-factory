@@ -24,15 +24,19 @@ from .team_models import StaffMembership
 @require_safe
 @never_cache
 def person(request,person_id):
+    return render(request,'identity/staff_person.html',person_projection(request.user,person_id,request.GET.get('page')))
+
+
+def person_projection(actor, person_id, number):
     from .teams import memberships, scope_label
 
-    user=staff_accounts.account(request.user,person_id)
-    cases=staff_accounts.manageable_cases(request.user).filter(
+    user=staff_accounts.account(actor,person_id)
+    cases=staff_accounts.manageable_cases(actor).filter(
         Q(pk__in=Grant.objects.filter(user=user).values('case_id')) |
         Q(pk__in=StaffMembership.objects.filter(user=user).values('case_id'))).order_by('title','pk')
-    page=Paginator(cases,20).get_page(request.GET.get('page'))
+    page=Paginator(cases,20).get_page(number)
     labels=staff_profiles.labels([c.pk for c in page],user.pk)
-    cfgs={c.tenant:c for c in intake.options(request.user,'manage_access')}
+    cfgs={c.tenant:c for c in intake.options(actor,'manage_access')}
     current_reads = set(Grant.objects.filter(user=user, case__in=page.object_list, active=True, action='case.read')
                         .values_list('case_id', flat=True))
     primary = dict(StaffPrimaryRoleChange.objects.filter(user=user, case__in=page.object_list)
@@ -42,7 +46,7 @@ def person(request,person_id):
     protected = user.is_staff or user.is_superuser or staff_accounts._technical_authority(user)
     for case in page:
         case.account_access_label=labels[case.pk]
-        case.can_edit_profile=(user.is_active and user.pk!=request.user.pk and not(user.is_staff or user.is_superuser)
+        case.can_edit_profile=(user.is_active and user.pk!=actor.pk and not(user.is_staff or user.is_superuser)
                                and cfgs[case.tenant].value.get('staff_lifecycle',{}).get('allow_profile_edit') is True)
         target_delegation = delegated.get(case.tenant, {})
         is_admin = (case.kind == 'project' and case.pk in current_reads
@@ -57,7 +61,7 @@ def person(request,person_id):
             case.account_access_label = member.team.name if member.team else 'Standalone role scope'
             case.can_edit_profile = False
             case.can_assign_primary_role = False
-    return render(request,'identity/staff_person.html',{'person':user,'workspaces':page})
+    return {'person':user,'workspaces':page}
 
 
 class AccessForm(forms.Form):

@@ -163,12 +163,15 @@ def _issue_invitation(actor, case, cfg, settings, username, name, email, actions
 
 
 @transaction.atomic
-def invite_person(actor, case_id, username, name, email, expected, *, role, mode, team_id, preceding=None):
+def invite_person(actor, case_id, username, name, email, expected, *, role, mode, team_id, preceding=None,
+                  expected_authority=None, expected_membership=None):
     from .teams import invitation_authority, scope_pin
 
     case = Case.objects.select_for_update().get(pk=case_id,kind='project')
     intake.lock_users([actor.pk])
     cfg, lead = invitation_authority(actor,case,mode,team_id=team_id)
+    if expected_authority is not None and (cfg.pk, lead.pk if lead else None) != (expected_authority, expected_membership):
+        raise ValidationError('STALE_VERSION: Review the current invitation authority and team.')
     if lead and role!=lead.role:
         raise PermissionDenied('A lead can invite members only into their own role and team.')
     pin = scope_pin(case,role,mode,team_id)

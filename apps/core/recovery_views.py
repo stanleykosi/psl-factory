@@ -12,7 +12,7 @@ from django.db import transaction
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
-from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.http import require_http_methods, require_safe
 
 from .account_delivery import queue_recovery, valid_reset
@@ -62,6 +62,48 @@ def sent(request):
     return private_response(render(request, 'registration/factory_recovery.html', {'sent': True}))
 
 
+@sensitive_variables('token')
+def bind_recovery_session(request, token):
+    request.session.pop(RESET_SESSION_KEY, None)
+    try:
+        key = uuid.UUID(Signer(salt='factory.password.recovery.v1').unsign(token))
+    except (BadSignature, ValueError):
+        return False
+    row = AccountDelivery.objects.select_related('actor').filter(pk=key).first()
+    if not row or not valid_reset(row, row.actor):
+        return False
+    request.session.cycle_key()
+    request.session[RESET_SESSION_KEY] = str(key)
+    return True
+
+
+def recovery_session(request):
+    key = request.session.get(RESET_SESSION_KEY)
+    row = AccountDelivery.objects.select_related('actor').filter(pk=key).first() if key else None
+    if not row or not valid_reset(row, row.actor):
+        request.session.pop(RESET_SESSION_KEY, None)
+        return None
+    return row
+
+
+@transaction.atomic
+@sensitive_variables('data', 'form')
+def change_recovered_password(request, row, data):
+    actor = get_user_model().objects.select_for_update().get(pk=row.actor_id)
+    row = AccountDelivery.objects.select_for_update().get(pk=row.pk)
+    if not valid_reset(row, actor):
+        request.session.pop(RESET_SESSION_KEY, None)
+        return None, False
+    form = RecoveryPasswordForm(actor, data)
+    if not form.is_valid():
+        return form, False
+    form.save()
+    row.consumed_at = timezone.now()
+    row.save(update_fields=['consumed_at'])
+    request.session.pop(RESET_SESSION_KEY, None)
+    return form, True
+
+
 @sensitive_post_parameters('token')
 @never_cache
 @require_http_methods(['GET', 'HEAD', 'POST'])
@@ -69,17 +111,10 @@ def redeem(request):
     form = RecoveryCodeForm(request.POST if request.method == 'POST' else None)
     if not form.is_bound:
         return private_response(render(request, 'registration/factory_recovery.html', {'code': form}))
-    request.session.pop(RESET_SESSION_KEY, None)
-    if not form.is_valid():
-        return private_response(redirect('factory_recovery_confirm'))
-    try:
-        key = uuid.UUID(Signer(salt='factory.password.recovery.v1').unsign(form.cleaned_data['token']))
-    except (BadSignature, ValueError):
-        return private_response(redirect('factory_recovery_confirm'))
-    row = AccountDelivery.objects.select_related('actor').filter(pk=key).first()
-    if row and valid_reset(row, row.actor):
-        request.session.cycle_key()
-        request.session[RESET_SESSION_KEY] = str(key)
+    if form.is_valid():
+        bind_recovery_session(request, form.cleaned_data['token'])
+    else:
+        request.session.pop(RESET_SESSION_KEY, None)
     return private_response(redirect('factory_recovery_confirm'))
 
 
@@ -87,28 +122,18 @@ def redeem(request):
 @never_cache
 @require_http_methods(['GET', 'HEAD', 'POST'])
 def confirm(request):
-    key = request.session.get(RESET_SESSION_KEY)
-    row = AccountDelivery.objects.select_related('actor').filter(pk=key).first() if key else None
-    if not row or not valid_reset(row, row.actor):
-        request.session.pop(RESET_SESSION_KEY, None)
+    row = recovery_session(request)
+    if not row:
         return private_response(render(request, 'registration/factory_recovery.html', {'invalid': True}))
     if request.method != 'POST':
         return private_response(render(request, 'registration/factory_recovery.html', {
             'new_password': RecoveryPasswordForm(row.actor),
         }))
-    with transaction.atomic():
-        actor = get_user_model().objects.select_for_update().get(pk=row.actor_id)
-        row = AccountDelivery.objects.select_for_update().get(pk=row.pk)
-        if not valid_reset(row, actor):
-            request.session.pop(RESET_SESSION_KEY, None)
-            return private_response(render(request, 'registration/factory_recovery.html', {'invalid': True}))
-        form = RecoveryPasswordForm(actor, request.POST)
-        if form.is_valid():
-            form.save()
-            row.consumed_at = timezone.now()
-            row.save(update_fields=['consumed_at'])
-            request.session.pop(RESET_SESSION_KEY, None)
-            return private_response(redirect('factory_recovery_complete'))
+    form, changed = change_recovered_password(request, row, request.POST)
+    if changed:
+        return private_response(redirect('factory_recovery_complete'))
+    if form is None:
+        return private_response(render(request, 'registration/factory_recovery.html', {'invalid': True}))
     return private_response(render(request, 'registration/factory_recovery.html', {'new_password': form}))
 
 

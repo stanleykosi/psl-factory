@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api')
+              'recover-api', 'go-live-api', 'staff-api')
 
 
 def run(group, token, role_access):
@@ -127,6 +127,10 @@ def run(group, token, role_access):
             'tests.test_go_live_replies.GoLiveReplyTests.test_decline_moves_through_an_owned_issue_fix_fresh_candidate_gates_and_new_acceptance',
             'tests.test_go_live_replies.GoLiveReplyTests.test_http_roles_exact_receipts_draft_rules_and_unavailable_actions',
         ]
+    elif group == 'staff-api':
+        modules = ['tests.test_factory_api.ContractTests', 'tests.test_account_delivery', 'tests.test_staff_access_api',
+                   'tests.test_role_scoped_work.RoleScopedWorkTests.test_api_team_invitation_renewal_admits_only_the_reviewed_role_and_team',
+                   'tests.test_role_scoped_work.RoleScopedWorkTests.test_18_pmo_finance_and_hr_leads_invite_only_their_team_members']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

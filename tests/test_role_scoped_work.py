@@ -863,6 +863,40 @@ class RoleScopedWorkTests(TestCase):
             self.assertContains(self.client.get(reverse('staff_roster'),{'q':post['username']}),post['name'])
             self.assertContains(self.client.get(reverse('staff_person',args=[member.user_id])),team.name)
 
+    def test_api_team_invitation_renewal_admits_only_the_reviewed_role_and_team(self):
+        lead = self.admitted(mode='lead')
+        self.client.force_login(lead.user)
+        path = f'/api/v1/setup/{self.case.pk}/invitations'
+        opening = self.client.get(path, {'team_id': self.team.pk})
+        self.assertEqual(opening.status_code, 200, opening.content)
+        base = {key: opening.json()[key] for key in ('authority_id', 'membership_id', 'revision')}
+        values = {**base, 'username': 'synthetic-api-invite', 'name': 'Synthetic API invite',
+                  'email': 'test-member@example.invalid', 'role': lead.role, 'mode': 'member',
+                  'team_id': self.team.pk, 'preceding_id': None}
+        def invite(body):
+            return self.client.post(path, body, content_type='application/json')
+
+        self.assertEqual(invite({**values, 'role': 'finance-lead'}).status_code, 403)
+        initial = invite(values)
+        self.assertEqual(initial.status_code, 201, initial.content)
+        older = initial.json()
+        fresh = invite({**values, 'revision': rev(self.case), 'preceding_id': older['invitation']['id']})
+        self.assertEqual(fresh.status_code, 201, fresh.content)
+        recipient = Client()
+        preview = '/api/v1/accounts/invitations/preview'
+        first = older['join_url'].split('#')[1]
+        latest = fresh.json()['join_url'].split('#')[1]
+        self.assertEqual(recipient.post(preview, {'token': first}, content_type='application/json').status_code, 422)
+        review = recipient.post(preview, {'token': latest}, content_type='application/json')
+        self.assertEqual(review.status_code, 200, review.content)
+        self.assertIn(self.team.name, review.json()['workspaces'][0]['access'])
+        accepted = recipient.post('/api/v1/accounts/invitations/accept', {'token': latest, 'password': PASSWORD,
+                                   'confirm': PASSWORD}, content_type='application/json')
+        self.assertEqual(accepted.status_code, 201, accepted.content)
+        admitted = StaffMembership.objects.get(user__username=values['username'])
+        self.assertEqual((admitted.role, admitted.mode, admitted.team_id), (lead.role, 'member', self.team.pk))
+        self.assertEqual(admitted.invitation.inviting_membership_id, lead.pk)
+
     def test_19_unscoped_links_and_revoked_lead_links_cannot_create_accounts(self):
         join = reverse('staff_accept_invite')
         _,old_token = staff.invite(self.admin,self.case.pk,'earlier-pending','Earlier colleague',

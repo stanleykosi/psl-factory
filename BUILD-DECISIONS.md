@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Admit anonymous requests only on the designated credential and invitation operations. Keep the same-origin CSRF requirement and Django session. Technical staff controls use native authority, full departure requires every affected workspace, and restored sign-in does not reactivate revoked access.
+
 22 November 2026. Pin corrected payroll imports to their preceding provider export under the workspace lock. Keep raw staff names behind the separate source-holder service and return only the recorded comparison. Restore settled unpublished preparation using its exact current profile and original lifetime allowance. Use the same native event checks for Django and API release and acceptance controls.
 
 22 November 2026. Use original multipart HR export bytes and the native per-period disclosure contract. Keep raw rows in a separate recipient-only resource. Aggregate reports and questions independently recheck the exact report, receipt authority and HR route. Question reads validate the report without fetching its amount payload, and one exact review verifies its full source lineage.

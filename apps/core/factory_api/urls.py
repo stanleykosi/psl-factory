@@ -7,14 +7,14 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    agents, archive_files, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
+    accounts, agents, archive_files, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
     delivery, documents,
     finance_operations, go_live_replies, handoffs, hr_handoffs, hypercare,
     intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, setup, support_replies, work, work_access, workspaces,
+    role_work, roles, setup, staff_access, support_replies, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -22,6 +22,24 @@ from .http import ID, TEXT, UUID, array, error, missing, obj
 PREFIX = '/api/v1/'
 ROUTES = (
     ('me', workspaces.me),
+    ('session', accounts.session, accounts.sign_in),
+    ('session/logout', accounts.sign_out),
+    ('accounts/recovery/request', accounts.request_recovery),
+    ('accounts/recovery/link', accounts.redeem),
+    ('accounts/recovery/password', accounts.recovery_status, accounts.reset_password),
+    ('accounts/invitations/preview', accounts.preview_invitation),
+    ('accounts/invitations/accept', accounts.accept_invitation),
+    ('me/onboarding', accounts.onboarding),
+    ('me/account', accounts.account),
+    ('me/account/password', accounts.password),
+    ('staff', staff_access.roster),
+    ('staff/<int:person_id>', staff_access.person),
+    ('staff/<int:person_id>/deactivation', staff_access.departure, staff_access.deactivate),
+    ('staff/<int:person_id>/restoration', staff_access.restoration, staff_access.restore),
+    ('staff/delegations/<int:authority_id>', staff_access.delegation, staff_access.update_delegation),
+    ('setup/<uuid:case_id>/invitations', staff_access.invitations, staff_access.invite),
+    ('setup/<uuid:case_id>/people/<int:person_id>/profile', staff_access.profile, staff_access.apply_profile),
+    ('setup/<uuid:case_id>/people/<int:person_id>/departure', staff_access.workspace_departure, staff_access.remove_workspace_access),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>/publication', documents.report_controls, documents.report_command),
     ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
@@ -237,6 +255,8 @@ def contract():
                 for kind, key in PATH_PARAMETER.findall(route)
             ]
             errors = WRITE_ERRORS if method == 'POST' else READ_ERRORS
+            if not info['authenticated']:
+                errors = tuple(code for code in errors if code != '401')
             operation = {'summary': info['summary'], 'operationId': operation_id(handler),
                          'parameters': path_params + [
                              {'name': name, 'in': 'query', 'required': name in info['required_query'], 'schema': schema}
@@ -247,6 +267,8 @@ def contract():
                              'default': {'description': 'Request or domain error',
                                          'content': json_content({'$ref': '#/components/schemas/Error'})},
                          }}
+            if not info['authenticated']:
+                operation['security'] = []
             if method == 'POST':
                 operation['parameters'].append({'name': 'X-CSRFToken', 'in': 'header', 'required': True, 'schema': TEXT})
                 media_type = 'multipart/form-data' if info['multipart'] else 'application/json'
@@ -254,8 +276,8 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.6.0',
-            'description': 'Use the current same-origin Django session. For JSON writes, read the session CSRF token from '
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.7.0',
+            'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,
         'components': {

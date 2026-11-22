@@ -1,8 +1,14 @@
 # Actual test execution ledger
 
+## OpenAPI staff accounts and recovery · 22 November 2026
+
+The local PostgreSQL suite passed nine tests in 23.747 seconds and observed 27 successful schema-checked operations, including the 26 staff additions. It verified same-origin CSRF, an original synthetic recovery email and expired replay, password change, cross-team refusal, scoped invitation renewal, exact role admission, unchanged action deadline, and restored sign-in while prior roles and grants remain revoked. OpenAPI 3.1 validation, TypeScript generation and migration drift passed.
+
 ## OpenAPI recovery and release closeout · 22 November 2026
 
 The first four PostgreSQL checks passed locally in 94.300 seconds, including original payroll replacement, separately attested names, an idempotent stopped-work restart, and reminder policy through mailbox receipt. The first Go-live and contract batch passed six of seven cases in 165.418 seconds. The stability case reached verified work, then an assertion accidentally carried over from the preceding Django missing-configuration test expected no assessment. That assertion was restored to its original test and the stability test now checks the qualified result it produced.
+
+Railway's first upload for revision `4aab08fc` timed out and created failed deployment `d5b27b43-2ba2-4a55-b5d6-c21eea563374`. Retrying the same frozen bundle as `fa465552-168a-43d4-a648-e83e51fa1395` passed all nine recovery checks in 186.236 seconds and all four Go-live checks in 118.717 seconds. The response audit recorded 18 and five successful operations respectively. Django system checks and migration drift passed. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=fa465552-168a-43d4-a648-e83e51fa1395)
 
 ## OpenAPI HR handoffs and payroll questions · 22 November 2026
 

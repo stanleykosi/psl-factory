@@ -59,16 +59,19 @@ class FactoryLogin(LoginView):
         return response
 
     def get_default_redirect_url(self):
-        from apps.identity.primary_roles import administered_projects
-        from apps.identity.teams import memberships
+        return factory_landing(self.request.user) or super().get_default_redirect_url()
 
-        actor = self.request.user
-        if memberships(actor).exists() or (
-                not granted(actor,['factory.read']).exists() and administered_projects(actor).exists()):
-            return reverse('home')
-        if not visible_cases(self.request.user).exists():
-            return reverse('getting_started')
-        return super().get_default_redirect_url()
+
+def factory_landing(actor):
+    from apps.identity.primary_roles import administered_projects
+    from apps.identity.teams import memberships
+
+    if memberships(actor).exists() or (
+            not granted(actor, ['factory.read']).exists() and administered_projects(actor).exists()):
+        return reverse('home')
+    if not visible_cases(actor).exists():
+        return reverse('getting_started')
+    return None
 
 
 @login_required

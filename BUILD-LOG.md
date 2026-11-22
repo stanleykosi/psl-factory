@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Added same-origin account, credential recovery and invitation APIs and scoped staff roster, technical delegation, profile, handover and restoration APIs. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Added versioned payroll replacement and restart, same-ID source-owner comparison and correction, withdrawal receipt readback, payment reminder policy drafting, Go-live decline options and the separate actual release and acceptance controls in stability work. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Added HR disclosure and correction commands, authenticated private export uploads and recipient row readback, aggregate payroll reports and receipts, and private payroll questions through acknowledged HR reply. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

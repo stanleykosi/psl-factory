@@ -123,7 +123,7 @@ def validation_problem(exc):
 
 
 def endpoint(*, method='GET', request=None, response=None, status=200, summary, query=None,
-             required_query=(), path_parameters=None, multipart=False):
+             required_query=(), path_parameters=None, multipart=False, authenticated=True):
     """Describe one operation and apply the same request contract at runtime."""
     def decorate(fn):
         @never_cache
@@ -132,7 +132,7 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
         @sensitive_variables('kwargs')
         def view(http, *args, **kwargs):
             methods = [method, 'HEAD'] if method == 'GET' else [method]
-            if not http.user.is_authenticated or not http.user.is_active:
+            if authenticated and (not http.user.is_authenticated or not http.user.is_active):
                 return error(401, 'unauthenticated', 'Sign in to continue.')
             if http.method not in methods:
                 result = error(405, 'method_not_allowed', 'The requested method is unavailable.')
@@ -159,6 +159,6 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
                 return validation_problem(exc)
         view.operation = {'method': method, 'request': request, 'response': response, 'status': status,
                           'summary': summary, 'query': query or {}, 'required_query': required_query,
-                          'path_parameters': path_parameters or {}, 'multipart': multipart}
+                          'path_parameters': path_parameters or {}, 'multipart': multipart, 'authenticated': authenticated}
         return view
     return decorate

@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Account and staff access APIs · 22 November 2026
+
+OpenAPI 1.7.0 adds 26 operations. Read the CSRF token from `GET /api/v1/session` before the first same-origin credential or invitation write, and use the rotated token after sign-in. Credential recovery retains the verified channel and one-use native session flow. Staff invitation options return current reviewed authority and lead membership IDs. Whole-account and workspace-only departure retain their separate handover and review controls. [API contract](contracts/psl-factory.openapi.json)
+
+The current map has 32 groups with API work across 186 states. Next are the cash correction and short-payment decisions, specialist source decisions, commercial and reporting actions and Finance close. Run the `staff-api` Railway checks group to verify account and invitation paths. Live HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Payroll recovery, reminder settings and release closeout APIs · 22 November 2026
 
 OpenAPI 1.6.0 adds 12 operations. A payroll source owner can import a corrected successor with `replaces_input_id`. Restricted name checks take separate source-owner attestations and return comparison and HR correction status. Payroll recovery gives prior withdrawal and recipient receipt details or the profile for settled unpublished restart. Go-live decline options list exact linked candidates, and stability events record the actual release and exact signed acceptance through the original services. Use the shared policy review operations to validate and activate drafts. [Contract](contracts/psl-factory.openapi.json)
