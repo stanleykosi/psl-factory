@@ -1,10 +1,26 @@
 {
+  "frontend_cutover_intake_setup_planning_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.18.0",
+    "live_paths": 250,
+    "live_operations": 356,
+    "added_operations": 15,
+    "completed_groups": ["SCR-04", "SCR-13", "SCR-42"],
+    "screen_groups_with_remaining_json": 11,
+    "states_in_groups_with_remaining_json": 54,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Signed commercial and stage provenance", "Work, decision, Assistant and project resources", "Full Railway API acceptance"],
+    "owner_decisions": "Live criteria, authorisations, disclosure fields and source owners remain deferred."
+  },
   "frontend_cutover_private_finance_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.17.0",
     "live_paths": 241,
     "live_operations": 341,
     "added_operations": 11,
+    "railway_tests_passed": 9,
+    "railway_checks_deployment": "01bcd49f-d662-42b2-a951-6109856e4856",
     "completed_groups": ["SCR-57", "SCR-58"],
     "screen_groups_with_remaining_json": 14,
     "states_in_groups_with_remaining_json": 84,

@@ -54,6 +54,25 @@ class FactoryPayrollTests(TestCase):
         self.assertEqual(native.read_publication(f['manager'],p.pk)['by_bu'],{'BU-A':'250.00'});self.assertEqual(connection.vendor,'postgresql')
         text=json.dumps(list(FactoryAttempt.objects.filter(activity__work=self.work).values('observation','result')))
         for secret in ['E001','E002','employee_id','effective_from','BASIC']:self.assertNotIn(secret,text)
+
+    def test_api_start_choices_follow_current_exact_hr_recipient_and_start(self):
+        f = self.f
+        self.client.force_login(f['preparer'])
+        url = f'/api/v1/projects/{f["case"].pk}/payroll/requests/{f["request"].pk}/start-choices'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, response.content)
+        choices = response.json()
+        self.assertEqual({item['id'] for item in choices['inputs']}, {item.pk for item in f['inputs']})
+        self.assertEqual([item['id'] for item in choices['hr_snapshots']], [f['hr'].pk])
+        self.assertNotContains(response, 'E001')
+        payload = {'line': payroll.DEFINITION, 'case_id': str(f['case'].pk), 'case_revision': choices['case_revision'],
+                   'idempotency_key': 'API matching payroll', 'reference': 'SAMPLE payroll',
+                   'background': False, 'intake': {'request_id': f['request'].pk,
+                       'inputs': {'input_ids': [item['id'] for item in choices['inputs']], 'hr_snapshot_id': f['hr'].pk}}}
+        response = self.client.post('/api/v1/work', payload, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        Grant.objects.filter(case=f['case'], user=f['preparer'], action='hrfinance.snapshot.read').update(active=False)
+        self.assertEqual(self.client.get(url).json()['hr_snapshots'], [])
     def test_focused_reviews_bind_each_subject_and_publication_has_recipient_status(self):
         self.start();self.advance();f=self.f
         url=reverse('factory_invoice_decision',args=[self.work.pk])

@@ -16,7 +16,8 @@ from . import (
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, schedule_work, scoped_policy, setup, short_payments, staff_access, support_replies, weekly_reports, work, work_access, workspaces,
+    role_work, roles, schedule_work, scoped_policy, setup, short_payments, staff_access, support_replies,
+    validation_intake, visibility_settings, weekly_reports, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -204,6 +205,7 @@ ROUTES = (
     ('projects/<uuid:case_id>/hr', workspaces.hr),
     ('projects/<uuid:case_id>/payroll/requests', payroll_sources.requests, payroll_sources.create_request),
     ('projects/<uuid:case_id>/payroll/requests/<int:request_id>/inputs', payroll_sources.imports, payroll_sources.upload),
+    ('projects/<uuid:case_id>/payroll/requests/<int:request_id>/start-choices', payroll_sources.start_choices),
     ('projects/<uuid:case_id>/payroll/<slug:kind>/<int:record_id>/working-rows', payroll_sources.working_rows),
     ('projects/<uuid:case_id>/meetings', meeting_records.collection, meeting_records.record),
     ('projects/<uuid:case_id>/meetings/options', meeting_records.options),
@@ -216,6 +218,10 @@ ROUTES = (
     ('projects/<uuid:case_id>/planning', planning.detail, planning.command),
     ('projects/<uuid:case_id>/planning/department-inputs', planning.record_input),
     ('projects/<uuid:case_id>/planning/effort-review', planning.review_effort),
+    ('projects/<uuid:case_id>/planning/source-clarifications', planning.sources, planning.clarify),
+    ('projects/<uuid:case_id>/validation-intake', validation_intake.options, validation_intake.capture),
+    ('projects/<uuid:case_id>/validation-intake/<int:package_id>', validation_intake.detail, validation_intake.command),
+    ('projects/<uuid:case_id>/validation-acceptance/<int:review_id>', validation_intake.receipt),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/closure-checklist', closure.checklist),
     ('projects/<uuid:case_id>/<slug:tab>', workspaces.project_tab),
     ('clients', clients.directory),
@@ -233,8 +239,12 @@ ROUTES = (
     ('setup/<uuid:case_id>/delegations/drafts', setup.draft_delegation),
     ('setup/<uuid:case_id>/rules', setup.rules),
     ('setup/<uuid:case_id>/decision-appointments', policy_reviews.appointments, policy_reviews.draft_appointments),
-    ('setup/<uuid:case_id>/policy-configurations', policy_reviews.versions),
+    ('setup/<uuid:case_id>/policy-configurations', policy_reviews.versions, visibility_settings.draft_envelope),
+    ('setup/<uuid:case_id>/policy-configurations/references', visibility_settings.register_policy_reference),
+    ('setup/<uuid:case_id>/policy-configurations/typed-drafts', visibility_settings.draft_policy),
     ('setup/<uuid:case_id>/policy-configurations/<int:configuration_id>/review', policy_reviews.review),
+    ('setup/<uuid:case_id>/hr-field-visibility', visibility_settings.visibility, visibility_settings.propose),
+    ('setup/<uuid:case_id>/hr-field-visibility/<int:configuration_id>', visibility_settings.field_review, visibility_settings.decide),
     ('setup/<uuid:case_id>/policy-scopes', scoped_policy.catalogue, scoped_policy.command),
     ('setup/<uuid:case_id>/policy-impact', scoped_policy.impacts, scoped_policy.capture),
     ('setup/<uuid:case_id>/policy-impact/<int:assessment_id>', scoped_policy.assessment, scoped_policy.review),
@@ -350,7 +360,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.17.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.18.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

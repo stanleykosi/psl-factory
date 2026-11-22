@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Exposed authorised payroll and validation choices, human acceptance receipts, typed policy drafts and HR field lifecycle, and Planning source clarification. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Connected business-unit finance intake, independent restricted report review and recipient receipt. Carried typed incumbent evidence and private observation proof through current verification and reviewed duplicate adjudication. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Connected bid requirement drafting and human review, actual submission and conversion history, pricing and Security estimate actions, and private client PDF download and protected release. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

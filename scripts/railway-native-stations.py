@@ -204,6 +204,15 @@ def run(group, token, role_access):
                    'tests.test_factory_ledger.FactoryLedgerTests.test_api_incumbent_observation_independent_review_and_private_readback',
                    'tests.test_factory_ledger_observation_proof.LedgerObservationProofTests.test_api_private_proof_round_trip_remains_unverified',
                    'tests.test_ledger_resolution.LedgerResolutionTests.test_api_duplicate_resolution_requires_independent_review_and_fresh_original_check']
+    elif group == 'source-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_evidence_validation.EvidenceValidationTests.test_api_validation_intake_through_owner_approval_replay_and_acceptance_receipt',
+                   'tests.test_evidence_validation.EvidenceValidationTests.test_api_versioned_setup_proof_typed_value_and_envelope_review',
+                   'tests.test_factory_payroll.FactoryPayrollTests.test_api_start_choices_follow_current_exact_hr_recipient_and_start',
+                   'tests.test_setup_disclosure.DisclosureSetupTests.test_api_field_visibility_discussion_through_live_native_revision',
+                   'tests.test_setup_disclosure.DisclosureSetupTests.test_focused_review_compares_reason_terms_and_uses_native_lifecycle',
+                   'tests.test_planning_source_correlations.PlanningSourceCorrelationTests.test_api_clarification_routes_to_the_exact_owner_and_preserves_source_hold',
+                   'tests.test_planning_source_correlations.PlanningSourceCorrelationTests.test_http_correction_owner_reassignment_disposition_and_currentness']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

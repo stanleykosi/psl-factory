@@ -1,8 +1,12 @@
 # Actual test execution ledger
 
+## OpenAPI Start work evidence, Setup and Planning clarification · 22 November 2026
+
+Local PostgreSQL passed validation package creation through owner approval, supplied replay and acceptance receipt, including lost export authority. It passed HR field proposal, comparison and activation, typed rule drafting with stale-revision rejection, registered proof and reviewed policy activation, and exact minimal payroll start choices through live work creation. An initial payroll test expected a different success status than its documented API. The corrected test passed. The first Planning response contained an additional field and the screen map omitted its empty remaining marker. The corrected Planning and contract tests passed all five in 26.707 seconds. They covered current owner response, an unauthorized actor and the still-unresolved source. Railway `source-api` is pending.
+
 ## OpenAPI business units and incumbent lineage · 22 November 2026
 
-Local PostgreSQL verified five successful business-unit API responses from scoped choices through the recipient receipt in 70.922 seconds. Three incumbent tests passed in 47.194 seconds and covered independent review, exact private proof and current duplicate resolution. Five additional tests passed in 31.559 seconds, covering evidence capture and the four contract checks. The official schema and TypeScript generation passed. Railway `private-api` is pending.
+Local PostgreSQL verified five successful business-unit API responses from scoped choices through the recipient receipt in 70.922 seconds. Three incumbent tests passed in 47.194 seconds and covered independent review, exact private proof and current duplicate resolution. Five additional tests passed in 31.559 seconds, covering evidence capture and the four contract checks. The official schema and TypeScript generation passed. Railway `private-api` passed all nine tests in 230.525 seconds on `f63547e6`, with 12 successful schema-checked operations. Django system and migration drift checks passed. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=01bcd49f-d662-42b2-a951-6109856e4856)
 
 ## OpenAPI bid response, pricing and submission · 22 November 2026
 

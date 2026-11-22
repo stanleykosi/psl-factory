@@ -46,6 +46,30 @@ class DisclosureSetupTests(TestCase):
         Grant.objects.filter(case=f['case'], user=f['hr'], action='policy.read').update(active=False)
         self.assertEqual(self.client.get(reverse('workspace_settings', args=[f['case'].pk])).status_code, 403)
 
+    def test_api_field_visibility_discussion_through_live_native_revision(self):
+        f = self.f
+        self.client.force_login(f['hr'])
+        path = f'/api/v1/setup/{f["case"].pk}/hr-field-visibility'
+        choices = self.client.get(path)
+        self.assertEqual(choices.status_code, 200, choices.content)
+        self.assertTrue(choices.json()['can_propose'])
+        args = {'case_revision': rev(f['case']), 'base_id': choices.json()['base_id'],
+                'latest_version': choices.json()['latest_version'], 'fields': REQUIRED + ['role'],
+                'evidence_id': f['e']['owner'].pk, 'effective_from': timezone.now().isoformat(), 'reason': 'SAMPLE field review'}
+        draft = self.client.post(path, args, content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        current_id = draft.json()['id']
+        review = f'{path}/{current_id}'
+        before = self.client.get(review)
+        self.assertEqual(before.status_code, 200, before.content)
+        self.assertEqual(before.json()['proposed'], REQUIRED + ['role'])
+        self.assertEqual(active_component(DISCLOSURE, f['case']).pk, f['disclosure_policy'].pk)
+        for state, action in (('draft', 'validate'), ('validated', 'activate')):
+            decision = self.client.post(review, {'case_revision': rev(f['case']), 'state': state, 'action': action},
+                                        content_type='application/json')
+            self.assertEqual(decision.status_code, 200, decision.content)
+        self.assertEqual(active_component(DISCLOSURE, f['case']).pk, current_id)
+
     def test_proposal_preserves_terms_and_requires_native_review_before_use(self):
         f = self.f
         snapshot = capture(f)

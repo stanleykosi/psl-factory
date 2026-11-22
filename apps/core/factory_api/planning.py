@@ -12,7 +12,8 @@ from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.core.services import lock_case
 from apps.identity.services import active_case_grants, visible_cases
-from apps.pmo import planning as domain, planning_inputs
+from apps.pmo import planning as domain, planning_inputs, planning_sources
+from apps.pmo.models import ActionItem
 from apps.pmo.models import DeliveryDossier, DeliverySource
 from apps.policy.services import decision_authority
 from apps.workflows import factory_planning
@@ -172,3 +173,60 @@ def observe(request, work_id, *, body):
                                                      body['receipt_id'], body['evidence_id'])
     wake_waiting(work.pk)
     return recorded(work, observation)
+
+
+CORRELATION = obj({'key': TEXT, 'code': TEXT, 'detail': TEXT, 'source_ids': array(ID)})
+CLARIFICATION = obj({'key': TEXT, 'action_id': ID, 'action_version': REVISION, 'owner_id': nullable(ID),
+    'owner_status': choice('unassigned', 'assigned', 'source_access_held'), 'status': TEXT, 'response_id': nullable(ID),
+    'approval_granted': {'const': False}})
+COST = obj({'disposition': TEXT, 'proposal': REVISION, 'previous': REVISION}, optional=('proposal', 'previous'))
+
+
+@endpoint(response=obj({'revision': REVISION, 'packet_id': nullable(ID), 'findings': array(CORRELATION),
+    'clarifications': array(CLARIFICATION), 'reviewed_costing': nullable(COST), 'can_assign': BOOLEAN}),
+    summary='Read exact Planning source gaps, owner responses and current reviewed costing')
+@read_observation
+def sources(request, case_id):
+    actor = request.user
+    case = get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
+    domain.readable(actor, case)
+    with limit_queries(1450, deadline=monotonic() + 12):
+        facts = domain.report(actor, case.pk)
+        grants = {action for _, action in active_case_grants(actor, [case.pk])}
+        findings = facts.get('source_correlation', {}).get('findings', [])
+        ids = {pk for finding in findings for pk in finding['source_ids']}
+        readable = set(public_evidence(case.evidence.filter(pk__in=ids)).values_list('pk', flat=True))
+        collection = (facts.get('readiness_inputs') or {}).get('department_inputs') or {}
+        costing = factory_planning.reviewed_costing(actor, case, collection)
+    return {'revision': case.revision, 'packet_id': facts.get('packet_id'),
+            'findings': [{**{key: finding[key] for key in ('key', 'code', 'detail')},
+                          'source_ids': [pk for pk in finding['source_ids'] if pk in readable]} for finding in findings],
+            'clarifications': facts.get('source_clarifications', []), 'reviewed_costing': costing,
+            'can_assign': {'planning.coordinate', 'action.manage'} <= grants}
+
+
+CLARIFICATION_ACTION = {'oneOf': [
+    obj({'action': {'const': 'assign'}, 'revision': REVISION, 'packet_id': ID, 'key': {**TEXT, 'maxLength': 100},
+         'owner_id': nullable(ID)}),
+    obj({'action': {'const': 'respond'}, 'revision': REVISION, 'packet_id': ID, 'key': {**TEXT, 'maxLength': 100},
+         'action_id': ID, 'expected_action': REVISION, 'disposition': choice('source_correction_required', 'exclude_in_successor'),
+         'evidence_id': ID, 'replacement_source_id': nullable(ID), 'target_prd_id': nullable(ID), 'target_scope_id': nullable(ID)}),
+]}
+
+
+@endpoint(method='POST', request=CLARIFICATION_ACTION, response=RECORDED, status=201,
+    summary='Assign an exact Planning source clarification or record the currently assigned owner’s evidenced response')
+@transaction.atomic
+def clarify(request, case_id, *, body):
+    actor = request.user
+    action = body['action']
+    case = lock_case(actor, case_id, 'planning.coordinate' if action == 'assign' else 'planning.participate', body['revision'])
+    domain.readable(actor, case)
+    values = {key: value for key, value in body.items() if key not in ('action', 'revision')}
+    if action == 'assign':
+        record = planning_sources.clarify(actor, case.pk, **values)
+    else:
+        get_object_or_404(ActionItem, case=case, pk=body['action_id'])
+        record = planning_sources.resolve(actor, case.pk, **values)
+    case.refresh_from_db(fields=['revision'])
+    return {'revision': case.revision, 'record_id': record.pk}

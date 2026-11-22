@@ -1,8 +1,12 @@
 # PSL Operations Factory handoff
 
+## Start work evidence, Setup and Planning clarification · 22 November 2026
+
+OpenAPI 1.18.0 adds fifteen operations. Payroll Start work can select exact current exports and a minimal Human Resources snapshot under the recipient’s current grant. Procedure validation can assemble exact sources, run separate owner decisions, record supplied replays and read the acceptance receipt. Setup supports policy references and versioned drafts and preserves all other reviewed terms when changing Human Resources fields. Planning can assign exact source questions and receive an evidenced response from the current owner. It preserves the unresolved source hold until a valid successor and exposes current reviewed costing. Local PostgreSQL passed the focused journeys and the generated contract checks. Railway `source-api` is pending. Eleven groups across 54 states still have API gaps. Continue the signed commercial journey and shared work, decision, project and outcome resources. The separate 262-state Railway API acceptance remains pending. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## Business-unit and private incumbent controls · 22 November 2026
 
-OpenAPI 1.17.0 exposes current business-unit options and certified event intake, independent restricted aggregate review and a named recipient's receipt. Incumbent lineage retains typed source and observed verification evidence, current private proof, independent review and separate duplicate disposition. The API applies the same current native permission and source controls as Django. Local PostgreSQL, official schema and TypeScript checks passed. Railway `private-api` is pending. Fourteen groups across 84 design states have API gaps at this checkpoint. Continue payroll matching and validation intake plus Setup, then the cross-workflow queues, signed commercial and Planning actions. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+OpenAPI 1.17.0 exposes current business-unit options and certified event intake, independent restricted aggregate review and a named recipient's receipt. Incumbent lineage retains typed source and observed verification evidence, current private proof, independent review and separate duplicate disposition. The API applies the same current native permission and source controls as Django. Railway `private-api` passed all nine tests. Fourteen groups across 84 design states had API gaps at this checkpoint. HOD decisions remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
 
 ## Bid responses, pricing and submission · 22 November 2026
 

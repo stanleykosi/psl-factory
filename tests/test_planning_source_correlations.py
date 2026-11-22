@@ -167,6 +167,36 @@ class PlanningSourceCorrelationTests(TestCase):
         h.evidence(f,'prd','A later unrelated unadopted draft PRD must not replace declared targets')
         self.assertTrue(planning.current_readiness(f['c'],ready.pk)['inputs']['source_correlation']['complete'])
 
+    def test_api_clarification_routes_to_the_exact_owner_and_preserves_source_hold(self):
+        f = self.f
+        payload = copy.deepcopy(f['payload'])
+        payload['source_correlations'][0]['state'] = 'conflicting'
+        packet = self.capture(payload)
+        url = f'/api/v1/projects/{f["c"].pk}/planning/source-clarifications'
+        owner = f['owners']['scope']
+        self.client.force_login(f['a'])
+        state = self.client.get(url)
+        self.assertEqual(state.status_code, 200, state.content)
+        self.assertIn('scope_id', [row['key'] for row in state.json()['findings']])
+        assigned = self.client.post(url, {'action': 'assign', 'revision': rev(f['c']), 'packet_id': packet.pk,
+            'key': 'scope_id', 'owner_id': owner.pk}, content_type='application/json')
+        self.assertEqual(assigned.status_code, 201, assigned.content)
+        item = ActionItem.objects.get(pk=assigned.json()['record_id'])
+        response = {'action': 'respond', 'revision': rev(f['c']), 'packet_id': packet.pk, 'key': 'scope_id',
+                    'action_id': item.pk, 'expected_action': item.current.number, 'disposition': 'source_correction_required',
+                    'evidence_id': f['e']['requirements'].pk, 'replacement_source_id': None,
+                    'target_prd_id': None, 'target_scope_id': None}
+        self.client.force_login(f['owners']['estimates'])
+        self.assertEqual(self.client.post(url, response, content_type='application/json').status_code, 403)
+        self.client.force_login(owner)
+        recorded = self.client.post(url, response, content_type='application/json')
+        self.assertEqual(recorded.status_code, 201, recorded.content)
+        receipt = self.client.get(url)
+        self.assertEqual(receipt.status_code, 200, receipt.content)
+        self.assertIn('scope_id', [row['key'] for row in receipt.json()['findings']])
+        self.assertFalse(receipt.json()['clarifications'][0]['approval_granted'])
+        self.assertEqual(receipt.json()['clarifications'][0]['response_id'], recorded.json()['record_id'])
+
     def test_http_correction_owner_reassignment_disposition_and_currentness(self):
         f=self.f;p=copy.deepcopy(f['payload']);p['source_correlations'][0]['state']='conflicting'
         p['source_correlations'][0]['detail']='Original scope excludes the rollout included in replacement scope'

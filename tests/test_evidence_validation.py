@@ -39,6 +39,70 @@ class EvidenceValidationTests(TestCase):
         value=LocalAcceptanceReportAdapter().read(self.f['acceptor'],self.c.pk,acceptance.pk)
         self.assertFalse(value['whole_product_accepted']);self.assertFalse(value['deployment_authorized']);self.assertEqual(value['status']['scope'],['B13','P13','P15'])
 
+    def test_api_validation_intake_through_owner_approval_replay_and_acceptance_receipt(self):
+        url = f'/api/v1/projects/{self.c.pk}'
+        self.client.force_login(self.a)
+        options = self.client.get(f'{url}/validation-intake')
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertIn(self.f['source'].pk, [row['id'] for row in options.json()['sources']])
+
+        def post(path, action, **fields):
+            response = self.client.post(f'{url}/{path}', {'action': action, 'case_revision': rev(self.c), **fields},
+                                        content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['id']
+
+        payload = dict(self.p.payload)
+        package = post('validation-intake', 'package', reference='SAMPLE API package', package=payload, evidence_id=self.e.pk)
+        path = f'validation-intake/{package}'
+        self.client.force_login(self.f['owner'])
+        for purpose in ('meaning', 'expectations'):
+            post(path, 'review', purpose=purpose, verdict='approve', operation_key='api-' + purpose,
+                 evidence_id=self.e.pk, reason='SAMPLE exact source review')
+        for example in self.f['examples']:
+            supplied = dict(self.f['config']['replay'], example_id=example.pk, actual=example.expected)
+            proof = evidence(self.a, self.c, 'validation_result', json.dumps(supplied))
+            self.client.force_login(self.f['tester'])
+            post(path, 'replay', evidence_id=proof.pk, operation_key=f'api-replay-{example.pk}')
+        self.client.force_login(self.f['acceptor'])
+        accepted = post(path, 'review', purpose='acceptance', verdict='approve', operation_key='api-accept',
+                        evidence_id=self.e.pk, reason='SAMPLE independently accepted')
+        confirmed = self.client.get(f'{url}/{path}')
+        self.assertEqual(confirmed.status_code, 200, confirmed.content)
+        self.assertEqual(confirmed.json()['status']['reviews']['acceptance']['latest'], accepted)
+        receipt = self.client.get(f'{url}/validation-acceptance/{accepted}')
+        self.assertEqual(receipt.status_code, 200, receipt.content)
+        self.assertTrue(receipt.json()['requested_record_is_current'])
+        self.assertFalse(receipt.json()['deployment_authorized'])
+        Grant.objects.filter(case=self.c, user=self.f['acceptor'], action='validation.export').update(active=False)
+        self.assertEqual(self.client.get(f'{url}/validation-acceptance/{accepted}').status_code, 403)
+
+    def test_api_versioned_setup_proof_typed_value_and_envelope_review(self):
+        self.client.force_login(self.a)
+        url = f'/api/v1/setup/{self.c.pk}/policy-configurations'
+        typed = {'component': OWNER, 'evidence_id': self.e.pk, 'value': self.f['config']['authority'],
+                 'effective_from': timezone.now().isoformat(), 'case_revision': rev(self.c)}
+
+        def post(path, body, status):
+            response = self.client.post(f'{url}{path}', body, content_type='application/json')
+            self.assertEqual(response.status_code, status, response.content)
+            return response.json()
+
+        result = post('/typed-drafts', typed, 201)
+        self.assertEqual(result['state'], 'draft')
+        post('/typed-drafts', typed, 409)
+        ref = post('/references', {'case_revision': rev(self.c), 'ref': 'validation:owner-api',
+            'schema_ref': 'schema:psl/validation-authority/v1', 'content': typed['value'], 'evidence_id': self.e.pk}, 201)
+        envelope = dict(active_component(OWNER, self.c).envelope)
+        envelope['value'] = {'artifact_ref': ref['ref'], 'artifact_version': ref['version'], 'sha256': ref['sha256'],
+                             'schema_ref': ref['schema_ref']}
+        draft = post('', {'case_revision': rev(self.c), 'envelope': envelope}, 201)
+        self.assertEqual(draft['version'], result['version'] + 1)
+        review = f'/{draft["id"]}/review'
+        for transition_name in ('validated', 'active'):
+            draft = post(review, {'case_revision': rev(self.c), 'state_id': draft['state_id'], 'transition': transition_name}, 200)
+        self.assertEqual(active_component(OWNER, self.c).pk, draft['id'])
+
     def test_receipt_stated_document_owner_and_admin_flag_grant_no_review_authority(self):
         self.a.is_superuser=True;self.a.save()
         with self.assertRaises(PermissionDenied):domain.review(self.a,self.c.pk,self.p.pk,'meaning','approve','admin',self.e.pk,'Source says Head of PMO; not an appointment',rev(self.c))

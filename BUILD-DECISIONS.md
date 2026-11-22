@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Keep private payroll snapshot rows out of the Start work choices and recheck the named recipient. Keep validation acceptance scoped to the exact package and supporting evidence. Permit policy authoring with current owner-evidence references and separate activation. Route Planning clarification to its explicitly assigned owner and retain a source hold until current valid evidence supports a successor.
+
 22 November 2026. Treat supplied incumbent evidence as an observation requiring its own current review. Keep duplicate evidence separate by source workspace and only expose it to currently authorised participants. Use the same mapping, current source and recipient guards for business-unit API work as for the native Finance flow.
 
 22 November 2026. Reuse exact current bid evidence for model suggestions and independently reviewed previous winning answers. Start fresh human decisions after adjusting the native costing source. Publication uses the configured publisher and registered client route. Release clients can read status and private approved pack files through the same boundaries used by Django.

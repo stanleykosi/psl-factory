@@ -44,6 +44,50 @@ def request_payload(row):
             **{key: row.metadata[key] for key in ('period', 'currency', 'providers')}}
 
 
+SNAPSHOT_CHOICE = obj({'id': ID, 'captured_at': DATETIME, 'period': TEXT})
+
+
+@endpoint(response=obj({'case_revision': REVISION, 'request': REQUEST, 'inputs': array(
+    obj({'id': ID, 'provider': TEXT, 'version': REVISION}), limit=2),
+    'hr_snapshots': array(SNAPSHOT_CHOICE, limit=40)}),
+    summary='Read exact accepted payroll inputs and current authorised minimal HR matching snapshots')
+@read_observation
+def start_choices(request, case_id, request_id):
+    from apps.finance import hrfinance
+    from apps.finance.models import HRReadSnapshot
+
+    from apps.workflows.factory import access
+
+    actor = request.user
+    case = workspace(request, case_id)
+    access(actor, case, 'factory.start', factory_payroll.DEFINITION)
+    payroll = get_object_or_404(PayrollRequest.objects.select_related('case'), case=case, pk=request_id)
+    config, rules = native.access(payroll, actor, True)
+    accepted = PayrollInput.objects.filter(request=payroll, provider__in=payroll.metadata['providers'],
+        metadata__accepted=True, retain_until__gt=timezone.now()).defer('payload').order_by('provider', '-version').distinct('provider')
+    snapshots = HRReadSnapshot.objects.defer('payload').filter(contract__need__case=case, status='accepted',
+        retain_until__gt=timezone.now(), contract__payload__recipient_ids__contains=[actor.pk],
+        contract__payload__purpose='payroll_matching', contract__payload__entity=payroll.metadata['entity'],
+        contract__payload__period=payroll.metadata['period']).select_related('contract__need__case').order_by('-pk')[:40]
+    matched, sources = [], []
+    with limit_queries(1150):
+        for row in accepted:
+            try:
+                native.check_input(row, payroll, config, rules)
+            except (PermissionDenied, ValidationError):
+                continue
+            sources.append({'id': row.pk, 'provider': row.provider, 'version': row.version})
+        for row in snapshots:
+            if set(row.contract.payload['fields']) != set(native.REQUIRED):
+                continue
+            try:
+                hrfinance.snapshot_access(actor, row)
+            except (PermissionDenied, ValidationError):
+                continue
+            matched.append({'id': row.pk, 'captured_at': row.created_at, 'period': row.contract.payload['period']})
+    return {'case_revision': case.revision, 'request': request_payload(payroll), 'inputs': sources, 'hr_snapshots': matched}
+
+
 @endpoint(response=obj({'revision': REVISION, 'items': array(REQUEST, limit=25), 'next_page': nullable(PAGE)}), query={'page': PAGE},
           summary='List current payroll requests and their exact export periods')
 def requests(request, case_id):
