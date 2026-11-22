@@ -195,16 +195,25 @@ class FactoryMinutesTests(TestCase):
             self.assertContains(invalid, 'Select existing notes or upload one notes file.')
             self.assertFalse(CaseUpload.objects.exists())
             store.assert_not_called()
-            accepted = self.client.post(path, {**command, 'notes_file': notes()})
-            self.assertEqual(accepted.status_code, 302)
+            api = f'/api/v1/projects/{self.case.pk}/minutes/intake'
+            upload_command = {'idempotency_key': command['key'], 'case_revision': command['revision'],
+                              'reference': command['reference'], 'audience': command['audience'],
+                              'template_id': command['template_id'], 'background': 'false'}
+            rejected = self.client.post(api, {**upload_command, 'evidence_id': self.notes.pk, 'notes_file': notes()})
+            self.assertEqual(rejected.status_code, 422, rejected.content)
+            store.assert_not_called()
+            accepted = self.client.post(api, {**upload_command, 'notes_file': notes()})
+            self.assertEqual(accepted.status_code, 200, accepted.content)
             self.work = FactoryWork.objects.get(key='sample-notes-upload')
+            self.assertEqual(accepted.json()['work_id'], self.work.pk)
             upload = CaseUpload.objects.get(case=self.case, actor=self.actor)
             selection, evidence, _ = flow.source(self.work, self.actor)
             self.assertEqual((selection['evidence_id'], evidence.body), (evidence.pk, raw.decode()))
             self.assertTrue(Audit.objects.filter(case=self.case, action=flow.UPLOADED_NOTES_AUDIT,
                                                 data__upload=upload.pk, data__file_sha256=upload.sha256).exists())
             repeat = self.client.post(path, {**command, 'notes_file': notes()})
-            self.assertRedirects(repeat, accepted.url, fetch_redirect_response=False)
+            self.assertEqual(repeat.status_code, 302, repeat.content)
+            self.assertIn(reverse('factory_detail', args=[self.work.pk]), repeat.url)
             store.assert_called_once_with(upload.key, raw)
         self.advance()
         self.assertIsNotNone(flow.extraction(self.work), self.work.finding)
@@ -227,27 +236,75 @@ class FactoryMinutesTests(TestCase):
         bad=dict(self.data,audience='client')
         with self.assertRaises(ValidationError):flow.start(self.actor,self.case.pk,'bad','bad',bad,rev(self.case))
     def test_external_exact_quality_review_all_recipients_and_receipts(self):
+        from adapters.publications import InternalPublicationAdapter
+
+        class RefusedDelivery(InternalPublicationAdapter):
+            def deliver(self, *args):
+                raise ValueError('Synthetic delivery refusal')
+
         second=get_user_model().objects.create_user('second-recipient');Grant.objects.create(case=self.case,user=second,action='document.receive:client')
         refs=[]
         for u in [self.recipient,second]:refs.append(register_reference(self.actor,self.case.pk,'client:'+str(u.pk),'schema:psl/document-recipient/v1',{'audience':'client','user_id':u.pk},self.owner.pk).ref)
         activate(self.actor,self.case,'D11.recipient_grant_refs',refs,self.owner)
-        self.start(True);self.advance();self.confirm();self.advance();b=flow.document(self.work)
-        self.assertIsNotNone(b,self.work.finding);self.assertNotEqual(self.work.status,'verified');self.assertFalse(Publication.objects.exists());self.assertFalse(HumanTask.objects.filter(version=b.version).exists())
-        self.request_outward_review()
-        self.assertTrue(HumanTask.objects.filter(version=b.version,status='open').exists())
         self.client.force_login(self.actor)
+        started = self.client.post('/api/v1/work', {
+            'line': flow.DEFINITION, 'case_id': str(self.case.pk), 'case_revision': rev(self.case),
+            'idempotency_key': 'MINUTES-1', 'reference': 'FORMAL-1', 'background': False,
+            'intake': {'data': {**self.data, 'audience': 'client', 'publish': True}},
+        }, content_type='application/json')
+        self.assertEqual(started.status_code, 200, started.content)
+        self.work = FactoryWork.objects.get(pk=started.json()['work_id'])
+        api = f'/api/v1/work/{self.work.pk}'
+        self.advance()
+        panel = self.client.get(api + '/minutes').json()
+        self.assertTrue(panel['can_confirm'])
+        self.assertEqual({row['evidence_id'] for row in panel['suggestions']}, {self.notes.pk})
+        confirmed = self.client.post(api + '/minutes/confirmation', {
+            **{key: panel[key] for key in ('case_revision', 'expected_revision', 'extraction_id')},
+            'minutes': self.fields(),
+        }, content_type='application/json')
+        self.assertEqual(confirmed.status_code, 200, confirmed.content)
+        self.advance();b=flow.document(self.work)
+        self.assertIsNotNone(b,self.work.finding);self.assertNotEqual(self.work.status,'verified');self.assertFalse(Publication.objects.exists());self.assertFalse(HumanTask.objects.filter(version=b.version).exists())
+        panel = self.client.get(api + '/minutes').json()
+        self.assertTrue(panel['document']['can_request_review'])
+        self.assertFalse(panel['can_confirm'])
+        review_requested = self.client.post(api + '/minutes/review-request', {
+            **{key: panel[key] for key in ('case_revision', 'expected_revision')}, 'version_id': b.version_id,
+        }, content_type='application/json')
+        self.assertEqual(review_requested.status_code, 200, review_requested.content)
+        self.assertTrue(HumanTask.objects.filter(version=b.version,status='open').exists())
         decision_url=f'/work/{self.work.pk}/decision/'
         self.assertContains(self.client.get(decision_url),'Approve exact outward minutes')
         review_version(self.actor,self.case.pk,b.version_id,'approve','Checked exact outward minutes and recipients',rev(self.case))
         self.assertNotContains(self.client.get(decision_url),'Approve exact outward minutes')
+        factory.run_until_wait(self.work.pk, adapter=RefusedDelivery())
+        panel = self.client.get(api + '/minutes').json()
+        self.assertEqual(panel['delivery']['state'], 'held', panel)
+        original_job = panel['delivery']['job_id']
+        retried = self.client.post(api + '/minutes/delivery', {
+            **{key: panel[key] for key in ('case_revision', 'expected_revision')},
+            'job_id': original_job, 'action': 'retry', 'reason': 'Synthetic recipient channel recovered',
+        }, content_type='application/json')
+        self.assertEqual(retried.status_code, 200, retried.content)
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=flow.verify(self.work,self.actor);self.assertEqual(len(proof['receipt_ids']),2);self.assertEqual(Publication.objects.get().factory_source_id,self.work.source_head_id);self.assertEqual(ActionItem.objects.get().current.status,'open')
         recovery=f'/work/{self.work.pk}/recovery/'
         page=self.client.get(recovery)
         self.assertContains(page,'Delivery by recipient')
         self.assertEqual({row['receipt'].pk for row in page.context['delivery']},set(proof['receipt_ids']))
+        panel = self.client.get(api + '/minutes').json()
+        self.assertEqual(panel['delivery']['job_id'], original_job)
+        self.assertEqual({row['receipt_id'] for row in panel['delivery']['recipients']}, set(proof['receipt_ids']))
+        refused = self.client.post(api + '/minutes/delivery', {
+            **{key: panel[key] for key in ('case_revision', 'expected_revision')},
+            'job_id': panel['delivery']['job_id'], 'action': 'retry', 'reason': 'Already received by both recipients',
+        }, content_type='application/json')
+        self.assertEqual(refused.status_code, 422, refused.content)
+        self.assertEqual(Publication.objects.count(), 1)
         Grant.objects.filter(case=self.case,user=self.actor,action='document.read').update(active=False)
         self.assertNotContains(self.client.get(recovery),'Delivery by recipient')
+        self.assertIsNone(self.client.get(api + '/minutes').json()['delivery'])
     def test_source_correction_preserves_old_minutes_budget_and_action_history(self):
         self.start();self.confirm();self.advance();before=self.work.budget_used;old=flow.document(self.work);item=ActionItem.objects.get()
         change_action(self.actor,self.case.pk,item.pk,'start',self.notes.pk,'Owner begins work',rev(self.case),1)

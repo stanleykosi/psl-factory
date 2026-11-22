@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## OpenAPI project records and recovery · 22 November 2026
+
+The isolated local PostgreSQL batch passed all 11 tests in 84.374 seconds. The response audit covered 33 of 141 operations, with 31 successful responses. It exercised original source selection and revocation, retrospective and action authoring, independent client link review, private minutes upload and original receipt readback, controlled report rework and publication, opaque access requests, invoice proof and the exact pre-issue stop. An earlier run exposed a test assertion using `id` where the contract returns `work_id`. The assertion was corrected and the flow passed. External effects used synthetic adapters. The OpenAPI 3.1 schema and TypeScript generation passed.
+
+The final minutes recovery run and four contract tests passed in 34.058 seconds. The minutes test verified a held delivery retried using the original job and checked both receipts through the API. The response audit covered five successful operations in this run, including the newly exercised retry command. Together these runs checked successful responses for every operation added in 1.3.0.
+
 ## Workflow API cutover · 22 November 2026
 
 The Windows frontend verification passed 441 focused tests, then all 3,629 tests in 151 files. Both previously timed-out test files ran in the focused and full passes. TypeScript passed. The fixes cover shell-specific source checks, path separators, paging retries and test worker startup.
@@ -16,7 +22,7 @@ Across the local runs, the response validator exercised successful responses for
 
 The worker supervisor test passed on Ubuntu in 3.506 seconds. It deliberately blocked both model queues and observed the effects and native progression commands start within the same probe. Railway web `fc17c996-4477-44c6-85c8-82fd3f0f29a3` returned the exact checked-in OpenAPI 1.2.0 document, health 200, the Django sign-in page 200 and the signed-out session API 401. Worker `e6cd2c07-be4f-4969-924c-10f4e058069d` started source readers and polled the application queues on the matching application revision `649ebec3`.
 
-Railway cutover checks deployment `3223343f-ba9a-4664-935e-6ba219844a73` passed Django system checks and migration drift. It discovered 34 tests and started the isolated PostgreSQL suite. Final suite output was pending at the last read. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=3223343f-ba9a-4664-935e-6ba219844a73)
+Railway cutover checks deployment `3223343f-ba9a-4664-935e-6ba219844a73` passed Django system checks, migration drift and all 34 isolated PostgreSQL tests in 1,097.695 seconds. The API audit observed schema-valid successful responses for 71 of the 115 operations. [Railway checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=3223343f-ba9a-4664-935e-6ba219844a73)
 
 ## Live OpenAPI handoff · 22 November 2026
 

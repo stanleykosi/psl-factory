@@ -106,8 +106,11 @@ class InvoiceMilestoneProofTests(TestCase):
             unclaimed = self.client.post(decision, payload(original_upload))
             self.assertContains(unclaimed, 'current claimed evidence request')
             storage.get_object.assert_not_called()
-            claim = {'action': 'claim', 'task': task.pk, 'task_revision': task.revision}
-            self.assertRedirects(self.client.post(decision, claim), decision, fetch_redirect_response=False)
+            api = f'/api/v1/work/{work.pk}/invoice-milestone-proof'
+            self.assertTrue(self.client.get(api).json()['request']['can_claim'])
+            claim = self.client.post(f'{api}/{task.pk}/claim', {'expected_revision': task.revision},
+                                     content_type='application/json')
+            self.assertEqual(claim.status_code, 200, claim.content)
             self.assertContains(self.client.get(decision), data['handoff'].milestone.name)
             text = {'action': 'information', 'task': task.pk, 'task_revision': task.revision,
                     'case_revision': rev(case), 'kind': KIND, 'body': 'Signed as text', 'source': 'synthetic:text'}
@@ -124,8 +127,14 @@ class InvoiceMilestoneProofTests(TestCase):
             self.assertContains(self.client.post(decision, first_submit), 'File integrity check failed')
             self.assertFalse(InvoiceMilestoneProof.objects.exists())
             stored[original_upload.key] = first_bytes
-            for _ in range(2):
-                self.assertRedirects(self.client.post(decision, first_submit), decision, fetch_redirect_response=False)
+            body = {'task_id': first_submit['task'], 'task_revision': first_submit['task_revision'],
+                    'case_revision': first_submit['case_revision'], 'upload_id': original_upload.pk,
+                    'operation': first_submit['proof_operation'], 'note': NOTE}
+            first_response = self.client.post(api, body, content_type='application/json')
+            self.assertEqual(first_response.status_code, 201, first_response.content)
+            replay = self.client.post(api, body, content_type='application/json')
+            self.assertEqual(replay.json(), first_response.json())
+            self.assertEqual(self.client.get(api).json()['proof'], first_response.json()['proof'])
             first = InvoiceMilestoneProof.objects.get(task=task)
             self.assertEqual(first.handoff_id, data['handoff'].pk)
             self.assertEqual(first.upload_id, original_upload.pk)

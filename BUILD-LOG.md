@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Completed the 34-test Railway cutover run. Added 26 APIs for project records, exact source selection, private minutes, controlled report publication and scoped invoice and access recovery. Recorded PostgreSQL results and the remaining workflow actions in the cutover map. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)
+
 22 November 2026. Added 36 workflow API operations and regenerated OpenAPI 1.2.0. Mapped the newly available commands and remaining Django steps. Corrected Windows test file discovery and paging retries. Isolated model-backed queues from native workflow progression. [Test ledger](BUILD-TESTS.md) · [Frontend handoff](docs/design/frontend-api.md)
 
 22 November 2026. Audited the live schema against Django, added Start work project choices and explicit error and multipart contracts, published the generated schema and reconciled the design coverage map. Integrated with the current frontend main while preserving its development-only mock reset alongside the Django proxy routes. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)

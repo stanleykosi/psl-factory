@@ -1,4 +1,23 @@
 {
+  "frontend_cutover_project_records_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.3.0",
+    "live_paths": 111,
+    "live_operations": 141,
+    "added_operations": 26,
+    "screen_groups_with_remaining_json": 49,
+    "states_in_groups_with_remaining_json": 250,
+    "completed_groups": ["SCR-08", "SCR-29", "SCR-33", "SCR-35"],
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": [
+      "Finish exact intake choices, minutes preview and existing action selection.",
+      "Add scoped specialist authority and source capture for Planning, delivery, Emergency, change and escalation.",
+      "Complete Finance imports, schedules, corrections, publication and restricted payroll and HR tasks.",
+      "Finish staff, account and policy administration API journeys and verify every remaining design state."
+    ],
+    "owner_decisions": "HOD rule values, appointments and approved live destinations remain deferred."
+  },
   "frontend_cutover_workflows_20261122": {
     "status": "partial_json_cutover",
     "contract": "contracts/psl-factory.openapi.json",

@@ -1,18 +1,21 @@
 from urllib.parse import parse_qs, urlsplit
 
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.documents import controlled, design_review, template_catalog, template_uploads
-from apps.documents.contracts import FIELDS, PMO_DOCUMENT_TYPES
-from apps.documents.models import TemplateFile
+from apps.documents.contracts import FIELDS, PMO_DOCUMENT_TYPES, digest
+from apps.documents.delivery import operate_publication
+from apps.documents.models import PublicationJob, PublicationReceipt, TemplateFile
 from apps.documents.template_access import visible_templates
 from apps.documents.template_lists import LIST_PAGE, LIST_QUERY_LIMIT, template_page
 from apps.identity.services import active_case_grants, require, visible_cases
 from apps.workflows.models import HumanTask
-from .http import BOOLEAN, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
 
 
 def report(actor, case_id, version_id):
@@ -51,6 +54,88 @@ def decide(request, case_id, version_id, *, body):
     result = controlled.review_version(request.user, case.pk, version.pk, body['verdict'], body['note'],
                                        body['expected_revision'], body['delegated'])
     return {'review_id': result.pk, 'verdict': result.verdict}
+
+
+FINGERPRINT = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
+REPORT_COMMAND = {'oneOf': [
+    obj({'action': {'const': 'request_review'}, 'revision': REVISION}),
+    obj({'action': {'const': 'revise'}, 'revision': REVISION, 'sections': obj(
+        {key: {'type': 'string', 'maxLength': 12000} for key in FIELDS}, optional=FIELDS)}),
+    obj({'action': {'const': 'publish'}, 'revision': REVISION, 'packet': FINGERPRINT}),
+    obj({'action': choice('retry', 'cancel'), 'revision': REVISION, 'job_id': ID,
+         'reason': {**TEXT, 'maxLength': 4000}}),
+]}
+
+
+@endpoint(response=obj({
+    'revision': REVISION, 'version_id': ID, 'current': BOOLEAN, 'can_request_review': BOOLEAN,
+    'editable': array(obj({'key': choice(*FIELDS), 'text': {'type': 'string'}})),
+    'findings': array(TEXT), 'review_status': nullable(TEXT),
+    'publication': nullable(obj({'packet': FINGERPRINT, 'recipients': array(TEXT)})),
+    'delivery': nullable(obj({'job_id': ID, 'state': TEXT, 'recovery_actions': array(choice('retry', 'cancel')),
+        'receipts': array(obj({'id': ID, 'recorded_at': DATETIME}), limit=50), 'has_more_receipts': BOOLEAN})),
+}), summary='Read exact report authoring, reviewed publication and original delivery controls')
+def report_controls(http, case_id, version_id):
+    actor = http.user
+    case, version = report(actor, case_id, version_id)
+    current = version.document.current_id == version.pk
+    task = HumanTask.objects.filter(version=version).first()
+    grants = {action for _, action in active_case_grants(actor, [case.pk])}
+    job = PublicationJob.objects.filter(publication__version=version).first()
+    findings = controlled.preflight(version)
+    editable = []
+    if current and 'document.draft' in grants and not job and (not task or task.status in {'returned', 'rejected', 'withdrawn'}):
+        permitted = version.template.definition['audience_fields'].get(version.audience, [])
+        editable = [{'key': key, 'text': section['text']} for key, section in version.fields.items() if key in permitted]
+    packet = None
+    if current and not job and not findings and 'document.publish' in grants:
+        try:
+            _, pins, _ = controlled.guard_reserve_publication(actor, case, version.pk)
+        except (ValidationError, PermissionDenied):
+            pass
+        else:
+            recipients = get_user_model().objects.in_bulk(pins['recipients'])
+            packet = {'packet': digest(pins), 'recipients': [person.get_full_name() or person.username
+                      for pk in pins['recipients'] if (person := recipients.get(pk))]}
+    delivery = None
+    if job:
+        receipts = list(PublicationReceipt.objects.filter(publication_id=job.publication_id)
+                        .only('created_at').order_by('pk')[:51])
+        actions = []
+        if not receipts and 'document.operate' in grants and job.status in {'held', 'pending'}:
+            actions.append('cancel')
+            if current and job.status == 'held':
+                actions.append('retry')
+        delivery = {'job_id': job.pk, 'state': job.status, 'recovery_actions': actions,
+                    'receipts': [{'id': row.pk, 'recorded_at': row.created_at} for row in receipts[:50]],
+                    'has_more_receipts': len(receipts) > 50}
+    return {'revision': case.revision, 'version_id': version.pk, 'current': current, 'findings': findings,
+            'can_request_review': current and not task and not findings and 'document.request_review' in grants,
+            'review_status': task.status if task else None, 'editable': editable, 'publication': packet,
+            'delivery': delivery}
+
+
+@endpoint(method='POST', request=REPORT_COMMAND, response=obj({'id': ID, 'version_id': ID, 'revision': REVISION}),
+          summary='Request review, revise, publish or recover the exact standalone report')
+def report_command(http, case_id, version_id, *, body):
+    actor = http.user
+    case, version = report(actor, case_id, version_id)
+    action, revision = body['action'], body['revision']
+    if action == 'request_review':
+        row = controlled.request_review(actor, case.pk, version.pk, revision)
+    elif action == 'revise':
+        row = version = design_review.revise_report(actor, case, version, revision, body['sections'])
+    elif action == 'publish':
+        row = design_review.publish_report(actor, case, version, revision, body['packet'])
+    else:
+        require(actor, case, 'document.operate')
+        job = get_object_or_404(PublicationJob, pk=body['job_id'], publication__version=version)
+        if job.status not in {'held', 'pending'} or action == 'retry' and version.document.current_id != version.pk:
+            raise Problem(409, 'conflict', 'Check the original delivery before retrying or cancelling it.')
+        operate_publication(actor, case.pk, job.pk, action, body['reason'], revision)
+        row = job
+    case.refresh_from_db(fields=['revision'])
+    return {'id': row.pk, 'version_id': version.pk, 'revision': case.revision}
 
 
 @endpoint(method='POST', multipart=True, request=obj({'previous': ID, 'proof': ID, 'revision': REVISION,

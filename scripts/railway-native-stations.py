@@ -61,6 +61,16 @@ def run(group, token, role_access):
             'tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance',
             'tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access',
         ]
+    elif group == 'project-records':
+        modules = [
+            'tests.test_factory_api.ContractTests',
+            'tests.test_factory_api_project_records', 'tests.test_work_access_requests',
+            'tests.test_factory_minutes.FactoryMinutesTests.test_start_upload_connects_exact_notes_and_original_source_authority',
+            'tests.test_factory_minutes.FactoryMinutesTests.test_external_exact_quality_review_all_recipients_and_receipts',
+            'tests.test_controlled_documents.ControlledDocumentTests.test_focused_status_report_returns_revises_and_shows_original_receipt',
+            'tests.test_invoice_milestone_proof.InvoiceMilestoneProofTests.test_private_pdf_and_successor_unlock_only_exact_draft_and_finance_review',
+            'tests.test_factory_invoice_draft_cancellation.InvoiceDraftCancellationTests.test_same_obligation_issued_invoice_is_linked_with_exact_cancellation_history',
+        ]
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',
@@ -83,7 +93,7 @@ def run(group, token, role_access):
     if group == "accounts":
         modules.append("tests.test_finance_import_projection")
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
-    if group in ('directory', 'cutover'):
+    if group in ('directory', 'cutover', 'project-records'):
         cmd += ["--testrunner", "tests.api_contract_runner.ContractRunner"]
     observed = set()
     role_observed = set()
@@ -99,7 +109,7 @@ def run(group, token, role_access):
         print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
         if observed != required:
             return False
-    if role_access and group not in ('surface', 'directory', 'cutover'):
+    if role_access and group not in ('surface', 'directory', 'cutover', 'project-records'):
         print(f"[{group}] Role reads checked for {len(role_observed)} processes; missing {sorted(required - role_observed)}.", flush=True)
         if role_observed != required:
             return False
@@ -135,7 +145,7 @@ def main():
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
     default_groups = (*SUITES, 'original', 'surface', 'directory') if options.role_access else tuple(SUITES)
-    available = (*default_groups, 'cutover') if options.role_access else default_groups
+    available = (*default_groups, 'cutover', 'project-records') if options.role_access else default_groups
     groups = options.groups or default_groups
     if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")

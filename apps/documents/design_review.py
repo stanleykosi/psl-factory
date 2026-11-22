@@ -72,6 +72,37 @@ def possible_verdicts(actor, case, task):
     return choices
 
 
+@transaction.atomic
+def revise_report(actor, case, version, revision, changes):
+    locked = lock_case(actor, case.pk, 'document.draft', revision)
+    version = get_object_or_404(visible_reports(locked).select_related('template', 'document'), pk=version.pk)
+    sources_for(locked, version)
+    task = HumanTask.objects.filter(version=version).first()
+    if version.document.current_id != version.pk:
+        raise ValidationError('STALE_VERSION: Open the current report before revising it.')
+    if PublicationJob.objects.filter(publication__version=version).exists() or (
+        task and task.status not in {'returned', 'rejected', 'withdrawn'}
+    ):
+        raise ValidationError('Only a report with no outstanding review or delivery can be revised here.')
+    allowed = version.fields.keys() & set(version.template.definition['audience_fields'].get(version.audience, []))
+    if not changes or set(changes) - allowed:
+        raise ValidationError('Choose editable sections from the current report audience.')
+    fields = {key: {**section, 'text': changes.get(key, section['text'])} for key, section in version.fields.items()}
+    return controlled.create_version(actor, case.pk, version.template_id, version.document.title,
+        version.audience, fields, revision, version.document_id,
+        template_scope_id=version.template_current_manifest.get('scope_id'))
+
+
+@transaction.atomic
+def publish_report(actor, case, version, revision, token):
+    locked = lock_case(actor, case.pk, 'document.publish', revision)
+    sources_for(locked, version)
+    checked, packet, _ = controlled.guard_reserve_publication(actor, locked, version.pk)
+    if checked.document.current_id != version.pk or digest(packet) != token:
+        raise ValidationError('STALE_VERSION: Publication details changed. Review the current version and recipients.')
+    return controlled.reserve_publication(actor, case.pk, version.pk, revision)
+
+
 @login_required
 @require_http_methods(['GET', 'HEAD', 'POST'])
 @never_cache
@@ -126,24 +157,13 @@ def show(request, case_id, version_id):
                 controlled.request_review(actor, case.pk, version.pk, int(request.POST.get('revision', '0')))
             elif operation == 'publish':
                 revision = int(request.POST.get('revision', '0'))
-                with transaction.atomic():
-                    locked = lock_case(actor, case.pk, 'document.publish', revision)
-                    checked, packet, _ = controlled.guard_reserve_publication(actor, locked, version.pk)
-                    if checked.document.current_id != version.pk or digest(packet) != request.POST.get('packet'):
-                        raise ValidationError('Publication details changed. Review the current version and recipients.')
-                    controlled.reserve_publication(actor, case.pk, version.pk, revision)
+                publish_report(actor, case, version, revision, request.POST.get('packet'))
             elif operation in dict(recovery_actions) and recovery.is_valid():
                 values = recovery.cleaned_data
                 operate_publication(actor, case.pk, job.pk, operation, values['reason'], values['revision'])
             elif operation == 'revise' and rework and rework.is_valid():
-                with transaction.atomic():
-                    lock_case(actor, case.pk, 'document.draft', rework.cleaned_data['revision'])
-                    fields = {key: {**section, 'text': rework.cleaned_data.get(key, section['text'])}
-                              for key, section in version.fields.items()}
-                    scope = version.template_current_manifest.get('scope_id')
-                    successor = controlled.create_version(actor, case.pk, version.template_id, version.document.title,
-                                                          version.audience, fields, rework.cleaned_data['revision'],
-                                                          version.document_id, template_scope_id=scope)
+                successor = revise_report(actor, case, version, rework.cleaned_data['revision'],
+                    {key: value for key, value in rework.cleaned_data.items() if key != 'revision'})
                 return redirect('design_document_review', case.pk, successor.pk)
             else:
                 raise ValidationError('Choose an action available for this version.')

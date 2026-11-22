@@ -16,6 +16,26 @@ from .models import WorkAccessRequest
 MAX_REFERENCE = (1 << 63) - 1
 
 
+def access_requested(actor, work_id):
+    if not get_user_model().objects.filter(pk=actor.pk, is_active=True).exists():
+        raise PermissionDenied
+    return WorkAccessRequest.objects.filter(requester=actor, work_reference=work_id).exists()
+
+
+@transaction.atomic
+def record_access_request(actor, work_id):
+    if not get_user_model().objects.select_for_update().filter(pk=actor.pk, is_active=True).first():
+        raise PermissionDenied
+    requests = WorkAccessRequest.objects.filter(requester=actor)
+    if requests.filter(work_reference=work_id).exists():
+        return True
+    # Bound writes from guessed links without querying their targets.
+    if requests.filter(created_at__gte=timezone.now() - timedelta(hours=1)).count() >= 10:
+        return False
+    requests.create(requester=actor, work_reference=work_id)
+    return True
+
+
 def unavailable(request, work_id):
     response = render(request, '404.html', {'access_reference': work_id if 0 < work_id <= MAX_REFERENCE else None}, status=404)
     response['Cache-Control'] = 'no-store'
@@ -28,20 +48,9 @@ def unavailable(request, work_id):
 def request_access(request, work_id):
     if not 0 < work_id <= MAX_REFERENCE:
         raise Http404
-    user_model = get_user_model()
     if request.method == 'POST':
-        with transaction.atomic():
-            if not user_model.objects.select_for_update().filter(pk=request.user.pk, is_active=True).first():
-                raise PermissionDenied
-            requests = WorkAccessRequest.objects.filter(requester=request.user)
-            if not requests.filter(work_reference=work_id).exists():
-                # Bound writes from guessed links without querying their targets.
-                cutoff = timezone.now() - timedelta(hours=1)
-                if requests.filter(created_at__gte=cutoff).count() >= 10:
-                    return render(request, 'identity/work_access_request.html', {'limited': True}, status=429)
-                requests.create(requester=request.user, work_reference=work_id)
+        if not record_access_request(request.user, work_id):
+            return render(request, 'identity/work_access_request.html', {'limited': True}, status=429)
         return redirect('work_access_request', work_id=work_id)
-    if not user_model.objects.filter(pk=request.user.pk, is_active=True).exists():
-        raise PermissionDenied
-    saved = WorkAccessRequest.objects.filter(requester=request.user, work_reference=work_id).exists()
+    saved = access_requested(request.user, work_id)
     return render(request, 'identity/work_access_request.html', {'saved': saved})

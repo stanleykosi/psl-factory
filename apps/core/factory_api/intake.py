@@ -1,5 +1,6 @@
 """Typed intake over exact records owned by each factory line."""
 from datetime import date
+from django import forms
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -106,7 +107,9 @@ START_INPUT = {'oneOf': [
 LINE = obj({'key': choice(*STARTS, factory_views.rfp_fresh_intake.LINE), 'title': TEXT, 'description': TEXT,
             'can_submit_via_api': BOOLEAN, 'django_url': TEXT, 'project_options_url': nullable(TEXT), 'submit_url': TEXT})
 TRIGGER_GUIDE = obj({'action': TEXT, 'screen': TEXT, 'source_url': TEXT, 'tracking_url': TEXT})
-LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, 'sample': BOOLEAN, 'django_url': TEXT})
+LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, 'sample': BOOLEAN, 'django_url': TEXT,
+                    'source_options_url': TEXT})
+START_RESULT = obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')})
 
 
 def start_projects(actor, line):
@@ -149,12 +152,24 @@ def projects(request):
     return {'items': [{
         'case_id': case.pk, 'title': workspace_name(case), 'case_revision': case.revision, 'sample': case.synthetic,
         'django_url': reverse('factory_create', query={'case': case.pk, 'definition': line}),
+        'source_options_url': f'/api/v1/projects/{case.pk}/intake-sources?line={line}',
     } for case in page], 'page': page.number,
         'next_page': page.next_page_number() if page.has_next() and page.number < PAGE['maximum'] else None}
 
 
-@endpoint(method='POST', request=START_INPUT,
-          response=obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')}),
+def progress_result(actor, work, enable):
+    background = 'not_requested'
+    if enable:
+        existed = getattr(work, 'background_progress', None) is not None
+        try:
+            factory_progress.set_progress(actor, work.pk, work.revision, True, initial=True)
+            background = 'existing' if existed else 'queued'
+        except (PermissionDenied, ValidationError):
+            background = 'held'
+    return {**result(work), 'background': background}
+
+
+@endpoint(method='POST', request=START_INPUT, response=START_RESULT,
           summary='Start the selected factory line using the current exact native sources')
 def start(request, *, body):
     case = get_object_or_404(start_projects(request.user, body['line']), pk=body['case_id'])
@@ -164,12 +179,40 @@ def start(request, *, body):
         inputs['reference'] = body['reference']
     with transaction.atomic():
         work = starter(request.user, case_id=case.pk, key=body['idempotency_key'], expected=body['case_revision'], **inputs)
-        background = 'not_requested'
-        if body.get('background', True):
-            existed = getattr(work, 'background_progress', None) is not None
-            try:
-                factory_progress.set_progress(request.user, work.pk, work.revision, True, initial=True)
-                background = 'existing' if existed else 'queued'
-            except (PermissionDenied, ValidationError):
-                background = 'held'
-    return {**result(work), 'background': background}
+        return progress_result(request.user, work, body.get('background', True))
+
+
+MINUTES_UPLOAD_FIELDS = obj({
+    'case_revision': REVISION, 'idempotency_key': KEY, 'reference': REF, 'template_id': ID, 'meeting_version_id': ID,
+    'audience': choice('internal', 'client'), 'background': choice('true', 'false'),
+    'notes_file': {'type': 'string', 'format': 'binary'},
+}, optional=('meeting_version_id', 'background'))
+
+
+class MinutesUploadForm(forms.Form):
+    case_revision = forms.IntegerField(min_value=1, max_value=REVISION['maximum'])
+    idempotency_key = forms.RegexField(r'\A[A-Za-z0-9_.:-]{1,100}\Z', strip=False)
+    reference = forms.CharField(max_length=160)
+    template_id = forms.IntegerField(min_value=1, max_value=ID['maximum'])
+    meeting_version_id = forms.IntegerField(min_value=1, max_value=ID['maximum'], required=False)
+    audience = forms.ChoiceField(choices=(('internal', 'Internal'), ('client', 'Client')))
+    background = forms.ChoiceField(choices=(('true', 'true'), ('false', 'false')), required=False)
+    notes_file = forms.FileField()
+
+
+@endpoint(method='POST', request=MINUTES_UPLOAD_FIELDS, response=START_RESULT, multipart=True,
+          summary='Start formal minutes from an exact private notes file and the selected project template')
+@transaction.atomic
+def upload_minutes(request, case_id):
+    actor = request.user
+    case = get_object_or_404(start_projects(actor, factory_minutes.DEFINITION), pk=case_id)
+    form = MinutesUploadForm(request.POST, request.FILES)
+    if not form.is_valid():
+        raise Problem(422, 'invalid_input', 'Check the meeting notes and intake fields.',
+                      fields=[{'name': name, 'message': messages[0]} for name, messages in form.errors.items()])
+    values = form.cleaned_data
+    data = {'protocol': factory_minutes.PROTOCOL, 'evidence_id': None, 'meeting_version_id': values['meeting_version_id'],
+            'template_id': values['template_id'], 'audience': values['audience'], 'publish': values['audience'] == 'client'}
+    work = factory_minutes.start_uploaded(actor, case.pk, values['idempotency_key'], values['reference'], data,
+                                          values['case_revision'], values['notes_file'])
+    return progress_result(actor, work, values['background'] != 'false')

@@ -98,20 +98,34 @@ class ControlledDocumentTests(TestCase):
         url = reverse('design_document_review', args=[self.case.pk, version.pk])
         self.assertContains(self.client.get(url), 'Audience preview')
         self.assertNotContains(self.client.get(url), 'PRIVATE TRACE')
+        original_api = f'/api/v1/projects/{self.case.pk}/document-reviews/{version.pk}/publication'
 
         def submit(target, **values):
             response = self.client.post(target, {**values, 'revision': rev(self.case)})
             self.assertEqual(response.status_code, 302)
             return response.url
 
-        submit(url, action='request')
+        def command(target, action, **values):
+            result = self.client.post(target, {'action': action, 'revision': rev(self.case), **values},
+                                      content_type='application/json')
+            self.assertEqual(result.status_code, 200, result.content)
+            return result.json()
+
+        self.assertTrue(self.client.get(original_api).json()['can_request_review'])
+        command(original_api, 'request_review')
         self.assertContains(self.client.get(url), 'Return for changes')
         submit(url, action='review', verdict='return:0', note='Update the wording')
         self.assertContains(self.client.get(url), 'Update the wording')
+        controls = self.client.get(original_api).json()
+        self.assertNotIn('internal_notes', {section['key'] for section in controls['editable']})
         corrected = {key: section['text'] for key, section in version.fields.items()}
         corrected['status'] = 'Clarified status for the client'
         corrected['internal_notes'] = 'Attempted change outside the audience'
-        successor_url = submit(url, action='revise', **corrected)
+        rejected = self.client.post(original_api, {'action': 'revise', 'revision': rev(self.case),
+            'sections': {'internal_notes': 'Attempted change outside the audience'}}, content_type='application/json')
+        self.assertEqual(rejected.status_code, 422)
+        revision = command(original_api, 'revise', sections={'status': corrected['status']})
+        successor_url = reverse('design_document_review', args=[self.case.pk, revision['version_id']])
         successor = version.document.versions.get(number=2)
         self.assertEqual(successor.source_manifest, version.source_manifest)
         self.assertEqual(successor.fields['internal_notes'], version.fields['internal_notes'])
@@ -132,20 +146,27 @@ class ControlledDocumentTests(TestCase):
         self.assertContains(self.client.post(successor_url, {'action': 'publish', 'packet': 'stale',
                             'revision': rev(self.case)}), 'Publication details changed')
         self.assertFalse(Publication.objects.exists())
-        submit(successor_url, action='publish', packet=token)
+        publication_api = review_api + '/publication'
+        self.assertEqual(self.client.get(publication_api).json()['publication']['packet'], token)
+        command(publication_api, 'publish', packet=token)
         class Held(InternalPublicationAdapter):
             def deliver(self, *args):
                 raise ValueError('Synthetic delivery refusal')
 
         self.assertTrue(run_publication_once(Held()))
         self.assertContains(self.client.get(successor_url), 'Retry this delivery')
-        submit(successor_url, action='retry', reason='Original channel recovered')
+        held = self.client.get(publication_api).json()['delivery']
+        self.assertIn('retry', held['recovery_actions'])
+        command(publication_api, 'retry', reason='Original channel recovered', job_id=held['job_id'])
         self.assertTrue(run_publication_once(PublicationTimeoutAfterAccept()))
         uncertain = self.client.get(successor_url)
         self.assertContains(uncertain, 'check for the original receipt')
         self.assertNotContains(uncertain, 'Retry this delivery')
         self.assertTrue(run_publication_once())
         self.assertContains(self.client.get(successor_url), 'Receipt recorded')
+        delivered = self.client.get(publication_api).json()['delivery']
+        self.assertEqual(delivered['state'], 'confirmed')
+        self.assertEqual(len(delivered['receipts']), 1)
         self.assertEqual(PublicationReceipt.objects.filter(publication__version=successor).count(), 1)
         self.assertFalse(PublicationReceipt.objects.filter(publication__version=version).exists())
 

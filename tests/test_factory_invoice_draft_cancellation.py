@@ -57,8 +57,14 @@ class InvoiceDraftCancellationTests(TestCase):
         self.assertContains(self.client.get(self.path), 'Stop this invoice draft')
         self.assertContains(self.client.get(self.path), 'VALID-ISSUED-INVOICE')
 
-        response = self.stop(existing_invoice=invoice.pk)
-        self.assertRedirects(response, self.path)
+        api = f'/api/v1/work/{self.work.pk}/invoice-draft-stop'
+        controls = self.client.get(api).json()
+        self.assertEqual(controls['existing_issue']['id'], invoice.pk)
+        body = {'expected_revision': controls['revision'], 'case_revision': controls['case_revision'],
+                'reason': self.reason, 'existing_invoice_id': invoice.pk}
+        response = self.client.post(api, body, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(self.client.post(api, body, content_type='application/json').status_code, 409)
         self.work.refresh_from_db()
         self.assertEqual(self.work.status, 'cancelled')
         self.assertEqual(self.work.request, work_request)
@@ -86,6 +92,9 @@ class InvoiceDraftCancellationTests(TestCase):
         wrong = self.client.get(self.path, {'existing_invoice': self.draft.pk})
         self.assertNotContains(wrong, 'Recorded issued invoice for this billing obligation.')
         self.assertEqual(invoices.draft_stop_history(self.draft).count(), 1)
+        recorded = self.client.get(api).json()
+        self.assertFalse(recorded['can_stop'])
+        self.assertEqual(recorded['recorded_stop']['existing_issue']['id'], invoice.pk)
 
     def test_stale_blank_unissued_and_unrelated_links_cannot_stop_draft(self):
         later_draft = invoices.draft(self.actor, self.case.pk, self.fixture['prep'].pk,

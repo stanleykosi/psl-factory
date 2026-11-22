@@ -83,8 +83,21 @@ class WorkAccessRequestTests(TestCase):
             self.assertEqual(self.client.post(reverse('work_access_request', args=[ref])).status_code, 302)
         bound = self.client.post(reverse('work_access_request', args=[next_id + 10]))
         self.assertContains(bound, 'Try again later', status_code=429)
+        limited = self.client.post(f'/api/v1/work/{next_id + 10}/access-request', {}, content_type='application/json')
+        self.assertEqual(limited.status_code, 429)
         self.assertEqual(self.client.post(pending_url).status_code, 302)
         self.assertEqual(WorkAccessRequest.objects.count(), 10)
         self.client.force_login(self.admin)
         page = self.client.get(reverse('case_access', args=[new_work.case_id]))
         self.assertEqual(list(page.context['work_requests']), [])
+
+    def test_api_uses_the_same_opaque_acknowledgement_for_hidden_and_missing_work(self):
+        for reference in (self.work.pk, self.work.pk + 1000000):
+            url = f'/api/v1/work/{reference}/access-request'
+            self.assertEqual(self.client.get(url).json(), {'requested': False})
+            for _ in range(2):
+                self.assertEqual(self.client.post(url, {}, content_type='application/json').json(), {'requested': True})
+            self.assertEqual(self.client.get(url).json(), {'requested': True})
+            self.assertEqual(self.client.get(f'/api/v1/work/{reference}').status_code, 404)
+        self.assertEqual(WorkAccessRequest.objects.filter(requester=self.reader).count(), 2)
+        self.assertFalse(Grant.objects.filter(user=self.reader).exists())

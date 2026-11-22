@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Project records, source selection and recovery APIs · 22 November 2026
+
+Build from `main`. OpenAPI 1.3.0 registers 141 operations across 111 paths. The snapshot and the expanded screen map are generated from the same live registry. Start work project choices link to `/api/v1/projects/{case_id}/intake-sources` for supported metadata choices. Keep the exact project revision at submission. Private minutes files use the multipart minutes intake and the existing storage and extraction service. Confirm cited suggestions with an authenticated person, then follow document review and original receipt readback.
+
+This checkpoint also covers standalone controlled report revision and publication, retrospective and independent action records, client legal identities and reviewed organisation links, opaque access requests, invoice milestone proof claims and exact pre-issue draft stops. Four more screen groups now have the documented JSON operations. The 49 remaining groups cover 250 states with at least one native step in their group. Use the inventory and its `remaining` fields together. The 262 native Django walkthroughs are the existing baseline. New API journeys need their own evidence. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json) · [Test ledger](BUILD-TESTS.md)
+
+Continue with specialist decision packets and exact source capture, including Planning and delivery, Finance close and private payroll, then staff and policy administration. Add a successful scoped journey for each new command and exercise stale sources, revoked access and ambiguous effects. Use `scripts/stage_railway_role_checks.py checks --revision HEAD --group project-records` to rehearse this checkpoint on the isolated Railway design-acceptance checks service. HOD policy values, formal appointments and external destinations remain deferred.
+
 ## Frontend API cutover increment · 22 November 2026
 
 Build on the OpenAPI 1.2.0 contract. There are 115 operations across 93 paths. The new paths and typed corrections are mapped across 37 screen groups. The 262-state inventory, 108 release processes and Django execution paths remain available. Generate frontend types from the checked-in contract. [Contract](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)

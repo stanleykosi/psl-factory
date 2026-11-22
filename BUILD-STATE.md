@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## OpenAPI project records and recovery · 22 November 2026
+
+OpenAPI 1.3.0 adds 26 operations for authorised source selection, private minutes upload and receipts, meeting and retrospective records, project commitments, client legal identity and organisation links, controlled report revisions and release receipts, opaque work access requests and invoice evidence and draft-stop recovery. The Django and JSON paths share their authority, source and revision checks. No migration is required. [Contract](contracts/psl-factory.openapi.json) · [Test ledger](BUILD-TESTS.md)
+
+The API has 141 operations on 111 paths. Four further groups, representing six design states, now have the mapped JSON actions. The remaining 49 groups cover 250 states and retain at least one Django action. Continue specialist decision and recovery packets, remaining intake sources, private payroll, Finance imports and reporting, and staff and policy commands. This checkpoint has its own PostgreSQL evidence. HOD-owned values, appointments and real delivery destinations are deferred. [Screen map](contracts/factory-api-screen-map.json) · [Handoff](HANDOFF.md)
+
 ## Frontend API cutover increment · 22 November 2026
 
 OpenAPI 1.2.0 adds 42 registered operations and updates 37 screen groups. The added paths cover project actions, milestones, signed change links, bid assignment, portal receipts, bid follow-up, templates, client contact history, payments and bank receipts, reminders, receivables and Finance close, rules and delegation drafts, invoice comments, 17 typed workflow source corrections, Planning exit decisions, Go-live sign-off and Support receipt. The same Django services own permissions, versions and operational effects. [Frontend handoff](docs/design/frontend-api.md) · [Screen map](contracts/factory-api-screen-map.json)

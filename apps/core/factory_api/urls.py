@@ -7,9 +7,12 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    agents, assistant_drafts, bank_payments, bid_assignments, bid_delivery, clients, commands, corrections, delivery, documents,
+    agents, assistant_drafts, bank_payments, bid_assignments, bid_delivery, client_records, clients, commands, corrections,
+    delivery, documents,
     finance_operations, handoffs,
-    intake, notifications, project_operations, received_bids, reminders, reviews, role_work, roles, setup, work, workspaces,
+    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, project_operations, received_bids,
+    reminders, reviews,
+    role_work, roles, setup, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -18,12 +21,15 @@ PREFIX = '/api/v1/'
 ROUTES = (
     ('me', workspaces.me),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
+    ('projects/<uuid:case_id>/document-reviews/<int:version_id>/publication', documents.report_controls, documents.report_command),
     ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
     ('work/<int:work_id>/coordination/<int:check_id>/retry', handoffs.retry),
     ('projects/<uuid:case_id>/templates/replacements', documents.replace_template),
     ('projects/<uuid:case_id>/templates', documents.catalogue, documents.first_template),
     ('lines', intake.lines),
     ('lines/projects', intake.projects),
+    ('projects/<uuid:case_id>/intake-sources', intake_sources.options),
+    ('projects/<uuid:case_id>/minutes/intake', intake.upload_minutes),
     ('processes', intake.processes),
     ('received-bids/organisations', received_bids.organisations),
     ('received-bids', received_bids.record),
@@ -31,6 +37,10 @@ ROUTES = (
     ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
     ('work', work.queue, intake.start),
     ('work/<int:work_id>', work.detail),
+    ('work/<int:work_id>/access-request', work_access.status, work_access.request_access),
+    ('work/<int:work_id>/invoice-milestone-proof', invoice_recovery.milestone_proof, invoice_recovery.attach_proof),
+    ('work/<int:work_id>/invoice-milestone-proof/<int:task_id>/claim', invoice_recovery.claim_proof),
+    ('work/<int:work_id>/invoice-draft-stop', invoice_recovery.draft_stop, invoice_recovery.stop_draft),
     ('work/<int:work_id>/department-handoff', handoffs.detail),
     ('work/<int:work_id>/department-handoff/source-review', handoffs.review),
     ('work/<int:work_id>/department-handoff/finance-acknowledgement', handoffs.acknowledge),
@@ -43,6 +53,8 @@ ROUTES = (
     ('work/<int:work_id>/go-live-signoff', delivery.go_live, delivery.record_go_live),
     ('work/<int:work_id>/support-receipt', delivery.support_receipt, delivery.acknowledge_support),
     ('work/<int:work_id>/aggregate-receipt', reviews.acknowledge_aggregate),
+    ('work/<int:work_id>/minutes', minutes.detail),
+    ('work/<int:work_id>/minutes/delivery', minutes.operate),
     ('work/<int:work_id>/minutes/confirmation', commands.confirm_minutes),
     ('work/<int:work_id>/minutes/review-request', commands.request_minutes_review),
     ('work/<int:work_id>/bid-pack', commands.bid_pack, commands.save_bid_pack),
@@ -70,6 +82,11 @@ ROUTES = (
     ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments/<int:receipt_id>/verification', bank_payments.verify),
     ('projects/<uuid:case_id>/invoices/<int:issue_id>/payments/<int:receipt_id>/allocations', bank_payments.allocate),
     ('projects/<uuid:case_id>/hr', workspaces.hr),
+    ('projects/<uuid:case_id>/meetings', meeting_records.collection, meeting_records.record),
+    ('projects/<uuid:case_id>/meetings/options', meeting_records.options),
+    ('projects/<uuid:case_id>/meetings/<int:meeting_id>', meeting_records.detail),
+    ('projects/<uuid:case_id>/meetings/<int:meeting_id>/actions', meeting_records.link_action),
+    ('projects/<uuid:case_id>/actions/create', meeting_records.create_action),
     ('projects/<uuid:case_id>/actions/<int:item_id>', project_operations.action, project_operations.update_action),
     ('projects/<uuid:case_id>/change-milestone-link', project_operations.stage_options, project_operations.link_stage),
     ('projects/<uuid:case_id>/milestones/completions', project_operations.milestone_options, project_operations.record_milestone),
@@ -80,6 +97,10 @@ ROUTES = (
     ('clients/<uuid:case_id>/contacts', workspaces.save_contact),
     ('clients/<uuid:case_id>/contacts/history', clients.contact_history),
     ('clients/<uuid:case_id>/contacts/options', clients.contact_options),
+    ('clients/<uuid:case_id>/project-people', client_records.named_people, client_records.save_person),
+    ('clients/<uuid:case_id>/billing-identities', client_records.billing_identities, client_records.save_identity),
+    ('clients/<uuid:case_id>/workspace-link', client_records.workspace_links, client_records.propose_link),
+    ('clients/<uuid:case_id>/workspace-link/<int:evidence_id>/confirmation', client_records.confirm_link),
     ('setup/<uuid:case_id>/delegations', workspaces.delegations),
     ('setup/<uuid:case_id>/delegations/options', setup.delegation_options),
     ('setup/<uuid:case_id>/delegations/drafts', setup.draft_delegation),
@@ -124,11 +145,12 @@ ERROR_RESPONSES = {
     '413': 'The request exceeds the application size limit.',
     '415': 'The request uses the wrong content type.',
     '422': 'A field, workflow prerequisite or required configuration needs attention.',
+    '429': 'The request reached its current rate or submission limit.',
     '500': 'An unexpected application error occurred.',
     '503': 'A dependency or bounded read is unavailable. Check current state before retrying.',
 }
 READ_ERRORS = ('400', '401', '403', '404', '405', '409', '422', '500', '503')
-WRITE_ERRORS = (*READ_ERRORS, '413', '415')
+WRITE_ERRORS = (*READ_ERRORS, '413', '415', '429')
 
 
 def dispatch(handlers):
@@ -189,7 +211,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.2.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.3.0',
             'description': 'Use the current same-origin Django session. For JSON writes, read the session CSRF token from '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,
