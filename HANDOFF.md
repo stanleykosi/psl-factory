@@ -4,7 +4,7 @@
 
 OpenAPI 1.9.0 adds 16 operations. Payment assessment, independent human exception review and local release controls use `payment-controls` and exact assessment and exception resources. Start an Emergency request from the project `emergency-intake` resource, classify the same request, then use the work-scoped `emergency` resource for prescribed decisions and observed implementation. Follow the exact outcome into ordinary scope and cost follow-up or historical authority recovery. The decision desk provides API links for those specialist packets. [Contract](contracts/psl-factory.openapi.json)
 
-Run the `decide-api` suite on Railway before promoting this revision. SCR-50 now maps its operational API actions. Thirty groups across 179 states still have a group-level API gap. Next, connect report authoring and delivery, broader intake choices, the commercial bid flow and Finance close. HOD decisions and live external actions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+The `decide-api` Railway suite passed all 14 PostgreSQL tests. SCR-50 now maps its operational API actions. Thirty groups across 179 states still have a group-level API gap. Next, connect report authoring and delivery, broader intake choices, the commercial bid flow and Finance close. HOD decisions and live external actions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
 
 ## Payment adjustments and cash successors · 22 November 2026
 
