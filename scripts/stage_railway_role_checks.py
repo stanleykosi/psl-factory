@@ -13,7 +13,7 @@ RUNTIME = ('Dockerfile', 'adapters', 'apps', 'config', 'contracts', 'fixtures', 
            'reference', 'static', 'templates', 'requirements.lock', 'requirements.deploy.txt',
            'SOURCE-MANIFEST.json', 'scripts/railway-worker.sh')
 CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-state-inventory.csv')
-GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface')
+GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory')
 
 
 def stage(revision, service, groups, coordinator_ticket=None):

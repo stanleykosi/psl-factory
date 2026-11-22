@@ -6,7 +6,7 @@
 {% if 'issue.manage' in issue_permissions %}
 <section><h2>Log an issue</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="log"><input type="hidden" name="revision" value="{{ case.revision }}"><label>Tenant-unique authoritative issue reference <input name="reference" required maxlength="160"></label><label>Title <input name="title" required maxlength="240"></label><label>Type <input name="kind" required maxlength="100"></label><label>Responsible owner <select name="owner" required>{% for o in owners %}<option value="{{ o.pk }}">{{ o.username }}</option>{% endfor %}</select></label><label>PM-set severity <select name="severity"><option value="">Awaiting PM classification</option>{% for s in severities %}<option>{{ s }}</option>{% endfor %}</select></label><label>Next action <input name="next_action" required maxlength="1000"></label><label>Evidence <select name="evidence" required>{% for e in evidence %}<option value="{{ e.pk }}">{{ e }}</option>{% endfor %}</select></label><label>Source rationale <textarea name="note" rows="2" required maxlength="4000"></textarea></label><details><summary>External owner references</summary><p>JSON list: kind risk/incident/change, source_ref and evidence_id. Capture risk_reference, incident or change_request evidence first. These links do not copy external lifecycle authority.</p><label>References <textarea name="external_links" rows="2">[]</textarea></label></details><button>Record owned issue</button></form></section>
 {% endif %}
-{% for i in issues %}<section class="card" id="issue-{{ i.pk }}">
+<div id="issue-register">{% for i in issues %}<section class="card" id="issue-{{ i.pk }}">
 <h2>{{ i.current.title }}</h2><p>{{ i.current.status }} · {{ i.current.severity|default:'Awaiting severity assessment' }}</p>
 <dl class="workspace-summary"><div><dt>Responsible owner</dt><dd>{{ i.team.label }}</dd></div><div><dt>Next action</dt><dd>{% if i.current.status == 'Closed' %}No further action{% else %}{{ i.current.next_action }}{% endif %}</dd></div></dl>
 {% if i.team.mode == 'team' %}<p>Follow-up coordinator · {% firstof i.team.assignment.recorder.get_full_name i.team.assignment.recorder.username %}</p>
@@ -74,7 +74,7 @@
 <label>Mode <select name="mode"><option>supplied</option><option>synthetic_mock</option></select></label>
 <label>Source-owner scope evidence ID <input name="evidence" type="number" required></label>
 <button>Record supplied source scope</button></form></details>{% endif %}
-<section class="card"><h2>Issue evidence assistant</h2>
+</div><section class="card"><h2>Issue evidence assistant</h2>
 {% if 'agent.issues' in issue_permissions %}<form method="post">{% csrf_token %}
 <input type="hidden" name="action" value="investigate"><input type="hidden" name="revision" value="{{ case.revision }}">
 <button>Investigate acknowledgement and root-cause gaps</button></form>{% endif %}

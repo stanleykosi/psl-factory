@@ -5,6 +5,7 @@
   <a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to My Work</a>
   <h1>Choose a line</h1>
   <p class="lede">Step 1 of 2 · Choose the work you want to start.</p>
+  {% if not request.GET.directory %}<p><a href="{% url 'factory_intake' %}?directory=1#process-directory" data-native-navigation>Find a process and where it starts</a></p>{% endif %}
   {% if not options %}<p>You have no projects available to start work in yet.</p>{% endif %}
   <form method="get" action="{% url 'factory_create' %}" class="start-chooser-form">
     <input type="hidden" name="queue" value="{{ queue }}">
@@ -24,14 +25,23 @@
     {% endif %}{% endfor %}
     <div class="start-chooser-actions"><button class="button primary" type="submit">Next</button></div>
   </form>
-  <details class="card">
+  <details class="card process-directory" id="process-directory"{% if request.GET.directory %} open{% endif %}>
     <summary>Find a process</summary>
+    <label data-process-search hidden>Search processes <input type="search" autocomplete="off"></label>
+    <p data-process-empty hidden role="status">No processes match your search.</p>
     {% regroup processes by department as departments %}
-    {% for department in departments %}<h2>{{ department.grouper }}</h2>
+    {% for department in departments %}<div data-process-group><h2>{{ department.grouper }}</h2>
     <ul>{% for process in department.list %}<li data-process="{{ process.process }}" data-startable="{{ process.intake_available|yesno:'true,false' }}">
-      {% if process.intake_available %}<a href="{{ process.intake_url }}">{{ process.title }}</a>{% else %}{{ process.title }}{% endif %}
-      {% if process.project_handoff %}<small>Continues from the department record.</small>{% elif not process.intake_available %}<small>Workspace access needed.</small>{% endif %}
-    </li>{% endfor %}</ul>{% endfor %}
+      <strong>{% if process.intake_available and not process.guide %}<a href="{{ process.intake_url }}">{{ process.title }}</a>{% else %}{{ process.title }}{% endif %}</strong>
+      {% if process.guide %}
+        <p>{{ process.guide.action }}</p>
+        <div class="process-links">
+          <a href="{{ process.guide.source_url }}" aria-label="Open {{ process.guide.screen }} for {{ process.title }}">{{ process.guide.screen }}</a>
+          <a href="{{ process.guide.tracking_url }}" aria-label="Track {{ process.title }} in Department handoffs">Track in Department handoffs</a>
+          {% if process.intake_available %}<a href="{{ process.intake_url }}">Log a received bid</a>{% endif %}
+        </div>
+      {% elif not process.intake_available %}<small>Workspace access needed.</small>{% endif %}
+    </li>{% endfor %}</ul></div>{% endfor %}
   </details>
   {% if can_ask_tola %}<p><a href="{% url 'assistant_start' 'tola' %}">Describe it to Tola</a> for help choosing a line.</p>{% endif %}
   {% if change_intakes %}<section class="card"><h2>Change requests awaiting classification</h2>{% for receipt in change_intakes %}<p><a href="{% url 'p56_intake_detail' receipt.case_id receipt.pk %}">Change request receipt #{{ receipt.pk }}</a> · received {{ receipt.created_at }}</p>{% endfor %}</section>{% endif %}

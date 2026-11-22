@@ -1,4 +1,7 @@
 (() => {
+  const target = document.getElementById(location.hash.slice(1));
+  if (target instanceof HTMLDetailsElement) target.open = true;
+
   const dialog = document.querySelector('#start-work-dialog');
   if (!dialog || typeof dialog.showModal !== 'function') return;
 
@@ -37,6 +40,24 @@
   }
 
   function searchable(container) {
+    const processSearch = container.querySelector('[data-process-search]');
+    if (processSearch) {
+      processSearch.hidden = false;
+      processSearch.querySelector('input').addEventListener('input', (event) => {
+        const query = event.target.value.trim().toLocaleLowerCase();
+        let found = false;
+        for (const group of container.querySelectorAll('[data-process-group]')) {
+          let hasRows = false;
+          for (const row of group.querySelectorAll('[data-process]')) {
+            row.hidden = !`${row.dataset.process} ${row.textContent}`.toLocaleLowerCase().includes(query);
+            hasRows ||= !row.hidden;
+          }
+          group.hidden = !hasRows;
+          found ||= hasRows;
+        }
+        container.querySelector('[data-process-empty]').hidden = found;
+      });
+    }
     const search = container.querySelector('[data-start-search]');
     if (!search) return;
     search.hidden = false;

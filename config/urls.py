@@ -24,7 +24,7 @@ from apps.finance import schedule_views
 from apps.finance import bu_views
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-from apps.workflows import native_station_views
+from apps.workflows import native_station_views, process_directory_views
 from .health import health
 from apps.agents import specialist_views, upload_views
 from apps.policy import delegation_views
@@ -168,6 +168,7 @@ urlpatterns += [path('factory/my-work/', login_required(TemplateView.as_view(
 urlpatterns += [path('workspaces/',workbench_views.home,name='workspace_overview'),
     path('factory/new/',factory_views.create,name='factory_create'),
     path('factory/start/',factory_views.intake,name='factory_intake'),
+    path('factory/processes/<slug:process>/<slug:target>/',process_directory_views.destination,name='process_destination'),
     path('work/<int:work_id>/',factory_views.detail,name='factory_detail'),
     path('work/<int:work_id>/ask-for-access/',work_access_views.request_access,name='work_access_request'),
     path('work/<int:work_id>/worker-recovery/',factory_execution_views.review,name='factory_execution_review'),

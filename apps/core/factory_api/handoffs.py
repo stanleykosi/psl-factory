@@ -7,7 +7,8 @@ from apps.agents import specialist_coordination, specialist_packets
 from apps.agents.specialists import routes
 from apps.workflows.native_station_access import acknowledge_finance, finance_acknowledgement, listed, project_scope, read_work
 from apps.workflows.factory_execution import can_control
-from .http import DATETIME, ID, REVISION, TEXT, UUID, Problem, array, endpoint, nullable, obj
+from apps.workflows.native_station_contracts import PROCESSES
+from .http import DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
 
 
 ITEM = obj({"work_id": ID, "project_id": UUID, "process": TEXT, "title": TEXT, "status": TEXT, "django_url": TEXT})
@@ -26,13 +27,16 @@ def item(work):
 
 
 @endpoint(response=obj({"items": array(ITEM, limit=20), "next_before": nullable(ID)}),
-          query={"before": ID}, summary="Read current department handoffs for this project")
+          query={"before": ID, "process": choice(*sorted(PROCESSES))}, summary="Read current department handoffs for this project")
 def project(request, case_id):
-    case = get_object_or_404(project_scope(request.user), pk=case_id)
+    process = request.GET.get("process")
+    if process is not None and process not in PROCESSES:
+        raise Problem(422, "invalid_filter", "Choose a listed automatic process.")
+    case = get_object_or_404(project_scope(request.user, process=process), pk=case_id)
     raw = request.GET.get("before")
     if raw is not None and not (raw.isascii() and raw.isdecimal() and len(raw) <= 18 and int(raw) > 0):
         raise Problem(422, "invalid_filter", "Choose a valid handoff cursor.")
-    works, cursor = listed(request.user, case, int(raw) if raw is not None else None)
+    works, cursor = listed(request.user, case, int(raw) if raw is not None else None, process=process)
     return {"items": [item(work) for work in works], "next_before": cursor}
 
 

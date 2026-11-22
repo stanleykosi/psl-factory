@@ -80,12 +80,14 @@ The separate frontend serves the signed-in work queue and Finance invoice review
 
 `GET /api/v1/processes` returns the same 108 process entries as **Find a process** in Start work. Each entry identifies whether it continues from a department record and whether the signed-in person has a project where they can submit its intake. Project evidence and decisions are fetched separately under the current reader’s access. The JSON contract is served at `/api/v1/openapi.json`.
 
+The 63 department-triggered entries expose `guide.action`, `guide.screen`, `guide.source_url` and `guide.tracking_url`. The two URLs open the native action or the process-filtered Department handoffs view after the reader chooses an accessible project. A client can pass `?project=<project UUID>` when it already knows the project. An unavailable project is rejected. Other entries return a null guide. Start work retains its 25 workflow types and the separate received bid intake.
+
 | Operation | Use |
 | --- | --- |
 | `GET /api/v1/lines` | Find intakes available to this person. |
 | `POST /api/v1/work` | Start an available workflow on an authorised project. Engagement accepts an existing capture or the source evidence and route from the Django form. |
 | `GET /api/v1/received-bids/organisations` and `POST /api/v1/received-bids` | Select a current organisation delegation and submit a received bid with its original private file. Repeating the same intake uses its original receipt. |
-| `GET /api/v1/projects/{case_id}/department-handoffs` | Page through this person’s visible department work in a project. |
+| `GET /api/v1/projects/{case_id}/department-handoffs` | Page through this person’s visible department work in a project. Retain the optional `process` filter alongside `before` when loading earlier results. |
 | `GET /api/v1/work/{work_id}/department-handoff` | Read current source evidence, receipt and available decisions. |
 | `POST /api/v1/work/{work_id}/department-handoff/source-review` | Resolve a completed specialist packet as the named information reviewer. |
 | `POST /api/v1/work/{work_id}/department-handoff/finance-acknowledgement` | Acknowledge the exact HR-authorised snapshot as its named Finance recipient. |

@@ -102,10 +102,12 @@ START_INPUT = {'oneOf': [
         optional=('background',)) for line, (_, schema) in STARTS.items()
 ]}
 LINE = obj({'key': TEXT, 'title': TEXT, 'description': TEXT, 'can_submit_via_api': BOOLEAN, 'django_url': TEXT})
+TRIGGER_GUIDE = obj({'action': TEXT, 'screen': TEXT, 'source_url': TEXT, 'tracking_url': TEXT})
 
 
 @endpoint(response=obj({'items': array(obj({'process': TEXT, 'title': TEXT, 'department': choice('PMO', 'Finance'),
-    'line': nullable(TEXT), 'project_handoff': BOOLEAN, 'intake_available': BOOLEAN, 'intake_url': nullable(TEXT)}))}),
+    'line': nullable(TEXT), 'project_handoff': BOOLEAN, 'intake_available': BOOLEAN, 'intake_url': nullable(TEXT),
+    'guide': nullable(TRIGGER_GUIDE)}))}),
     summary='Browse release processes and see which intakes are available in your workspaces')
 def processes(request):
     available = {item['definition'] for item in factory_views.intake_options(request.user)}

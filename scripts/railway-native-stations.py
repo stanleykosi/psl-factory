@@ -32,6 +32,9 @@ def run(group, token, role_access):
         from apps.workflows.native_station_contracts import DEFINITION
         required = {pid for line, processes in PROCESS_IDS.items() if line != DEFINITION for pid in processes}
         modules = ['tests.test_original_process_role_access']
+    elif group == 'directory':
+        modules = ['tests.test_process_trigger_navigation', 'tests.test_process_role_directory',
+                   'tests.test_native_station_role_access', 'tests.test_factory_api']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',
@@ -68,7 +71,7 @@ def run(group, token, role_access):
         print(f"[{group}] Passed receiver checks {sorted(observed)}. Missing {sorted(required - observed)}.", flush=True)
         if observed != required:
             return False
-    if role_access and group != 'surface':
+    if role_access and group not in ('surface', 'directory'):
         print(f"[{group}] Role reads checked for {len(role_observed)} processes; missing {sorted(required - role_observed)}.", flush=True)
         if role_observed != required:
             return False
@@ -103,7 +106,7 @@ def main():
     provider.add_argument("--live", action="store_true", help="Also run both synthetic provider and storage checks.")
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
-    available = (*SUITES, 'original', 'surface') if options.role_access else tuple(SUITES)
+    available = (*SUITES, 'original', 'surface', 'directory') if options.role_access else tuple(SUITES)
     groups = options.groups or available
     if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")

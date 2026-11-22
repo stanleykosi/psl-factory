@@ -4,7 +4,7 @@
 {% include 'pmo/engagement_won.html' %}
 <p><a href="{% url 'meetings' case.pk %}">Formal meetings and actions</a> · <a href="{% url 'approvals' case.pk %}">Department-owned source requests</a> · <a href="{% url 'delivery' case.pk %}">Delivery planning</a></p>
 {% if ordinary %}
-<section><h2>Capture planning sources and questions</h2>
+<section id="planning-packet"><h2>Capture planning sources and questions</h2>
 <p>Unknown sources and contacts may remain blank. This records a new packet version; it does not approve scope, assign an action owner or calculate a deadline.</p>
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="capture_fields">
 {{ ordinary.0.as_p }}

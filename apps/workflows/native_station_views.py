@@ -6,18 +6,28 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_safe
 from apps.agents.specialists import routes
 from .native_station_access import acknowledge_finance, finance_acknowledgement, listed, project_scope, read_work
+from .process_directory import trigger_guide
+from .process_directory_views import source_projects
+from .process_triggers import TRIGGERS
 
 
 @login_required
 @require_safe
 def project(request, case_id):
-    case = get_object_or_404(project_scope(request.user), pk=case_id)
+    process = request.GET.get("process")
+    if process is not None and process not in TRIGGERS:
+        raise Http404
+    case = get_object_or_404(project_scope(request.user, process=process), pk=case_id)
     cursor = request.GET.get("before", "")
     before = int(cursor) if cursor.isascii() and cursor.isdecimal() and len(cursor) <= 18 else None
-    items, continuation = listed(request.user, case, before)
+    items, continuation = listed(request.user, case, before, process=process)
     rows = [(work, routes()[work.native_station.process]["original_title"]) for work in items]
+    guide = trigger_guide(process) if process else None
+    source_here = bool(process and source_projects(request.user, TRIGGERS[process]).filter(pk=case.pk).exists())
     response = render(request, "factory/project_handoffs.html", {
-        "case": case, "rows": rows, "cursor": continuation,
+        "case": case, "rows": rows, "cursor": continuation, "process": process,
+        "title": routes()[process]["original_title"] if process else None,
+        "guide": guide, "source_here": source_here,
     })
     response["Cache-Control"] = "private, no-store"
     return response

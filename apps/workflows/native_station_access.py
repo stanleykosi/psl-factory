@@ -21,10 +21,11 @@ def legacy_cases(actor):
     return projects
 
 
-def project_scope(actor):
+def project_scope(actor, *, process=None):
     available = Q(pk__in=legacy_cases(actor))
-    for role in ("pmo-lead", "finance-lead"):
-        available |= Q(pk__in=department_cases(actor, role))
+    for department, role in (("PMO", "pmo-lead"), ("Finance", "finance-lead")):
+        if process is None or routes()[process]["department"] == department:
+            available |= Q(pk__in=department_cases(actor, role))
     return Case.objects.filter(available, kind="project")
 
 
@@ -79,8 +80,10 @@ def review_scope(work, actor):
         yield
 
 
-def listed(actor, case, before=None):
+def listed(actor, case, before=None, *, process=None):
     query = candidates(actor).filter(case=case)
+    if process is not None:
+        query = query.filter(native_station__process=process)
     if before is not None:
         query = query.filter(pk__lt=before)
     selection = list(query.order_by("-pk")[:21])

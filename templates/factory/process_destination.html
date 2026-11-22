@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load studio_ui %}
+{% block title %}Choose a project · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <a class="back-link" href="{% url 'factory_intake' %}?directory=1#process-directory">← Find a process</a>
+    <h1>{{ title }}</h1>
+    {% if tracking %}<p>Choose a project to track this process in Department handoffs.</p>
+    {% else %}<p>{{ guide.action }}</p>{% endif %}
+  </div>
+</header>
+<section class="card">
+  <h2>{% if tracking %}Department handoffs{% else %}{{ guide.screen }}{% endif %}</h2>
+  {% if search or page.paginator.count %}
+  <form method="get" class="actions">
+    <label>Find a project <input type="search" name="q" value="{{ search }}" maxlength="100"></label>
+    <button type="submit">Search</button>
+  </form>
+  {% endif %}
+  {% for case, url in projects %}
+    <a class="floor-line" href="{{ url }}"><strong>{{ case|workspace_name }}</strong><span>{{ case.tenant }}</span></a>
+  {% empty %}
+    {% if search %}<p>No accessible projects match this search.</p>
+    {% else %}<p>This destination needs access to the relevant project and department record.</p>{% endif %}
+  {% endfor %}
+  <nav class="actions" aria-label="Project pages">
+    {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&amp;q={{ search|urlencode }}">Previous</a>{% endif %}
+    {% if page.has_next %}<a href="?page={{ page.next_page_number }}&amp;q={{ search|urlencode }}">More projects</a>{% endif %}
+  </nav>
+</section>
+{% endblock %}

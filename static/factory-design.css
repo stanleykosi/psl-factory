@@ -179,6 +179,12 @@
 .start-chooser-form [hidden] { display: none; }
 .start-chooser-actions { display: flex; justify-content: flex-end; position: sticky; bottom: 0; padding: 12px 0; background: var(--paper); border-top: 1px solid var(--line); }
 .start-chooser-actions button { margin: 0; min-height: 44px; }
+.process-directory ul { list-style: none; margin: 0; padding: 0; }
+.process-directory li { border-top: 1px solid var(--line); padding: 12px 0; }
+.process-directory p { margin: 4px 0 8px; }
+.process-directory small { display: block; }
+.process-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.process-links a { display: inline-flex; align-items: center; min-height: 32px; }
 .assistant-draft { margin-block: 16px; padding: 16px; border: 1px solid var(--line); border-left: 4px solid var(--ink); background: var(--paper); overflow-wrap: anywhere; }
 .assistant-draft h2 { margin: 0 0 8px; font-size: 1rem; }
 .work-filter { border-bottom: 1px solid var(--line); padding: 12px 16px; }
