@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case,event,bump
+from apps.core.read_observation import observed_fact
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority
 from apps.documents.controlled import create_version
@@ -10,19 +11,30 @@ from .models import RFPDocumentBinding,RFPSubmission
 from .rfp import current_response,reviewed,public_terms_for
 from .commercial import valid_approvals
 from .services import subject
+from .rfp_pricing import quote_text
+from . import rfp_submission_pack as packs
 
 def inputs(v,key,*,dispatch=False):
-    case=v.rfp.case;current_response(case,v.pk)
+    return _inputs(v.rfp,v.pk,key,dispatch=dispatch)
+
+
+@observed_fact
+def _inputs(r,response_id,key,*,dispatch=False):
+    case=r.case;v=current_response(case,response_id)
     public_terms_for(v)
     reviews=reviewed(v);decisions=valid_approvals(v.commercial,['PM','Head of PMO','CEO'])
     c=active_component('D11.adapter_configuration_refs',case)
-    routes=[r for r in reference_values(c) if r['key']==key]
+    routes=[r for r in reference_values(c) if r.get('kind')=='rfp_submission' and r['key']==key]
     if len(routes)!=1:raise ValidationError('Select one verified configured RFP route')
     route=routes[0];i=v.intake
     if dispatch and i.deadline_status=='unknown':raise ValidationError('Verify the actual submission deadline or attest explicitly that none is stated')
     if dispatch and i.deadline_status=='stated' and timezone.now()>i.deadline_at:raise ValidationError('Submission deadline has passed; record an evidenced revised intake before new dispatch')
-    return {'response':v.pk,'sources':v.snapshot,'reviews':reviews,'costing_decisions':decisions,'route_config':c.pk,'route':route,
+    snapshot = {'response':v.pk,'sources':v.snapshot,'reviews':reviews,'costing_decisions':decisions,'route_config':c.pk,'route':route,
         'deadline_status':i.deadline_status,'deadline_at':i.deadline_at.isoformat() if i.deadline_at else None}
+    pack = packs.current(v)
+    if pack:
+        snapshot['submission_pack'] = pack.pk
+    return snapshot
 
 def sender(actor,version):
     b=RFPDocumentBinding.objects.filter(version=version).first()
@@ -47,17 +59,40 @@ def draft(actor,case_id,response_id,template_id,route_key,expected):
     fields={'executive_summary':{'text':'RFP '+v.rfp.reference+' response '+str(v.number),'evidence_ids':[e.pk]},
         'scope':{'text':e.body,'evidence_ids':[e.pk]},
         mapping:{'text':'\n'.join(row['key']+': '+row['disposition']+' — '+row['response'] for row in v.matrix),'evidence_ids':sorted(set(row['evidence_id'] for row in v.matrix))},
-        terms:{'text':public_terms.body+'\nTimeline: '+plan.body,'evidence_ids':[public_terms.pk,plan.pk]}}
+        terms:{'text':quote_text(public_terms)+'\nTimeline: '+plan.body,'evidence_ids':[public_terms.pk,plan.pk]}}
+    document_id = None
+    if 'submission_pack' in snapshot:
+        pack = packs.current(v)
+        summary = fields['executive_summary']
+        summary['text'] = packs.summary(pack, summary['text'])
+        summary['evidence_ids'].append(pack.source_id)
+        document_id = RFPDocumentBinding.objects.filter(response=v).order_by('-pk').values_list(
+            'version__document_id', flat=True).first()
     from apps.documents.pmo_sections import complete_native_client_sections
     fields['timeline'] = {'text': plan.body, 'evidence_ids': [plan.pk]}
     fields = complete_native_client_sections(fields, 'client', [e.pk])
-    version=create_version(actor,case.pk,t.pk,'RFP response '+v.rfp.reference,'client',fields,case.revision)
-    RFPDocumentBinding.objects.create(version=version,response=v,snapshot=snapshot);sender(actor,version);return version
+    version=create_version(actor,case.pk,t.pk,'RFP response '+v.rfp.reference,'client',fields,case.revision,
+                           document_id=document_id)
+    binding=RFPDocumentBinding.objects.create(version=version,response=v,snapshot=snapshot)
+    sender(actor,version)
+    if 'submission_pack' in snapshot:
+        from .rfp_submission_artifacts import materialize
+        materialize(binding)
+    return version
 
 def binding_findings(b):
     try:
         if b.version.template.definition.get('internal_review_required',True) is not True:return ['RFP client responses require final controlled document review']
         if b.snapshot!=inputs(b.response,b.snapshot['route']['key']):return ['RFP sources, reviews or route changed; draft and review a new exact response']
+        pack = packs.bound_pack(b)
+        if pack:
+            response = b.response
+            introduction = f'RFP {response.rfp.reference} response {response.number}'
+            if b.version.fields.get('executive_summary') != {
+                    'text': packs.summary(pack, introduction),
+                    'evidence_ids': [response.evidence_id, pack.source_id],
+            }:
+                return ['The client document must contain the exact recorded cover note and file requirements.']
     except (ValidationError,PermissionDenied) as exc:return ['RFP publication held: '+str(exc)]
     return []
 
@@ -65,8 +100,12 @@ def binding_findings(b):
 def dispatch_requirements(version):
     """Deadline checks hold new transmission, not preparation, human review or receipt lookup."""
     binding=RFPDocumentBinding.objects.filter(version=version).select_related('response__rfp__case').first()
+    if binding and binding.snapshot['route']['method']=='manual_client_portal':
+        raise ValidationError('This response uses manual client portal submission. Record the original portal receipt.')
     if binding and binding.snapshot!=inputs(binding.response,binding.snapshot['route']['key'],dispatch=True):
         raise ValidationError('Review the current RFP submission sources and destination before sending')
+    if binding:
+        packs.require_verified_files(binding)
 
 def recipient_requirements(b,recipients):
     if sorted(b.snapshot['route']['recipient_ids'])!=recipients:raise ValidationError('RFP route must equal the exact configured client recipients')
@@ -78,6 +117,8 @@ def capture_submission(actor,case_id,version_id,expected):
     case=lock_case(actor,case_id,'rfp.submit',expected)
     b=RFPDocumentBinding.objects.filter(version_id=version_id,response__rfp__case=case).first()
     if not b:raise ValidationError('Select this case exact RFP response document')
+    if b.snapshot['route']['method']=='manual_client_portal':
+        raise ValidationError('Record the original client portal receipt for this response.')
     old=RFPSubmission.objects.filter(version_id=version_id).first()
     if old:return old
     from adapters.rfp import LocalRFPAdapter

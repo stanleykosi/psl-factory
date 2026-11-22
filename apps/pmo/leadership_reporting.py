@@ -21,6 +21,7 @@ from apps.documents.models import Template, Publication, PublicationReceipt
 from .clocks import aware
 from .models import Meeting, ActionItem, Milestone, Issue, ChangeRequest, EscalationRequest, PeriodReport, MinutesReportBinding
 from .reporting import report_source_access
+from . import leadership_project_scope as project_scope
 
 MODE = 'leadership_selected_facts/v1'
 CONTENT = 'agent_private_leadership_report_content'
@@ -134,9 +135,33 @@ def content(case, kind, content_id, sources):
     return e, data['sections']
 
 
-def package(actor, case, kind, start, end, audience, selections, content_id):
+def scoped_inputs(kind, start, end, audience, selections, content_id, scope):
+    return {'kind': kind, 'start_at': start.isoformat(), 'end_at': end.isoformat(), 'audience': audience,
+            'selections': selections, 'content_id': content_id, 'template_id': None, 'scope': scope}
+
+
+def scoped_package(actor, case, inputs):
+    manifest = project_scope.snapshot(case, inputs)
+    project_scope.access(actor, case, manifest)
+    ids = project_scope.citations(manifest)
+    sources = list(Evidence.objects.filter(pk__in=ids).defer('body').order_by('pk'))
+    sections = {}
+    if inputs['content_id']:
+        narrative, sections = content(case, inputs['kind'], inputs['content_id'], sources)
+        if (narrative.source != project_scope.GENERATED_SOURCE or narrative.created_by_id != inputs['scope']['actor']
+                or sections != project_scope.sections(manifest, inputs['kind'])):
+            raise ValidationError('Review changed project coverage before drafting a fresh report.')
+    return {'manifest': manifest, 'sources': sources, 'sections': sections, 'gaps': []}
+
+
+def package(actor, case, kind, start, end, audience, selections, content_id, *, scope=None):
     if case.kind != 'project': raise ValidationError('Leadership reporting requires a project')
     start, end = window(kind, start, end, audience)
+    if scope is not None:
+        data = scoped_package(actor, case, scoped_inputs(kind, start, end, audience, selections, content_id, scope))
+        if not data['sections']:
+            raise ValidationError('No eligible evidence was recorded in the reviewed project scope.')
+        return data['manifest'], data['sources'], data['gaps'], data['sections']
     manifest, sources, gaps = inventory(actor, case, start, end, selections)
     narrative, sections = content(case, kind, content_id, sources)
     manifest.update(source_mode=MODE, selections={key: sorted(ids) for key, ids in selections.items()},
@@ -146,8 +171,8 @@ def package(actor, case, kind, start, end, audience, selections, content_id):
     return manifest, sources, gaps, sections
 
 
-def investigate(actor, case, kind, start, end, audience, selections, content_id):
-    manifest, sources, gaps, sections = package(actor, case, kind, start, end, audience, selections, content_id)
+def investigate(actor, case, kind, start, end, audience, selections, content_id, *, scope=None):
+    manifest, sources, gaps, sections = package(actor, case, kind, start, end, audience, selections, content_id, scope=scope)
     return {'capability': 'Selected leadership source coverage and unsupported-claim investigation',
         'source_manifest': manifest, 'as_of': timezone.now().isoformat(), 'commitment_gaps': gaps,
         'themes': {key: {'coverage': value['coverage'], 'evidence_ids': value['evidence_ids']} for key, value in sections.items()},
@@ -159,9 +184,12 @@ def investigate(actor, case, kind, start, end, audience, selections, content_id)
 
 
 @transaction.atomic
-def prepare(actor, case_id, kind, start, end, template_id, audience, selections, content_id, expected, *, force_revision=False):
+def prepare(actor, case_id, kind, start, end, template_id, audience, selections, content_id, expected, *, force_revision=False, scope=None):
     case = lock_case(actor, case_id, 'report.draft', expected)
-    manifest, sources, gaps, sections = package(actor, case, kind, start, end, audience, selections, content_id)
+    manifest, sources, gaps, sections = package(actor, case, kind, start, end, audience, selections, content_id, scope=scope)
+    if scope is not None:
+        project_scope.lock_projects(case, manifest, {actor.pk})
+        manifest, sources, gaps, sections = package(actor, case, kind, start, end, audience, selections, content_id, scope=scope)
     start, end = window(kind, start, end, audience)
     template = Template.objects.filter(case=case, pk=template_id, definition__document_type='status_report').first()
     required = {'executive_summary', *THEMES[kind]}
@@ -169,6 +197,8 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
         raise ValidationError('Select an exact theme-complete internal template with purpose-specific review requirements')
     report, _ = PeriodReport.objects.get_or_create(case=case, kind=kind, start_at=start, end_at=end, audience=audience)
     old = MinutesReportBinding.objects.filter(report=report, version_id=report.document.current_id if report.document_id else None).first()
+    if old and ('project_scope' in old.manifest) != (scope is not None):
+        raise ValidationError('Open the existing leadership work to review its selected project scope.')
     if not force_revision and old and old.manifest == manifest and old.version.template_id == template.pk:
         review = old.version.reviews.order_by('-pk').first()
         if not review or review.verdict == 'approve':
@@ -184,6 +214,8 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
         'Human project-performance statements are not calculated financial performance. Source timestamps do not establish completeness or freshness.')
     from .incident_reporting import summary
     values['executive_summary'] += summary(manifest)
+    if scope is not None:
+        values['executive_summary'] += project_scope.project_summary(manifest['project_scope'])
     projection = add_evidence(actor, case.pk, 'ops_leadership_report_projection',
         json.dumps(values, sort_keys=True), 'psl:leadership-report:'+str(report.pk))
     case.refresh_from_db()
@@ -212,6 +244,9 @@ def binding_access(actor, version, *, budget=None):
 
 
 def _bound_access(actor, case, manifest, recorded_at, *, budget):
+    if 'project_scope' in manifest:
+        project_scope.access(actor, case, manifest)
+        return
     report_source_access(actor, case, manifest, budget=budget)
     if 'incident_claims' not in manifest:
         from .incident_reporting import legacy_access
@@ -290,6 +325,12 @@ def denied_binding_templates(actor, bindings, budget):
     groups = defaultdict(list)
     for binding in admitted:
         manifest = binding.manifest
+        if 'project_scope' in manifest:
+            try:
+                project_scope.access(actor, binding.report.case, manifest)
+            except PermissionDenied:
+                denied.add(binding.version.template_id)
+            continue
         # Only legacy incident history depends on the version's timestamp.
         cutoff = binding.version.created_at if 'incident_claims' not in manifest and manifest.get('issues') else None
         groups[(binding.report.case_id, cutoff, json.dumps(manifest, sort_keys=True))].append(binding)
@@ -370,10 +411,26 @@ def current_manifest(binding):
     if binding.version.document.current_id != binding.version_id:
         return {'superseded': True}
     try:
+        scope = binding.manifest.get('project_scope')
+        if scope is not None:
+            inputs = scoped_inputs(r.kind, r.start_at, r.end_at, r.audience, binding.manifest['selections'],
+                                   binding.manifest['content']['id'],
+                                   {field: scope[field] for field in ('mode', 'actor', 'configuration', 'domains')})
+            return project_scope.snapshot(r.case, inputs)
         return package(binding.version.created_by, r.case, r.kind, r.start_at, r.end_at, r.audience,
                        binding.manifest['selections'], binding.manifest['content']['id'])[0]
     except (ValidationError, PermissionDenied):
         return {'current_source_unavailable': True}
+
+
+def lock_report_scope(actor, case, version_id):
+    binding = MinutesReportBinding.objects.filter(version_id=version_id, report__case=case,
+                                                  manifest__has_key='project_scope').first()
+    if binding is not None:
+        project_scope.access(actor, case, binding.manifest)
+        project_scope.lock_projects(case, binding.manifest, {actor.pk})
+        project_scope.access(actor, case, binding.manifest)
+    return binding is not None
 
 
 AUDIENCE_COMPONENT = 'OPS.leadership_audience'

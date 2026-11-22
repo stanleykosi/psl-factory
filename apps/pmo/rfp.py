@@ -1,14 +1,23 @@
 """Source-bound RFP services. A win starts Route A; it never signs a SOW."""
 import json
+import re
+from dataclasses import asdict
+from datetime import date, datetime
+from decimal import Decimal
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, bump, event, add_evidence
+from apps.core.evidence_access import public_evidence, restricted
+from apps.core.read_observation import observed_fact
+from apps.finance.rules import decimal
 from apps.identity.services import require
 from apps.policy.services import active_component, reference_values, decision_authority
-from .models import (RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,
+from .models import (RFPCase,RFPIntake,RFPIntakeSourceContext,RFPAssignment,RFPContribution,RFPResponse,
     RFPReview,RFPOutcome,RFPDisposition,Baseline,CommercialCase)
 from .services import subject
+from .clocks import aware
+from . import rfp_intake_context
 
 TEAMS={'Engineering':'engineering_estimate','QA':'qa_estimate','Security':'security_estimate','Product':'product_input'}
 REVIEW_ROLES=['PMO Lead','Engineering Lead']
@@ -45,8 +54,12 @@ def outcome_authority_matches(recorded,current):
     return authority_matches({k:v for k,v in recorded.items() if k!='_selection_context'},current)
 
 @transaction.atomic
-def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadline_at,deadline_evidence_id,note_text,expected):
+def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadline_at,deadline_evidence_id,note_text,expected,
+           *,source_context=None,context_attested=False):
     case=lock_case(actor,case_id,'rfp.intake',expected);note(note_text);past(received_at)
+    context = rfp_intake_context.validate(source_context, context_attested)
+    if context.recorded:
+        rfp_intake_context.authorize_write(actor, case)
     if case.kind!='project' or not isinstance(reference,str) or not reference.strip() or len(reference)>160:raise ValidationError('Use a project workspace and an RFP reference of at most 160 characters')
     r=RFPCase.objects.filter(case=case).first()
     if not r:
@@ -55,7 +68,9 @@ def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadl
         r=RFPCase.objects.create(case=case,tenant=case.tenant,reference=reference.strip())
     ensure_open(r)
     if r.reference!=reference.strip():raise ValidationError('Keep the immutable RFP reference')
-    e=subject(case,evidence_id,'rfp_intake')
+    e=subject(case,evidence_id,'rfp_intake',metadata_only=True)
+    if context.recorded:
+        rfp_intake_context.require_source(case, e)
     if deadline_status not in ['unknown','stated','not_stated']:raise ValidationError('State whether the deadline is unknown, stated or explicitly not stated')
     de=None
     if deadline_status=='stated':
@@ -65,24 +80,73 @@ def intake(actor,case_id,reference,evidence_id,received_at,deadline_status,deadl
     i=RFPIntake.objects.create(rfp=r,number=r.intakes.count()+1,received_at=received_at,deadline_status=deadline_status,
         deadline_at=deadline_at,deadline_evidence=de,evidence=e,note=note_text,actor=actor)
     r.current_intake=i;r.current_response=None;r.save(update_fields=['current_intake','current_response'])
+    if context.recorded:
+        RFPIntakeSourceContext.objects.create(intake=i, **asdict(context))
     event(actor,case,'rfp.intake',intake=i.pk,deadline_status=deadline_status);bump(case);return i
 
 @transaction.atomic
 def assign(actor,case_id,pm,role,evidence_id,note_text,expected):
     case=lock_case(actor,case_id,'rfp.assign',expected);r=root(case);ensure_open(r);note(note_text)
     auth=authority(actor,case,'assignment',role);require(pm,case,'rfp.prepare');decision_authority(pm,case,'PM')
-    a=RFPAssignment.objects.create(intake=r.current_intake,pm=pm,role=role,authority=auth,evidence=subject(case,evidence_id),note=note_text,actor=actor)
+    from .coordinator_intake import accept
+    accept(actor,case,r.current_intake,"P45")
+    a=RFPAssignment.objects.create(intake=r.current_intake,pm=pm,role=role,authority=auth,
+        evidence=subject(case,evidence_id,metadata_only=True),note=note_text,actor=actor)
     event(actor,case,'rfp.assigned',assignment=a.pk,pm=pm.pk);bump(case);return a
+
+def _team_target(actor, case_id, team, expected):
+    if not isinstance(team, str) or team not in TEAMS:raise ValidationError('Select Engineering, QA, Security or Product')
+    case=lock_case(actor,case_id,'rfp.contribute:'+team,expected);r=root(case);ensure_open(r)
+    return case, r.current_intake
+
+
+def _append_contribution(actor, case, intake_record, team, evidence, **facts):
+    x=RFPContribution.objects.create(intake=intake_record,team=team,evidence=evidence,actor=actor,**facts)
+    event(actor,case,'rfp.input',contribution=x.pk,team=team);bump(case);return x
+
 
 @transaction.atomic
 def contribute(actor,case_id,team,evidence_id,expected):
-    if team not in TEAMS:raise ValidationError('Select Engineering, QA, Security or Product')
-    case=lock_case(actor,case_id,'rfp.contribute:'+team,expected);r=root(case);ensure_open(r)
-    x=RFPContribution.objects.create(intake=r.current_intake,team=team,evidence=subject(case,evidence_id,TEAMS[team]),actor=actor)
-    event(actor,case,'rfp.input',contribution=x.pk,team=team);bump(case);return x
+    """Retain the evidence-only interface for legacy integrations."""
+    case, intake_record = _team_target(actor, case_id, team, expected)
+    return _append_contribution(actor, case, intake_record, team, subject(case,evidence_id,TEAMS[team],metadata_only=True))
 
-def current_assignment(r):
-    case=r.case;i=r.current_intake;a=i.assignments.order_by('-pk').first()
+
+@transaction.atomic
+def record_team_input(actor, case_id, team, evidence_id, expected, *, received_at, source_party, summary, person_days, attested):
+    if type(expected) is not int or expected < 1 or type(evidence_id) is not int or evidence_id < 1:
+        raise ValidationError('Choose the current bid and exact team evidence.')
+    case, intake_record = _team_target(actor, case_id, team, expected)
+    require(actor, case, 'case.read')
+    require(actor, case, 'rfp.read')
+    if attested is not True:
+        raise ValidationError('Confirm this input came from the named team.')
+    evidence = subject(case, evidence_id, TEAMS[team], metadata_only=True)
+    if restricted(evidence):
+        raise ValidationError('Choose available evidence from the named team.')
+    received = aware(received_at, 'Actual received time')
+    past(received)
+    if not isinstance(source_party, str) or not source_party.strip() or len(source_party) > 160:
+        raise ValidationError('Record who supplied the team input.')
+    note(summary)
+    days = None
+    if person_days is not None:
+        if not isinstance(person_days, (str, Decimal)):
+            raise ValidationError('Use an exact person-day amount.')
+        days = decimal(str(person_days), nonnegative=True)
+        if days > Decimal('999999999.999') or days != days.quantize(Decimal('.001')):
+            raise ValidationError('Use person-days with no more than three decimal places.')
+    return _append_contribution(actor, case, intake_record, team, evidence, received_at=received,
+                                source_party=source_party.strip(), summary=summary.strip(), person_days=days)
+
+
+@observed_fact
+def current_assignment(r, *, metadata_only=False):
+    case=r.case;i=r.current_intake
+    assignments = i.assignments.order_by('-pk')
+    if metadata_only:
+        assignments = assignments.only('actor_id', 'pm_id', 'role', 'authority')
+    a = assignments.first()
     if not a:raise ValidationError('Assign an accountable PM')
     from django.contrib.auth import get_user_model
     if get_user_model().objects.filter(pk__in={a.actor_id,a.pm_id},is_active=True).count()!=len({a.actor_id,a.pm_id}):raise PermissionDenied('Current active assignment principals required')
@@ -90,17 +154,30 @@ def current_assignment(r):
     if not authority_matches(a.authority,authority(a.actor,case,'assignment',a.role)):raise ValidationError('Assignment authority changed; reaffirm assignment')
     return a
 
+@observed_fact
 def source_snapshot(r):
     case=r.case;i=r.current_intake;a=current_assignment(r)
+    rows = {row.team: row for row in i.contributions.filter(team__in=TEAMS).order_by('team','-pk').distinct('team')
+            .select_related('actor','evidence').defer('actor__password','evidence__body')}
     inputs={}
     for team in TEAMS:
-        x=i.contributions.filter(team=team).order_by('-pk').first()
+        x=rows.get(team)
         if not x:raise ValidationError('Capture '+team+' input')
-        require(x.actor,case,'rfp.contribute:'+team);inputs[team]={'id':x.pk,'evidence':x.evidence_id,'sha256':x.evidence.sha256}
+        require(x.actor,case,'rfp.contribute:'+team)
+        if x.received_at is not None:
+            require(x.actor,case,'case.read');require(x.actor,case,'rfp.read')
+            if not public_evidence(case.evidence.filter(pk=x.evidence_id,kind=TEAMS[team])).exists():
+                raise ValidationError('Review current cited evidence for '+team)
+        inputs[team]={'id':x.pk,'evidence':x.evidence_id,'sha256':x.evidence.sha256}
     return {'intake':i.pk,'assignment':a.pk,'assignment_authority':a.authority,'inputs':inputs}
 
 def current_response(case,pk):
-    r=root(case);ensure_open(r)
+    return _current_response(root(case),pk)
+
+
+@observed_fact
+def _current_response(r,pk):
+    case=r.case;ensure_open(r)
     v=RFPResponse.objects.filter(pk=pk,rfp=r).first()
     if not v or r.current_response_id!=v.pk or v.snapshot!=source_snapshot(r):raise ValidationError('RFP source or assignment changed; prepare a current response')
     from .commercial import current_revision,terminal
@@ -116,6 +193,8 @@ def prepare_response(actor,case_id,evidence_id,matrix,sources,expected,public_te
     if a.pm_id!=actor.pk:raise PermissionDenied('Only the assigned PM prepares this response')
     e=subject(case,evidence_id,'rfp_response')
     public_terms=subject(case,public_terms_id,'rfp_commercial_terms')
+    from .rfp_pricing import QUOTE, read
+    read(public_terms, QUOTE)
     if not isinstance(sources,dict) or set(sources)!={'requirements','plan','costing'}:raise ValidationError('Select exact requirements, plan and costing sources')
     for kind,pk in sources.items():
         if type(pk) is not int or pk<1:raise ValidationError('Commercial source IDs must be positive integers')
@@ -140,10 +219,10 @@ def prepare_response(actor,case_id,evidence_id,matrix,sources,expected,public_te
     v=RFPResponse.objects.create(rfp=r,intake=r.current_intake,assignment=a,commercial=commercial,number=r.responses.count()+1,snapshot=snap,matrix=matrix,evidence=e,actor=actor)
     r.current_response=v;r.save(update_fields=['current_response']);event(actor,case,'rfp.response_prepared',response=v.pk);bump(case);return v
 
-def public_terms_for(v):
+def public_terms_for(v,*,metadata_only=False):
     source=subject(v.rfp.case,v.commercial.sources['sow'],'sow')
     try:
-        data=json.loads(source.body);terms=subject(v.rfp.case,data['public_terms_id'],'rfp_commercial_terms')
+        data=json.loads(source.body);terms=subject(v.rfp.case,data['public_terms_id'],'rfp_commercial_terms',metadata_only=metadata_only)
         if data['public_terms_sha256']!=terms.sha256:raise ValidationError('Public commercial terms source changed')
     except (KeyError,TypeError,ValueError):raise ValidationError('Select explicit public commercial terms in a new response; internal costing is not an outward quotation')
     return terms
@@ -157,7 +236,12 @@ def review(actor,case_id,response_id,role,verdict,evidence_id,note_text,expected
     event(actor,case,'rfp.reviewed',review=x.pk,verdict=verdict,role=role);bump(case);return x
 
 def reviewed(v):
-    current_response(v.rfp.case,v.pk);ids=[]
+    return _reviewed(v.rfp,v.pk)
+
+
+@observed_fact
+def _reviewed(r,response_id):
+    v=current_response(r.case,response_id);ids=[]
     for role in REVIEW_ROLES:
         x=v.reviews.filter(role=role).order_by('-pk').first()
         if not x or x.verdict!='approve':raise ValidationError('Current RFP review missing: '+role)
@@ -167,18 +251,53 @@ def reviewed(v):
     return ids
 
 @transaction.atomic
-def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None):
+def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None,*,
+            followup_on=None,award_amount=None,award_currency=None,customer_expected_on=None,remind_at=None,
+            loss_reason_key='',loss_catalog_id=None,debrief_version_id=None):
     from .models import RFPSubmission
     case=lock_case(actor,case_id,'rfp.outcome',expected);r=root(case);ensure_open(r);note(note_text);past(observed_at)
     require(actor,case,'case.read');require(actor,case,'rfp.read')
     s=RFPSubmission.objects.filter(pk=submission_id,response__rfp=r).first()
     if not s or observed_at<s.submitted_at:raise ValidationError('Outcome must follow an actual exact submission')
     if result not in ['won','lost','pending','unknown']:raise ValidationError('Record won, lost, pending or unknown')
-    from .rfp_outcomes import selection_authority
+    amount = currency = None
+    if award_amount is not None or award_currency is not None:
+        if result != 'won' or not isinstance(award_currency, str) or not re.fullmatch(r'[A-Z]{3}', award_currency):
+            raise ValidationError('Record an award amount only for a won bid, with its three-letter currency.')
+        amount = decimal(award_amount, nonnegative=True)
+        currency = award_currency
+    from .rfp_outcomes import historical_submission, selection_authority
     auth=authority(actor,case,'outcome',role)
+    if followup_on is not None and (result not in ['pending','unknown'] or type(followup_on) is not date or
+                                    followup_on < timezone.localdate(observed_at)):
+        raise ValidationError('Choose a follow-up date on or after the observation for a pending or unconfirmed bid')
+    if remind_at is not None and (result not in {'pending', 'unknown'} or not isinstance(remind_at, datetime) or
+                                  timezone.is_naive(remind_at) or remind_at < observed_at or followup_on is not None):
+        raise ValidationError('Choose one internal reminder time on or after the pending or unconfirmed observation.')
+    if customer_expected_on is not None and (result != 'pending' or type(customer_expected_on) is not date):
+        raise ValidationError('Record a customer-stated decision date only for an evidenced pending outcome.')
+    if result != 'lost' and (loss_reason_key or loss_catalog_id is not None or debrief_version_id is not None):
+        raise ValidationError('Add a loss reason or debrief only to a customer loss.')
+    evidence = None
+    if evidence_id:
+        evidence = subject(case,evidence_id,'rfp_outcome')
+        if not public_evidence(case.evidence.filter(pk=evidence.pk)).exists():
+            raise ValidationError('Choose available customer outcome evidence')
+    elif result == 'unknown':
+        historical_submission(case,s)
+    else:
+        raise ValidationError('Choose the evidence for the customer response')
+    from .rfp_pricing import verify_award
+    verify_award(evidence, s, result, amount, currency)
+    from .rfp_loss import check_debrief, reason_pin
+    reason = reason_pin(actor, case, loss_reason_key, loss_catalog_id) if loss_reason_key else {}
+    debrief = check_debrief(actor, case, debrief_version_id) if debrief_version_id is not None else None
     selection=selection_authority(case,s,selection_context)
     if selection:auth['_selection_context']=selection
-    x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,evidence=subject(case,evidence_id,'rfp_outcome'),note=note_text,actor=actor)
+    x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,
+                               evidence=evidence,note=note_text,actor=actor,followup_on=followup_on,
+                               award_amount=amount,award_currency=currency,customer_expected_on=customer_expected_on,
+                               remind_at=remind_at,loss_reason=reason,debrief_version_id=debrief)
     event(actor,case,'rfp.outcome_recorded',outcome=x.pk,result=result);bump(case);return x
 
 @transaction.atomic

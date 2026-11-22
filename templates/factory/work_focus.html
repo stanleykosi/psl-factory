@@ -1,0 +1,8 @@
+{% load studio_ui %}
+{% work_queue_query row.work as work_query %}
+<nav class="factory-queues" aria-label="Work item sections">
+  <a href="{% url 'factory_detail' row.work.pk %}{{ work_query }}"{% if not focus %} aria-current="page"{% endif %}>Work item</a>
+  <a href="{% url 'factory_invoice_decision' row.work.pk %}{{ work_query }}"{% if focus == 'decision' %} aria-current="page"{% endif %}>Decisions</a>
+  {% if has_response %}<a href="{% url 'factory_work_response' row.work.pk %}{{ work_query }}"{% if focus == 'response' %} aria-current="page"{% endif %}>{{ response_label|default:'Record a response' }}</a>{% endif %}
+  <a href="{% url 'factory_invoice_recovery' row.work.pk %}{{ work_query }}"{% if focus == 'recovery' %} aria-current="page"{% endif %}>Receipts and recovery</a>
+</nav>

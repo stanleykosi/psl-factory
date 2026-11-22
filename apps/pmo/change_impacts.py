@@ -4,9 +4,14 @@ P57: SOP 9.10.3. P59: SOP 9.10.5–9.10.8. Existing Standard and
 Emergency routes retain their separate contracts. Empty legacy detail is unknown.
 """
 import json
+from decimal import Decimal
+
 from django.core.exceptions import ValidationError, PermissionDenied
+from apps.core.evidence_access import restricted
 from apps.documents.controlled import baseline_manifest
 from apps.documents.contracts import validate
+from apps.finance.rules import decimal
+from apps.identity.models import Grant
 
 OUTPUTS = ('discipline', 'timeline', 'cost_resource', 'risk', 'dependency')
 
@@ -17,8 +22,26 @@ def inventory(value):
         raise ValidationError('Scope items must be explicit nonblank owner identifiers')
     return value
 
-def assessment_details(version, contributor, outputs, production_impact, scope_items):
-    if outputs is None:return {}
+def effort_value(value):
+    if value is None:
+        return None
+    if not isinstance(value, (str, Decimal)) or len(str(value)) > 32:
+        raise ValidationError('Enter person-days as a positive decimal or leave effort unknown.')
+    try:
+        estimate = decimal(str(value), positive=True)
+    except ValidationError:
+        raise ValidationError('Enter person-days as a positive decimal or leave effort unknown.') from None
+    if estimate > Decimal('999999999.999') or estimate != estimate.quantize(Decimal('.001')):
+        raise ValidationError('Enter positive person-days with up to three decimal places.')
+    return format(estimate.normalize(), 'f')
+
+
+def assessment_details(version, contributor, outputs, production_impact, scope_items, effort_person_days=None):
+    effort = effort_value(effort_person_days)
+    if outputs is None:
+        if effort is not None:
+            raise ValidationError('Record the owner impact outputs with the effort estimate.')
+        return {}
     validate({'type':'object','properties':{k:{'type':['string','null'],'minLength':1,'maxLength':4000} for k in OUTPUTS},
               'required':list(OUTPUTS),'additionalProperties':False}, outputs)
     if any(isinstance(x,str) and not x.strip() for x in outputs.values()):
@@ -29,8 +52,40 @@ def assessment_details(version, contributor, outputs, production_impact, scope_i
         raise ValidationError('Infra owns production applicability')
     if contributor!='Engineering' and scope_items is not None:
         raise ValidationError('Engineering supplies the scope inventory for prescribed decisions')
-    return {'outputs':outputs,'production_impact':production_impact,'scope_items':inventory(scope_items),
-            'baseline':version.base_manifest}
+    details = {'outputs':outputs,'production_impact':production_impact,'scope_items':inventory(scope_items),
+               'baseline':version.base_manifest}
+    if effort is not None:
+        details['effort_person_days'] = effort
+    return details
+
+
+def latest_assessments(version):
+    return version.assessments.order_by('contributor', '-pk').distinct('contributor')
+
+
+def impact_rows(actor, case, version):
+    from .changes import CONTRIBUTORS
+    from .release_proofs import accessible_pdfs
+
+    rows = list(latest_assessments(version).filter(contributor__in=CONTRIBUTORS)
+                .select_related('evidence').defer('note', 'evidence__body'))
+    authorities = set(Grant.objects.filter(case=case, active=True, user__is_active=True,
+        user_id__in={row.actor_id for row in rows}, action__in={f'change.assess:{name}' for name in CONTRIBUTORS})
+        .values_list('user_id', 'action'))
+    recorded = {row.contributor: row for row in rows}
+    available = {row.contributor: row for row in rows if row.evidence.case_id == case.pk and not restricted(row.evidence)
+                 and (row.actor_id, f'change.assess:{row.contributor}') in authorities}
+    readers = Grant.objects.filter(case=case, active=True, user__is_active=True, user=actor, action='evidence.add')
+    files = accessible_pdfs(case, actor, {row.pk: row.impact_details.get('private_proof')
+                            for row in available.values() if row.actor_id == actor.pk}) if readers.exists() else {}
+    result = []
+    for name in CONTRIBUTORS:
+        row = available.get(name)
+        result.append({'team': name, 'status': 'Recorded' if row else 'Source needs review' if name in recorded else 'Waiting',
+                       'record': row, 'effort': row.impact_details.get('effort_person_days') if row else None,
+                       'summary': row.impact_details.get('outputs', {}).get('discipline') if row else None,
+                       'proof': files.get(row.pk) if row else None})
+    return result
 
 def validate_assessments(version, latest):
     if not version.base_manifest.get('plan_id') or not version.base_manifest.get('costing_id'):
@@ -133,7 +188,9 @@ def assessment_form(post):
     if raw not in ['unknown','true','false']:raise ValidationError('Choose true, false or unknown production impact')
     return {'outputs':{k:post.get('impact_'+k,'').strip() or None for k in OUTPUTS},
             'production_impact':{'unknown':None,'true':True,'false':False}[raw],
-            'scope_items':post.get('scope_items','').splitlines() if post.get('scope_items','').strip() else None}
+            'scope_items':post.get('scope_items','').splitlines() if post.get('scope_items','').strip() else None,
+            'effort_person_days':post.get('effort_person_days','').strip() or None,
+            'proof_upload':int(post['proof_upload']) if post.get('proof_upload') else None}
 
 def execution_form(post):
     return {'scope_items':post.get('scope_items','').splitlines() if post.get('scope_items','').strip() else None,
@@ -148,13 +205,16 @@ def notice_has_timeline(auth,version):
 
 def timeline_snapshot(case):
     from .models import ChangeExecutionEvent
-    from .change_execution import validate_authorization
     rows=ChangeExecutionEvent.objects.filter(authorization__version__change__case=case,kind='plan_updated').select_related('authorization__version__change').order_by('pk')
     latest={}
     for e in rows:
         if e.impact_details.get('approved_timeline'):latest[e.authorization_id]=e
+    return {'baseline':baseline_manifest(case),'rows':timeline_rows(case, latest.values())}
+
+def timeline_rows(case, events):
+    from .change_execution import validate_authorization
     result=[]
-    for e in latest.values():
+    for e in events:
         auth=e.authorization;version=auth.version;status='current approved';reason='Current source decisions; not deployment authority'
         if version.change.current_id!=version.pk:
             status='superseded';reason='A newer CR revision requires its own assessment and authority'
@@ -166,7 +226,7 @@ def timeline_snapshot(case):
         result.append({'authorization_id':auth.pk,'change_version_id':version.pk,'reference':version.change.reference,
             'revision':version.number,'plan_event_id':e.pk,'plan_evidence_id':e.evidence_id,
             'timeline':e.impact_details['approved_timeline'],'status':status,'reason':reason})
-    return {'baseline':baseline_manifest(case),'rows':result}
+    return result
 
 def report_timeline(snapshot):
     return '\n'.join(f"{r['reference']} / revision {r['revision']} / {r['status']} / plan evidence #{r['plan_evidence_id']}:\n{r['timeline']}\n{r['reason']}" for r in snapshot['rows'])

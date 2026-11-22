@@ -6,6 +6,7 @@ from apps.pmo.clocks import aware
 from apps.pmo.services import subject
 from .registry import components
 from .services import register_reference, save_draft
+from .delivery_validators import HYPERCARE_V1, HYPERCARE_V2
 
 SCHEMAS = {'D11.change_go_live_client_applicability': 'schema:psl/change-go-live-client-applicability/v1',
     'D11.client_signature_contract': 'schema:psl/client-signature-contract/v1',
@@ -13,7 +14,7 @@ SCHEMAS = {'D11.change_go_live_client_applicability': 'schema:psl/change-go-live
     'D01.satisfied_gate_map': 'schema:psl/standard-satisfied-gates/v1',
     'D01.emergency_glpi_relationship':'schema:psl/emergency-glpi/v1',
     'D05.revision_invalidation_rules':'schema:psl/commercial-revision/v2',
-    'D11.hypercare_criteria_ref':'schema:psl/hypercare-criteria/v1',
+    'D11.hypercare_criteria_ref':HYPERCARE_V1,
     'D11.template_storage_retention_rules':'schema:psl/document-storage/v2',
     'D05.decision_action_matrix':'schema:psl/decision-actions/v2',
     'D11.adapter_configuration_refs':'schema:psl/rfp-submission-route/v1'}
@@ -28,10 +29,16 @@ def draft_standard_policy(actor, case_id, component, value, evidence_id, effecti
     if component in ['D01.change_type_catalogue','D11.adapter_configuration_refs']:
         if not isinstance(value, list) or not 1 <= len(value) <= 100:
             raise ValidationError('Catalogue draft needs 1–100 explicit entry objects')
-        records = [register_reference(actor, case_id, 'standard:'+str(uuid4()), SCHEMAS[component], item, evidence_id) for item in value]
+        adapter_schemas={'rfp_followup':'schema:psl/rfp-followup-route/v1',
+                         'go_live_reply':'schema:psl/go-live-client-replies/v1'}
+        records = [register_reference(actor, case_id, 'standard:'+str(uuid4()),
+            adapter_schemas.get(item.get('kind'),SCHEMAS[component]) if component=='D11.adapter_configuration_refs' and isinstance(item,dict) else SCHEMAS[component],
+            item, evidence_id) for item in value]
         value = [r.ref for r in records]
     else:
         schema=SCHEMAS[component]
+        if component=='D11.hypercare_criteria_ref' and isinstance(value,dict) and 'issue_clearance' in value:
+            schema=HYPERCARE_V2
         if component=='D11.template_storage_retention_rules' and isinstance(value,dict) and 'template_owners' in value:
             schema='schema:psl/document-storage/v3'
         if component=='D05.decision_action_matrix' and isinstance(value,dict) and any(

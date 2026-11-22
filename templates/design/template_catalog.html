@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Templates · {{ case|workspace_name }}{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_project' case.pk %}">← Project journey</a><h1>Templates</h1><p class="lede">{{ case|workspace_name }}</p></div>
+  <a class="button secondary" href="{% url 'template_current' case.pk %}">Review current versions</a></header>
+{% include 'design/project_tabs.html' %}
+<section class="card"><h2>Recorded versions</h2>
+{% if error %}<p role="alert">{{ error }}</p><a href="{% url 'design_project_tab' case.pk 'templates' %}">First page</a>
+{% else %}<ul>{% for version in versions %}<li>{{ version.name }} · Version {{ version.version }}{% if version.has_file %} · <a href="{% url 'design_template_download' case.pk version.pk %}">Download source file</a>{% endif %}</li>{% empty %}<li>No versions are available on this page.</li>{% endfor %}</ul>
+{% if next_url %}<a href="{{ next_url }}">Earlier versions</a>{% endif %}{% endif %}
+<a href="{% url 'documents' case.pk %}">Open controlled documents</a>
+</section>
+{% if upload_form %}<section class="card"><h2>Upload a revised template</h2><p>Select the version and owner evidence that go with this file.</p><form action="{% url 'design_template_upload' case.pk %}" method="post" enctype="multipart/form-data">{% csrf_token %}{{ upload_form.as_p }}<button>Record template version</button></form></section>{% endif %}
+{% if new_template_form %}<section class="card"><details{% if new_template_form.is_bound %} open{% endif %}><summary>Add a template</summary><p>Select the required sections and who can see them. Attach the file and the owner's decision for this definition.</p><form action="{% url 'design_template_upload' case.pk %}" method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="operation" value="first">{{ new_template_form.as_p }}<button>Record first version</button></form></details></section>{% endif %}
+{% endblock %}

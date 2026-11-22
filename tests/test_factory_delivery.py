@@ -14,7 +14,7 @@ from apps.pmo.models import DeliveryRecord,DeliverySourceVerification
 from apps.workflows import factory,factory_delivery
 from apps.workflows.models import FactoryWork,HumanTask
 from tests.test_delivery import DeliveryFixture
-from tests.helpers import rev
+from tests.helpers import rev, worker_test_environment
 
 
 def setup(configure=True):
@@ -30,6 +30,21 @@ def release_sources(f):
     f.plan();f.gates(delivery.UPSTREAM_GATES)
     delivery.record_release_request(f.actor,f.case.pk,f.d.pk,'SYNTHETIC-GLPI-1',f.e['requirements'].pk,'Recorded fixture deployment request reference',rev(f.case))
     f.gates(delivery.GLPI_GATES,'SYNTHETIC-GLPI-1')
+
+
+def return_fixture():
+    from apps.pmo.issues import log_issue
+    from tests.document_helpers import artifact
+
+    f = setup()
+    for kind in delivery.PLANNING:
+        f.source(kind, {'requires_ui': False, 'client_signoff_required': False} if kind == 'ui_applicability' else {})
+    artifact(f.actor, f.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+             {'rules': [{'role': 'PMO Lead', 'actions': ['return', 'reject']}]}, f.e['policy_decision'])
+    issue = log_issue(f.actor, f.case.pk, 'SYNTHETIC-RELEASE-BLOCKER', 'Sample login issue', 'Test defect',
+                      f.actor.pk, 'Repair the login retry behavior', f.e['requirements'].pk,
+                      'Synthetic issue evidence from the release review', rev(f.case), severity='Medium')
+    return f, issue, f.evidence('resolution', 'Synthetic QA observation of the corrected login retry behavior')
 
 
 class FactoryDeliveryTests(TestCase):
@@ -61,6 +76,40 @@ class FactoryDeliveryTests(TestCase):
         factory_delivery.decide(f.actor,f.work.pk,f.work.revision,'return',f.e['plan'].pk,'Source owner must correct the plan',rev(f.case),panel['decision_packet'])
         with self.assertRaises(ValidationError):delivery.approved_plan(f.d)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').exists())
+        f.source('technical_design')
+        with self.assertRaisesMessage(ValidationError, 'Record and verify corrected Planning evidence'):
+            delivery.decide_planning(f.actor,f.case.pk,f.d.pk,'approve',f.e['plan'].pk,'Unchanged content',rev(f.case))
+        f.source('technical_design', evidence=f.evidence('requirements', 'Synthetic corrected retry design'))
+        approval = delivery.decide_planning(f.actor,f.case.pk,f.d.pk,'approve',f.e['plan'].pk,'Corrected current source',rev(f.case))
+        self.assertEqual(delivery.approved_plan(f.d), approval)
+
+    def test_returned_release_needs_the_exact_linked_issue_fix_before_fresh_decision(self):
+        from apps.pmo.issues import update_issue
+
+        f, state, fix = return_fixture()
+        self.client.force_login(f.actor)
+        url = reverse('factory_invoice_decision', args=[f.work.pk])
+        panel = factory_delivery.projection(f.actor, f.work)
+        self.assertRedirects(self.client.post(url, {'action': 'delivery_decision', 'verdict': 'return',
+            'revision': f.work.revision, 'case_revision': rev(f.case), 'packet': panel['decision_packet'],
+            'evidence': f.e['plan'].pk, 'note': 'Review this exact issue fix first', 'blocking_issue': state.issue_id,
+        }), url)
+        returned = delivery.latest(f.d, 'planning_decision')
+        self.assertEqual(returned.data['blocking_issue'], {'issue': state.issue_id, 'state': state.pk})
+        self.assertContains(self.client.get(url), 'Delivery returned')
+        self.assertNotContains(self.client.get(url), 'Approve exact Planning exit')
+        with self.assertRaisesMessage(ValidationError, 'Record the fix for the linked issue'):
+            delivery.decide_planning(f.actor, f.case.pk, f.d.pk, 'approve', f.e['plan'].pk, 'Still open', rev(f.case))
+        ack = update_issue(f.actor, f.case.pk, state.issue_id, state.pk, 'acknowledge', f.e['requirements'].pk,
+                           'Owner confirmed the exact issue', rev(f.case))
+        resolved = update_issue(f.actor, f.case.pk, state.issue_id, ack.pk, 'resolve', f.e['requirements'].pk,
+                                'Owner recorded the exact fix', rev(f.case), fix_id=fix.pk)
+        self.assertContains(self.client.get(url), 'Approve exact Planning exit')
+        approval = delivery.decide_planning(f.actor, f.case.pk, f.d.pk, 'approve', f.e['plan'].pk,
+                                           'Reviewed current native fix', rev(f.case))
+        self.assertEqual(approval.parent_id, returned.pk)
+        self.assertEqual(approval.data['issue_remedy'], {'issue': state.issue_id, 'state': resolved.pk, 'fix': fix.pk})
+        self.assertEqual(delivery.approved_plan(f.d), approval)
 
     def test_delivery_reader_never_receives_private_source_bodies_or_agent_history(self):
         from django.contrib.auth import get_user_model
@@ -85,7 +134,12 @@ class FactoryDeliveryTests(TestCase):
         self.client.force_login(f.actor);self.assertContains(self.client.get(reverse('home')+'?queue=exceptions'),'Prior release evidence needs review')
         self.assertNotContains(self.client.get(reverse('home')+'?queue=verified'),'Delivery factory example')
         self.assertNotContains(self.client.get(reverse('factory_detail',args=[f.work.pk])),'The current source approvals and release readiness record match.')
-        factory_delivery.reassess(f.actor,f.work.pk,f.work.revision,'Review the actual successor source gate')
+        decision = reverse('factory_invoice_decision', args=[f.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[f.work.pk])
+        self.assertNotContains(self.client.get(decision),'Reassess changed delivery evidence')
+        self.assertContains(self.client.get(recovery),'Reassess changed delivery evidence')
+        self.assertRedirects(self.client.post(recovery, {'action':'reassess','revision':f.work.revision,
+                              'reason':'Review the actual successor source gate'}), recovery)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'waiting',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').count(),1)
         delivery.record_release_request(f.actor,f.case.pk,f.d.pk,'SYNTHETIC-GLPI-2',f.e['requirements'].pk,'Actual fixture successor request after upstream change',rev(f.case))
@@ -130,8 +184,9 @@ class FactoryDeliveryTests(TestCase):
         for kind in delivery.PLANNING:f.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})
         Grant.objects.filter(case=f.case,user=f.actor,action='finance.read').update(active=False)
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertTrue(factory_delivery.projection(f.actor,w)['can_decide'])
-        self.client.force_login(f.actor);url=reverse('factory_detail',args=[w.pk])+'?queue=decisions&q=Delivery'
+        self.client.force_login(f.actor);url=reverse('factory_invoice_decision',args=[w.pk])+'?queue=decisions&q=Delivery'
         self.assertContains(self.client.get(url),'Planning exit decision')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[w.pk])),'Approve exact Planning exit')
         data={'action':'delivery_decision','revision':w.revision,'case_revision':rev(f.case),'packet':factory_delivery.projection(f.actor,w)['decision_packet'],'verdict':'approve','evidence':f.e['plan'].pk,'note':'Synthetic PMO Lead exact Planning exit'}
         self.assertRedirects(self.client.post(url,data),url)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').count(),1)
@@ -188,9 +243,9 @@ from django.test import TransactionTestCase
 
 class FactoryDeliveryConcurrencyTests(TransactionTestCase):
     def test_real_process_interruption_after_native_preparation_rolls_back_then_recovers_once(self):
-        import os,sys,subprocess
+        import sys,subprocess
         from datetime import timedelta
-        f=setup();release_sources(f);env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        f=setup();release_sources(f);env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'interrupt_after_action'],env=env,capture_output=True,timeout=60)
         self.assertEqual(result.returncode,38,result.stderr.decode())
         f.work.refresh_from_db();spent=f.work.budget_used;self.assertGreaterEqual(spent,200)

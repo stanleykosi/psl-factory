@@ -16,13 +16,20 @@ from .ppe_forms import commands
 from . import ppe as d
 @login_required
 def workbench(request,case_id):
- c=accessible_case(request.user,case_id);d.readable(request.user,c);forms=commands(request.user,c,request.POST if request.method=='POST' else None)
+ c=accessible_case(request.user,case_id);d.readable(request.user,c);forms=commands(request.user,c,
+     request.POST if request.method=='POST' else None,request.FILES if request.method=='POST' else None)
  if request.method=='POST':
   try:
    f=next((x['form'] for x in forms if x['form']['action'].value()==request.POST.get('action')),None)
    if not f or not f.is_valid() or set(request.POST)-set(f.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Valid permitted typed command required; no extra authority fields')
    v=f.cleaned_data;a=request.user;k=v['action'];rev=v['revision'];e=v['evidence'].pk if v.get('evidence') else None
+   if request.FILES and (k!='record_dates' or set(request.FILES)!={'file'} or len(request.FILES.getlist('file'))!=1):
+    raise ValidationError('Attach at most one PDF to the date explanation.')
    if k=='capture':d.capture(a,c.pk,v['reference'],e,rev)
+   elif k=='record_dates':
+    from apps.workflows import factory_ppe_date_proof
+    dates = [v[name].isoformat() if v[name] else None for name in ('delivery_date','in_service_date')]
+    factory_ppe_date_proof.record(a,c.pk,v['register'].pk,v['asset_id'],*dates,v['fraction_basis'],e,rev,v['file'])
    elif k=='prepare':d.prepare(a,c.pk,v['reference'],v['register'].pk,v['prior'].pk if v['prior'] else None,v['ledger'].pk if v['ledger'] else None,rev)
    elif k=='review':d.review(a,c.pk,v['work'].pk,v['purpose'],v['verdict'],e,v['note'],rev)
    elif k=='investigate':investigate(a,c.pk,rev)
@@ -34,6 +41,7 @@ def workbench(request,case_id):
  for w in rows:
   try:d.current(w);w.current=True
   except (ValidationError,PermissionDenied):w.current=False
+  if w.kind=='ppe_register':w.date_facts_visible=d.date_facts_visible(w)
   try:d.approved(w,'register' if w.kind=='ppe_register' else 'schedule');w.reviewed=w.current
   except (ValidationError,PermissionDenied):w.reviewed=False
  response=render(request,'finance/ppe.html',{'case':c,'works':rows,'commands':forms,'policies':[resolve(k,c) for k in SCHEMAS],'schema':d.REGISTER,'schemas':SCHEMAS,'agents':AgentRun.objects.filter(case=c,provider='deterministic-ppe-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response

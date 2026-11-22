@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from apps.core.services import lock_case, event, bump
 from apps.documents.controlled import baseline_manifest
@@ -45,30 +45,45 @@ def log_change(actor, case_id, reference, category, module, description, reason,
 
 
 @transaction.atomic
-def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline_impact, client_facing, evidence_id, note, expected, *, outputs=None, production_impact=None, scope_items=None):
+def assess_change(actor, case_id, version_id, contributor, cost_impact, timeline_impact, client_facing, evidence_id, note, expected, *, outputs=None, production_impact=None, scope_items=None, effort_person_days=None, proof_upload=None):
     from .commercial import note_required
     case = lock_case(actor, case_id, 'change.assess:'+contributor, expected)
     version = current_change(case, version_id)
     require_open_version(version)
+    from .coordinator_intake import accept
+    accept(actor,case,version,"P56")
     if contributor not in CONTRIBUTORS or any(v is not None and type(v) is not bool for v in [cost_impact, timeline_impact, client_facing]):
         raise ValidationError('Use an explicit contributor and true/false/unknown impact values')
     note_required(note)
     from .change_impacts import assessment_details
-    details = assessment_details(version, contributor, outputs, production_impact, scope_items)
+    typed_proof = effort_person_days is not None or proof_upload is not None
+    if typed_proof and version.category != 'Normal':
+        raise ValidationError('Effort and private assessment proof apply to a Normal change.')
+    evidence = subject(case, evidence_id, metadata_only=True)
+    if typed_proof:
+        from apps.core.evidence_access import restricted
+        if restricted(evidence):
+            raise ValidationError('Choose available assessment evidence for this project.')
+    details = assessment_details(version, contributor, outputs, production_impact, scope_items, effort_person_days)
+    if proof_upload is not None:
+        if type(proof_upload) is not int or proof_upload < 1 or not details:
+            raise ValidationError('Choose exact supporting assessment proof with the owner impact outputs.')
+        from .release_proofs import capture
+        details['private_proof'] = capture(actor, case, proof_upload, purpose='assessment proof')
     result = ChangeAssessment.objects.create(impact_details=details, version=version, contributor=contributor, cost_impact=cost_impact,
-        timeline_impact=timeline_impact, client_facing=client_facing, evidence=subject(case,evidence_id), note=note, actor=actor)
+        timeline_impact=timeline_impact, client_facing=client_facing, evidence=evidence, note=note, actor=actor)
     event(actor, case, 'change.assessed', assessment=result.pk, version=version.pk, contributor=contributor)
     bump(case)
     return result
 
 
 def impact(version):
-    latest = {}
-    for a in version.assessments.order_by('pk'): latest[a.contributor] = a
+    from .change_impacts import latest_assessments, validate_assessments
+
+    latest = {row.contributor: row for row in latest_assessments(version)}
     if set(latest) != set(CONTRIBUTORS): raise ValidationError('Engineering, QA, Infra and Security assessments required')
     values = [latest[r] for r in CONTRIBUTORS]
     if version.category == 'Normal':
-        from .change_impacts import validate_assessments
         validate_assessments(version, latest)
     if any(getattr(a, k) is None for a in values for k in ['cost_impact', 'timeline_impact', 'client_facing']):
         raise ValidationError('Impact remains unknown; obtain the contributing owner clarification')
@@ -78,6 +93,37 @@ def impact(version):
 
 def required_roles(flags):
     return ['Product','Engineering'] + (['Client'] if flags['client_facing'] else []) + (['Engineering Lead','Security Manager'] if flags['timeline_impact'] else [])
+
+
+def require_current_decision_authority(case, decision):
+    from apps.identity.services import require
+
+    require(decision.actor, case, 'change.decide')
+    if decision_authority(decision.actor, case, decision.role, decision.verdict) != decision.authority:
+        raise ValidationError('Change decision authority changed')
+
+
+def normal_decision_status(version):
+    """Present the same assessment-bound roles enforced for authorization."""
+    ids, flags = impact(version)
+    roles = required_roles(flags)
+    latest = {d.role: d for d in version.decisions.filter(role__in=roles).select_related('actor').order_by('pk')}
+    states = []
+    labels = {'approve': 'Approved', 'return': 'Returned', 'reject': 'Rejected'}
+    for role in roles:
+        decision = latest.get(role)
+        status = 'Waiting'
+        if decision is not None:
+            status = 'Needs review'
+            if decision.assessment_ids == ids:
+                try:
+                    require_current_decision_authority(version.change.case, decision)
+                except (PermissionDenied, ValidationError):
+                    pass
+                else:
+                    status = labels.get(decision.verdict, 'Needs review')
+        states.append({'role': role, 'status': status, 'decision': decision})
+    return states
 
 
 @transaction.atomic
@@ -118,11 +164,8 @@ def authorization_inputs(case, version, adopted_manifest=None, *, check_authorit
         d = latest.get(role)
         if not d or d.verdict != 'approve' or d.assessment_ids != ids:
             raise ValidationError('Current assessment-bound decision required: '+role)
-        from apps.identity.services import require
         if check_authority:
-            require(d.actor, case, 'change.decide')
-            if decision_authority(d.actor,case,d.role,d.verdict) != d.authority:
-                raise ValidationError('Change decision authority changed')
+            require_current_decision_authority(case, d)
         decision_ids.append(d.pk)
     return ids, flags, decision_ids
 
@@ -134,6 +177,8 @@ def authorize_change(actor, case_id, version_id, commercial_id, expected):
     version = current_change(case, version_id)
     require_open_version(version)
     ids, flags, decisions = authorization_inputs(case, version)
+    from .coordinator_intake import accept
+    accept(actor,case,version,"P58")
     commercial = current_revision(case, commercial_id) if commercial_id else None
     if flags['cost_impact'] and not commercial:
         raise ValidationError('Cost impact requires a current approved commercial revision')

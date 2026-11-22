@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Emergency change for an incident · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><h1>Emergency change for an incident</h1></header>
+<section class="card">
+  <form method="get">
+    <input type="hidden" name="definition" value="pmo-emergency/v1">
+    <input type="hidden" name="mode" value="incident">
+    {{ projects.case.as_field_group }}
+    <button type="submit">Select project</button>
+  </form>
+  {% if problem %}<p role="status">{{ problem }}</p>{% endif %}
+  {% if form %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="definition" value="pmo-emergency/v1">
+    <input type="hidden" name="mode" value="incident">
+    <input type="hidden" name="case" value="{{ case.pk }}">
+    {{ form.as_p }}
+    <button type="submit">Ask for preauthorisation</button>
+  </form>
+  {% endif %}
+  <p><a href="?definition=pmo-emergency%2Fv1&amp;mode=existing{% if case %}&amp;case={{ case.pk }}{% endif %}">Continue an existing Emergency request</a></p>
+</section>
+{% endblock %}

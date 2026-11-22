@@ -29,6 +29,7 @@ def seed_predecessor(self):
     work=escalation.start(actor,case.pk,'UPGRADE-P44',request.pk,template.pk,'Native predecessor handoff',rev(case))
     factory.run_until_wait(work.pk);work.refresh_from_db();escalation.decide(actor,work.pk,work.revision,rev(case),request.pk,'Head of PMO','approve','Exact human client decision')
     factory.run_until_wait(work.pk);work.refresh_from_db();version=escalation.document(work)
+    request_review(actor,case.pk,version.pk,rev(case))
     escalation.review(actor,work.pk,work.revision,rev(case),version.pk,'approve','Exact predecessor communication review')
     factory.run_until_wait(work.pk);work.refresh_from_db();self.assertEqual(work.status,'verified',work.finding);proof=escalation.verify(work)
     notes=add_evidence(actor,case.pk,'meeting_notes','Confirm the delivery plan.\nInvestigate the dependency.','synthetic:upgrade-notes')

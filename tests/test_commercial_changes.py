@@ -25,8 +25,8 @@ DEFINITION={'document_type':'sow','required_fields':['executive_summary','scope'
     'audience_fields':{'client':['executive_summary','scope','timeline','risks','dependencies','status']}}
 
 
-def fixture(existing=False,username='human'):
-    actor,case=setup_case(username=username)
+def fixture(existing=False,username='human',context=None):
+    actor,case=context if context is not None else setup_case(username=username)
     e=signed(actor,case) if existing else project_evidence(actor,case)
     if not existing:roles(actor,case,e['policy_decision'])
     template=register_template(actor,case.pk,'Commercial SOW',DEFINITION,e['policy_decision'].pk,rev(case))
@@ -46,12 +46,12 @@ def approvals(actor,case,v):
         decide_proposal(actor,case.pk,v.pk,role,'approve','Checked exact sources',rev(case))
 
 
-def delivered(actor,case,v,t):
+def delivered(actor,case,v,t,*,scoped=False):
     version=draft_submission(actor,case.pk,v.pk,t.pk,rev(case))
     request_review(actor,case.pk,version.pk,rev(case))
     review_version(actor,case.pk,version.pk,'approve','Reviewed client version',rev(case))
     reserve_publication(actor,case.pk,version.pk,rev(case))
-    assert run_once()
+    assert run_once(case_id=case.pk) if scoped else run_once()
     return PublicationReceipt.objects.get(publication__version=version)
 
 

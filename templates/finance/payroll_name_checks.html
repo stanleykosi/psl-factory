@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'case' case.pk %}">Back to workspace</a>
+<header class="page-heading"><div><h1>Check staff names</h1><p class="lede">Compare the names supplied for an existing staff ID match.</p></div></header>
+{% if not enabled %}<p role="status">Name checks need a reviewed rule. Payroll matching can continue.</p>{% endif %}
+{% if can_configure %}<p><a href="{% url 'payroll' case.pk %}">Review matching rules</a></p>{% endif %}
+{% if commands.payroll %}<section class="card"><h2>Record the payroll source name</h2>
+<form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="action" value="payroll">{{ commands.payroll.as_p }}<button>Record payroll evidence</button></form></section>{% endif %}
+{% if commands.hr %}<section class="card"><h2>Record the HR source name</h2>
+<form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="action" value="hr">{{ commands.hr.as_p }}<button>Record HR evidence</button></form></section>{% endif %}
+{% if commands.check %}<section class="card"><h2>Compare source names</h2>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="check">{{ commands.check.as_p }}<button>Check names</button></form></section>{% endif %}
+{% if comparison %}<section class="card"><h2>Recorded name check</h2>
+{% if comparison.result == 'same' %}<p>The source names agree.</p>{% elif comparison.result == 'different' %}<p>The source holders supplied different names for the same staff ID.</p>{% else %}<p>Waiting for both source names.</p>{% endif %}
+{% if comparison.followup %}<p>HR correction request {{ comparison.followup }} · {% if comparison.review == 'response' %}Corrected HR export approved. Acknowledge the export before using it in payroll.{% elif comparison.review == 'correction_return' %}Returned for clarification{% elif comparison.review == 'correction_reject' %}Rejected{% else %}Awaiting HR review{% endif %}</p>
+{% elif comparison.result == 'different' and commands.route %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="route">{{ commands.route.as_p }}<button>Send to HR for correction</button></form>{% endif %}
+</section>{% endif %}
+{% endblock %}

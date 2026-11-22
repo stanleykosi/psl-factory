@@ -33,6 +33,60 @@ class AccountingRecoveryTests(TestCase):
         self.assertFalse(FinanceRun.objects.filter(case=c,source=source,kind='formula').exists())
         self.assertEqual(work.status,'configuration_needed');self.assertIn('D06.rule_oracle_refs',work.finding)
 
+    def test_missing_independent_reviewer_keeps_other_native_decisions_and_rechecks_same_source(self):
+        from django.contrib.auth import get_user_model
+
+        from apps.identity.models import Grant
+        from apps.policy.services import register_reference
+        from apps.workflows import factory_accounting as accounting
+        from tests.factory_accounting_helpers import configured
+        from tests.finance_analysis_helpers import policy
+        from tests.helpers import activate
+
+        a, c, e, values, _, source, template, _ = fixture(
+            username='sample-nonconflicting-accounting-review', recipient_username='sample-routing-receipt', review=False)
+        for rule in values['authority']['finance']:
+            if rule['purpose'] == 'source':
+                rule['allow_preparer_review'] = False
+        policy(a, c, 'D05.decision_action_matrix', values['authority'], e['policy_decision'])
+        work = configured(a, c, e, source, template, METRICS)['work']
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'owner_needed')
+        self.assertEqual(accounting.review_routing_hold(work), [{'purpose': 'source', 'subject': 'source', 'target': source.pk}])
+        task = HumanTask.objects.get(case=c, kind='factory_accounting_review', status='open')
+        self.assertEqual(task.context['purpose'], 'mapping')
+        self.client.force_login(a)
+        url = reverse('factory_detail', args=[work.pk])
+        self.assertContains(self.client.get(url), 'Finance reviewer needed')
+        self.assertContains(self.client.get(url), 'Claim Finance review')
+        task = accounting.claim(a, task.pk, task.revision)
+        accepted = accounting.decide(a, task.pk, task.revision, 'approve', e['finance_review'].pk,
+                                     'The unaffected synthetic mapping review remains available.')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'owner_needed')
+        head, spent = work.source_head_id, work.budget_used
+        reviewer = get_user_model().objects.create_user('sample-independent-accounting-reviewer')
+        Grant.objects.bulk_create([Grant(case=c, user=reviewer, action=action) for action in
+                                   ('case.read', 'finance.read', 'factory.read', 'finance.review')])
+        reference = register_reference(a, c.pk, 'sample:independent-accounting-reviewer',
+                                       'schema:psl/role-assignment/v1', {'role': 'Finance', 'user_id': reviewer.pk},
+                                       e['policy_decision'].pk)
+        activate(a, c, 'D05.role_principal_assignments', ['finance:human', reference.ref], e['policy_decision'])
+        recovery = reverse('factory_invoice_recovery', args=[work.pk])
+        response = self.client.post(recovery, {'action': 'recheck_reviewers', 'revision': work.revision})
+        self.assertRedirects(response, recovery+'?queue=needs_me&q=', fetch_redirect_response=False)
+        work.refresh_from_db()
+        self.assertEqual((work.source_head_id, work.budget_used), (head, spent))
+        factory.run_until_wait(work.pk)
+        task.refresh_from_db()
+        self.assertEqual(task.status, 'completed')
+        self.assertTrue(FinanceReview.objects.filter(pk=accepted.pk).exists())
+        current = HumanTask.objects.get(case=c, status='open', context__purpose='source')
+        self.assertEqual([candidate['id'] for candidate in current.context['packet']['candidates']], [reviewer.pk])
+        self.assertFalse(PublicationReceipt.objects.filter(publication__factory_work=work).exists())
+
     def test_return_requires_explicit_source_owned_recheck_preserving_history_and_allowance(self):
         from apps.documents.models import Publication
         a,c,e,source,work,accounting,task=self.output_wait()
@@ -41,7 +95,15 @@ class AccountingRecoveryTests(TestCase):
         work.refresh_from_db();old_head=work.source_head_id;original=work.request.copy();spent=work.budget_used;limit=work.budget_limit
         factory.run_until_wait(work.pk);work.refresh_from_db()
         self.assertEqual(work.status,'followup_needed');self.assertFalse(Publication.objects.filter(factory_work=work).exists())
-        accounting.recheck(a,work.pk,work.revision,source.pk,[],'Explicitly reassessed unchanged source and supplemental inventory')
+        self.client.force_login(a)
+        recovery = reverse('factory_invoice_recovery', args=[work.pk])
+        page = self.client.get(recovery)
+        self.assertContains(page, 'Recheck corrected accounting inputs')
+        self.assertContains(page, f'value="{source.pk}" selected')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_decision', args=[work.pk])), 'Record reviewed inputs')
+        response = self.client.post(recovery, {'action': 'recheck', 'revision': work.revision,
+            'source': source.pk, 'adjustments': '', 'reason': 'Explicitly reassessed unchanged source and supplemental inventory'})
+        self.assertRedirects(response, recovery+'?queue=needs_me&q=', fetch_redirect_response=False)
         work.refresh_from_db();self.assertNotEqual(work.source_head_id,old_head);self.assertEqual(work.request,original)
         self.assertEqual((work.budget_used,work.budget_limit),(spent,limit))
         factory.run_until_wait(work.pk)
@@ -74,15 +136,27 @@ class AccountingRecoveryTests(TestCase):
     def test_missing_receipt_remains_uncertain_without_a_second_delivery(self):
         from adapters.publications import InternalPublicationAdapter
         from apps.documents.models import PublicationJob,Publication
+        a,c,e,source,work,accounting,task=self.output_wait()
+        client = self.client
+        client.force_login(a)
+        url = reverse('factory_detail', args=[work.pk])
+        active_pages = []
+
         class LostBeforeCommit(InternalPublicationAdapter):
             deliveries=0
             def deliver(self,job_id,fence):
-                self.deliveries+=1;raise TimeoutError('Synthetic connection lost before any inbox commit')
-        a,c,e,source,work,accounting,task=self.output_wait()
+                active_pages.append(client.get(url))
+                self.deliveries+=1
+                raise TimeoutError('Synthetic connection lost before any inbox commit')
+
         task=accounting.claim(a,task.pk,task.revision)
         accounting.decide(a,task.pk,task.revision,'approve',e['finance_review'].pk,'Synthetic exact output approved')
         adapter=LostBeforeCommit();factory.run_until_wait(work.pk,adapter=adapter)
         work.refresh_from_db();self.assertEqual(work.status,'waiting_effect',work.finding);self.assertEqual(adapter.deliveries,1)
+        self.assertContains(active_pages[0], 'Report delivery is in progress.')
+        uncertain = self.client.get(url)
+        self.assertContains(uncertain, 'Delivery is uncertain. Check the original report receipts.')
+        self.assertNotContains(uncertain, 'Report delivery is in progress.')
         job=PublicationJob.objects.get(publication__factory_work=work);self.assertEqual(job.status,'unknown')
         spent=work.budget_used;accounting.reconcile(a,work.pk,work.revision)
         job.refresh_from_db();work.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertEqual(work.status,'waiting_effect')
@@ -97,19 +171,36 @@ class FactoryAccountingTests(TestCase):
         definition('finance-accounts/v1')
         from tests.factory_accounting_helpers import configured
         from apps.workflows import factory_accounting as accounting
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
         f=configured(a,c,e,source,template,METRICS)
-        work=f['work'];factory.run_until_wait(work.pk)
-        task=HumanTask.objects.get(case=c,kind='factory_accounting_review',status='open')
-        self.assertEqual(task.context['purpose'],'output')
+        work=f['work']
         client=Client();client.force_login(a)
         url=reverse('factory_detail',args=[work.pk])+'?queue=decisions&q=Accounts'
+        observed_phases = {}
+
+        class InspectNativeClaim(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                selection = super().choose(context)
+                activity = selection['activity']
+                if activity in ('ACT04', 'ACT08', 'ACT09') and activity not in observed_phases:
+                    observed_phases[activity] = client.get(url)
+                return selection
+
+        self.assertNotContains(client.get(url), 'Investigating the accounting sources.')
+        factory.run_until_wait(work.pk, provider=InspectNativeClaim())
+        self.assertContains(observed_phases['ACT04'], 'Investigating the accounting sources.')
+        self.assertContains(observed_phases['ACT08'], 'Calculating the accounting figures.')
+        self.assertNotIn('ACT09', observed_phases)
+        task=HumanTask.objects.get(case=c,kind='factory_accounting_review',status='open')
+        self.assertEqual(task.context['purpose'],'output')
         response=client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Review the prepared accounting report')
         task=accounting.claim(a,task.pk,task.revision)
         response=client.get(url);self.assertContains(response,'Approve exact Finance subject')
         response=client.post(url,{'action':'decide','task':task.pk,'task_revision':task.revision,'verdict':'approve',
             'evidence':e['finance_review'].pk,'reason':'Synthetic exact accounting output and lineage reviewed'})
         self.assertEqual(response.status_code,302)
-        factory.run_until_wait(work.pk);work.refresh_from_db()
+        factory.run_until_wait(work.pk, provider=InspectNativeClaim());work.refresh_from_db()
+        self.assertContains(observed_phases['ACT09'], 'Drafting the accounting report.')
         self.assertEqual(work.status,'verified',work.finding)
         output=FinanceRun.objects.filter(case=c,kind='formula').latest('pk')
         self.assertEqual(output.result['company']['pbt']['value'],'609.99')
@@ -121,6 +212,10 @@ class FactoryAccountingTests(TestCase):
         self.assertNotIn('opaque-synthetic',str(receipt.payload));self.assertFalse(output.result['ledger_posted'])
         response=client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'609.99')
         self.assertContains(response,'Confirmed for');self.assertEqual(response.context['row']['state'],'Verified')
+        recovery=client.get(f'/work/{work.pk}/recovery/',{'queue':'mine'})
+        self.assertContains(recovery,'Confirmed for')
+        self.assertEqual(recovery.context['queue'],'mine')
+        self.assertEqual(recovery.context['row']['state'],'Verified')
         from apps.finance import analysis
         from tests.helpers import rev
         analysis.capture_source(a,c.pk,source.batch_id,source.entity,source.accounting_basis,source.extracted_at,
@@ -151,6 +246,35 @@ class AccountingOperatorTests(TestCase):
         self.assertEqual(client.get(reverse('factory_detail',args=[work.pk])).status_code,200)
         self.assertEqual(client.get(reverse('factory_create')+'?definition=finance-accounts/v1&case=not-a-workspace').status_code,404)
 
+    def test_continue_queues_accounting_on_the_worker_and_preserves_native_review(self):
+        from apps.workflows import factory_progress
+        from apps.workflows.models import FactoryProgress
+        from tests.factory_accounting_helpers import configured
+
+        actor, case, evidence, _, _, source, template, _ = self.data
+        work = configured(actor, case, evidence, source, template, METRICS)['work']
+        self.client.force_login(actor)
+        url = reverse('factory_detail', args=[work.pk])
+        fields = {'action': 'advance', 'revision': work.revision}
+        self.assertEqual(self.client.post(url, {**fields, 'revision': 0}).status_code, 302)
+        self.assertFalse(FactoryProgress.objects.filter(work=work).exists())
+        self.assertEqual(self.client.post(url, fields).status_code, 302)
+        self.assertEqual(self.client.post(url, fields).status_code, 302)
+        request = FactoryProgress.objects.get(work=work)
+        self.assertEqual(request.status, 'queued')
+        work.refresh_from_db()
+        self.assertEqual(work.budget_used, 0)
+        self.assertFalse(work.activities.exists())
+
+        for _ in range(12):
+            factory_progress.run_once()
+            request.refresh_from_db()
+            if request.status == 'waiting':
+                break
+        self.assertEqual(request.status, 'waiting')
+        self.assertTrue(HumanTask.objects.filter(case=case, kind='factory_accounting_review',
+            context__work=work.pk, context__purpose='source', status='open').exists())
+
     def test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown(self):
         import json
         from pathlib import Path
@@ -173,8 +297,11 @@ class AccountingOperatorTests(TestCase):
         from apps.workflows import factory_accounting as accounting
         a,c,e,values,configs,source,template,recipient=self.data;f=configured(a,c,e,source,template,METRICS);work=f['work'];factory.run_until_wait(work.pk)
         task=HumanTask.objects.get(case=c,kind='factory_accounting_review',context__purpose='source',status='open')
-        client=Client();client.force_login(a);url=reverse('factory_detail',args=[work.pk])
+        client=Client();client.force_login(a);url=reverse('factory_invoice_decision',args=[work.pk])
         response=client.get(url);self.assertContains(response,'Review the trial-balance source');self.assertContains(response,'Claim Finance review')
+        self.assertNotContains(response, 'Continue eligible accounting work')
+        recover=client.get(reverse('factory_invoice_recovery',args=[work.pk]))
+        self.assertContains(recover, 'Report receipts');self.assertNotContains(recover,'Claim Finance review')
         secure=Client(enforce_csrf_checks=True);secure.force_login(a)
         self.assertEqual(secure.post(url,{'action':'claim','task':task.pk,'task_revision':task.revision}).status_code,403)
         self.assertEqual(client.post(url,{'action':'claim','task':task.pk,'task_revision':task.revision}).status_code,302)

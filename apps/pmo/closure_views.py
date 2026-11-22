@@ -18,7 +18,8 @@ from apps.identity.services import require
 from apps.agents.delivery import investigate_delivery
 from apps.agents.models import AgentRun
 from adapters.delivery import LocalDeliveryAdapter
-from .delivery import dossier_for
+from .delivery import dossier_for, latest
+from .delivery_closure import recorded_closure_requirements
 from .models import MeetingVersion
 
 
@@ -41,6 +42,14 @@ def preparation(request,case_id,dossier_id):
     case=accessible_case(request.user,case_id);require(request.user,case,'delivery.read')
     try:d=dossier_for(case,dossier_id,current=False)
     except ValidationError:raise Http404 from None
+    closed = latest(d, 'closure', False)
+    if closed:
+        report = recorded_closure_requirements(request.user, d, closed)
+        response = render(request, 'pmo/closure_preparation.html', {
+            'case': case, 'dossier': d, 'report': report, 'checked_at': parse_datetime(report['as_of']),
+        })
+        response['Cache-Control'] = 'no-store'
+        return response
     form=SelectionForm(case,request.POST if request.method=='POST' else request.GET)
     selected={'retrospective_id':None,'report_evidence_id':None}
     valid=form.is_valid()
@@ -61,7 +70,7 @@ def preparation(request,case_id,dossier_id):
     report=LocalDeliveryAdapter().read_closure(d,selected)
     runs=AgentRun.objects.filter(case=case,provider='deterministic-delivery-investigation-v1',result__dossier_id=d.pk).order_by('-pk')[:5]
     actions={'can_investigate':granted(request.user,['delivery.read','agent.delivery']).filter(pk=case.pk).exists(),
-        'can_start_closure':granted(request.user,['factory.start','delivery.read','evidence.add']).filter(pk=case.pk).exists() and not d.records.filter(kind='closure').exists(),
+        'can_start_closure':granted(request.user,['factory.start','delivery.read','evidence.add']).filter(pk=case.pk).exists() and not report['recorded_closure_id'],
         'can_record_meeting':granted(request.user,['meeting.read','meeting.record']).filter(pk=case.pk).exists(),
         'can_open_delivery':granted(request.user,['delivery.read','delivery.manage']).filter(pk=case.pk).exists()}
     response=render(request,'pmo/closure_preparation.html',{'case':case,'dossier':d,'form':form,'report':report,'checked_at':parse_datetime(report['as_of']),'runs':runs,**actions})

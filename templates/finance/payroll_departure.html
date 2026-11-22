@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% block content %}
+<a class="back-link" href="{% url 'case' case.pk %}">Back to workspace</a>
+<header class="page-heading"><div><h1>Check payment timing</h1><p>Compare a recorded payroll settlement with the effective time an employee left.</p></div></header>
+{% if not configured %}<p role="status">This check needs approved employment and payment sources. Payroll matching can continue.</p>{% endif %}
+{% if commands.source %}<details class="card"><summary>Record an approved source</summary>
+<p>Use the approved document reference. Replacing a source pauses this check until the rule is approved again.</p>
+<form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="action" value="source">{{ commands.source.as_p }}<button>Record source reference</button></form></details>{% endif %}
+{% if commands.policy %}<details class="card"><summary>Set the payment timing rule</summary>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="policy">{{ commands.policy.as_p }}<button>Save rule for review</button></form>
+<p><a href="{% url 'policy' case.pk %}">Review rule versions</a></p></details>{% endif %}
+{% if commands.employment %}<section class="card"><h2>Record employment evidence</h2>
+<form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="action" value="employment">{{ commands.employment.as_p }}<button>Record employment evidence</button></form></section>{% endif %}
+{% if commands.settlement %}<section class="card"><h2>Record payment evidence</h2>
+<form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="action" value="settlement">{{ commands.settlement.as_p }}<button>Record payment evidence</button></form></section>{% endif %}
+{% if commands.check %}<section class="card"><h2>Compare the recorded sources</h2>
+{% if settlements %}<p>Recent payment evidence {% for number in settlements %}{{ number }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="check">{{ commands.check.as_p }}<button>Compare payment timing</button></form></section>{% endif %}
+{% if recent %}<details class="card"><summary>Recorded checks</summary><ul>{% for number in recent %}<li><a href="?check={{ number }}">Open check {{ number }}</a></li>{% endfor %}</ul></details>{% endif %}
+{% if comparison %}<section class="card"><h2>Recorded timing check</h2>
+{% if comparison.result == 'after' %}<p>The recorded payment settled after the recorded departure.</p>
+{% elif comparison.result == 'on_or_before' %}<p>The recorded payment settled on or before the recorded departure.</p>
+{% elif comparison.result == 'awaiting_evidence' %}<p>Waiting for the exact employment evidence.</p>
+{% else %}<p>The recorded sources do not establish comparable departure and settlement times.</p>{% endif %}
+{% if comparison.acknowledged %}<p>HR acknowledged this exact finding.</p>
+{% elif comparison.can_acknowledge %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="review">{{ commands.review.as_p }}<button>Acknowledge this finding</button></form>{% endif %}
+</section>{% endif %}
+{% endblock %}

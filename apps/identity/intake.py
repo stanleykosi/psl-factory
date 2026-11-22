@@ -11,11 +11,26 @@ from apps.documents.contracts import validate
 from adapters.forecast import obj,KEY
 from .intake_models import TenantAuthority as Authority,CaseIntake as Intake,AccessChange
 
-SCHEMA=obj({'format':{'enum':['psl.tenant-access/v1','psl.tenant-access/v2']},'create_cases':{'type':'boolean'},'manage_access':{'type':'boolean'},
+SCHEMA=obj({'format':{'enum':['psl.tenant-access/v1','psl.tenant-access/v2','psl.tenant-access/v3']},'create_cases':{'type':'boolean'},'manage_access':{'type':'boolean'},
     'kinds':{'type':'array','uniqueItems':True,'maxItems':2,'items':{'enum':['project','support']}},
     'allowed_actions':{'type':'array','uniqueItems':True,'maxItems':1000,'items':{'type':'string','minLength':1,'maxLength':100}},
     'initial_actions':{'type':'array','uniqueItems':True,'maxItems':1000,'items':{'type':'string','minLength':1,'maxLength':100}},
     'classification':{'enum':['synthetic','operational']}})
+SCHEMA['properties']['staff_lifecycle']=obj({
+    'invite_minutes':{'type':'integer','minimum':1,'maximum':10080},
+    'allow_invite':{'type':'boolean'},
+    'allow_deactivation':{'type':'boolean'},
+})
+for key in ['allow_roster','allow_account_deactivation','allow_unassigned_departure']:
+    SCHEMA['properties']['staff_lifecycle']['properties'][key]={'type':['boolean','null']}
+for key in ['allow_profile_edit','allow_reactivation']:
+    SCHEMA['properties']['staff_lifecycle']['properties'][key]={'type':['boolean','null']}
+SCHEMA['properties']['staff_lifecycle']['properties']['profiles']={
+    'type':['array','null'],'maxItems':30,'items':obj({
+        'key':{'type':'string','pattern':r'^[a-z][a-z0-9_-]{0,49}$'},
+        'label':{'type':'string','minLength':1,'maxLength':80},
+        'actions':{'type':'array','minItems':1,'maxItems':1000,'uniqueItems':True,
+                   'items':{'type':'string','minLength':1,'maxLength':100}}})}
 
 def source_system(action):
     prefix='approval.source.read:'
@@ -31,8 +46,27 @@ def checked(v):
     from apps.identity.actions import ACTIONS
     initial=set(v['initial_actions']);allowed=set(v['allowed_actions']);fixed=set(ACTIONS)
     if not initial<=allowed or not initial<=fixed:raise ValidationError('Initial actions must be fixed registered actions explicitly delegated')
-    if any(action not in fixed and not(v['format']=='psl.tenant-access/v2' and source_system(action)) for action in allowed):raise ValidationError('Only fixed actions or exact v2 approval source-read literals may be delegated; no wildcard')
+    if any(action not in fixed and not(v['format'] in ['psl.tenant-access/v2','psl.tenant-access/v3'] and source_system(action)) for action in allowed):raise ValidationError('Only fixed actions or exact approval source-read literals may be delegated; no wildcard')
     if v['create_cases'] and ('case.read' not in v['initial_actions'] or not v['kinds']):raise ValidationError('Case creation requires an explicit kind and initial case.read')
+    if v.get('staff_lifecycle') and (not v['manage_access'] or 'case.read' not in allowed or not v['kinds']):
+        raise ValidationError('Staff lifecycle requires explicit workspace access delegation')
+    controls=v.get('staff_lifecycle',{})
+    advanced={'allow_roster','allow_account_deactivation','allow_unassigned_departure',
+              'allow_profile_edit','allow_reactivation','profiles'}
+    if advanced.intersection(controls) and v['format']!='psl.tenant-access/v3':
+        raise ValidationError('Account controls require a version3 delegation; legacy authority is unchanged')
+    if controls.get('allow_account_deactivation') and not controls.get('allow_deactivation'):
+        raise ValidationError('Account departure requires explicit workspace departure delegation')
+    if controls.get('allow_unassigned_departure') and not controls.get('allow_account_deactivation'):
+        raise ValidationError('Unassigned departure requires explicit account departure delegation')
+    if (controls.get('allow_profile_edit') or controls.get('allow_reactivation')) and controls.get('allow_roster') is not True:
+        raise ValidationError('Account access changes require explicit staff review access')
+    profiles=controls.get('profiles') or []
+    if len({p['key'] for p in profiles})!=len(profiles):raise ValidationError('Profile keys must be unique in this delegation version')
+    for profile in profiles:
+        text(profile['label'],80)
+        if 'case.read' not in profile['actions'] or not set(profile['actions'])<=allowed:
+            raise ValidationError('Each access profile needs workspace read and only explicitly delegated actions')
 
 def text(v,maximum):
     if not isinstance(v,str) or not v.strip() or v!=v.strip() or len(v)>maximum:raise ValidationError('Provide bounded nonempty text without surrounding whitespace')
@@ -88,6 +122,11 @@ def change_access(actor,case_id,subject_id,action,enabled,reason):
     if action not in cfg.value['allowed_actions'] or not isinstance(enabled,bool):raise PermissionDenied('Explicit delegated record action required')
     subject=get_user_model().objects.get(pk=subject_id)
     if enabled and not subject.is_active:raise ValidationError('Granting requires an active account; inactive accounts can still have grants revoked')
+    if enabled:
+        from .team_models import StaffMembership
+
+        if StaffMembership.objects.filter(case=c,user_id=subject_id).exists():
+            raise ValidationError('Manage this person through their reviewed workspace role and exact assignments.')
     if c.synthetic!=(cfg.value['classification']=='synthetic'):raise PermissionDenied('Exact technical classification required')
     system=source_system(action)
     if enabled and system:
@@ -101,10 +140,10 @@ def change_access(actor,case_id,subject_id,action,enabled,reason):
     event(actor,c,'intake.access_changed',change=r.pk,subject=subject.pk,grant_action=action,enabled=enabled,authority=cfg.pk)
     return r
 
-def options(actor):
+def options(actor, purpose='create_cases'):
     tenants=Authority.objects.filter(user=actor).values_list('tenant',flat=True).distinct();rows=[]
     for tenant in tenants:
-        try:rows.append(current(actor,tenant,'create_cases'))
+        try:rows.append(current(actor,tenant,purpose))
         except PermissionDenied:pass
     return rows
 

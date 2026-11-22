@@ -16,7 +16,7 @@ from .models import CoverageAssessment, CoveragePreparationRequest, CoveragePrep
 @login_required
 @require_http_methods(['GET', 'POST'])
 def workbench(request, case_id):
-    case = accessible_case(request.user, case_id)
+    case = accessible_case(request.user, case_id, source_action='coverage.read')
     require(request.user, case, 'coverage.read')
     forms = commands(request.user, case, request.POST if request.method == 'POST' else None)
     if request.method == 'POST':

@@ -1,0 +1,43 @@
+{% load studio_ui %}
+{% if project_rows %}
+<div class="project-directory">
+  <table class="project-directory-table" aria-label="Projects" role="table">
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader">Project</th>
+        <th scope="col" role="columnheader">Project manager</th>
+        <th scope="col" role="columnheader">Where it is</th>
+        <th scope="col" role="columnheader">Next milestone</th>
+        <th scope="col" role="columnheader">Needs a person</th>
+        <th scope="col" role="columnheader">Stopped</th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      {% for item in project_rows %}
+      <tr role="row">
+        <th scope="row" role="rowheader">
+          <a href="{% url 'design_project' item.case.pk %}">{{ item.case|workspace_name }} {% include 'ui/icon.html' with icon='arrow' %}</a>
+        </th>
+        <td role="cell"><span class="project-directory-label" aria-hidden="true">Project manager</span>{{ item.manager|default_if_none:'Unknown' }}</td>
+        <td role="cell">
+          <span class="project-directory-label" aria-hidden="true">Where it is</span>
+          {% if item.phase %}<strong>{{ item.phase }}</strong>{% if item.state %}<small>{{ item.state }}</small>{% endif %}
+          {% else %}<strong>{{ item.lifecycle|default_if_none:'Unknown' }}</strong>{% endif %}
+          {% if item.closed_at %}<small><time datetime="{{ item.closed_at|date:'c' }}">{{ item.closed_at|date:'d M Y' }}</time></small>{% endif %}
+        </td>
+        <td role="cell">
+          <span class="project-directory-label" aria-hidden="true">Next milestone</span>
+          {% if item.milestone %}{{ item.milestone.name }}{% if item.milestone.due %}<small>Due <time datetime="{{ item.milestone.due|date:'Y-m-d' }}">{{ item.milestone.due|date:'d M Y' }}</time></small>{% endif %}
+          {% elif item.lifecycle == 'Closed' %}—{% else %}Unknown{% endif %}
+        </td>
+        <td role="cell"><span class="project-directory-label" aria-hidden="true">Needs a person</span>{{ item.reviews|default_if_none:'Unknown' }}</td>
+        <td role="cell"><span class="project-directory-label" aria-hidden="true">Stopped</span>{{ item.exceptions|default_if_none:'Unknown' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p class="project-directory-note">Review and stop counts cover work you can see in this list.</p>
+</div>
+{% else %}
+<div class="empty-state">{% include 'ui/icon.html' with icon='project' %}<h3>No projects found</h3><p>Try a different search or project status.</p></div>
+{% endif %}

@@ -1,0 +1,11 @@
+{% load studio_ui %}{% if won_sources %}<section class="card"><h2>Winning proposal</h2>
+{% if won_sources.held %}<p>{{ won_sources.finding }}</p>{% else %}
+<p>{{ won_sources.reference }} · submitted response {{ won_sources.response_number }}</p>
+<dl><dt>Requirement mappings</dt><dd>{{ won_sources.addressed }} addressed of {{ won_sources.requirements }} supplied</dd>
+<dt>Submitted client quote</dt><dd>{% if won_sources.quoted_price %}{{ won_sources.quoted_price.currency }} {{ won_sources.quoted_price.amount }} · {{ won_sources.quoted_price.basis|readable }}{% else %}Unknown — the supplied terms do not establish a structured amount{% endif %}</dd>
+<dt>Requirements source</dt><dd>{{ won_sources.inputs.prd_id.source }} · version {{ won_sources.inputs.prd_id.version }}</dd>
+<dt>Supplied plan</dt><dd>{{ won_sources.inputs.scope_id.source }} · version {{ won_sources.inputs.scope_id.version }}</dd>
+<dt>Engineering estimate</dt><dd>{{ won_sources.inputs.engineering_estimate_id.source }} · version {{ won_sources.inputs.engineering_estimate_id.version }}</dd>
+<dt>Security estimate</dt><dd>{{ won_sources.inputs.security_estimate_id.source }} · version {{ won_sources.inputs.security_estimate_id.version }}</dd></dl>
+<p>Supplied with the reviewed bid. Planning and project pricing continue through their own source checks and decisions.</p>
+{% endif %}</section>{% endif %}

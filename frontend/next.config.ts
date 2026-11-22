@@ -5,14 +5,26 @@ import type { NextConfig } from 'next';
 const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:4010';
 
 const nextConfig: NextConfig = {
+  env: { NEXT_PUBLIC_FACTORY_ORIGIN: process.env.NEXT_PUBLIC_FACTORY_ORIGIN ?? '' },
   // `next dev` blocks its dev resources for any host but localhost, so a page opened on
   // 127.0.0.1 never hydrates and stays on "Loading…". Loopback only; no effect on `next build`.
   allowedDevOrigins: ['127.0.0.1'],
   async rewrites() {
-    const api = { source: '/api/v1/:path*', destination: `${apiOrigin}/api/v1/:path*` };
-    // D-155: the demo bar's Reset demo reaches the mock's reset endpoint; only when the dev script turns the demo on.
-    const reset = { source: '/__mock/reset', destination: `${apiOrigin}/__mock/reset` };
-    return process.env.NEXT_PUBLIC_MOCK_DEMO === '1' && process.env.NODE_ENV !== 'production' ? [api, reset] : [api];
+    const beforeFiles = [
+      { source: '/api/v1/:path*', destination: `${apiOrigin}/api/v1/:path*` },
+      { source: '/factory-assets/work-client.js', destination: `${apiOrigin}/static/factory-work-client.js` },
+      { source: '/accounts/:path*', destination: `${apiOrigin}/accounts/:path*` },
+      { source: '/factory-forms/:path*', destination: `${apiOrigin}/:path*` },
+      { source: '/static/:path*', destination: `${apiOrigin}/static/:path*` },
+    ];
+    if (process.env.NEXT_PUBLIC_MOCK_DEMO === '1' && process.env.NODE_ENV !== 'production') {
+      beforeFiles.push({ source: '/__mock/reset', destination: `${apiOrigin}/__mock/reset` });
+    }
+    return {
+      beforeFiles,
+      afterFiles: [],
+      fallback: [{ source: '/:path((?!__mock(?:/|$)).*)', destination: `${apiOrigin}/:path` }],
+    };
   },
 };
 

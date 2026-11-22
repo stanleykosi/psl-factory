@@ -73,6 +73,12 @@ def capture(actor,case,d,inputs,action):
     event(actor,case,action,evidence_id=e.pk,sha256=e.sha256);return e
 
 
+class ExistingClosureWork(ValidationError):
+    def __init__(self, work_id):
+        self.work_id = work_id
+        super().__init__('Review changed inputs or restart in the existing closure work.')
+
+
 @transaction.atomic
 def start(actor,case_id,key,dossier_id,inputs,reference,expected=None):
     from .factory import access
@@ -85,7 +91,8 @@ def start(actor,case_id,key,dossier_id,inputs,reference,expected=None):
     old=Work.objects.filter(case=case).filter(Q(key=key)|Q(definition=DEFINITION,business_key=business)).first()
     if old:
         if old.actor_id!=actor.pk or old.definition!=DEFINITION or old.key==key and old.request_hash!=sha:raise ValidationError('IDEMPOTENCY_CONFLICT: changed closure intent')
-        if source(old)[1]['inputs']!=inputs:raise ValidationError('Review changed inputs in the existing closure work')
+        if old.cancel_requested or source(old)[1]['inputs']!=inputs:
+            raise ExistingClosureWork(old.pk)
         return old
     delivery.ensure_open(d)
     w=Work.objects.create(case=case,actor=actor,key=key,definition=DEFINITION,request=payload,request_hash=sha,business_key=business,
@@ -228,7 +235,7 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT11':
         v=document(work)
         if not v:raise ValidationError('Exact prepared closure report required')
-        prerequisites(d,data);current_version(case,v.pk);validate_review(case,v);closure.current_closure_approval(d,v.pk)
+        prerequisites(d,data);closure.current_closure_approval(d,v.pk)
         row=closure.finalize_closure(operator(work,value),case.pk,d.pk,case.revision)
         return {'head':work.source_head_id,'dossier':d.pk,'closure':row.pk,'document_version':v.pk,'operator':row.actor_id}
     if kind=='ACT13':result=verify(work,actor=work.execution_actor);work.status='verified';return result
@@ -241,7 +248,7 @@ def verify(work,actor=None):
     decision,binding=closure.current_closure_approval(d,v.pk)
     if binding.data!=selected(data) or row.data['version_id']!=v.pk or row.data['decision_id']!=decision.pk or row.snapshot!=binding.snapshot:
         raise ValidationError('Native closure must bind the exact current report, source and prescribed decision')
-    require(row.actor,work.case,'delivery.manage');decision_authority(row.actor,work.case,'PM');validate_review(work.case,v)
+    require(row.actor,work.case,'delivery.manage');decision_authority(row.actor,work.case,'PM')
     if row.snapshot['debt_waived'] is not False or row.snapshot['deployment_authorized'] is not False:raise ValidationError('Closure cannot grant independent financial or release authority')
     return {'verified':True,'head':work.source_head_id,'dossier':d.pk,'closure':row.pk,'document_version':v.pk,'decision':decision.pk,
         'verification_scope':'synthetic_native_project_closure','debt_waived':False,'deployment_authorized':False,
@@ -277,7 +284,7 @@ def decide(actor,work_id,expected,case_expected,version_id,verdict,evidence_id,n
     if w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh the current closure work')
     d,data,_=source(w,actor);v=document(w)
     if not v or v.pk!=version_id:raise ValidationError('Exact current-source closure version required')
-    prerequisites(d,data);validate_review(w.case,v)
+    prerequisites(d,data)
     return closure.decide_closure(actor,w.case_id,v.pk,verdict,evidence_id,note,case_expected)
 
 
@@ -326,7 +333,8 @@ def restart(actor,work_id,expected,case_expected,reason):
     event(actor,case,'factory.closure_restarted',work=w.pk,previous=previous,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
 
-def projection(actor,work):
+@read_observation
+def projection(actor,work,*,include_execution=True):
     from .factory import access,profile
     access(actor,work.case,envelope=DEFINITION);d,data,rows=source(work,actor,current=False);v=document(work)
     report=LocalDeliveryAdapter().read_closure(d,selected(data));closed=delivery.latest(d,'closure',False);changed=False;issue=''
@@ -336,6 +344,9 @@ def projection(actor,work):
         try:verify(work,actor=actor)
         except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     pending_review=bool(v and HumanTask.objects.filter(version=v,status='open').exists())
+    last_decision=delivery.latest(d,'closure_decision',False)
+    if last_decision and (not v or last_decision.data['version_id']!=v.pk):last_decision=None
+    needs_correction=bool(last_decision and last_decision.data['verdict'] in ('return','reject'))
     reviewer_names=[u.get_full_name() or u.username for u in owners(work.case,'PMO Lead','document.review_controlled')] if pending_review else []
     decision_names=[u.get_full_name() or u.username for u in owners(work.case,'Head of PMO','delivery.closure_decide')]
     can_review=can_correct=can_restart=can_settle=False;verdicts=[];review_verdicts=[]
@@ -355,6 +366,7 @@ def projection(actor,work):
                 else:
                     validate_review(work.case,v);require(actor,work.case,'delivery.closure_decide')
                     for verdict in ['approve','return','reject']:
+                        if needs_correction and verdict=='approve':continue
                         try:decision_authority(actor,work.case,'Head of PMO',verdict);verdicts.append(verdict)
                         except (ValidationError,PermissionDenied):pass
             except (ValidationError,PermissionDenied) as exc:issue=finding(exc)
@@ -365,13 +377,12 @@ def projection(actor,work):
             can_settle=work.cancel_requested and work.status not in ['cancelled','verified','followup_needed']
         except (ValidationError,PermissionDenied):pass
     next_options=[];next_action='Review current closure evidence and prescribed decisions'
-    try:
-        _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
-    except (ValidationError,PermissionDenied):pass
-    last_decision=delivery.latest(d,'closure_decision',False)
-    if last_decision and (not v or last_decision.data['version_id']!=v.pk):last_decision=None
+    if include_execution:
+        try:
+            _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
+        except (ValidationError,PermissionDenied):pass
     return {'dossier':d,'data':data,'report':report,'document':v,'decision':last_decision,'closure':closed,'finding':issue,
-        'intake_current':intake_current,'readiness_changed':changed,'pending_review':pending_review,
+        'intake_current':intake_current,'readiness_changed':changed,'pending_review':pending_review,'needs_correction':needs_correction,
         'reviewer_names':reviewer_names,'decision_names':decision_names,'can_review':can_review,'review_verdicts':review_verdicts,'verdicts':verdicts,
         'can_correct':can_correct,'can_restart':can_restart,'can_settle':can_settle,'next_options':next_options,'next_action':next_action}
 

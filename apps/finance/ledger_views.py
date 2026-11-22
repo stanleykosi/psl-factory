@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.shortcuts import render,redirect
-from django.http import JsonResponse
+from django.http import Http404,JsonResponse
 from django.db import transaction
 from apps.core.views import accessible_case
 from apps.policy.ledger_validators import SCHEMAS
@@ -36,7 +36,13 @@ def workbench(request,case_id):
     with transaction.atomic():d.locked(a,c.pk,'policy.configure',rev);draft_ledger_policy(a,c.pk,v['component'],v['content'],e,v['effective_from'])
    messages.success(request,'Incumbent reference history updated');return redirect('ledger',case_id=c.pk)
   except (ValidationError,ValueError,TypeError) as exc:messages.error(request,str(exc));return redirect('ledger',case_id=c.pk)
- rows=list(LedgerLineage.objects.filter(case=c).order_by('-pk')[:40])
+ available=LedgerLineage.objects.filter(case=c).order_by('-pk')
+ lineage=request.GET.get('lineage')
+ if lineage is not None:
+  if not lineage.isascii() or not lineage.isdecimal() or len(lineage)>18:raise Http404
+  rows=list(available.filter(pk=int(lineage)))
+  if not rows:raise Http404
+ else:rows=list(available[:40])
  for w in rows:
   try:d.report(request.user,c.pk,w.pk);w.reviewed=True
   except (ValidationError,PermissionDenied):w.reviewed=False

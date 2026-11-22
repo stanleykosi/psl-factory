@@ -14,7 +14,7 @@ from apps.pmo.models import DeliveryRecord,DeliveryDocumentBinding
 from apps.documents.models import Publication,PublicationReceipt
 from apps.workflows import factory,factory_go_live as go_live
 from apps.workflows.models import FactoryWork,HumanTask
-from tests.helpers import rev
+from tests.helpers import rev,worker_test_environment
 from tests.test_delivery import DeliveryFixture
 
 def configure(f,preparer=True,publisher=True,tokens=20000):
@@ -51,6 +51,7 @@ def accept(f):
 class FactoryGoLiveDistinctAuthorityTests(TestCase):
     def test_actual_pm_attests_through_http_without_worker_configuration_or_publisher_privileges(self):
         from apps.policy.services import register_reference
+        from tests.forecast_helpers import payload, scenario
         from tests.helpers import activate
         f=DeliveryFixture();f.setup_delivery()
         pm=get_user_model().objects.create_user(username='synthetic-go-live-attesting-pm')
@@ -64,12 +65,18 @@ class FactoryGoLiveDistinctAuthorityTests(TestCase):
         version=go_live.document(f.work);receipt=PublicationReceipt.objects.get(publication__version=version)
         signature_pm=f.evidence('signature','Synthetic supplied PM signature for distinct human attestation')
         signature_client=f.evidence('signature','Synthetic supplied Client signature for distinct human attestation')
-        self.client.force_login(pm);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
+        self.client.force_login(pm);url=reverse('factory_work_response',args=[f.work.pk]);page=self.client.get(url)
+        recovery = reverse('factory_invoice_recovery', args=[f.work.pk])
         self.assertContains(page,'Record actual sign-off for this report');self.assertNotContains(page,'Continue eligible work')
         self.assertNotContains(page,'Record reviewed source changes')
+        self.assertNotContains(self.client.get(recovery), 'Record actual sign-off for this report')
+        self.assertNotContains(page, 'Recorded signatures')
+        signed_pm, signed_client = receipt.created_at, timezone.now()
+        declaration = f.attestation(receipt, signature_pm, signature_client, actor=pm, signed_at=signed_pm.isoformat())
+        declaration['signatures']['Client']['signed_at'] = signed_client.isoformat()
         response=self.client.post(url,{'action':'accept','revision':f.work.revision,'case_revision':rev(f.case),
             'version':version.pk,'receipt':receipt.pk,'pm_signature':signature_pm.pk,'client_signature':signature_client.pk,
-            'attestation':json.dumps(f.attestation(receipt,signature_pm,signature_client,actor=pm)),
+            'attestation':json.dumps(declaration),
             'note':'Distinct actual synthetic PM attests exact delivered report and supplied signature evidence'})
         self.assertRedirects(response,url)
         anchor=DeliveryRecord.objects.get(dossier=f.d,kind='go_live');self.assertEqual(anchor.actor_id,pm.pk)
@@ -77,6 +84,47 @@ class FactoryGoLiveDistinctAuthorityTests(TestCase):
         self.assertEqual(receipt.publication.actor_id,f.publisher.pk);self.assertEqual(version.created_by_id,f.actor.pk)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(go_live.verify(f.work)['acceptance'],anchor.pk)
+        reader = get_user_model().objects.create_user('synthetic-go-live-readback-reader')
+        Grant.objects.bulk_create([Grant(case=f.case, user=reader, action=action)
+                                   for action in ('case.read', 'factory.read', 'delivery.read')])
+        self.client.force_login(reader)
+        page = self.client.get(recovery)
+        sign_off = page.context['row']['go_live']['sign_off']
+        self.assertEqual(sign_off, {
+            'confirmed_at': anchor.created_at, 'report_number': version.number,
+            'report_version_id': version.pk, 'receipt_id': receipt.pk,
+            'signatures': [
+                {'role': 'Project Manager', 'signed_at': signed_pm, 'evidence_id': signature_pm.pk,
+                 'evidence_version': signature_pm.version},
+                {'role': 'Client', 'signed_at': signed_client, 'evidence_id': signature_client.pk,
+                 'evidence_version': signature_client.version},
+            ],
+        })
+        self.assertContains(page, 'Recorded signatures')
+        self.assertContains(page, '<h3>Confirmation</h3>', html=True)
+        self.assertContains(page, f'Signature evidence {signature_pm.pk}')
+        self.assertContains(page, f'Signature evidence {signature_client.pk}')
+        self.assertNotContains(page, signature_pm.body)
+        self.assertNotContains(page, signature_client.body)
+        self.assertNotContains(page, 'synthetic-local-test')
+        self.assertNotContains(self.client.get(url), 'Record actual sign-off for this report')
+
+        private = payload(f.actor, f.case)
+        private['items'][0]['evidence_id'] = signature_client.pk
+        scenario(f.actor, f.case, private)
+        masked = self.client.get(reverse('factory_detail', args=[f.work.pk]))
+        self.assertContains(masked, 'Recorded signature evidence is unavailable with current access.')
+        self.assertNotContains(masked, f'Signature evidence {signature_client.pk}')
+        self.assertNotContains(masked, 'client_signature')
+        self.assertEqual(masked.context['row']['go_live']['sign_off']['signatures'][1], {'role': 'Client'})
+        self.assertContains(masked, f'Signature evidence {signature_pm.pk}')
+
+        Grant.objects.filter(case=f.case, user=pm, action='delivery.manage').update(active=False)
+        revoked = self.client.get(recovery)
+        self.assertIsNone(revoked.context['row']['go_live']['sign_off'])
+        self.assertContains(revoked, 'Earlier sign-off is retained.')
+        self.assertNotContains(revoked, 'Recorded signatures')
+        self.assertEqual(DeliveryRecord.objects.get(dossier=f.d, kind='go_live').pk, anchor.pk)
 
 class FactoryGoLiveConcurrencyTests(TransactionTestCase):
     def test_two_first_intakes_create_one_private_source_and_one_business_identity(self):
@@ -98,11 +146,11 @@ class FactoryGoLiveConcurrencyTests(TransactionTestCase):
         self.assertEqual(Evidence.objects.filter(case=f.case,kind=go_live.KIND).count(),1)
 
     def test_real_process_exit_after_delivery_recovers_original_receipt_before_human_signoff(self):
-        import os,sys,subprocess
+        import sys,subprocess
         from datetime import timedelta
         from apps.documents.models import PublicationJob
         f=setup();factory.run_until_wait(f.work.pk);review(f)
-        env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'go_live_interrupt_after_delivery'],env=env,capture_output=True,timeout=180)
         self.assertEqual(result.returncode,39,result.stderr.decode());f.work.refresh_from_db();spent=f.work.budget_used
         receipt=PublicationReceipt.objects.get(publication__factory_work=f.work);job=PublicationJob.objects.get(publication=receipt.publication)
@@ -155,13 +203,49 @@ class FactoryGoLiveTests(TestCase):
         self.assertFalse(Publication.objects.filter(factory_work=f.work).exists());self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Review the exact client report');self.assertNotContains(page,'Record actual sign-off for this report')
-        review(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();p=Publication.objects.get(factory_work=f.work)
+        from apps.workflows.factory_progress import set_progress
+        from apps.workflows.models import FactoryProgress
+        progress = set_progress(f.actor, f.work.pk, f.work.revision, True)
+        FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='review-pending')
+        review(f)
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, '')
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db();p=Publication.objects.get(factory_work=f.work)
         self.assertEqual(p.actor_id,f.publisher.pk);self.assertEqual(PublicationReceipt.objects.filter(publication=p).count(),1)
         self.assertEqual(f.work.status,'waiting',f.work.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
         page=self.client.get(url);self.assertContains(page,'Record actual PM and Client sign-off');self.assertNotContains(page,'Continue eligible work')
-        decision=accept(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
+        receipt=PublicationReceipt.objects.get(publication=p)
+        pm=f.evidence('signature','Synthetic supplied PM signature for this delivered report')
+        customer=f.evidence('signature','Synthetic supplied client signature for this delivered report')
+        response_url=f'/work/{f.work.pk}/response/'
+        page=self.client.get(response_url)
+        self.assertContains(page,'Project Manager signature evidence')
+        self.assertContains(page,'Client signature evidence')
+        payload={'action':'accept','revision':f.work.revision,'case_revision':rev(f.case),'version':v.pk,'receipt':receipt.pk,
+                 'pm_signature':pm.pk,'client_signature':customer.pk,'note':'Synthetic actual separate sign-offs checked'}
+        FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='signoff-pending')
+        for role in ('pm','client'):
+            for key,value in {'source_system':'synthetic-test','source_reference':f'source-{role}','decision_id':f'decision-{role}',
+                              'decision_version':'1','signer_reference':f'signer-{role}','signed_at':timezone.now().isoformat()}.items():
+                payload[f'{role}-fact-{key}']=value
+        error=self.client.post(response_url,{**payload,'client_signature':pm.pk})
+        self.assertContains(error,'Choose a different source record for each signature.')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, 'signoff-pending')
+        self.assertRedirects(self.client.post(response_url,payload),response_url,fetch_redirect_response=False)
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, '')
+        decision=DeliveryRecord.objects.get(dossier=f.d,kind='go_live')
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         proof=go_live.verify(f.work);self.assertEqual(proof['acceptance'],decision.pk);self.assertNotEqual(proof['pm_signature'],proof['client_signature'])
         self.assertFalse(proof['sign_off_inferred']);self.assertFalse(proof['deployment_authorized']);self.assertFalse(proof['financial_release_granted']);self.assertFalse(proof['external_authenticity_verified'])
+        from unittest.mock import patch
+        with patch.object(go_live,'published',wraps=go_live.published) as observed:
+            readback=self.client.get(f'/work/{f.work.pk}/recovery/')
+        self.assertContains(readback,'Actual PM and Client sign-off recorded')
+        self.assertTrue(readback.context['row']['go_live']['delivery_complete'])
+        observed.assert_called_once()
         from apps.pmo.delivery_closure import accepted_go_live,hypercare_inputs
         self.assertEqual(accepted_go_live(f.d).pk,decision.pk);f.criteria();f.observations()
         self.assertTrue(hypercare_inputs(f.d)['qualified']);self.assertEqual(hypercare_inputs(f.d)['acceptance_id'],decision.pk)

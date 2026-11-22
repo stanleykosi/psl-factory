@@ -15,11 +15,11 @@ from apps.policy.models import Configuration,ScopeApplication
 from apps.finance import analysis
 from apps.finance.billing import digest
 from apps.finance.models import FinanceSource,FinanceRun,FinanceAdjustment,FinanceDocumentBinding
-from apps.finance.documents import report_inputs,binding_findings
+from apps.finance.documents import binding_findings
 from apps.documents.models import Publication,PublicationJob,PublicationReceipt
 from apps.documents.controlled import reserve_publication,current_version
 from adapters.factory_accounting import NativeAccountingAdapter
-from .models import FactoryWork as Work,FactoryActivity as Activity,HumanTask,TaskEvent
+from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt,HumanTask,TaskEvent
 
 DEFINITION='finance-accounts/v1'
 PROCESS_IDS=['F03','F04','F09','F14','F15','F19','F20','F22','F23']
@@ -85,7 +85,9 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
     if mapping and (value['allocation_mode']=='company_only' or allocation):selected.add('D06.rule_oracle_refs')
     rows=[{'purpose':'source','subject':'source','id':source.pk,'preparer':source.actor_id}];missing=[];policies={}
     for component in sorted(selected):
-        resolution=resolve(component,work.case);policies[component]={'status':resolution.status,'id':resolution.configuration.pk if resolution.configuration else None}
+        resolution=resolve(component,work.case);config=resolution.configuration
+        policies[component]={'status':resolution.status,'id':config.pk if config else None,
+                             'revision':config.revision if config else None}
         if resolution.status!='ACTIVE':missing.append(component);continue
         if component in analysis.PURPOSE:
             rows.append({'purpose':analysis.PURPOSE[component],'subject':'configuration','id':resolution.configuration.pk,'preparer':resolution.configuration.created_by_id})
@@ -114,15 +116,20 @@ def requirements(work,source,value,formula,mapping=None,allocation=None,reader=N
 
 def route(work,row,value):
     from .factory import access
+    from contextlib import nullcontext
+    from apps.identity.role_factory_decisions import permissions,review_candidates
+    from apps.identity.services import subject_actions
     result=[]
-    for actor in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__active=True,grant__action='finance.review').distinct().order_by('pk'):
+    candidates,scoped=review_candidates(work,'accounting',row['id'],row)
+    for actor in candidates:
         try:
-            access(actor,work.case,envelope=DEFINITION)
-            if row['subject']=='configuration':
-                app=ScopeApplication.objects.select_related('source__configuration__case').filter(configuration_id=row['id']).first()
-                if app:
-                    from apps.policy.scopes import authorized
-                    authorized(actor,app.source.configuration.case,'policy.read')
+            with subject_actions(actor,work.case,permissions(work,'accounting')) if actor.pk in scoped else nullcontext():
+                access(actor,work.case,envelope=DEFINITION)
+                if row['subject']=='configuration':
+                    app=ScopeApplication.objects.select_related('source__configuration__case').filter(configuration_id=row['id']).first()
+                    if app:
+                        from apps.policy.scopes import authorized
+                        authorized(actor,app.source.configuration.case,'policy.read')
         except PermissionDenied:continue
         actions={}
         for verdict in ['approve','return','reject']:
@@ -173,7 +180,7 @@ def snapshot(work,value,reader=None):
             formula=statement
             if not analysis.certification_findings(statement):
                 reviews.append({'purpose':'output','subject':'run','id':statement.pk,'preparer':statement.actor_id,'review':analysis.current_review(work.case,'output',run=statement)})
-    document=document_for(work,formula,value) if not value.get('statement_contract_id') or statement else None
+    document=document_for(work,formula,value) if 'statement_contract_id' not in value or statement else None
     publications=Publication.objects.filter(Q(factory_work=work)|Q(version=document.version if document else None))
     jobs=list(PublicationJob.objects.filter(publication__in=publications).select_related('publication__version').order_by('pk'))
     tasks=list(HumanTask.objects.filter(case=work.case,factory_key__startswith=f'factory:{work.pk}:').order_by('pk'))
@@ -183,10 +190,23 @@ def snapshot(work,value,reader=None):
         'document':document.pk if document else None,'jobs':[(j.pk,j.status,j.fence) for j in jobs],
         'tasks':[(t.pk,t.status,t.revision) for t in tasks],
         'receipts':list(PublicationReceipt.objects.filter(publication__in=publications).values_list('pk','operation_key'))}
-    if value.get('statement_contract_id') is not None:
+    if 'statement_contract_id' in value:
         state.update(base_formula=base_formula.pk if base_formula else None,statement=statement.pk if statement else None)
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,tasks,jobs
+
+def setup_blocker(state, value):
+    if state['unconfigured']:
+        return 'Configure required native accounting rules: ' + ', '.join(state['unconfigured'])
+    if state['mapping']:
+        if value['allocation_mode'] is None:
+            return 'Choose the preparation scope before further calculation.'
+        if value['allocation_mode'] == 'company_and_bu' and value['bu_metrics'] is None:
+            return 'Choose the business-unit metrics before allocating the mapped accounts.'
+    if state.get('base_formula') and 'statement_contract_id' in value and value['statement_contract_id'] is None:
+        return 'Link the exact statement contract before assembling or drafting the report.'
+    return None
+
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if any(j.status=='unknown' or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now() for j in jobs):return ['ACT12'],'Reconcile the original report operation before any new preparation'
@@ -195,7 +215,6 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if any(j.status=='pending' for j in jobs):return ['ACT11'],'Continue the original native report operation'
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate current accounting evidence and calculation lineage'
     if missing or stale:return [],'Current source evidence is incomplete or stale'
-    if state['unconfigured']:return ['ACT10'],'Configure required native accounting rules'
     current_packets={digest(packet(work,r,value)):r for r in state['reviews']}
     if any(t.status=='open' and t.kind=='factory_accounting_review' and
         (digest(t.context.get('packet')) not in current_packets or current_packets[digest(t.context.get('packet'))]['review']['valid']) for t in tasks):
@@ -205,8 +224,8 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
         if all(any(t.status=='open' and t.kind=='factory_accounting_review' and t.context.get('packet')==packet(work,r,value) for t in tasks) for r in pending):return [],'Required Finance decisions are waiting on current eligible reviewers'
         return ['ACT10'],'Assemble the required exact Finance decision packets'
     if any(t.status=='open' for t in tasks):return ['ACT10'],'Observe current source-owned Finance decisions'
+    if blocker:=setup_blocker(state,value):return ['ACT10'],blocker
     if not state['mapping']:return ['ACT08'],'Prepare the native account alignment and control-total preview'
-    if value['allocation_mode'] is None or value['allocation_mode']=='company_and_bu' and value['bu_metrics'] is None:return ['ACT10'],'Configure the accounting allocation scope'
     if value['allocation_mode']=='company_and_bu' and not state['allocation']:return ['ACT08'],'Prepare the configured native BU allocation'
     if not state['formula']:return ['ACT08'],'Prepare the configured native formula output'
     if value.get('statement_contract_id') is not None and not state.get('statement'):return ['ACT08'],'Bind the exact reviewed statement input inventory'
@@ -226,10 +245,9 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         pk=state['formula'] or state['allocation'] or state['mapping']
         return adapter.investigate(work,source,FinanceRun.objects.get(pk=pk) if pk else None)
     if kind=='ACT10':
-        if state['unconfigured']:raise ValidationError('configuration_needed: configure native accounting components '+', '.join(state['unconfigured']))
-        if state['mapping'] and (value['allocation_mode'] is None or value['allocation_mode']=='company_and_bu' and value['bu_metrics'] is None):
-            raise ValidationError('configuration_needed: explicit company/BU preparation scope is required')
-        current={digest(packet(work,r,value)):r for r in state['reviews']};created=[]
+        packets = [(row, packet(work, row, value)) for row in state['reviews']]
+        current = {digest(bound): row for row, bound in packets}
+        created, unrouted = [], []
         for observed_task in tasks:
             t=HumanTask.objects.select_for_update().get(pk=observed_task.pk)
             if t.kind!='factory_accounting_review' or t.status!='open':continue
@@ -240,10 +258,11 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             elif row is None:
                 t.status='returned';t.revision+=1;t.save(update_fields=['status','revision'])
                 TaskEvent.objects.create(task=t,actor=work.execution_actor,action='factory.packet_superseded',data={'source':source.pk,'reason':'accounting_subject_changed'})
-        for row in state['reviews']:
+        for row, bound in packets:
             if row['review']['valid']:continue
-            bound=packet(work,row,value)
-            if not bound['candidates']:raise ValidationError('owner_needed: current native Finance review authority is unavailable for '+row['purpose'])
+            if not bound['candidates']:
+                unrouted.append({'purpose': row['purpose'], 'subject': row['subject'], 'target': row['id']})
+                continue
             task,_=HumanTask.objects.get_or_create(case=case,factory_key=f'factory:{work.pk}:accounting:{digest(bound)}',defaults={
                 'kind':'factory_accounting_review','created_by':work.execution_actor,'required_role':value['review_role'],
                 'context':{'work':work.pk,'purpose':row['purpose'],'packet':bound}})
@@ -251,7 +270,15 @@ def act(work,choice,value,latest,missing,tasks,jobs):
                 work.status='followup_needed'
                 return {'finding':'An earlier exact Finance decision needs source-owned rework or explicit recheck; it is not automatically retried','approval_granted':False}
             created.append(task.pk)
-        return {'review_tasks':created,'waiting':'finance_review' if created else None,'approval_granted':False}
+        result = {'head': work.source_head_id, 'review_tasks': created,
+                  'waiting': 'finance_review' if created else None, 'approval_granted': False}
+        if not created and (blocker:=setup_blocker(state,value)):
+            work.status = 'configuration_needed'
+            result['finding'] = blocker
+        elif unrouted:
+            work.status = 'owner_needed'
+            result.update(owner_needed_for=unrouted, finding='A current Finance reviewer is needed for a dependent decision.')
+        return result
     if kind=='ACT08':
         if value.get('statement_contract_id') is not None and state.get('base_formula') and not state.get('statement'):
             from apps.finance.statements import assemble
@@ -262,6 +289,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         run=adapter.prepare(work,source,stage,FinanceRun.objects.get(pk=parent_id) if parent_id else None,value['bu_metrics'],inputs(work)['adjustment_ids'])
         return {'finance_run':run.pk,'kind':run.kind,'result_status':run.result['status'],'ledger_posted':False}
     if kind=='ACT09':
+        if 'statement_contract_id' in value and not state.get('statement'):
+            raise ValidationError('configuration_needed: complete the exact statement before drafting this report')
         if value['template_id'] is None or value['audience'] is None:raise ValidationError('configuration_needed: report template and aggregate audience are required')
         version=adapter.draft(work,FinanceRun.objects.get(pk=state['formula']),value['template_id'],value['audience'])
         return {'document_version':version.pk,'finance_run':state['formula']}
@@ -285,8 +314,9 @@ def act(work,choice,value,latest,missing,tasks,jobs):
 def verified(work,value,state=None):
     state=state if state is not None else snapshot(work,value)[0]
     if not state['formula'] or not state['document']:raise ValidationError('Current native accounting output and document binding required')
-    run=FinanceRun.objects.get(pk=state['formula']);report_inputs(run,value['audience'])
+    run=FinanceRun.objects.get(pk=state['formula'])
     binding=FinanceDocumentBinding.objects.select_related('version').get(pk=state['document'])
+    if binding.run_id!=run.pk or binding.version.audience!=value['audience']:raise ValidationError('Exact reviewed run and audience required')
     current_version(work.case,binding.version_id)
     if binding_findings(binding):raise ValidationError('Current exact Finance document projection required')
     publication=Publication.objects.select_related('job').filter(version=binding.version).first()
@@ -295,6 +325,7 @@ def verified(work,value,state=None):
     recipient_access(run,publication.recipient_ids)
     receipts=list(PublicationReceipt.objects.filter(publication=publication).order_by('pk'))
     if not publication.recipient_ids or sorted(r.recipient_id for r in receipts)!=sorted(publication.recipient_ids):raise ValidationError('Every exact native report recipient receipt is required')
+    if any(r.payload_sha256!=binding.version.payload_sha256 or r.payload!=binding.version.payload for r in receipts):raise ValidationError('Receipts must match the exact reviewed accounting document')
     return {'verified':True,'source':run.source_id,'run':run.pk,'binding':binding.pk,'publication':publication.pk,
         'document_version':binding.version_id,'receipt_ids':[r.pk for r in receipts],'ledger_posted':False}
 
@@ -316,6 +347,29 @@ def review_task(work,task,value,reader=None):
     for row in state['reviews']:
         if not row['review']['valid'] and task.context.get('packet')==packet(work,row,value):return row
     raise ValidationError('STALE_VERSION: native accounting subject, policy or review changed')
+
+
+def review_routing_hold(work):
+    if work.status != 'owner_needed':
+        return []
+    return (Attempt.objects.filter(activity__work=work, activity__kind='ACT10', phase='observed',
+                                   result__head=work.source_head_id, result__has_key='owner_needed_for')
+            .order_by('-pk').values_list('result__owner_needed_for', flat=True).first()) or []
+
+
+@transaction.atomic
+def recheck_reviewers(actor, work_id, expected):
+    from . import factory
+    from .factory_progress import set_progress
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case', 'source_head').get(pk=work_id, definition=DEFINITION)
+    factory.access(actor, work.case, 'factory.manage', DEFINITION)
+    if work.revision != expected or not review_routing_hold(work):
+        raise ValidationError('Refresh the work item and select the current reviewer hold.')
+    revised = factory.manage(actor, work.pk, expected, 'resume')
+    set_progress(actor, revised.pk, revised.revision, True)
+    return revised
+
 
 @transaction.atomic
 def decide(actor,task_id,expected,verdict,evidence_id,reason):
@@ -368,9 +422,12 @@ def reconcile(actor,work_id,expected):
 @transaction.atomic
 def recheck(actor,work_id,expected,source_id,adjustment_ids,reason):
     from .factory import access,profile
+    from .factory_accounting_corrections import successor
     work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
     access(actor,work.case,'factory.execute',DEFINITION);case=lock_case(actor,work.case_id,'finance.source')
     if work.revision!=expected:raise ValidationError('STALE_VERSION: accounting work changed')
+    if successor(work):
+        raise ValidationError('Open the corrected accounting work. The returned source and its decisions are retained here.')
     if work.cancel_requested or work.status in ['cancelled','waiting_effect'] or work.lease_until and work.lease_until>timezone.now():raise ValidationError('Stopped or currently owned accounting work cannot be reconstituted')
     if PublicationJob.objects.filter(publication__factory_work=work,status__in=['pending','unknown','leased','held']).exists():raise ValidationError('Resolve original native report work before changing inputs')
     source=analysis.source_for(case,source_id)

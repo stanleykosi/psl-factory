@@ -62,11 +62,13 @@ class CoordinatorConfigurationTests(TestCase):
         cls.actor,cls.case=setup_case(username='coordination-owner',synthetic=False)
         cls.proof=add_evidence(cls.actor,cls.case.pk,'policy_decision','Isolated test decision; no live PSL policy','synthetic:test')
 
-    def test_structured_unknown_settings_have_native_draft_validate_activate_lifecycle_and_csrf(self):
+    def test_openrouter_settings_keep_the_principal_undecided_and_have_no_provider_choice(self):
         from django.test import Client
         a,c,e=self.actor,self.case,self.proof;self.client.force_login(a)
         url=reverse('factory_coordinator_configuration',args=[c.pk])
         response=self.client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Work coordination')
+        self.assertContains(response, 'OpenRouter')
+        self.assertNotContains(response, 'name="contract_id"')
         self.assertEqual(response['Cache-Control'],'no-store')
         secure=Client(enforce_csrf_checks=True);secure.force_login(a)
         self.assertEqual(secure.post(url,{'action':'draft'}).status_code,403)
@@ -75,7 +77,8 @@ class CoordinatorConfigurationTests(TestCase):
         config=Configuration.objects.get(component='OPS.factory_coordinator')
         for state in ['validated','active']:self.assertEqual(self.client.post(url,{'action':'transition','configuration':config.pk,'state':state}).status_code,302)
         value=reference_values(config)[0]
-        self.assertIsNone(value['mode']);self.assertIsNone(value['planner_id']);self.assertIsNone(value['contract_id'])
+        self.assertEqual(value['mode'],'openrouter_coordination_v1')
+        self.assertIsNone(value['planner_id']);self.assertIsNone(value['contract_id'])
 
     def test_invalid_or_unauthorised_principal_and_raw_data_fields_are_rejected(self):
         a,c,e=self.actor,self.case,self.proof

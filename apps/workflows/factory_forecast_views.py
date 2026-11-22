@@ -1,18 +1,37 @@
 """Work-centric forecast UI. All human commands retain native authority checks."""
+from io import BytesIO
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
+from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
+from adapters import case_uploads
 from apps.core.models import Case, Evidence
 from apps.core.workbench import granted
 from apps.documents.models import Template
 from apps.finance.models import ForecastScenario
+from apps.finance import group_forecast
 from apps.finance.forecast_forms import commands
-from . import factory, factory_forecast as service
+from . import factory, factory_forecast as service, factory_forecast_recovery as recovery
+from .factory_execution import can_control
+from .factory_progress_views import StartWithBackground, start_work
 from apps.finance.forecast_workbook import source_ids as workbook_source_ids
 from .factory_forecast_sources import PROTOCOL
+
+
+def monthly_forecast(row):
+    """Project the exact current internal calculation without exposing source rows."""
+    if (row['selection']['audience'] not in ('internal', 'management') or not row['intake_current']
+            or row['status']['stage'] not in ('review', 'publication', 'complete') or row['run'] is None):
+        return None
+    result = row['run'].result
+    coverage = result['coverage']
+    return {'as_of': result['as_of'], 'currency': result['currency'], 'basis': result['basis'],
+            'account_count': len(coverage['accounts']), 'inflows': coverage['inflows'], 'outflows': coverage['outflows'],
+            'periods': [{field: period[field] for field in ('month', 'opening', 'inflow', 'outflow', 'closing')}
+                        for period in result['periods']]}
 
 
 class InputsForm(forms.Form):
@@ -33,7 +52,7 @@ class InputsForm(forms.Form):
         return {'protocol':PROTOCOL,'scenario_id':d['scenario_id'].pk,'as_of':d['as_of'].isoformat(),'months':d['months'],'source_ids':sorted(e.pk for e in d['source_ids']),'template_id':d['template_id'].pk if d['template_id'] else None,'audience':d['audience']}
 
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=service.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Engagement')
@@ -59,15 +78,31 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=service.DEFINITION:raise ValidationError('Choose the registered forecast definition')
-            w=service.start(request.user,d['case'].pk,d['key'],inputs.selection(),d['reference'],d['revision'])
-            return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: service.start(request.user, d['case'].pk, d['key'],
+                              inputs.selection(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,service.finding(exc))
     return render(request,'factory/forecast_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
-    from .factory_views import presentation,permitted
+def detail(request,work,focus=None):
+    from .factory_views import QUEUES,presentation,permitted
+    from .screen_focus import SCREENS,require_action
+    from .factory_progress import set_progress
+    queue=request.GET.get('queue','needs_me')
+    if queue not in QUEUES:queue='needs_me'
+    query=request.GET.get('q','')[:120]
+    if request.method in ('GET', 'HEAD') and focus == 'recovery' and 'observation_proof' in request.GET:
+        proof_id = forms.IntegerField(min_value=1)
+        try:
+            proof = recovery.attachment(request.user, work, proof_id.clean(request.GET.get('observation_proof')))
+            data = case_uploads.read(proof)
+        except (ValidationError, OSError) as exc:
+            raise Http404('The recorded forecast proof is unavailable.') from exc
+        response = FileResponse(BytesIO(data), as_attachment=True, filename=proof.name,
+                                content_type='application/octet-stream')
+        response['Cache-Control'] = 'no-store'
+        return response
     scenario,selected=service.source(work,request.user,False)
     inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,scenario_reference=scenario.reference,initial=selected)
     human_actions={'support','actual','verify','match','unmatch','review','priority','group_review'}
@@ -84,7 +119,8 @@ def detail(request,work):
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('work_revision',p.get('revision','0')));case_revision=int(p.get('case_revision',p.get('revision','0')))
-            if action=='advance':factory.advance(request.user,work.pk,revision)
+            require_action(work,focus,action)
+            if action=='advance':set_progress(request.user,work.pk,revision,True)
             elif action=='correct':
                 if not inputs.is_valid():raise ValidationError('Choose exact scenario, horizon and complete source inventory')
                 service.correct(request.user,work.pk,revision,case_revision,inputs.selection(),p.get('reason',''))
@@ -95,16 +131,98 @@ def detail(request,work):
                 form=next(r['form'] for r in forms_list if r['action']==action)
                 if not form.is_valid():raise ValidationError(form.errors.as_text())
                 service.human_action(request.user,work.pk,revision,form.cleaned_data['revision'],int(p.get('selected_scenario','0')),action,form.cleaned_data)
+            elif action=='group_rules':
+                from apps.finance.group_disclosure_forms import save
+                if selected['audience']!='group' or work.revision!=revision:
+                    raise ValidationError('Review the current group forecast work before changing disclosure rules.')
+                run=service.calculation(work,request.user)
+                if run is None:raise ValidationError('Review a forecast calculation before selecting group disclosure.')
+                save(request.user,work.case,run,p,case_revision)
             elif action=='cancel':service.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')
-            elif action=='reconcile':service.reconcile(request.user,work.pk,revision)
+            elif action=='reconcile':
+                if p.get('record_observation') == '1':
+                    if len(p.getlist('outcome')) != 1 or len(request.FILES.getlist('proof')) > 1:
+                        raise ValidationError('Choose one delivery outcome and attach at most one proof.')
+                    recovery.observe(request.user, work.pk, revision, case_revision, int(p.get('job', '0')),
+                                     p.get('outcome', ''), request.FILES.get('proof'))
+                    messages.success(request, 'Your observation was recorded. Check the original receipt for confirmation.')
+                    return redirect(request.get_full_path())
+                recovery.reconcile(request.user, work.pk, revision, job_id=int(p['job']) if 'job' in p else None)
             elif action=='operate_delivery':service.operate(request.user,work.pk,revision,case_revision,int(p.get('job','0')),p.get('operation',''),p.get('reason',''))
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             else:raise ValidationError('Choose a current forecast work action')
             messages.success(request,'Forecast action recorded');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work)
-    return render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'inputs_form':inputs,'commands':forms_list,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure')})
+        except (ValidationError,ValueError) as exc:
+            messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
+            work.refresh_from_db();work.case.refresh_from_db()
+    row=presentation(request.user,work,include_progress=not focus)
+    last_observation = None
+    if focus in (None, 'recovery') and row['forecast']['jobs'] and can_control(request.user, work):
+        observation = recovery.observations(work).filter(data__source=work.source_head_id).order_by('-pk').first()
+        if observation:
+            last_observation = {'label': recovery.OUTCOMES[observation.data['outcome']], 'at': observation.created_at}
+            if observation.actor_id == request.user.pk and observation.data['proof'] and permitted(request.user,work,'evidence.add'):
+                last_observation['proof_id'] = observation.pk
+    can_attach_proof = permitted(request.user,work,'evidence.add')
+    if focus:
+        forms_list=[entry for entry in forms_list if entry['action'] in SCREENS[work.definition][focus]]
+        if focus=='decision':
+            forms_list=[entry for entry in forms_list if
+                        (entry['action']!='review' or row['forecast']['review_roles']) and
+                        (entry['action']!='group_review' or row['forecast']['group_disclosure'])]
+    management_decision = None
+    if selected['audience'] == 'management' and focus in (None, 'decision'):
+        from .factory_forecast_decisions import management_readback
+        try:
+            management_decision = management_readback(request.user, work, row['forecast'])
+        except (ValidationError, PermissionDenied):
+            pass
+        if (management_decision and management_decision['code'] in ('return', 'reject')
+                and not work.cancel_requested and not row['readiness_changed'] and not row['forecast_original_job']):
+            row['state'] = management_decision['verdict']
+            row['next_action'] = ('Prepare a corrected calculation for fresh Finance review.'
+                                  if management_decision['code'] == 'return' else 'Review the decision before continuing.')
+    group_decisions=None
+    if selected['audience']=='group' and focus in (None,'decision'):
+        from .factory_forecast_decisions import readback
+        try:
+            group_decisions=readback(request.user,work,row['forecast'])
+        except (ValidationError,PermissionDenied):
+            pass
+    group_table=None
+    group_rules_form=None
+    if selected['audience']=='group' and focus in (None,'decision') and permitted(request.user,work,'policy.configure'):
+        from apps.finance.group_disclosure_forms import GroupDisclosureForm
+        from apps.policy.services import active_component
+        try:
+            run=service.calculation(work,request.user)
+            if run:
+                service.forecast.approved(run)
+                configuration=active_component('D10.audience_projection_rules',work.case)
+                group_rules_form=GroupDisclosureForm(request.user,work.case,run,configuration,
+                    request.POST if request.method=='POST' and request.POST.get('action')=='group_rules' else None)
+        except (ValidationError,PermissionDenied):
+            pass
+    binding=row['forecast']['document']
+    if binding and binding.version.audience=='group' and focus in (None,'decision'):
+        try:
+            projected=group_forecast.check_content(binding)
+        except ValidationError:
+            forms_list=[entry for entry in forms_list if entry['action']!='group_review']
+        else:
+            headers=binding.snapshot['projection']['fields']
+            group_table={'headers':headers,'rows':[[item[name] for name in headers] for item in projected['rows']],
+                         'metadata':projected['metadata']}
+    response = render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
+        'group_table':group_table,'group_decisions':group_decisions,'management_decision':management_decision,
+        'monthly_forecast':monthly_forecast(row['forecast']) if focus in (None,'decision') else None,
+        'group_rules_form':group_rules_form,
+        'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),
+        'last_observation':last_observation,'can_attach_proof':can_attach_proof,'delivery_outcomes':recovery.OUTCOMES,
+        'can_configure':permitted(request.user,work,'policy.configure')})
+    response['Cache-Control'] = 'no-store'
+    return response
 
 
 from .factory_views import ProfileForm

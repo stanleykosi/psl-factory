@@ -1,6 +1,7 @@
 """Explicit group intent through existing forecast factory; synthetic sources only."""
 import json
 from pathlib import Path
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.urls import reverse
@@ -20,7 +21,54 @@ from .billing_helpers import evidence,policy
 from .helpers import rev
 
 class GroupForecastFactoryTests(TestCase):
+    def test_structured_group_rule_editor_retains_base_requires_oracle_and_saves_only_a_draft(self):
+        from apps.policy.models import Configuration
+        from apps.policy.services import resolve
+        from apps.identity.models import Grant
+        self.start();self.advance();self.client.force_login(self.a)
+        url=reverse('factory_invoice_decision',args=[self.w.pk])
+        self.assertContains(self.client.get(url),'Save group rules for review')
+        base=active_component('D10.audience_projection_rules',self.c)
+        previous=reference_values(base)[0]
+        values={'action':'group_rules','work_revision':self.w.revision,'case_revision':rev(self.c),
+            'base_configuration':base.pk,'rows':self.g['rows'],'fields':self.g['fields'],
+            'metadata':self.g['metadata'],'recipients':[self.reader.pk],'reviewer_roles':['Finance'],
+            'publisher_roles':['Finance'],'allow_preparer_review':'yes','oracle':self.g['oracle_evidence_id'],
+            'decision':self.c.evidence.filter(kind='policy_decision').first().pk,
+            'effective_from':timezone.now().isoformat()}
+        before=Configuration.objects.filter(case=self.c).count()
+        self.assertContains(self.client.post(url,{**values,'base_configuration':0}),'disclosure rules changed')
+        invalid=self.client.post(url,{**values,'metadata':['as_of']})
+        self.assertContains(invalid,'currency, accounting basis')
+        self.assertNotContains(invalid,'__all__')
+        wrong=evidence(self.a,self.c,'forecast_group_oracle','{}')
+        values['case_revision']=rev(self.c)
+        self.assertContains(self.client.post(url,{**values,'oracle':wrong.pk}),'independent expected report differs')
+        self.assertEqual(Configuration.objects.filter(case=self.c).count(),before)
+        self.assertRedirects(self.client.post(url,values),url)
+        successor=Configuration.objects.filter(case=self.c,component='D10.audience_projection_rules').latest('pk')
+        self.assertNotEqual(successor.pk,base.pk)
+        self.assertEqual(resolve('D10.audience_projection_rules',self.c).configuration.pk,base.pk)
+        result=reference_values(successor)[0]
+        self.assertEqual(result['forecast'],previous['forecast'])
+        self.assertEqual(result['group']['run_hash'],self.run.sha256)
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        from apps.finance.group_disclosure_forms import GroupDisclosureForm
+        from django.core.exceptions import PermissionDenied
+        Grant.objects.filter(case=self.c,user=self.a,action='finance.read').update(active=False)
+        with self.assertRaises(PermissionDenied):
+            GroupDisclosureForm(self.a,self.c,self.run,base)
+        self.assertEqual(self.client.post(url,values).status_code,404)
+        Grant.objects.filter(case=self.c,user=self.a,action='finance.read').update(active=True)
+        Grant.objects.filter(case=self.c,user=self.a,action='policy.configure').update(active=False)
+        values['case_revision']=rev(self.c)
+        self.assertEqual(self.client.post(url,values).status_code,403)
+
     def setUp(self):
+        # A long acceptance run can cross midnight during one review journey.
+        # Keep the test on its starting business date while worker leases use real time.
+        business_date = timezone.localdate()
+        self.enterContext(patch.object(timezone, 'localdate', return_value=business_date))
         self.a,self.c,self.run,self.reader,self.t,self.g,self.expected=configured()
         s=self.run.scenario;p=s.payload
         self.selected={'protocol':PROTOCOL,'scenario_id':s.pk,'as_of':p['as_of'],'months':p['months'],
@@ -53,6 +101,52 @@ class GroupForecastFactoryTests(TestCase):
         self.assertEqual(PublicationReceipt.objects.filter(publication__factory_work=self.w).count(),1)
         self.assertEqual(group_forecast.verified(service.document(self.w).version)['recipient_count'],1)
 
+    def test_group_queue_presentation_reuses_verified_report_and_rechecks_revocation(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        from apps.core.read_observation import observation_scope
+        from apps.identity.models import Grant
+        from apps.workflows.factory_views import presentation
+
+        self.start();self.advance();self.review();self.advance()
+        self.assertEqual(connection.vendor, 'postgresql')
+        self.assertEqual(self.w.status, 'verified')
+        receipt = PublicationReceipt.objects.get(publication__factory_work=self.w)
+        with observation_scope():
+            with (patch.object(service, 'report', wraps=service.report) as reports,
+                  patch.object(service, 'verify', wraps=service.verify) as verification,
+                  CaptureQueriesContext(connection) as scoped_queries):
+                row = presentation(self.a, self.w)
+            reports.assert_called_once()
+            verification.assert_called_once()
+            self.assertEqual(row['forecast']['status']['stage'], 'complete')
+            self.assertFalse(row['readiness_changed'])
+            with CaptureQueriesContext(connection) as duplicate_queries:
+                self.assertEqual(service.report(self.w, self.a)['stage'], 'complete')
+                self.assertEqual(service.verify(self.w, self.a)['receipt_ids'], [receipt.pk])
+        print(f'Group Forecast queue presentation statements: {len(scoped_queries)}; '
+              f'additional statements in the former duplicate checks: {len(duplicate_queries)}')
+        self.assertLess(len(scoped_queries), 1400)
+        self.assertGreater(len(duplicate_queries), 0)
+
+        recipient = Grant.objects.filter(case=self.c, user=self.reader, action='document.receive:group')
+        self.assertEqual(recipient.filter(active=True).count(), 1)
+        recipient.update(active=False)
+        with patch.object(service, 'verify', wraps=service.verify) as verification:
+            held = presentation(self.a, self.w)
+        verification.assert_called_once()
+        self.assertTrue(held['readiness_changed'])
+        self.assertNotEqual(held['forecast']['status']['stage'], 'complete')
+        recipient.update(active=True)
+        self.assertFalse(presentation(self.a, self.w)['readiness_changed'])
+
+        disclosure = active_component('D10.audience_projection_rules', self.c)
+        transition(self.a, disclosure.pk, 'revoked')
+        stale = presentation(self.a, self.w)
+        self.assertTrue(stale['readiness_changed'])
+        self.assertNotEqual(stale['forecast']['status']['stage'], 'complete')
+        self.assertTrue(PublicationReceipt.objects.filter(pk=receipt.pk, recipient=self.reader).exists())
+
     def test_missing_group_policy_stops_group_only_without_draft_or_investigation_leak(self):
         projection=reference_values(active_component('D10.audience_projection_rules',self.c))[0];projection.pop('group')
         policy(self.a,self.c,'D10.audience_projection_rules',projection)
@@ -78,11 +172,17 @@ class GroupForecastFactoryTests(TestCase):
     def test_primary_work_console_exact_group_review_and_readonly_get(self):
         self.start();self.advance();self.client.force_login(self.a)
         before=(FactoryAttempt.objects.count(),ForecastBinding.objects.count(),self.w.revision,rev(self.c))
-        url=reverse('factory_detail',args=[self.w.pk]);response=self.client.get(url)
+        url=reverse('factory_invoice_decision',args=[self.w.pk]);response=self.client.get(url)
         self.assertEqual(response.status_code,200);self.assertContains(response,'Separate group disclosure report')
         self.assertContains(response,'Decide exact group disclosure and recipients')
         self.assertContains(response,'Exact group disclosure decision');self.assertContains(response,self.reader.username)
+        self.assertContains(response,'Selected forecast rows')
+        self.assertContains(response,'<td>50</td>',html=True)
+        self.assertNotContains(response,'7391')
         self.assertContains(response,service.document(self.w).version.payload_sha256)
+        actuals=self.client.get(reverse('factory_work_response',args=[self.w.pk]))
+        self.assertNotContains(actuals,'Exact group disclosure decision')
+        self.assertNotContains(actuals,self.reader.username)
         self.w.refresh_from_db();self.assertEqual(before,(FactoryAttempt.objects.count(),ForecastBinding.objects.count(),self.w.revision,rev(self.c)))
         b=service.document(self.w)
         response=self.client.post(url,{'action':'group_review','revision':rev(self.c),'work_revision':self.w.revision,

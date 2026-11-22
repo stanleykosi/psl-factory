@@ -139,6 +139,9 @@ def record(actor,case_id,packet_id,kind,operation_key,evidence_id,note,expected,
  case=locked(actor,case_id,'recognition.'+kind,expected)
  packet,e,intent,old,auth,snapshot=guard_record(actor,case,packet_id,kind,operation_key,evidence_id,note,verdict,decision_evidence_id)
  if old:return old
+ if kind=='review' and verdict=='reviewed':
+  from apps.workflows.native_stations import receive_advice
+  receive_advice('F33',packet,actor,case=case)
  payload={'intent':intent,'snapshot':snapshot,'recognised_amount':None,'accounting_posted':False,'invoice_approved':False,'payment_approved':False}
  r=RecognitionRecord.objects.create(packet=packet,kind=kind,operation_key=operation_key,payload=payload,authority=auth,evidence=e,actor=actor)
  event(actor,case,'recognition.'+kind,record=r.pk,packet=packet.pk);bump(case);return r

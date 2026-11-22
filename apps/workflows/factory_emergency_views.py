@@ -3,6 +3,7 @@ from uuid import uuid4
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import render,redirect
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
@@ -13,6 +14,7 @@ from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from apps.pmo.models import EmergencyProfile,EmergencyAuthorization,EmergencyOutcome
 from . import factory,factory_emergency as emergency
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,change_id=None,**kwargs):
@@ -26,10 +28,11 @@ class InputsForm(forms.Form):
         self.fields['outcome_id']=forms.ModelChoiceField(queryset=EmergencyOutcome.objects.filter(profile__in=profiles).select_related('profile__version__change').order_by('-pk'),required=False,label='Actual recorded implementation',empty_label='Not recorded or not selected')
         self.fields['outcome_id'].label_from_instance=lambda o:f'{o.profile.version.change.reference} · outcome {o.pk} · actual {o.implemented_at.isoformat()}'
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['project_artifact','status_report']),required=False,label='Controlled retrospective template')
-        self.fields['audience']=forms.ChoiceField(choices=[('client','Client'),('internal','Internal')],label='Explicit report audience')
+        self.fields['audience']=forms.TypedChoiceField(choices=[('', 'Choose when preparing the report'),
+            ('client','Client'),('internal','Internal')], required=False, empty_value=None, label='Report audience')
     def inputs(self):return {**{k:self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['template_id','authorization_id','outcome_id']},'audience':self.cleaned_data['audience']}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=emergency.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -47,7 +50,17 @@ class OutcomeForm(forms.Form):
 
 @require_http_methods(['GET','HEAD','POST'])
 def create(request):
-    case_id=request.POST.get('case') if request.method=='POST' else request.GET.get('case')
+    data = request.POST if request.method == 'POST' else request.GET
+    mode = data.get('mode')
+    if mode == 'classify':
+        from .factory_emergency_intake import classification
+        return classification(request)
+    if mode == 'incident' or mode is None and request.method != 'POST':
+        from .factory_emergency_intake import create as create_incident
+        return create_incident(request)
+    if mode not in (None, 'existing'):
+        raise Http404('Choose an available Emergency intake.')
+    case_id=data.get('case')
     try:form=StartForm(request.user,request.POST if request.method=='POST' else None,case_id=case_id)
     except (ValidationError,ValueError):form=StartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available project')
     inputs=InputsForm(form.selected,request.POST if request.method=='POST' else None) if form.selected else None
@@ -55,19 +68,23 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=emergency.DEFINITION:raise ValidationError('Choose the registered Emergency definition')
-            w=emergency.start(request.user,d['case'].pk,d['key'],inputs.cleaned_data['profile_id'].pk,inputs.inputs(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: emergency.start(request.user, d['case'].pk, d['key'],
+                              inputs.cleaned_data['profile_id'].pk, inputs.inputs(), d['reference'], d['revision']),
+                              d['background'])
         except ValidationError as exc:form.add_error(None,emergency.finding(exc))
     return render(request,'factory/emergency_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
     from .factory_views import presentation,permitted
+    from .screen_focus import require_action
     p,data=emergency.source(work,request.user,False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,change_id=p.version.change_id,initial=dict(data['inputs'],profile_id=p.pk))
     actual_form=OutcomeForm(request.POST if request.method=='POST' and request.POST.get('action')=='capture_outcome' else None)
     if request.method=='POST':
         try:
             d=request.POST;action=d.get('action');revision=int(d.get('revision','0'));case_revision=int(d.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Choose exact native Emergency sources')
@@ -78,7 +95,8 @@ def detail(request,work):
                 if action=='capture_outcome':
                     if not actual_form.is_valid():raise ValidationError('Provide the actual implementation timestamp in the displayed time zone')
                     values['implemented_at']=actual_form.cleaned_data['implemented_at']
-                emergency.human_action(request.user,work.pk,revision,case_revision,int(d.get('profile','0')),action,values)
+                emergency.human_action(request.user,work.pk,revision,case_revision,int(d.get('profile','0')),action,values,
+                                       pending_only=focus == 'decision')
             elif action=='cancel':emergency.cancel(request.user,work.pk,revision)
             elif action=='restart':emergency.restart(request.user,work.pk,revision,case_revision,d.get('reason',''))
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')
@@ -89,4 +107,14 @@ def detail(request,work):
             messages.success(request,'Emergency evidence action recorded. Select newly recorded native references explicitly when needed.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/emergency_detail.html',{'row':row,'case':work.case,'inputs_form':form,'outcome_form':actual_form,'time_zone':timezone.get_current_timezone_name(),'evidence':public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk'),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+    evidence = public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
+    choices, history, decision_evidence = [], [], []
+    if focus == 'decision' and not data['inputs']['outcome_id'] and row['emergency']['status']['stage'] != 'source':
+        choices, history = emergency.preauthorization_decisions(request.user, work.case, row['emergency']['profile'])
+        if not row['emergency']['human']['preauthorization_decision']:
+            choices = []
+        if choices:
+            decision_evidence = evidence.filter(kind='emergency_decision')[:30]
+    return render(request,'factory/emergency_detail.html',{'row':row,'case':work.case,'inputs_form':form,'outcome_form':actual_form,'time_zone':timezone.get_current_timezone_name(),'evidence':evidence,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk'),'focus':focus,
+                  'preauthorization_options': choices, 'preauthorization_history': history,
+                  'preauthorization_evidence': decision_evidence})

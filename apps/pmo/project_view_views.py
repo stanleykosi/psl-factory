@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.http import Http404,JsonResponse
 from django.shortcuts import render,redirect
 from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 from apps.core.models import Case
 from apps.core.views import accessible_case
 from apps.core.workbench import active
@@ -19,17 +20,22 @@ def index(request):
     response['Cache-Control']='no-store';return response
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def audience(request,case_id,key):
     active(request.user)
     case=Case.objects.filter(pk=case_id,grant__user=request.user,grant__active=True,grant__action='project.view').first()
     if not case:raise Http404
     try:
-        if request.GET.get('inspect')=='1':
+        if request.method == "GET" and request.GET.get('inspect')=='1':
             from apps.agents.project_view import investigate
             return JsonResponse(investigate(request.user,case.pk,key),headers={'Cache-Control':'no-store'})
+        from .coordinator_visibility import acknowledge, view_digest
+        received = None
+        if request.method == "POST":
+            received = acknowledge(request.user,case.pk,key,request.POST.get("view_digest"))
         value=d.projection(request.user,case.pk,key)
         from apps.identity.models import Grant
-        response=render(request,'pmo/project_view.html',{'projection':value,'can_inspect':Grant.objects.filter(case=case,user=request.user,action='agent.project_view',active=True).exists(),'case_id':str(case.pk),'audience':key})
+        response=render(request,'pmo/project_view.html',{'projection':value,'can_inspect':Grant.objects.filter(case=case,user=request.user,action='agent.project_view',active=True).exists(),'case_id':str(case.pk),'audience':key,'view_digest':view_digest(request.user,value),'received':received})
     except ValidationError as exc:
         response=render(request,'pmo/project_view.html',{'case_id':str(case.pk),'audience':key,'hold':str(exc)},status=409)
     response['Cache-Control']='no-store';return response

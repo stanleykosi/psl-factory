@@ -1,0 +1,35 @@
+{% load studio_ui %}
+<div class="table-wrap">
+  <h3>Receivables and reconciliation</h3>
+  <p>{{ entry.receivables.status }}{% if entry.receivables.cutoff %} · Close date {{ entry.receivables.cutoff|date:'d M Y' }}{% endif %}</p>
+  {% if entry.receivables.pk %}
+  <p>Figures as captured on {{ entry.receivables.date|date:'d M Y' }} · Recorded {{ entry.receivables.recorded|date:'d M Y, H:i T' }} · Capture {{ entry.receivables.pk }}</p>
+  {% if entry.receivables.groups %}
+  <table>
+    <thead><tr><th scope="col">Customer and contract</th><th scope="col">Currency and basis</th><th scope="col">Outstanding</th><th scope="col">Overdue</th><th scope="col">Unallocated cash</th></tr></thead>
+    <tbody>{% for group in entry.receivables.groups %}<tr>
+      <th scope="row">{{ group.customer }} · {{ group.contract }}</th>
+      <td>{{ group.currency }} · {{ group.amount_basis|readable }}</td>
+      <td>{{ group.receivable|default_if_none:'Unknown' }}</td>
+      <td>{{ group.overdue|default_if_none:'Unknown' }}</td>
+      <td>{{ group.unallocated_cash|default_if_none:'Unknown' }}</td>
+    </tr>{% endfor %}</tbody>
+  </table>
+  {% if entry.receivables.total_groups > 12 %}<p>Showing 12 of {{ entry.receivables.total_groups }} recorded customer and contract groups.</p>{% endif %}
+  {% else %}<p>This capture contains no customer and contract balance rows.</p>{% endif %}
+  <h4>Exceptions at capture</h4>
+  {% if entry.receivables.exceptions %}<ul>
+    {% for label,count in entry.receivables.exceptions %}<li>{{ label }} · {{ count }}</li>{% endfor %}
+  </ul>{% else %}<p>The capture records no exceptions in the checks it covers.</p>{% endif %}
+  {% endif %}
+  <div class="actions">
+    <a href="{% url 'finance_settlement' entry.case.pk %}">Investigate invoices, receipts and allocations</a>
+    {% if entry.can_capture %}
+    <form method="post" action="{% url 'design_capture_month_end_receivables' entry.case.pk %}">
+      {% csrf_token %}<input type="hidden" name="month" value="{{ month }}"><input type="hidden" name="revision" value="{{ entry.case.revision }}">
+      {% if return_to %}<input type="hidden" name="return_to" value="{{ return_to }}">{% endif %}
+      <button class="button secondary" type="submit">Capture today’s receivables</button>
+    </form>
+    {% endif %}
+  </div>
+</div>

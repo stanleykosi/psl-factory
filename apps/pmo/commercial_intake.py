@@ -28,7 +28,7 @@ def validate_sources(actor,case,value):
         read_inputs(source.body,ARRAY(INPUT_VALUE,1))
     if value['oracle_id'] is not None and value['rule_id'] is None:raise ValidationError('Name the actual rule before linking its independent oracle')
     if value['rule_id'] is not None:
-        rule=costing.rule_for(case,value['rule_id']);oracle=costing.oracle_for(rule,value['oracle_id']) if value['oracle_id'] is not None else None
+        rule=costing.rule_for_use(actor,case,value['rule_id']);oracle=costing.oracle_for(rule,value['oracle_id']) if value['oracle_id'] is not None else None
         costing.current_source(rule,oracle)
     if value['template_id'] is not None and not Template.objects.filter(case=case,pk=value['template_id'],definition__document_type='sow').exists():raise ValidationError('Exact controlled SOW template required')
     if value['predecessor_id'] is not None and not CommercialRevision.objects.filter(dossier__case=case,pk=value['predecessor_id']).exists():raise ValidationError('Commercial predecessor belongs to another case')

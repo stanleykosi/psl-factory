@@ -1,0 +1,30 @@
+{% load studio_ui %}
+<section class="card">
+  <h2>Current rules</h2>
+  <div class="table-wrap detail-table">
+    <table>
+      <thead><tr><th scope="col">Rule</th><th scope="col">Area</th><th scope="col">Current value</th><th scope="col">Version</th></tr></thead>
+      <tbody>
+        {% for row in rule_rows %}
+        <tr>
+          <th scope="row">{% if row.url %}<a href="{{ row.url }}">{{ row.label }}</a>{% else %}{{ row.label }}{% endif %}</th>
+          <td data-label="Area">{{ row.area }}</td>
+          <td data-label="Current value">
+            {% if row.roles %}
+              {% for role in row.roles %}{{ role|role_name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            {% elif row.value %}
+              {{ row.value }}
+              {% if row.details %}<ul>{% for item in row.details %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+            {% elif row.status == 'MISSING' %}Not set
+            {% elif row.status == 'UNAVAILABLE' %}Access required
+            {% else %}{{ row.status|readable }}{% endif %}
+          </td>
+          <td data-label="Version">{% if row.version %}Version {{ row.version }}{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review rule versions and configuration</a></p>{% else %}<p>View access only.</p>{% endif %}
+  <p class="coverage-note">Checked {{ observed_at|date:'d M Y H:i:s T' }}.</p>
+</section>

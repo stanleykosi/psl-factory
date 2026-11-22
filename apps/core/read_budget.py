@@ -10,10 +10,19 @@ class ReadLimit(Exception):
 
 
 @contextmanager
-def limit_queries(remaining):
+def limit_queries(remaining, *, deadline=None):
+    from time import monotonic
+
     def charge(execute, sql, params, many, context):
         nonlocal remaining
-        if remaining == 0:
+        # A limit raised inside a nested native transaction must still let
+        # Django unwind its savepoint. These statements cannot read data or
+        # perform a business action; charging them after exhaustion would
+        # leave the surrounding request transaction unusable.
+        cleanup=sql.lstrip().upper()
+        if cleanup.startswith(('ROLLBACK TO SAVEPOINT ', 'RELEASE SAVEPOINT ')):
+            return execute(sql, params, many, context)
+        if remaining == 0 or (deadline is not None and monotonic() >= deadline):
             raise ReadLimit
         remaining -= 1
         return execute(sql, params, many, context)

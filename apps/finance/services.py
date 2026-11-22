@@ -45,6 +45,10 @@ def validate_import(actor, case_id, batch_id, expected):
 def begin_invoice_preparation(actor, case_id, handoff_id, expected):
     case = lock_case(actor, case_id, 'finance.prepare', expected)
     handoff = Handoff.objects.get(case=case,pk=handoff_id)
+    from apps.pmo.coordinator_intake import accept
+    accept(actor,case,handoff.milestone,"P12")
+    from apps.workflows.native_stations import receive_advice
+    receive_advice('F34', handoff.milestone, actor, case=case)
     result, created = InvoicePreparation.objects.get_or_create(handoff=handoff)
     if not created:
         raise ValidationError('Preparation already exists for this handoff')

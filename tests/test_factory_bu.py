@@ -1,8 +1,10 @@
 """Connected BU scope, actual native reviews and aggregate-only receipts."""
 import json
+from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 from copy import deepcopy
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import connection,transaction,DatabaseError
@@ -11,9 +13,9 @@ from django.utils import timezone
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
-from apps.policy.bu_validators import SOURCE
+from apps.policy.bu_validators import DISCLOSE,SOURCE
 from apps.workflows import factory,factory_bu as bu
-from apps.workflows.models import FactoryWork,FactoryAttempt
+from apps.workflows.models import FactoryWork,FactoryAttempt,FactoryProgress
 from apps.finance.bu_models import BUReport,BUReceipt,BUWork
 from tests.bu_helpers import fixture,rule,review,source,policy
 from tests.helpers import rev
@@ -58,6 +60,51 @@ class FactoryBUTests(TestCase):
         review(self.f,self.rule);self.advance();self.assertIsNotNone(bu.result(self.work))
     def test_unreviewed_event_source_wait(self):
         self.start('event',False);self.advance();self.assertIsNone(bu.result(self.work));self.assertEqual(bu.report(self.work)['stage'],'source_review')
+    def test_focused_staff_reviews_publication_and_private_recipient_receipt(self):
+        self.start(approved=False);self.advance();f=self.f
+        decision=reverse('factory_invoice_decision',args=[self.work.pk])
+        publication=reverse('factory_work_response',args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery',args=[self.work.pk])
+        self.client.force_login(f['reviewer']);self.assertContains(self.client.get(decision),'Review exception rule')
+        self.assertNotContains(self.client.get(decision),'Publish exact aggregate')
+        command={'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),
+                 'work_id':self.rule.pk,'purpose':'rule','verdict':'approve','operation_key':'http-staff-rule',
+                 'evidence_id':f['e']['bu_review'].pk}
+        self.assertContains(self.client.post(publication,command),'Choose an available action on this page.')
+        self.assertFalse(self.rule.reviews.exists())
+        self.assertEqual(self.client.post(decision,command).status_code,302)
+        self.advance();result=bu.result(self.work)
+        self.assertContains(self.client.get(decision),'Review business-unit totals')
+        self.assertEqual(self.client.post(decision,{**command,'revision':self.work.revision,'case_revision':rev(f['case']),
+                         'work_id':result.pk,'purpose':result.kind,'operation_key':'http-staff-result'}).status_code,302)
+        self.client.force_login(f['preparer'])
+        self.assertContains(self.client.get(publication),'Publish exact aggregate')
+        self.assertEqual(self.client.post(publication,{'action':'publish','revision':self.work.revision,
+                         'case_revision':rev(f['case'])}).status_code,302)
+        report=bu.publication(self.work)
+        self.assertContains(self.client.get(recovery),'Waiting for recipient receipts')
+        self.client.force_login(f['manager'])
+        page=self.client.get(recovery);self.assertContains(page,'Acknowledge receipt as myself')
+        self.assertNotContains(page,'Inspect restricted subject')
+        self.assertEqual(self.client.get(decision).status_code,403)
+        FactoryWork.objects.filter(pk=self.work.pk).update(revision=self.work.revision+1,lease_until=timezone.now()+timedelta(minutes=1))
+        queued=FactoryProgress.objects.create(work=self.work,requested_by=f['preparer'],status='waiting',
+                                             available_at=timezone.now()+timedelta(minutes=2),observation='awaiting-receipt')
+        self.assertEqual(self.client.post(recovery,{'action':'receive','revision':self.work.revision,
+                         'case_revision':rev(f['case']),'publication_id':report.pk}).status_code,302)
+        self.assertEqual(BUReceipt.objects.get(report=report).actor,f['manager'])
+        previous_due=queued.available_at;queued.refresh_from_db()
+        self.assertLess(queued.available_at,previous_due);self.assertEqual(queued.observation,'')
+        FactoryWork.objects.filter(pk=self.work.pk).update(lease_until=None)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+    def test_small_group_hold_hides_publication_while_review_survives(self):
+        f=self.f;policy(f,DISCLOSE,dict(f['bu_config']['disclosure'],minimum_staff=10))
+        self.start();self.advance();review(f,bu.result(self.work));self.advance()
+        self.client.force_login(f['preparer'])
+        url=reverse('factory_work_response',args=[self.work.pk]);page=self.client.get(url)
+        self.assertContains(page,'Small-group protection holds the whole report')
+        self.assertNotContains(page,'Publish exact aggregate')
+        self.assertFalse(BUReport.objects.exists())
     def test_known_exception_omitted_holds_not_zero_or_previous_ratio(self):
         self.start();self.inputs['rule_ids']=[]
         bu.correct(self.f['preparer'],self.work.pk,self.work.revision,rev(self.f['case']),self.inputs,'Explicit changed exclusion selection');self.work.refresh_from_db();self.advance()
@@ -74,6 +121,25 @@ class FactoryBUTests(TestCase):
         self.start();self.assertEqual(bu.start(self.f['preparer'],self.f['case'].pk,'OTHER',self.inputs,'Same scope').pk,self.work.pk)
         with self.assertRaises(ValidationError):bu.start(self.f['preparer'],self.f['case'].pk,'BU-1',self.inputs,'Changed description')
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_drawer_requires_current_sources_and_refreshes_its_choices(self):
+        from apps.workflows.factory_bu_views import InputsForm
+
+        f = self.f
+        sample_event = source(f)
+        self.client.force_login(f['preparer'])
+        url = reverse('factory_create') + '?definition=' + bu.DEFINITION + '&case=' + str(f['case'].pk)
+        available = self.client.get(url)
+        self.assertContains(available, f'Payroll match {f["match"].pk}')
+        self.assertContains(available, f'Accepted event source {sample_event.pk}')
+        later = timezone.now() + timedelta(days=90)
+        with patch('apps.finance.payroll.timezone.now', return_value=later):
+            # Simulate source age at the form boundary without expiring the test login session.
+            unavailable = InputsForm(f['case'], f['preparer'], starting=True)
+        self.assertFalse(unavailable.has_current_sources)
+        self.assertFalse(unavailable.fields['payroll_id'].queryset.exists())
+        self.assertFalse(unavailable.fields['source_id'].queryset.exists())
+        self.assertFalse(FactoryWork.objects.exists())
     def test_cross_case_and_wrong_native_kind_inputs_denied(self):
         self.start();bad=dict(self.inputs,payroll_id=999999)
         with self.assertRaises(ValidationError):bu.inputs_checked(self.f['preparer'],self.f['case'],bad)
@@ -93,7 +159,28 @@ class FactoryBUTests(TestCase):
         args=(f['preparer'],pk,self.work.revision,rev(f['case']),self.inputs,self.profile.pk,'fresh-bu','Fresh instruction')
         bu.restart(*args);self.work.refresh_from_db();self.assertEqual(self.work.pk,pk);self.assertEqual(self.work.budget_used,spent);self.assertNotEqual(self.work.source_head_id,head);self.assertTrue(self.work.activities.exists());bu.restart(*args)
     def test_returned_result_can_rebuild_reviewed_successor_preserving_old_result(self):
-        self.start();self.advance();old=bu.result(self.work);review(self.f,old,'return');spent=self.work.budget_used;bu.correct(self.f['preparer'],self.work.pk,self.work.revision,rev(self.f['case']),self.inputs,'Source-owned rework');self.work.refresh_from_db();self.assertEqual(self.work.budget_used,spent);self.advance();self.assertNotEqual(bu.result(self.work).pk,old.pk);self.assertTrue(BUWork.objects.filter(pk=old.pk).exists())
+        f = self.f
+        self.start()
+        self.advance()
+        old = bu.result(self.work)
+        returned = review(f, old, 'return')
+        spent = self.work.budget_used
+        original_due = timezone.now() + timedelta(minutes=2)
+        progress = FactoryProgress.objects.create(work=self.work, requested_by=f['preparer'], status='waiting',
+                                                  available_at=original_due, observation='awaiting-result')
+        bu.correct(f['preparer'], self.work.pk, self.work.revision, rev(f['case']), self.inputs, 'Source-owned rework')
+        self.work.refresh_from_db()
+        progress.refresh_from_db()
+        self.assertEqual(self.work.budget_used, spent)
+        self.assertEqual(progress.requested_by_id, f['preparer'].pk)
+        self.assertEqual(progress.status, 'waiting')
+        self.assertLess(progress.available_at, original_due)
+        self.assertEqual(progress.observation, '')
+        self.advance()
+        replacement = bu.result(self.work)
+        self.assertNotEqual(replacement.pk, old.pk)
+        self.assertFalse(replacement.reviews.exists())
+        self.assertTrue(old.reviews.filter(pk=returned.pk, verdict='return').exists())
     def test_primary_intake_form_is_typed_and_rejects_extra_fields(self):
         f=self.f;self.client.force_login(f['preparer']);url=reverse('factory_create')+'?definition='+bu.DEFINITION+'&case='+str(f['case'].pk)
         response=self.client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Exceptions to exclude');self.assertNotContains(response,'JSON')
@@ -240,4 +327,5 @@ class FactoryBUPublishedTests(TestCase):
     def test_native_recipient_get_has_no_private_business_fields_and_is_read_only(self):
         f=self.f;self.client.force_login(f['manager']);before=self.rowsets();response=self.client.get(reverse('factory_detail',args=[self.work.pk]));self.assertEqual(response.status_code,200)
         self.assertEqual(before,self.rowsets());self.assertContains(response,'Inspect your aggregate report')
+        self.assertContains(response,'Received aggregate report');self.assertNotContains(response,self.work.request['reference'])
         for private in ['E900','E002','BASIC','standard_pool_ref','weight_0','Inspect restricted subject','source_id','payroll_id','rule_ids','comparison_id']:self.assertNotContains(response,private)

@@ -5,12 +5,22 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.shortcuts import render, redirect
 from apps.core.views import accessible_case
 from apps.agents.models import AgentRun
+from apps.identity.models import Grant
 from .forms import CommandForm
 from .models import UsageIntakeSource, UsageIntakeReceipt
 from . import usage_intake as domain
 
 
-def commands(case, data=None):
+COMMAND_GRANTS = {
+    'receive': 'finance.billing.capture',
+    'inspect': 'agent.billing',
+    'accept': 'finance.billing.capture',
+    'withdraw': 'finance.billing.capture',
+    'lookup': 'finance.read',
+}
+
+
+def commands(actor, case, data=None):
     def source(optional=False):
         return forms.ModelChoiceField(UsageIntakeSource.objects.filter(case=case), required=not optional)
     def evidence(kind):
@@ -24,8 +34,12 @@ def commands(case, data=None):
         'withdraw': ('Withdraw source from future dependent use', {'source': source(), 'evidence': evidence('usage_intake_withdrawal'), 'reason': forms.CharField(max_length=1000)}),
         'lookup': ('Look up uncertain operation before retry', {'operation_key': forms.CharField(max_length=100)}),
     }
+    grants = set(Grant.objects.filter(user=actor, case=case, active=True, action__in=COMMAND_GRANTS.values())
+                 .values_list('action', flat=True))
     result = []
     for action, (label, fields) in definitions.items():
+        if COMMAND_GRANTS[action] not in grants:
+            continue
         form = CommandForm(data if data and data.get('action') == action else None,
                            initial={'action': action, 'revision': case.revision}, auto_id='intake_' + action + '_%s')
         form.fields.update(fields)
@@ -35,13 +49,16 @@ def commands(case, data=None):
 
 @login_required
 def workbench(request, case_id):
-    case = accessible_case(request.user, case_id)
+    case = accessible_case(request.user, case_id, source_action='finance.read')
     domain.access(request.user, case)
-    forms = commands(case, request.POST if request.method == 'POST' else None)
+    forms = commands(request.user, case, request.POST if request.method == 'POST' else None)
     receipt = None
     if request.method == 'POST':
         try:
-            command = next((x for x in forms if x['action'] == request.POST.get('action')), None)
+            requested = request.POST.get('action')
+            command = next((x for x in forms if x['action'] == requested), None)
+            if command is None and requested in COMMAND_GRANTS:
+                raise PermissionDenied('This account is not authorized for that usage action.')
             if not command or not command['form'].is_valid():
                 raise ValidationError(command['form'].errors.as_text() if command else 'Select a usage-intake action')
             d = command['form'].cleaned_data

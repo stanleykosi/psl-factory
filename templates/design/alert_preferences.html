@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Alert preferences · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'design_alerts' %}">← Alerts</a>
+<header class="page-heading"><div><h1>How you’re alerted</h1><p class="lede">Choose where to receive a reminder to check your work.</p></div></header>
+<section class="card onboarding-card"><form method="post">
+  {% csrf_token %}{{ form.revision }}{{ form.non_field_errors }}
+  <p>{{ form.email_requested }} {{ form.email_requested.label_tag }}<br>{% if email_ready %}Ready to send{% else %}Waiting for a verified email address{% endif %}</p>
+  <p>{{ form.whatsapp_requested }} {{ form.whatsapp_requested.label_tag }}<br>{% if whatsapp_ready %}Ready to send{% else %}Waiting for a verified WhatsApp number{% endif %}</p>
+  {{ form.revision.errors }}
+  <button class="button primary" type="submit">Save preferences</button>
+</form></section>
+<section class="card onboarding-card">
+  <h2>Recent delivery</h2>
+  {% if sample_mailbox %}<p>Email and WhatsApp deliveries here use sample destinations. <a href="{% url 'design_sample_mailbox' %}">Open sample recovery inbox</a></p>{% endif %}
+  {% for row in recent %}
+    <p><strong>{{ row.get_channel_display }}</strong> · {{ row.get_state_display }}<br>
+      {% if row.delivered_at %}<time>{{ row.delivered_at }}</time> · {{ row.receipt }}{% else %}<time>{{ row.created_at }}</time>{% endif %}</p>
+  {% empty %}<p>No recent email or WhatsApp delivery.</p>{% endfor %}
+</section>
+{% endblock %}

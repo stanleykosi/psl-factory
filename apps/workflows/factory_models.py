@@ -40,6 +40,19 @@ class FactoryWork(models.Model):
         constraints=[models.UniqueConstraint(fields=['case','key'],name='factory_work_identity'),models.UniqueConstraint(fields=['case','definition','business_key'],name='factory_business_identity'),models.CheckConstraint(condition=Q(budget_used__lte=F('budget_limit')),name='factory_shared_budget')]
 
 
+class FactoryProgress(models.Model):
+    work = models.OneToOneField(FactoryWork, on_delete=models.PROTECT, related_name='background_progress')
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    status = models.CharField(max_length=12, default='queued')
+    available_at = models.DateTimeField()
+    token = models.UUIDField(null=True)
+    observation = models.CharField(max_length=64, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['status', 'available_at'], name='factory_progress_due')]
+
+
 class FactoryActivity(models.Model):
     work=models.ForeignKey(FactoryWork,on_delete=models.PROTECT,related_name='activities')
     parent=models.ForeignKey('self',null=True,on_delete=models.PROTECT)

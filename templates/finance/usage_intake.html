@@ -18,6 +18,6 @@
 <section class="workflow-panel"><h2>Delivery receipts</h2>
 {% for r in receipts %}<p>Receipt #{{ r.pk }} · {{ r.delivery_ref }} · operation {{ r.operation_key }} · {{ r.source }} · {% if r.duplicate_of_id %}Duplicate of receipt #{{ r.duplicate_of_id }}. No additional usage.{% else %}Original delivery.{% endif %}</p>{% empty %}<p>No delivery receipts.</p>{% endfor %}
 </section>
-<section class="workflow-panel"><h2>Intake and recovery actions</h2>{% for command in commands %}<details><summary>{{ command.label }}</summary><form method="post">{% csrf_token %}{{ command.form.as_p }}<button>{{ command.label }}</button></form></details>{% endfor %}</section>
+<section class="workflow-panel"><h2>Intake and recovery actions</h2>{% for command in commands %}<details id="action-{{ command.action }}"><summary>{{ command.label }}</summary><form method="post">{% csrf_token %}{{ command.form.as_p }}<button>{{ command.label }}</button></form></details>{% endfor %}</section>
 {% for a in agents %}<section class="workflow-panel"><h2>Cited investigation #{{ a.pk }}</h2>{% for f in a.result.missing_fields %}<p>{{ f }}</p>{% endfor %}<p>{{ a.result.next_work }}</p><details><summary>Scoped citations and result</summary><pre>{{ a.result }}</pre></details></section>{% endfor %}
 {% endblock %}

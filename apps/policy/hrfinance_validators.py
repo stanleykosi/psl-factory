@@ -15,17 +15,42 @@ REQUIRED=['employee_id','bu','effective_from','effective_until']
 MONTH={'type':'string','pattern':r'^\d{4}-(0[1-9]|1[0-2])$'}
 IDS={'type':'array','minItems':1,'maxItems':100,'uniqueItems':True,'items':ID}
 FIELD_LIST={'type':'array','minItems':4,'maxItems':7,'uniqueItems':True,'items':{'enum':FIELDS}}
+EXTENDED_FIELDS = FIELDS + ['gross_pay', 'deductions', 'bank_account', 'home_address', 'date_of_birth']
+EXTENDED_FIELD_LIST = {'type': 'array', 'minItems': 4, 'maxItems': len(EXTENDED_FIELDS),
+                       'uniqueItems': True, 'items': {'enum': EXTENDED_FIELDS}}
+DISCLOSURE_V2 = 'schema:psl/hr-finance-disclosure/v2'
+DISCLOSURE_FORMAT_V2 = 'psl.hr-finance-disclosure/v2'
 TEXT={'type':'string','minLength':1,'maxLength':1000}
 SCHEMAS={
  SCOPE_ROUTE:('schema:psl/hr-scope-clarification-route/v1',obj({'owner_id':ID,'action':{'const':'confirm_minimum_scope'},'question_version':{'const':1},'disclosure':{'const':'codes_and_source_identity_only'}})),
  AUTHORITY:('schema:psl/hr-finance-authority/v1',obj({'human_only':{'const':True},'assignments':{'type':'array','minItems':1,'maxItems':100,'items':obj({'user_id':ID,'purpose':{'enum':['authorize','receive','respond']},'role':{'enum':['HR','Finance']}})}})),
  DISCLOSURE:('schema:psl/hr-finance-disclosure/v1',obj({'source_view':KEY,'employee_key_semantics':{'const':'opaque_exact_case_sensitive'},'effective_until_semantics':{'enum':['inclusive','exclusive']},'route':{'const':'supplied_export_read_only'},'allowed_fields':FIELD_LIST,'recipient_ids':IDS,'purposes':{'type':'array','minItems':1,'maxItems':30,'uniqueItems':True,'items':KEY},'from_period':MONTH,'to_period':MONTH,'max_age_seconds':{'type':'integer','minimum':1},'retention_seconds':{'type':'integer','minimum':1},'retention_mode':{'const':'restrict_after_expiry'},'correction_route':TEXT,'source_evidence_id':ID}))}
+EXTENDED_DISCLOSURE_SCHEMA = obj({**SCHEMAS[DISCLOSURE][1]['properties'],
+    'format': {'const': DISCLOSURE_FORMAT_V2}, 'source_fields': EXTENDED_FIELD_LIST,
+    'allowed_fields': EXTENDED_FIELD_LIST})
 BASIS_SCHEMA=obj({'snapshot_id':ID,'sha256':{'type':'string','pattern':'^[a-f0-9]{64}$'},'entity':KEY,'period':MONTH})
 BASIS_SCHEMAS={'D07.effective_membership_ref':'schema:psl/hr-finance-membership/v1','D07.authorized_input_refs':'schema:psl/hr-finance-authorized-basis/v1'}
 def handles(component,target):return component in SCHEMAS or component in BASIS_SCHEMAS and target.schema_ref==BASIS_SCHEMAS[component]
+
+
+def disclosure_schema(content):
+ if isinstance(content,dict) and content.get('format')==DISCLOSURE_FORMAT_V2:
+  return DISCLOSURE_V2,EXTENDED_DISCLOSURE_SCHEMA
+ return SCHEMAS[DISCLOSURE]
+
+
+def source_kind(rules):
+ return 'hr_contract_source_v2' if rules.get('format')==DISCLOSURE_FORMAT_V2 else 'hr_contract_source'
+
+
+def money_fields(fields):
+ return bool(set(fields).intersection({'monthly_pay','gross_pay','deductions'}))
+
+
 def validate_reference(component,target,case,runtime=False):
  if component in SCHEMAS:
-  v=typed(target,*SCHEMAS[component])
+  schema=(DISCLOSURE_V2,EXTENDED_DISCLOSURE_SCHEMA) if component==DISCLOSURE and target.schema_ref==DISCLOSURE_V2 else SCHEMAS[component]
+  v=typed(target,*schema)
   if component==SCOPE_ROUTE:
    from apps.finance.hr_scope import owner_access
    owner=get_user_model().objects.filter(pk=v['owner_id'],is_active=True).first()
@@ -42,11 +67,13 @@ def validate_reference(component,target,case,runtime=False):
     seen.add(key)
   else:
    if not set(REQUIRED)<=set(v['allowed_fields']):raise ValidationError('Explicit identity/BU/effective-date fields required')
-   if ('monthly_pay' in v['allowed_fields'])!=('currency' in v['allowed_fields']):raise ValidationError('Pay requires explicit currency and vice versa')
+   if money_fields(v['allowed_fields'])!=('currency' in v['allowed_fields']):raise ValidationError('Pay requires explicit currency and vice versa')
+   if v.get('format')==DISCLOSURE_FORMAT_V2 and not set(v['allowed_fields'])<=set(v['source_fields']):raise ValidationError('Visible fields must belong to the explicitly reviewed source contract')
+   if v.get('format')==DISCLOSURE_FORMAT_V2 and money_fields(v['source_fields'])!=('currency' in v['source_fields']):raise ValidationError('Source pay fields require explicit currency')
    if v['from_period']>v['to_period']:raise ValidationError('Disclosure periods reversed')
    if get_user_model().objects.filter(pk__in=v['recipient_ids'],is_active=True).count()!=len(v['recipient_ids']):raise ValidationError('Active actual recipients required')
    from apps.pmo.services import subject
-   e=subject(case,v['source_evidence_id'],'hr_contract_source')
+   e=subject(case,v['source_evidence_id'],source_kind(v))
    if case.evidence.filter(kind=e.kind,version__gt=e.version).exists():raise ValidationError('Source-view evidence superseded')
    try:timezone.now()+timedelta(seconds=v['retention_seconds'])
    except (OverflowError,ValueError):raise ValidationError('Retention exceeds supported datetime range')

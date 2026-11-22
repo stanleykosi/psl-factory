@@ -1,8 +1,37 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
-<div class="page-heading"><div><p class="eyebrow">PSL OPERATIONS FACTORY</p><h1>Work queue</h1><p class="lede">See what needs attention, carry work forward and verify the result.</p></div>{% if intake_available %}<a class="button primary" href="{% url 'factory_intake' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">{% include 'ui/icon.html' with icon='plus' %}Start work</a>{% endif %}</div>
-<nav class="factory-queues" aria-label="Work views">{% for key,label in queues.items %}<a href="?queue={{ key }}&amp;q={{ q|urlencode }}" {% if queue == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>
-<section class="workspace-panel factory-queue"><form method="get" class="workspace-search"><input type="hidden" name="queue" value="{{ queue }}"><label class="sr-only" for="work-search">Search work</label><input id="work-search" name="q" maxlength="120" value="{{ q }}" placeholder="Search invoice, project or work reference"><button type="submit">Search</button></form>
-{% for row in rows %}<a class="factory-work-row" href="{% url 'factory_detail' row.work.pk %}?queue={{ queue }}&amp;q={{ q|urlencode }}"><div class="work-row-main"><strong>{{ row.work.request.reference }}</strong><span>{{ row.work.case|workspace_name }}</span><p>{{ row.next_action }}</p></div><div class="work-row-state"><strong>{{ row.state }}</strong><span>Owner: {{ row.owner }}</span>{% if row.blocker %}<span>{{ row.blocker }}</span>{% endif %}</div><div class="work-row-time"><time datetime="{{ row.work.updated_at|date:'c' }}">{{ row.work.updated_at|date:'d M, H:i T' }}</time><span>Deadline not recorded</span></div>{% include 'ui/icon.html' with icon='arrow' %}</a>
-{% empty %}<div class="empty-state">{% include 'ui/icon.html' with icon='work' %}<h2>No work in this view</h2><p>Try another view or search. Only factory work you can currently access is shown.</p><a href="{% url 'workspace_overview' %}">Open your workspaces →</a></div>{% endfor %}
-</section><p class="coverage-note">Checked {{ as_of|date:'d M Y, H:i:s T' }} · {{ rows|length }} shown from {{ evaluated }} evaluated records{% if limited %}; this view is limited{% endif %}. Coverage includes registered factory work only. Other departmental work and unregistered processes are outside this view.</p>
+<div class="page-heading">
+  <div><h1>{{ role_heading|default:"My work" }}</h1>{% if line_title %}<p class="lede">{{ line_title }} · <a href="?queue={{ queue }}">Clear workflow filter</a></p>{% endif %}</div>
+  {% if workspace_positions %}
+  <div class="actions">
+    {% for position in workspace_positions %}
+      {% if position.invite_url %}<a class="button secondary" href="{{ position.invite_url }}">Invite a teammate{% if workspace_positions|length > 1 %} · {{ position.team }}, {{ position.workspace }}{% endif %}</a>{% endif %}
+      {% if position.manage_url %}<a class="button secondary" href="{{ position.manage_url }}">Manage teams and assignments{% if workspace_positions|length > 1 %} · {{ position.workspace }}{% endif %}</a>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+<nav class="factory-queues" aria-label="Work views">{% for key,label in queues.items %}<a href="?queue={{ key }}&amp;q={{ q|urlencode }}{% if line %}&amp;line={{ line|urlencode }}{% endif %}" {% if queue == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>
+{% if assignments %}{% include 'identity/workspace_assignments.html' %}{% endif %}
+{% if queue == 'unassigned' %}<p><a href="{% url 'rfp_assignment_queue' %}">Review unassigned bids →</a></p>{% endif %}
+<section class="workspace-panel factory-queue shared-mobile-controls"><form method="get" class="workspace-search" role="search"><input type="hidden" name="queue" value="{{ queue }}">{% if line %}<input type="hidden" name="line" value="{{ line }}">{% endif %}{% include 'ui/search_field.html' with field_id='work-search' field_label='Search work' field_value=q hide_label=True placeholder='Search invoice, project or work reference' %}<button type="submit">Search</button></form>
+<details class="work-filter"{% if line %} open{% endif %}><summary>Filter work</summary>
+  <form method="get" class="actions"><input type="hidden" name="q" value="{{ q }}">
+    <label for="filter-queue">Work view</label><select id="filter-queue" name="queue">{% for key,label in queues.items %}<option value="{{ key }}"{% if key == queue %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <label for="filter-line">Workflow</label><select id="filter-line" name="line"><option value="">All workflows</option>{% for key,label in line_choices %}<option value="{{ key }}"{% if key == line %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <button type="submit">Apply filters</button>
+  </form>
+</details>
+{% if payroll_questions.rows or payroll_questions.held %}<section aria-label="Staff-cost questions"><h2>Staff-cost questions</h2>
+{% for question in payroll_questions.rows %}<a class="factory-work-row" href="{% url 'payroll_questions' question.case.pk %}?question={{ question.id }}"><div class="work-row-main"><strong>{{ question.question }}</strong><span>{{ question.case|workspace_name }}</span><p>Period {{ question.period }} · Report {{ question.publication }}</p></div><div class="work-row-state"><strong>{% if question.can_answer %}HR response needed{% elif question.can_receive %}HR reply ready{% elif question.state == 'received' %}Reply acknowledged{% elif question.state == 'owner_needed' %}HR owner needed{% elif question.state == 'held' %}Current source or authority checks needed{% elif question.state == 'dispatched' %}Waiting for HR{% else %}Ready for your review{% endif %}</strong></div>{% include 'ui/icon.html' with icon='arrow' %}</a>{% endfor %}
+{% if payroll_questions.held %}<p>Question checks need more time. <a href="{% url 'work_inbox' %}">Open recorded assignments</a> to continue.</p>{% endif %}
+<p class="coverage-note">Up to {{ payroll_questions.limit }} current permitted questions checked separately from the workflow page below.</p></section>{% endif %}
+{% for row in rows %}<a class="factory-work-row" href="{% url 'factory_detail' row.work.pk %}{{ work_query }}"><div class="work-row-main"><strong>{{ row.work.request.reference }}</strong><span>{{ row.work.case|workspace_name }}</span><p>{{ row.next_action }}</p></div><div class="work-row-state"><strong>{{ row.state }}</strong><span>Owner: {{ row.owner }}</span>{% if row.blocker %}<span>{{ row.blocker }}</span>{% endif %}</div><div class="work-row-time"><time datetime="{{ row.work.updated_at|date:'c' }}">{{ row.work.updated_at|date:'d M, H:i T' }}</time><span>Deadline not recorded</span></div>{% include 'ui/icon.html' with icon='arrow' %}</a>
+{% empty %}<div class="empty-state">{% include 'ui/icon.html' with icon='work' %}<h2>{% if deferred or candidates.has_other_pages %}No matching work was confirmed on this page{% else %}No work in this view{% endif %}</h2><p>Try another view or search.</p><a href="{% url 'workspace_overview' %}">Open your workspaces →</a></div>{% endfor %}
+{% if deferred %}<section class="card"><h2>Open these records to check their status</h2><ul>{% for work in deferred %}<li><a href="{% url 'factory_detail' work.pk %}{{ work_query }}">{{ work.request.reference }} · {{ work.case|workspace_name }}</a></li>{% endfor %}</ul></section>{% endif %}
+{% if candidates.has_other_pages %}<nav class="actions" aria-label="Work pages">
+  {% if candidates.has_previous %}<a href="?queue={{ queue }}&amp;q={{ q|urlencode }}&amp;line={{ line|urlencode }}&amp;page={{ candidates.previous_page_number }}">Previous page</a>{% endif %}
+  <span>Page {{ candidates.number }} of {{ candidates.paginator.num_pages }}</span>
+  {% if candidates.has_next %}<a href="?queue={{ queue }}&amp;q={{ q|urlencode }}&amp;line={{ line|urlencode }}&amp;page={{ candidates.next_page_number }}">Next page</a>{% endif %}
+</nav>{% endif %}
+</section><p class="coverage-note">Checked {{ as_of|date:'d M Y, H:i:s T' }} · {{ rows|length }} match{{ rows|length|pluralize:"es" }} from {{ evaluated }} record{{ evaluated|pluralize }} checked on this page.</p>
 {% endblock %}

@@ -26,14 +26,22 @@ def combine(inputs,rules):
   for r in payload['rows']:buckets.setdefault((r['employee_id'],r['component']),[]).append({**r,'input_id':item.pk,'provider':item.provider})
  rows=[];issues=[]
  for (employee,component),group in sorted(buckets.items()):
-  provenance=[{'input_id':x['input_id'],'row_ref':x['row_ref'],'provider':x['provider'],'amount':x['amount']} for x in group]
-  if not rules:amount=None;code='merge_policy_missing'
+  provenance=[{'input_id':x['input_id'],'row_ref':x['row_ref'],'provider':x['provider'],'amount':x['amount'],
+               **({'data_row':x['data_row']} if 'data_row' in x else {})} for x in group]
+  quarantined=sorted({code for row in group for code in row.get('quarantine_codes',[])})
+  if quarantined:
+   amount=None;code=None
+   if 'duplicate_source_row_or_component' in quarantined and (not rules or rules.get('duplicate_within_source')!='hold_conflicting_rows'):
+    quarantined.append('duplicate_merge_rule_unconfigured')
+   for finding in quarantined:codes.append(finding);issues.append({'employee_id':employee,'component':component,'code':finding})
+  elif not rules:amount=None;code='merge_policy_missing'
   else:
    group=sorted(group,key=lambda r:rules['provider_order'].index(r['provider']))
    amount=merge_amount(group[0]['amount'],group[1]['amount'] if len(group)>1 else None,len(group)>1,rules['method'])
    code='overlap_unresolved' if len(group)>1 and rules['method']=='disjoint_union' else 'unknown_amount' if amount is None else None
   if code:codes.append(code);issues.append({'employee_id':employee,'component':component,'code':code})
-  rows.append({'employee_id':employee,'component':component,'amount':amount,'provenance':provenance})
+  rows.append({'employee_id':employee,'component':component,'amount':amount,'provenance':provenance,
+               **({'quarantine_codes':quarantined} if quarantined else {})})
  raw=sum_values(c['calculated'] for c in controls.values());combined=sum_values(r['amount'] for r in rows)
  return {'rows':rows,'issues':issues,'controls':controls,'raw_total':raw,'combined_total':combined,'intentional_overlap_difference':None if raw is None or combined is None else number(decimal(raw)-decimal(combined))},sorted(set(codes))
 

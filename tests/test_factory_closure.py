@@ -18,6 +18,39 @@ from tests.test_delivery import DeliveryFixture
 
 
 class FactoryClosureDistinctAuthorityTests(TestCase):
+    def test_restarted_closure_queues_from_the_recovery_page(self):
+        from apps.workflows.factory_progress import run_once
+        from apps.workflows.models import FactoryProgress
+
+        f = setup()
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        initial_decision = approve(f)
+        f.work.refresh_from_db()
+        closure.cancel(f.actor, f.work.pk, f.work.revision)
+        f.work.refresh_from_db()
+        self.client.force_login(f.actor)
+        url = reverse('factory_invoice_recovery', args=[f.work.pk])
+        attempt = self.client.post(reverse('factory_create'), {
+            'definition': closure.DEFINITION, 'case': str(f.case.pk), 'dossier': f.d.pk,
+            'key': 'CLOSURE-REOPEN-FROM-READINESS', 'reference': 'Synthetic readiness restarts existing work',
+            'revision': rev(f.case), **f.inputs,
+        })
+        self.assertRedirects(attempt, url, fetch_redirect_response=False)
+        self.assertEqual(FactoryWork.objects.filter(case=f.case, definition=closure.DEFINITION).count(), 1)
+        self.assertRedirects(self.client.post(url, {'action': 'restart', 'revision': f.work.revision,
+                              'case_revision': rev(f.case), 'reason': 'Synthetic fresh closure instruction'}), url)
+        f.work.refresh_from_db()
+        self.assertRedirects(self.client.post(url, {'action': 'advance', 'revision': f.work.revision}), url)
+        self.assertEqual(FactoryProgress.objects.get(work=f.work).status, 'queued')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d, kind='closure').exists())
+        for _ in range(20):
+            run_once()
+            f.work.refresh_from_db()
+            if closure.document(f.work) and closure.document(f.work).pk != initial_decision.data['version_id']:
+                break
+        self.assertContains(self.client.get(reverse('factory_invoice_decision', args=[f.work.pk])), 'Approve exact closure report')
+
     def test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head(self):
         from django.contrib.auth import get_user_model
         from apps.policy.services import register_reference
@@ -36,16 +69,18 @@ class FactoryClosureDistinctAuthorityTests(TestCase):
         reaffirm_for(f.actor,f.case)  # Explicit same-document current-authority fixture evidence.
         f.closure_selected=f.closing();f=setup(base=f)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();version=closure.document(f.work)
-        self.assertIsNotNone(version);url=reverse('factory_detail',args=[f.work.pk])
+        self.assertIsNotNone(version);url=reverse('factory_invoice_decision',args=[f.work.pk])
         self.client.force_login(f.actor);self.assertNotContains(self.client.get(url),'Approve exact closure report')
         with self.assertRaises(PermissionDenied):approve(f)
         self.client.force_login(head);page=self.client.get(url)
         self.assertContains(page,'Approve exact closure report');self.assertNotContains(page,'Continue eligible work')
         self.assertNotContains(page,'Record reviewed source changes')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[f.work.pk])), 'Approve exact closure report')
         response=self.client.post(url,{'action':'decide','revision':f.work.revision,'case_revision':rev(f.case),
             'version':version.pk,'verdict':'approve','evidence':f.e['requirements'].pk,'note':'Distinct synthetic Head reviews exact native report'})
         self.assertRedirects(response,url)
         decision=DeliveryRecord.objects.get(dossier=f.d,kind='closure_decision');self.assertEqual(decision.actor_id,head.pk)
+        self.assertContains(self.client.get(url), 'Recorded by synthetic-closure-head')
         self.assertFalse(Grant.objects.filter(case=f.case,user=head,action__in=['factory.execute','factory.manage','policy.configure']).exists())
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         closed=DeliveryRecord.objects.get(dossier=f.d,kind='closure');self.assertEqual(closed.actor_id,f.actor.pk)
@@ -128,6 +163,9 @@ class FactoryClosureTests(TestCase):
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Head of PMO closure decision');self.assertContains(page,'PM performance summary, risks and resolutions')
         self.assertNotContains(page,'Continue eligible work');self.assertEqual(page['Cache-Control'],'no-store')
+        projects = reverse('workspace_overview')
+        self.assertIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'active'}).context['cases'])
+        self.assertNotIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'closed'}).context['cases'])
         decision=approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding);proof=closure.verify(f.work)
         self.assertTrue(proof['verified']);self.assertEqual(proof['decision'],decision.pk)
@@ -140,6 +178,8 @@ class FactoryClosureTests(TestCase):
         result=closure_requirements(f.d,{k:f.inputs[k] for k in ['retrospective_id','report_evidence_id']})
         self.assertEqual(result['checks'][0]['status'],'closed');self.assertFalse(result['ready_to_prepare'])
         self.assertEqual(result['recorded_closure_id'],proof['closure'])
+        self.assertIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'closed'}).context['cases'])
+        self.assertNotIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'active'}).context['cases'])
 
     def test_unknown_intake_and_missing_profile_capture_correct_and_continue_with_same_allowance(self):
         f=setup(known=False,profile=False,base=self.base);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
@@ -244,6 +284,12 @@ class FactoryClosureTests(TestCase):
         self.assertNotEqual(first.pk,second.pk)
         closure.review(f.actor,f.work.pk,f.work.revision,rev(f.case),second.pk,'approve','Exact corrected quality document reviewed')
         closure.decide(f.actor,f.work.pk,f.work.revision,rev(f.case),second.pk,'return',f.e['requirements'].pk,'Actual Head of PMO return under configured action authority')
+        decision_page = self.client.get(reverse('factory_invoice_decision', args=[f.work.pk]))
+        self.assertContains(decision_page, 'Closure returned')
+        self.assertContains(decision_page, 'Review source changes')
+        self.assertNotContains(decision_page, 'Approve exact closure report')
+        with self.assertRaisesMessage(ValidationError, 'Record corrected source'):
+            approve(f)
         closure.decide(f.actor,f.work.pk,f.work.revision,rev(f.case),second.pk,'reject',f.e['requirements'].pk,'Actual Head of PMO rejection retained independently')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').exists())
         report=f.evidence('closure_report','Synthetic final report after Head return and rejection')
@@ -253,6 +299,19 @@ class FactoryClosureTests(TestCase):
         approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').count(),1);self.assertEqual(f.work.budget_limit,20000)
         self.assertTrue(HumanTask.objects.filter(version=first,status='returned').exists())
+        history = self.client.get(reverse('factory_invoice_recovery', args=[f.work.pk]))
+        self.assertContains(history, 'Earlier closure decisions')
+        self.assertContains(history, 'Actual Head of PMO return under configured action authority')
+        self.assertContains(history, 'Actual Head of PMO rejection retained independently')
+        self.assertContains(history, f'Recorded by {f.actor.username}', count=3)
+        from django.contrib.auth import get_user_model
+        reader = get_user_model().objects.create_user('closure-history-reader')
+        Grant.objects.bulk_create([Grant(case=f.case, user=reader, action=action)
+                                   for action in ('case.read', 'factory.read', 'delivery.read')])
+        self.client.force_login(reader)
+        read_only = self.client.get(reverse('factory_invoice_recovery', args=[f.work.pk]))
+        self.assertContains(read_only, 'Earlier closure decisions')
+        self.assertNotContains(read_only, 'Recorded by')
 
     def test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers(self):
         f=setup(base=self.base);factory.run_until_wait(f.work.pk);approve(f)

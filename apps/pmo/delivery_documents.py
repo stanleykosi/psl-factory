@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from apps.core.services import lock_case
+from apps.core.read_observation import read_observation
 from apps.documents.controlled import create_version
 from apps.documents.models import Template
 from apps.policy.services import decision_authority
@@ -13,10 +14,14 @@ INPUTS={'go_live':go_live_inputs,'handover':handover_inputs,'closure':closure_in
 
 
 @transaction.atomic
-def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,expected):
+def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,expected,*,previous_version_id=None):
     case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d);decision_authority(actor,case,'PM')
     if purpose not in INPUTS:raise ValidationError('Choose go_live, handover or closure')
     snapshot=INPUTS[purpose](d,data)
+    if purpose == 'closure':
+        from .coordinator_intake import accept
+        from .delivery_closure import current_retrospective
+        accept(actor,case,current_retrospective(d,data['retrospective_id']),"P38")
     template=Template.objects.filter(case=case,pk=template_id,definition__document_type='project_artifact').first()
     if not template:raise ValidationError('Select this case controlled project artifact template')
     if purpose=='go_live':
@@ -37,6 +42,13 @@ def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,ex
     if purpose=='go_live':
         fields['executive_summary']['text']=f'Go-live and business acceptance report for {d.candidate.reference}.'
         fields['status']['text']='Prepared for actual PM and Client sign-off. Acceptance is recorded separately.'
+        replies=snapshot.get('client_responses',{}).get('replies',[])
+        if len(replies)>19:raise ValidationError('The response sources exceed the controlled section citation capacity; prepare reviewed source consolidation.')
+        if replies:
+            from .models import GoLiveClientReply
+            messages=GoLiveClientReply.objects.filter(pk__in=[row['reply_id'] for row in replies]).order_by('pk')
+            fields['next_steps']['text']+='\n\nClient requests considered in this revision:\n'+'\n'.join(row.note for row in messages)
+            fields['next_steps']['evidence_ids']+=sorted({row['evidence_id'] for row in replies})
     if purpose=='closure':
         fields['executive_summary']['text']=f'Project closure report for {d.candidate.reference}.'
         fields['status']['text']='PM report prepared for the prescribed closure decision.'
@@ -47,11 +59,18 @@ def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,ex
     title='Go-live report' if purpose=='go_live' else purpose.replace('_',' ').title()
     from apps.documents.pmo_sections import complete_native_client_sections
     fields = complete_native_client_sections(fields, audience, [source])
-    v=create_version(actor,case.pk,template.pk,title+': '+d.candidate.reference,audience,fields,case.revision)
+    previous=None
+    if previous_version_id is not None:
+        previous=DeliveryDocumentBinding.objects.select_related('version__document').filter(version_id=previous_version_id,dossier=d,purpose=purpose).first()
+        if not previous or previous.version.document.current_id!=previous_version_id:
+            raise ValidationError('Select this delivery report current version as the exact predecessor.')
+    v=create_version(actor,case.pk,template.pk,title+': '+d.candidate.reference,audience,fields,case.revision,
+                     document_id=previous.version.document_id if previous else None)
     DeliveryDocumentBinding.objects.create(version=v,dossier=d,purpose=purpose,data=data,snapshot=snapshot)
     return v
 
 
+@read_observation
 def binding_findings(binding):
     try:
         d=dossier_for(binding.dossier.case,binding.dossier_id)

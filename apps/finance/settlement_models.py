@@ -79,9 +79,18 @@ class CashReceipt(AppendOnly):
         constraints=[models.UniqueConstraint(fields=['tenant','source','transaction_ref'],name='cash_tenant_transaction_identity')]
     def __str__(self):return f'{self.source} / {self.transaction_ref} / #{self.pk}'
 
+class CashReportedAmount(AppendOnly):
+    receipt=models.OneToOneField(CashReceipt,on_delete=models.PROTECT,related_name='reported_amount_supplement')
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    payload=models.JSONField()
+    reason=models.CharField(max_length=2000)
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(auto_now_add=True)
+
 class CashVerification(AppendOnly):
     receipt=models.ForeignKey(CashReceipt,on_delete=models.PROTECT)
     successor=models.OneToOneField('finance.CashSuccessor',on_delete=models.PROTECT,null=True)
+    reported_amount=models.OneToOneField(CashReportedAmount,on_delete=models.PROTECT,null=True)
     amount=models.DecimalField(max_digits=32,decimal_places=8)
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
     authority=models.JSONField()
@@ -89,7 +98,9 @@ class CashVerification(AppendOnly):
     created_at=models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        constraints=[models.CheckConstraint(condition=models.Q(amount__gt=0),name='cash_lot_positive_amount'),models.UniqueConstraint(fields=['receipt'],condition=models.Q(successor__isnull=True),name='one_original_cash_lot')]
+        constraints=[models.CheckConstraint(condition=models.Q(amount__gt=0),name='cash_lot_positive_amount'),models.UniqueConstraint(fields=['receipt'],condition=models.Q(successor__isnull=True),name='one_original_cash_lot'),
+                     models.CheckConstraint(condition=models.Q(reported_amount__isnull=True)|models.Q(successor__isnull=True),
+                                            name='cash_supplement_first_lot_only')]
 
     def __str__(self):return f'Cash lot #{self.pk} / {self.receipt.source} / {self.receipt.transaction_ref} / {self.amount}'
 

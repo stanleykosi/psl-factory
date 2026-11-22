@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Evidence,Audit
+from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
@@ -147,12 +148,18 @@ def snapshot(work,value,reader=None):
     old=assessed(work)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'native':native,'checks':observed,'operator':owner,'current_archive':index.pk if index else None,'assessed':old.pk if old else None}
+    from apps.pmo.archive_transfer import projection as file_projection
+    files = file_projection(actor, work)
+    if files['plan']:
+        state['file_archive'] = {'plan_id': files['plan'].pk, 'sha256': files['plan'].sha256, 'verified': files['verified']}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate final-document evidence and declared archive inventory'
+    if state.get('file_archive') and not state['file_archive']['verified']:
+        return [], 'Confirm the original file receipts and retry only files found missing.'
     if missing or stale:return [],'Current required archive evidence is missing or stale: '+', '.join(missing+stale)
     if state['checks']['storage']['status']=='held':return ['ACT10'],'Resolve the reviewed storage and inventory rule'
     if state['checks']['archive']['status']=='held':return [],state['checks']['archive']['summary']
@@ -167,7 +174,14 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
     if case.revision!=work.case.revision:raise ValidationError('STALE_VERSION: archive sources changed while planning')
     d,data,rows=source(work,work.execution_actor);kind=choice['activity']
-    if kind=='ACT04':return {'head':work.source_head_id,'dossier':d.pk,'checks':{k:v['status'] for k,v in checks(d,data).items()},'source_refs':sorted(rows)}
+    if kind=='ACT04':
+        result={'head':work.source_head_id,'dossier':d.pk,'checks':{k:v['status'] for k,v in checks(d,data).items()},'source_refs':sorted(rows)}
+        from apps.pmo.archive_transfer import projection as file_projection
+        files=file_projection(work.execution_actor,work)
+        if files['plan']:
+            result['file_archive']={'plan_id':files['plan'].pk,'total':files['total'],'confirmed':files['confirmed'],
+                'unconfirmed_file_ids':[file.pk for file in files['files'] if file.job.status!='confirmed']}
+        return result
     if kind=='ACT10':
         storage(case);user=operator(work,value);return {'head':work.source_head_id,'operator':user.pk,'configuration_available':True}
     if kind=='ACT08':
@@ -185,9 +199,20 @@ def verify(work,actor=None):
     d,data,_=source(work,actor);row=assessed(work);current=closure.current_archive(d)
     if not row or row.pk!=current.pk or row.data['inventory']!=data['inventory']:raise ValidationError('Exact current source-bound native archive index required')
     if row.snapshot['physical_purge_performed'] is not False:raise ValidationError('The archive index cannot claim a physical purge')
-    return {'head':work.source_head_id,'dossier':d.pk,'archive':row.pk,'verified':True,'verification_scope':'synthetic_native_archive_index',
+    result = {'head':work.source_head_id,'dossier':d.pk,'archive':row.pk,'verified':True,'verification_scope':'synthetic_native_archive_index',
         'external_bytes_verified':False,'external_authenticity_verified':False,'physical_purge_performed':False,
         'support_handover_received':False,'closure_approved':False,'financial_release_granted':False,'deployment_authorized':False}
+    from apps.pmo.archive_transfer import projection as file_projection
+    files = file_projection(actor or work.execution_actor, work)
+    if files['plan']:
+        if not files['verified']:
+            raise ValidationError('Confirm every selected archive file before completing the archive work.')
+        provider=reference_values(files['plan'].configuration)[0]['adapter']
+        result.update(file_archive=files['plan'].pk, file_manifest_sha256=files['plan'].sha256,
+                      file_bytes_verified=True, external_bytes_verified=provider=='private_object_store/v1',
+                      verification_scope='synthetic_project_file_archive_byte_readback' if provider=='synthetic_archive/v1'
+                      else 'private_object_store_byte_readback')
+    return result
 
 
 @transaction.atomic
@@ -259,6 +284,7 @@ def restart(actor,work_id,expected,case_expected,reason):
     event(actor,case,'factory.archive_restarted',work=w.pk,previous=previous,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
 
+@read_observation
 def projection(actor,work):
     from .factory import access
     access(actor,work.case,envelope=DEFINITION);d,data,rows=source(work,actor,current=False);observed=checks(d,data)
@@ -285,5 +311,6 @@ def projection(actor,work):
 
 def attempt_projection(attempt):
     allowed={'head','dossier','archive','operator','created','checks','source_refs','configuration_available','verified','verification_scope',
+        'file_archive','file_manifest_sha256','file_bytes_verified',
         'external_bytes_verified','external_authenticity_verified','physical_purge_performed','support_handover_received','closure_approved','financial_release_granted','deployment_authorized'}
     return {k:v for k,v in attempt.result.items() if k in allowed}

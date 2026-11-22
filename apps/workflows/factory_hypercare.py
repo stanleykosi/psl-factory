@@ -7,6 +7,7 @@ from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.services import lock_case,event
 from apps.core.evidence_access import public_evidence
+from apps.core.read_observation import read_observation
 from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.policy.services import resolve,decision_authority
@@ -43,6 +44,7 @@ def assessed(work):
     pk=Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,result__has_key='hypercare').order_by('-pk').values_list('result__hypercare',flat=True).first()
     return DeliveryRecord.objects.filter(pk=pk,dossier_id=work.request['dossier'],kind='hypercare').first() if pk else None
 
+@read_observation
 def snapshot(work,value,reader=None):
     from .factory import access
     actor=reader or work.execution_actor
@@ -54,9 +56,10 @@ def snapshot(work,value,reader=None):
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     p=resolve('D11.hypercare_criteria_ref',work.case)
+    assessment=assessed(work)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'native':native,'checks':checks(d),'criteria':[p.status,p.configuration.pk if p.configuration else None],
-        'assessed':assessed(work).pk if assessed(work) else None}
+        'assessed':assessment.pk if assessment else None}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 
@@ -149,7 +152,20 @@ def projection(actor,work):
     except PermissionDenied:author_current=False
     from apps.pmo.go_live_attestations import declaration_draft
     for receipt in current_receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
+    from .stability_forms import observation_forms
+    from apps.pmo.hypercare_issues import project_issue_clearance
+    logs = None
+    if can_release:
+        try:
+            require(actor, work.case, 'evidence.add')
+            from apps.pmo.release_proofs import own_pdfs
+            logs = list(own_pdfs(actor, work.case).order_by('-pk')[:50])
+        except PermissionDenied:
+            pass
     return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
+        'issue_clearance': project_issue_clearance(actor, d) if observed['stability']['status'] == 'ready' else None,
+        'private_release_logs': logs, 'can_attach_release_log': logs is not None,
+        'observation_forms':observation_forms(actor,work),
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,
         'can_accept_go_live':can_accept,'acceptance_packet':packet,'go_live_receipts':current_receipts,'readiness_changed':changed,
         'public_sources':list(public_evidence(Evidence.objects.filter(case=work.case,pk__in=public_ids))),
@@ -169,7 +185,8 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     if kind=='release':
         if not panel['can_record_release']:raise PermissionDenied('Current actual-release recording authority required')
         if not public_evidence(Evidence.objects.filter(case=case,pk=data['evidence'])).exists():raise ValidationError('Available public event evidence required')
-        result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],case.revision)
+        result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],
+            case.revision,deployment_environment=data.get('deployment_environment'),private_log_id=data.get('private_log'))
     elif kind=='acceptance':
         if not panel['can_accept_go_live'] or data['packet']!=panel['acceptance_packet']:raise ValidationError('STALE_VERSION: exact current go-live receipt and authority required')
         if data['receipt'] not in [r.pk for r in panel['go_live_receipts']]:raise ValidationError('Select an available current go-live receipt')
@@ -178,6 +195,39 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     work.revision+=1
     if work.status not in ['configuration_needed','owner_needed','blocked']:work.status='ready';work.finding=''
     work.save();return result
+
+
+@transaction.atomic
+def record_stability(actor,work_id,expected,case_expected,data):
+    from .factory import access
+    from .stability_forms import observation_forms
+    work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
+    access(actor,work.case,envelope=DEFINITION)
+    case=lock_case(actor,work.case_id,'delivery.source',case_expected)
+    work.case=case
+    if work.revision!=expected or work.cancel_requested:
+        raise ValidationError('The stability work changed. Review its current evidence.')
+    forms=observation_forms(actor,work,data)
+    form=next((form for form in forms if form.owner_name==data.get('owner')),None)
+    if form is None:
+        raise ValidationError('A current reviewed stability rule and permitted source owner are required.')
+    if not form.is_valid():
+        raise ValidationError([message for messages in form.errors.values() for message in messages])
+    subject(work,actor)
+    values=form.cleaned_data
+    source=delivery.capture_source(actor,case.pk,work.request['dossier'],'hypercare_'+form.owner_name.lower(),
+        values['reference'],values['evidence'].pk,form.payload(),case.revision)
+    if values.get('verify_sample'):
+        case.refresh_from_db()
+        delivery.verify_source(actor,case.pk,source.pk,case.revision)
+    work.revision+=1
+    if work.status not in {'verified','configuration_needed','owner_needed','blocked'}:
+        work.status='ready'
+        work.finding=''
+    work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return source
 
 @transaction.atomic
 def reassess(actor,work_id,expected,reason):

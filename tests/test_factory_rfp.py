@@ -1,8 +1,12 @@
 """Real native RFP factory behavior; only recipient-transport faults are synthetic."""
 from copy import deepcopy
+from datetime import timedelta
+from decimal import Decimal
 from django.core.exceptions import ValidationError,PermissionDenied
-from django.db import connection,transaction,DatabaseError
+from django.db import connection,transaction,DatabaseError,IntegrityError
 from django.test import TestCase,TransactionTestCase
+from django.test.utils import CaptureQueriesContext
+from django.urls import reverse
 from django.utils import timezone
 from apps.agents.models import AgentRun
 from apps.core.models import Evidence
@@ -21,6 +25,111 @@ from tests import factory_rfp_helpers as helpers
 class FactoryRFPTests(TestCase):
     @classmethod
     def setUpTestData(cls):cls.data=helpers.configured()
+
+    def test_final_review_page_has_bounded_pure_reads_and_rechecks_source_authority(self):
+        from time import monotonic
+        f = self.data
+        work = helpers.start(f)
+        response, document = helpers.reviewed_document(f, work)
+        self.client.force_login(f['actor'])
+        url = reverse('factory_detail', args=[work.pk])
+        before = (RFPReview.objects.count(), ControlledReview.objects.count(), Publication.objects.count())
+        started = monotonic()
+        with CaptureQueriesContext(connection) as queries:
+            page = self.client.get(url)
+        print(f'PSL_RFP_FINAL_REVIEW_QUERIES={len(queries)} SECONDS={monotonic() - started:.3f}')
+        from collections import Counter
+        import re
+        tables = Counter(match.group(1) for query in queries
+                         if (match := re.search(r'FROM "([^"]+)"', query['sql'])))
+        print(f'PSL_RFP_READ_TABLE_COUNTS={tables.most_common(12)}')
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, document.document.title)
+        self.assertLessEqual(len(queries), 1000)
+        self.assertEqual(before, (RFPReview.objects.count(), ControlledReview.objects.count(), Publication.objects.count()))
+
+        Grant.objects.filter(case=f['case'], user=f['actor'], action='rfp.contribute:Engineering').update(active=False)
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertNotContains(page, 'Approve exact Document')
+        with self.assertRaises(PermissionDenied):
+            rfp.current_response(f['case'], response.pk)
+        from apps.documents.controlled import reserve_publication
+        with self.assertRaises((PermissionDenied, ValidationError)):
+            reserve_publication(f['actor'], f['case'].pk, document.pk, rev(f['case']))
+        self.assertFalse(Publication.objects.exists())
+
+    def test_observed_source_checks_cannot_execute_commands_or_survive_the_read_scope(self):
+        from apps.core.read_observation import observation_scope
+        f = self.data
+        work = helpers.start(f)
+        factory.run_until_wait(work.pk)
+        response = factory_rfp.response_for(work)
+        with observation_scope():
+            rfp.current_response(f['case'], response.pk)
+            with CaptureQueriesContext(connection) as queries:
+                rfp.current_response(f['case'], response.pk)
+            self.assertLessEqual(len(queries), 2)
+            with self.assertRaisesMessage(ValidationError, 'Read-only observation'):
+                rfp.review(f['actor'], f['case'].pk, response.pk, 'PMO Lead', 'approve',
+                           f['evidence']['policy_decision'].pk, 'This command must use fresh authority', rev(f['case']))
+        Grant.objects.filter(case=f['case'], user=f['actor'], action='rfp.prepare').update(active=False)
+        with observation_scope(), self.assertRaises(PermissionDenied):
+            rfp.current_response(f['case'], response.pk)
+
+    def test_console_decisions_wake_the_existing_request_and_preserve_a_human_pause(self):
+        from apps.workflows import factory_progress
+        from apps.workflows.factory_rfp_views import human_command
+
+        f = self.data
+        work = helpers.start(f)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        response = factory_rfp.response_for(work)
+        job = factory_progress.set_progress(f['actor'], work.pk, work.revision, True)
+
+        def decide(kind, target, role, verdict='approve', *, paused=False):
+            work.refresh_from_db()
+            job.status = 'waiting'
+            job.available_at = timezone.now() + timedelta(hours=1)
+            job.observation = 'previous-source-observation'
+            job.save()
+            if paused:
+                factory_progress.set_progress(f['actor'], work.pk, work.revision, False)
+                job.refresh_from_db()
+            before = (job.status, job.observation, job.available_at)
+            evidence = f['evidence']['rfp_outcome' if kind == 'outcome' else 'policy_decision']
+            human_command(f['actor'], work.pk, work.revision, rev(f['case']), kind, target,
+                          role, verdict, evidence.pk, 'Actual sample human decision',
+                          observed_at=timezone.now() if kind == 'outcome' else None)
+            job.refresh_from_db()
+            if paused:
+                self.assertEqual((job.status, job.observation, job.available_at), before)
+            else:
+                self.assertEqual(job.status, 'waiting')
+                self.assertEqual(job.observation, '')
+                self.assertLessEqual(job.available_at, timezone.now())
+
+        for role in rfp.REVIEW_ROLES:
+            decide('response', response.pk, role)
+        for role in ['PM', 'Head of PMO', 'CEO']:
+            decide('commercial', response.commercial_id, role, paused=role == 'PM')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        document = factory_rfp.review_document(work)
+        decide('document', document.pk, 'PMO Lead')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        submission = RFPSubmission.objects.get(response=response)
+        decide('outcome', submission.pk, 'Client', 'won')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'verified')
+        self.client.force_login(f['actor'])
+        page = self.client.get(reverse('factory_detail', args=[work.pk]))
+        for text in ['Verified outcome', 'Reviewed response', 'Delivered client response', 'No action required']:
+            self.assertContains(page, text)
+
 
     def test_intake_useful_agent_human_reviews_receipt_and_won_route_a(self):
         self.assertEqual(connection.vendor,'postgresql')
@@ -85,6 +194,59 @@ class FactoryRFPTests(TestCase):
         self.assertEqual(disposition.kind,'loss_archive');self.assertEqual(disposition.lessons_id,payload['lessons'])
         self.assertEqual(work.status,'verified',work.finding);self.assertGreaterEqual(work.budget_used,spent)
         self.assertEqual(RFPResponse.objects.count(),1);self.assertEqual(PublicationReceipt.objects.count(),1)
+
+    def test_outcome_variants_bound_to_verified_submission_and_optional_followup(self):
+        f = self.data
+        work = helpers.start(f)
+        response, _ = helpers.reviewed_document(f, work)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        submission = RFPSubmission.objects.get(response=response)
+        self.client.force_login(f['actor'])
+        url = reverse('factory_work_response', args=[work.pk])
+        reminder_field = 'Internal reminder time'
+        self.assertContains(self.client.get(url, {'outcome': 'unknown'}), 'Use original verified submission')
+        self.assertContains(self.client.get(url, {'outcome': 'pending'}), reminder_field)
+        self.assertContains(self.client.get(url, {'outcome': 'lost'}), 'Customer reason and notes')
+        self.assertNotContains(self.client.get(url, {'outcome': 'won'}), reminder_field)
+        now = timezone.localtime()
+        check_on = now.date() + timedelta(days=3)
+        data = {'action': 'outcome', 'revision': work.revision, 'case_revision': rev(f['case']), 'target': submission.pk,
+                'role': 'Client', 'observed_at': now.isoformat(), 'note': 'Synthetic customer response check',
+                'followup_on': check_on.isoformat(), 'verdict': 'pending'}
+        invalid = self.client.post(url, data)
+        self.assertContains(invalid, 'Choose the evidence for the customer response')
+        self.assertContains(invalid, str(check_on))
+        self.assertFalse(submission.outcomes.exists())
+        result = self.client.post(url, {**data, 'verdict': 'unknown'}, follow=True)
+        self.assertContains(result, 'Customer outcome unconfirmed')
+        self.assertContains(result, 'Next customer check')
+        initial = submission.outcomes.get()
+        self.assertIsNone(initial.evidence_id)
+        self.assertEqual(initial.followup_on, check_on)
+        work.refresh_from_db()
+        result = self.client.post(url, {**data, 'revision': work.revision, 'case_revision': rev(f['case']),
+                                      'evidence': f['evidence']['rfp_outcome'].pk}, follow=True)
+        self.assertContains(result, 'Customer decision pending')
+        self.assertEqual(submission.outcomes.count(), 2)
+        self.assertFalse(RFPDisposition.objects.exists())
+
+        work.refresh_from_db()
+        confirmed = {**data, 'revision': work.revision, 'case_revision': rev(f['case']),
+                     'evidence': f['evidence']['rfp_outcome'].pk, 'followup_on': '', 'award_amount': '101.25'}
+        invalid = self.client.post(url, {**confirmed, 'verdict': 'won'})
+        self.assertContains(invalid, 'with its three-letter currency')
+        invalid = self.client.post(url, {**confirmed, 'verdict': 'lost', 'award_currency': 'NGN'})
+        self.assertContains(invalid, 'only for a won bid')
+        result = self.client.post(url, {**confirmed, 'verdict': 'won', 'award_currency': 'NGN'}, follow=True)
+        self.assertContains(result, 'Amount stated in the award')
+        self.assertContains(result, 'NGN 101.25')
+        latest = submission.outcomes.latest('pk')
+        self.assertEqual((latest.award_amount, latest.award_currency), (Decimal('101.25'), 'NGN'))
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            submission.outcomes.create(result='lost', observed_at=now, role=latest.role, evidence=latest.evidence,
+                                       actor=latest.actor, authority=latest.authority, note='Invalid direct award insert',
+                                       award_amount=latest.award_amount, award_currency=latest.award_currency)
 
     def test_unknown_inputs_get_useful_investigation_then_source_owned_correction(self):
         f=self.data;payload=deepcopy(f['payload']);payload['response_evidence']=None;work=helpers.start(f,payload=payload)

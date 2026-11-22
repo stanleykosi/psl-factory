@@ -1,4 +1,5 @@
 from apps.pmo.go_live_attestations import parse_attestation
+from apps.pmo import rfp_fresh_intake
 from uuid import uuid4
 from urllib.parse import urlencode
 from django import forms
@@ -6,16 +7,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
-from django.views.decorators.http import require_safe
+from django.views.decorators.http import require_http_methods, require_safe
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from apps.identity.models import Grant
-from apps.identity.services import visible_cases
 from apps.core.models import Evidence,Case,Audit
+from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
 from apps.core.templatetags.studio_ui import readable
 from apps.core.presentation import workspace_name
@@ -27,9 +29,19 @@ from apps.policy.services import active_component,reference_values,transition,re
 from apps.policy.models import Configuration
 from .models import FactoryWork,HumanTask
 from . import factory as d
+from .factory_progress_views import StartWithBackground, start_work, started
 from .factory_definitions import DEFINITIONS,definition
 
-QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
+QUEUES={'needs_me':'Needs my attention','waiting':'Waiting on others','mine':'Started by me','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
+
+
+def work_queue_params(values, *, work=None):
+    queue = values.get('queue', 'needs_me')
+    params = {'queue': queue if queue in QUEUES else 'needs_me', 'q': values.get('q', '').strip()[:120]}
+    line = values.get('line', '')
+    if line in DEFINITIONS and (work is None or line == work.definition):
+        params['line'] = line
+    return params
 
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
@@ -39,7 +51,7 @@ INTAKES=(
     ('pmo-minutes/v1','Record formal meeting minutes','Connect authorized notes, cited suggestions, human commitments and current native minutes.',('factory.start','meeting.read','evidence.add')),
     ('pmo-escalation/v1','Coordinate an escalation communication','Connect a source-bound issue request, human client decision and exact recipient receipts.',('factory.start','issue.read','evidence.add')),
     ('pmo-weekly-report/v1','Prepare a weekly client report','Connect selected period, cited client narrative, exact PMO Lead review and recipient receipts.',('factory.start','report.read','evidence.add')),
-    ('pmo-leadership-report/v1','Prepare a internal leadership report','Connect selected period, cited human narrative, exact configured leadership review and recipient receipts.',('factory.start','report.read','evidence.add')),
+    ('pmo-leadership-report/v1','Prepare an internal leadership report','Choose a period and project records, then prepare a report for the intended reviewers and recipients.',('factory.start','report.read','evidence.add')),
     ('finance-schedules/v1','Prepare an income detail or schedule inventory','Connect exact supplied income detail or selected inventory, native checks and human review.',('factory.start','schedules.read','finance.read','evidence.add')),
     ('finance-ppe/v1','Prepare an asset schedule','Connect exact asset register reviews, configured calculation and a reviewed read-only accounting note.',('factory.start','ppe.read','finance.read','evidence.add')),
     ('finance-forecast/v1','Prepare a reviewed cash forecast','Connect exact scenario sources, native human decisions and aggregate delivery.',('factory.start','finance.read','evidence.add')),
@@ -60,11 +72,24 @@ INTAKES=(
     ('pmo-finance/v1','Prepare an invoice','Continue an exact Finance preparation or PMO completion through review, issuance and delivery.',('finance.read','factory.start')),
 )
 
+def intake_catalogue():
+    bid = {'definition': rfp_fresh_intake.LINE, 'title': 'Log a received bid',
+           'description': 'Start a workspace and keep the original document.'}
+    return [bid, *({'definition': name, 'title': title, 'description': description}
+                   for name, title, description, _ in INTAKES)]
+
+
 def intake_options(actor):
     available={}
-    for _,_,_,actions in INTAKES:
-        if actions not in available:available[actions]=granted(actor,list(actions)).filter(kind='project').exists()
-    return [{'definition':name,'title':title,'description':description} for name,title,description,actions in INTAKES if available[actions]]
+    allowed = set()
+    for name, _, _, actions in INTAKES:
+        if actions not in available:
+            available[actions] = granted(actor, actions).filter(kind='project').exists()
+        if available[actions]:
+            allowed.add(name)
+    if rfp_fresh_intake.available(actor).exists():
+        allowed.add(rfp_fresh_intake.LINE)
+    return [option for option in intake_catalogue() if option['definition'] in allowed]
 
 
 @login_required
@@ -72,17 +97,75 @@ def intake_options(actor):
 def intake(request):
     queue=request.GET.get('queue','needs_me')
     if queue not in QUEUES:queue='needs_me'
+    from apps.agents.assistant import cases_for
     from .factory_change_intake import pending_intakes
-    response=render(request,'factory/intake.html',{'options':intake_options(request.user),'change_intakes':pending_intakes(request.user),'queue':queue,'q':request.GET.get('q','').strip()[:120]})
+    options = intake_options(request.user)
+    q = request.GET.get('q','').strip()[:120]
+    selected = request.GET.get('entry') == 'default' and len(options) == 1
+    if selected:
+        response = redirect(reverse('factory_create') + '?' + urlencode({'definition': options[0]['definition'], 'queue': queue, 'q': q}))
+        response['Cache-Control'] = 'no-store'
+        return response
+    groups = {'Project work': [], 'Finance': [], 'Delivery and closure': []}
+    available = {option['definition'] for option in options}
+    for option in intake_catalogue():
+        key = option['definition']
+        title = 'Project work'
+        if key.startswith(('finance-', 'pmo-finance/')):
+            title = 'Finance'
+        elif key.startswith('delivery-'):
+            title = 'Delivery and closure'
+        groups[title].append({**option, 'available': key in available})
+    from .process_directory import entries
+    from apps.identity.factory_access import project_cases
+    response=render(request,'factory/intake.html',{'options':options,'has_projects':project_cases(request.user).exists(),'groups':groups,'processes':entries(available),'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
+        'can_ask_tola': cases_for(request.user, 'tola').exists()})
     response['Cache-Control']='no-store';return response
 
-def visible(actor):
+def work_grant_scope(actor, *, include_native=False):
+    """Grant-level discovery scope. Protected native records may narrow it further."""
+    from apps.agents.department_context import work_definitions
+    from apps.identity.factory_access import department_cases
+    from apps.identity.models import Grant
+    from apps.identity.services import visible_cases
+
     active(actor)
     scope=Q(pk__in=[])
+    if include_native:
+        from .native_station_access import candidates
+        scope |= Q(pk__in=candidates(actor).values('pk'))
+    for persona, role in [('tola', 'pmo-lead'), ('chidi', 'finance-lead')]:
+        scope |= Q(definition__in=work_definitions(persona), case_id__in=department_cases(actor, role).values('pk'))
+    explicit = visible_cases(actor)
+    works = FactoryWork.objects.all() if include_native else FactoryWork.objects.exclude(definition='process-handoff/v1')
+    if not explicit.exists():
+        return works.filter(scope)
+    by_actions = {}
     for name,spec in DEFINITIONS.items():
         actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
-        scope|=Q(definition=name,case_id__in=granted(actor,actions).values('pk'))
-    query=FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
+        by_actions.setdefault(frozenset(actions) - {'case.read', 'factory.read'}, []).append(name)
+    grants = Grant.objects.filter(user=actor, active=True)
+    legacy = Q(pk__in=[])
+    for actions, names in by_actions.items():
+        eligible = Q(definition__in=names)
+        for action in sorted(actions):
+            eligible &= Q(case_id__in=grants.filter(action=action).values('case_id'))
+        legacy |= eligible
+    return works.filter(scope | (legacy & Q(case__in=explicit,
+        case_id__in=grants.filter(action='factory.read').values('case_id'))))
+
+
+def visible(actor, *, work_id=None, case_id=None):
+    query=work_grant_scope(actor, include_native=work_id is not None).select_related('case','actor','invoice','source_head')
+    if work_id is not None:
+        query=query.filter(pk=work_id)
+        native=query.filter(definition='process-handoff/v1').first()
+        if native:
+            from .native_stations import readable
+            if not readable(actor,native):
+                return query.none()
+    if case_id is not None:
+        query=query.filter(case_id=case_id)
     from apps.finance.fixed_charge import preparation_access
     inaccessible=[]
     for work in query.filter(preparation__kind='fixed_contract').select_related('preparation'):
@@ -90,15 +173,36 @@ def visible(actor):
         except (PermissionDenied,ValidationError):inaccessible.append(work.pk)
     return query.exclude(pk__in=inaccessible)
 
+
+def decision_inbox_row(row):
+    return not (row.get('review_needs_update') or row.get('review_ready')) and (
+        row.get('department_wait') or any(task.status == 'open' and task.kind == 'factory_review' for task in row['tasks'])
+    )
+
+
+def exception_inbox_row(row, status):
+    if status == 'verified':
+        return bool(row.get('readiness_changed') or row.get('correction_required'))
+    if status in ('ready', 'waiting'):
+        holds = ('correction_required', 'review_needs_update', 'adoption', 'coordination_needed',
+                 'execution_owner_needed', 'source_instruction_needed', 'source_followup_needed',
+                 'operation_followup_needed', 'outcome_selection_needed', 'held_publication_needs_operator')
+        return (any(row.get(hold) for hold in holds) or any(d.uncertain_job(job) for job in row['jobs'])
+                or row['state'] == 'Execution rules need review')
+    return status in ('blocked', 'owner_needed', 'configuration_needed', 'waiting_effect', 'followup_needed') or any(
+        d.uncertain_job(job) for job in row['jobs']
+    )
+
 def permitted(actor,work,action):
     try:d.access(actor,work.case,action,work.definition);return True
     except PermissionDenied:return False
 
-def presentation(actor,work):
+@read_observation
+def presentation(actor,work,*,focus=None,include_progress=False):
     from apps.agents.factory_coordinator import decorate
-    return decorate(actor,work,_presentation(actor,work))
+    return decorate(actor,work,_presentation(actor,work,focus=focus,include_progress=include_progress))
 
-def _presentation(actor,work):
+def _presentation(actor,work,*,focus=None,include_progress=False):
     if work.definition=='pmo-issues/v1':
         from .factory_issue_views import presentation as issue_presentation
         return issue_presentation(actor,work)
@@ -116,10 +220,14 @@ def _presentation(actor,work):
         return accounting_presentation(actor,work)
     from .factory_execution import available_actor,can_control
     execution_owner=available_actor(work);controlled=can_control(actor,work)
-    try:d.profile(work);profile_available=True
-    except (ValidationError,PermissionDenied):profile_available=False
-    try:d.profile(work,recovery=True);recovery_available=True
-    except (ValidationError,PermissionDenied):recovery_available=False
+    execution_profile=None
+    try:
+        execution_profile=d.profile(work)
+        profile_available=recovery_available=True
+    except (ValidationError,PermissionDenied):
+        profile_available=False
+        try:d.profile(work,recovery=True);recovery_available=True
+        except (ValidationError,PermissionDenied):recovery_available=False
     tasks=list(HumanTask.objects.filter(case=work.case,factory_key__startswith=f'factory:{work.pk}:').select_related('claimed_by').order_by('pk'))
     jobs=d.invoice_jobs(work)
     state={'ready':'Ready to continue','waiting':'Waiting','blocked':'Action needed','owner_needed':'Owner needed','configuration_needed':'Setup needed','verified':'Verified','cancelled':'Cancelled','waiting_effect':'Awaiting reconciliation','followup_needed':'Stopped; invoice follow-up needed'}.get(work.status,'Check required')
@@ -139,8 +247,6 @@ def _presentation(actor,work):
     elif work.invoice_id and InvoiceDelivery.objects.filter(invoice_id=work.invoice_id).exists() and work.status!='verified':state='Awaiting verification'
     for t in tasks:
         if t.kind=='factory_review':
-            recipient=get_user_model().objects.filter(pk=t.context['packet']['recipient_id'],is_active=True,grant__case=work.case,grant__active=True,grant__action='finance.invoice.receive').first()
-            t.recipient_name=(recipient.get_full_name() or recipient.username) if recipient else None
             refs=t.context['packet'].get('factory_sources',{}).get('evidence',{})
             exact={r['id']:(r['version'],r['sha256']) for r in refs.values()}
             t.source_records=[e for e in public_evidence(Evidence.objects.filter(case=work.case,pk__in=exact)) if (e.version,e.sha256)==exact[e.pk]]
@@ -203,6 +309,14 @@ def _presentation(actor,work):
         row['preparation_selection']=preparation_selection(work)
         row['preparation_history']=work.preparation_bindings.select_related('actor','preparation').order_by('sequence')
     if work.definition=='pmo-finance/v1' and work.invoice_id:
+        from apps.finance.models import InvoiceReview
+        if work.status == 'waiting_effect' and recovery_available and controlled and not row['can_reconcile'] and not (
+                work.lease_until and work.lease_until > timezone.now()):
+            from .factory_invoice_receipts import confirmed_waiting_job
+            if confirmed_waiting_job(work, jobs):
+                row.update(state='Original receipt recorded', blocker='', can_reconcile=True, needs_me=True,
+                           recorded_invoice_receipt=True, next_action='Check the recorded invoice receipt before continuing')
+        row['invoice_decisions']=InvoiceReview.objects.filter(invoice=work.invoice).select_related('actor').order_by('-pk')[:10]
         from .factory_routing import evaluate,task_authority_current
         row['routing']=evaluate(work)
         row['reviewer_findings']=sorted({r['summary'] for r in row['routing'].get('reviewer_findings',[])})
@@ -265,6 +379,19 @@ def _presentation(actor,work):
             if prerequisite:row.update(blocker=prerequisite['summary'],next_action=prerequisite['summary'])
         if work.status=='verified':row.update(next_action='Inspect the release readiness record and source approvals')
         if row['delivery']['can_decide']:row.update(needs_me=True,next_action='Review this exact Planning exit',owner=actor.get_full_name() or actor.username,department_wait=True)
+        elif row['delivery']['returned'] and row['delivery']['remedy_finding'] and not work.cancel_requested:
+            issue = row['delivery']['return_issue']
+            state = 'Delivery returned' if row['delivery']['returned'].data['verdict']=='return' else 'Delivery rejected'
+            finding = row['delivery']['remedy_finding']
+            row.update(state=state, next_action=finding, blocker=finding, department_wait=False, can_advance=False,
+                       owner=(issue.current.owner.get_full_name() or issue.current.owner.username) if issue else 'Unassigned',
+                       needs_me=bool(issue and issue.current.owner_id==actor.pk))
+        elif (row['delivery']['intake_current'] and not work.cancel_requested
+                and work.status not in ('verified','cancelled','followup_needed','configuration_needed')
+                and not row['delivery']['planning_owner_names'] and row['delivery']['checks']['planning_sources']['status']=='ready'
+                and row['delivery']['checks']['planning_decision']['status']=='held'):
+            row.update(state='Planning approver needed', owner='Unassigned',
+                       next_action='Review the current Planning approval assignment.', department_wait=False)
         if row['delivery']['readiness_changed']:
             row.update(state='Prior release evidence needs review',next_action='Review changed native delivery sources or authority',readiness_changed=True,
                 can_reassess=permitted(actor,work,'factory.manage'),needs_me=permitted(actor,work,'factory.manage'))
@@ -277,6 +404,9 @@ def _presentation(actor,work):
             if prerequisite:row.update(blocker=prerequisite['summary'],next_action=prerequisite['summary'])
             elif row['hypercare']['assessment'] and row['hypercare']['assessment'].snapshot['qualified'] is not True:
                 row.update(blocker='Current stability observations remain unknown or fail the configured criteria.',next_action='Obtain corrected source observations before qualification')
+                if row['hypercare']['observation_forms']:
+                    row.update(needs_me=True, owner=actor.get_full_name() or actor.username,
+                               next_action='Record the current stability observations')
         if work.status=='configuration_needed' and profile_available:
             if resolve('D11.hypercare_criteria_ref',work.case).status=='ACTIVE':
                 row.update(state='Prerequisites need recheck',blocker='A current stability rule is available. Recheck the held work and any remaining source requirements.',next_action='Recheck corrected prerequisites')
@@ -321,7 +451,7 @@ def _presentation(actor,work):
         from .factory_handover import projection
         row['handover']=projection(actor,work);row['jobs']=row['handover']['jobs']
         pending_ack=[x for x in row['handover']['receipts'] if not x['ack'] or x['ack'].data['status']!='received']
-        own_ack=any(x['can_ack'] for x in pending_ack)
+        own_ack=any(x['can_ack'] or x.get('can_record_reply') for x in pending_ack)
         if row['handover']['finding'] and work.status in ['ready','waiting']:
             row.update(blocker=row['handover']['finding'],next_action=row['handover']['finding'])
             if work.status=='waiting':row['can_advance']=False
@@ -334,6 +464,8 @@ def _presentation(actor,work):
         if row['handover']['can_review']:
             row.update(needs_me=True,owner=actor.get_full_name() or actor.username,next_action='Review this exact controlled handover document',department_wait=True)
         if own_ack:row.update(needs_me=True,owner=actor.get_full_name() or actor.username,department_wait=True)
+        if any(x.get('can_record_reply') for x in pending_ack):
+            row['next_action']='Record Support’s actual reply with its proof'
         if not row['handover']['publication_current']:
             row.update(owner=(actor.get_full_name() or actor.username) if row['handover']['can_correct'] else 'Unassigned',
                 next_action='Review changed document, recipient or publication policy before a fresh package',needs_me=row['handover']['can_correct'])
@@ -344,6 +476,9 @@ def _presentation(actor,work):
         if any(j.status=='unknown' or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now() for j in row['jobs']):
             row.update(state='Handover delivery uncertain',next_action='Reconcile the original internal delivery',can_advance=False,
                 can_reconcile=controlled and not (work.lease_until and work.lease_until>timezone.now()))
+        elif controlled and row['handover']['recorded_receipt'] and not (work.lease_until and work.lease_until > timezone.now()):
+            row.update(state='Original handover receipt recorded', blocker='', can_reconcile=True, can_advance=False,
+                       needs_me=True, next_action='Check the recorded handover receipts before continuing')
         if work.status=='followup_needed':row.update(state='Stopped; delivered handover needs follow-up',next_action='Review the original delivered package and actual recipient records')
         if work.status=='verified':row.update(next_action='Inspect the current handover package and actual recipient acknowledgements')
         if row['handover']['readiness_changed']:
@@ -351,12 +486,23 @@ def _presentation(actor,work):
                 can_reassess=row['handover']['can_correct'] or own_ack,needs_me=row['handover']['can_correct'] or own_ack)
     if work.definition=='delivery-closure/v1':
         from .factory_closure import projection
-        row['closure']=projection(actor,work);panel=row['closure'];row['can_advance']&=bool(panel['next_options']) and panel['intake_current']
+        row['closure']=projection(actor,work,include_execution=focus!='decision');panel=row['closure'];row['can_advance']&=bool(panel['next_options']) and panel['intake_current']
         row['next_action']=panel['next_action'];row['readiness_changed']=panel['readiness_changed']
         row['blocker']=panel['finding'] or (panel['next_action'] if not panel['next_options'] and work.status not in ['verified','cancelled','followup_needed'] else '')
         if panel['pending_review']:
             row.update(state='Awaiting document review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',department_wait=panel['can_review'],needs_me=panel['can_review'])
         elif panel['closure'] and work.status!='verified':row.update(state='Closure recorded; verification pending',next_action='Verify the exact recorded closure and prescribed decision')
+        elif panel['needs_correction'] and not panel['closure']:
+            verdict = panel['decision'].data['verdict']
+            row.update(state='Closure returned' if verdict=='return' else 'Closure rejected',
+                       next_action='Record corrected source and prepare a new closure report',
+                       owner='Unassigned',
+                       needs_me=panel['can_correct'],department_wait=False,can_advance=False,correction_required=True)
+        elif not panel['closure'] and not panel['report']['ready_to_prepare']:
+            missing = next(check for check in panel['report']['checks'] if check['status'] != 'current')
+            row.update(state='Closure evidence needed', next_action=missing['summary'],
+                       blocker=panel['finding'] or missing['summary'],
+                       needs_me=panel['can_correct'], department_wait=False)
         elif panel['document'] and panel['report']['ready_to_prepare'] and not (panel['decision'] and panel['decision'].data['verdict']=='approve'):
             row.update(state='Awaiting closure decision',owner=', '.join(panel['decision_names']) or 'Unassigned',department_wait=bool(panel['verdicts']),needs_me=bool(panel['verdicts']))
         if work.status=='verified':row.update(next_action='Inspect the recorded closure, exact report and prescribed decision')
@@ -364,19 +510,28 @@ def _presentation(actor,work):
         if work.status=='followup_needed':row.update(state='Stopped; recorded closure needs follow-up',next_action='Inspect the existing native closure; stopping work cannot reopen it')
         row['can_reassess']=False
     if work.definition=='pmo-minutes/v1':
-        from .factory_minutes import projection
+        from .factory_minutes import confirmed_waiting_job, projection
         row['minutes']=projection(actor,work);panel=row['minutes'];row['jobs']=panel['jobs']
-        row['can_reconcile']=recovery_available and controlled and any(d.uncertain_job(j) for j in panel['jobs'])
+        idle = not (work.lease_until and work.lease_until > timezone.now())
+        row['can_reconcile'] = recovery_available and controlled and idle and any(d.uncertain_job(j) for j in panel['jobs'])
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if not panel['confirmation']:
             row.update(state='Confirm actual meeting record',needs_me=permitted(actor,work,'meeting.record'),department_wait=permitted(actor,work,'meeting.record'))
-        if panel['native']['stage']=='publication':
+        if panel['native']['review_request_needed']:
+            row.update(state='Draft ready for review', needs_me=panel['can_request_review'], department_wait=panel['can_request_review'])
+        elif panel['native']['stage']=='publication':
             row.update(state='Awaiting exact outward review or delivery',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
+        if any(d.uncertain_job(job) for job in panel['jobs']):
+            row.update(state='Delivery uncertain',next_action='Check the original recipient delivery',can_advance=False)
+        elif (recovery_available and controlled and idle and panel['native']['stage'] == 'complete'
+                and confirmed_waiting_job(work, panel['jobs'])):
+            row.update(state='Original receipt recorded', next_action='Check the recorded minutes receipts before continuing',
+                       blocker='', can_reconcile=True, can_advance=False, needs_me=True, recorded_minutes_receipt=True)
         if panel['readiness_changed']:row.update(state='Current meeting or action changes need new minutes',needs_me=permitted(actor,work,'factory.manage'),can_reassess=permitted(actor,work,'factory.manage'),can_advance=False)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger import projection
-        row['ledger']=projection(actor,work);panel=row['ledger']
+        row['ledger']=projection(actor,work,include_progress=include_progress);panel=row['ledger']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['readiness_changed']:row['state']='Supplied incumbent verification needs revalidation'
@@ -384,40 +539,78 @@ def _presentation(actor,work):
         elif panel['native']['stage']=='observation':row.update(state='Awaiting current supplied incumbent observation',needs_me=permitted(actor,work,'ledger.verify'),department_wait=permitted(actor,work,'ledger.verify'))
     if work.definition=='finance-schedules/v1':
         from .factory_schedules import projection
-        row['schedules']=projection(actor,work);panel=row['schedules']
+        row['schedules']=projection(actor,work,include_progress=include_progress);panel=row['schedules']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['pending_reviews']:
             row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
-        if panel['readiness_changed']:row['state']='Reviewed income detail or schedule inventory needs revalidation'
+        if panel['native'].get('stage')=='returned':
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'),
+                       can_advance=False,correction_required=True)
+        elif panel['native'].get('stage')=='withdrawn':
+            row.update(state='Approval withdrawn', can_advance=False,correction_required=True)
+        elif panel['readiness_changed']:row['state']='Reviewed income detail or schedule inventory needs revalidation'
     if work.definition=='finance-ppe/v1':
         from .factory_ppe import projection
-        row['ppe']=projection(actor,work);panel=row['ppe']
+        row['ppe']=projection(actor,work,include_progress=include_progress);panel=row['ppe']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['pending_reviews']:
             row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
-        if panel['readiness_changed']:row['state']='Reviewed asset schedule needs revalidation'
+        stage=panel['native'].get('stage')
+        if stage=='returned':
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'),
+                       can_advance=False,correction_required=True)
+        elif panel['readiness_changed']:row['state']='Reviewed asset schedule needs revalidation'
+        elif panel['pending_reviews']:
+            row['state']={'source_review':'Awaiting asset register review','basis_review':'Awaiting reporting dates review',
+                          'output_review':'Awaiting asset schedule review'}.get(stage,row['state'])
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import projection
-        row['forecast']=projection(actor,work);panel=row['forecast'];row['jobs']=panel['jobs']
+        from .factory_forecast_recovery import UNSETTLED, in_flight, needs_lookup, original_job, recorded
+        row['forecast']=projection(actor,work,include_progress=include_progress);panel=row['forecast'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options']) and panel['intake_current']
-        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
+        original = original_job(work, panel['jobs'])
+        uncertain = original is not None and needs_lookup(original)
+        receipt_recorded = original is not None and recorded(work, original, panel['jobs'])
+        row['can_reconcile'] = (recovery_available and controlled and panel['intake_current']
+                                and not in_flight(work) and (uncertain or receipt_recorded))
+        row['forecast_original_job'] = original
+        row['forecast_can_observe'] = row['can_reconcile'] and uncertain and not work.cancel_requested
+        row['forecast_receipt_recorded'] = receipt_recorded
+        row['forecast_can_recheck'] = row['can_manage'] and not any(
+            job.status in UNSETTLED and job.publication.factory_source_id == work.source_head_id
+            for job in panel['jobs'])
         if panel['review_roles']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting native forecast review')
         if panel['readiness_changed']:row['state']='Recorded forecast evidence changed'
+        if uncertain:
+            row.update(state='Delivery uncertain',next_action='Check the original forecast delivery',can_advance=False)
+        elif receipt_recorded and row['can_reconcile']:
+            row.update(state='Original receipt recorded',next_action='Check the recorded forecast receipt',
+                       can_advance=False,needs_me=True)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation import projection
-        row['escalation']=projection(actor,work);panel=row['escalation'];row['jobs']=panel['jobs']
+        row['escalation']=projection(actor,work,include_progress=include_progress);panel=row['escalation'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
-        if panel['review_verdicts']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting exact document review')
+        if panel['review_request_needed']:
+            row.update(state='Message drafted', next_action='Send the exact communication for review.',
+                       needs_me=panel['can_request_review'], department_wait=False, can_advance=False,
+                       owner=(actor.get_full_name() or actor.username) if panel['can_request_review'] else 'Communication preparer')
+        if panel['review_pending']:row['state']='Awaiting exact document review'
+        if panel['review_verdicts']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username)
         if panel['native'].get('stage')=='decision':row.update(owner=', '.join(panel['owner_names']) or 'Unassigned PMO Lead / Head of PMO',needs_me=bool(panel['decision_roles']),department_wait=bool(panel['decision_roles']),state='Awaiting native client decision')
+        if panel['native'].get('stage') == 'not_escalated':
+            row.update(state='Not escalated', owner='No action required', needs_me=False, department_wait=False, can_advance=False)
+        elif panel['native'].get('stage') == 'returned':
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'),
+                       department_wait=False,can_advance=False,correction_required=True)
         if panel['readiness_changed']:row['state']='Communication evidence needs revalidation'
     if work.definition=='pmo-leadership-report/v1':
         from .factory_leadership import projection
-        row['reporting']=projection(actor,work);panel=row['reporting'];row['jobs']=panel['jobs']
+        row['reporting']=projection(actor,work,include_progress=include_progress);panel=row['reporting'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
@@ -426,24 +619,26 @@ def _presentation(actor,work):
         # Optional editing is not an obligation while another principal reviews.
         # Native return/currentness/hold facts identify the correction need; native
         # can_correct remains the separate authority and settled-effect boundary.
-        verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
-        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
+        row['correction_required'] = bool(panel['return_review']) and not work.cancel_requested
+        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or row['correction_required'] or work.status in ['blocked','owner_needed','configuration_needed'])
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting import projection
-        row['reporting']=projection(actor,work);panel=row['reporting'];row['jobs']=panel['jobs']
+        row['reporting']=projection(actor,work,include_progress=include_progress,execution_profile=execution_profile);panel=row['reporting'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
+        if panel['template_required'] and not panel['next_options']:
+            row.update(state='Report template needed')
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['review_verdicts']:row.update(state='Awaiting PMO Lead review',owner=actor.get_full_name() or actor.username,needs_me=True,department_wait=True)
         if panel['readiness_changed']:row.update(state='Reviewed weekly report needs revalidation',can_advance=False,can_reassess=panel['can_correct'])
         # Optional editing is not an obligation while another principal reviews.
         # Native return/currentness/hold facts identify the correction need; native
         # can_correct remains the separate authority and settled-effect boundary.
-        verdict=panel['document'].reviews.order_by('-pk').values_list('verdict',flat=True).first() if panel['document'] else None
-        correction_due=panel['can_correct'] and bool(panel['readiness_changed'] or panel['finding'] or verdict in ['return','reject'] or work.status in ['blocked','owner_needed','configuration_needed'])
+        row['correction_required'] = bool(panel['template_required'] or panel['return_review']) and not work.cancel_requested
+        correction_due=panel['can_correct'] and bool(row['correction_required'] or panel['readiness_changed'] or panel['finding'] or work.status in ['blocked','owner_needed','configuration_needed'])
         row['needs_me']=bool(panel['review_verdicts'] or row['can_advance'] or row['can_reconcile'] or correction_due)
         row['can_manage']=row['can_manage'] and profile_available and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now())
         row['can_cancel']=row['can_cancel'] and work.status!='followup_needed'
@@ -451,6 +646,7 @@ def _presentation(actor,work):
         from .factory_emergency import projection
         row['emergency']=projection(actor,work);panel=row['emergency'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
+        if panel['status']['stage']=='refused':row['state']='Preauthorization refused'
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['readiness_changed']:row['state']='Retrospective evidence needs review'
@@ -475,6 +671,18 @@ def _presentation(actor,work):
                 needs_me=panel['can_accept'],department_wait=panel['can_accept'])
         elif panel['publication'] and not panel['acceptance'] and not work.cancel_requested:
             row.update(state='Awaiting client document delivery',needs_me=False,department_wait=False)
+        responses = panel['client_responses']['items']
+        if any(reply['outcome'] == 'declined' for reply in responses):
+            row.update(state='Client declined go-live', can_advance=False, department_wait=False,
+                       needs_me=permitted(actor, work, 'delivery.manage'))
+        elif panel['document'] and any(reply['outcome'] == 'changes_requested' and
+                reply['version_id'] == panel['document'].pk for reply in responses):
+            row.update(state='Client requested changes', department_wait=False,
+                       needs_me=panel['can_prepare_reply_successor'] or permitted(actor, work, 'policy.configure'))
+        elif panel['document'] and any(reply['outcome'] == 'withdrawn' and
+                reply['version_id'] == panel['document'].pk for reply in responses):
+            row.update(state='Response correction recorded', department_wait=False,
+                       needs_me=panel['can_prepare_reply_successor'])
         if any(j.status in ['unknown','leased'] and (j.status=='unknown' or j.lease_until and j.lease_until<=timezone.now()) for j in panel['jobs']):
             row.update(state='Document delivery uncertain',next_action='Reconcile the original go-live delivery before further work',can_advance=False,
                 can_reconcile=controlled and not (work.lease_until and work.lease_until>timezone.now()))
@@ -506,37 +714,115 @@ def _presentation(actor,work):
 
 @login_required
 def index(request):
+    from apps.identity import role_work
+    from apps.identity.role_work_views import page_number
+
     # Retain legacy filtered workspace links while making the root a work-first surface.
     if any(k in request.GET for k in ['kind','area','tenant']):
         from apps.core.workbench_views import home
         return home(request)
-    queue=request.GET.get('queue','needs_me');q=request.GET.get('q','').strip()[:120]
-    if queue not in QUEUES:queue='needs_me'
-    query=visible(request.user)
+    context = queue_context(request.user, request.GET)
+    positions = role_work.workspace_positions(request.user)
+    context['role_heading'] = ' · '.join(dict.fromkeys(position['name'] for position in positions))
+    context['workspace_positions'] = positions
+    if (positions or context['queue'] == 'decisions') and context['queue'] in ('needs_me', 'decisions') and not (
+            context['q'] or context['line']):
+        context['assignments'] = role_work.dashboard(request.user, page_number(request.GET.get('assignments_page')),
+                                                    positions=positions, include_workspace_decisions=False)
+    response=render(request,'factory/queue.html',context)
+    response['Cache-Control']='no-store';return response
+
+
+def queue_context(actor, values, *, scope=None):
+    from time import monotonic
+    from django.core.paginator import Paginator
+    from apps.core.design_views import discoverable_work
+    from apps.core.read_budget import ReadLimit, limit_queries
+    from apps.core.read_observation import observation_scope
+
+    params=work_queue_params(values)
+    queue,q,line=params['queue'],params['q'],params.get('line','')
+    query=discoverable_work(actor) if scope is None else scope
+    known_lines = set(query.order_by().values_list('definition', flat=True).distinct())
+    line_choices = sorted((key, value['title']) for key, value in DEFINITIONS.items() if key in known_lines)
+    if line:query=query.filter(definition=line)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
     elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
+    elif queue=='mine':query=query.filter(actor=actor)
+    elif queue=='waiting':query=query.filter(status__in=['waiting','waiting_effect'])
     else:query=query.exclude(status__in=['verified','cancelled'])
-    query=query.distinct().order_by('-updated_at','-pk');items=[]
-    # Explicit bounded evaluated coverage: no global totals from a first page.
-    for work in query[:101]:
-        row=presentation(request.user,work)
+    candidates=Paginator(query.distinct().order_by('-updated_at','-pk'), 8).get_page(values.get('page'))
+    items=[];deferred=[];evaluated=0;deadline=monotonic()+9
+    for work in candidates:
+        try:
+            with observation_scope(), limit_queries(1400, deadline=deadline):
+                row=presentation(actor,work)
+        except ReadLimit:
+            deferred.append(work)
+            continue
+        evaluated+=1
         if queue=='verified' and row.get('readiness_changed'):continue
-        if queue=='exceptions' and work.status=='verified' and not row.get('readiness_changed'):continue
-        if queue=='exceptions' and work.status in ['ready','waiting'] and not (row.get('review_needs_update') or row.get('adoption') or row.get('coordination_needed') or row.get('execution_owner_needed') or row.get('source_instruction_needed') or row.get('source_followup_needed') or row.get('operation_followup_needed') or row.get('outcome_selection_needed') or row.get('held_publication_needs_operator') or any(d.uncertain_job(j) for j in row['jobs']) or row['state']=='Execution rules need review'):continue
+        if queue=='exceptions' and not exception_inbox_row(row,work.status):continue
         if queue=='needs_me' and not row['needs_me']:continue
-        if queue=='decisions' and (row.get('review_needs_update') or row.get('review_ready') or not (row.get('department_wait') or any(t.status=='open' and t.kind=='factory_review' for t in row['tasks']))):continue
+        if queue=='waiting' and row['needs_me']:continue
+        if queue=='decisions' and not decision_inbox_row(row):continue
         if queue=='unassigned' and row['owner']!='Unassigned':continue
         items.append(row)
-    evaluated=query.count()
-    response=render(request,'factory/queue.html',{'rows':items[:50],
-        'intake_available':bool(intake_options(request.user)),'queue':queue,'queues':QUEUES,'q':q,'as_of':timezone.now(),
-        'evaluated':min(evaluated,101),'limited':len(items)>50 or evaluated>101,'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
-    response['Cache-Control']='no-store';return response
+    from apps.finance.payroll_questions import queue_cards as payroll_question_cards
+    questions=payroll_question_cards(actor,queue,q,line)
+    return {'rows':items,'candidates':candidates,'deferred':deferred,'payroll_questions':questions,
+        'queue':queue,'queues':QUEUES,'q':q,'line':line,'line_choices':line_choices,'work_query':'?'+urlencode(params),
+        'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
+        'evaluated':evaluated,'limited':bool(deferred),'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)}
 
-class StartForm(forms.Form):
+def assistant_origin(request, form, envelope):
+    turn_id = request.GET.get('assistant_turn')
+    if request.method != 'GET' or not turn_id:
+        return None
+    from apps.agents.assistant import cited_record, work_intent
+    from apps.agents.assistant_drafts import FIELDS, latest
+
+    try:
+        turn = work_intent(request.user, turn_id, envelope, request.GET.get('case'))
+    except ValidationError as exc:
+        messages.error(request, exc.messages[0])
+        return redirect('design_agents')
+    if turn.started_work_id:
+        return redirect('factory_detail', work_id=turn.started_work_id)
+    form.initial.update({'assistant_turn': turn.pk, 'key': str(turn.pk)})
+    draft = latest(turn)
+    if draft:
+        form.initial.update(draft.payload)
+        form.initial['draft_version'] = draft.number
+    field = FIELDS[envelope][0]
+    pk = cited_record(turn, field)
+    if pk is not None and form.fields[field].queryset.filter(pk=pk).exists():
+        form.initial[field] = pk
+    return None
+
+
+@transaction.atomic
+def submit_start(request, form_values, envelope, start_native):
+    from apps.agents import assistant_drafts
+
+    if request.POST.get('action') == 'save_draft':
+        assistant_drafts.save(request.user, envelope, form_values)
+        return redirect(reverse('factory_create') + '?' + urlencode({
+            'definition': envelope, 'case': form_values['case'].pk, 'assistant_turn': form_values['assistant_turn'],
+        }))
+    if form_values['assistant_turn']:
+        work = assistant_drafts.start(request.user, envelope, form_values, start_native)
+    else:
+        work = start_native()
+    return started(request, work, form_values['background'])
+
+
+class StartForm(StartWithBackground):
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
+    assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
+    draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
     mode=forms.ChoiceField(required=False,initial='completion',choices=[('completion','PMO completion'),('existing-preparation/v1','Existing Finance preparation')])
     from apps.finance.models import BillingPreparation, Invoice
@@ -571,16 +857,34 @@ class StartForm(forms.Form):
 
     def clean(self):
         values=super().clean()
+        from adapters.billing_usage import KEY
+
+        if values.get('reference') and not KEY.fullmatch(values['reference']):
+            self.add_error('reference', 'Use a valid invoice reference.')
         values['mode']=values.get('mode') or 'completion'
         fields=['preparation'] if values.get('mode')=='existing-preparation/v1' else ['coverage','handoff']
         for field in fields:
             if not values.get(field):self.add_error(field,'Select the exact source for this intake mode.')
         return values
 
+
+def start_invoice(actor, values):
+    case_id, key, reference, revision = (values['case'].pk, values['key'], values['reference'], values['revision'])
+    if values['mode']=='existing-preparation/v1':
+        from .factory_invoice_intake import start as start_preparation
+
+        return start_preparation(actor,case_id,key,values['preparation'].pk,reference,values['due_date'],revision,
+                                 values['invoice'].pk if values['invoice'] else None)
+    return d.start(actor,case_id,key,values['coverage'].pk,values['handoff'].pk,reference,revision)
+
+
 @login_required
 def create(request):
     envelope=request.POST.get('definition',request.GET.get('definition','pmo-finance/v1'))
-    if envelope not in DEFINITIONS:raise Http404
+    if envelope == rfp_fresh_intake.LINE:
+        from .factory_fresh_bid_views import create as log_bid
+        return log_bid(request)
+    if envelope not in {line for line, _, _, _ in INTAKES}:raise Http404
     if envelope=='rfp-response/v1':
         from .factory_rfp_views import create as create_rfp
         return create_rfp(request)
@@ -658,90 +962,135 @@ def create(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            if v['mode']=='existing-preparation/v1':
-                from .factory_invoice_intake import start as start_preparation
-                work=start_preparation(request.user,v['case'].pk,v['key'],v['preparation'].pk,v['reference'],v['due_date'],v['revision'],v['invoice'].pk if v['invoice'] else None)
-            else:
-                work=d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
-            return redirect('factory_detail',work_id=work.pk)
+            return submit_start(request, v, envelope, lambda: start_invoice(request.user, v))
         except ValidationError as exc:form.add_error(None,str(exc))
+    response = assistant_origin(request, form, envelope)
+    if response is not None:
+        return response
     return render(request,'factory/start.html',{'form':form,'available_cases':granted(request.user,['finance.read','factory.start']).filter(kind='project')})
 
 @login_required
-def detail(request,work_id):
-    work=get_object_or_404(visible(request.user),pk=work_id)
+@require_http_methods(['GET','HEAD','POST'])
+def detail(request,work_id,focus=None):
+    from apps.core.read_observation import observation_scope
+
+    if request.method in ['GET', 'HEAD']:
+        with observation_scope():
+            return _detail(request, work_id, focus)
+    return _detail(request, work_id, focus)
+
+
+def _detail(request,work_id,focus=None):
+    from .screen_focus import SCREENS, require_action
+
+    work=visible(request.user,work_id=work_id).first()
+    if work is None:
+        if request.method in ('GET','HEAD'):
+            from apps.identity.work_access_views import unavailable
+            return unavailable(request,work_id)
+        raise Http404
+    if focus and focus not in SCREENS.get(work.definition, {}):
+        raise Http404
+    if work.definition=='process-handoff/v1':
+        from .native_station_views import detail
+        return detail(request,work)
     if work.definition=='engagement/v1':
         from .factory_engagement_views import detail as engagement_detail
         return engagement_detail(request,work)
     if work.definition=='rfp-response/v1':
         from .factory_rfp_views import detail as rfp_detail
-        return rfp_detail(request,work)
+        return rfp_detail(request,work,focus)
     if work.definition=='finance-accounts/v1':
         from .factory_accounting_views import detail as accounting_detail
-        return accounting_detail(request,work)
+        return accounting_detail(request,work,focus)
     if work.definition=='pmo-issues/v1':
         from .factory_issue_views import detail
         return detail(request,work)
     if work.definition=='pmo-minutes/v1':
         from .factory_minutes_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-schedules/v1':
         from .factory_schedules_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-ppe/v1':
         from .factory_ppe_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-forecast/v1':
         from .factory_forecast_views import detail as forecast_detail
-        return forecast_detail(request,work)
+        return forecast_detail(request,work,focus)
     if work.definition=='finance-bu/v1':
         from .factory_bu_views import detail as bu_detail
-        return bu_detail(request,work)
+        return bu_detail(request,work,focus)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll_views import detail as payroll_detail
-        return payroll_detail(request,work)
+        return payroll_detail(request,work,focus)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='pmo-leadership-report/v1':
         from .factory_leadership_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency_views import detail as emergency_detail
-        return emergency_detail(request,work)
+        return emergency_detail(request,work,focus)
     if work.definition=='pmo-change/v1':
         from .factory_change_views import detail as change_detail
         return change_detail(request,work)
     if work.definition=='delivery-go-live/v1':
         from .factory_go_live_views import detail as go_live_detail
-        return go_live_detail(request,work)
+        return go_live_detail(request,work,focus)
     if work.definition=='delivery-closure/v1':
         from .factory_closure_views import detail as closure_detail
-        return closure_detail(request,work)
+        return closure_detail(request,work,focus)
     if work.definition=='delivery-handover/v1':
         from .factory_handover_views import detail as handover_detail
-        return handover_detail(request,work)
+        return handover_detail(request,work,focus)
     if work.definition=='delivery-archive/v1':
         from .factory_archive_views import detail as archive_detail
         return archive_detail(request,work)
-    return_queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
-    if return_queue not in QUEUES:return_queue='needs_me'
+    params=work_queue_params(request.GET,work=work)
+    return_queue,q=params['queue'],params['q']
     if request.method=='POST':
         try:
             operation=request.POST.get('action');revision=int(request.POST.get('revision','0'))
+            require_action(work, focus, operation)
             if operation=='observe_department' and work.definition!='planning/v1' or operation=='reassess' and work.definition not in ['planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1']:raise ValidationError('Choose an action available for this work')
             if operation=='replace_preparation':
                 from .factory_invoice_intake import replace
                 from datetime import date
                 due=date.fromisoformat(request.POST['due_date']) if request.POST.get('due_date') else None
                 replace(request.user,work.pk,int(request.POST.get('preparation','0')),request.POST.get('reference',''),due,revision,request.POST.get('reason',''))
-            elif operation=='advance':d.advance(request.user,work.pk,revision)
+            elif operation=='advance':
+                if work.definition in {'delivery-release/v1','delivery-hypercare/v1'}:
+                    from .factory_progress import set_progress
+                    set_progress(request.user,work.pk,revision,True)
+                    messages.success(request,'Release follow-up will continue in the background.' if
+                                     work.definition=='delivery-hypercare/v1' else 'Release work will continue in the background.')
+                    return redirect(request.get_full_path())
+                d.advance(request.user,work.pk,revision)
+            elif operation=='release_invoice':
+                from .factory_progress import queue_invoice_release
+                queue_invoice_release(request.user,work.pk,revision)
+                messages.success(request,'Invoice issuance and delivery queued. Check for the original receipts.')
+                return redirect(request.get_full_path())
+            elif operation=='invoice_comment':
+                from .factory_invoice_review import comment
+                comment(request.user,work.pk,int(request.POST.get('task','0')),
+                        int(request.POST.get('task_revision','0')),request.POST.get('comment',''))
+                messages.success(request,'Comment recorded for this invoice review.')
+                return redirect(request.get_full_path())
+            elif operation=='invoice_milestone_proof':
+                if work.definition!='pmo-finance/v1':raise ValidationError('Use the exact invoice evidence request')
+                from .factory_invoice_information_views import supply
+                supply(request,work)
+                messages.success(request,'Private milestone proof recorded. It does not approve the invoice.')
+                return redirect(request.get_full_path())
             elif operation=='reassess':
                 if work.definition=='delivery-hypercare/v1':
                     from .factory_hypercare import reassess
@@ -755,6 +1104,10 @@ def detail(request,work_id):
             elif operation=='observe_department':
                 from .factory_planning import observe_department
                 observe_department(request.user,work.pk,revision,int(request.POST.get('request','0')),int(request.POST.get('receipt','0')),int(request.POST.get('evidence','0')))
+            elif operation in ['department_input','department_effort_review','department_input_rules']:
+                if work.definition!='planning/v1':raise ValidationError('Planning work required.')
+                from .factory_planning import department_action
+                department_action(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),operation,request.POST)
             elif operation=='commercial_decision':
                 if work.definition!='commercial/v1':raise ValidationError('Commercial work required')
                 from .factory_commercial import decide
@@ -762,7 +1115,21 @@ def detail(request,work_id):
             elif operation=='delivery_decision':
                 if work.definition!='delivery-release/v1':raise ValidationError('Delivery work required')
                 from .factory_delivery import decide
-                decide(request.user,work.pk,revision,request.POST.get('verdict'),int(request.POST.get('evidence','0')),request.POST.get('note',''),int(request.POST.get('case_revision','0')),request.POST.get('packet',''))
+                decide(request.user,work.pk,revision,request.POST.get('verdict'),int(request.POST.get('evidence','0')),request.POST.get('note',''),int(request.POST.get('case_revision','0')),request.POST.get('packet',''),
+                       issue_id=int(request.POST['blocking_issue']) if request.POST.get('blocking_issue') else None)
+            elif operation=='delivery_workaround':
+                if work.definition!='delivery-release/v1':raise ValidationError('Delivery work required')
+                from .factory_delivery import link_client_workaround
+
+                fields = {'return_id', 'issue_state_id', 'response_id', 'review_id'}
+                expected_fields = fields | {'action', 'revision', 'case_revision', 'note'}
+                if set(request.POST) - expected_fields - {'csrfmiddlewaretoken'} or any(
+                        len(request.POST.getlist(key)) != 1 for key in expected_fields):
+                    raise ValidationError('Choose the exact current return, issue and reviewed client response.')
+                link_client_workaround(request.user, work.pk, revision, int(request.POST['case_revision']),
+                                       **{key: int(request.POST[key]) for key in fields}, note=request.POST['note'])
+                messages.success(request, 'Client workaround linked for a fresh Planning decision.')
+                return redirect(request.get_full_path())
             elif operation=='hypercare_observation':
                 if work.definition!='delivery-hypercare/v1':raise ValidationError('Release follow-up work required')
                 from .factory_hypercare import observe
@@ -770,12 +1137,23 @@ def detail(request,work_id):
                 if kind=='release':
                     data={'readiness':int(request.POST['readiness']) if request.POST.get('readiness') else None,
                         'released_at':request.POST.get('released_at',''),'reference':request.POST.get('reference',''),
-                        'evidence':int(request.POST.get('evidence','0')),'note':request.POST.get('note','')}
+                        'evidence':int(request.POST.get('evidence','0')),'note':request.POST.get('note',''),
+                        'deployment_environment':request.POST.get('deployment_environment'),
+                        'private_log':int(request.POST['private_log']) if request.POST.get('private_log') else None}
                 elif kind=='acceptance':data={'receipt':int(request.POST.get('receipt','0')),'pm_signature':int(request.POST.get('pm_signature','0')),
                     'client_signature':int(request.POST.get('client_signature','0')),'attestation':parse_attestation(request.POST.get('attestation','')),'packet':request.POST.get('packet',''),'note':request.POST.get('note','')}
                 else:raise ValidationError('Choose an actual release or go-live acceptance observation')
                 observe(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),kind,data)
+            elif operation=='stability_source':
+                if work.definition!='delivery-hypercare/v1':raise ValidationError('Release follow-up work required')
+                from .factory_hypercare import record_stability
+                record_stability(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),request.POST)
             elif operation=='reconcile':d.reconcile(request.user,work.pk,revision)
+            elif operation=='stop_invoice_draft':
+                from .factory_invoice_cancellation import DraftStop, DraftStopForm
+                form = DraftStopForm(request.POST)
+                if not form.is_valid():raise ValidationError('Enter a reason of up to 2,000 characters and review the recorded invoice selection.')
+                d.manage(request.user, work.pk, revision, 'cancel', draft_stop=DraftStop(**form.cleaned_data))
             elif operation in ['resume','cancel']:d.manage(request.user,work.pk,revision,operation)
             elif operation=='adopt_profile':d.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             elif operation=='release_claim':
@@ -797,11 +1175,50 @@ def detail(request,work_id):
             else:raise ValidationError('Choose a current available action')
             messages.success(request,'Action recorded. Check the current work and receipt status.')
             return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc))
+        except (ValidationError,ValueError) as exc:
+            messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
+    if work.definition == 'pmo-finance/v1' and work.invoice_id:
+        from .factory_invoice_cancellation import eligible, existing_issue, readback
+        row['invoice_draft_stop'] = readback(request.user, work)
+        if row['invoice_draft_stop']:
+            row['next_action'] = 'Inspect the cancelled draft and recorded reason'
+            selected = row['invoice_draft_stop']['existing_invoice']
+            if selected and request.GET.get('existing_invoice') == str(selected.pk):
+                row['show_existing_invoice'] = True
+        elif row['can_cancel'] and focus != 'decision' and eligible(request.user, work, jobs=row['jobs']):
+            row['can_stop_invoice_draft'] = True
+            try:
+                issue = existing_issue(request.user, work)
+                row['invoice_stop_alternative'] = issue.invoice if issue else None
+            except (PermissionDenied, ValidationError):
+                pass
+    if work.definition == 'pmo-finance/v1' and focus in (None, 'decision'):
+        from .factory_invoice_review import annotate_comments, context
+        from .factory_invoice_information_views import decorate
+        row['invoice_context'] = None if row.get('invoice_draft_stop') else context(request.user, row)
+        decorate(request.user,row)
+        if focus == 'decision' and row['invoice_context']:
+            annotate_comments(row)
+            if request.method == 'POST' and request.POST.get('action') == 'invoice_comment':
+                row['comment_task'] = request.POST.get('task')
+                row['comment_draft'] = request.POST.get('comment', '')[:2000]
+    if work.definition == 'pmo-finance/v1' and focus is None and row['can_advance'] and not row['jobs']:
+        from .factory_progress import ACTIVE, invoice_release_ready
+        from .models import FactoryProgress
+        if not FactoryProgress.objects.filter(work=work, status__in=ACTIVE).exists():
+            try:
+                if invoice_release_ready(work):
+                    row.update(advance_label='Issue and send invoice', advance_action='release_invoice',
+                               state='Approved; ready to send')
+            except (ValidationError, PermissionDenied):
+                pass
+    if work.definition=='delivery-hypercare/v1' and request.method=='POST' and request.POST.get('action')=='stability_source':
+        from .stability_forms import observation_forms
+        row['hypercare']['observation_forms']=observation_forms(request.user,work,request.POST)
     from apps.agents.factory_catalogue import CATALOGUE
-    activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    activities=[] if focus else list(work.activities.prefetch_related('attempts').order_by('pk'))
     for activity in activities:
         activity.title=CATALOGUE[activity.kind].title
         for attempt in activity.attempts.all():
@@ -826,9 +1243,17 @@ def detail(request,work_id):
             elif attempt.result.get('dispatch_job'):attempt.summary='Processing was requested from the native invoice worker. Inspect receipts for the observed result.'
             elif attempt.result.get('waiting')=='approval':attempt.summary='The exact publication packet is waiting for an eligible Finance decision.'
             elif attempt.result.get('waiting')=='input':attempt.summary='A native information task records the missing source and configured resolver.'
-    proofs=Evidence.objects.filter(case=work.case,kind='invoice_review')
+    proofs=public_evidence(Evidence.objects.filter(case=work.case,kind='invoice_review'))
     job_ids=[j.pk for j in row['jobs']]
     history=Audit.objects.filter(case=work.case,action__startswith='invoice.effect_',data__job__in=job_ids).order_by('pk')
+    if job_ids and work.definition == 'pmo-finance/v1':
+        from apps.finance.models import InvoiceDelivery, InvoiceIssue
+        receipts = {job_id: receipt_id for model in (InvoiceIssue, InvoiceDelivery)
+                    for job_id, receipt_id in model.objects.filter(invoice__case=work.case, job_id__in=job_ids)
+                    .values_list('job_id', 'pk')}
+        for job in row['jobs']:
+            job.receipt_id = receipts.get(job.pk)
+            job.needs_lookup = d.uncertain_job(job)
     if work.definition=='planning/v1':
         from apps.pmo import planning
         row['planning']=planning.report(request.user,work.case_id)
@@ -836,12 +1261,22 @@ def detail(request,work_id):
         try:planning.read(work.case,work.source_head,'packet','coordinate')
         except (ValidationError,PermissionDenied):row['packet']=None
         row['current_packet']=planning.latest(work.case,'packet')
-        from .factory_planning import owner_panels
+        from apps.pmo.planning_input_forms import panels as department_panels
+        row['department_panels']=department_panels(request.user,work.case,work.source_head,
+            row['planning'].get('department_inputs') if row['planning'].get('packet_id')==work.source_head_id else None,
+            request.POST,request.POST.get('action'))
+        from .factory_planning import owner_panels, readiness_progress
         row['owner_panels']=owner_panels(request.user,work)
+        row['planning_progress']=readiness_progress(request.user,work,row['planning'])
         from apps.pmo.models import DeliverySource
         row['handoff']=DeliverySource.objects.filter(dossier__case=work.case,kind='scope_baseline',evidence_id=row['planning'].get('readiness_id')).first() if row['planning'].get('readiness_id') else None
+        row['can_read_routing_setup'] = work.status == 'owner_needed' and permitted(request.user, work, 'policy.read')
+    if work.definition == 'delivery-hypercare/v1':
+        from apps.pmo.delivery import release_observations
+        dossier_id = row['hypercare']['dossier'].pk
+        row['hypercare']['release_observation'] = release_observations(work.case, [dossier_id], request.user).get(dossier_id)
     template='factory/hypercare_detail.html' if work.definition=='delivery-hypercare/v1' else 'factory/delivery_detail.html' if work.definition=='delivery-release/v1' else 'factory/commercial_detail.html' if work.definition=='commercial/v1' else 'factory/planning_detail.html' if work.definition=='planning/v1' else 'factory/detail.html'
-    response=render(request,template,{'case':work.case,'row':row,'activities':activities,'review_evidence':proofs,'effect_history':history,'can_configure':permitted(request.user,work,'policy.configure'),'queue':return_queue,'q':q,'as_of':timezone.now()})
+    response=render(request,template,{'case':work.case,'row':row,'activities':activities,'review_evidence':proofs,'effect_history':history,'can_configure':permitted(request.user,work,'policy.configure'),'queue':return_queue,'q':q,'as_of':timezone.now(),'focus':focus})
     response['Cache-Control']='no-store';return response
 
 def responsibility_names(case,value,cache=None):
@@ -874,12 +1309,11 @@ def responsibility_context(request,case):
     if work_key:
         if not work_key.isascii() or not work_key.isdecimal() or len(work_key)>19 or not 1<=int(work_key)<=2**63-1:raise Http404
         work=get_object_or_404(visible(request.user),pk=int(work_key),case=case,definition='pmo-finance/v1')
-    queue=request.POST.get('queue',request.GET.get('queue','needs_me'))
-    if queue not in QUEUES:queue='needs_me'
-    q=request.POST.get('q',request.GET.get('q','')).strip()[:120]
-    suffix='?'+urlencode({'work':work.pk,'queue':queue,'q':q}) if work else ''
-    return {'selected_work':work,'queue':queue,'q':q,'configuration_url':request.path+suffix,
-        'return_url':reverse('factory_detail',args=[work.pk])+'?'+urlencode({'queue':queue,'q':q}) if work else None}
+    values = {key: request.POST.get(key, request.GET.get(key, '')) for key in ('queue', 'q', 'line')}
+    params = work_queue_params(values, work=work)
+    suffix = '?' + urlencode({'work': work.pk, **params}) if work else ''
+    return {'selected_work': work, **params, 'configuration_url': request.path + suffix,
+            'return_url': reverse('factory_detail', args=[work.pk]) + '?' + urlencode(params) if work else None}
 
 class ResponsibilityForm(forms.Form):
     availability_mode=forms.ChoiceField(required=False,label='Check reviewer availability?',choices=[('', 'Not decided'),
@@ -1077,6 +1511,9 @@ def configuration(request,case_id):
         if envelope=='finance-accounts/v1':
             value['template_id']=value['template_id'].pk if value['template_id'] else None
             for name in ['allocation_mode','audience','bu_metrics']:value[name]=value[name] or None
+            statement_contract=value.pop('statement_contract_id')
+            if 'statement_contract_id' in request.POST:
+                value['statement_contract_id']=statement_contract.pk if statement_contract else None
         if envelope=='rfp-response/v1':
             value['template_id']=value['template_id'].pk if value['template_id'] else None
             value['route_key']=value['route_key'] or None
@@ -1113,9 +1550,11 @@ def configuration(request,case_id):
         except (ValidationError,KeyError):config.settings_value=None
     response=render(request,'factory/configuration.html',{'case':case,'form':form,'configurations':readable_configs,'definition':envelope,'definition_title':spec['title']});response['Cache-Control']='no-store';return response
 
-class PlanningStartForm(forms.Form):
+class PlanningStartForm(StartWithBackground):
     definition=forms.CharField(initial='planning/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
+    assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
+    draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
     packet=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Current planning packet')
     reference=forms.CharField(max_length=100,label='Work reference')
@@ -1140,13 +1579,18 @@ def create_planning(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work=start(request.user,v['case'].pk,v['key'],v['packet'].pk,v['reference'],v['revision']);return redirect('factory_detail',work_id=work.pk)
+            return submit_start(request, v, 'planning/v1', lambda: start(request.user,v['case'].pk,v['key'],v['packet'].pk,v['reference'],v['revision']))
         except ValidationError as exc:form.add_error(None,str(exc))
+    response = assistant_origin(request, form, 'planning/v1')
+    if response is not None:
+        return response
     return render(request,'factory/planning_start.html',{'form':form,'available_cases':granted(request.user,['planning.read','factory.start']).filter(kind='project')})
 
-class CommercialStartForm(forms.Form):
+class CommercialStartForm(StartWithBackground):
     definition=forms.CharField(initial='commercial/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
+    assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
+    draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
     reference=forms.CharField(max_length=100,label='Commercial work reference')
     predecessor=forms.IntegerField(required=False,widget=forms.HiddenInput)
@@ -1165,9 +1609,21 @@ class CommercialStartForm(forms.Form):
             'sow':('SOW content',['sow']),'inputs':('Declared costing inputs',['p14_inputs']),'context_id':('Request or client feedback context',['requirements','client_feedback','change_request'])}
         for key,(label,kinds) in specs.items():
             query=Evidence.objects.filter(case=selected,kind__in=kinds) if selected else Evidence.objects.none()
+            if key != 'inputs':
+                query=public_evidence(query)
             self.fields[key]=forms.ModelChoiceField(queryset=query,required=False,label=label)
             self.fields[key].label_from_instance=lambda e:e.source+' · version '+str(e.version)
-        for key,label,query in [('rule_id','Calculator rule',CostingRule.objects.filter(case=selected)),('oracle_id','Independent example set',CostingOracle.objects.filter(rule__case=selected)),
+        rule_query=CostingRule.objects.filter(case=selected)
+        oracle_query=CostingOracle.objects.filter(rule__case=selected)
+        if selected:
+            from apps.pmo import costing
+            try:
+                _,rule,oracle,_=costing.configured(selected,actor)
+                rule_query=rule_query | CostingRule.objects.filter(pk=rule.pk)
+                oracle_query=oracle_query | CostingOracle.objects.filter(pk=oracle.pk)
+            except (PermissionDenied,ValidationError):
+                pass
+        for key,label,query in [('rule_id','Calculator rule',rule_query),('oracle_id','Independent example set',oracle_query),
             ('template_id','Client SOW template',Template.objects.filter(case=selected,definition__document_type='sow')),('predecessor_id','Prior commercial proposal',CommercialRevision.objects.filter(dossier__case=selected))]:
             self.fields[key]=forms.ModelChoiceField(queryset=query if selected else query.none(),required=False,label=label)
             self.fields[key].label_from_instance=lambda obj:getattr(obj,'reference',getattr(obj,'name','Proposal'))+' · '+str(getattr(obj,'version',getattr(obj,'number','')))
@@ -1181,28 +1637,36 @@ class CommercialStartForm(forms.Form):
                 except (ValidationError,PermissionDenied):pass
             self.fields['predecessor_id'].initial=CommercialCase.objects.filter(case=selected).values_list('current_id',flat=True).first()
 
-def create_commercial(request):
-    from django.db import transaction
+def start_commercial(actor, values):
     from apps.pmo import commercial_intake
     from .factory_commercial import start
+    from adapters.commercial_intake import FIELDS
+
+    sources = {key: values[key].pk if values[key] else None for key in FIELDS}
+    head = commercial_intake.capture(actor,values['case'].pk,sources,values['predecessor'],values['revision'])
+    work = start(actor,values['case'].pk,values['key'],head.pk,values['reference'])
+    if values['assistant_turn'] and work.request != {'intake': head.pk, 'reference': values['reference']}:
+        raise ValidationError('Commercial work already exists with different inputs. Open it to record a correction.')
+    return work
+
+
+def create_commercial(request):
     case_id=request.POST.get('case') if request.method=='POST' else request.GET.get('case')
     try:form=CommercialStartForm(request.user,request.POST if request.method=='POST' else None,case_id)
     except (ValueError,ValidationError):
         form=CommercialStartForm(request.user,data={});form.is_valid();form.add_error(None,'Choose an available project.')
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
-        from adapters.commercial_intake import FIELDS
-        values={key:v[key].pk if v[key] else None for key in FIELDS}
         try:
-            with transaction.atomic():
-                head=commercial_intake.capture(request.user,v['case'].pk,values,v['predecessor'],v['revision'])
-                work=start(request.user,v['case'].pk,v['key'],head.pk,v['reference'])
-            return redirect('factory_detail',work_id=work.pk)
+            return submit_start(request, v, 'commercial/v1', lambda: start_commercial(request.user, v))
         except ValidationError as exc:form.add_error(None,'; '.join(exc.messages))
+    response = assistant_origin(request, form, 'commercial/v1')
+    if response is not None:
+        return response
     return render(request,'factory/commercial_start.html',{'form':form,'available_cases':granted(request.user,['factory.start','commercial.prepare','costing.read','costing.source.read']).filter(kind='project')})
 
 
-class DeliveryStartForm(forms.Form):
+class DeliveryStartForm(StartWithBackground):
     definition=forms.CharField(initial='delivery-release/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -1236,7 +1700,8 @@ def create_delivery(request,envelope='delivery-release/v1'):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work=start(request.user,v['case'].pk,v['key'],v['dossier'].pk,v['reference'],v['revision']);return redirect('factory_detail',work_id=work.pk)
+            return start_work(request, lambda: start(request.user, v['case'].pk, v['key'], v['dossier'].pk,
+                              v['reference'], v['revision']), v['background'])
         except ValidationError as exc:form.add_error(None,str(exc))
     return render(request,'factory/delivery_start.html',{'form':form,'definition':envelope,
         'intake_title':'Start release follow-up' if envelope=='delivery-hypercare/v1' else 'Start delivery work',

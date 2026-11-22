@@ -186,6 +186,105 @@ class StatementPPETests(TestCase):
         with connection.cursor() as cursor:
             cursor.execute('SELECT psl_statement_ppe_current(%s)',[run.pk]);self.assertFalse(cursor.fetchone()[0])
 
+    def test_private_opening_owner_holds_live_reused_register_and_drafts_but_preserves_delivery_history(self):
+        from django.contrib.auth import get_user_model
+        from django.test.utils import CaptureQueriesContext
+        from django.urls import reverse
+        from apps.core.evidence_access import PPE_OPENING_SOURCE
+        from apps.core.services import add_evidence
+        from apps.documents.controlled import reserve_publication
+        from apps.documents.delivery import run_publication_once
+        from apps.documents.models import PublicationReceipt, Template, Version
+        from apps.finance.documents import draft_report
+        from apps.finance.statement_ppe import held_opening_statement_ids
+
+        f=self.f;case=f['case'];actor=f['actor']
+        owner=get_user_model().objects.create_user('original-private-opening-owner')
+        Grant.objects.bulk_create([Grant(user=owner,case=case,action=action)
+                                   for action in ppe.READ_ACTIONS+ppe.OPENING_OWNER_ACTIONS])
+        opening=add_evidence(owner,case.pk,'ppe_opening','Synthetic private opening proof identity.',PPE_OPENING_SOURCE)
+        register=ph.capture(f,dict(f['register'].payload,opening_evidence_id=opening.pk),reference='ordinary-reused-opening')
+        self.assertNotEqual(register.evidence.source,PPE_OPENING_SOURCE)
+        self.assertNotEqual(register.actor_id,owner.pk)
+        ph.review(f,register,'register')
+        work=ph.prepare(f,register,reference='ordinary-reused-opening-schedule')
+        review=ph.review(f,work)
+        row=dict(self.row,schedule_id=work.pk,schedule_sha256=work.sha256,register_id=register.pk,schedule_review_id=review.pk)
+        run=self.assemble(self.configure(row))
+        projection=copy.deepcopy(f['base']['projection'])
+        projection['audiences'][0].update(formula_keys=['Note8'],bu_keys=[],include_company=True)
+        policy(actor,case,'D10.audience_projection_rules',projection,f['e']['policy_decision'])
+        review_note='PRIVATE_OPENING_REPORT_REVIEW_SENTINEL'
+        analysis.review(f['reviewer'],case.pk,'output',run.pk,'Finance','approve',f['e']['finance_review'].pk,
+                        review_note,rev(case))
+        template=Template.objects.get(case=case,definition__document_type='finance_report')
+        for action in ('case.read','finance.read','ppe.read'):
+            Grant.objects.get_or_create(case=case,user=f['recipient'],action=action)
+        delivered=draft_report(actor,case.pk,run.pk,template.pk,'internal',rev(case))
+        reserve_publication(actor,case.pk,delivered.pk,rev(case));self.assertTrue(run_publication_once())
+        receipt=PublicationReceipt.objects.get(publication__version=delivered,recipient=f['recipient'])
+        draft=draft_report(actor,case.pk,run.pk,template.pk,'internal',rev(case))
+        self.assertNotEqual(delivered.pk,draft.pk)
+        finance_path=reverse('finance_analysis',args=[case.pk])
+        documents_path=reverse('documents',args=[case.pk])
+        title=f'Finance configured output {run.pk}'
+        self.client.force_login(actor)
+        self.assertContains(self.client.get(finance_path),review_note)
+        self.assertContains(self.client.get(documents_path),title)
+
+        def native_sql_current():
+            with connection.cursor() as cursor:
+                cursor.execute('SELECT psl_ppe_schedule_current(%s), psl_ppe_schedule_current(%s), psl_statement_ppe_current(%s)',
+                               [work.pk,self.work.pk,run.pk])
+                return cursor.fetchone()
+
+        self.assertEqual(native_sql_current(),(True,True,True))
+        self.assertEqual(held_opening_statement_ids(case),[])
+        for action in ppe.OPENING_OWNER_ACTIONS:
+            with self.subTest(action=action):
+                grant=Grant.objects.filter(case=case,user=owner,action=action)
+                grant.update(active=False)
+                with self.assertRaises(PermissionDenied):ppe.current(work)
+                with self.assertRaises(PermissionDenied):statements.ensure_current(run)
+                self.assertEqual(native_sql_current(),(False,True,False))
+                self.assertEqual(ppe.current(self.work),self.work)
+                self.assertEqual(held_opening_statement_ids(case),[run.pk])
+                grant.update(active=True)
+
+        Grant.objects.filter(case=case,user=owner,action='factory.manage').update(active=False)
+        with CaptureQueriesContext(connection) as queries:
+            self.assertEqual(held_opening_statement_ids(case),[run.pk])
+        self.assertEqual(len(queries),1)
+        selection=queries[0]['sql'].lower()
+        self.assertIn('select distinct selected.statement_id',selection)
+        self.assertNotIn('snapshot',selection)
+        self.assertNotIn('.result',selection)
+        self.assertNotIn('.body',selection)
+        finance=self.client.get(finance_path)
+        self.assertNotContains(finance,review_note)
+        self.assertNotContains(finance,f'PPE schedule {work.pk}')
+        self.assertContains(finance,f'Formula #{self.anchor.pk}')
+        report_form=next(item['form'] for item in finance.context['commands'] if item['action']=='report')
+        report_choices={str(value):label for value,label in report_form.fields['run'].choices}
+        self.assertNotIn(str(run.pk),report_choices)
+        self.assertEqual(report_choices[str(self.anchor.pk)],str(self.anchor))
+        with CaptureQueriesContext(connection) as rendered:
+            self.assertNotContains(self.client.get(documents_path),title)
+        queries=[item['sql'].lower() for item in rendered]
+        self.assertEqual(sum('with recursive selected' in query for query in queries),1)
+        template_reads=[query for query in queries if all(column in query.split(' from ',1)[0] for column in
+                       ('"finance_financerun"."snapshot"','"documents_version"."template_id"'))]
+        self.assertTrue(template_reads)
+        for query in template_reads:
+            self.assertIn(f'not ("finance_financedocumentbinding"."run_id" in ({run.pk}))',query)
+            self.assertNotIn('"finance_financerun"."result"',query.split(' from ',1)[0])
+            self.assertNotIn('"documents_version"."payload"',query.split(' from ',1)[0])
+        self.assertTrue(Version.objects.filter(pk__in=[delivered.pk,draft.pk]).count()==2)
+
+        self.client.force_login(f['recipient'])
+        self.assertContains(self.client.get(reverse('document_inbox')),'500.00')
+        self.assertTrue(PublicationReceipt.objects.filter(pk=receipt.pk,payload_sha256=receipt.payload_sha256).exists())
+
     def test_migrated_factory_native_chain_and_receipt(self):
         # Uses actual migrated 0079/0030 guards without test-local replacement.
         from tests.factory_accounting_helpers import configured

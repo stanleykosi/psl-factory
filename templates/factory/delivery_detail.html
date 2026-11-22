@@ -1,18 +1,74 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
-<a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to the same work view</a>
-<div class="page-heading"><div><p class="eyebrow">DELIVERY AND RELEASE EVIDENCE</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></div>
+<a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
+<div class="page-heading"><div><p class="eyebrow">DELIVERY AND RELEASE EVIDENCE</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{% if row.delivery.design_signoff_hold %}Setup needed{% else %}{{ row.state }}{% endif %} · {{ case|workspace_name }}</p></div></div>
 {% include 'factory/intake_instruction_link.html' with source_panel=row.delivery %}
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</time></div></div>
+{% include 'factory/work_focus.html' %}
 <div class="factory-case-layout"><div><section class="card"><h2>Delivery candidate</h2><p>{{ row.delivery.dossier.candidate.reference }}</p>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}{% if row.work.finding %}<details><summary>Current prerequisite</summary><p>{{ row.work.finding }}</p></details>{% endif %}
 <p><a href="{% url 'delivery' case.pk %}">Delivery source records and gates →</a></p>{% if row.delivery.ready %}<p>Release readiness record {{ row.delivery.ready.pk }} is retained.</p>{% endif %}{% if row.work.status == 'verified' and not row.readiness_changed %}<p>The current source approvals and release readiness record match. Deployment and financial release retain their separate controls.</p>{% elif row.readiness_changed %}<p>Earlier readiness remains in history. Current source approvals need review.</p>{% endif %}</section>
+{% if row.delivery.design_signoff_hold %}{% with held=row.delivery.design_signoff_hold %}
+<section class="card" aria-labelledby="planning-design-signoff"><h2 id="planning-design-signoff">Design sign-off needed</h2>
+  <p>Product/Design confirmed this work needs a UI design. Planning exit is held until the Design Lead’s sign-off for its exact design version is verified.</p>
+  <dl><dt>Requirements</dt><dd>Recorded · revision {{ held.requirements.version }}</dd>
+      <dt>Engineering estimate</dt><dd>{% if held.estimate %}Recorded · revision {{ held.estimate.version }}{% else %}Current estimate reference unavailable{% endif %}</dd>
+      <dt>Design sign-off</dt><dd>Held · awaiting the Design Lead’s sign-off</dd></dl>
+  <div class="actions">{% if held.can_read_setup %}<a class="button secondary" href="{% url 'workspace_settings' case.pk %}?area=roles#ui-design-signoff">Open Setup</a>{% endif %}</div>
+  {% if row.delivery.planning_owner_names %}<p>Raise this with the PMO Lead · {{ row.delivery.planning_owner_names|join:', ' }}</p>{% endif %}
+</section>
+{% endwith %}{% endif %}
+{% if row.delivery.last_decision %}
+<section class="card">
+  <h2>Planning decision history</h2>
+  <p>{{ row.delivery.last_decision.data.verdict|readable }} · {{ row.delivery.last_decision.created_at|date:'d M Y, H:i T' }}</p>
+  <p>{{ row.delivery.last_decision.data.note }}</p>
+  {% if row.delivery.return_issue %}
+    <p>{{ row.delivery.return_issue.reference }} · {{ row.delivery.return_issue.current.status }}</p>
+    <a class="button secondary" href="{% url 'issues' case.pk %}#issue-{{ row.delivery.return_issue.pk }}">Open linked issue</a>
+  {% endif %}
+  {% if row.delivery.reviewed_workaround %}<p>A reviewed client workaround is linked to this issue. The issue remains open.</p>{% endif %}
+  {% if row.delivery.workaround_statement %}<p>{{ row.delivery.workaround_statement }}</p>{% endif %}
+  {% if row.delivery.last_decision.parent %}
+    <details><summary>Previous decision</summary><p>{{ row.delivery.last_decision.parent.data.verdict|readable }}</p><p>{{ row.delivery.last_decision.parent.data.note }}</p></details>
+  {% endif %}
+</section>
+{% endif %}
 {% include 'factory/phase_evidence.html' with phases=row.delivery.phase_evidence %}
+<section class="card"><h2>Client testing response</h2><p>Record the named client's actual response, check its private proof and obtain the configured human review. Corrections keep the earlier history.</p><a href="{% url 'client_uat' case.pk row.delivery.dossier.pk %}?work={{ row.work.pk }}">Open client testing response</a></section>
 <section class="card"><h2>Production prerequisites</h2>{% for name,check in row.delivery.checks.items %}<div><h3>{{ check.title }}</h3>{% if check.status == 'ready' %}<p>Current source prerequisites are recorded.</p><details><summary>Exact source references</summary><pre>{{ check.inputs }}</pre></details>{% else %}<p>{{ check.summary }}</p><details><summary>Source requirement details</summary><p>{{ check.finding }}</p></details>{% endif %}</div>{% endfor %}</section>
 <section class="card"><h2>Delivery progress and authoritative issues</h2><p>Observed impact does not change the approved plan. Source, issue and communication decisions remain independent.</p><a href="{% url 'delivery_progress' case.pk row.delivery.dossier.pk %}">Open scoped progress tracking</a>{% if row.delivery.progress_tracking.summary %}<p>{{ row.delivery.progress_tracking.summary }}</p>{% endif %}{% for item in row.delivery.progress_tracking.sources %}<p>{{ item.team }} · {{ item.source_ref }} · {{ item.correlation_status }}{% if item.issue_id %} · issue #{{ item.issue_id }}{% endif %}</p>{% for question in item.questions %}<p>{{ question }}</p>{% endfor %}{% endfor %}</section><section class="card"><h2>Current source evidence</h2>
 {% include 'factory/source_coverage.html' with coverage=row.delivery.source_coverage %}
 {% for source in row.delivery.public_sources %}<details><summary>{{ source.kind|readable }} · version {{ source.version }}</summary><p>{{ source.source }}</p><pre>{{ source.body }}</pre></details>{% empty %}<p>No source bodies are available within this account's delivery access.</p>{% endfor %}</section>
-<section class="card"><h2>Agent activity</h2>{% for activity in activities %}<details><summary>{{ activity.title }} · {{ activity.status|readable }}</summary>{% for attempt in activity.attempts.all %}<p>{{ attempt.summary }}</p><details><summary>Observed references</summary><pre>{{ attempt.display_result }}</pre></details>{% endfor %}</details>{% empty %}<p>No activity recorded yet.</p>{% endfor %}</section></div>
-<aside class="factory-action-panel"><section class="card"><h2>Next permitted action</h2>{% if row.can_advance %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue eligible work</button></form>{% else %}<p>{{ row.next_action }}</p>{% endif %}{% if row.can_manage %}{% if row.work.status == 'blocked' or row.work.status == 'owner_needed' or row.work.status == 'configuration_needed' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Recheck corrected prerequisites</button></form>{% endif %}{% if row.can_cancel %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Request cancellation</button></form>{% endif %}{% endif %}</section>
-{% if row.delivery.can_decide %}<section class="card"><h2>Planning exit decision</h2><p>Review this exact delivery candidate and its source-owned design, test and UAT prerequisites.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="delivery_decision"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="packet" value="{{ row.delivery.decision_packet }}"><label>Decision evidence<select name="evidence" required>{% for source in row.delivery.decision_evidence %}<option value="{{ source.pk }}">{{ source.kind|readable }} · version {{ source.version }}</option>{% endfor %}</select></label><label>Decision rationale<textarea name="note" required maxlength="4000"></textarea></label>{% if 'approve' in row.delivery.allowed_verdicts %}<button name="verdict" value="approve">Approve exact Planning exit</button>{% endif %}{% if 'return' in row.delivery.allowed_verdicts %}<button name="verdict" value="return">Return for correction</button>{% endif %}{% if 'reject' in row.delivery.allowed_verdicts %}<button name="verdict" value="reject">Reject</button>{% endif %}</form></section>{% endif %}
-{% if row.can_reassess %}<section class="card"><h2>Review changed delivery evidence</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="reassess"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label>Reason for reassessment<textarea name="reason" required maxlength="2000"></textarea></label><button>Reassess changed delivery evidence</button></form></section>{% endif %}
-{% if row.adoption %}<section class="card"><h2>Changed execution rules</h2><details><summary>Exact current settings</summary><pre>{{ row.adoption.value }}</pre></details><form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt_profile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="configuration" value="{{ row.adoption.id }}"><label>Reason for adoption<textarea name="reason" required maxlength="2000"></textarea></label><button>Adopt reviewed profile version</button></form></section>{% endif %}
+{% if not focus %}<section class="card"><h2>Agent activity</h2>{% for activity in activities %}<details><summary>{{ activity.title }} · {{ activity.status|readable }}</summary>{% for attempt in activity.attempts.all %}<p>{{ attempt.summary }}</p><details><summary>Observed references</summary><pre>{{ attempt.display_result }}</pre></details>{% endfor %}</details>{% empty %}<p>No activity recorded yet.</p>{% endfor %}</section>{% endif %}</div>
+<aside class="factory-action-panel">
+{% if focus != 'decision' %}<section class="card"><h2>Next permitted action</h2>{% if row.can_advance %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue eligible work</button></form>{% else %}<p>{{ row.next_action }}</p>{% endif %}{% if row.can_manage %}{% if row.work.status == 'blocked' or row.work.status == 'owner_needed' or row.work.status == 'configuration_needed' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Recheck corrected prerequisites</button></form>{% endif %}{% if row.can_cancel %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button class="button secondary">Request cancellation</button></form>{% endif %}{% endif %}</section>{% endif %}
+{% if focus != 'recovery' and row.delivery.workaround_option %}
+<section class="card"><h2>Client-approved workaround</h2>
+  <p>Link the reviewed client response to this returned Planning decision for independent review.</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="delivery_workaround">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    {% with option=row.delivery.workaround_option %}
+    <input type="hidden" name="return_id" value="{{ option.return_id }}">
+    <input type="hidden" name="issue_state_id" value="{{ option.issue_state_id }}">
+    <input type="hidden" name="response_id" value="{{ option.response_id }}">
+    <input type="hidden" name="review_id" value="{{ option.review_id }}">
+    {% endwith %}
+    <label>Reason for linking this workaround<textarea name="note" required maxlength="4000"></textarea></label>
+    <button>Link reviewed client workaround</button>
+  </form>
+</section>{% endif %}
+{% if focus != 'recovery' and row.delivery.can_decide %}
+<section class="card"><h2>Planning exit decision</h2><p>Review this exact delivery candidate and its source-owned design, test and UAT prerequisites.</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="delivery_decision"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="packet" value="{{ row.delivery.decision_packet }}">
+    <label>Decision evidence<select name="evidence" required>{% for source in row.delivery.decision_evidence %}<option value="{{ source.pk }}">{{ source.kind|readable }} · version {{ source.version }}</option>{% endfor %}</select></label>
+    <label>Decision rationale<textarea name="note" required maxlength="4000"></textarea></label>
+    {% if row.delivery.return_issues %}<label>Blocking issue (for return or rejection)<select name="blocking_issue"><option value="">No linked issue</option>{% for issue in row.delivery.return_issues %}<option value="{{ issue.pk }}">{{ issue.reference }} · {{ issue.current.title }}</option>{% endfor %}</select></label>{% endif %}
+    {% if 'approve' in row.delivery.allowed_verdicts %}<button name="verdict" value="approve">Approve exact Planning exit</button>{% endif %}
+    {% if 'return' in row.delivery.allowed_verdicts %}<button name="verdict" value="return">Return for correction</button>{% endif %}
+    {% if 'reject' in row.delivery.allowed_verdicts %}<button name="verdict" value="reject">Reject</button>{% endif %}
+  </form>
+</section>{% endif %}
+{% if focus != 'decision' and row.can_reassess %}<section class="card"><h2>Review changed delivery evidence</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="reassess"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label>Reason for reassessment<textarea name="reason" required maxlength="2000"></textarea></label><button>Reassess changed delivery evidence</button></form></section>{% endif %}
+{% if focus != 'decision' and row.adoption %}<section class="card"><h2>Changed execution rules</h2><details><summary>Exact current settings</summary><pre>{{ row.adoption.value }}</pre></details><form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt_profile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="configuration" value="{{ row.adoption.id }}"><label>Reason for adoption<textarea name="reason" required maxlength="2000"></textarea></label><button>Adopt reviewed profile version</button></form></section>{% endif %}
 <section class="card"><h2>Execution setup</h2>{% if row.work.policy_id %}<p>Reserved allowance: {{ row.work.budget_used }} of {{ row.work.budget_limit }}. Rework retains this allowance.</p>{% else %}<p>The execution allowance is assigned when processing begins.</p>{% endif %}{% if can_configure %}<a href="{% url 'factory_configuration' case.pk %}?definition=delivery-release/v1">Delivery execution rules →</a>{% endif %}</section></aside></div>{% endblock %}

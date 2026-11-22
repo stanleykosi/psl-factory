@@ -15,10 +15,11 @@ from .correction_forms import commands
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read');forms=commands(case,request.POST if request.method=='POST' else None)
+    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read')
+    submitted = request.POST if request.method == 'POST' else None
     if request.method=='POST':
         try:
-            entry=next((x for x in forms if x['action']==request.POST.get('action')),None)
+            entry=next((x for x in commands(case, submitted) if x['action']==submitted.get('action')),None)
             if not entry or not entry['form'].is_valid():raise ValidationError(entry['form'].errors.as_text() if entry else 'Choose a correction action')
             d=entry['form'].cleaned_data;a=request.user;c=case.pk;v=d['revision'];action=d['action']
             if action=='note':corrections.capture(a,c,d['issue'].pk,d['evidence'].pk,d['allocation_evidence'].pk if d['allocation_evidence'] else None,d['reason'],v)
@@ -43,7 +44,7 @@ def workbench(request,case_id):
         if not accepted:
             try:financial_reviews.approved(item)
             except (ValidationError,PermissionDenied) as exc:item.findings=getattr(exc,'messages',[str(exc)])
-    return render(request,'finance/corrections.html',{'case':case,'commands':forms,'notes':notes,'successors':successors,
+    return render(request,'finance/corrections.html',{'case':case,'commands':commands(case, submitted, actor=request.user),'notes':notes,'successors':successors,
         'jobs':InvoiceJob.objects.filter(invoice__case=case,kind__in=['adjust','adjust_deliver']).order_by('-pk')[:40],
         'reviews':FinancialCorrectionReview.objects.filter(correction__case=case).union(FinancialCorrectionReview.objects.filter(successor__case=case)).order_by('-pk')[:40],
         'agents':AgentRun.objects.filter(case=case,provider='deterministic-financial-corrections-v1').order_by('-pk')[:5]})

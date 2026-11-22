@@ -34,12 +34,14 @@ def signature(value):
     return (tuple(sorted(e['roles'])),instant(e['valid_from']),instant(e['valid_until']))
 
 
-def validate_reference(target,case):
+def validate_reference(target,case,*,runtime=False):
     schema=SCHEMAS.get(target.schema_ref)
     if schema is None or list(Draft202012Validator(schema,format_checker=FormatChecker()).iter_errors(target.content)):
         raise ValidationError('Expected a closed typed role assignment v1 or explicit eligibility v2')
     value=target.content
-    if not get_user_model().objects.filter(pk=value['user_id'],is_active=True).exists():raise ValidationError('Unknown or inactive nominated human')
+    person=get_user_model().objects.filter(pk=value['user_id'])
+    if not person.exists() or not runtime and not person.filter(is_active=True).exists():
+        raise ValidationError('Unknown or inactive nominated human')
     if 'eligibility' in value:
         roles,start,end=signature(value)
         if value['role'] not in roles or start>=end:raise ValidationError('Eligibility must include this role and have a positive explicit window')
@@ -55,10 +57,11 @@ def validate_collection(values):
                 raise ValidationError('Every assigned role in this exact human bundle needs the same explicit eligibility and window')
 
 
-def eligibility(case,values,user_id,at=None):
+def eligibility(case,values,user_id,at=None,*,active=None):
     group=[v for v in values if v['user_id']==user_id];roles=sorted({v['role'] for v in group})
     state='not_assigned';eligible=False
-    if roles:
+    if active is False:state='inactive_account'
+    elif roles:
         if len(roles)==1:state='single_role';eligible=True
         elif all('eligibility' in v for v in group):
             start,end=signature(group[0])[1:];eligible=start<=(at or timezone.now())<end
@@ -72,7 +75,7 @@ def eligibility(case,values,user_id,at=None):
 def assert_assigned(actor,case,values,role):
     if not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current active nominated human required')
     if not any(v['role']==role and v['user_id']==actor.pk for v in values):raise PermissionDenied('Human role is not assigned by current policy')
-    result=eligibility(case,values,actor.pk)
+    result=eligibility(case,values,actor.pk,active=True)
     if not result['eligible_role_bundle']:
         if result['eligibility']=='owner_eligibility_unconfigured':raise ValidationError('Operational dual-role eligibility is not configured for this exact bundle')
         raise ValidationError('Explicit role-bundle eligibility window is not current')
@@ -156,5 +159,7 @@ def report(actor,case_id):
     resolved=resolve(COMPONENT,case)
     if resolved.status!='ACTIVE':return {'component':COMPONENT,'status':resolved.status,'assignments':[],'effects_scheduled':False}
     cfg=configuration(actor,case_id,resolved.configuration.pk);values=reference_values(cfg)
-    return {'component':COMPONENT,'configuration':cfg.pk,'status':'ACTIVE','assignments':[eligibility(case,values,pk) for pk in sorted({v['user_id'] for v in values})],
+    people={v['user_id'] for v in values}
+    active_people=set(get_user_model().objects.filter(pk__in=people,is_active=True).values_list('pk',flat=True))
+    return {'component':COMPONENT,'configuration':cfg.pk,'status':'ACTIVE','assignments':[eligibility(case,values,pk,active=pk in active_people) for pk in sorted(people)],
         'effects_scheduled':False,'action_authority_granted':False,'independence_controls_waived':False}

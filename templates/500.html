@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <h1>There was a problem loading this page</h1>
+  <p>Try loading it again, or return to My work.</p>
+  <div class="actions"><a class="button" href="">Try again</a><a href="{% url 'home' %}">Back to My work</a></div>
+</section>
+{% endblock %}

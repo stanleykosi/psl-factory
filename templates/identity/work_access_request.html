@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Ask for access · PSL Factory{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Ask for access</h1>
+  {% if limited %}
+    <p role="status">You’ve sent several requests. Try again later.</p>
+  {% elif saved %}
+    <p role="status">Your request was recorded. You can return to My work while it is reviewed.</p>
+  {% else %}
+    <p>A workspace administrator can review requests attached to their work. You’ll need their approval to open the item.</p>
+    <form method="post">{% csrf_token %}<button class="button primary" type="submit">Record access request</button></form>
+  {% endif %}
+  <a class="button secondary" href="{% url 'home' %}">Back to My work</a>
+</section>
+{% endblock %}

@@ -5,6 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.db import connection,transaction,DatabaseError
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
 from apps.core.models import Evidence,Audit
@@ -139,6 +140,7 @@ class PayrollTests(TestCase):
   with patch.object(PayrollInput,'payload',new=property(forbidden)),patch.object(PayrollRun,'result',new=property(forbidden)),patch.object(PayrollPublication,'payload',new=property(forbidden)):
    a=investigate(f['preparer'],f['case'].pk,rev(f['case']));self.assertFalse(a.result['private_payloads_read']);self.assertNotIn('E001',json.dumps(a.result))
    self.client.force_login(f['manager']);response=self.client.get(reverse('payroll',args=[f['case'].pk]));self.assertEqual(response.status_code,200);self.assertNotContains(response,'E001');self.assertNotContains(response,'250.00')
+   self.assertContains(response,'Recorded checks use metadata');self.assertContains(response,'Review questions');self.assertContains(response,'Evidence details')
  def test_no_store_endpoints_check_exact_case_and_reader(self):
   f=self.f;c,m,a,p=pipeline(f);self.client.force_login(f['manager']);report=self.client.get(reverse('payroll_data',args=[f['case'].pk,'report',p.pk]));self.assertEqual(report.status_code,200);self.assertEqual(report['Cache-Control'],'no-store');self.assertEqual(self.client.get(reverse('payroll_data',args=[f['case'].pk,'input',f['inputs'][0].pk])).status_code,403)
   u,c2=setup_case(username='other-case');self.assertEqual(self.client.get(reverse('payroll_data',args=[c2.pk,'report',p.pk])).status_code,404)
@@ -157,7 +159,38 @@ class PayrollTests(TestCase):
   v['oracles'][0]['expected']='500.00000000';policy(f,REPORT,v)
   c,m,a,p=pipeline(f);self.assertEqual(a.result['eligible_total'],'24691357802469136080.24691356');self.assertEqual(a.result['coefficient_effect'],'12345678901234568040.12345678')
  def test_UI_capture_rejection_never_reflects_bad_source_values(self):
-  f=self.f;self.client.force_login(f['owner']);v=json.loads(body(f,1));v['rows'][0]['medical']='PRIVATE-UI-SENTINEL';res=self.client.post(reverse('payroll',args=[f['case'].pk]),{'action':'capture','revision':rev(f['case']),'request_record':f['request'].pk,'provider':'PAY-B','operation_key':'bad-ui','body':json.dumps(v)},follow=True);self.assertNotContains(res,'PRIVATE-UI-SENTINEL');self.assertContains(res,'out_of_contract_fields')
+  f=self.f;self.client.force_login(f['owner']);v=json.loads(body(f,1));v['rows'][0]['medical']='PRIVATE-UI-SENTINEL';res=self.client.post(reverse('payroll',args=[f['case'].pk]),{'action':'capture','revision':rev(f['case']),'request_record':f['request'].pk,'provider':'PAY-B','operation_key':'bad-ui','body':json.dumps(v)},follow=True);self.assertNotContains(res,'PRIVATE-UI-SENTINEL');self.assertContains(res,'outside its agreed source layout');self.assertNotIn('out_of_contract_fields',' '.join(str(m) for m in res.context['messages']))
+ def test_focused_payroll_upload_and_matching_keep_exact_source_boundaries(self):
+  f=self.f
+  case=f['case']
+  inputs,matching,corrections=(reverse('design_payroll_'+name,args=[case.pk]) for name in ('inputs','matching','corrections'))
+  self.client.force_login(f['owner'])
+  self.assertContains(self.client.get(inputs),'enctype="multipart/form-data"')
+  payload=body(f,1,source_version='PAY-B-browser-v2').encode('utf-8')
+
+  def post(path,content,**extra):
+   return self.client.post(path,{
+    'action':'capture','revision':rev(case),'request_record':f['request'].pk,'provider':'PAY-B',
+    'operation_key':'focused-upload','file':SimpleUploadedFile('export.json',content),**extra,
+   },follow=True)
+
+  self.assertContains(post(inputs,b'\xffprivate-source'),'The upload could not be accepted')
+  self.assertContains(post(inputs,payload,body='{}'),'The upload could not be accepted')
+  self.assertContains(post(corrections,payload),'The upload could not be accepted')
+  self.assertEqual(PayrollInput.objects.filter(request=f['request']).count(),2)
+  for _ in range(2):
+   self.assertContains(post(inputs,payload),'Payroll history updated')
+  self.assertEqual(PayrollInput.objects.filter(request=f['request']).count(),3)
+  self.assertEqual(PayrollInput.objects.get(request=f['request'],operation_key='focused-upload').metadata['source_version'],'PAY-B-browser-v2')
+
+  self.client.force_login(f['preparer'])
+  self.assertContains(self.client.get(matching),'Match to the HR-authorised effective-period view')
+  self.assertContains(self.client.get(corrections),'Route an HR matching correction by reference')
+  self.client.force_login(f['manager'])
+  response=self.client.get(inputs)
+  self.assertEqual(response['Cache-Control'],'no-store')
+  self.assertNotContains(response,'E002')
+  self.assertNotContains(response,'Supply an authorised payroll export')
  def test_validators_require_actual_authority_and_exact_numerical_oracles(self):
   f=self.f
   for key,name in [(MERGE,'merge'),(REPORT,'report')]:

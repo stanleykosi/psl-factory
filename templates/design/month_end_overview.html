@@ -1,0 +1,33 @@
+{% load studio_ui %}
+<section class="card" aria-labelledby="month-close-work">
+  <h2 id="month-close-work">Month-end checklist</h2>
+  <p>Recorded status of Finance work updated in this month. Counts cover the links shown for {{ overview.workspaces }} workspace{{ overview.workspaces|pluralize }}. Viewed <time datetime="{{ overview.as_of|date:'c' }}">{{ overview.as_of|date:'d M Y, H:i T' }}</time>.</p>
+  {% if overview.work %}
+  <div class="workspace-summary" aria-label="Work on this checklist">
+    <div><small>Done</small><strong>{{ overview.counts.done }} of {{ overview.work|length }}</strong></div>
+    <div><small>Waiting</small><strong>{{ overview.counts.waiting }}</strong></div>
+    <div><small>In progress</small><strong>{{ overview.counts.in_progress }}</strong></div>
+    {% if overview.counts.stopped %}<div><small>Stopped</small><strong>{{ overview.counts.stopped }}</strong></div>{% endif %}
+  </div>
+  {% endif %}
+  <h3>Cash received</h3>
+  {% if overview.cash.groups %}
+    <ul>{% for group in overview.cash.groups %}<li>
+      {% if group.workspace %}{{ group.workspace }} · {% endif %}<strong>{{ group.currency }} {{ group.amount|decimal_display }}</strong> · {{ group.basis|readable }}
+    </li>{% endfor %}</ul>
+    <p>Verified receipts from the workspaces shown. Remaining cash coverage is <strong>Unknown</strong>.</p>
+    {% if overview.cash.more_groups %}<p>More currency and basis groups are available in the workspace details.</p>{% endif %}
+  {% else %}<p><strong>Unknown.</strong> No verified cash amounts are available in this view.</p>{% endif %}
+  {% if overview.work %}
+  <div class="table-wrap detail-table"><table>
+    <thead><tr><th scope="col">Work</th><th scope="col">Workspace</th><th scope="col">Status</th><th scope="col">Record</th></tr></thead>
+    <tbody>{% for item in overview.work %}<tr>
+      <th scope="row">{{ item.title }}</th>
+      <td data-label="Workspace">{{ item.workspace }}</td>
+      <td data-label="Status"><span>{{ item.label }} · <time datetime="{{ item.at|date:'c' }}">{{ item.at|date:'d M' }}</time></span></td>
+      <td data-label="Record"><a class="button secondary" href="{{ item.url }}" aria-label="Open {{ item.title }} for {{ item.workspace }}">Open</a></td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% if overview.work|length == overview.work_limit %}<p>Showing {{ overview.work_limit }} work item{{ overview.work_limit|pluralize }}.</p>{% endif %}
+  {% else %}<p>No Finance work updates are available for this month.</p>{% endif %}
+</section>

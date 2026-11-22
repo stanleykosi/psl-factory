@@ -6,7 +6,7 @@ from django.utils import timezone
 from apps.identity.models import Grant
 from apps.core.services import add_evidence
 from apps.core.management.commands.seed_demo import ACTIONS
-from apps.policy.services import register_reference,transition
+from apps.policy.services import active_component, register_reference,transition
 from apps.policy.costing_drafts import draft_costing_policy
 from apps.policy.costing_validators import COMPONENT
 from apps.pmo import costing as d
@@ -22,14 +22,26 @@ def policy(f,value=None):
 def review(f,oracle=None,verdict='confirm',key=None,actor=None):
     return d.review(actor or (f['tester'] if oracle else f['owner']),f['case'].pk,f['rule'].pk,oracle.pk if oracle else None,verdict,key or verdict+'-'+str(oracle.pk if oracle else 'rule'),f['review_evidence'].pk)
 
-def fixture(configured=True):
-    a,c=setup_case();sources=project_evidence(a,c);people={}
+def fixture(configured=True, *, context=None, sources=None, adjustable=False):
+    a,c=context if context else setup_case();sources=sources if sources is not None else project_evidence(a,c);people={}
     for key in ['owner','tester']:
         u=get_user_model().objects.create_user(username='costing-'+key);Grant.objects.bulk_create([Grant(case=c,user=u,action=x) for x in ACTIONS]);people[key]=u
-    f={'actor':a,'case':c,'sources':sources,**people};refs=[]
-    for u,role in [(a,'PM'),(a,'Head of PMO'),(a,'CEO'),(a,'PMO Lead'),(people['owner'],'PMO'),(people['tester'],'Finance')]:refs.append(register_reference(a,c.pk,'cost-role:'+str(u.pk)+':'+role.replace(' ','-'),'schema:psl/role-assignment/v1',{'role':role,'user_id':u.pk},sources['policy_decision'].pk).ref)
+    f={'actor':a,'case':c,'sources':sources,**people}
+    refs=list(active_component('D05.role_principal_assignments',c).envelope['value']) if context else []
+    assignments=[(people['owner'],'PMO'),(people['tester'],'Finance')]
+    if not context:assignments.extend((a,role) for role in ['PM','Head of PMO','CEO','PMO Lead'])
+    for u,role in assignments:refs.append(register_reference(a,c.pk,'cost-role:'+str(u.pk)+':'+role.replace(' ','-'),'schema:psl/role-assignment/v1',{'role':role,'user_id':u.pk},sources['policy_decision'].pk).ref)
     activate(a,c,'D05.role_principal_assignments',refs,sources['policy_decision'])
     v=json.loads((Path(__file__).resolve().parent.parent/'fixtures/commercial-costing.json').read_text(encoding='utf-8'));f['values']=v
+    if adjustable:
+        v['rule']['inputs'].append({'key': 'adjustment', 'unit': 'NGN'})
+        v['rule']['nodes'][0]['key'] = 'base_cost'
+        v['rule']['nodes'].append({'key': 'cost', 'unit': 'NGN', 'operation': 'add',
+                                   'operands': ['node:base_cost', 'input:adjustment'],
+                                   'decimal_places': 2, 'rounding': 'half_up'})
+        for scenario in v['scenarios']:
+            scenario['inputs'].append({'key': 'adjustment', 'unit': 'NGN', 'value': '0'})
+        v['scenarios'][1]['expected']['findings'].append('unknown:node:base_cost')
     r=copy.deepcopy(v['rule']);r.update(owner_id=f['owner'].pk,oracle_owner_id=f['tester'].pk);r['parameters'][0]['evidence_id']=evidence(f,'p14_parameter').pk
     f['rule']=d.capture_rule(a,c.pk,'calculator',evidence(f,'p14_rule',r).pk);f['review_evidence']=evidence(f,'p14_review');rr=review(f)
     o={'rule_sha256':f['rule'].sha256,'calculator_ref':r['calculator_ref'],'calculator_version':r['calculator_version'],'source_class':'synthetic_fixture','source_locator':'independently-entered-example-fixture','scenarios':copy.deepcopy(v['scenarios'])}

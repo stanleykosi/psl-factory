@@ -1,0 +1,8 @@
+{
+  "classification": "Synthetic example only. Operator IDs, provider selection and limits require an actual reviewed decision.",
+  "adapter": "synthetic_archive/v1",
+  "operator_id": 1,
+  "max_files": 100,
+  "max_bytes": 10485760,
+  "lease_seconds": 60
+}

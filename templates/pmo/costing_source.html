@@ -1,0 +1,21 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Costing rule · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'costing' case.pk %}">← Costing rules and worked examples</a>
+<header class="page-heading"><div><p class="eyebrow">Costing setup</p><h1>{% if kind == 'oracle' %}Worked examples{% else %}{{ rule.reference|readable }}{% endif %}</h1><p class="lede">{{ case|workspace_name }} · version {{ record.version }}</p></div></header>
+{% for finding in findings %}<p role="status">{{ finding }}</p>{% endfor %}
+<div class="factory-case-layout"><div>
+{% if kind == 'rule' %}
+<section class="card"><h2>Project inputs</h2><table><thead><tr><th>Input</th><th>Unit</th></tr></thead><tbody>{% for input in rule.payload.inputs %}<tr><td>{{ input.key|readable }}</td><td>{{ input.unit }}</td></tr>{% endfor %}</tbody></table></section>
+<section class="card"><h2>Prices and parameters</h2><table><thead><tr><th>Parameter</th>{% if previous %}<th>Version {{ previous.version }}</th>{% endif %}<th>Version {{ rule.version }}</th><th>Unit</th></tr></thead><tbody>{% for parameter in parameters %}<tr><td>{{ parameter.current.key|readable }}</td>{% if previous %}<td>{{ parameter.previous.value|default_if_none:'Unknown' }}</td>{% endif %}<td>{{ parameter.current.value|default_if_none:'Unknown' }}</td><td>{{ parameter.current.unit }}</td></tr>{% endfor %}</tbody></table></section>
+<section class="card"><h2>How the total is calculated</h2>{% for step in rule.payload.nodes %}<article><h3>{{ step.key|readable }}</h3><p>{{ step.operation|readable }} · {{ step.operands|join:' · ' }}</p><p>{{ step.unit }} · {{ step.decimal_places }} decimal places · {{ step.rounding|readable }}</p></article>{% endfor %}</section>
+{% else %}
+{% for example in examples %}<section class="card"><h2>{{ example.key|readable }}</h2><p>{{ example.scenario|readable }} example · {% if example.matches %}Matches{% else %}Needs review{% endif %}</p>
+<h3>Inputs</h3><table><thead><tr><th>Input</th><th>Value</th><th>Unit</th></tr></thead><tbody>{% for input in example.inputs %}<tr><td>{{ input.key|readable }}</td><td>{{ input.value|default_if_none:'Unknown' }}</td><td>{{ input.unit }}</td></tr>{% endfor %}</tbody></table>
+<div class="two-column"><section><h3>Expected result</h3><p>{{ example.expected.status|readable }}</p>{% for value in example.expected.values %}<p>{{ value.key|readable }} · {{ value.value|default_if_none:'Unknown' }} {{ value.unit }}</p>{% endfor %}</section><section><h3>Rule result</h3><p>{{ example.actual.status|readable }}</p>{% for value in example.actual.values %}<p>{{ value.key|readable }} · {{ value.value|default_if_none:'Unknown' }} {{ value.unit }}</p>{% endfor %}</section></div>
+</section>{% endfor %}
+{% endif %}
+</div><aside class="factory-action-panel"><section class="card"><h2>Source owners</h2><dl><dt>Rule owner</dt><dd>{% if rule_owner %}{{ rule_owner.get_full_name|default:rule_owner.username }}{% else %}Awaiting owner decision{% endif %} · {{ rule.payload.owner_role|default_if_none:'Role undecided' }}</dd><dt>Worked examples owner</dt><dd>{% if examples_owner %}{{ examples_owner.get_full_name|default:examples_owner.username }}{% else %}Awaiting owner decision{% endif %} · {{ rule.payload.oracle_role|default_if_none:'Role undecided' }}</dd></dl></section>
+<section class="card"><h2>Recorded source reviews</h2>{% for review in reviews %}<p>{{ review.verdict|readable }} · {{ review.actor.get_full_name|default:review.actor.username }} · {{ review.created_at|date:'d M Y H:i T' }}</p>{% empty %}<p>No source review recorded.</p>{% endfor %}<a href="{% url 'costing' case.pk %}">Open available costing actions</a></section>
+<details class="card"><summary>Source references</summary><p>{{ rule.payload.calculator_ref }} · {{ rule.payload.calculator_version }}</p><p>{{ rule.payload.source_locator }}</p><p>{{ record.sha256 }}</p><a href="{% url 'costing_source' case.pk kind record.pk %}">Structured source record</a></details></aside></div>
+{% endblock %}

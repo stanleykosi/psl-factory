@@ -1,0 +1,12 @@
+<section class="card">
+  <h2>Recipient receipts</h2>
+  <p>Report version {{ publication.version }} · Published {{ publication.created_at|date:'d M Y, H:i T' }}. Each recipient confirms their own receipt.</p>
+  {% if receipt_rows is None %}
+  <p role="status">The audience for this report version could not be read. Ask Finance to check the publication record.</p>
+  {% else %}
+  <div class="table-wrap"><table><caption>Recipients for this report version</caption>
+    <thead><tr><th scope="col">Recipient</th><th scope="col">Status</th><th scope="col">Recorded</th></tr></thead>
+    <tbody>{% for item in receipt_rows %}<tr><th scope="row">{{ item.name }}</th><td>{% if item.receipt %}Confirmed{% else %}Waiting{% endif %}</td><td>{% if item.receipt %}<time datetime="{{ item.receipt.created_at|date:'c' }}">{{ item.receipt.created_at|date:'d M Y, H:i T' }}</time>{% else %}—{% endif %}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+</section>

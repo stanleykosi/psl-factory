@@ -7,7 +7,7 @@ from django.db.models import Q,Max
 from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.evidence_access import public_evidence
-from apps.core.services import lock_case,event
+from apps.core.services import lock_case,event,bump
 from apps.identity.services import require,visible_cases
 from apps.policy.services import active_component,reference_values
 from apps.policy.factory_validators import COMPONENT
@@ -45,9 +45,7 @@ def profile(work,*,recovery=False):
     elif value['provider']=='governed_factory_v1':
         from apps.agents.factory_coordinator import configured
         if not recovery:
-            _,coordination=configured(work)
-            if coordination['mode']=='authenticated_planner_v1' and value['lease_seconds']<10:
-                raise ValidationError('configuration_needed: provider planning requires a lease of at least ten seconds')
+            configured(work)
     else:raise ValidationError('Unsupported factory coordinator')
     return config,value
 
@@ -85,6 +83,8 @@ def route(actor,work):
 
 
 def assert_review_task_current(work,task):
+    if not work.invoice_id or invoices.successor_drafts(work.invoice).exists():
+        raise ValidationError('The earlier Finance decision requires a current invoice draft.')
     if task.context['packet']!=invoices.review_packet(work.invoice):raise ValidationError('STALE_EVIDENCE: publication packet changed')
     from .factory_routing import task_authority_current
     if not task_authority_current(work,task):raise ValidationError('STALE_AUTHORITY: Finance review routing changed; prepare a current decision task')
@@ -108,6 +108,9 @@ def invoice_job_observation(jobs):
     return [(job.pk,job.status,'expired' if job.status=='leased' and uncertain_job(job) else None) for job in jobs]
 
 def _snapshot(work,value,reader=None):
+    if work.definition=='process-handoff/v1':
+        from .native_stations import snapshot as station_snapshot
+        return station_snapshot(work,value,reader)
     if work.definition=='pmo-issues/v1':
         from .factory_issues import snapshot as fn
         return fn(work,value,reader=reader)
@@ -186,6 +189,10 @@ def _snapshot(work,value,reader=None):
         from apps.finance.fixed_charge import preparation_access
         preparation_access(reader or work.execution_actor,work.preparation)
     records=sources(work);latest={}
+    if work.definition=='pmo-finance/v1':
+        from .factory_invoice_information import current as milestone_proof
+        proof=milestone_proof(work,value)
+        if proof is not None:records.append(proof.evidence)
     for e in records:latest.setdefault(e.kind,e)
     missing=[kind for kind in value['required_evidence_kinds'] if kind not in latest]
     stale=[kind for kind in value['required_evidence_kinds'] if kind in latest and latest[kind].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
@@ -218,6 +225,9 @@ def snapshot(work,value,reader=None):
     return (state,*result[1:])
 
 def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
+    if work.definition=='process-handoff/v1':
+        from .native_stations import eligible as station_eligible
+        return station_eligible(work,observed)
     if work.definition=='pmo-issues/v1':
         from .factory_issues import eligible as fn
         return fn(work,value,observed,latest,missing,stale,tasks,jobs)
@@ -365,6 +375,9 @@ def task(work,kind,context,resolver=None):
     return row
 
 def act(work,choice,value,latest,missing,tasks,jobs):
+    if work.definition=='process-handoff/v1':
+        from .native_stations import act as station_act
+        return station_act(work,choice['activity'])
     if work.definition=='pmo-issues/v1':
         from .factory_issues import act as fn
         return fn(work,choice,value,latest,missing,tasks,jobs)
@@ -455,6 +468,10 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         run=extract_evidence(work.execution_actor,case.pk,evidence.pk,'P34')
         return {'agent_run':run.pk,'evidence_ids':[evidence.pk]}
     if kind=='ACT05':
+        from apps.core.evidence_access import INVOICE_MILESTONE_PROOF
+        if INVOICE_MILESTONE_PROOF in missing:
+            from .factory_invoice_information import handoff_for
+            handoff_for(work)
         resolver=value['information_resolver_id']
         if resolver is None:raise ValidationError('owner_needed: information resolver is not configured')
         user=get_user_model().objects.get(pk=resolver);access(user,case,'factory.information')
@@ -626,23 +643,39 @@ def run_once(work_id,provider=None,adapter=None):
             if options==['ACT12'] and work.observation_hash==observed['hash']:
                 work.status='waiting_effect';work.finding='Provider result is still unknown. Reconcile the original operation when another observation is available.';work.lease_until=None;work.save();return False
             if not latest:raise ValidationError('Missing initial source evidence; no invented AgentRun source')
+            from apps.agents import specialist_packets
+            handoffs = []
+            if not set(options).issubset(specialist_packets.INDEPENDENT):
+                state, handoffs = specialist_packets.join(work, work.execution_actor, latest, value)
+                if state != 'ready':
+                    work.status = 'waiting'
+                    work.finding = {'waiting': 'Checking the source evidence.',
+                                    'source_changed': 'Current source material and its reading permission are required.',
+                                    'unavailable': 'A specialist report or coordinator check could not be verified. Check the current evidence before continuing.',
+                                    'review': 'The source findings need a decision from the information reviewer.'}[state]
+                    work.lease_until = None
+                    work.save(update_fields=['status', 'finding', 'lease_until', 'budget_used'])
+                    return False
             if original:
                 activity=original.activity;number=original.number;started=original
                 context=original.result['native_context'];observed=dict(original.observation,work_revision=work.revision)
             else:
                 reserve=value['tokens_per_call']
-                if work.budget_used+reserve>min(work.budget_limit,value['max_tokens']) or work.plan_revision>=value['max_steps'] or work.activities.count()+2>value['max_children']:raise ValidationError('BUDGET_EXHAUSTED: aggregate work allowance includes retries and both plan/child records')
+                if (work.budget_used+reserve>min(work.budget_limit,value['max_tokens'])
+                        or work.plan_revision>=value['max_steps']
+                        or specialist_packets.task_count(work)+2>value['max_children']):
+                    raise ValidationError('BUDGET_EXHAUSTED: aggregate work allowance includes retries and plan, child and reading records')
                 work.budget_used+=reserve;work.plan_revision+=1;work.save()
                 key=digest(['plan',observed['hash'],options])
                 activity,created=Activity.objects.get_or_create(work=work,key=key,defaults={'kind':'ACT03','plan_revision':work.plan_revision,'status':'running'})
                 number=(activity.attempts.aggregate(n=Max('number'))['n'] or 0)+1
                 context={'eligible':options,'evidence_ids':[e.pk for e in latest.values()],'missing':missing,'case_revision':work.case.revision}
-                request=coordinator.intent(work,context,activity,number) if value['provider']=='governed_factory_v1' else {}
+                request=coordinator.intent(work) if value['provider']=='governed_factory_v1' else {}
                 started=Attempt.objects.create(activity=activity,number=number,phase='started',fence=token,observation=observed,result=request)
                 if value['provider']=='governed_factory_v1':planning_attempt_id=started.pk
         if provider is None and value['provider']=='governed_factory_v1':
             from apps.agents.factory_coordinator import choose
-            answer,provider_name=choose(work,context,started,resuming=original is not None)
+            answer,provider_name=choose(work,context,started)
         else:
             answer=(provider or SyntheticFactoryCoordinator()).choose(context);provider_name='synthetic_factory_v1'
         with transaction.atomic():
@@ -652,24 +685,20 @@ def run_once(work_id,provider=None,adapter=None):
             fresh,latest,missing,stale,tasks,jobs=snapshot(work,value)
             if fresh['hash']!=observed['hash'] or fresh['work_revision']!=observed['work_revision']:raise ValidationError('STALE_VERSION: case/evidence/decision/work changed while planning')
             if not isinstance(answer,dict) or set(answer)!={'activity','citations'} or answer['activity'] not in options:raise PermissionDenied('FORBIDDEN: model choice is outside current capabilities')
+            if handoffs:
+                state, checked = specialist_packets.join(work, work.execution_actor, latest, value)
+                if state != 'ready' or checked != handoffs:
+                    raise ValidationError('The source findings changed during coordination.')
             if not isinstance(answer['citations'],list) or not answer['citations'] or any(type(pk) is not int or pk not in context['evidence_ids'] for pk in answer['citations']):raise ValidationError('Unsupported citation')
-            process={'pmo-issues/v1':'P50','finance-ledger/v1':'F01','finance-bu/v1':('F21' if work.request.get('mode')=='staff' else 'F44'),'engagement/v1':'P16' if answer['activity']=='ACT04' else 'P03','pmo-minutes/v1':'P43','pmo-escalation/v1':'P44','pmo-weekly-report/v1':'P41','pmo-leadership-report/v1':('P40' if work.request.get('kind')=='internal_tuesday' else 'P42'),'finance-schedules/v1':('F12' if work.request.get('kind')=='income' else 'F13'),'finance-ppe/v1':'F07','finance-forecast/v1':'F39','finance-payroll/v1':'F16','pmo-change/v1':'P57','delivery-go-live/v1':'P33','delivery-closure/v1':'P39','delivery-handover/v1':'P37','delivery-archive/v1':'P36',
-                'delivery-hypercare/v1':'P35','delivery-release/v1':'P32','planning/v1':'P26'}.get(work.definition)
-            if work.definition=='finance-payroll/v1':
-                process='F18' if observed['native']['stage'] in ['aggregate','aggregate_review','publish','receipt','complete'] else 'F17' if observed['native']['stage'] in ['match','match_review'] else 'F16'
-            if work.definition=='pmo-emergency/v1':
-                process='P62' if observed['native']['outcome'] else 'P61'
-            if work.definition=='pmo-change/v1':
-                process='P57' if answer['activity']=='ACT04' else 'P60' if observed['native']['stage'] in ['go_live','signatures','complete'] else 'P59'
-            if work.definition=='finance-accounts/v1':
-                from .factory_accounting import process_for_activity
-                process=process_for_activity(answer['activity'],observed,value)
-            if work.definition=='rfp-response/v1':
-                process='P46' if answer['activity']=='ACT04' else 'P47' if not observed['document'] else 'P49' if observed['submission'] else 'P48'
-            if process is None:
-                process=('P14' if answer['activity']=='ACT04' else 'P06' if answer['activity']=='ACT08' else 'P07') if work.definition=='commercial/v1' else 'F29' if answer['activity']=='ACT08' else 'F30' if answer['activity'] in ['ACT09','ACT10','ACT11','ACT12','ACT13'] else 'P34'
-            run=AgentRun.objects.create(case=work.case,actor=work.execution_actor,evidence=latest[next(iter(latest))],provider=provider_name,process_id=process,result=answer)
+            from apps.agents import specialists
+            from .factory_processes import process_for
+            process = process_for(work, answer['activity'], observed, value)
+            assignment = specialists.assignment(process, answer['activity'])
+            run=AgentRun.objects.create(case=work.case,actor=work.execution_actor,evidence=latest[next(iter(latest))],provider=provider_name,process_id=process,result={**answer,'assignment':assignment})
             child_key=digest(['ACT04',observed['sources'],work.source_head_id]) if answer['activity']=='ACT04' and work.definition in ['planning/v1','commercial/v1'] else digest(['ACT04',observed['sources']]) if answer['activity']=='ACT04' else digest([activity.key,answer['activity']])
+            if answer['activity']=='ACT04' and work.definition=='planning/v1':
+                from .factory_planning import investigation_key as planning_investigation_key
+                child_key=planning_investigation_key(work,observed)
             if 'bound_preparation' in observed and answer['activity']=='ACT04':
                 child_key=digest(['ACT04',observed['sources'],observed['bound_preparation']])
             if work.definition=='finance-accounts/v1' and answer['activity']=='ACT04':
@@ -687,11 +716,16 @@ def run_once(work_id,provider=None,adapter=None):
             child,created=Activity.objects.get_or_create(work=work,key=child_key,defaults={'parent':activity,'kind':answer['activity'],'plan_revision':work.plan_revision})
             child_number=(child.attempts.aggregate(n=Max('number'))['n'] or 0)+1
             Attempt.objects.create(activity=child,number=child_number,phase='started',fence=token,observation=fresh)
-            result=act(work,answer,value,latest,missing,tasks,jobs)
+            result, specialist_receipt = specialists.dispatch(work,child,assignment,answer,value,latest,missing,stale,tasks,jobs)
+            if handoffs and answer['activity'] not in specialist_packets.INDEPENDENT:
+                specialist_receipt['source_handoffs'] = handoffs
+                specialist_packets.SpecialistPacket.objects.filter(
+                    pk__in=[item['packet'] for item in handoffs], consumed_at=None
+                ).update(consumed_at=timezone.now())
             child.status='succeeded';child.save(update_fields=['status'])
             Attempt.objects.create(activity=child,number=child_number,phase='observed',fence=token,observation=fresh,result=result,agent_run=run)
             activity.status='succeeded';activity.save(update_fields=['status'])
-            Attempt.objects.create(activity=activity,number=number,phase='observed',fence=token,observation=fresh,result={'child':child.pk,'activity':answer['activity']},agent_run=run)
+            Attempt.objects.create(activity=activity,number=number,phase='observed',fence=token,observation=fresh,result={'child':child.pk,'activity':answer['activity'],'specialist':specialist_receipt},agent_run=run)
             if work.status not in TERMINAL:work.status='waiting' if result.get('waiting') else 'ready'
             work.finding=result.get('finding',result.get('waiting',''));work.observation_hash=fresh['hash'];work.revision+=1;work.save()
         # Native worker owns effect retries. No transaction is held across adapter calls.
@@ -795,27 +829,41 @@ def decide(actor,task_id,expected,verdict,evidence_id,reason):
     review=invoices.review(actor,t.case_id,work.invoice_id,'Finance',verdict,evidence_id,reason,t.case.revision,delegated=delegated_for(work,actor))
     TaskEvent.objects.create(task=t,actor=actor,action='factory.review',data={'native_review':review.pk,'packet_hash':digest(t.context['packet']),'verdict':verdict})
     t.status='completed' if verdict=='approve' else 'returned';t.revision+=1;t.save(update_fields=['status','revision'])
-    work.status='ready' if verdict=='approve' else 'blocked';work.finding='' if verdict=='approve' else 'Finance returned or rejected this exact packet';work.revision+=1;work.save();return review
+    work.status='ready' if verdict=='approve' else 'blocked';work.finding='' if verdict=='approve' else 'Finance returned or rejected this exact packet';work.revision+=1;work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return review
 
 @transaction.atomic
-def manage(actor,work_id,expected,operation):
+def manage(actor,work_id,expected,operation,*,draft_stop=None):
     work=Work.objects.select_for_update().select_related('case').get(pk=work_id);access(actor,work.case,'factory.manage',work.definition)
     if work.revision!=expected:raise ValidationError('STALE_VERSION: work changed')
     if work.status in ['verified','cancelled','followup_needed']:raise ValidationError('Completed or stopped work requires its native follow-up or correction workflow')
+    audit_data={}
     if operation=='cancel':
         if work.status in ['verified','cancelled']:raise ValidationError('Completed outcomes need an authorised correction; cancellation cannot undo them')
-        work.cancel_requested=True
+        if draft_stop is not None:
+            from .factory_invoice_cancellation import validate
+            case,audit_data=validate(actor,work,draft_stop)
+            work.status='cancelled';work.finding='';work.lease_until=None
+            bump(case)
         # Held work cannot be claimed by a worker to acknowledge a stop.
-        if work.status in TERMINAL and not (work.lease_until and work.lease_until>timezone.now()):work.status=cancellation_status(work)
+        elif work.status in TERMINAL and not (work.lease_until and work.lease_until>timezone.now()):work.status=cancellation_status(work)
+        work.cancel_requested=True
         for task in HumanTask.objects.select_for_update().filter(case=work.case,status='open',factory_key__startswith=f'factory:{work.pk}:'):
             TaskEvent.objects.create(task=task,actor=actor,action='factory.wait_cancelled',data={'work':work.pk})
             task.status='returned';task.revision+=1;task.save(update_fields=['status','revision'])
     elif operation=='resume':
         if work.cancel_requested:raise ValidationError('Cancelled intent cannot silently restart')
         if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: the current worker still owns this work')
+        if work.definition == 'finance-forecast/v1':
+            from .factory_forecast_recovery import unsettled_delivery
+
+            if unsettled_delivery(work):
+                raise ValidationError('Check the original forecast delivery before continuing.')
         profile(work);work.status='ready';work.finding=''
     else:raise ValidationError('Unknown operator action')
-    work.revision+=1;work.save();event(actor,work.case,'factory.'+operation,work=work.pk)
+    work.revision+=1;work.save();event(actor,work.case,'factory.'+operation,work=work.pk,**audit_data)
     return work
 
 @transaction.atomic
@@ -863,6 +911,8 @@ def advance(actor,work_id,expected,provider=None,adapter=None):
 
 @transaction.atomic
 def provide_information(actor,task_id,expected,case_revision,kind,body,source):
+    from apps.core.evidence_access import INVOICE_MILESTONE_PROOF
+    if kind==INVOICE_MILESTONE_PROOF:raise ValidationError('Choose the original private PDF for this milestone proof')
     t=HumanTask.objects.select_for_update().select_related('case').get(pk=task_id)
     if t.context.get('purpose')=='hr_scope_clarification_v1':raise ValidationError('Use the dedicated private HR scope workflow')
     access(actor,t.case,'factory.information')
@@ -917,23 +967,64 @@ def reconcile(actor,work_id,expected):
     if Work.objects.filter(pk=work_id,definition='planning/v1').exists():
         from .factory_planning import reconcile as planning_reconcile
         return planning_reconcile(actor,work_id,expected)
+    from apps.identity.models import Grant
+    from .factory_execution import require_control
+    from .factory_invoice_receipts import confirmed_waiting_job, current_receipt, reconcile_confirmed, record_reconciliation
     with transaction.atomic():
-        work=Work.objects.select_for_update().select_related('case','actor').get(pk=work_id)
-        access(actor,work.case,'factory.execute')
-        from .factory_execution import require_control
+        work=Work.objects.select_for_update(of=('self',)).select_related('case','actor').get(pk=work_id)
         require_control(actor,work)
         if work.revision!=expected:raise ValidationError('STALE_VERSION: work changed')
         if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: worker owns this work')
         profile(work,recovery=True)
-        job=next((job for job in invoice_jobs(work) if uncertain_job(job)),None)
-        if not job:raise ValidationError('No uncertain native invoice operation to reconcile')
+        jobs=invoice_jobs(work)
+        job=next((item for item in jobs if uncertain_job(item)),None)
+        if not job:
+            original = confirmed_waiting_job(work, jobs)
+            if original:
+                return reconcile_confirmed(actor, work, original)
+            raise ValidationError('No original native invoice operation awaiting reconciliation')
         event(actor,work.case,'factory.reconciliation_requested',work=work.pk,job=job.pk)
     invoice_delivery.run_once(adapter_for(work),case_id=work.case_id,job_id=job.pk,lookup_only=True)
     with transaction.atomic():
         work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','invoice').get(pk=work_id)
-        job.refresh_from_db();_,value=profile(work,recovery=True)
-        work.status=cancellation_status(work) if work.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'ready'
-        work.finding='The original provider result remains uncertain' if job.status=='unknown' else 'Cancellation requires native follow-up for any issued invoice' if work.cancel_requested else ''
-        observed,*_=snapshot(work,value);work.observation_hash=observed['hash'] if job.status=='unknown' else ''
+        if work.revision!=expected:raise ValidationError('STALE_VERSION: work changed while checking the original receipt')
+        if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: worker now owns this work')
+        work.case = lock_case(actor, work.case_id, 'factory.execute')
+        list(Grant.objects.select_for_update().filter(case=work.case).order_by('pk'))
+        require_control(actor, work)
+        _, value = profile(work, recovery=True)
+        job = InvoiceJob.objects.select_for_update(of=('self',)).select_related('invoice__case', 'actor').get(pk=job.pk)
+        jobs = invoice_jobs(work)
+        if job not in jobs:
+            raise ValidationError('The original operation changed while checking its receipt.')
+        if work.cancel_requested:
+            work.status = cancellation_status(work)
+            work.finding = 'Cancellation requires native follow-up for any issued invoice'
+        else:
+            work.status = 'waiting_effect'
+            if job.status == 'confirmed':
+                try:
+                    if any(item.status in ('pending', 'leased', 'unknown', 'held') for item in jobs):
+                        raise ValidationError('Review the other unresolved original invoice operations.')
+                    receipt = current_receipt(work, job)
+                except (PermissionDenied, ValidationError):
+                    work.finding = 'Finance needs to verify the original receipt and current scope before continuing.'
+                else:
+                    return record_reconciliation(actor, work, job, receipt)
+            else:
+                work.finding = {
+                    'leased': 'The invoice worker is checking the original operation.',
+                    'held': 'The original invoice receipt needs authorised Finance recovery.',
+                    'unknown': 'The original provider result remains uncertain',
+                }.get(job.status, 'Review the current original invoice reservation before continuing.')
+        if work.status == 'waiting_effect':
+            try:
+                observed, *_ = snapshot(work, value)
+                work.observation_hash = observed['hash']
+            except (PermissionDenied, ValidationError):
+                # A changed source or reader must not clear the native receipt wait.
+                pass
+        else:
+            work.observation_hash = ''
         work.revision+=1;work.save()
     return work

@@ -9,6 +9,7 @@ from apps.documents import validation
 from apps.finance import recognition
 from apps.pmo import engagement, gates, issues, meetings, planning
 from apps.pmo.services import subject
+from .file_draft_reviews import reviewed_output
 from .models import AgentJob
 from .upload_jobs import authorize
 
@@ -46,7 +47,7 @@ def form_for(job, data=None):
         fields['gate'] = forms.ChoiceField(choices=[(key, f'{key.replace("_", " ")} · {owner}')
                                                    for key, owner in gates.GATE_OWNERS.items()])
         fields['external_ref'] = forms.CharField(max_length=240, label='Source reference')
-    return type('ReviewedDraftForm', (forms.Form,), fields)(data)
+    return type('ReviewedDraftForm', (forms.Form,), fields)(data, auto_id=f'file-handoff-{job.pk}-%s')
 
 
 def discovery(actor, case, evidence, key, result):
@@ -61,7 +62,7 @@ def discovery(actor, case, evidence, key, result):
 
 def create_record(actor, case, job, evidence, fields):
     key = f'agent-draft-{job.pk}'
-    role, result = job.role, job.result
+    role, result = job.role, reviewed_output(job, evidence)
     if role == 'A01':
         if engagement.latest(case, 'capture'):
             raise ValidationError('This case already has an intake. Review its existing intake record.')

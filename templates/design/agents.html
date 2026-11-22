@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Assistant · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><h1>Assistant</h1></header>
+<div class="assistant-layout">
+  <aside class="card"><h2>Conversations</h2>
+    {% for conversation in conversations %}<a class="floor-line" href="{% url 'assistant_thread' conversation.pk %}">{% if conversation.scope == 'department' %}All department projects{% else %}{{ conversation.case|workspace_name }}{% endif %}<span>{{ conversation.persona|title }}</span></a>
+    {% empty %}<p>No conversations yet.</p>{% endfor %}
+  </aside>
+  <section class="card" aria-labelledby="ask-a-department"><h2 id="ask-a-department">Department assistants</h2>
+    <p><a href="{% url 'payroll_received_reports' %}">My acknowledged payroll reports</a></p>
+    {% for key, name, department in departments %}<a class="floor-line" href="{% url 'assistant_start' key %}"><strong>{{ name }}</strong><span>{{ department }} →</span></a>
+    {% empty %}<p>Your current role has no department assistant.</p>{% endfor %}
+  </section>
+</div>
+{% endblock %}

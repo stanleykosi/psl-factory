@@ -1,0 +1,93 @@
+.shared-search {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.shared-search-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shared-search-input input {
+  min-width: 0;
+}
+
+.shared-search-input input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.shared-search-clear {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 6px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.shared-search-clear[hidden] {
+  display: none;
+}
+
+.shared-scroll-region:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.shared-checkbox-target {
+  display: inline;
+  margin: 0;
+}
+
+@media (max-width: 650px) {
+  .shared-search-clear,
+  .shared-mobile-controls :is(button, a.button, a[data-mobile-control], select, textarea,
+    input:not([type='hidden'], [type='checkbox'], [type='radio'])),
+  .shared-mobile-controls > summary,
+  .shared-mobile-controls details > summary {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
+
+  .shared-mobile-controls > summary,
+  .shared-mobile-controls details > summary {
+    padding-block: 10px;
+  }
+
+  .shared-mobile-controls a[data-mobile-control] {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .shared-mobile-controls label:has(> input:is([type='checkbox'], [type='radio'])),
+  .shared-mobile-controls p:has(> input:is([type='checkbox'], [type='radio'])) > label,
+  .shared-mobile-controls .shared-checkbox-target {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
+
+  .shared-mobile-controls input[type='file'] {
+    padding: 0;
+  }
+
+  .shared-mobile-controls input[type='file']::file-selector-button {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    padding-inline: 12px;
+    font: inherit;
+  }
+
+  .shared-scroll-region > table {
+    display: table;
+    max-width: none;
+    overflow: visible;
+  }
+}

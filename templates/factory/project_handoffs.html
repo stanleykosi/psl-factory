@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% load studio_ui %}
+{% block title %}Department handoffs · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div>
+  <h1>Department handoffs</h1><p>{{ case|workspace_name }}</p>
+  {% if process %}<h2>{{ title }}</h2><p>{{ guide.action }}</p>
+  <div class="process-links">
+    <a href="{{ guide.source_url }}{% if source_here %}?project={{ case.pk }}{% endif %}">{{ guide.screen }}</a>
+    <a href="{% url 'project_handoffs' case.pk %}">All project handoffs</a>
+    <a href="{{ guide.tracking_url }}?page=1">Choose another project</a>
+  </div>{% endif %}
+</div></header>
+<section class="card">{% for work, title in rows %}
+<a class="floor-line" href="{% url 'factory_detail' work.pk %}"><strong>{{ title }}</strong><span>{{ work.status|readable }}</span></a>
+{% empty %}<p>{% if process %}No work for this process is available to you yet. Matching handoffs appear here after they enter background work.{% else %}No handoffs are available to you on this page.{% endif %}</p>{% endfor %}</section>
+{% if cursor %}<a href="?before={{ cursor }}{% if process %}&amp;process={{ process }}{% endif %}">Earlier handoffs</a>{% endif %}
+{% endblock %}

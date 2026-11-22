@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Move to a role scope · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'staff_person' person.pk %}">← Staff access</a>
+<h1>Move {{ person.get_full_name|default:person.username }} to a role scope</h1><p>{{ case|workspace_name }}</p></div></header>
+<section class="card onboarding-card"><form method="get">{{ selection.as_p }}<button class="button primary">Preview move</button></form></section>
+{% if problem %}<p role="alert">{{ problem }}</p>{% endif %}
+{% if preview %}
+<section class="card"><h2>{{ preview.label }}</h2>
+<p>This move removes {{ preview.grants|length }} workspace permissions and carries {{ preview.items|length }} open actions into My work.</p>
+{% if preview.items %}<ul>{% for item in preview.items %}<li>{{ item.current.description }}</li>{% endfor %}</ul>{% endif %}
+<details><summary>Workspace permissions being removed</summary><ul>{% for label in preview.removed_labels %}<li>{{ label }}</li>{% endfor %}</ul></details>
+{% if preview.holds %}<ul aria-label="Items to resolve before moving">{% for hold in preview.holds %}<li>{{ hold }}</li>{% endfor %}</ul>{% endif %}
+</section>
+{% endif %}
+{% if confirmation %}<section class="card onboarding-card"><form method="post">{% csrf_token %}{{ confirmation.as_p }}<button class="button primary">Confirm move</button></form></section>{% endif %}
+{% endblock %}

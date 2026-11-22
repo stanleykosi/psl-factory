@@ -1,1 +1,17 @@
-{% extends 'base.html' %}{% block content %}<h1>Prepare a weekly client report</h1><p>Select the completed period and controlled client template. Supply cited client-safe progress, risks, milestone status and next steps. Missing inputs remain visible; nothing here grants review or distribution authority.</p><form method="get"><input type="hidden" name="definition" value="pmo-weekly-report/v1">{{ form.case.as_field_group }}<button>Select project</button></form>{% if case %}<form method="post">{% csrf_token %}{{ form.as_p }}<p>Timestamp time zone: {{ time_zone }}. Explicit selection does not configure cadence. Inventory includes local period meetings/milestones and current commitments, issues and linked project evidence; no complete external coverage is claimed.</p>{{ inputs_form.as_p }}<button>Start weekly report work</button></form>{% endif %}{% endblock %}
+{% extends 'base.html' %}{% block content %}
+<h1>Prepare a weekly client report</h1>
+<p>Choose a completed period and a client template. Select the records that support each part of the report. They stay private during client delivery.</p>
+{% include 'factory/project_intake_picker.html' %}
+{{ form.non_field_errors }}
+{% if case %}<form method="post">{% csrf_token %}{{ form.case.as_hidden }}{{ form.definition }}{{ form.revision }}{{ form.key }}{{ form.draft_version }}
+  {% if draft %}<p>Private draft saved {{ draft.created_at|date:'d M Y, H:i T' }}.</p>{% endif %}
+  {{ form.reference.as_field_group }}<p>Times are shown in {{ time_zone }}. The report covers selected project records for this period.</p>
+  {{ inputs_form.non_field_errors }}
+  {% for field in inputs_form.visible_fields %}<div>{{ field.as_field_group }}</div>{% endfor %}
+  {{ form.background.as_field_group }}
+  <div class="actions">
+    <button name="action" value="start">Send to Tola to assemble</button>
+    <button name="action" value="save_draft" class="secondary" formnovalidate>Save draft</button>
+  </div>
+</form>{% endif %}
+{% endblock %}

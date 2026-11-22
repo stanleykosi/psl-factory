@@ -1,0 +1,14 @@
+{
+  "classification":"Synthetic interface example only. Live people, destinations, review separation and timing remain owner-supplied.",
+  "value":{
+    "reviewer_roles":["PM"],
+    "sender_roles":["PM"],
+    "independent_release":false,
+    "routes":[{"team_key":"sample-engineering","channel":"email","destination":"sample-engineering@example.invalid","mode":"synthetic_mailbox"}],
+    "reminder_after_hours":1,
+    "escalation_after_hours":2,
+    "escalation_target":"CTO",
+    "clock_basis":"source_delivery_time",
+    "draft_on_owner_wait":true
+  }
+}

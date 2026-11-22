@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.db import transaction,connection
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.utils import timezone
+from apps.core.models import Case
 from apps.core.services import lock_case,event,bump
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -44,10 +45,13 @@ def catalog(c,scope):
  if not bus:raise ValidationError('Effective BU catalogue required')
  return p,bus
 
-def private_access(actor,w):
+def private_access(actor,w,*,checked_payroll=None):
+ # This check is also used for read-only work projections. Payload reads and writes
+ # retain their native case/grant transaction at the service boundary.
  for k in ['case.read','bu.read','bu.private.read']:require(actor,w.case,k)
  if w.payroll_id:
-  pr.check_run_access(actor,pr.exact(w.case,PayrollRun,w.payroll_id))
+  if checked_payroll is not None and checked_payroll.pk==w.payroll_id:pr.run_reader(actor,checked_payroll)
+  else:pr.run_access(actor,pr.exact(w.case,PayrollRun,w.payroll_id))
  else:
   _,v=config(SOURCE,w.case,w.metadata['scope'])
   if actor.pk not in v['reader_ids']:raise PermissionDenied('Not an exact event-source reader')
@@ -68,17 +72,19 @@ def exception_inventory(c,payroll_id,components,at=None):
   result.append({'rule_id':r.pk,'review_id':last['id'] if last else None,'verdict':last['verdict'] if last else 'pending'})
  return sorted(result,key=lambda r:r['rule_id'])
 
-def current(w,check_comparison=True):
+def current(w,check_comparison=True,*,checked_payroll=None):
  for key,pk in w.metadata['policy_ids'].items():
   if active_component(key,w.case).pk!=pk:raise ValidationError('BU source/rule context changed')
  if w.metadata.get('retain_until') and timezone.now()>=timestamp(w.metadata['retain_until']):raise ValidationError('BU retained access expired')
  if BUWork.objects.filter(case=w.case,kind=w.kind,reference=w.reference,version__gt=w.version,metadata__accepted=True).exists():raise ValidationError('BU work version replaced')
  require(w.actor,w.case,'bu.capture' if w.kind=='source' else 'bu.'+w.kind)
- if w.kind!='source':private_access(w.actor,w)
+ payroll=None
  if w.payroll_id:
-  p=pr.exact(w.case,PayrollRun,w.payroll_id);pr.run_current(p)
-  if p.sha256!=w.metadata['payroll_sha256']:raise ValidationError('Payroll source differs')
-  for pk in w.metadata.get('rule_ids',[]):current(exact(w.case,pk),check_comparison=check_comparison)
+  payroll=checked_payroll if checked_payroll is not None and checked_payroll.pk==w.payroll_id else pr.run_current(pr.exact(w.case,PayrollRun,w.payroll_id))
+  if payroll.sha256!=w.metadata['payroll_sha256']:raise ValidationError('Payroll source differs')
+ if w.kind!='source':private_access(w.actor,w,checked_payroll=payroll)
+ if payroll is not None:
+  for pk in w.metadata.get('rule_ids',[]):current(exact(w.case,pk),check_comparison=check_comparison,checked_payroll=payroll)
   if w.kind=='staff':
    _,financial=config(STAFF,w.case,w.metadata['scope']);live=exception_inventory(w.case,w.payroll_id,financial['components'])
    # Older immutable work reconstructs its original ID/review inventory by creation time.
@@ -134,12 +140,28 @@ def parents_reviewed(w):
  for pk in w.metadata.get('rule_ids',[]):review_current(exact(w.case,pk))
  if w.parent_id:review_current(exact(w.case,w.parent_id))
 
-def review_current(w,purpose=None):
+def _own_review(w,purpose,*,checked_payroll=None):
  purpose=purpose or w.kind;r=w.reviews.filter(purpose=purpose).order_by('-pk').first()
  if not r or r.verdict!='approve' or r.subject_sha256!=w.sha256:raise ValidationError('Exact current BU approval required')
- current(w);private_access(r.actor,w);require(r.actor,w.case,'bu.review')
+ current(w,checked_payroll=checked_payroll);private_access(r.actor,w,checked_payroll=checked_payroll);require(r.actor,w.case,'bu.review')
  if authority(r.actor,w,purpose)!=r.authority:raise ValidationError('Review authority changed')
- parents_reviewed(w);return r
+ return r
+
+def review_current(w,purpose=None):
+ review=_own_review(w,purpose)
+ parents_reviewed(w)
+ return review
+
+def checked_staff_rules(payroll,rules):
+ """Check one shared payroll lineage and each selected exception's own review."""
+ if payroll.kind!='match':
+  raise ValidationError('Staff allocation requires a matched payroll.')
+ pr.current_review(payroll)
+ for rule in rules:
+  if (rule.kind!='rule' or rule.payroll_id!=payroll.pk or
+      rule.case_id!=payroll.request.case_id or rule.parent_id or rule.metadata.get('rule_ids')):
+   raise ValidationError('Exception review requires the exact matched payroll and original rule.')
+  _own_review(rule,'rule',checked_payroll=payroll)
 
 @transaction.atomic
 def staff(actor,case_id,payroll_id,reference,key,declared,rule_ids,expected):
@@ -265,6 +287,12 @@ def private_comparison_difference(bu_total,company_total,comparable):
  except (InvalidOperation,ValueError):pass
  return result
 
+def disclosure_for(work):
+ policy,value=config(DISCLOSE,work.case)
+ if work.kind=='staff' and any(count<value['minimum_staff'] for count in work.payload['staff_counts'].values()):
+  raise ValidationError('Small-group protection holds the whole report. Review the Finance disclosure rule.')
+ return policy,value
+
 @transaction.atomic
 def publish(actor,case_id,work_id,key,expected):
  c=locked(actor,case_id,'bu.publish',expected);w=exact(c,work_id);validate(KEY,key)
@@ -273,10 +301,13 @@ def publish(actor,case_id,work_id,key,expected):
  if existing:
   if existing.actor_id!=actor.pk:raise ValidationError('Publication retry actor changed')
   return existing
- private_access(actor,w);current(w);r=review_current(w);a=authority(actor,w,'publish');policy,v=config(DISCLOSE,c)
+ private_access(actor,w);current(w);r=review_current(w);a=authority(actor,w,'publish')
  if w.metadata.get('historical'):review_current(w,'historical')
  if w.metadata['status']!='complete' or not w.payload['conserved']:raise ValidationError('Reconciled source population required')
- if w.kind=='staff' and any(n<v['minimum_staff'] for n in w.payload['staff_counts'].values()):raise ValidationError('Small-group protection holds whole report publication')
+ policy,v=disclosure_for(w)
+ if w.kind == 'staff':
+  from apps.workflows.native_stations import receive_advice
+  receive_advice('F20', w, actor, case=c)
  payload={**w.metadata['scope'],'unit':'major_currency','by_bu':w.payload['by_bu'],'company_source_total':w.payload['source_total'],'allocated_total':w.payload['allocated_total'],'company_only':w.payload.get('company_only','0'),'residual':w.payload['residual'],'conserved':True,'source_work':w.pk,'coverage':'selected_supplied_population_only','native_authenticity_verified':False,'destination':v['destination'],'ledger_posted':False,'source_written':False,'disclosure':'aggregate_only'}
  version=(BUReport.objects.filter(work=w).order_by('-version').values_list('version',flat=True).first() or 0)+1
  report=BUReport.objects.create(work=w,review=r,version=version,operation_key=key,payload=payload,policy_ids={**a,DISCLOSE:policy.pk},actor=actor)
@@ -284,7 +315,12 @@ def publish(actor,case_id,work_id,key,expected):
 
 @transaction.atomic
 def read_report(actor,report_id):
- r=BUReport.objects.defer('payload').select_related('work__case').get(pk=report_id);c=locked(actor,r.work.case_id,'bu.report.read');policy,v=config(DISCLOSE,c)
+ r=BUReport.objects.defer('payload','work__payload','work__metadata').select_related('work').get(pk=report_id)
+ # Hold the source and grants stable during the read without entering a command scope.
+ c=Case.objects.select_for_update().get(pk=r.work.case_id)
+ list(Grant.objects.select_for_update().filter(case=c).order_by('pk').values_list('pk',flat=True))
+ for action in ['case.read','bu.read','bu.report.read']:require(actor,c,action)
+ policy,v=config(DISCLOSE,c)
  if actor.pk not in v['recipient_ids']:raise PermissionDenied('Not a configured aggregate recipient')
  w=exact(c,r.work_id);current(w);require(r.actor,c,'bu.publish');private_access(r.actor,w)
  if review_current(w).pk!=r.review_id or authority(r.actor,w,'publish')!={k:pk for k,pk in r.policy_ids.items() if k!=DISCLOSE} or policy.pk!=r.policy_ids[DISCLOSE]:raise ValidationError('Report review/authority/disclosure changed')

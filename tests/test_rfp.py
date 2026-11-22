@@ -20,8 +20,8 @@ from . import test_commercial_changes as commercial_helpers
 DEFINITION={'document_type':'rfp_response','required_fields':['executive_summary','scope','requirements_mapping','commercial_terms'],
     'audience_fields':{'client':['executive_summary', 'scope', 'requirements_mapping', 'commercial_terms', 'timeline', 'risks', 'dependencies', 'status']}}
 
-def fixture():
-    a,c,e,_=commercial_helpers.fixture();commercial_helpers.change_roles(a,c,e['policy_decision'])
+def fixture(reference='RFP-001', *, record_intake=True, portal=False, context=None, include_security=True):
+    a,c,e,_=commercial_helpers.fixture(context=context);commercial_helpers.change_roles(a,c,e['policy_decision'])
     for k in ['rfp_commercial_terms','rfp_intake','rfp_deadline','rfp_response','rfp_outcome','rfp_lessons','qa_estimate','product_input']:
         e[k]=add_evidence(a,c.pk,k,'Synthetic '+k+' source','synthetic:rfp')
     artifact(a,c,'D05.decision_action_matrix','schema:psl/decision-actions/v2',{'rfp':{'assignment_roles':['CEO'],'outcome_roles':['Client']},
@@ -29,11 +29,16 @@ def fixture():
     t=register_template(a,c.pk,'RFP response',DEFINITION,e['policy_decision'].pk,rev(c))
     artifact(a,c,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',{'template_ids':[t.pk],'repository':'internal-versioned','retention_days':30},e['policy_decision'])
     route={'kind':'rfp_submission','key':'client_bid','method':'internal_recipient_inbox','destination_ref':'synthetic:rfp-inbox','recipient_ids':[a.pk],'sender_roles':['PM']}
+    if portal:
+        route.update(method='manual_client_portal',destination_ref='synthetic:client-portal',recipient_ids=[])
     rr=register_reference(a,c.pk,'rfp:route','schema:psl/rfp-submission-route/v1',route,e['policy_decision'].pk)
     activate(a,c,'D11.adapter_configuration_refs',[rr.ref],e['policy_decision'])
-    rfp.intake(a,c.pk,'RFP-001',e['rfp_intake'].pk,timezone.now()-timedelta(hours=1),'not_stated',None,None,'Source explicitly has no deadline',rev(c))
-    rfp.assign(a,c.pk,a,'CEO',e['policy_decision'].pk,'Actual assignment evidence',rev(c))
-    for team,kind in rfp.TEAMS.items():rfp.contribute(a,c.pk,team,e[kind].pk,rev(c))
+    if record_intake:
+        rfp.intake(a,c.pk,reference,e['rfp_intake'].pk,timezone.now()-timedelta(hours=1),'not_stated',None,None,'Source explicitly has no deadline',rev(c))
+        rfp.assign(a,c.pk,a,'CEO',e['policy_decision'].pk,'Actual assignment evidence',rev(c))
+        for team, kind in rfp.TEAMS.items():
+            if include_security or team != 'Security':
+                rfp.contribute(a,c.pk,team,e[kind].pk,rev(c))
     return a,c,e,t,route
 
 def response(a,c,e):

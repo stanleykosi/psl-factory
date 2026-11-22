@@ -15,7 +15,10 @@ def binding(work):
 def evaluate(work):
     from . import factory
     from apps.finance import invoices
-    from django.contrib.auth import get_user_model
+    from apps.finance.fixed_charge import preparation_access
+    from apps.identity.role_factory_decisions import permissions, review_candidates
+    from apps.identity.services import subject_actions
+    from contextlib import nullcontext
     bound=binding(work);value=bound['value'];missing=[]
     if value is None:missing=['responsibility_configuration']
     else:missing=[name for name in OWNERS if principal(work.case,value[name]) is None]
@@ -24,16 +27,20 @@ def evaluate(work):
     if value and value['method']==METHOD_V3 and value['availability_mode'] is None:missing.append('reviewer_availability_mode')
     users=[];authorities=[];findings=[]
     if not missing and work.invoice_id:
-        for user in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__active=True,grant__action='finance.invoice.review').distinct().order_by('pk'):
+        candidates, scoped = review_candidates(work,'invoice',work.invoice_id)
+        for user in candidates:
             try:
-                factory.access(user,work.case)
-                try:authority=invoices.review_authority(user,work.case,'invoice','Finance','approve',work.invoice.actor_id,invoice=work.invoice)
-                except (ValidationError,PermissionDenied) as direct_error:
-                    if value.get('authority_mode')!='direct_or_configured_delegate':raise
-                    try:authority=invoices.review_authority(user,work.case,'invoice','Finance','approve',work.invoice.actor_id,delegated=True,invoice=work.invoice)
-                    except (ValidationError,PermissionDenied):
-                        if 'availability_needed:' in str(direct_error) or 'reviewer_unavailable:' in str(direct_error):raise direct_error
-                        raise
+                with subject_actions(user,work.case,permissions(work,'invoice')) if user.pk in scoped else nullcontext():
+                    factory.access(user,work.case)
+                    if user.pk in scoped:
+                        preparation_access(user,work.invoice.preparation)
+                    try:authority=invoices.review_authority(user,work.case,'invoice','Finance','approve',work.invoice.actor_id,invoice=work.invoice)
+                    except (ValidationError,PermissionDenied) as direct_error:
+                        if value.get('authority_mode')!='direct_or_configured_delegate':raise
+                        try:authority=invoices.review_authority(user,work.case,'invoice','Finance','approve',work.invoice.actor_id,delegated=True,invoice=work.invoice)
+                        except (ValidationError,PermissionDenied):
+                            if 'availability_needed:' in str(direct_error) or 'reviewer_unavailable:' in str(direct_error):raise direct_error
+                            raise
             except (ValidationError,PermissionDenied) as exc:
                 if value['method'] in [METHOD_V2,METHOD_V3]:
                     message=str(exc).casefold()
@@ -108,15 +115,17 @@ def task_authority_current(work,task,evaluated=None):
 def native_review_current(work,review):
     """Old native decisions stay history; only a currently valid one satisfies a wait."""
     from apps.finance import invoices
+    from apps.identity.role_factory_decisions import invoice_scope
     from apps.identity.services import require
     try:
         if review.publication_packet!=invoices.review_packet(work.invoice):return False
         if review.verdict=='approve':invoices.reviewed(work.invoice)
         else:
-            invoices.current(work.invoice);require(review.actor,work.case,'finance.invoice.review')
-            require_ready(work,review.actor)
-            current=invoices.review_authority(review.actor,work.case,'invoice',review.role,review.verdict,work.invoice.actor_id,
-                delegated='D05.delegation_rules' in review.authority,invoice=work.invoice)
+            with invoice_scope(work.invoice,review.actor):
+                invoices.current(work.invoice);require(review.actor,work.case,'finance.invoice.review')
+                require_ready(work,review.actor)
+                current=invoices.review_authority(review.actor,work.case,'invoice',review.role,review.verdict,work.invoice.actor_id,
+                    delegated='D05.delegation_rules' in review.authority,invoice=work.invoice)
             if relevant_authority(current)!=relevant_authority(review.authority):return False
     except (ValidationError,PermissionDenied):return False
     return True

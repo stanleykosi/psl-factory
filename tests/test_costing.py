@@ -82,8 +82,8 @@ class CostingTests(TestCase):
     def test_withdrawal_does_not_erase_proven_historical_calculation(self):
         f=self.f;r=run(f);review(f,f['oracle'],verdict='withdraw',key='withdraw-independent');self.assertEqual(CostingRun.objects.count(),1);self.assertFalse(d.report(f['actor'],f['case'].pk,r.pk)['current_usable'])
     def test_scoped_ui_report_and_private_source_guards(self):
-        f=self.f;r=run(f);self.client.force_login(f['actor']);base=f"/cases/{f['case'].pk}/costing/";self.assertContains(self.client.get(base),'Commercial costing rules and independent reference examples');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,200)
-        Grant.objects.filter(case=f['case'],user=f['actor']).exclude(action__in=['case.read','costing.read']).update(active=False);self.assertContains(self.client.get(base),'Read-only access.');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,403);value=self.client.get(base+f'report/{r.pk}/').json();self.assertNotIn('result',value);self.assertNotIn('inputs',value)
+        f=self.f;r=run(f);self.client.force_login(f['actor']);base=f"/cases/{f['case'].pk}/costing/";self.assertContains(self.client.get(base),'Costing rules and worked examples');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,200)
+        Grant.objects.filter(case=f['case'],user=f['actor']).exclude(action__in=['case.read','costing.read']).update(active=False);self.assertContains(self.client.get(base),'Your access allows reading these records.');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,403);value=self.client.get(base+f'report/{r.pk}/').json();self.assertNotIn('result',value);self.assertNotIn('inputs',value)
     def test_agents_and_generic_readers_cannot_repackage_private_costing(self):
         f=self.f;run(f);agent=investigate(f['actor'],f['case'].pk);self.assertFalse(agent.result['source_body_read']);self.assertFalse(agent.result['expected_outputs_generated'])
         from apps.agents.services import extract_evidence
@@ -129,7 +129,7 @@ class CostingTests(TestCase):
     def test_server_rendered_calculation_post_calls_real_domain(self):
         f=self.f;s=f['sources'];self.client.force_login(f['actor']);url=f"/cases/{f['case'].pk}/costing/"
         response=self.client.post(url,{'action':'calculate','revision':rev(f['case']),'plan':s['plan'].pk,'engineering':s['engineering_estimate'].pk,'security':s['security_estimate'].pk,'inputs':f['inputs'].pk,'operation_key':'ui-calculation'})
-        self.assertEqual(response.status_code,302);self.assertEqual(CostingRun.objects.get().operation_key,'ui-calculation');self.assertContains(self.client.get(url),'Evidence confirmation history')
+        self.assertEqual(response.status_code,302);self.assertEqual(CostingRun.objects.get().operation_key,'ui-calculation');self.assertContains(self.client.get(url),'Source reviews')
 
     def test_rule_confirmation_does_not_wait_for_oracle_owner_configuration(self):
         f=self.f;v=copy.deepcopy(f['rule'].payload);v.update(oracle_owner_id=None,oracle_role=None);r=d.capture_rule(f['actor'],f['case'].pk,'pending-oracle-owner',evidence(f,'p14_rule',v).pk)

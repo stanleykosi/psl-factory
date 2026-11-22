@@ -12,7 +12,6 @@ from apps.policy.models import Configuration,ScopeApplication
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import reference_values,transition
 from apps.policy.factory_coordinator_validators import COMPONENT,SCOPE
-from .readiness_models import IntegrationContract
 from django.views.decorators.http import require_POST
 
 @login_required
@@ -29,11 +28,7 @@ def reconcile(request,work_id):
     return redirect(reverse('factory_detail',args=[work.pk]))
 
 class CoordinatorForm(forms.Form):
-    mode=forms.ChoiceField(required=False,label='Coordination method',choices=[('','Not decided'),
-        ('internal_permitted_step_v1','Internal workflow rules'),('authenticated_planner_v1','Reviewed AI planning service')])
-    planner_id=forms.ModelChoiceField(queryset=get_user_model().objects.none(),required=False,label='Coordinator')
-    contract_id=forms.ModelChoiceField(queryset=IntegrationContract.objects.none(),required=False,label='Planning service')
-    max_output_chars=forms.IntegerField(min_value=100,max_value=2048,label='Maximum planning response characters')
+    planner_id=forms.ModelChoiceField(queryset=get_user_model().objects.none(),required=False,label='Accountable person')
     evidence=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Recorded configuration decision')
     def __init__(self,actor,case,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -41,11 +36,6 @@ class CoordinatorForm(forms.Form):
         for action in ['case.read','factory.read','factory.execute']:people=people.filter(grant__case=case,grant__active=True,grant__action=action)
         self.fields['planner_id'].queryset=people.distinct().order_by('username')
         self.fields['evidence'].queryset=Evidence.objects.filter(case=case,kind='policy_decision').order_by('-pk')
-        from . import readiness
-        try:readiness.readable(actor,case,True)
-        except PermissionDenied:return
-        self.fields['contract_id'].queryset=readiness.visible_contracts(actor,case).filter(payload__kind='provider',payload__implementation='authenticated_json_v1')
-        self.fields['contract_id'].label_from_instance=lambda c:f'{c.reference} · revision {c.version}'
 
 def origin_access(actor,config):
     source=ScopeApplication.objects.select_related('source__configuration__case').filter(configuration=config).first()
@@ -61,8 +51,9 @@ def configuration(request,case_id):
     if request.method=='POST':
         if request.POST.get('action')=='draft' and form.is_valid():
             value=dict(form.cleaned_data);proof=value.pop('evidence')
-            for key in ['planner_id','contract_id']:value[key]=value[key].pk if value[key] else None
-            value.update(mode=value['mode'] or None,data_scope=SCOPE)
+            person = value['planner_id']
+            value.update(planner_id=person.pk if person else None, contract_id=None,
+                         mode='openrouter_coordination_v1', data_scope=SCOPE, max_output_chars=2048)
             try:draft_operator_policy(request.user,case.pk,COMPONENT,value,proof.pk,timezone.now())
             except ValidationError as exc:form.add_error(None,exc)
             else:messages.success(request,'Coordination draft saved. Review and activate it separately.');return redirect(request.path)

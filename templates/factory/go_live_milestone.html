@@ -1,0 +1,55 @@
+{% if milestone_panel.recorded %}
+<section class="card">
+  <h2>Milestone completed</h2>
+  <p>{{ milestone_panel.recorded.name }}</p>
+  <p>Recorded <time datetime="{{ milestone_panel.recorded.completed_at|date:'c' }}">{{ milestone_panel.recorded.completed_at|date:'d M Y, H:i T' }}</time>.</p>
+</section>
+{% elif milestone_panel.completion %}
+{% with completion=milestone_panel.completion %}
+<section class="card">
+  <h2>Record milestone completion</h2>
+  <p>{{ completion.name }}</p>
+  {% if completion.sources %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="record_milestone">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    <input type="hidden" name="milestone_mapping" value="{{ completion.configuration }}">
+    <input type="hidden" name="acceptance" value="{{ completion.acceptance }}">
+    <label>Completion evidence
+      <select name="completion_evidence" required>
+        <option value="">Choose separate evidence that this milestone was reached</option>
+        {% for source in completion.sources %}<option value="{{ source.pk }}">Evidence {{ source.pk }} · v{{ source.version }} · {{ source.created_at|date:'d M Y' }}</option>{% endfor %}
+      </select>
+    </label>
+    <button>Confirm milestone completion</button>
+  </form>
+  {% else %}<p>Add separate completion evidence to the project before recording this milestone.</p>{% endif %}
+  <p><a href="{% url 'case' case.pk %}">Review project evidence →</a></p>
+</section>
+{% endwith %}
+{% endif %}
+{% if milestone_panel.settings %}
+<section class="card">
+  <details>
+    <summary>Milestone handoff settings</summary>
+    <p>Use the milestone name recorded in the owner decision for this project and signed baseline.</p>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="draft_milestone_mapping">
+      <input type="hidden" name="revision" value="{{ row.work.revision }}">
+      <input type="hidden" name="case_revision" value="{{ case.revision }}">
+      <label>Approved milestone name <input name="milestone_name" maxlength="200" required></label>
+      <label>Owner decision evidence
+        <select name="owner_decision" required>
+          <option value="">Choose the recorded owner decision</option>
+          {% for source in milestone_panel.settings %}<option value="{{ source.pk }}">Evidence {{ source.pk }} · v{{ source.version }}</option>{% endfor %}
+        </select>
+      </label>
+      <button>Save mapping for review</button>
+    </form>
+    <p><a href="{% url 'policy' case.pk %}">Review settings history →</a></p>
+  </details>
+</section>
+{% endif %}

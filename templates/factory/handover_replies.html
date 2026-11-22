@@ -1,0 +1,43 @@
+{% load studio_ui %}
+{% if reply_roles and not row.work.cancel_requested %}
+{% for item in row.handover.receipts %}
+<section class="card">
+  <h2>Record Support’s reply</h2>
+  <p>For {{ item.receipt.recipient.username }} · handover version {{ row.handover.document.number }}.</p>
+  <p>Record the reply and its proof. Your name stays on the record.</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="record_support_reply">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    <input type="hidden" name="receipt" value="{{ item.receipt.pk }}">
+    <input type="hidden" name="predecessor" value="{{ item.ack.pk|default:0 }}">
+    <label>Who replied<input name="party" required maxlength="200" value="{{ item.reply_values.party }}"></label>
+    <label>When they replied<input type="datetime-local" name="responded_at" required value="{{ item.reply_values.responded_at }}"></label>
+    <label>Reply channel<select name="channel" required><option value="">Choose channel</option>
+      {% for channel in reply_channels %}<option value="{{ channel }}"{% if channel == item.reply_values.channel %} selected{% endif %}>{{ channel|readable }}</option>{% endfor %}
+    </select></label>
+    <label>Your recording role<select name="role" required><option value="">Choose your current role</option>
+      {% for role in reply_roles %}<option{% if role == item.reply_values.role %} selected{% endif %}>{{ role }}</option>{% endfor %}
+    </select></label>
+    <label>Reply proof<select name="evidence" required><option value="">Choose recorded reply proof</option>
+      {% for evidence in evidence_choices %}<option value="{{ evidence.pk }}"{% if evidence.pk|stringformat:'s' == item.reply_values.evidence %} selected{% endif %}>{{ evidence.body|truncatechars:85 }} · version {{ evidence.version }}</option>{% endfor %}
+    </select></label>
+    <label>What Support said<textarea name="note" required maxlength="4000">{{ item.reply_values.note }}</textarea></label>
+    <button name="status" value="received">Record received without gaps</button>
+    <button name="status" value="gaps" class="secondary">Record gaps</button>
+  </form>
+</section>
+{% endfor %}
+{% endif %}
+{% if reply_rules_form %}
+<section class="card"><details><summary>Who may record Support replies</summary>
+  {% if reply_finding %}<p>{{ reply_finding }}</p>{% endif %}
+  <p>Use the recorded owner decision. Saving prepares a draft for review.</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="support_reply_rules">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    {{ reply_rules_form.as_p }}<button>Save reply rule draft</button>
+  </form>
+</details></section>
+{% endif %}

@@ -17,7 +17,7 @@ from .models import ApprovalRequest,ApprovalSourceReceipt,ApprovalRouteJob,Appro
 
 @login_required
 def workbench(request,case_id):
- c=accessible_case(request.user,case_id);d.readable(request.user,c);forms=commands(request.user,c,request.POST if request.method=='POST' else None)
+ c=accessible_case(request.user,case_id,source_action='approval.read');d.readable(request.user,c);forms=commands(request.user,c,request.POST if request.method=='POST' else None)
  if request.method=='POST':
   try:
    f=next((x['form'] for x in forms if x['form']['action'].value()==request.POST.get('action')),None)

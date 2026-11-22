@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from . import workbench
 
 class SearchForm(forms.Form):
@@ -10,6 +11,7 @@ class SearchForm(forms.Form):
     kind=forms.ChoiceField(required=False,label='Workspace type',choices=[('','All workspaces'),('project','Projects'),('support','Customer support')],widget=forms.Select(attrs={'aria-label':'Workspace type'}))
     cursor=forms.CharField(max_length=4096,required=False,widget=forms.HiddenInput,error_messages={'max_length':'This page link is invalid. Restart the search.'})
     area=forms.ChoiceField(required=False,choices=[('','All areas'),('finance','Finance')],widget=forms.HiddenInput)
+    lifecycle=forms.ChoiceField(required=False,label='Project status',choices=[('','All I can see'),('active','Active'),('closed','Closed')])
 
 @login_required
 def home(request):
@@ -21,5 +23,10 @@ def home(request):
 
 @login_required
 def inbox(request):
+    from apps.identity.services import visible_cases
+    from apps.identity.teams import memberships
+
+    if memberships(request.user).exists() and not visible_cases(request.user).exists():
+        return redirect(reverse('home') + '#assignments')
     result=workbench.work(request.user)
     response=render(request,'workbench_inbox.html',{'sample_mode':bool(result['rows']) and all(row['synthetic'] for row in result['rows']),**result});response['Cache-Control']='no-store';return response

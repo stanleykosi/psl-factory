@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Talk to {{ persona.0 }} · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'design_agents' %}">← Assistant</a>
+<header class="page-heading"><div><h1>Talk to {{ persona.0 }}</h1><p class="lede">{{ persona.1 }}</p></div></header>
+<section class="card onboarding-card">
+  {% if persona.0 == 'Zainab' %}<p><a href="{% url 'payroll_received_reports' %}">My acknowledged payroll reports</a></p>{% endif %}
+  {% if can_start %}<form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Start conversation</button></form>
+  {% else %}<p>Your current role has no projects with this assistant.</p>{% endif %}
+</section>
+{% endblock %}

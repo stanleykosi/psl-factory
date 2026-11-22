@@ -1,4 +1,5 @@
 from django.contrib import messages
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import render,redirect
@@ -50,7 +51,11 @@ def workbench(request,case_id):
             messages.error(request,str(exc));case.refresh_from_db()
     profiles=list(EscalationProfile.objects.filter(state__issue__case=case).select_related('state__issue').order_by('-pk')[:100])
     for p in profiles:
-        try:current_profile(case,p.pk);p.is_current=True;p.clock=timing(p)
+        try:
+            current_profile(case,p.pk);p.is_current=True;p.clock=timing(p)
+            p.clock_anchor=datetime.fromisoformat(p.clock['anchor']) if p.clock['anchor'] else None
+            p.acknowledgement_at=datetime.fromisoformat(p.clock['acknowledgement_at']) if p.clock.get('acknowledgement_at') else None
+            p.acknowledgement_due_at=datetime.fromisoformat(p.clock['acknowledgement_due_at']) if p.clock['acknowledgement_due_at'] else None
         except ValidationError:p.is_current=False;p.clock=None
     return render(request,'pmo/escalations.html',{'case':case,'profile_form':pf,'request_form':rf,'clock_form':cf,'profiles':profiles,
         'requests':EscalationRequest.objects.filter(profile__state__issue__case=case).order_by('-pk')[:100],

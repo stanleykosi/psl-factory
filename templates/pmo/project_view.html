@@ -16,4 +16,7 @@
 </tr>{% empty %}<tr><td colspan="4">No recorded facts. Source coverage remains unknown.</td></tr>{% endfor %}</table>
 </section>{% endfor %}
 <p>Configuration #{{ projection.configuration_id }} · Metadata observed {{ projection.observed_at }}</p>
+{% if received %}<p role="status">Your receipt was recorded.</p>{% else %}
+<form method="post">{% csrf_token %}<input type="hidden" name="view_digest" value="{{ view_digest }}"><button type="submit">Acknowledge this report</button></form>
+{% endif %}
 {% endif %}{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block title %}Issue owner · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'issues' case.pk %}">← Issue register</a><h1>Issue owner</h1><p>{{ issue.reference }} · {{ issue.current.title }}</p></div></header>
+<section class="card"><p>The follow-up coordinator records responses from teams that work outside the factory.</p>
+{% if not rules_available %}<p role="status">External teams and recorder roles need their reviewed rules. You can record that an external owner is still needed.</p>{% endif %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save issue owner</button></form>
+</section>
+<p><a href="{% url 'issue_team_configuration' case.pk %}">Team response settings</a></p>
+{% endblock %}

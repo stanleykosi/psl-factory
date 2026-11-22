@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block title %}Owner message · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'issue_messages' case.pk issue.pk %}">← Owner messages</a><h1>{{ draft.kind|readable }} to {{ draft.assignment.team_label }}</h1><p class="lede">{{ issue.current.title }} · version {{ draft.number }}</p></div></header>
+{% if finding %}<p role="status">{{ finding }}</p>{% endif %}
+{% if delivery_finding %}<p role="status">{{ delivery_finding }}</p>{% endif %}
+<section class="card"><h2>Message wording</h2><div class="prose">{{ draft.body|linebreaks }}</div>
+<p>Prepared {% if draft.run_id %}from current issue facts{% else %}by {{ draft.actor.username }}{% endif %} · {{ draft.created_at|date:'d M Y, H:i T' }}</p></section>
+{% if can_edit %}<details class="card"><summary>Edit the wording</summary><form method="post" data-message-action="edit">{% csrf_token %}<input type="hidden" name="action" value="edit">{{ forms.edit.as_p }}<button>Save a new wording version</button></form></details>{% endif %}
+<section class="card"><h2>Wording review</h2>
+{% if review_held %}<p role="status">The earlier review needs current access to its original evidence.</p>{% elif review %}<p>{{ review.verdict|readable }} · {{ review.role|role_name }} · {{ review.actor.username }} · {{ review.created_at|date:'d M Y, H:i T' }}</p><p>{{ review.note }}</p>{% else %}<p>Awaiting an authorised wording review.</p>{% endif %}
+{% if can_review %}<form method="post" data-message-action="review">{% csrf_token %}<input type="hidden" name="action" value="review">{{ forms.review.as_p }}<button>Record wording decision</button></form>{% endif %}
+{% if not rules_available %}<p role="status">Message reviewers and senders need current settings. The draft remains available.</p>{% endif %}</section>
+<section class="card"><h2>Release and delivery</h2><p>{{ status }}</p>
+{% if cancellation %}<p>Cancelled by {{ cancellation.actor.username }} · {{ cancellation.created_at|date:'d M Y, H:i:s T' }}</p><p>{{ cancellation.reason }}</p>{% endif %}
+{% if dispatch %}<dl class="workspace-summary"><div><dt>Channel</dt><dd>{{ dispatch.payload.channel|readable }}</dd></div><div><dt>Recipient</dt><dd>{{ dispatch.payload.recipient }}</dd></div><div><dt>Scheduled time</dt><dd>{{ dispatch.not_before|date:'d M Y, H:i:s T' }}</dd></div><div><dt>Released by</dt><dd>{{ dispatch.actor.username }}</dd></div></dl>
+{% if dispatch.route.mode == 'synthetic_mailbox' %}<p>Internal test delivery. No external message is sent.</p>{% else %}<p>The authorised sender uses the chosen channel and records its original receipt here.</p>{% endif %}{% endif %}
+{% if can_release %}<form method="post" data-message-action="release">{% csrf_token %}<input type="hidden" name="action" value="release">{{ forms.release.as_p }}<button>Release reviewed message</button></form>
+{% elif review.verdict == 'approve' and not dispatch %}<p role="status">Release needs current sender authority, a destination and the review-separation decision.</p>{% endif %}
+{% if can_manual %}<form method="post" data-message-action="manual">{% csrf_token %}<input type="hidden" name="action" value="manual">{{ forms.manual.as_p }}<p>Start only when ready to send this exact reviewed message. If the result is uncertain, check the original channel receipt before sending again.</p><button>Start this manual send</button></form>{% endif %}
+{% if receipt %}<h3>Original receipt</h3><p>{% if receipt.delivered %}Delivered{% else %}Not delivered{% endif %} · {{ receipt.reference }}</p>
+<p>Actual delivery {{ receipt.delivered_at|date:'d M Y, H:i:s T'|default:'time unknown' }} · recorded {{ receipt.created_at|date:'d M Y, H:i:s T' }}</p>
+{% if receipt.clock_source == 'human_attested' %}<p>Recorded by {{ receipt.actor.username }} from checked channel evidence.</p>{% else %}<p>Observed automatically in the internal test mailbox.</p>{% endif %}
+{% if not receipt.delivered %}<p>The original operation is closed without delivery. Prepare and review a fresh request if it is still needed.</p>{% endif %}
+{% endif %}
+{% if can_recover %}<form method="post" data-message-action="recover">{% csrf_token %}<input type="hidden" name="action" value="recover">{{ forms.recover.as_p }}<button>Check the original delivery</button></form>{% endif %}
+{% if can_receipt %}<h3>Record the channel receipt</h3><p><a href="{% url 'case' case.pk %}#add-document">Add the original channel document</a>, then select it below.</p><form method="post" data-message-action="receipt">{% csrf_token %}<input type="hidden" name="action" value="receipt">{{ forms.receipt.as_p }}<button>Record checked delivery evidence</button></form>{% endif %}
+{% if can_cancel %}<details><summary>Cancel an unsent release</summary><form method="post" data-message-action="cancel">{% csrf_token %}<input type="hidden" name="action" value="cancel">{{ forms.cancel.as_p }}<button>Cancel this unsent release</button></form></details>{% endif %}
+<details><summary>Original operation reference</summary>{% if dispatch %}<p>{{ dispatch.operation }}</p>{% else %}<p>No release operation yet.</p>{% endif %}</details></section>
+<p><a href="{% url 'issues' case.pk %}">Record the owner's actual reply in the issue follow-up</a></p>
+{% if 'policy.configure' in permissions and 'policy.read' in permissions %}<p><a href="{% url 'issue_message_configuration' case.pk %}">Review owner-message settings</a></p>{% endif %}
+{% endblock %}

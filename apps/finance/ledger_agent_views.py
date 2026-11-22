@@ -21,7 +21,9 @@ def commands(a,c,data=None):
  visible=gateway.visible_projections(a,c)
  def draft():return forms.ModelChoiceField(d.Draft.objects.filter(case=c,source__projection__in=visible))
  defs={
- 'capture':('Capture private Finance source or observation','ledger.capture',{'kind':forms.ChoiceField(choices=[(k,k) for k in ['ledger_source','quickbooks_verification']]),'body':forms.CharField(max_length=12000,widget=forms.Textarea)}),
+ 'capture':('Capture private Finance source or observation','ledger.capture',{
+     'kind':forms.ChoiceField(label='Evidence type',choices=[('ledger_source','Transaction reference'),('quickbooks_verification','Supplied observation')]),
+     'body':forms.CharField(label='Source content',max_length=12000,widget=forms.Textarea)}),
  'policy':('Draft native source and reuse policy','policy.configure',{'content':forms.JSONField(widget=forms.Textarea),'evidence':forms.ModelChoiceField(c.evidence.filter(kind='policy_decision')),'effective_from':forms.DateTimeField()}),
  'project':('Project current Finance evidence fields','ledger.agent.project',{'lineage':forms.ModelChoiceField(LedgerLineage.objects.filter(case=c)),'reference':forms.CharField(max_length=100)}),
  'reuse':('Prepare draft from reviewed extraction','ledger.agent.draft',{'receipt':forms.ModelChoiceField(gateway.Receipt.objects.filter(job__projection__in=visible,job__projection__evidence__kind=d.KIND)),'reference':forms.CharField(max_length=100)}),
@@ -30,7 +32,7 @@ def commands(a,c,data=None):
  result=[]
  for key,(title,permission,fields) in defs.items():
   if permission not in grants:continue
-  cls=type('FinanceAgentCommand',(CommandForm,),fields);f=cls(data if data and data.get('action')==key else None,initial={'action':key,'revision':c.revision});result.append({'key':key,'title':title,'form':f})
+  cls=type('FinanceAgentCommand',(CommandForm,),fields);f=cls(data if data and data.get('action')==key else None,initial={'action':key,'revision':c.revision},auto_id=f'id_{key}_%s');result.append({'key':key,'title':title,'form':f})
  return result
 @login_required
 def workbench(request,case_id):

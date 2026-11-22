@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<a href="{% url 'policy' case.pk %}">← Business rule settings</a><h1>Client response proof rules</h1>
+<p>Leave undecided choices blank. Recording an actual response remains available; confirming it for delivery waits for the necessary choices. These settings grant no new access and change no financial control.</p>
+{% if latest %}<p>Latest rule version: {{ latest.revision }}. A draft is separate from the active rule.</p>{% endif %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save proof rule draft</button></form>
+<p><a href="{% url 'policy' case.pk %}">Review, validate and activate the draft</a></p>{% endblock %}

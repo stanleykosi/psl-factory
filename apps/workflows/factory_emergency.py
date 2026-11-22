@@ -28,7 +28,7 @@ DEFINITION='pmo-emergency/v1'
 KIND='agent_private_emergency_intake'
 PROTOCOL='factory-emergency-intake/v1'
 ID={'anyOf':[{'type':'integer','minimum':1,'maximum':9223372036854775807},{'type':'null'}]}
-INPUT={'type':'object','properties':{'template_id':ID,'authorization_id':ID,'outcome_id':ID,'audience':{'enum':['internal','client']}},'required':['template_id','authorization_id','outcome_id','audience'],'additionalProperties':False}
+INPUT={'type':'object','properties':{'template_id':ID,'authorization_id':ID,'outcome_id':ID,'audience':{'enum':['internal','client',None]}},'required':['template_id','authorization_id','outcome_id','audience'],'additionalProperties':False}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'profile_id':{'type':'integer','minimum':1},'inputs':INPUT},'required':['protocol','profile_id','inputs'],'additionalProperties':False}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
@@ -129,6 +129,10 @@ def report(work,actor=None):
     result={'profile':p.pk,'change_version':p.version_id,'critical_production':p.critical_production,'p1':p.p1,'authorization':auth.pk if auth else None,'outcome':data['inputs']['outcome_id'],'stage':'preauthorization','finding':'','deployment_dispatched':False,'ordinary_change_closed':False}
     if not data['inputs']['outcome_id']:
         try:
+            refusal = native.current_refusal(work.case, p)
+            if refusal:
+                return dict(result, stage='refused', refusal=refusal.pk, refusal_role=refusal.role,
+                            finding='Emergency preauthorization was refused. Record actual implementation evidence if work nevertheless occurred.')
             expected=native.preauthorization_inputs(work.case,p)
             if not auth:raise ValidationError('Await actual native preauthorization and explicit selection; no deployment is dispatched')
             require(auth.actor,work.case,'emergency.authorize')
@@ -140,6 +144,8 @@ def report(work,actor=None):
     evidence=LocalEmergencyEvidenceAdapter().read(work.case,actual);result['manifest']=evidence['manifest'];result['source_evidence_ids']=evidence['source_evidence_ids']
     try:
         _,record,current=completed(work,data);result.update(stage='report',retrospective_record=record.pk,retrospective_status=record.snapshot['status'],authority_recovery_id=current.get('authority_recovery_id'))
+        if not data['inputs']['template_id'] or not data['inputs']['audience']:
+            result['report_setup_needed'] = True
         published(work,actor);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
@@ -159,7 +165,14 @@ def snapshot(work,value,reader=None):
     if v:
         try:current_version(work.case,v.pk);r=validate_review(work.case,v);review={'status':'ready','id':r.pk}
         except (ValidationError,PermissionDenied) as exc:review={'status':'held','finding':finding(exc)}
-    state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':native_state,'checks':{'stage':native_state['stage']},'document':v.pk if v else None,'review':review,'publication':Publication.objects.filter(version=v).values_list('pk',flat=True).first() if v else None,'jobs':[(j.pk,j.status) for j in jobs]}
+    publication = Publication.objects.filter(version=v).values_list('pk', flat=True).first() if v else None
+    delivery_hold = ''
+    if native_state['stage'] == 'report' and review['status'] == 'ready' and not publication:
+        try:
+            publication_requirements(work.case, v)
+        except (ValidationError, PermissionDenied) as exc:
+            delivery_hold = 'Report delivery needs setup. ' + finding(exc)
+    state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':native_state,'checks':{'stage':native_state['stage']},'document':v.pk if v else None,'review':review,'publication':publication,'delivery_hold':delivery_hold,'jobs':[(j.pk,j.status) for j in jobs]}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],jobs
 
@@ -171,9 +184,13 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if missing or stale:return [],'Required current Emergency evidence is missing or stale: '+', '.join(missing+stale)
     if state['native']['stage']=='complete':return ['ACT13'],'Verify native retrospective status and exact report receipts'
     if state['native']['stage']!='report':return [],state['native']['finding']
-    if not state['document']:return ['ACT09'],'Prepare the controlled completed-retrospective report'
+    if not state['document']:
+        if state['native'].get('report_setup_needed'):
+            return [], 'Choose the retrospective report template and audience before preparing it.'
+        return ['ACT09'],'Prepare the controlled completed-retrospective report'
     if not HumanTask.objects.filter(version_id=state['document']).exists():return ['ACT09'],'Request native review of the retained report'
     if state['review']['status']!='ready':return [],'Await exact outward review or source-owned report rework'
+    if state.get('delivery_hold'):return [],state['delivery_hold']
     if not state['publication']:return ['ACT11'],'Reserve the reviewed retrospective report'
     return [],state['native']['finding']
 
@@ -187,7 +204,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT09':
         from apps.documents.controlled import request_review
         actual,_,_=completed(work,data);u=principal(work,value,'preparer_id');v=document(work)
-        if not data['inputs']['template_id']:raise ValidationError('Select the controlled retrospective template')
+        if not data['inputs']['template_id'] or not data['inputs']['audience']:
+            raise ValidationError('Choose the retrospective report template and audience before preparing it.')
         if not v:v=draft_retrospective(u,case.pk,actual.pk,data['inputs']['template_id'],data['inputs']['audience'],case.revision)
         task=None;waiting=None
         if not HumanTask.objects.filter(version=v).exists():
@@ -260,14 +278,73 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now() or not v or v.pk!=version_id:raise ValidationError('STALE_VERSION: select exact current retrospective report')
     return review_version(actor,w.case_id,version_id,verdict,note,case_expected)
 
+def preauthorization_decisions(actor, case, profile):
+    """Observe only the prescribed decisions for the current incident profile."""
+    from apps.policy.services import assigned_decision_options, decision_authority
+
+    if profile.critical_production is not True or profile.p1 is None:
+        return [], []
+    try:
+        policy, pins = native.emergency_policy(case)
+    except (ValidationError, PermissionDenied):
+        return [], []
+    required = native.required_decision_roles(profile, policy)
+    recorded = {row.role: row for row in profile.decisions.filter(role__in=required).select_related('actor')
+                .order_by('role', '-pk').distinct('role')}
+    current = []
+    for role in required:
+        previous = recorded.get(role)
+        authority_role = policy['incident_lead_role'] if role == 'Incident Lead' else role.removeprefix('GLPI exception:')
+        if not previous or previous.authority_role != authority_role or (previous.policies and previous.policies != pins):
+            continue
+        try:
+            require(previous.actor, case, 'emergency.decide')
+            if decision_authority(previous.actor, case, authority_role, previous.verdict) == previous.authority:
+                current.append(previous)
+        except (ValidationError, PermissionDenied):
+            continue
+    try:
+        require(actor, case, 'emergency.decide')
+    except PermissionDenied:
+        return [], current
+    if any(item.verdict != 'approve' for item in current) or profile.version.emergency_profiles.filter(
+            outcomes__isnull=False).exists() or EmergencyAuthorization.objects.filter(profile=profile).exists():
+        return [], current
+    settled = {item.role for item in current}
+    options = []
+    for role in required:
+        if role in settled:
+            continue
+        authority_role = policy['incident_lead_role'] if role == 'Incident Lead' else role.removeprefix('GLPI exception:')
+        try:
+            verdicts = assigned_decision_options(actor, case, authority_role, ('approve', 'return', 'reject'))
+        except (ValidationError, PermissionDenied):
+            continue
+        if verdicts:
+            options.append({'role': role, 'authority_role': authority_role, 'verdicts': verdicts})
+    return options, current
+
+
 @transaction.atomic
-def human_action(actor,work_id,expected,case_expected,profile_id,action,values):
+def human_action(actor,work_id,expected,case_expected,profile_id,action,values,*,pending_only=False):
     """Explicit native human actions; not registered for agent dispatch."""
     from .factory import access
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);p,data=source(w,actor)
     if type(expected) is not int or w.revision!=expected or p.pk!=profile_id or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh exact Emergency work')
-    if action=='preauthorization_decision':result=native.decide_emergency(actor,w.case_id,p.pk,values['role'],values['authority_role'],values['verdict'],values['evidence'],values['note'],case_expected)
+    if action=='preauthorization_decision':
+        if pending_only:
+            w.case = lock_case(actor, w.case_id, 'emergency.decide', case_expected)
+            list(Grant.objects.select_for_update(of=('self',)).filter(case=w.case).order_by('pk'))
+            p, _ = source(w, actor)
+            options, _ = preauthorization_decisions(actor, w.case, p)
+            if not any(item['role'] == values['role'] and item['authority_role'] == values['authority_role']
+                       and values['verdict'] in item['verdicts'] for item in options):
+                raise ValidationError('Choose a currently available emergency decision for this exact request.')
+            if not public_evidence(Evidence.objects.filter(
+                    case=w.case, pk=values['evidence'], kind='emergency_decision')).exists():
+                raise ValidationError('Select the available emergency decision evidence.')
+        result=native.decide_emergency(actor,w.case_id,p.pk,values['role'],values['authority_role'],values['verdict'],values['evidence'],values['note'],case_expected)
     elif action=='authorize':result=native.authorize_emergency(actor,w.case_id,p.pk,case_expected)
     elif action=='capture_outcome':result=native.capture_outcome(actor,w.case_id,p.pk,data['inputs']['authorization_id'],values['implemented_at'],values['evidence'],values['note'],case_expected)
     elif action=='record_review':result=native.record_review(actor,w.case_id,outcome(w,data).pk,values['evidence'],values['note'],case_expected)
@@ -385,4 +462,6 @@ def projection(actor,work):
         if live and current and work.status!='verified':
             try:require(actor,work.case,action);permissions[name]=True
             except PermissionDenied:pass
+    if status['stage'] == 'refused':
+        permissions['authorize'] = False
     return {'profile':p,'data':data,'status':status,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,'human':permissions}

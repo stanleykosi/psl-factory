@@ -17,7 +17,11 @@ from .forms import commands
 @login_required
 @never_cache
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read');forms=commands(case,request.POST if request.method=='POST' else None)
+    from .statement_ppe import held_opening_statement_ids, recipient_access
+
+    case=accessible_case(request.user,case_id,source_action='finance.read');require(request.user,case,'finance.read')
+    held_runs=held_opening_statement_ids(case)
+    forms=commands(case,request.POST if request.method=='POST' else None,held_runs=held_runs)
     draft_diagnostic=None
     if request.method=='POST':
         try:
@@ -45,8 +49,7 @@ def workbench(request,case_id):
             if draft_diagnostic is None:
                 messages.success(request,'Finance evidence and preview history updated');return redirect('finance_analysis',case_id=c)
         except (ValidationError,ValueError,KeyError) as exc:messages.error(request,str(exc));case.refresh_from_db()
-    runs=list(FinanceRun.objects.filter(case=case).order_by('-pk')[:30])
-    from .statement_ppe import recipient_access
+    runs=list(FinanceRun.objects.filter(case=case).exclude(pk__in=held_runs).order_by('-pk')[:30])
     visible=[]
     for run in runs:
         try:recipient_access(run,[request.user.pk])
@@ -55,13 +58,13 @@ def workbench(request,case_id):
         run.current_findings=[]
         try:analysis.ensure_current(run)
         except (ValidationError,PermissionDenied) as exc:run.current_findings=getattr(exc,'messages',[str(exc)])
-    hidden_ppe_runs=[]
+    hidden_ppe_runs=set(held_runs)
     from . import ppe
     try:ppe.readable(request.user,case)
     except (PermissionDenied,ValidationError):
-        hidden_ppe_runs=list(FinanceRun.objects.filter(case=case,statement_ppe_inputs__isnull=False).values_list('pk',flat=True))
+        hidden_ppe_runs.update(FinanceRun.objects.filter(case=case,statement_ppe_inputs__isnull=False).values_list('pk',flat=True))
     agents=[]
-    for log in AgentRun.objects.filter(case=case,provider='deterministic-finance-lineage-v1').order_by('-pk')[:5]:
+    for log in AgentRun.objects.filter(case=case,provider='deterministic-finance-lineage-v1').exclude(result__run__in=held_runs).order_by('-pk')[:5]:
         selected=FinanceRun.objects.filter(case=case,pk=log.result.get('run')).first()
         try:
             if selected:recipient_access(selected,[request.user.pk])
@@ -69,5 +72,6 @@ def workbench(request,case_id):
         agents.append(log)
     return render(request,'finance/analysis.html',{'case':case,'commands':forms,'sources':FinanceSource.objects.filter(case=case).order_by('-pk'),
         'runs':visible,'reviews':FinanceReview.objects.filter(case=case).exclude(run_id__in=hidden_ppe_runs).order_by('-pk')[:30],
-        'bindings':FinanceDocumentBinding.objects.filter(run__case=case),'adjustments':FinanceAdjustment.objects.filter(source__case=case),
+        'bindings':FinanceDocumentBinding.objects.filter(run__case=case).exclude(run_id__in=hidden_ppe_runs),
+        'adjustments':FinanceAdjustment.objects.filter(source__case=case),
         'imports':FinancialImport.objects.filter(case=case),'agents':agents,'draft_diagnostic':draft_diagnostic})

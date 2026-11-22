@@ -93,6 +93,12 @@ ENGAGEMENT_SCHEMA='schema:psl/factory-engagement-execution/v1'
 ENGAGEMENT_VALUE=deepcopy(PLANNING_VALUE)
 ENGAGEMENT_VALUE['properties']['definition']={'const':'engagement/v1'}
 
+STATION_COMPONENT='OPS.factory_native_station_execution'
+STATION_SCHEMA='schema:psl/factory-native-station-execution/v1'
+STATION_VALUE=deepcopy(PLANNING_VALUE)
+STATION_VALUE['properties'].update(definition={'const':'process-handoff/v1'},
+    required_evidence_kinds={'const':['native_station_projection']}, information_resolver_id=deepcopy(ID))
+
 def validate_reference(component,target,case,runtime=False):
     planning=component==PLANNING_COMPONENT
     commercial=component==COMMERCIAL_COMPONENT
@@ -109,18 +115,31 @@ def validate_reference(component,target,case,runtime=False):
         HANDOVER_COMPONENT:(HANDOVER_SCHEMA,HANDOVER_VALUE),CLOSURE_COMPONENT:(CLOSURE_SCHEMA,CLOSURE_VALUE),
         GO_LIVE_COMPONENT:(GO_LIVE_SCHEMA,GO_LIVE_VALUE),CHANGE_COMPONENT:(CHANGE_SCHEMA,CHANGE_VALUE),PPE_COMPONENT:(PPE_SCHEMA,PPE_VALUE),SCHEDULES_COMPONENT:(SCHEDULES_SCHEMA,SCHEDULES_VALUE)}.get(component,(SCHEMA,VALUE))
     from .factory_provider_profiles import shape_for,scope
+    if component == STATION_COMPONENT:
+        schema,shape=STATION_SCHEMA,STATION_VALUE
     value=typed(target,*shape_for(target,schema,shape));scope(case,value)
     if value['tokens_per_call']>value['max_tokens']:raise ValidationError('Call reservation exceeds aggregate token budget')
     from types import SimpleNamespace
-    from apps.core.evidence_access import restricted
-    if any(restricted(SimpleNamespace(kind=k)) and not (component==BU_COMPONENT and k=='agent_private_bu_intake' or component==SCHEDULES_COMPONENT and k=='agent_private_schedules_intake' or component==ENGAGEMENT_COMPONENT and k=='agent_private_engagement_intake') and not (component==LEDGER_COMPONENT and k in ['agent_private_ledger_intake','ledger_source']) for k in value['required_evidence_kinds']):raise ValidationError('Restricted evidence requires its native domain provider interface')
+    from apps.core.evidence_access import INVOICE_MILESTONE_PROOF, restricted
+    native_private = {BU_COMPONENT: {'agent_private_bu_intake'}, SCHEDULES_COMPONENT: {'agent_private_schedules_intake'},
+                      ENGAGEMENT_COMPONENT: {'agent_private_engagement_intake'}, LEDGER_COMPONENT: {'agent_private_ledger_intake', 'ledger_source'},
+                      COMPONENT: {INVOICE_MILESTONE_PROOF}}
+    if any(restricted(SimpleNamespace(kind=k)) and k not in native_private.get(component, set())
+           for k in value['required_evidence_kinds']):
+        raise ValidationError('Restricted evidence requires its native domain provider interface')
     if component==LEDGER_COMPONENT and any(k not in ['agent_private_ledger_intake','ledger_source'] for k in value['required_evidence_kinds']):raise ValidationError('Selected private ledger intake only')
     from django.contrib.auth import get_user_model
     from apps.identity.models import Grant
     for name in ['information_resolver_id','executor_id']+(['preparer_id'] if go_live else []):
         if not runtime and value[name] is not None:
             action='factory.information' if name=='information_resolver_id' else 'factory.execute'
-            if not get_user_model().objects.filter(pk=value[name],is_active=True).exists() or not Grant.objects.filter(case=case,user_id=value[name],action=action,active=True).exists():raise ValidationError('Configured principal requires an actual current same-case grant')
+            person = get_user_model().objects.filter(pk=value[name], is_active=True).first()
+            granted = Grant.objects.filter(case=case,user_id=value[name],action=action,active=True).exists()
+            if person and component == STATION_COMPONENT and name == 'information_resolver_id' and not granted:
+                from apps.identity.factory_access import department_cases
+                granted = any(department_cases(person, role).filter(pk=case.pk).exists()
+                              for role in ('pmo-lead', 'finance-lead'))
+            if not person or not granted:raise ValidationError('Configured principal requires current authority in this project')
             if planning and not Grant.objects.filter(case=case,user_id=value[name],action='planning.read',active=True).exists():raise ValidationError('Planning principals require current same-case planning access')
             if commercial and name=='executor_id' and not Grant.objects.filter(case=case,user_id=value[name],action='document.publish',active=True).exists():raise ValidationError('Commercial publisher requires current same-case document publication access')
             if archive and name=='executor_id':

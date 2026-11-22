@@ -1,15 +1,17 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
-<a class="back-link" href="{% url 'home' %}?queue={{ queue }}&amp;q={{ q|urlencode }}">← Back to the same work view</a>
+<a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
 <div class="page-heading"><div><p class="eyebrow">PROJECT ARTIFACT ARCHIVE</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</time></div></div>
 <div class="factory-case-layout"><div>
+{% include 'factory/archive_files.html' %}
 <section class="card"><h2>Project archive</h2><p>{{ row.archive.dossier.candidate.reference }}</p>
 {% if row.work.status == 'verified' and not row.readiness_changed %}<p>The current archive index matches the declared inventory, Engineering final-document evidence and reviewed storage rules. Support handover and closure remain separate work.</p>{% elif row.readiness_changed %}<p>The earlier index remains in history. Review the changed inventory, storage rule or authority.</p>{% endif %}
 {% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}
 {% if not row.archive.intake_current %}<p>Current intake authority or project baseline needs review before agent execution.</p>{% endif %}
 {% if row.work.finding %}<details><summary>Current requirement</summary><p>{{ row.work.finding }}</p></details>{% endif %}
 <p><a href="{% url 'delivery' case.pk %}">Final-document confirmation, storage rules and native archive history →</a></p>
-<details><summary>Scope of this outcome</summary><p>This verifies the internal versioned archive index and its exact evidence references. External file copies, link authenticity, physical retention purge, Support acceptance and closure need their own evidence.</p></details></section>
+{% if can_start_handover %}<p><a href="{{ handover_url }}">Open Support handover →</a></p>{% endif %}
+<details><summary>Scope of this outcome</summary><p>The archive index binds its selected source versions and storage rule.{% if file_archive.verified %} Matching file receipts verify the selected contents in the {{ file_archive.store_label }}.{% endif %} Support receipt and project closure have their own recorded outcomes.</p></details></section>
 <section class="card"><h2>Production prerequisites</h2>{% for key,check in row.archive.checks.items %}<h3>{{ check.title }}</h3>
 {% if check.status == 'ready' %}<p>Current evidence requirements are available.</p><details><summary>Exact references</summary><pre>{{ check.inputs }}</pre></details>{% else %}<p>{{ check.summary }}</p>{% if check.finding %}<details><summary>Source requirement details</summary><p>{{ check.finding }}</p></details>{% endif %}{% endif %}{% endfor %}</section>
 <section class="card"><h2>Declared evidence</h2>{% for item in row.archive.inventory %}<h3>{{ item.kind|readable }}</h3>{% if item.missing %}<p>Not yet provided.</p>{% else %}<p>Version {{ item.evidence.version }} · evidence {{ item.evidence.pk }}</p><p>{{ item.evidence.body|linebreaksbr }}</p><details><summary>Exact source reference</summary><p>{{ item.evidence.source }}</p><code>{{ item.evidence.sha256 }}</code></details>{% endif %}{% empty %}<p>No evidence has been declared. Complete the required inventory after reviewing its rule.</p>{% endfor %}</section>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Get started · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Get started</h1><p class="lede">Your account is ready. Set up your first workspace or ask your team for access.</p></div></header>
+<section class="card onboarding-card">
+  {% if can_create %}
+  <h2>Create a workspace</h2>
+  <p>Choose your organization and give your project or customer case a name.</p>
+  <a class="button primary" href="{% url 'case_create' %}">Create workspace</a>
+  {% else %}
+  <h2>Ask for workspace access</h2>
+  <p>Ask your workspace administrator to add you to the project or workflow you’ll be working on. Once they’ve granted access, your work will appear in My Work.</p>
+  <a class="button secondary" href="{% url 'home' %}">Check My Work</a>
+  {% endif %}
+</section>
+{% endblock %}

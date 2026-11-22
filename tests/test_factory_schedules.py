@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.test import TestCase,Client
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError
+from django.urls import reverse
 from django.utils import timezone
 from apps.identity.models import Grant
 from apps.finance import schedules,analysis
@@ -12,7 +13,7 @@ from apps.policy.services import transition
 from apps.workflows import factory,factory_schedules as flow
 from apps.workflows.models import FactoryWork
 from .schedule_helpers import fixture,policy,evidence,row,review,accepted_equity
-from .helpers import rev
+from .helpers import check_investigation_progress, rev
 
 class FactorySchedulesTests(TestCase):
     def setUp(self):
@@ -33,8 +34,37 @@ class FactorySchedulesTests(TestCase):
             c.execute("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename");names=[r[0] for r in c.fetchall()];result={}
             for n in names:c.execute('SELECT to_jsonb(t)::text FROM '+connection.ops.quote_name(n)+' t ORDER BY to_jsonb(t)::text');result[n]=c.fetchall()
             return result
+
+    def test_start_uses_selected_income_and_inventory_evidence_without_json_override(self):
+        f = self.f
+        income_source = evidence(f, 'income_detail', json.dumps(self.payload))
+        inventory_source = evidence(f, 'schedule_inventory', json.dumps(f['values']['inventory']))
+        self.client.force_login(f['actor'])
+        url = reverse('factory_create') + '?definition=' + flow.DEFINITION + '&case=' + str(f['case'].pk)
+        page = self.client.get(url)
+        self.assertContains(page, 'Leave this blank to use the exact selected evidence.')
+        self.assertNotContains(page, '>null</textarea>')
+        for kind, source, parent in [('income', income_source, f['parent'].pk), ('inventory', inventory_source, '')]:
+            with self.subTest(kind=kind):
+                values = {'definition': flow.DEFINITION, 'case': f['case'].pk, 'key': f'drawer-{kind}', 'kind': kind,
+                          'reference': f'sample-{kind}', 'revision': rev(f['case']), 'parent_id': parent,
+                          'evidence_id': source.pk, 'payload': ''}
+                response = self.client.post(url, values)
+                self.assertEqual(response.status_code, 302, response.context and response.context['form'].errors)
+                self.work = FactoryWork.objects.get(key=f'drawer-{kind}')
+                self.advance()
+                schedule = flow.schedule(self.work)
+                self.assertIsNotNone(schedule, self.work.finding)
+                self.assertEqual(schedule.evidence_id, source.pk)
+                self.assertFalse(schedule.reviews.exists())
+                if kind == 'income':
+                    self.assertEqual(schedule.result['adjusted_total'], '-1000')
+                else:
+                    self.assertFalse(schedule.result['complete_inventory'])
     def test_income_native_chain_and_read_only_metadata(self):
-        f=self.f;self.start();self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['adjusted_total'],'-1000');self.assertNotEqual(self.work.status,'verified')
+        f=self.f;self.start()
+        check_investigation_progress(self, f['actor'], self.work, 'Investigating the selected income and schedule evidence.')
+        self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['adjusted_total'],'-1000');self.assertNotEqual(self.work.status,'verified')
         review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding);self.assertFalse(flow.verify(self.work,f['actor'])['ledger_posted'])
         self.client.force_login(f['reviewer']);Grant.objects.filter(case=f['case'],user=f['reviewer'],action='schedules.report').update(active=False)
         before=self.rows();response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Private report values require separate report permission');self.assertEqual(before,self.rows());self.assertNotContains(response,'-600');self.assertNotContains(response,'-400');self.assertFalse(flow.projection(f['reviewer'],self.work)['readiness_changed'])
@@ -45,12 +75,171 @@ class FactorySchedulesTests(TestCase):
     def test_partial_inventory_is_only_selected_dependency_output(self):
         f=self.f;self.start(inventory=True);self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertFalse(s.result['complete_inventory']);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=flow.verify(self.work,f['actor']);self.assertEqual(proof['verification_scope'],'selected_supplied_schedule_dependency_inventory');self.assertFalse(proof['native_workbook_verified']);self.assertFalse(proof['complete_inventory'])
+
+    def test_schedule_decisions_and_corrected_source_wake_the_existing_background_request(self):
+        from apps.workflows import factory_progress
+
+        f = self.f
+        self.start()
+        job = factory_progress.set_progress(f['actor'], self.work.pk, self.work.revision, True)
+
+        def drain_to(status):
+            for _ in range(15):
+                self.assertEqual(factory_progress.run_once(), job.pk)
+                job.refresh_from_db()
+                if job.status != 'queued':
+                    break
+            self.assertEqual(job.status, status, self.work.finding)
+            self.work.refresh_from_db()
+
+        def assert_woken():
+            job.refresh_from_db()
+            self.assertEqual(job.requested_by_id, f['actor'].pk)
+            self.assertLessEqual(job.available_at, timezone.now())
+            self.assertEqual(job.observation, '')
+
+        decision = reverse('factory_invoice_decision', args=[self.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[self.work.pk])
+
+        def submit_review(schedule, verdict):
+            return self.client.post(decision, {
+                'action': 'review', 'revision': self.work.revision, 'case_revision': rev(f['case']),
+                'target': schedule.pk, 'verdict': verdict, 'evidence': f['e']['finance_review'].pk,
+                'note': 'Synthetic exact schedule decision for the current evidence.',
+            })
+
+        drain_to('waiting')
+        original = flow.schedule(self.work)
+        self.assertIsNotNone(original)
+        self.assertGreater(job.available_at, timezone.now())
+        self.assertTrue(job.observation)
+        before = (job.available_at, job.observation, job.updated_at)
+        self.client.force_login(f['actor'])
+        self.assertEqual(submit_review(original, 'approve').status_code, 403)
+        job.refresh_from_db()
+        self.assertEqual((job.available_at, job.observation, job.updated_at), before)
+        self.assertFalse(original.reviews.exists())
+
+        self.client.force_login(f['reviewer'])
+        self.assertRedirects(submit_review(original, 'return'), decision, fetch_redirect_response=False)
+        assert_woken()
+        drain_to('waiting')
+        self.assertEqual(original.reviews.get().verdict, 'return')
+
+        corrected = dict(self.payload, rows=[row(f, 'corrected', '-1000')])
+        replacement = evidence(f, 'income_detail', json.dumps(corrected))
+        self.client.force_login(f['actor'])
+        response = self.client.post(recovery, {
+            'action': 'correct', 'revision': self.work.revision, 'case_revision': rev(f['case']),
+            'kind': 'income', 'parent_id': f['parent'].pk, 'evidence_id': replacement.pk, 'payload': '',
+            'reason': 'The replacement file contains the corrected synthetic breakdown.',
+        })
+        self.assertRedirects(response, recovery, fetch_redirect_response=False)
+        assert_woken()
+        drain_to('waiting')
+        successor = flow.schedule(self.work)
+        self.assertIsNotNone(successor)
+        self.assertNotEqual(successor.pk, original.pk)
+        self.assertEqual(successor.evidence_id, replacement.pk)
+
+        self.client.force_login(f['reviewer'])
+        self.assertRedirects(submit_review(successor, 'approve'), decision, fetch_redirect_response=False)
+        assert_woken()
+        with self.assertRaisesMessage(DatabaseError, 'Observed exact current human-reviewed selected schedule required'):
+            with transaction.atomic():
+                FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+        drain_to('finished')
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        self.assertEqual(flow.verify(self.work, f['actor'])['schedule_review'], successor.reviews.get().pk)
+        self.assertEqual(original.reviews.get().verdict, 'return')
     def test_af13_accepted_inventory_and_source_supersession(self):
         from apps.documents import validation as v
         f=self.f;self.start(inventory=True,accepted=True);self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         old=f['discovery_source'];v.capture_source(f['actor'],f['case'].pk,old.reference,old.evidence_id,old.metadata,rev(f['case']))
         with self.assertRaises((ValidationError,PermissionDenied)):flow.verify(self.work,f['actor'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_returned_income_row_requires_explicit_treatment_and_fresh_exact_review(self):
+        from apps.core.models import Audit
+        from apps.workflows import factory_progress
+
+        f = self.f
+        selected = dict(row(f, 'reviewed-timing-difference', '0'), duplicate_state='separately_justified')
+        self.payload['rows'].append(selected)
+        self.start()
+        self.advance()
+        original = flow.schedule(self.work)
+        url = reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.client.force_login(f['actor'])
+        self.assertNotContains(self.client.get(url), 'Row relationship')
+        original_return = flow.review(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), original.pk,
+                                      'return', f['e']['finance_review'].pk, 'Review the timing difference relationship.')
+        self.work.refresh_from_db()
+        values = {'action': 'resubmit_returned_row', 'target': original.pk, 'return_id': original_return.pk,
+                  'row_key': selected['key'], 'revision': self.work.revision, 'case_revision': rev(f['case'])}
+        before = self.work.source_head_id
+
+        self.client.force_login(f['reviewer'])
+        self.assertNotContains(self.client.get(url), 'Row relationship')
+        with self.assertRaises(PermissionDenied):
+            flow.resubmit_returned_row(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), original.pk,
+                                       original_return.pk, selected['key'], 'reclassification')
+
+        self.client.force_login(f['actor'])
+        response = self.client.get(url)
+        self.assertContains(response, 'Review the timing difference relationship.')
+        self.assertContains(response, 'schedule-correction-drawer')
+        self.assertContains(response, 'Select corrected sources and rebuild')
+        relationship = response.context['correction_form']['relationship']
+        self.assertIsNone(relationship.value())
+        self.assertNotIn('checked', str(relationship))
+        self.assertEqual([choice for choice, _ in relationship.field.choices],
+                         ['disaggregation', 'reclassification', 'additive'])
+        invalid = (
+            values,
+            dict(values, relationship='disaggregation'),
+            dict(values, relationship='reclassification', target=original.pk + 1),
+            dict(values, relationship='reclassification', return_id=original_return.pk + 1),
+            dict(values, relationship='reclassification', case_revision=rev(f['case']) - 1),
+            dict(values, relationship=['additive', 'reclassification']),
+            dict(values, relationship='reclassification', row_key='another-row'),
+        )
+        for command in invalid:
+            with self.subTest(command=command):
+                self.assertContains(self.client.post(url, command), 'errorlist')
+                self.work.refresh_from_db()
+                self.assertEqual(self.work.source_head_id, before)
+        command = dict(values, relationship='reclassification')
+        self.assertRedirects(self.client.post(url, command), url, fetch_redirect_response=False)
+        self.assertNotEqual(self.client.post(url, command).status_code, 302)
+
+        job = self.work.background_progress
+
+        def drain_progress(target_status):
+            for _ in range(15):
+                self.assertEqual(factory_progress.run_once(), job.pk)
+                job.refresh_from_db()
+                if job.status != 'queued':
+                    break
+            self.assertEqual(job.status, target_status, job.observation)
+            self.work.refresh_from_db()
+
+        drain_progress('waiting')
+        successor = flow.schedule(self.work)
+        self.assertIsNotNone(successor)
+        self.assertEqual(successor.version, original.version + 1)
+        self.assertEqual((successor.parent_id, successor.evidence_id), (original.parent_id, original.evidence_id))
+        self.assertEqual(successor.payload['rows'], original.payload['rows'][:-1] + [dict(selected, relationship='reclassification')])
+        self.assertEqual(original.reviews.get().pk, original_return.pk)
+        self.assertFalse(successor.reviews.exists())
+        self.assertNotEqual(self.work.status, 'verified')
+        audit = Audit.objects.get(case=f['case'], action='finance.schedule_returned_row_corrected')
+        self.assertEqual(audit.data['return_review'], original_return.pk)
+        self.assertEqual(audit.data['current_source'], self.work.source_head_id)
+        approved = flow.review(f['reviewer'], self.work.pk, self.work.revision, rev(f['case']), successor.pk,
+                               'approve', f['e']['finance_review'].pk, 'Independent decision on the new exact version.')
+        drain_progress('finished')
+        self.assertEqual(flow.verify(self.work, f['actor'])['schedule_review'], approved.pk)
     def test_current_review_wait_is_not_rebuild_and_is_in_decision_queue(self):
         f=self.f;self.start();self.advance();s=flow.schedule(self.work)
         with self.assertRaises(ValidationError):flow.correct(f['actor'],self.work.pk,self.work.revision,rev(f['case']),*self.args,'Do not bypass the exact pending review')
@@ -59,6 +248,55 @@ class FactorySchedulesTests(TestCase):
         from apps.policy.schedule_validators import INCOME
         policy(f,INCOME,f['values']['income_rule']);self.assertFalse(flow.projection(f['reviewer'],self.work)['pending_reviews'])
         flow.correct(f['actor'],self.work.pk,self.work.revision,rev(f['case']),*self.args,'Rebuild with the newly configured rule');self.advance();self.assertNotEqual(flow.schedule(self.work).pk,s.pk)
+
+    def test_duplicate_additions_use_exact_held_rows_and_prepare_an_independent_review(self):
+        from django.urls import reverse
+        from apps.core.models import Audit
+        from apps.workflows import factory_progress
+
+        f = self.f
+        first = dict(row(f, 'already-captured', '20', 'additive'), duplicate_state='not_assessed')
+        second = dict(row(f, 'separate-charge', '15', 'additive'), duplicate_state='not_assessed')
+        self.payload['rows'].extend([first, second])
+        self.start()
+        self.advance()
+        held = flow.schedule(self.work)
+        self.assertEqual(held.result['status'], 'held')
+        target = reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.client.force_login(f['actor'])
+        page = self.client.get(target)
+        self.assertContains(page, 'Resolve possible duplicate additions')
+        self.assertContains(page, 'Duplicate check for already-captured')
+        self.assertContains(page, 'Duplicate check for separate-charge')
+        values = {'action': 'resolve_duplicates', 'revision': self.work.revision, 'case_revision': rev(f['case']),
+                  'target': held.pk, 'evidence': f['e']['finance_review'].pk, 'treatment_0': 'already_represented',
+                  'reason': 'Synthetic proof distinguishes an existing amount from an evidenced addition.'}
+        self.assertContains(self.client.post(target, values), 'choose a treatment for every shown addition')
+        self.assertFalse(Audit.objects.filter(case=f['case'], action='finance.schedule_duplicates_resolved').exists())
+        values['treatment_1'] = 'separately_justified'
+        self.assertRedirects(self.client.post(target, values), target, fetch_redirect_response=False)
+        self.assertFalse(held.reviews.exists())
+        self.assertEqual([r['duplicate_state'] for r in held.payload['rows'][2:]], ['not_assessed', 'not_assessed'])
+        self.assertEqual(Audit.objects.get(case=f['case'], action='finance.schedule_duplicates_resolved').data['previous_schedule'], held.pk)
+        request = self.work.background_progress
+        self.assertEqual(request.status, 'queued')
+        for _ in range(15):
+            factory_progress.run_once()
+            self.work.refresh_from_db()
+            prepared = flow.schedule(self.work)
+            if prepared and prepared.result['status'] == 'ready':
+                break
+        self.assertEqual(prepared.result['adjusted_total'], '-985')
+        self.assertEqual([r['key'] for r in prepared.payload['rows']], ['a', 'b', 'separate-charge'])
+        self.assertFalse(prepared.reviews.exists())
+        self.assertNotEqual(self.work.status, 'verified')
+        preview = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertContains(preview, 'Prepared total')
+        self.assertContains(preview, '-985')
+        self.assertNotContains(preview, 'Open exact reviewed report')
+        review(f, prepared)
+        self.advance()
+        self.assertEqual(self.work.status, 'verified')
     def test_exact_export_reconciles_and_requires_separate_native_adjustment_review(self):
         f=self.f;self.payload['rows']=[row(f,'supplement','20','additive',lines=[{'account':'sales','amount':'20'}])];self.start();self.advance();s=flow.schedule(self.work);review(f,s);self.advance()
         args=[f['actor'],self.work.pk,self.work.revision,rev(f['case']),s.pk,'additive',f['e']['finance_adjustment'].pk];a=flow.export(*args);args[3]=rev(f['case']);self.assertEqual(flow.export(*args).pk,a.pk)
@@ -78,6 +316,44 @@ class FactorySchedulesTests(TestCase):
         url=reverse('factory_detail',args=[self.work.pk]);secure=Client(enforce_csrf_checks=True);secure.force_login(f['reviewer']);self.assertEqual(secure.post(url,{'action':'review'}).status_code,403)
         self.client.force_login(f['reviewer']);response=self.client.post(url,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),'target':s.pk,'verdict':'approve','evidence':f['e']['finance_review'].pk,'note':'Exact synthetic human review through primary console'})
         self.assertEqual(response.status_code,302);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+    def test_focused_schedule_return_correction_and_withdrawal_keep_exact_versions(self):
+        from django.urls import reverse
+
+        f=self.f;self.start();self.advance();original=flow.schedule(self.work)
+        decision=reverse('factory_invoice_decision', args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.client.force_login(f['reviewer'])
+        self.assertContains(self.client.get(decision), 'Approve exact schedule')
+        exceptions = reverse('home') + '?queue=exceptions&q=' + self.work.key
+        self.assertNotIn(self.work.pk, [row['work'].pk for row in self.client.get(exceptions).context['rows']])
+        response=self.client.post(decision, {'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),
+            'target':original.pk,'verdict':'return','evidence':f['e']['finance_review'].pk,'note':'Correct the source breakdown'})
+        self.assertRedirects(response, decision, fetch_redirect_response=False)
+        page=self.client.get(decision)
+        self.assertContains(page, 'Returned for correction')
+        self.assertNotContains(page, 'Approve exact schedule')
+        Grant.objects.filter(case=f['case'], user=f['reviewer'], action='factory.manage').update(active=False)
+        self.assertContains(self.client.get(exceptions), 'Returned for correction')
+        self.assertNotContains(self.client.get(recovery), 'Correct and resubmit')
+        with self.assertRaisesMessage(ValidationError, 'Prepare a corrected schedule version'):
+            review(f,original)
+        self.client.force_login(f['actor'])
+        fixed=copy.deepcopy(self.payload);fixed['rows']=[row(f,'corrected','-1000')]
+        response=self.client.post(recovery, {'action':'correct','revision':self.work.revision,'case_revision':rev(f['case']),
+            'kind':'income','parent_id':f['parent'].pk,'evidence_id':f['e']['income_detail'].pk,
+            'payload':json.dumps(fixed),'reason':'Reviewed corrected income detail'})
+        self.assertRedirects(response, recovery, fetch_redirect_response=False)
+        self.advance();successor=flow.schedule(self.work)
+        self.assertNotEqual(successor.pk, original.pk)
+        review(f,successor);self.advance()
+        self.assertEqual(self.work.status, 'verified')
+        review(f,successor,'revoke')
+        self.client.force_login(f['reviewer'])
+        page=self.client.get(decision)
+        self.assertContains(page, 'Approval withdrawn')
+        self.assertContains(page, 'Restore exact approval')
+        self.assertNotContains(page, 'Approve exact schedule')
+        self.assertEqual(original.reviews.get().verdict, 'return')
     def test_af13_grant_withdrawal_invalidates_native_and_sql_without_private_report_grant(self):
         f=self.f;self.start(inventory=True,accepted=True);self.advance();s=flow.schedule(self.work);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         Grant.objects.filter(case=f['case'],user=f['reviewer'],action='validation.accept').update(active=False)

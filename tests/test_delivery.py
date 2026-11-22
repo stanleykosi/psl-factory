@@ -33,8 +33,8 @@ CRITERIA={'clock':'elapsed_hours_since_release','minimum_hours':0,'confirmation_
 
 
 class DeliveryFixture:
-    def setup_delivery(self):
-        self.actor,self.case=setup_case();self.e=signed(self.actor,self.case)
+    def setup_delivery(self,context=None):
+        self.actor,self.case=context or setup_case();self.e=signed(self.actor,self.case)
         self.candidate=register_candidate(self.actor,self.case.pk,'delivery-build',self.e['requirements'].pk,rev(self.case))
         self.d=open_dossier(self.actor,self.case.pk,self.candidate.pk,self.e['plan'].pk,'PM scope attestation for this requirements/plan',rev(self.case))
         self.t=register_template(self.actor,self.case.pk,'Delivery artifact',{'document_type':'project_artifact','required_fields':['executive_summary','status'],
@@ -55,7 +55,7 @@ class DeliveryFixture:
     def plan(self):
         for kind in PLANNING:self.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})
         decision=decide_planning(self.actor,self.case.pk,self.d.pk,'approve',self.e['plan'].pk,'PMO Lead exact Planning exit',rev(self.case))
-        m=record_meeting(self.actor,self.case.pk,'KICKOFF','kickoff',timezone.now(),'Delivery expectations','Participants aligned with approved plan',[self.actor.pk],[],self.e['requirements'].pk,rev(self.case))
+        m=record_meeting(self.actor,self.case.pk,getattr(self,'kickoff_reference','KICKOFF'),'kickoff',timezone.now(),'Delivery expectations','Participants aligned with approved plan',[self.actor.pk],[],self.e['requirements'].pk,rev(self.case))
         record_progress(self.actor,self.case.pk,self.d.pk,'kickoff',m.evidence_id,'Actual kickoff after plan approval',rev(self.case),m.pk)
         return decision
 
@@ -66,8 +66,9 @@ class DeliveryFixture:
 
     def ready(self):
         self.plan();self.gates(UPSTREAM_GATES)
-        record_release_request(self.actor,self.case.pk,self.d.pk,'GLPI-001',self.e['requirements'].pk,'Actual externally raised request',rev(self.case))
-        self.gates(GLPI_GATES,'GLPI-001')
+        request_reference=getattr(self,'release_request_reference','GLPI-001')
+        record_release_request(self.actor,self.case.pk,self.d.pk,request_reference,self.e['requirements'].pk,'Actual externally raised request',rev(self.case))
+        self.gates(GLPI_GATES,request_reference)
         return prepare_readiness(self.actor,self.case.pk,self.d.pk,rev(self.case))
 
     def release(self):
@@ -77,7 +78,9 @@ class DeliveryFixture:
     def publish(self,v):
         if v.audience=='client':
             request_review(self.actor,self.case.pk,v.pk,rev(self.case));review_version(self.actor,self.case.pk,v.pk,'approve','Exact client projection checked',rev(self.case))
-        reserve_publication(self.actor,self.case.pk,v.pk,rev(self.case));assert run_publication_once()
+        publication = reserve_publication(self.actor,self.case.pk,v.pk,rev(self.case))
+        job = PublicationJob.objects.get(publication=publication)
+        assert run_publication_once(case_id=self.case.pk, job_id=job.pk)
         return PublicationReceipt.objects.get(publication__version=v)
 
     def accepted(self):

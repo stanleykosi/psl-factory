@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}HR payroll corrections · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>HR payroll corrections</h1><p>Review the request and record the HR decision.</p></div>
+<a class="button secondary" href="{% url 'hrfinance' case.pk %}">HR information</a></header>
+<p><a href="{% url 'payroll_name_checks' case.pk %}">Record staff name evidence</a></p>
+<p><a href="{% url 'payroll_departure_check' case.pk %}">Check payment timing</a></p>
+<section class="card">
+  <h2>Correction requests</h2>
+  <ul>{% for row in rows %}<li><a href="{% url 'design_hr_payroll_correction' case.pk row.pk %}">Correction {{ row.record_id }}</a> · {{ row.record.created_at }}</li>
+  {% empty %}<li>No payroll corrections to review.</li>{% endfor %}</ul>
+</section>
+{% if job %}<section class="card onboarding-card">
+  <h2>Correction {{ job.pk }}</h2>
+  <p>Request evidence {{ job.evidence_id }} · Original HR export {{ job.snapshot_id }}</p>
+  {% if decision %}
+    {% if decision.kind == 'response' %}
+      <p>Approved with corrected HR export {{ decision.snapshot_id }}. Finance must confirm receipt before using it.</p>
+    {% elif decision.kind == 'correction_return' %}<p>Returned for clarification.</p>
+    {% else %}<p>Rejected.</p>{% endif %}
+  {% else %}
+    <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Record HR decision</button></form>
+  {% endif %}
+</section>{% endif %}
+{% endblock %}

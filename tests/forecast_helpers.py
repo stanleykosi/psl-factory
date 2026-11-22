@@ -62,12 +62,12 @@ def match(a,c,s,r,amount='15',key='receipt-1',op='MATCH-1'):
     e=evidence(a,c,'forecast_match','Synthetic explicit actual-to-assumption match')
     return forecast.match(a,c.pk,s.pk,key,r.pk,amount,op,e.pk,rev(c))
 
-def publication(a,c):
+def publication(a,c,*,reader_name='forecast-reader'):
     owner=evidence(a,c,'policy_decision','Synthetic report template and recipient scope')
     definition={'document_type':'finance_report','required_fields':['executive_summary','financial_metrics','bu_totals'],'audience_fields':{k:['executive_summary','financial_metrics','bu_totals'] for k in ['internal','management']},'internal_review_required':False}
     t=register_template(a,c.pk,'Synthetic cash forecast',definition,owner.pk,rev(c))
     artifact(a,c,'D11.template_storage_retention_rules','schema:psl/document-storage/v1',{'template_ids':[t.pk],'repository':'internal-versioned','retention_days':30},owner)
-    reader=get_user_model().objects.create_user(username='forecast-reader')
+    reader=get_user_model().objects.create_user(username=reader_name)
     Grant.objects.create(case=c,user=reader,action='finance.read')
     refs=[]
     for audience in ['internal','management']:

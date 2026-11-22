@@ -1,0 +1,47 @@
+<header class="factory-nav">
+  <a href="{% url 'home' %}" class="factory-wordmark">PSL Factory</a>
+  {% if control_plane %}
+  <nav aria-label="Main navigation"><a href="{% url 'home' %}">Recovery work</a></nav>
+  <form class="factory-menu" action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sign out</button></form>
+  {% else %}
+  <nav aria-label="Main navigation">
+    <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>My work</a>
+    <a href="{% url 'workspace_overview' %}?kind=project" {% if request.resolver_match.url_name == 'workspace_overview' %}aria-current="page"{% endif %}>Projects</a>
+    <a href="{% url 'design_overview' %}" {% if request.resolver_match.url_name == 'design_overview' %}aria-current="page"{% endif %}>Overview</a>
+    <a href="{% url 'design_agents' %}" {% if request.resolver_match.url_name == 'design_agents' %}aria-current="page"{% endif %}>Assistant</a>
+  </nav>
+  {% if choose_work_url %}
+  <div class="start-work-split">
+    <a href="{{ start_work_url }}" data-start-work="default" aria-label="Start work">{% include 'ui/icon.html' with icon='plus' %}<span>Start<span class="start-work-desktop-word"> work</span></span></a>
+    <a href="{{ choose_work_url }}" data-start-work="choose" aria-label="More ways to start">▾</a>
+  </div>
+  {% endif %}
+  <details class="factory-alert-menu" data-alert-preview="{% url 'design_alert_preview' %}">
+    <summary aria-label="Alerts">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9M10 21h4"/></svg>
+    </summary>
+    <div class="factory-alert-panel">
+      <h2>Unread alerts</h2>
+      <div data-alert-rows aria-live="polite"></div>
+      <a href="{% url 'design_alerts' %}">View all alerts</a>
+    </div>
+  </details>
+  <details class="factory-menu">
+    <summary>Menu</summary>
+    <div>
+      <a href="{% url 'work_inbox' %}">My assignments</a>
+      <a href="{% url 'workspace_overview' %}?area=finance">Finance workspaces</a>
+      <a href="{% url 'design_payments' %}"{% if request.resolver_match.url_name == 'design_payments' %} aria-current="page"{% endif %}>Payments and follow-up</a>
+      <a href="{% url 'design_company_month_end' %}">Month-end</a>
+      <a href="{% url 'document_inbox' %}">Documents</a>
+      <a href="{% url 'project_views' %}">Project reports</a>
+      <a href="{% url 'design_clients' %}">Clients</a>
+      <a href="{% url 'design_setup' %}"{% if request.resolver_match.url_name == 'design_setup' %} aria-current="page"{% endif %}>Setup</a>
+      <a href="{% url 'case_create' %}">New workspace</a>
+      <a href="{% url 'password_change' %}">Change password</a>
+      {% if user.is_superuser %}<a href="{% url 'tenant_access' %}">Organization settings</a>{% endif %}
+      <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sign out</button></form>
+    </div>
+  </details>
+  {% endif %}
+</header>

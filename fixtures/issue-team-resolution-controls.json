@@ -1,0 +1,11 @@
+{
+  "classification": "Synthetic interface example only. No operational roles or clock decision is supplied.",
+  "value": {
+    "recorder_roles": ["PM"],
+    "teams": [{"key":"sample-engineering","label":"SAMPLE Engineering"}],
+    "channels": ["email","meeting"],
+    "clock_basis": "human_attested_source_time",
+    "resolution_recorder_roles": ["PM"],
+    "acknowledgement_clock": "human_attested_source_time"
+  }
+}

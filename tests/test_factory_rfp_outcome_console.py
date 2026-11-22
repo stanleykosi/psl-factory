@@ -61,12 +61,13 @@ class FactoryRFPOutcomeConsoleTests(TestCase):
         work=helpers.start(f)
         url=reverse('factory_detail',args=[work.pk])+'?queue=decisions&q=Actual+customer'
         page=self.client.get(url)
-        self.assertContains(page,'Actual submitted response covered by this evidence')
+        self.assertContains(page,'<label>Actual submitted response')
         self.assertContains(page,'Choose the response actually submitted')
         self.assertContains(page,'Conversion waits for a configured outcome selection method')
         self.assertContains(page,'Showing 2 of 2 recorded submitted responses')
-        self.assertContains(page,'value="'+str(first.pk)+'"')
-        self.assertContains(page,'value="'+str(second.pk)+'"')
+        selector = page.context['submission_selector']
+        for submission in (first, second):
+            self.assertIn(f'<option value="{submission.pk}">Submission {submission.pk}', selector)
         for submission,result in [(second,'lost'),(first,'won')]:
             work.refresh_from_db()
             posted=self.client.post(url,{'action':'outcome','revision':work.revision,'case_revision':rev(case),

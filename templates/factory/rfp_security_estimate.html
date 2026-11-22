@@ -1,0 +1,33 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Security estimate · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'factory_rfp_pricing' work.pk %}">← Bid costing</a>
+<header class="page-heading"><div><h1>Ask Security for an estimate</h1><p class="lede">{{ work.request.reference }} · {{ case|workspace_name }}</p></div></header>
+<div class="factory-case-layout"><div>
+  <section class="card"><h2>Security contact</h2>
+    {% for key, route in destinations.items %}<p>{{ key|readable }} · {{ route.contact }}</p>
+    {% empty %}<p>Owner needed. Add a reviewed contact before sending a request.</p>{% endfor %}
+    {% if can_configure %}<p><a href="{% url 'operations' case.pk %}">Draft contact and channel rules</a></p>{% endif %}
+    <p><a href="{% url 'rfp' case.pk %}">Record an estimate that has arrived</a></p>
+  </section>
+  {% if reviewed %}<section class="card"><h2>Reviewed request</h2><p>{{ reviewed.payload.body|linebreaksbr }}</p>
+    <p>{{ reviewed.payload.route.contact }} · {{ reviewed.payload.route.channel|readable }} · Needed by {{ reviewed.payload.requested_by }}</p>
+    {% if reviewed.attachment %}<p>Attached private file · {{ reviewed.attachment.name }}</p>{% endif %}
+    {% if can_release %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="release"><input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="request" value="{{ reviewed.pk }}"><button>Release reviewed request</button></form>{% endif %}
+    {% if receipt %}<p role="status">{% if receipt.delivered %}Delivery confirmed{% else %}Delivery failed{% endif %} · {{ receipt.created_at|date:'d M Y, H:i T' }}</p><p>{{ receipt.reference }}</p>
+    {% elif dispatch %}<p role="status">Waiting for the original delivery receipt.</p>
+    <p>Send the reviewed wording through the approved {{ reviewed.payload.route.channel|readable }} channel to {{ reviewed.payload.route.destination }}. The estimate stays pending until it is recorded.</p>
+    <details><summary>Exact message reference</summary><p>{{ dispatch.operation }} · {{ reviewed.sha256 }}</p></details>{% endif %}
+    {% if receipt_form %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="receipt">{{ receipt_form.as_p }}<button>Record original receipt</button></form>{% endif %}
+  </section>{% endif %}
+</div><aside class="factory-action-panel">
+  {% if model_turn.status == 'queued' or model_turn.status == 'running' %}<section class="card" data-work-watch><h2>Tola's draft</h2><p role="status">Tola is preparing wording from the selected bid.</p></section>{% endif %}
+  {% if can_ask_tola %}<section class="card"><h2>Ask Tola to draft</h2><p>Tola uses the selected bid reference. You review the wording and recipient.</p>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="prepare_tola"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Draft with Tola</button></form></section>{% endif %}
+  {% if review_form %}<section class="card"><h2>Review the message</h2><p>Check and edit the prepared wording against the current bid before releasing it.</p>
+    {% if model_answer %}<p>Suggested by Tola. Based on the selected received bid.</p>{% endif %}
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="review">{{ review_form.as_p }}<button>Save reviewed request</button></form></section>
+  {% elif draft %}<section class="card"><h2>Prepared draft</h2><p>{{ draft.evidence.body|linebreaksbr }}</p><p>Review is available once there is a configured Security contact.</p></section>
+  {% elif can_prepare %}<section class="card"><h2>Prepare a draft</h2><p>The factory will use the selected bid and its requirements.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="prepare"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Prepare request wording</button></form></section>{% endif %}
+</aside></div>
+{% endblock %}

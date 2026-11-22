@@ -22,8 +22,8 @@ def criteria(f,values=None):
     p=draft_operator_policy(f['a'],f['c'].pk,COMPONENT,values or f['rules'],f['e']['policy_decision'].pk,timezone.now())
     transition(f['a'],p.pk,'validated');transition(f['a'],p.pk,'active');return p
 
-def fixture(configured=True,username='planning-human',owner_password=None):
-    a,c=setup_case(username=username);e=prepared(a,c)
+def fixture(configured=True,username='planning-human',owner_password=None,*,context=None):
+    a,c=context or setup_case(username=username);e=prepared(a,c)
     f={'a':a,'c':c,'e':e,'owners':{},'routes':{},'meetings':{}}
     refs=list(c.registeredreference_set.filter(schema_ref='schema:psl/role-assignment/v1').values_list('ref',flat=True))
     for key,role in planning.OWNER_ROLES.items():

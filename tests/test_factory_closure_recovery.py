@@ -1,5 +1,5 @@
 """Real PostgreSQL intake race and actual OS exits around local native closure commit."""
-import os,sys,subprocess
+import sys,subprocess
 from datetime import timedelta
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
@@ -12,14 +12,14 @@ from apps.identity.models import Grant
 from apps.pmo.models import DeliveryRecord
 from apps.workflows import factory,factory_closure as closure
 from apps.workflows.models import FactoryWork
-from tests.helpers import rev
+from tests.helpers import rev,worker_test_environment
 from tests.test_factory_closure import setup,configure,approve
 
 
 class FactoryClosureRecoveryTests(TransactionTestCase):
     def worker(self,f,mode):
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),mode],
-            env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME']),capture_output=True,timeout=300)
+            env=worker_test_environment(connection),capture_output=True,timeout=300)
         return result
 
     def expired(self,f):

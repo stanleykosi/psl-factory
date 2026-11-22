@@ -33,6 +33,12 @@ def validate_reference(component,target,case,runtime=False):
     if value['allocation_mode']=='company_only' and value['bu_metrics'] is not None:
         raise ValidationError('Company-only preparation must explicitly leave BU metric scope unapplied')
     if not runtime:
+        if value.get('statement_contract_id') is not None:
+            from .services import resolve
+            statement = resolve('D06.statement_contract',case)
+            if (statement.status!='ACTIVE' or type(value['statement_contract_id']) is not int
+                    or statement.configuration.pk!=value['statement_contract_id']):
+                raise ValidationError('Select the exact current statement contract in this workspace')
         if value['template_id'] is not None and not Template.objects.filter(case=case,pk=value['template_id'],definition__document_type='finance_report').exists():
             raise ValidationError('Select this workspace native Finance report template')
         for field,actions in [('executor_id',['case.read','finance.read','document.publish','finance.publish','factory.execute']),

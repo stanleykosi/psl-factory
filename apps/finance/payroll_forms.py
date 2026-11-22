@@ -1,11 +1,56 @@
 from django import forms
+from pathlib import PurePath
+from uuid import uuid4
 from apps.identity.models import Grant
 from apps.policy.payroll_validators import SCHEMAS
 from .forms import CommandForm
 from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollPublication
 from .hrfinance_models import HRReadSnapshot
 
-def commands(actor,case,data=None):
+class PayrollCaptureForm(CommandForm):
+ file = forms.FileField(required=False, label='Payroll export file', widget=forms.ClearableFileInput(attrs={'accept':'.json,.csv,.xlsx'}))
+ source_version = forms.CharField(required=False,max_length=100,label='Source export version',
+  help_text='For a CSV or Excel file, use the version recorded by its source owner.')
+ extracted_at = forms.DateTimeField(required=False,label='Export prepared at',
+  widget=forms.DateTimeInput(format='%Y-%m-%dT%H:%M:%S',attrs={'type':'datetime-local','step':'1'}))
+ completeness = forms.ChoiceField(required=False,label='Does the file contain the full export?',
+  choices=[('','Choose for CSV or Excel'),('complete','Complete export'),('partial','Part of the export'),('unknown','Not confirmed')])
+ control_total = forms.CharField(required=False,max_length=100,label='Source control total',
+  help_text='Leave blank when the source does not provide a total. Unknown amounts stay unknown.')
+ # Existing integrations may still submit the exact structured envelope. It is
+ # secondary to the human fields and cannot be combined with conflicting input.
+ extraction = forms.JSONField(required=False,widget=forms.HiddenInput)
+
+ def clean(self):
+  values=super().clean()
+  file,body=values.get('file'),values.get('body')
+  human_fields=['source_version','extracted_at','completeness','control_total']
+  supplied=any(values.get(name) not in [None,''] for name in human_fields)
+  if bool(file)==bool(body):raise forms.ValidationError('Choose one export file or paste its contents.')
+  if file:
+   if file.size>256000:raise forms.ValidationError('Choose an export up to 256,000 bytes.')
+   suffix=PurePath(file.name).suffix.lower()
+   content=file.read(256001)
+   if suffix in {'.csv','.xlsx'}:
+    details=values.get('extraction')
+    if supplied:
+     if details is not None:raise forms.ValidationError('Use one set of export details.')
+     if not all(values.get(name) for name in human_fields[:3]):
+      raise forms.ValidationError('For CSV or Excel, provide the source version, preparation time and export completeness.')
+     details={name:values.get(name) for name in human_fields}
+     details['extracted_at']=details['extracted_at'].isoformat()
+     details['control_total']=details['control_total'] or None
+    if not isinstance(details,dict):raise forms.ValidationError('Provide the source version, preparation time and export completeness.')
+    values['spreadsheet']=(suffix[1:],content,details)
+    return values
+   if suffix!='.json':raise forms.ValidationError('Choose JSON or a mapped CSV or Excel export.')
+   try:values['body']=content.decode('utf-8-sig')
+   except UnicodeDecodeError as exc:raise forms.ValidationError('Choose a UTF-8 JSON export.') from exc
+  if supplied or values.get('extraction') is not None:raise forms.ValidationError('Export details are for CSV or Excel files.')
+  return values
+
+
+def commands(actor,case,data=None,files=None):
  def select(model,multiple=False,kind=None):
   if model==PayrollRequest:q=model.objects.filter(case=case)
   elif model==HRReadSnapshot:q=model.objects.defer('payload').filter(contract__need__case=case)
@@ -20,11 +65,11 @@ def commands(actor,case,data=None):
  key=lambda:forms.CharField(max_length=100)
  defs={
  'request':('State restricted two-source payroll need',{'reference':key(),'metadata':forms.JSONField(widget=forms.Textarea(attrs={'rows':7})),'evidence':evidence('payroll_need')}),
- 'capture':('Source owner supply authorised payroll export',{'request_record':select(PayrollRequest),'provider':key(),'operation_key':key(),'body':forms.CharField(max_length=256000,widget=forms.Textarea(attrs={'rows':10}),help_text='Private source values must use this form, not shared case evidence.')}),
+ 'capture':('Supply an authorised payroll export',{'request_record':select(PayrollRequest),'provider':key(),'operation_key':key(),'body':forms.CharField(required=False,max_length=256000,widget=forms.Textarea(attrs={'rows':7}),label='Paste export contents')}),
  'combine':('Prepare restricted source combination',{'request_record':select(PayrollRequest),'inputs':select(PayrollInput,True),'operation_key':key()}),
  'match':('Match to the HR-authorised effective-period view',{'parent':select(PayrollRun,kind='combine'),'hr_snapshot':select(HRReadSnapshot),'operation_key':key()}),
  'aggregate':('Prepare permitted BU staff-cost totals',{'parent':select(PayrollRun,kind='match'),'operation_key':key()}),
- 'review':('Finance review exact input or working version',{'subject_kind':forms.ChoiceField(choices=[('input','input'),('run','run')]),'subject_id':forms.IntegerField(min_value=1),'verdict':forms.ChoiceField(choices=[(v,v) for v in ['approve','return','revoke']]),'operation_key':key(),'evidence':evidence('payroll_review')}),
+ 'review':('Finance review exact input or working version',{'subject_kind':forms.ChoiceField(choices=[('input','input'),('run','run')]),'subject_id':forms.IntegerField(min_value=1),'verdict':forms.ChoiceField(choices=[(v,v) for v in ['approve','return','revoke']]),'operation_key':key(),'evidence':evidence('payroll_review'),'note':forms.CharField(max_length=2000,required=False,widget=forms.Textarea(attrs={'rows':3}),label='Note for a return or withdrawal')}),
  'publish':('Publish reviewed aggregate to local BU report',{'run':select(PayrollRun,kind='aggregate'),'operation_key':key()}),
  'receive':('Acknowledge exact BU report version',{'publication':select(PayrollPublication)}),
  'hr_correction':('Route an HR matching correction by reference',{'run':select(PayrollRun,kind='match'),'operation_key':key(),'evidence':evidence('hr_correction_request')}),
@@ -34,6 +79,13 @@ def commands(actor,case,data=None):
  for action,(title,fields) in defs.items():
   permission='agent.payroll' if action=='investigate' else 'policy.configure' if action=='policy' else 'payroll.report.receive' if action=='receive' else 'payroll.'+action
   if permission not in grants:continue
-  f=type('Payroll'+action,(CommandForm,),fields)(data if data is not None and data.get('action')==action else None,initial={'action':action,'revision':case.revision},auto_id='id_'+action+'_%s')
+  bound=data is not None and data.get('action')==action
+  base=PayrollCaptureForm if action=='capture' else CommandForm
+  if action=='capture':
+   fields['request_record'].label='Payroll period'
+   fields['provider'].label='Payroll source'
+   fields['operation_key']=forms.CharField(max_length=100,widget=forms.HiddenInput,initial='payroll-upload-'+uuid4().hex)
+  f=type('Payroll'+action,(base,),fields)(data if bound else None,files if bound else None,
+     initial={'action':action,'revision':case.revision},auto_id='id_'+action+'_%s')
   result.append({'action':action,'title':title,'form':f})
  return result

@@ -39,6 +39,18 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(len(pair['requests']),2)
         used=w.budget_used;factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.budget_used,used)
         self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
+        self.client.force_login(f['a'])
+        page=self.client.get(reverse('factory_detail',args=[w.pk]))
+        self.assertContains(page,'Owner configuration required')
+        self.assertNotContains(page,'None:')
+        settings = reverse('workspace_settings', args=[f['c'].pk])
+        self.assertContains(page, settings + '?area=roles')
+        rules = self.client.get(settings, {'area': 'roles'})
+        item = next(row for row in rules.context['items'] if row['label'] == 'Department approval routes')
+        self.assertEqual(item['status'], 'MISSING')
+        Grant.objects.filter(case=f['c'], user=f['a'], action='policy.read').update(active=False)
+        self.assertNotContains(self.client.get(reverse('factory_detail', args=[w.pk])), settings + '?area=roles')
+        self.assertEqual(self.client.get(settings, {'area': 'roles'}).status_code, 403)
 
     def test_exact_department_panel_records_only_native_owner_observation(self):
         f=setup();w=f['work'];factory.run_until_wait(w.pk)
@@ -154,13 +166,31 @@ class FactoryPlanningTests(TestCase):
     def test_lost_internal_route_response_reconciles_same_receipt_without_approval(self):
         f=setup();w=f['work']
         from adapters.approvals import InternalApprovalRoutingAdapter
+        from apps.pmo import approval_routing
+        from apps.workflows import factory_progress
+
         class Lost(InternalApprovalRoutingAdapter):
             def deliver(self,pk,fence):
                 super().deliver(pk,fence);raise TimeoutError('Synthetic response lost after internal receipt')
+
+        class DelayedLookup(InternalApprovalRoutingAdapter):
+            def lookup(self, job):
+                return None
+
+            def deliver(self, pk, fence):
+                raise AssertionError('An uncertain original may only be looked up')
+
+        background = factory_progress.set_progress(f['a'], w.pk, w.revision, True)
         # Investigation, reservation, selected delivery loses its response.
         factory.run_once(w.pk);factory.run_once(w.pk);factory.run_once(w.pk,adapter=Lost())
         job=ApprovalRouteJob.objects.filter(request__case=f['c'],status='unknown').get()
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job=job).count(),1)
+        self.assertEqual(factory_progress.run_once(), background.pk)
+        background.refresh_from_db()
+        self.assertEqual(background.status, 'held')
+        self.assertTrue(approval_routing.run_once(DelayedLookup(), job_id=job.pk))
+        job.refresh_from_db()
+        self.assertEqual(job.status, 'unknown')
         factory.run_until_wait(w.pk);job.refresh_from_db();w.refresh_from_db()
         self.assertEqual(job.status,'confirmed');self.assertEqual(w.status,'waiting',w.finding)
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job=job).count(),1)

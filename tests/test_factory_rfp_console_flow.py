@@ -27,10 +27,12 @@ class FactoryRFPConsoleFlowTests(TestCase):
             'lessons':declared['lessons'],**declared['sources'],
             'requirements-TOTAL_FORMS':'1','requirements-INITIAL_FORMS':'0','requirements-MIN_NUM_FORMS':'0','requirements-MAX_NUM_FORMS':'100',
             **{'requirements-0-'+key:value for key,value in declared['matrix'][0].items()}}
-        started=self.client.post(create_url,intake)
+        self.assertContains(self.client.get(create_url), 'Continue in background after starting')
+        started=self.client.post(create_url,dict(intake, background='on'))
         self.assertEqual(started.status_code,302,getattr(started,'context',None))
         work=FactoryWork.objects.get(case=case,key='RFP-CONSOLE-1')
         self.assertEqual(started.url,reverse('factory_detail',args=[work.pk]))
+        self.assertEqual(work.background_progress.status, 'queued')
         self.assertEqual(factory_rfp.inputs(work)['matrix'],declared['matrix'])
         self.assertEqual(FactoryWork.objects.filter(case=case).count(),1)
         starter=work.actor_id;head=work.source_head_id
@@ -38,9 +40,12 @@ class FactoryRFPConsoleFlowTests(TestCase):
 
         def post(action,**fields):
             work.refresh_from_db()
-            result=self.client.post(url,{'action':action,'revision':work.revision,'case_revision':rev(case),**fields})
+            page={'response':'factory_invoice_decision','commercial':'factory_invoice_decision',
+                  'document':'factory_invoice_decision','outcome':'factory_work_response'}.get(action)
+            target=reverse(page,args=[work.pk])+'?queue=decisions&q=Cited+customer' if page else url
+            result=self.client.post(target,{'action':action,'revision':work.revision,'case_revision':rev(case),**fields})
             self.assertEqual(result.status_code,302,getattr(result,'context',None))
-            self.assertEqual(result.url,url)
+            self.assertEqual(result.url,target)
             work.refresh_from_db()
             return result
 

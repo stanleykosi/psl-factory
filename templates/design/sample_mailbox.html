@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Sample recovery inbox · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'design_alert_preferences' %}">← Alert preferences</a>
+<header class="page-heading"><div><h1>Sample recovery inbox</h1><p class="lede">Recovery email for this sample account.</p></div></header>
+<section class="card onboarding-card">
+  {% for link in links %}<p>Delivery verified · <time>{{ link.row.delivered_at }}</time><br><a href="{{ link.url }}" rel="noreferrer">Open password reset link</a></p>
+  {% empty %}<p>No current reset link. A new request may take a moment to arrive.</p>{% endfor %}
+</section>
+{% endblock %}

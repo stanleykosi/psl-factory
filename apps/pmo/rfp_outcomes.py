@@ -3,9 +3,10 @@ import json
 import hashlib
 from django.core.exceptions import ValidationError,PermissionDenied
 from apps.core.models import Evidence
+from apps.core.evidence_access import public_evidence
 from apps.documents.contracts import digest
 from apps.documents.controlled import project_payload
-from apps.documents.models import Publication,PublicationReceipt
+from apps.documents.models import Publication,PublicationReceipt,Version
 from apps.policy.services import resolve,reference_values
 from apps.policy.rfp_outcome_validators import COMPONENT,METHOD
 from .models import (RFPCase,RFPSubmission,RFPDocumentBinding,RFPReview,RFPContribution,
@@ -14,6 +15,20 @@ from .services import subject
 
 SCHEMA='rfp-outcome-selection/v1'
 HISTORY_LIMIT=100
+
+
+def assert_public_submission_sources(case,submission):
+    """Metadata gate for reuse readers, before historical verification loads bodies."""
+    candidate=submission.response
+    version=Version.objects.only('id','source_manifest').filter(pk=submission.version_id,document__case=case).first()
+    if version is None:raise ValidationError('Exact same-project submitted source metadata is required.')
+    try:
+        cited={row['id'] for row in version.source_manifest}
+        body_sources={candidate.evidence_id,candidate.commercial.sources['sow']}
+        if any(type(pk) is not int or pk<1 for pk in cited|body_sources):raise ValueError
+    except (KeyError,TypeError,ValueError):raise ValidationError('Exact submitted source metadata is required.') from None
+    permitted=set(public_evidence(Evidence.objects.filter(case=case,pk__in=cited|body_sources)).values_list('pk',flat=True))
+    if permitted!=cited|body_sources:raise PermissionDenied('Submitted sources need their current domain permissions before reuse.')
 
 
 def exact_ids(values,count,label):
@@ -40,19 +55,42 @@ def _historical_submission(case,submission):
     submission=actual;response=submission.response;version=submission.version;snapshot=submission.snapshot
     binding=RFPDocumentBinding.objects.filter(response=response,version=version).first()
     keys={'response','sources','reviews','costing_decisions','route_config','route','deadline_status','deadline_at'}
+    if binding and 'submission_pack' in binding.snapshot:
+        from .rfp_submission_pack import bound_pack
+        pack = bound_pack(binding)
+        if pack.source_id != response.intake.evidence_id or pack.actor_id != response.actor_id:
+            raise ValidationError('Exact historical client pack provenance required')
+        keys.add('submission_pack')
     if not binding or not isinstance(snapshot,dict) or set(snapshot)!=keys or binding.snapshot!=snapshot or snapshot['response']!=response.pk or snapshot['sources']!=response.snapshot:
         raise ValidationError('Exact historical response document binding and source manifest required')
     if version.document.case_id!=case.pk or version.template.case_id!=case.pk or response.commercial.dossier.case_id!=case.pk or response.evidence.case_id!=case.pk:
         raise ValidationError('Same-workspace historical RFP sources required')
     if version.audience!='client' or version.template.definition.get('internal_review_required',True) is not True:
         raise ValidationError('Historical client response and final review required')
+    from .rfp_portal import METHOD, exact_file, proof
+    route=snapshot['route']
     publication=Publication.objects.select_related('review').filter(version=version).first()
-    if not publication or not publication.review_id or publication.review.version_id!=version.pk or publication.review.verdict!='approve' or publication.review.payload_sha256!=version.payload_sha256 or publication.review.created_at>publication.created_at:
+    portal=None
+    if route['method']==METHOD:
+        from .models import RFPPortalReceipt
+        artifact = exact_file(binding)
+        portal=RFPPortalReceipt.objects.select_related('review','evidence').filter(submission=submission).first()
+        if (publication or not portal or portal.evidence.case_id!=case.pk or portal.evidence.kind!='rfp_portal_receipt' or
+                portal.actor_id!=submission.actor_id or submission.receipt_ids!=[] or route['recipient_ids']!=[] or
+                proof(portal.evidence,version,route,artifact=artifact,historical=True)!=(portal.reference,submission.submitted_at) or
+                portal.created_at<submission.submitted_at):
+            raise ValidationError('Exact independent client portal receipt evidence required')
+        review=portal.review
+        approved_at=submission.submitted_at
+    else:
+        review=publication.review if publication else None
+        approved_at=publication.created_at if publication else None
+    if not review or review.version_id!=version.pk or review.verdict!='approve' or review.payload_sha256!=version.payload_sha256 or review.created_at>approved_at:
         raise ValidationError('Exact historical final client-document approval required')
     if version.payload_sha256!=digest(version.payload) or version.payload!=project_payload(version.payload['title'],version.template.definition,version.audience,version.fields):
         raise ValidationError('Historical outward payload and projection hash differ')
     source_ids=sorted({pk for field in version.fields.values() for pk in field['evidence_ids']})
-    sources=list(Evidence.objects.filter(case=case,pk__in=source_ids).order_by('pk'))
+    sources=list(Evidence.objects.filter(case=case,pk__in=source_ids).only('id','version','sha256').order_by('pk'))
     if len(sources)!=len(source_ids) or version.source_manifest!=[{'id':e.pk,'version':e.version,'sha256':e.sha256} for e in sources]:
         raise ValidationError('Exact historical document source evidence required')
     source=response.snapshot
@@ -61,13 +99,13 @@ def _historical_submission(case,submission):
     from .rfp import TEAMS,REVIEW_ROLES,public_terms_for
     if set(source['inputs'])!=set(TEAMS):raise ValidationError('Historical RFP team input inventory required')
     for team,item in source['inputs'].items():
-        contribution=RFPContribution.objects.select_related('evidence').filter(pk=item['id'],intake_id=response.intake_id,team=team).first()
+        contribution=RFPContribution.objects.select_related('evidence').defer('evidence__body').filter(pk=item['id'],intake_id=response.intake_id,team=team).first()
         if not contribution or item!={'id':contribution.pk,'evidence':contribution.evidence_id,'sha256':contribution.evidence.sha256} or contribution.evidence.case_id!=case.pk or contribution.evidence.kind!=TEAMS[team]:
             raise ValidationError('Exact historical team input evidence required')
-    for kind,pk in response.commercial.sources.items():subject(case,pk,kind)
+    for kind,pk in response.commercial.sources.items():subject(case,pk,kind,metadata_only=True)
     if response.commercial.sources['engineering_estimate']!=source['inputs']['Engineering']['evidence'] or response.commercial.sources['security_estimate']!=source['inputs']['Security']['evidence']:
         raise ValidationError('Historical commercial estimates differ from reviewed response')
-    terms=public_terms_for(response)
+    terms=public_terms_for(response,metadata_only=True)
     try:draft=json.loads(subject(case,response.commercial.sources['sow'],'sow').body)
     except (ValueError,TypeError):raise ValidationError('Historical response draft provenance required') from None
     if draft.get('rfp_response')!=response.evidence_id or draft.get('body')!=response.evidence.body or draft.get('matrix')!=response.matrix:
@@ -76,19 +114,21 @@ def _historical_submission(case,submission):
     if not required.issubset(set(source_ids)):raise ValidationError('Historical client document lacks reviewed response source references')
     review_ids=exact_ids(snapshot['reviews'],2,'response review')
     for pk,role in zip(review_ids,REVIEW_ROLES):
-        review=RFPReview.objects.filter(pk=pk,response=response,role=role,verdict='approve',created_at__lte=publication.created_at).first()
-        last=RFPReview.objects.filter(response=response,role=role,created_at__lte=publication.created_at).order_by('-pk').first()
+        review=RFPReview.objects.filter(pk=pk,response=response,role=role,verdict='approve',created_at__lte=approved_at).first()
+        last=RFPReview.objects.filter(response=response,role=role,created_at__lte=approved_at).order_by('-pk').first()
         if not review or not last or last.pk!=pk:raise ValidationError('Exact approved response reviews at submission required')
-    if RFPReview.objects.filter(response=response,verdict__in=['return','reject'],created_at__lte=publication.created_at).exists():
+    if RFPReview.objects.filter(response=response,verdict__in=['return','reject'],created_at__lte=approved_at).exists():
         raise ValidationError('Returned response was not an approved historical submission')
     decision_ids=exact_ids(snapshot['costing_decisions'],3,'ordered costing decision')
     if decision_ids!=sorted(decision_ids):raise ValidationError('Historical costing decisions must preserve the prescribed sequence')
     for pk,role in zip(decision_ids,['PM','Head of PMO','CEO']):
-        decision=CommercialDecision.objects.filter(pk=pk,revision=response.commercial,role=role,verdict='approve',created_at__lte=publication.created_at).first()
-        last=CommercialDecision.objects.filter(revision=response.commercial,role=role,created_at__lte=publication.created_at).order_by('-pk').first()
+        decision=CommercialDecision.objects.filter(pk=pk,revision=response.commercial,role=role,verdict='approve',created_at__lte=approved_at).first()
+        last=CommercialDecision.objects.filter(revision=response.commercial,role=role,created_at__lte=approved_at).order_by('-pk').first()
         if not decision or not last or last.pk!=pk:raise ValidationError('Exact approved commercial decisions at submission required')
-    if CommercialDecision.objects.filter(revision=response.commercial,verdict__in=['return','reject','withdraw'],created_at__lte=publication.created_at).exists():
+    if CommercialDecision.objects.filter(revision=response.commercial,verdict__in=['return','reject','withdraw'],created_at__lte=approved_at).exists():
         raise ValidationError('Closed costing proposal was not an approved historical submission')
+    if portal:
+        return response
     route=snapshot['route'];recipients=route.get('recipient_ids',[]) if isinstance(route,dict) else []
     exact_ids(recipients,len(recipients),'recipient')
     receipts=list(PublicationReceipt.objects.filter(publication=publication).order_by('pk'))

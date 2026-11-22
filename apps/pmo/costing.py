@@ -2,6 +2,8 @@
 from django.db import transaction
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.contrib.auth import get_user_model
+from apps.core.models import Case
+from apps.core.read_observation import read_observation
 from apps.core.services import lock_case,event,bump,add_evidence
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -34,6 +36,8 @@ def oracle_for(r,pk):
 
 def current_source(r,o=None):
     if CostingRule.objects.filter(case=r.case,reference=r.reference,version__gt=r.version).exists() or r.sha256!=digest(r.payload):raise ValidationError('Rule source superseded or hash changed')
+    from .costing_proposals import validate_adoption
+    validate_adoption(r)
     if o and (o.rule_id!=r.pk or o.sha256!=digest(o.payload) or CostingOracle.objects.filter(rule=r,reference=o.reference,version__gt=o.version).exists()):raise ValidationError('Independent oracle changed; revalidate expectations')
 
 @transaction.atomic
@@ -44,28 +48,55 @@ def capture_rule(a,case_id,reference,evidence_id,expected=None,predecessor=None)
     for param in v['parameters']:subject(c,param['evidence_id'],'p14_parameter')
     old=CostingRule.objects.filter(case=c,reference=reference).order_by('-version').first()
     if old and old.sha256==digest(v):return old
+    if old:
+        from apps.policy.models import Configuration
+        from apps.policy.costing_proposal_validators import COMPONENT as PROPOSAL_REVIEW
+        if Configuration.objects.filter(case=c,component=PROPOSAL_REVIEW,states__state='active').exists():
+            raise ValidationError('Submit this calculator change through its independent proposal review.')
     if (old.pk if old else None)!=predecessor:raise ValidationError('Explicit current rule predecessor required')
     r=CostingRule.objects.create(case=c,reference=reference,version=old.version+1 if old else 1,payload=v,sha256=digest(v),evidence=e,actor=a);event(a,c,'costing.rule_captured',rule=r.pk,native_workbook_verified=False);bump(c);return r
 
 @transaction.atomic
 def capture_oracle(a,case_id,rule_id,reference,evidence_id,expected=None,predecessor=None):
-    c=locked(a,case_id,'costing.oracle.capture',expected);readable(a,c,True);r=rule_for(c,rule_id);current_source(r);validate(KEY,reference);e=subject(c,evidence_id,'p14_oracle');v=SuppliedCostingContractAdapter().read_oracle(e)
-    if any(v[k]!=r.payload[k] for k in ['calculator_ref','calculator_version']) or v['rule_sha256']!=r.sha256:raise ValidationError('Oracle must pin exact calculator/rule version')
-    if not c.synthetic and v['source_class']=='synthetic_fixture':raise ValidationError('Synthetic examples cannot enter operational scope')
-    if len({x['key'] for x in v['scenarios']})!=len(v['scenarios']) or {x['scenario'] for x in v['scenarios']}!={'normal','exception'}:raise ValidationError('Distinct independent normal and exception examples required')
-    # Capture mismatches now; only dependent confirmation/activation holds.
-    for row in v['scenarios']:calculate(r.payload,row['inputs'])
+    c=locked(a,case_id,'costing.oracle.capture',expected);readable(a,c,True);r=rule_for(c,rule_id);current_source(r);validate(KEY,reference);e=subject(c,evidence_id,'p14_oracle');v=oracle_evidence(c,r.payload,r.sha256,e)
     old=CostingOracle.objects.filter(rule=r,reference=reference).order_by('-version').first()
     if old and old.sha256==digest(v):return old
     if (old.pk if old else None)!=predecessor:raise ValidationError('Explicit current oracle predecessor required')
     o=CostingOracle.objects.create(rule=r,reference=reference,version=old.version+1 if old else 1,payload=v,sha256=digest(v),evidence=e,actor=a);event(a,c,'costing.oracle_captured',oracle=o.pk);bump(c);return o
 
+def oracle_evidence(case, rule, rule_hash, proof):
+    value = SuppliedCostingContractAdapter().read_oracle(proof)
+    if any(value[key] != rule[key] for key in ('calculator_ref', 'calculator_version')) or value['rule_sha256'] != rule_hash:
+        raise ValidationError('Oracle must pin exact calculator/rule version')
+    if not case.synthetic and value['source_class'] == 'synthetic_fixture':
+        raise ValidationError('Synthetic examples cannot enter operational scope')
+    examples = value['scenarios']
+    if len({row['key'] for row in examples}) != len(examples) or {row['scenario'] for row in examples} != {'normal', 'exception'}:
+        raise ValidationError('Distinct independent normal and exception examples required')
+    for row in examples:
+        calculate(rule, row['inputs'])
+    return value
+
+
+def oracle_owner_authority(actor, case, rule, preparer_id):
+    readable(actor, case, True)
+    require(actor, case, 'costing.oracle.review')
+    if rule['oracle_owner_id'] is None or rule['oracle_role'] is None:
+        raise ValidationError('Configure the relevant actual costing evidence owner and role before confirmation')
+    if actor.pk != rule['oracle_owner_id']:
+        raise PermissionDenied('Exact configured costing evidence owner required; case approval grants do not appoint model owners')
+    if actor.pk in [preparer_id, rule['owner_id']]:
+        raise PermissionDenied('Oracle reviewer must be independent of rule preparer and owner')
+    return decision_authority(actor, case, rule['oracle_role'])
+
+
 def authority(a,r,o=None):
-    readable(a,r.case,True);require(a,r.case,'costing.oracle.review' if o else 'costing.rule.review');v=r.payload
-    if v['oracle_owner_id' if o else 'owner_id'] is None or v['oracle_role' if o else 'owner_role'] is None:raise ValidationError('Configure the relevant actual costing evidence owner and role before confirmation')
-    if a.pk!=v['oracle_owner_id' if o else 'owner_id']:raise PermissionDenied('Exact configured costing evidence owner required; case approval grants do not appoint model owners')
-    if o and a.pk in [r.actor_id,v['owner_id']]:raise PermissionDenied('Oracle reviewer must be independent of rule preparer and owner')
-    return decision_authority(a,r.case,v['oracle_role' if o else 'owner_role'])
+    if o:
+        return oracle_owner_authority(a,r.case,r.payload,r.actor_id)
+    readable(a,r.case,True);require(a,r.case,'costing.rule.review');v=r.payload
+    if v['owner_id'] is None or v['owner_role'] is None:raise ValidationError('Configure the relevant actual costing evidence owner and role before confirmation')
+    if a.pk!=v['owner_id']:raise PermissionDenied('Exact configured costing evidence owner required; case approval grants do not appoint model owners')
+    return decision_authority(a,r.case,v['owner_role'])
 
 def oracle_results(r,o,require_match=False):
     rows=[];known=held=False
@@ -93,12 +124,26 @@ def confirmed(r,o=None):
     if row.authority!=authority(row.actor,r,o) or row.snapshot!={'rule':r.sha256,'oracle':o.sha256 if o else None}:raise ValidationError('Evidence owner authority/source changed')
     return row
 
-def configured(c):
-    p=active_component(COMPONENT,c);v=reference_values(p)[0];r=rule_for(c,v['rule_id']);o=oracle_for(r,v['oracle_id']);return p,r,o,v
+def configured(c,actor=None):
+    p=active_component(COMPONENT,c);v=reference_values(p)[0]
+    source_case=c
+    if 'studio_source_id' in v:
+        from .costing_studio import source_case as studio_case
+        source_case=studio_case(actor,c,v)
+    r=rule_for(source_case,v['rule_id']);o=oracle_for(r,v['oracle_id']);return p,r,o,v
+
+
+def rule_for_use(actor,case,rule_id):
+    readable(actor,case,True)
+    local=CostingRule.objects.select_related('case','actor').filter(case=case,pk=rule_id).first()
+    if local:return local
+    _,rule,_,_=configured(case,actor)
+    if rule.pk!=rule_id:raise ValidationError('Select the exact calculator configured for this project.')
+    return rule
 
 @transaction.atomic
 def run(a,case_id,plan_id,engineering_id,security_id,inputs_id,operation_key,expected=None):
-    c=locked(a,case_id,'costing.calculate',expected);readable(a,c,True);validate(KEY,operation_key);p,r,o,v=configured(c)
+    c=locked(a,case_id,'costing.calculate',expected);readable(a,c,True);validate(KEY,operation_key);p,r,o,v=configured(c,a)
     sources={k:subject(c,pk,kind) for k,pk,kind in [('plan',plan_id,'plan'),('engineering',engineering_id,'engineering_estimate'),('security',security_id,'security_estimate')]};e=subject(c,inputs_id,'p14_inputs');inputs=read(e.body,ARRAY(VALUE,1));pins={'policy':p.pk,'contract':v,'sources':{k:[ev.pk,ev.sha256] for k,ev in sources.items()},'inputs_sha256':e.sha256}
     old=CostingRun.objects.filter(case=c,operation_key=operation_key).first()
     if old:
@@ -108,7 +153,7 @@ def run(a,case_id,plan_id,engineering_id,security_id,inputs_id,operation_key,exp
     row=CostingRun.objects.create(case=c,rule=r,operation_key=operation_key,snapshot=pins,inputs=inputs,result=result,evidence=e,actor=a);event(a,c,'costing.calculated',run=row.pk,status=result['status']);bump(c);return row
 
 def current_run(row,require_known=True):
-    readable(row.actor,row.case,True);require(row.actor,row.case,'costing.calculate');p,r,o,v=configured(row.case)
+    readable(row.actor,row.case,True);require(row.actor,row.case,'costing.calculate');p,r,o,v=configured(row.case,row.actor)
     if row.rule_id!=r.pk or row.snapshot['policy']!=p.pk or row.snapshot['contract']!=v:raise ValidationError('Costing policy/rule/oracle changed; calculate a new exact version')
     if require_known and row.result['status']!='known':raise ValidationError('Unknown costing cannot become commercial costing evidence')
     return r,o
@@ -170,9 +215,11 @@ def package_readiness(p,a=None):
         return {'status':'local_rule_oracle_verified','binding':b.pk,'run':b.run_id,'native_workbook_verified':False,'acceptance_granted':False}
     except (ValidationError,PermissionDenied):return {'status':'reassessment_required','binding':b.pk,'native_workbook_verified':False}
 
-@transaction.atomic
+@read_observation
 def report(a,case_id,run_id):
-    c=locked(a,case_id,'costing.read');row=CostingRun.objects.select_related('case','actor').filter(case=c,pk=run_id).first()
+    c=Case.objects.get(pk=case_id);readable(a,c)
+    if c.kind!='project':raise ValidationError('Exact project costing scope required')
+    row=CostingRun.objects.select_related('case','actor').filter(case=c,pk=run_id).first()
     if not row:raise ValidationError('Exact case calculation required')
     holds=[]
     try:current_run(row)

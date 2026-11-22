@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}{{ item.title }} · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'home' %}#assignments">← My work</a>
+  <h1>{% if item.review %}{{ item.review.title }}{% else %}{{ item.title }}{% endif %}</h1>
+  <p>{{ item.workspace }} · {{ item.state }}</p>
+</div></header>
+{% if item.review %}
+<section class="card"><h2>{% if item.review.version %}Review version {{ item.review.version }}{% else %}Review the correction{% endif %}</h2>
+  {% for section in item.review.sections %}<h3>{{ section.heading }}</h3>{{ section.text|linebreaks }}{% endfor %}
+</section>
+{% endif %}
+{% if item.action_revision %}<section class="card">
+  <p>Assigned to {{ item.owner }}</p>
+  {% if item.due %}<p>Due {{ item.due|date:'j M Y, H:i T' }}</p>{% endif %}
+  {% if item.line %}<p>{{ item.line }}</p>{% endif %}
+  {% if item.conclusion %}<p>{{ item.conclusion }}</p>{% endif %}
+</section>{% elif item.conclusion %}<p>Your decision is saved as {{ item.conclusion }}.</p>
+{% elif not item.review %}<p>A current document and decision authority are required.</p>{% endif %}
+{% if item.operations or item.review %}
+<section class="card onboarding-card"><form method="post">
+  {% csrf_token %}{{ form.as_p }}
+  <div class="split-buttons">
+    {% if 'start' in item.operations %}<button class="button secondary" name="operation" value="start">Start work</button>{% endif %}
+    {% if 'complete' in item.operations %}<button class="button primary" name="operation" value="complete">Mark complete</button>{% endif %}
+    {% for verdict in item.review.verdicts %}<button class="button {% if verdict == 'approve' %}primary{% else %}secondary{% endif %}" name="operation" value="{{ verdict }}">{{ verdict|capfirst }}</button>{% endfor %}
+  </div>
+</form></section>
+{% endif %}
+{% endblock %}

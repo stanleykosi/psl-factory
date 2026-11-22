@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from apps.workflows import factory,factory_receipt_recovery as recovery
 from apps.workflows.models import FactoryPlanningRecovery,FactoryPlanningReceipt
 from apps.agents import factory_coordinator as coordinator
-from tests.factory_coordinator_helpers import gateway
+from tests.factory_coordinator_helpers import gateway, historical_request
 from tests.readiness_helpers import endpoint
 from tests.helpers import rev
 from tests import test_factory_receipt_recovery as helpers
@@ -18,7 +18,7 @@ class ReceiptRecoveryContentionTests(TransactionTestCase):
     def test_same_original_work_revision_has_one_review_and_two_distinct_backend_sessions(self):
         with endpoint() as state:
             f=gateway(state,prefix='receipt-contention');a,c,w=f['actor'],f['case'],f['work']
-            state['lose_planning_response']=True;factory.run_once(w.pk);w.refresh_from_db();attempt=coordinator.pending(w)
+            attempt=historical_request(f,state)
             state['secret']='contention-rotated-synthetic-token';os.environ['PSL_TEST_READINESS_TOKEN']=state['secret']
             with override_settings(READINESS_SECRET_REFS={'secret:fixture':{'env':'PSL_TEST_READINESS_TOKEN','revision':'fixture-v2'}}):
                 contract=helpers.ReceiptRecoveryTests.rotate(self,f);helpers.ReceiptRecoveryTests.configure(self,f)
@@ -48,7 +48,7 @@ class ReceiptRecoveryContentionTests(TransactionTestCase):
         from adapters.factory_planner import FactoryPlannerAdapter
         with endpoint() as state:
             f=gateway(state,prefix='receipt-lease');a,c,w=f['actor'],f['case'],f['work']
-            state['lose_planning_response']=True;factory.run_once(w.pk);w.refresh_from_db();attempt=coordinator.pending(w);spent=w.budget_used
+            attempt=historical_request(f,state);spent=w.budget_used
             state['secret']='lease-rotated-synthetic-token';os.environ['PSL_TEST_READINESS_TOKEN']=state['secret']
             with override_settings(READINESS_SECRET_REFS={'secret:fixture':{'env':'PSL_TEST_READINESS_TOKEN','revision':'fixture-v2'}}):
                 contract=helpers.ReceiptRecoveryTests.rotate(self,f);helpers.ReceiptRecoveryTests.configure(self,f)

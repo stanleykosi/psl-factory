@@ -3,18 +3,22 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.db.models import Prefetch
 from django.shortcuts import render,redirect
+from adapters.client_uat import KINDS as CLIENT_KINDS
+from apps.core.evidence_access import public_evidence
 from apps.core.views import accessible_case
-from apps.identity.services import require
+from apps.identity.services import active_case_grants, require
 from apps.policy.change_drafts import draft_standard_policy
 from apps.agents.delivery import investigate_delivery
 from apps.agents.models import AgentRun
 from apps.documents.models import Template,PublicationReceipt
 from .delivery import (SOURCE_OWNERS,open_dossier,capture_source,verify_source,decide_planning,record_progress,
-    record_release_request,prepare_readiness,capture_release)
+    record_release_request,prepare_readiness,capture_release,release_observations)
 from .delivery_closure import (accept_go_live,reaffirm_go_live,latest_go_live,evaluate_hypercare,archive_artifacts,acknowledge_handover,confirm_finance,decide_closure,finalize_closure)
 from .delivery_documents import draft_delivery_document
-from .models import DeliveryDossier,DeliveryRecord,DeliveryCandidate,MeetingVersion,DeliveryDocumentBinding
+from .delivery_workarounds import KIND as WORKAROUND_KIND
+from .models import DeliveryDossier,DeliveryRecord,DeliverySource,DeliveryCandidate,MeetingVersion,DeliveryDocumentBinding
 
 
 def optional_bool(value):return {'true':True,'false':False,'unknown':None}.get(value)
@@ -22,7 +26,7 @@ def optional_bool(value):return {'true':True,'false':False,'unknown':None}.get(v
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'delivery.read')
+    case=accessible_case(request.user,case_id,source_action='delivery.read');require(request.user,case,'delivery.read')
     if request.method=='POST':
         try:
             p=request.POST;action=p['action'];expected=int(p['revision']);d=int(p.get('dossier') or 0)
@@ -43,11 +47,14 @@ def workbench(request,case_id):
                 elif kind.startswith('hypercare_'):payload={'observed_at':p['observed_at'],'confirmed':optional_bool(p['confirmed']),'metrics':json.loads(p['metrics'])}
                 capture_source(request.user,case.pk,d,kind,p['external_ref'],evidence,payload,expected)
             elif action=='verify':verify_source(request.user,case.pk,int(p['source']),expected)
-            elif action=='plan':decide_planning(request.user,case.pk,d,p['verdict'],evidence,note,expected)
+            elif action=='plan':decide_planning(request.user,case.pk,d,p['verdict'],evidence,note,expected,
+                issue_id=int(p['blocking_issue']) if p.get('blocking_issue') else None)
             elif action=='progress':record_progress(request.user,case.pk,d,p['kind'],evidence,note,expected,int(p['meeting']) if p.get('meeting') else None)
             elif action=='request':record_release_request(request.user,case.pk,d,p['external_ref'],evidence,note,expected)
             elif action=='ready':prepare_readiness(request.user,case.pk,d,expected)
-            elif action=='release':capture_release(request.user,case.pk,d,int(p['readiness']) if p.get('readiness') else None,p['released_at'],p['external_ref'],evidence,note,expected)
+            elif action=='release':
+                capture_release(request.user,case.pk,d,int(p['readiness']) if p.get('readiness') else None,
+                    p['released_at'],p['external_ref'],evidence,note,expected,deployment_environment=p.get('deployment_environment'))
             elif action=='draft':
                 purpose=p['purpose'];keys={'go_live':['checklist','incident_reporting','rollback'],'handover':['support_document','escalation_document'],'closure':['retrospective_id','report_evidence_id']}
                 if purpose not in keys:raise ValidationError('Unsupported delivery document')
@@ -72,10 +79,22 @@ def workbench(request,case_id):
             messages.success(request,'Delivery evidence recorded; no deployment or financial transaction was dispatched')
             return redirect('delivery',case_id=case.pk)
         except (ValidationError,ValueError,KeyError) as exc:messages.error(request,str(exc));case.refresh_from_db()
-    dossiers=list(DeliveryDossier.objects.filter(case=case).select_related('candidate').order_by('-pk')[:50])
+    evidence = public_evidence(case.evidence.exclude(kind='client_uat_metadata'))
+    sources = (DeliverySource.objects.filter(evidence_id__in=evidence.values('pk'))
+               .exclude(kind__in=CLIENT_KINDS | {WORKAROUND_KIND})
+               .only('dossier_id', 'kind', 'external_ref', 'evidence_id').order_by('-pk')[:50])
+    records = DeliveryRecord.objects.only('dossier_id', 'kind', 'created_at').order_by('-pk')[:50]
+    dossiers = list(DeliveryDossier.objects.filter(case=case).select_related('candidate').prefetch_related(
+        Prefetch('sources', queryset=sources, to_attr='visible_sources'),
+        Prefetch('records', queryset=records, to_attr='visible_records'),
+    ).order_by('-pk')[:50])
     from .delivery import planning_inputs,readiness_inputs,dossier_for
     from .delivery_closure import hypercare_inputs
+    from .hypercare_issues import project_issue_clearance
+    releases = release_observations(case, [d.pk for d in dossiers], actor=request.user)
     for d in dossiers:
+        d.release_observation = releases.get(d.pk)
+        d.issue_clearance = None
         d.go_live_head=latest_go_live(d,False);d.can_reaffirm_go_live=False
         if d.go_live_head and not d.records.filter(kind='closure').exists():
             try:
@@ -91,10 +110,13 @@ def workbench(request,case_id):
         d.checks={}
         d.lifecycle='Closure recorded; immutable archive index preserved' if d.records.filter(kind='closure').exists() else 'Release outcome recorded' if d.records.filter(kind='release_outcome').exists() else 'Planning and delivery evidence in progress'
         for key,fn in [('Planning',planning_inputs),('Release evidence',readiness_inputs),('Hypercare',hypercare_inputs)]:
-            try:dossier_for(case,d.pk);d.checks[key]={'state':'Source evidence available','details':fn(d)}
+            try:
+                dossier_for(case,d.pk);d.checks[key]={'state':'Source evidence available','details':fn(d)}
+                if key == 'Hypercare':d.issue_clearance = project_issue_clearance(request.user, d)
             except (ValidationError,PermissionDenied) as exc:d.checks[key]={'state':'Needs attention','details':str(exc)}
-    return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':SOURCE_OWNERS,
-        'candidates':DeliveryCandidate.objects.filter(case=case),'evidence':case.evidence.all(),
+    return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':{k:v for k,v in SOURCE_OWNERS.items() if k not in CLIENT_KINDS and k != WORKAROUND_KIND},
+        'can_view_client_testing':(case.pk, 'engagement.read') in active_case_grants(request.user, [case.pk], actions=('engagement.read',)),
+        'candidates':DeliveryCandidate.objects.filter(case=case),'evidence':evidence.defer('body'),
         'meetings':MeetingVersion.objects.filter(meeting__case=case).order_by('-pk')[:100],
         'templates':Template.objects.filter(case=case,definition__document_type='project_artifact'),
         'receipts':PublicationReceipt.objects.filter(publication__version__deliverydocumentbinding__dossier__case=case),

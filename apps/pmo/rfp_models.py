@@ -28,6 +28,11 @@ class RFPIntake(AppendOnly):
         constraints=[models.UniqueConstraint(fields=['rfp','number'],name='rfp_intake_revision')]
 
 
+class RFPIntakeSourceContext(AppendOnly):
+    intake = models.OneToOneField('RFPIntake', on_delete=models.PROTECT, related_name='observed_context')
+    prospect_name = models.CharField(max_length=160, null=True, blank=True)
+    submission_method = models.CharField(max_length=20, null=True, blank=True)
+    submission_target = models.CharField(max_length=320, null=True, blank=True)
 class RFPAssignment(AppendOnly):
     intake=models.ForeignKey(RFPIntake,on_delete=models.PROTECT,related_name='assignments')
     pm=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name='+')
@@ -41,7 +46,12 @@ class RFPAssignment(AppendOnly):
 
 class RFPContribution(AppendOnly):
     intake=models.ForeignKey(RFPIntake,on_delete=models.PROTECT,related_name='contributions')
-    team=models.CharField(max_length=30)
+    team=models.CharField(max_length=30)
+
+    received_at = models.DateTimeField(null=True, blank=True)
+    source_party = models.CharField(max_length=160, null=True, blank=True)
+    summary = models.CharField(max_length=4000, null=True, blank=True)
+    person_days = models.DecimalField(max_digits=12, decimal_places=3, null=True, blank=True)
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     created_at=models.DateTimeField(auto_now_add=True)
@@ -97,13 +107,42 @@ class RFPOutcome(AppendOnly):
     def __str__(self):return f'Outcome #{self.pk} · {self.result} · submission #{self.submission_id}'
     submission=models.ForeignKey(RFPSubmission,on_delete=models.PROTECT,related_name='outcomes')
     result=models.CharField(max_length=20)
-    observed_at=models.DateTimeField()
-    role=models.CharField(max_length=50)
+    observed_at=models.DateTimeField()
+
+    followup_on=models.DateField(null=True,blank=True)
+
+    customer_expected_on = models.DateField(null=True, blank=True)
+
+    remind_at = models.DateTimeField(null=True, blank=True)
+
+    loss_reason = models.JSONField(default=dict, blank=True)
+    debrief_version = models.ForeignKey('pmo.MeetingVersion', on_delete=models.PROTECT, null=True, blank=True)
+    role=models.CharField(max_length=50)
     authority=models.JSONField()
-    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT,null=True,blank=True)
     note=models.TextField()
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
-    created_at=models.DateTimeField(auto_now_add=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+
+    award_amount = models.DecimalField(max_digits=32, decimal_places=8, null=True, blank=True)
+    award_currency = models.CharField(max_length=3, null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(result='unknown') | models.Q(evidence__isnull=False),
+                                   name='rfp_asserted_outcome_has_evidence'),
+            models.CheckConstraint(condition=models.Q(customer_expected_on__isnull=True) |
+                                   models.Q(result='pending', evidence__isnull=False),
+                                   name='rfp_customer_date_for_evidenced_pending'),
+            models.CheckConstraint(condition=models.Q(remind_at__isnull=True) |
+                                   models.Q(result__in=['pending', 'unknown'], followup_on__isnull=True,
+                                            remind_at__gte=models.F('observed_at')),
+                                   name='rfp_exact_reminder_open_outcome'),
+            models.CheckConstraint(condition=(models.Q(award_amount__isnull=True, award_currency__isnull=True) |
+                models.Q(result='won', award_amount__isnull=False, award_amount__gte=0, award_amount__lt=10**24,
+                         award_currency__isnull=False, award_currency__regex=r'^[A-Z]{3}$')),
+                name='rfp_award_complete_won_pair'),
+        ]
 
 
 class RFPDisposition(AppendOnly):

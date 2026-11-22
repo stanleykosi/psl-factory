@@ -1,9 +1,10 @@
 """Independent source-unit boundary tests. No performance/sign implementation coverage."""
 import copy
 import json
+from types import SimpleNamespace
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db import DatabaseError, transaction
-from django.test import TestCase
+from django.db import DatabaseError, connection, transaction
+from django.test import SimpleTestCase, TestCase
 from apps.core.services import add_evidence
 from apps.finance import analysis
 from apps.finance.models import FinanceSource, FinanceRun
@@ -69,6 +70,40 @@ class SourceUnitBoundary777Tests(TestCase):
         s=self.source_with(self.envelope(('thousands_currency',)))
         with self.assertRaisesMessage(ValidationError,'unsupported'):self.mapping(s)
 
+    def test_millions_is_recorded_but_postgres_and_native_mapping_hold(self):
+        declarations = self.envelope(('millions_currency',))
+        source = self.source_with(declarations)
+        self.assertEqual(inspect(source)['status'], 'unsupported')
+        self.assertEqual(source.unit_declaration, declarations)
+        with self.assertRaisesMessage(ValidationError, 'unsupported'):
+            self.mapping(source)
+        with self.assertRaisesMessage(DatabaseError, 'no numeric preview'), transaction.atomic():
+            FinanceRun.objects.create(case=self.c, source=source, kind='mapping', request={},
+                snapshot={'source_units': {'status': 'declared_major_currency', 'declaration': declarations,
+                                           'findings': []}}, result={'rows': [{'amount': '1000000'}]},
+                operation_key='m' * 64, actor=self.a)
+        self.assertFalse(FinanceRun.objects.filter(source=source).exists())
+
+        forged = copy.deepcopy(declarations)
+        forged['declarations'][0]['unit'] = 'major_currency'
+        cases = [
+            (declarations, 'unsupported'),
+            (self.envelope(('thousands_currency', 'millions_currency'), key='scaled-conflict'), 'conflict'),
+            (self.envelope(('millions_currency', 'unknown'), key='missing-feed'), 'unknown'),
+            (forged, 'invalid'),
+        ]
+        for envelope, expected in cases:
+            with self.subTest(status=expected), connection.cursor() as cursor:
+                cursor.execute('SELECT psl_source_units(%s,%s,%s::jsonb)',
+                    [str(self.c.pk), source.batch_id, json.dumps(envelope)])
+                self.assertEqual(cursor.fetchone()[0], expected)
+                if expected == 'invalid':
+                    with self.assertRaises(ValidationError):
+                        capture(source.batch, envelope)
+                else:
+                    sample = SimpleNamespace(batch=source.batch, unit_declaration=envelope)
+                    self.assertEqual(inspect(sample)['status'], expected)
+
     def test_unknown_feed_is_not_overridden_by_known_feed(self):
         s=self.source_with(self.envelope(('unknown','major_currency')))
         with self.assertRaisesMessage(ValidationError,'unknown'):self.mapping(s)
@@ -94,7 +129,6 @@ class SourceUnitBoundary777Tests(TestCase):
         with self.assertRaises(ValidationError):self.source_with(value)
 
     def test_colon_pairs_remain_distinct_evidence_currentness_identities(self):
-        from django.db import connection
         first=self.source_with(self.envelope(key='A:B',feeds=['C']))
         run=self.mapping(first)
         second=self.envelope(key='A',feeds=['B:C'])
@@ -225,10 +259,6 @@ class SourceUnitBoundary777Tests(TestCase):
         response=self.client.get(reverse('finance_analysis',args=[self.c.pk]))
         self.assertContains(response,'Source unit: unknown')
         self.assertContains(response,'no conversion')
-
-
-from types import SimpleNamespace
-from django.test import SimpleTestCase
 
 
 class SourceUnitShape777Tests(SimpleTestCase):

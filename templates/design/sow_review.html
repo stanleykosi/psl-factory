@@ -1,0 +1,61 @@
+{% extends 'base.html' %}{% load document_labels studio_ui %}
+{% block title %}Statement of work · {{ case|workspace_name }}{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'commercial' case.pk %}">← Commercial records</a>
+  <p>{{ case|workspace_name }}</p><h1>Statement of work · v{{ version.number }}</h1>
+  <p>Commercial proposal {{ binding.revision.number }} · Client{% if not current %} · Earlier version{% endif %}</p></div></header>
+<div class="factory-case-layout"><div>
+  {% if latest_review.verdict == 'return' %}<section class="card"><h2>Returned to the project manager</h2>
+    <p>Version {{ version.number }} keeps this decision. The next version needs a fresh review.</p>
+    {% if corrected %}<form method="post">{% csrf_token %}
+      <input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="proposal" value="{{ corrected.pk }}">
+      <button name="action" value="prepare">Prepare the corrected version</button>
+    </form>{% elif version.document.current_id == version.pk %}<a href="{% url 'commercial' case.pk %}">Open the commercial sources to prepare the correction</a>
+    {% else %}<a href="{% url 'design_sow_review' case.pk version.document.current_id %}">Open the current version</a>{% endif %}
+  </section>{% endif %}
+  <section class="card" aria-label="Client statement preview"><h2>Client preview</h2>
+    {% for section in version.payload.sections %}<h3>{{ section.heading|section_label }}</h3><p>{{ section.text|linebreaksbr }}</p>
+    {% empty %}<p>No sections are ready.</p>{% endfor %}
+  </section>
+  {% if previous %}<section class="card" id="sow-comparison"><h2>Version changes</h2>
+    <p>{{ changes|length }} changed section{{ changes|length|pluralize }} since proposal {{ previous.revision.number }}, document v{{ previous.version.number }}.</p>
+    <p>{% if costing_unchanged %}Both drafts use the same costing evidence.{% else %}The costing evidence changed. Check the current approved version.{% endif %}</p>
+    <a href="{% url 'design_sow_review' case.pk previous.version_id %}">Open the earlier version</a>
+    {% if not compared %}<a href="?compare=1#sow-comparison">Compare with the earlier version</a>{% else %}
+      {% for row in changes %}<section aria-label="{{ row.heading|section_label }} change"><h3>{{ row.heading|section_label }}</h3>
+        <dl><dt>Before</dt><dd>{{ row.before|default_if_none:'No section'|linebreaksbr }}</dd>
+        <dt>After</dt><dd>{{ row.after|default_if_none:'No section'|linebreaksbr }}</dd></dl>
+      </section>{% empty %}<p>Both versions have the same client wording.</p>{% endfor %}
+    {% endif %}
+  </section>{% endif %}
+  <section class="card"><h2>Source records</h2><ul>
+    {% for source in sources %}<li>{{ source.kind|readable }} · version {{ source.version }} · {{ source.source }}</li>{% endfor %}
+  </ul></section>
+</div><aside class="factory-action-panel">
+  <section class="card"><h2>Checks</h2>
+    <ul><li>{{ template_status }} · {{ version.template.name }} v{{ version.template.version }}</li>
+      <li>{% if current_costing %}Current approved costing{% else %}Recorded costing source{% endif %} · version {{ costing.version }}</li>
+      <li>Check any amounts in the draft against the approved costing.</li>
+      <li>Audience · Client</li></ul>
+    {% if findings %}<ul>{% for finding in findings %}<li>{{ finding }}</li>{% endfor %}</ul>
+    {% else %}<p>Required sections and source checks passed.</p>{% endif %}
+  </section>
+  <section class="card"><h2>{% if task %}{{ task.required_role }} review{% else %}Review{% endif %}</h2>
+    {% if latest_review %}<p>{{ latest_review.verdict|capfirst }} by {{ latest_review.actor.get_full_name|default:latest_review.actor.get_username }}
+      · {{ latest_review.created_at|date:'d M Y, H:i T' }}</p><p>{{ latest_review.note }}</p>
+    {% elif task %}<p>Waiting for {{ task.required_role }} review.</p>{% else %}<p>Review has not been requested.</p>{% endif %}
+    {% if can_request %}<form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}">
+      <button name="action" value="request">Request review of v{{ version.number }}</button></form>{% endif %}
+    {% if form %}<form method="post" class="form-stack">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.revision.errors }}
+      <input type="hidden" name="action" value="review"><div>{{ form.note.label_tag }}{{ form.note }}{{ form.note.errors }}</div>{{ form.verdict.errors }}
+      {% for key, label in choices %}<button name="verdict" value="{{ key }}">{{ label }}</button>{% endfor %}
+    </form>{% endif %}
+    <p>Approval records the reviewer and time. Sending to the client is a separate step.</p>
+  </section>
+  <section class="card"><h2>Client delivery</h2>
+    {% if receipt_count %}<p>Recorded receipts: {{ receipt_count }}</p>{% elif publication %}<p>Waiting for delivery evidence.</p>
+    {% else %}<p>No delivery is recorded.</p>{% endif %}
+    <a href="{% url 'documents' case.pk %}">Open publication controls</a>
+  </section>
+</aside></div>
+{% endblock %}

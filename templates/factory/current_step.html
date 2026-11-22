@@ -1,0 +1,6 @@
+{% if progress %}
+<section class="card"{% if progress.watching %} data-work-watch{% endif %}>
+  <h2>Current step</h2>
+  <p role="status">{{ progress.label }}</p>
+</section>
+{% endif %}

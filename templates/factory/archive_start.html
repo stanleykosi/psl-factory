@@ -6,5 +6,6 @@
 <form method="post">{% csrf_token %}{{ form.definition }}{{ form.key }}{{ form.revision }}{{ form.non_field_errors }}
 <input type="hidden" name="case" value="{{ case.pk }}">
 {{ form.dossier.as_field_group }}{{ form.reference.as_field_group }}{{ inventory_form.as_p }}
+{{ form.background.as_field_group }}
 <button>Start archive work</button></form></section>{% else %}{{ form.errors }}<p>Select an available project to declare its inventory.</p>{% endif %}
 {% endblock %}

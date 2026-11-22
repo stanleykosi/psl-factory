@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}My acknowledged payroll reports · PSL Factory{% endblock %}
+{% block content %}
+<a href="{% url 'design_agents' %}">← Assistant</a>
+<header class="page-heading"><div><h1>My acknowledged payroll reports</h1><p class="lede">Open a reviewed report to ask Zainab for the total staff cost and the breakdown by business unit.</p></div></header>
+<section class="card"><h2>Your reports</h2>{% for report in reports %}
+<p><a href="{% url 'payroll_inspect' report.case.pk 'report' report.pk %}">{{ report.entity }} · {{ report.period }} · version {{ report.version }}</a><br>{{ report.case|workspace_name }}</p>
+{% empty %}<p>No current acknowledged payroll reports{% if page.paginator.num_pages > 1 %} on this page{% endif %}.</p>{% endfor %}
+{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">Previous</a>{% endif %}
+{% if page.has_next %}<a href="?page={{ page.next_page_number }}">Next</a>{% endif %}</section>
+{% endblock %}

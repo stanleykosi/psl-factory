@@ -2,6 +2,25 @@
   "classification": "Supplemental engineering interfaces; no default accounting policies or real appointments",
   "components": [
     {
+      "id": "F07.in_service_fraction_rules",
+      "parent_decision_id": "F07",
+      "schema_ref": "schema:psl/policy-component/F07.in_service_fraction_rules/v1",
+      "subject_scope": "Exact asset category, reporting period and reviewed in-service dates with owner-supplied fractions and independent reference examples",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "F07.source_rules",
       "parent_decision_id": "F07",
       "schema_ref": "schema:psl/policy-component/F07.source_rules/v1",

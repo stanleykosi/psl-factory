@@ -1,0 +1,8 @@
+<span class="shared-search" data-shared-search>
+  <label for="{{ field_id }}"{% if hide_label %} class="sr-only"{% endif %}>{{ field_label }}</label>
+  <span class="shared-search-input">
+    <input id="{{ field_id }}" name="q" type="search" maxlength="120" value="{{ field_value }}"{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}>
+    <a class="shared-search-clear" href="{{ request.path }}{% querystring q=None page=None cursor=None %}#{{ field_id }}"
+       aria-label="Clear search" title="Clear search" data-clear-search{% if not field_value %} hidden{% endif %}><span aria-hidden="true">×</span></a>
+  </span>
+</span>

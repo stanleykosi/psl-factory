@@ -50,6 +50,11 @@ def verify_gate(actor,case_id,record_id,expected,adapter=None):
     record=GateRecord.objects.select_related('candidate__requirements','evidence').filter(candidate__case=case,pk=record_id).first()
     if not record:
         raise ValidationError('Gate record is outside this project')
+    if record.kind=='uat_client':
+        from adapters.client_uat import TARGET
+        from .models import DeliverySource
+        if DeliverySource.objects.filter(dossier__candidate=record.candidate,kind=TARGET).exists():
+            raise ValidationError('Use the current human-recorded client response; synthetic verification cannot replace it')
     from .approvals import candidate_requests
     if candidate_requests(record.candidate,record.kind):raise ValidationError('Use the current department-owned P02 observation; synthetic verification cannot override it')
     if not case.synthetic:
@@ -89,6 +94,10 @@ def gate_manifest(candidate):
         from .approvals import gate_context
         context=gate_context(candidate,kind)
         if context is not None:result.append({'kind':kind,'p02_context':context})
+        if kind=='uat_client':
+            from .client_uat import context as client_context
+            client=client_context(candidate)
+            if client is not None:result.append({'kind':kind,'client_uat_context':client})
     return result
 
 
@@ -99,7 +108,8 @@ def gate_summary(candidate,actor=None):
         verification=record.verifications.order_by('-pk').first() if record else None
         status=verification.result['decision'] if verification else 'unverified' if record else 'missing'
         from .approvals import gate_current,gate_context
-        if gate_context(candidate,kind) is not None:
+        from .client_uat import context as client_context
+        if gate_context(candidate,kind) is not None or kind=='uat_client' and client_context(candidate) is not None:
             try:gate_current(candidate,kind,verification)
             except (ValidationError,PermissionDenied):status='verification_unavailable'
         if actor is not None:

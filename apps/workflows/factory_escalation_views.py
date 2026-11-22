@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.documents.models import Template
 from apps.pmo.models import EscalationRequest
 from . import factory,factory_escalation as domain
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,issue_id=None,**kwargs):
@@ -22,7 +23,7 @@ class InputsForm(forms.Form):
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['status_report','project_artifact']),required=False,label='Controlled communication template')
     def ids(self):return [self.cleaned_data['request_id'].pk,self.cleaned_data['template_id'].pk if self.cleaned_data['template_id'] else None]
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -45,24 +46,28 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=domain.DEFINITION:raise ValidationError('Choose the registered escalation definition')
-            w=domain.start(request.user,d['case'].pk,d['key'],*inputs.ids(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'], *inputs.ids(),
+                              d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/escalation_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
+    from .screen_focus import require_action
     from .factory_views import presentation,permitted
     r,data=domain.source(work,request.user,False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,issue_id=r.profile.state.issue_id,initial=data)
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError(form.errors.as_text())
                 domain.correct(request.user,work.pk,revision,case_revision,*form.ids(),p.get('reason',''))
             elif action=='decision':domain.decide(request.user,work.pk,revision,case_revision,int(p.get('request','0')),p.get('role',''),p.get('verdict',''),p.get('note',''),p.get('delegated')=='on')
+            elif action=='request_review':domain.request_communication_review(request.user,work.pk,revision,case_revision,int(p.get('version','0')))
             elif action=='review':domain.review(request.user,work.pk,revision,case_revision,int(p.get('version','0')),p.get('verdict',''),p.get('note',''))
             elif action=='cancel':domain.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')
@@ -71,6 +76,11 @@ def detail(request,work):
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             else:raise ValidationError('Choose an explicit current action')
             messages.success(request,'Communication action recorded. Issue resolution remains separate.');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work)
-    return render(request,'factory/escalation_detail.html',{'row':row,'case':work.case,'inputs_form':form,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+        except (ValidationError,ValueError) as exc:
+            messages.error(request, domain.finding(exc));work.refresh_from_db();work.case.refresh_from_db()
+    row=presentation(request.user,work,include_progress=not focus)
+    controls = domain.decision_controls(request.user, work.case, row['escalation']['decision_roles']) if focus != 'recovery' else []
+    posted_decision = request.POST if request.method == 'POST' and request.POST.get('action') == 'decision' else {}
+    return render(request,'factory/escalation_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,
+        'decision_controls':controls,'decision_role':posted_decision.get('role'),'decision_note':posted_decision.get('note','')[:4000],
+        'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
