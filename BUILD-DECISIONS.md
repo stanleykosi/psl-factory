@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Keep Django forms and the JSON API on the same domain commands and permission checks. Count screen-map coverage, schema-verified API responses and completed state walkthroughs from their own evidence. A mapped route alone does not close a state replay.
+
 22 November 2026. Keep private testing pack and delivery proof as distinct original files. Bind the reply deadline and editable reminder to the reviewed delivery. Retain earlier dates when a current client reply stops the reminder.
 
 22 November 2026. Point each cross-workflow card to the resource that owns the source, receipt or decision. Recheck the requested information task and its authority before accepting source evidence. Keep separate client witness, proof inspection, independent review and use in an exact release gate or signed baseline. A scope change link preserves the reviewed amount and carries a null additional amount until the signed agreement supplies a figure.

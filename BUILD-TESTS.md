@@ -1,5 +1,15 @@
 # Actual test execution ledger
 
+## Consolidated API acceptance checkpoint · 22 November 2026
+
+The 13 incremental Railway batches from OpenAPI 1.6.0 through 1.18.0 passed 141 PostgreSQL test executions. The 1.19.0 project and journey suites passed 42 more. Across those executions, 258 distinct current OpenAPI operations have schema-checked successful responses, including at least one mapped action in 56 of the 59 screen groups. These counts overlap at the case level.
+
+The OpenAPI 1.20.0 commercial regression passed 152 tests in 1164.480 seconds on Railway deployment `aa5c5593-adfe-4f6d-8642-929a01b5b550`. The delivery, Finance and shared groups are tracked by their own exit markers on that deployment. An older Change assessment heading failed in delivery. The corrected native form assertion passed locally before targeted rerun. The logged failure remains part of the original delivery result.
+
+Local PostgreSQL passed an exact comparison of eight queue filters, privately scoped own work and the empty search in 24.753 seconds. The held invoice through its original issued and delivered receipts and decision history passed in 47.303 seconds. The first new assertion compared the precise decimal amount as an exact display string. The corrected assertion compares numeric values while the contract preserves a string response.
+
+The complete local `final-api` selection passed all 16 Django and PostgreSQL cases in 220.167 seconds and checked 25 successful API operations. Its worker supervisor test was skipped on Windows and passed independently on Linux in 3.018 seconds. The probe kept both model queues blocked and confirmed that the native outbox and factory progress consumers still ran. The suite also covered the exact received bid and revocation, versioned project template upload and replacement, original private file evidence, and the named Finance recipient’s acknowledgement of a reviewed Human Resources export.
+
 ## OpenAPI client testing pack and state replay · 22 November 2026
 
 The first local pack test reached the native UUID guard. The API now converts the validated key to the service's UUID type. The corrected pack and contract run passed all five tests in 14.566 seconds with four successful API operations. It rejected reusing the same file, downloaded the two private originals, verified exact delivery, retained the original deadline through the reminder successor and accepted the client reply through the response API.

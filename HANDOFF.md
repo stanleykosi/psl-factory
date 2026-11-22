@@ -1,5 +1,13 @@
 # PSL Operations Factory handoff
 
+## Screen API coverage and Railway acceptance · 22 November 2026
+
+Use GitHub main and OpenAPI 1.20.0. All 41 tracked implementation gaps are closed in the screen inventory. Its 59 groups and 262 state IDs resolve to mounted API routes. Railway web `b33da1c8-99d0-44ea-b46c-2984642ae99e` and worker `00775505-f22a-40bd-ab61-b40bc7f4e080` run application revision `ba71110c`. Later changes to tests and build records are separate from the application revision. Django sign-in, health and the deployed contract passed their checks.
+
+Follow the isolated Railway deployment `aa5c5593-adfe-4f6d-8642-929a01b5b550` for the grouped regression. Commercial passed 152 tests. The `final-api` stage adds exact bid receipt, template replacement and Human Resources to Finance handoff checks, plus the corrected Change test, work queue and invoice variants, and the worker probe.
+
+The historical 262-state Railway Django acceptance is preserved in the browser ledger. A fresh, individual API replay for all 262 states remains open. Use each state’s legal actors, required decisions, original receipts and retained successor history to match evidence across existing suites and exercise the specific branches without evidence. Keep the in-use Django pages working. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## Client testing response window and state replay · 22 November 2026
 
 OpenAPI 1.20.0 adds three operations for reviewed client testing pack delivery, its private original files and the current response deadline and reminder. Scope still follows the exact testing request, original recorder and authorised reviewer. A client's recorded reply clears the reminder. The work API now also reports the exact eligible profile adoption candidate and presents source-owned delivery uncertainty consistently.
