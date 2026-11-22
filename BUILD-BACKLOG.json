@@ -18,8 +18,12 @@
     "railway_grouped_passed": 809,
     "railway_grouped_initial_failures": 3,
     "railway_final_retest": "d558c3a9-557a-4d9e-b31d-6ea19d68d3cf",
+    "railway_final_retest_passed": 22,
+    "railway_screen_groups_with_api_success": 59,
+    "railway_known_api_successes": 283,
+    "railway_new_api_successes": 180,
     "test_record": "BUILD-TESTS.md",
-    "next": ["Confirm the exact final API and worker probes", "Record fresh individual API evidence for unverified design states"],
+    "next": ["Confirm the remaining six added operations through the final Go-live and Change suites", "Record fresh individual API evidence for unverified design states"],
     "owner_decisions": "Live reviewers, contact routes and external delivery remain deferred."
   },
   "frontend_cutover_work_and_project_journeys_20261122": {
