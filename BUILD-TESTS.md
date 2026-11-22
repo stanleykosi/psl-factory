@@ -14,6 +14,10 @@ The two additional Support handover API cases passed on local PostgreSQL in 436.
 
 Finance ran 227 tests in 3551.194 seconds on the same Railway regression deployment, with two failures. A negative forecast receipt lookup left a legacy Ready state in place. The payroll recovery test tried to create a fresh request through the retired external planner. Recovery now holds the original forecast while checking for its receipt. The payroll test now loads an exact historical reservation and requires its valid receipt without a new planner request. The targeted Railway rerun remains recorded separately.
 
+Project delivery ran 249 tests in 4161.315 seconds with one failure, the outdated Change assessment heading assertion. The original four-group result was 809 passing executions out of 812. Targeted local PostgreSQL passed the corrected Change assertion, the forecast miss with an API uncertainty readback in 28.871 seconds, and the historical payroll receipt in 34.365 seconds. The forecast miss and accepted receipt cases also passed together in 54.312 seconds before the API readback assertion was added.
+
+Railway web `46036741-c181-4aab-8365-9eaf80cba180` and worker `b3c1dcff-ebfc-4eee-ae41-d2591460c47f` deployed application revision `0d777470`. The served OpenAPI exactly matched the generated 1.20.0 file. Health, sign-in and session returned 200, the unauthenticated user read returned 401, and the worker ran the native and specialist polls. The first targeted checks upload timed out before producing a deployment. Its retry started `d558c3a9-557a-4d9e-b31d-6ea19d68d3cf` in the isolated checks service.
+
 ## OpenAPI client testing pack and state replay · 22 November 2026
 
 The first local pack test reached the native UUID guard. The API now converts the validated key to the service's UUID type. The corrected pack and contract run passed all five tests in 14.566 seconds with four successful API operations. It rejected reusing the same file, downloaded the two private originals, verified exact delivery, retained the original deadline through the reminder successor and accepted the client reply through the response API.

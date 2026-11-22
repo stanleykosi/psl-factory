@@ -14,8 +14,12 @@
     "railway_grouped_regression": "aa5c5593-adfe-4f6d-8642-929a01b5b550",
     "railway_confirmed_commercial_tests": 152,
     "railway_confirmed_shared_tests": 184,
+    "railway_grouped_tests": 812,
+    "railway_grouped_passed": 809,
+    "railway_grouped_initial_failures": 3,
+    "railway_final_retest": "d558c3a9-557a-4d9e-b31d-6ea19d68d3cf",
     "test_record": "BUILD-TESTS.md",
-    "next": ["Record final results for delivery and Finance Railway groups", "Run the exact final API and worker probes", "Close remaining direct API state evidence"],
+    "next": ["Confirm the exact final API and worker probes", "Record fresh individual API evidence for unverified design states"],
     "owner_decisions": "Live reviewers, contact routes and external delivery remain deferred."
   },
   "frontend_cutover_work_and_project_journeys_20261122": {
