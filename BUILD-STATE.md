@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI engagement registration and independent costing · 22 November 2026
+
+OpenAPI 1.11.0 lists 271 operations on 196 paths. Nine added operations map SCR-39 and SCR-41, covering engagement source and assigned PM, verified registration and Planning handoff, calculator rule and independent example review, proposed comparisons and scoped calculation readback. The map lists 25 outstanding groups across 156 states. Full API acceptance across all 262 design states remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI reports and escalation communication · 22 November 2026
 
 OpenAPI 1.10.0 lists 262 operations on 190 paths. Twelve added operations cover weekly client report drafts, returned revisions and original receipts, leadership source coverage and narrative plus separate settings, and escalation requests through reviewed communication. The map covers SCR-25, SCR-51 and SCR-52 and lists 27 outstanding groups across 162 states. The number of OpenAPI operations is a separate measurement from completed acceptance of the 262 design states. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

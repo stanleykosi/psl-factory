@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api')
 
 
 def run(group, token, role_access):
@@ -153,6 +153,13 @@ def run(group, token, role_access):
                    'tests.test_factory_leadership.FactoryLeadershipTests.test_tuesday_no_extra_approval_and_exact_receipts',
                    'tests.test_factory_escalation.FactoryEscalationTests.test_api_client_escalation_requires_authority_and_returns_exact_communication_receipt',
                    'tests.test_factory_escalation.FactoryEscalationTests.test_primary_http_intake_decisions_review_and_get_preserves_rows']
+    elif group == 'cost-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_factory_engagement.FactoryEngagementTests.test_api_engagement_assignment_details_and_registered_planning_handoff',
+                   'tests.test_factory_engagement.FactoryEngagementTests.test_route_b_human_assignment_planning_before_registration_exact_final_handoff',
+                   'tests.test_costing.CostingTests.test_api_rule_oracle_reviews_bind_supported_calculation_and_preserve_source_scope',
+                   'tests.test_costing.CostingTests.test_connected_calculation_cost_approvals_signature_and_af13',
+                   'tests.test_costing_proposals.CostingProposalTests.test_api_comparison_and_independent_proposal_review_preserve_source_checks']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

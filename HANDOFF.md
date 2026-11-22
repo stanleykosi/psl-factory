@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Engagement registration and independent costing · 22 November 2026
+
+OpenAPI 1.11.0 adds nine operations. Use `engagement-intake` to read the original and confirm the correct source before starting work. The work-scoped `engagement` resource handles PM assignment, attested project details, registration and source reassessment. Its Planning receipt and original child work IDs link the same engagement to Planning. The project `costing` API separates rule and oracle versions, independent reviews, calculation, proposal comparisons and reviewed adoption. Calculation binds its exact source independently of project cost approval. [Contract](contracts/psl-factory.openapi.json)
+
+The next check is `cost-api` on Railway. The map has 25 groups across 156 states with at least one API gap. Continue with the remaining intake sources, source-owned bid and signed commercial actions, issue and change workflows, and broader Finance. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Weekly reports, leadership reports and escalation communication · 22 November 2026
 
 OpenAPI 1.10.0 adds twelve routes. Start work project choices link to `weekly-report-intake`, `leadership-report-intake` and `escalation-register` for the actions that precede work. Weekly drafts keep separate citations for the four sections and maintain private saved revisions through return and resubmission. Leadership reports keep selected source coverage and audience, and read the validated original receipts after the current review. Escalations separate client approval, communication review and original receipt recovery. [Contract](contracts/psl-factory.openapi.json)

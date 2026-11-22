@@ -111,7 +111,8 @@ LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, '
                     'source_options_url': TEXT, 'workflow_intake_url': nullable(TEXT)})
 START_RESULT = obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')})
 WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1': 'weekly-report-intake',
-                   'pmo-leadership-report/v1': 'leadership-report-intake', 'pmo-escalation/v1': 'escalation-register'}
+                   'pmo-leadership-report/v1': 'leadership-report-intake', 'pmo-escalation/v1': 'escalation-register',
+                   'engagement/v1': 'engagement-intake'}
 
 
 def start_projects(actor, line):

@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_engagement_costing_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.11.0",
+    "live_paths": 196,
+    "live_operations": 271,
+    "added_operations": 9,
+    "completed_groups": ["SCR-39", "SCR-41"],
+    "screen_groups_with_remaining_json": 25,
+    "states_in_groups_with_remaining_json": 156,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Remaining intake and workflow-specific source actions", "Commercial, bid, issue and change decisions", "Finance close and full Railway API acceptance"],
+    "owner_decisions": "Live project nomination, registration details, calculation rules and independent reviewer appointments remain deferred."
+  },
   "frontend_cutover_report_communication_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.10.0",

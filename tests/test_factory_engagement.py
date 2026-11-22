@@ -53,6 +53,44 @@ def complete(f):
 
 
 class FactoryEngagementTests(TestCase):
+    def test_api_engagement_assignment_details_and_registered_planning_handoff(self):
+        f = setup()
+        actor, case, work = f['a'], f['c'], f['w']
+        self.client.force_login(actor)
+        self.assertEqual(self.client.get(f'/api/v1/projects/{case.pk}/engagement-intake').json()['capture']['evidence_id'], f['e'].pk)
+        detail = f'/api/v1/work/{work.pk}/engagement'
+        values = json.loads(Path('fixtures/engagement-intake.json').read_text())
+        roles(actor, case, f['policy'])
+        activate(actor, case, ASSIGN, values['assignment'], f['policy'])
+        activate(actor, case, REGISTER, values['registration'], f['policy'])
+        factory.run_until_wait(work.pk)
+
+        def write(action, **fields):
+            work.refresh_from_db()
+            response = self.client.post(detail, {'action': action, 'expected_revision': work.revision,
+                'case_revision': rev(case), **fields}, content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['record_id']
+
+        available = self.client.get(detail).json()
+        self.assertIn(actor.pk, [manager['id'] for manager in available['managers']])
+        assignment = write('assign', pm_id=actor.pk, role='PMO Lead', evidence_id=f['e'].pk, key='api-assignment')
+        factory.run_until_wait(work.pk)
+        self.assertEqual(self.client.get(detail).json()['assignment_id'], assignment)
+        plan = add_evidence(actor, case.pk, 'plan', 'Synthetic plan supplied by its owner', 'synthetic:plan')
+        capture = available['capture']['id']
+        details = write('details', capture_id=capture, reference='API-PSL-1', plan_id=plan.pk, evidence_id=f['e'].pk,
+                        key='api-details', checked=True, planned_start=None, contact_id=None)
+        self.assertEqual(self.client.get(detail).json()['details']['id'], details)
+        registration = write('register', role='PMO Lead', value='API-PSL-1', plan_id=plan.pk, evidence_id=f['e'].pk,
+                             key='api-registration', details_id=details)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        verified = self.client.get(detail).json()
+        self.assertEqual(verified['registration_id'], registration)
+        self.assertIsNotNone(verified['planning_receipt_id'])
+        self.assertEqual(d.verified_output(work)['registration'], registration)
+
     def test_human_decision_wakes_the_existing_background_request_without_resuming_a_pause(self):
         from apps.workflows import factory_progress
         from apps.workflows.models import FactoryProgress

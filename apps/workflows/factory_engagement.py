@@ -242,9 +242,9 @@ def verified_output(work):
 
 
 @transaction.atomic
-def reassess(actor,work_id,expected,reason,capture_id=None):
+def reassess(actor,work_id,expected,reason,capture_id=None,*,case_expected=None):
     work=Work.objects.select_for_update().select_related('case').get(pk=work_id,definition=DEFINITION)
-    case=lock_case(actor,work.case_id,'factory.manage');readable(actor,case,'factory.manage')
+    case=lock_case(actor,work.case_id,'factory.manage',case_expected);readable(actor,case,'factory.manage')
     if type(expected) is not int or work.revision!=expected or work.cancel_requested or work.status in ['cancelled','followup_needed']:raise ValidationError('STALE_VERSION: refresh the current engagement work')
     if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: wait for the current worker')
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the source-owned reassessment')

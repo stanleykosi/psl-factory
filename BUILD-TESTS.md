@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI engagement registration and costing · 22 November 2026
+
+Two local PostgreSQL engagement checks passed in 37.485 seconds, including the existing Django route and the new API assignment, source attestation, registration and exact Planning receipt. Three successful operations were schema-checked. The first local costing run passed independent proposal review but the second test attempted to create a duplicate fixture instead of using the class fixture. The corrected test reuses the isolated fixture and revokes its synthetic rule before drafting and reviewing a replacement. The report and cost suite on Railway uses synthetic projects and separate human roles.
+
 ## OpenAPI reports and escalation communication · 22 November 2026
 
 The first local weekly and leadership report tests needed the synthetic policy that explicitly grants the test reviewer the return decision. The first leadership receipt read after a verified publication hit the query budget. The verified read now follows the exact same native publication and recipient checks without recalculating unneeded workbench sections. Weekly report acceptance passed locally in 22.847 seconds. Escalation and leadership acceptance passed together in 74.111 seconds, including original receipt readback and preserved issue state. All twelve additions had a successful schema-checked response across those three local tests. OpenAPI 3.1 validation, TypeScript generation and migration drift passed. [Screen map](contracts/factory-api-screen-map.json)

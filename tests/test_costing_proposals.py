@@ -41,6 +41,32 @@ class CostingProposalTests(TestCase):
         return domain.decide(actor or data['owner'], data['case'].pk, proposal.pk,
             verdict, 'SAMPLE exact version reviewed', data['review_evidence'].pk)
 
+    def test_api_comparison_and_independent_proposal_review_preserve_source_checks(self):
+        data = self.data
+        case = data['case']
+        self.configure()
+        url = f'/api/v1/projects/{case.pk}/costing'
+        self.client.force_login(data['actor'])
+        response = self.client.post(url, {'action': 'propose', 'revision': rev(case), 'base_id': data['rule'].pk,
+            'evidence_id': self.source.pk, 'reason': 'Review the supplied revised amount', 'operation_key': 'api-proposal'},
+            content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        exact = f"{url}/proposals/{response.json()['id']}"
+        choices = self.client.get(exact, {'oracle_id': data['oracle'].pk}).json()
+        self.assertEqual(choices['verdicts'], ['withdraw'])
+        self.assertTrue(choices['comparison'][0]['before_matches'])
+        self.assertFalse(choices['comparison'][0]['after_matches'])
+        decision = {'revision': rev(case), 'verdict': 'confirm', 'reason': 'Reviewed the exact proposed version',
+                    'evidence_id': data['review_evidence'].pk}
+        self.assertEqual(self.client.post(exact, decision, content_type='application/json').status_code, 403)
+        self.client.force_login(data['owner'])
+        response = self.client.post(exact, decision, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        recorded = self.client.get(exact).json()
+        self.assertEqual(recorded['recorded_verdict'], 'confirm')
+        self.assertIsNotNone(recorded['successor_rule_id'])
+        self.assertFalse(recorded['active_successor'])
+
     def test_pending_proposal_retains_current_calculator_and_can_be_withdrawn_without_policy(self):
         data = self.data
         proposal = self.proposal()
