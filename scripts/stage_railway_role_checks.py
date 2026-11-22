@@ -12,7 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = ('Dockerfile', 'adapters', 'apps', 'config', 'contracts', 'fixtures', 'manage.py',
            'reference', 'static', 'templates', 'requirements.lock', 'requirements.deploy.txt',
            'SOURCE-MANIFEST.json', 'scripts/railway-worker.sh')
-CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-state-inventory.csv')
+CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-state-inventory.csv',
+          'architecture/packages/v7/openapi.json')
 GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory')
 
 
@@ -40,7 +41,8 @@ def stage(revision, service, groups, coordinator_ticket=None):
         raise ValueError('The base Dockerfile has changed. Review its startup command.')
     if service == 'checks':
         before_command += ('\nCOPY tests tests\nCOPY scripts/railway-native-stations.py scripts/railway-native-stations.py'
-                           '\nCOPY docs/design/screen-state-inventory.csv docs/design/screen-state-inventory.csv')
+                           '\nCOPY docs/design/screen-state-inventory.csv docs/design/screen-state-inventory.csv'
+                           '\nCOPY architecture/packages/v7/openapi.json architecture/packages/v7/openapi.json')
         command = ('python manage.py check && python manage.py makemigrations --check --dry-run'
                    ' && exec python scripts/railway-native-stations.py --role-access ' + ' '.join(groups))
         if coordinator_ticket:

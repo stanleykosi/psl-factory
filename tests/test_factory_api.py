@@ -12,7 +12,7 @@ from apps.agents import assistant
 from apps.agents.models import AgentJob, CaseUpload
 from apps.agents.upload_jobs import ROLES
 from apps.core.factory_api.intake import DERIVED_REFERENCES, INTAKE_GRANTS, STARTS
-from apps.core.factory_api.urls import contract
+from apps.core.factory_api.urls import contract, operation_id
 from apps.finance.models import InvoiceIssue, InvoiceJob
 from apps.identity.models import Grant
 from apps.workflows import factory, factory_minutes
@@ -55,7 +55,7 @@ class ContractTests(SimpleTestCase):
         self.assertEqual(self.client.get(f'{BASE}/openapi.json').json(), SPEC)
         ids = set()
         for route, methods in SPEC['paths'].items():
-            for operation in methods.values():
+            for method, operation in methods.items():
                 self.assertNotIn(operation['operationId'], ids)
                 ids.add(operation['operationId'])
                 example = route
@@ -64,16 +64,37 @@ class ContractTests(SimpleTestCase):
                         value = 'example' if parameter['schema']['type'] == 'string' else '1'
                         if parameter['schema'].get('format') == 'uuid':
                             value = str(uuid4())
+                        elif parameter['schema'].get('enum'):
+                            value = parameter['schema']['enum'][0]
+                        elif parameter['schema'].get('pattern'):
+                            value = 'a' * 64
                         example = example.replace('{' + parameter['name'] + '}', value)
-                self.assertNotEqual(resolve(example).func.__name__, 'unknown')
+                    Draft202012Validator.check_schema(parameter['schema'])
+                self.assertEqual(operation_id(resolve(example).func.api_handlers[method.upper()]), operation['operationId'])
                 for code, response in operation['responses'].items():
-                    if code != 'default':
+                    if code.startswith('2'):
                         Draft202012Validator.check_schema(response['content']['application/json']['schema'])
                 if 'requestBody' in operation:
                     for content in operation['requestBody']['content'].values():
                         Draft202012Validator.check_schema(content['schema'])
         self.assertGreaterEqual(len(ids), 38)
         self.assertEqual(self.client.get(f'{BASE}/unknown').json()['code'], 'not_found')
+
+    def test_main_branch_snapshot_and_coverage_index_match_live_contract(self):
+        import json
+        from django.conf import settings
+        from apps.core.management.commands.export_factory_api import coverage
+
+        snapshot = settings.BASE_DIR / 'contracts/psl-factory.openapi.json'
+        self.assertEqual(json.loads(snapshot.read_text(encoding='utf-8')), SPEC)
+        index = coverage()
+        self.assertEqual((index['inventory'], index['screen_groups']), (262, 59))
+        self.assertEqual(len(index['processes']), 108)
+        self.assertEqual(sum(row['execution'] == 'native_source_event' for row in index['processes']), 63)
+        for row in index['processes']:
+            if row['intake_api']:
+                self.assertIn('post', SPEC['paths'][row['intake_api']])
+            self.assertIn('get', SPEC['paths'][row['tracking_api'].split('?', 1)[0]])
 
 
 class FactoryApiTests(TestCase):
@@ -138,6 +159,20 @@ class FactoryApiTests(TestCase):
         self.assertEqual(self.client.get(work_url).json(), self.client.get(f'{BASE}/work/9999999').json())
         self.assertFalse(self.client.get(f'{BASE}/work?queue=mine').json()['items'])
         self.assertEqual(self.client.get(f'{BASE}/projects/{self.case.pk}/money').status_code, 404)
+
+    def test_line_catalogue_identifies_the_typed_submit_endpoint_and_eligible_projects(self):
+        self.client.force_login(self.actor)
+        items = self.check(self.client.get(f'{BASE}/lines'), '/lines')['items']
+        invoice = next(row for row in items if row['key'] == 'pmo-finance/v1')
+        self.assertEqual(invoice['submit_url'], f'{BASE}/work')
+        chooser = self.check(self.client.get(invoice['project_options_url']), '/lines/projects')
+        self.assertEqual([row['case_id'] for row in chooser['items']], [str(self.case.pk)])
+        self.assertEqual(chooser['items'][0]['case_revision'], rev(self.case))
+        self.assertTrue(chooser['items'][0]['django_url'].startswith(reverse('factory_create')))
+        self.assertIsNone(chooser['next_page'])
+        self.assertFalse(self.client.get(invoice['project_options_url'] + '&q=Unmatched').json()['items'])
+        for query in ('', '?line=process-handoff/v1', '?line=pmo-finance/v1&page=0'):
+            self.assertEqual(self.client.get(f'{BASE}/lines/projects' + query).json()['code'], 'invalid_filter')
 
     def test_native_invoice_claim_review_and_stale_revision(self):
         native = self.data
@@ -235,6 +270,13 @@ class FactoryApiTests(TestCase):
         self.client.force_login(self.actor)
         route = f'/cases/{self.case.pk}/files'
         with patch('adapters.case_uploads.put') as store:
+            response = self.client.post(BASE + route, {
+                'file': [SimpleUploadedFile('one.txt', b'one'), SimpleUploadedFile('two.txt', b'two')],
+                'unlisted': 'extra field',
+            })
+            self.assertEqual(response.status_code, 422)
+            self.assertEqual({field['name'] for field in response.json()['fields']}, {'file', 'unlisted'})
+            store.assert_not_called()
             file = self.check(self.client.post(BASE + route, {
                 'file': SimpleUploadedFile('facts.txt', b'Fictional release facts.'),
             }), '/cases/{case_id}/files', method='post')

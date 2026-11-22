@@ -102,6 +102,7 @@ SECTION_ITEM = obj({
     'severity': nullable(TEXT), 'owner': nullable(TEXT), 'django_url': TEXT,
 })
 SECTION = obj({'title': TEXT, 'items': array(SECTION_ITEM, limit=25), 'page': ID, 'has_more': BOOLEAN, 'django_url': TEXT})
+PROJECT_TABS = ('milestones', 'documents', 'registers', 'actions')
 
 
 @endpoint(response=obj({'case_id': UUID, 'destinations': array(obj({
@@ -116,9 +117,10 @@ def hr(request, case_id):
 
 @endpoint(response=obj({'case_id': UUID, 'tab': TEXT, 'sections': array(SECTION), 'as_of': DATETIME}),
           query={'q': {'type': 'string', 'maxLength': 120}, 'page': PAGE, 'state': TEXT, 'owner': TEXT, 'severity': TEXT},
+          path_parameters={'tab': choice(*PROJECT_TABS)},
           summary='Read permitted project milestones, evidence, registers or actions')
 def project_tab(request, case_id, tab):
-    if tab not in {'milestones', 'documents', 'registers', 'actions'}:
+    if tab not in PROJECT_TABS:
         raise Http404
     case = get_object_or_404(project_cases(request.user), pk=case_id)
     grants = project_actions(request.user, case)

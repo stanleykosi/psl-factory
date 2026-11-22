@@ -23,6 +23,7 @@ def inbox(request):
 
 
 @endpoint(method='POST', request=obj({}), response=obj({'id': TEXT, 'read': BOOLEAN}),
+          path_parameters={'notification_id': {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}},
           summary='Acknowledge an alert for the signed-in user')
 def mark_read(request, notification_id, *, body):
     if len(notification_id) != 64 or not any(row['key'] == notification_id for row in alerts.items(request.user)):

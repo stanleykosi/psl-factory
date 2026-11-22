@@ -1,9 +1,24 @@
 """Plain factory error pages with the framework's original status and access checks."""
+from django.core.exceptions import RequestDataTooBig
 from django.shortcuts import render
 from django.views import defaults
 
 
+def bad_request(request, exception):
+    if request.path_info.startswith('/api/v1/'):
+        from .factory_api.http import error
+
+        if isinstance(exception, RequestDataTooBig):
+            return error(413, 'request_too_large', 'The request exceeds the application size limit.')
+        return error(400, 'bad_request', 'Check the request and try again.')
+    return defaults.bad_request(request, exception)
+
+
 def forbidden(request, exception):
+    if request.path_info.startswith('/api/v1/'):
+        from .factory_api.http import error
+
+        return error(403, 'forbidden', 'You do not have permission for this action.')
     response = defaults.permission_denied(request, exception, template_name='403.html')
     response['Cache-Control'] = 'no-store'
     return response
@@ -20,6 +35,10 @@ def missing(request, exception):
 
 
 def failed(request):
+    if request.path_info.startswith('/api/v1/'):
+        from .factory_api.http import error
+
+        return error(500, 'internal_error', 'The request could not be completed. Check the current work before retrying.')
     response = defaults.server_error(request, template_name='500.html')
     response['Cache-Control'] = 'no-store'
     return response

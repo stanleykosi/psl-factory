@@ -100,11 +100,12 @@ def apply(request, case_id, person_id, *, body):
     return {'change_id': row.pk, 'role_key': row.role_key or None, 'added': row.added, 'removed': row.removed}
 
 
-MOVE_QUERY = {'role': choice(*domain.BUILT_INS), 'mode': choice(*teams.MODE_LABELS), 'team_id': nullable(ID)}
+MOVE_FIELDS = {'role': choice(*domain.BUILT_INS), 'mode': choice(*teams.MODE_LABELS), 'team_id': nullable(ID)}
 MOVE_PIN = {'type':'string', 'pattern':'^[a-f0-9]{64}$'}
 
 
-@endpoint(query=MOVE_QUERY, response=obj({'person_id':ID, 'scope':TEXT, 'fingerprint':MOVE_PIN,
+@endpoint(query={**MOVE_FIELDS, 'team_id': ID}, required_query=('role', 'mode'),
+    response=obj({'person_id':ID, 'scope':TEXT, 'fingerprint':MOVE_PIN,
     'removed':array(TEXT), 'carried_actions':array(obj({'id':ID, 'title':TEXT, 'revision':ID})), 'holds':array(TEXT), 'django_url':TEXT}),
     summary='Review the exact access removal and carried actions for an existing staff member')
 def preview_scope(request, case_id, person_id):
@@ -121,7 +122,7 @@ def preview_scope(request, case_id, person_id):
             'django_url':reverse('staff_scope_move',args=[case.pk,person_id])}
 
 
-@endpoint(method='POST', request=obj({**MOVE_QUERY,'fingerprint':MOVE_PIN,'operation':UUID,'reason':REASON,
+@endpoint(method='POST', request=obj({**MOVE_FIELDS,'fingerprint':MOVE_PIN,'operation':UUID,'reason':REASON,
     'confirmed':{'const':True}}), response=obj({'move_id':ID,'membership_id':ID}),
     summary='Commit a reviewed move from workspace grants to exact role assignments')
 def apply_scope(request, case_id, person_id, *, body):

@@ -1,18 +1,21 @@
 # Factory API for the frontend cutover
 
-The live Django implementation serves a versioned OpenAPI contract at `/api/v1/openapi.json`. The exported contract is generated from the mounted route registry and the request schemas used by Django. The existing frontend prototype uses the design-time v7 contract and its mock server. Generate a separate client from the live contract for the cutover and reconcile its field names and shapes feature by feature.
+Generate the frontend client from the [checked-in live OpenAPI contract](../../contracts/psl-factory.openapi.json). A running Django deployment serves the same contract at `/api/v1/openapi.json`. The mounted routes and request schemas generate both copies. The design prototype and its mock server use the separate v7 contract. Where the method and path match, use the live request and response types for Django integration.
 
 ## Use the live API
 
-Run these commands from the repository root. The first emits machine-readable OpenAPI. The second expands the cutover map to all 262 accepted states and checks every API operation and Django route it references.
+Run these from the repository root to refresh OpenAPI and export the complete inventory of design states, process entry points, and prototype operations without an exact live route.
 
 ```powershell
-.venv\Scripts\python.exe manage.py export_factory_api
-.venv\Scripts\python.exe manage.py export_factory_api --screen-map
+.venv\Scripts\python.exe manage.py export_factory_api --output contracts/psl-factory.openapi.json
+.venv\Scripts\python.exe manage.py export_factory_api --coverage --output .runtime/psl-api-coverage.json
+Set-Location frontend
+npm exec --offline openapi-typescript -- ../contracts/psl-factory.openapi.json -o src/api/live-schema.d.ts
 ```
 
 - Serve the future frontend and Django API on the same origin. Keep ordinary Django login, recovery and invitations during the cutover. The Django session and staff lifecycle checks apply to both clients.
 - Read `GET /api/v1/me` after sign-in. Send its `csrf_token` in `X-CSRFToken` on writes, with the session cookie. The token belongs to the current session. Private responses are marked `no-store`.
+- Use the site origin as the client base URL. The OpenAPI paths already include `/api/v1`. Handle the declared HTTP statuses and use the JSON error `code` and optional `fields` for application errors.
 - Use the current server-issued record identifiers and revisions. Treat a conflict as a request to reload, inspect the current record and make a fresh decision. A permission response or an unavailable record stops that operation.
 - Submit multipart private files through the existing upload service. Fetch file and detailed source links through their authenticated Django URLs. Agent drafts keep the exact source or attempt pin through review, recovery and handoff.
 - Send initiation and Assistant requests with the same idempotency key for the same intent. Treat an accepted command as an acknowledgement. Refresh authorized work or receipt status for the business outcome. Explicit release and receipt reconciliation remain separate.
@@ -58,7 +61,7 @@ The role dashboard supplies an `invite_url` for a team lead’s own position. It
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups the 262 states by screen and lists the available JSON operations, the working Django routes and the remaining contracts. A grouped mapping points to workflow capability. It does not imply that every variation already has a JSON equivalent.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists the mapped JSON operations, working Django routes and remaining steps. The current map records Django steps in 57 groups covering 260 states. A group can have usable JSON for some actions and require Django for others. The live schema publishes 73 GET and POST operations across 63 paths. Of the 51 design-prototype operations, 21 have an exact method and path match. Compare their field shapes before migrating a call.
 
 The current API covers intake against exact native sources for all 25 existing factory work definitions. It also covers work and project readback, invoice and Accounting task claims and decisions, reviewed project and Finance document actions, minutes confirmation, bid pack and outcome handling, authorised receipt reconciliation, department chat, eight scoped file agents, client contacts, alerts and verified-channel preferences. Its invoice, Payroll and document commands use the same durable services and authority checks as the Django pages.
 
@@ -86,7 +89,8 @@ PMO Lead, Finance Lead, CEO and CTO see every project in their organisation and 
 
 | Operation | Use |
 | --- | --- |
-| `GET /api/v1/lines` | Find intakes available to this person. |
+| `GET /api/v1/lines` | Find intakes available to this person, their submission URL and their project picker URL when applicable. |
+| `GET /api/v1/lines/projects?line=planning/v1` | Find projects where the current person can submit that Start work type. Use the returned `case_id` and `case_revision`. Keep the returned Django URL for source selection and forms that still run there. |
 | `POST /api/v1/work` | Start an available workflow on an authorised project. Engagement accepts an existing capture or the source evidence and route from the Django form. |
 | `GET /api/v1/received-bids/organisations` and `POST /api/v1/received-bids` | Select a current organisation delegation and submit a received bid with its original private file. Repeating the same intake uses its original receipt. |
 | `GET /api/v1/projects/{case_id}/department-handoffs` | Page through this person’s visible department work in a project. Retain the optional `process` filter alongside `before` when loading earlier results. |

@@ -84,6 +84,23 @@ def _invalid_constant(value):
     raise ValueError(value)
 
 
+def multipart_body(request, schema):
+    if request.content_type != 'multipart/form-data':
+        raise Problem(415, 'unsupported_media_type', 'Send a multipart form.')
+    expected = schema['properties']
+    names = (set(request.POST) | set(request.FILES)) - {'csrfmiddlewaretoken'}
+    invalid = (names - set(expected)) | (set(schema['required']) - names)
+    for name in names & set(expected):
+        binary = expected[name].get('format') == 'binary'
+        values, other = (request.FILES, request.POST) if binary else (request.POST, request.FILES)
+        if len(values.getlist(name)) != 1 or name in other:
+            invalid.add(name)
+    if invalid:
+        fields = [{'name': name, 'message': 'Send the declared field once in the correct part.'}
+                  for name in sorted(invalid)[:12]]
+        raise Problem(422, 'invalid_input', 'Check the multipart fields.', fields=fields)
+
+
 def validation_problem(exc):
     message = exc.messages[0]
     prefix, _, reason = message.partition(':')
@@ -96,7 +113,8 @@ def validation_problem(exc):
     return error(422, 'action_unavailable', message)
 
 
-def endpoint(*, method='GET', request=None, response=None, status=200, summary, query=None, multipart=False):
+def endpoint(*, method='GET', request=None, response=None, status=200, summary, query=None,
+             required_query=(), path_parameters=None, multipart=False):
     """Describe one operation and apply the same request contract at runtime."""
     def decorate(fn):
         @never_cache
@@ -110,18 +128,24 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
                 result['Allow'] = ', '.join(methods)
                 return result
             try:
-                if request is not None and not multipart:
-                    kwargs['body'] = json_body(http, request)
+                if request is not None:
+                    if multipart:
+                        multipart_body(http, request)
+                    else:
+                        kwargs['body'] = json_body(http, request)
                 return JsonResponse(fn(http, *args, **kwargs), status=status)
             except Problem as exc:
                 return error(exc.status, exc.code, exc.message, fields=exc.fields)
             except (Http404, ObjectDoesNotExist):
                 return missing()
+            except RequestDataTooBig:
+                return error(413, 'request_too_large', 'The request exceeds the application size limit.')
             except PermissionDenied:
                 return error(403, 'forbidden', 'You do not have permission for this action.')
             except ValidationError as exc:
                 return validation_problem(exc)
         view.operation = {'method': method, 'request': request, 'response': response, 'status': status,
-                          'summary': summary, 'query': query or {}, 'multipart': multipart}
+                          'summary': summary, 'query': query or {}, 'required_query': required_query,
+                          'path_parameters': path_parameters or {}, 'multipart': multipart}
         return view
     return decorate

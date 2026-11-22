@@ -63,6 +63,7 @@ from apps.policy import pilot_binding_views
 pilot_patterns=[path('cases/<uuid:case_id>/pilot/',pilot_views.workbench,name='pilot_preflight'),
     path('cases/<uuid:case_id>/pilot/contracts/<int:pk>/',pilot_views.contract,name='pilot_contract'),
     path('cases/<uuid:case_id>/pilot/observations/<int:pk>/',pilot_views.report,name='pilot_observation')]
+handler400 = 'apps.core.error_views.bad_request'
 handler403 = 'apps.core.error_views.forbidden'
 handler404 = 'apps.core.error_views.missing'
 handler500 = 'apps.core.error_views.failed'

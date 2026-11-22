@@ -1,6 +1,7 @@
 """The registered live API and the contract generated from those same operations."""
 import re
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.urls import path, re_path
 from django.views.decorators.http import require_safe
@@ -17,6 +18,7 @@ ROUTES = (
     ('work/<int:work_id>/coordination/<int:check_id>/retry', handoffs.retry),
     ('projects/<uuid:case_id>/templates/replacements', documents.replace_template),
     ('lines', intake.lines),
+    ('lines/projects', intake.projects),
     ('processes', intake.processes),
     ('received-bids/organisations', received_bids.organisations),
     ('received-bids', received_bids.record),
@@ -78,6 +80,21 @@ PATH_PARAMETER = re.compile(r'<(int|uuid|slug|str):([a-z_]+)>')
 PARAMETER_TYPES = {'int': ID, 'uuid': UUID, 'slug': TEXT, 'str': TEXT}
 ERROR = obj({'code': TEXT, 'message': TEXT, 'fields': array(obj({'name': TEXT, 'message': TEXT}))},
             optional=('fields',))
+ERROR_RESPONSES = {
+    '400': 'The request could not be read.',
+    '401': 'Sign in with a current Django session.',
+    '403': 'Permission or CSRF verification failed.',
+    '404': 'The record is unavailable or outside the current user’s access.',
+    '405': 'The HTTP method is unavailable on this route.',
+    '409': 'A version, state or idempotency conflict requires current readback.',
+    '413': 'The request exceeds the application size limit.',
+    '415': 'The request uses the wrong content type.',
+    '422': 'A field, workflow prerequisite or required configuration needs attention.',
+    '500': 'An unexpected application error occurred.',
+    '503': 'A dependency or bounded read is unavailable. Check current state before retrying.',
+}
+READ_ERRORS = ('400', '401', '403', '404', '405', '409', '422', '500', '503')
+WRITE_ERRORS = (*READ_ERRORS, '413', '415')
 
 
 def dispatch(handlers):
@@ -95,6 +112,7 @@ def dispatch(handlers):
             return response
         return handler(request, **values)
 
+    view.api_handlers = methods
     return view
 
 
@@ -102,24 +120,31 @@ def json_content(schema):
     return {'application/json': {'schema': schema}}
 
 
+def operation_id(handler):
+    return f'{handler.__module__.split(".")[-1]}_{handler.__name__}'
+
+
 def contract():
     paths = {}
     for route, *handlers in ROUTES:
         path_name = PREFIX + PATH_PARAMETER.sub(r'{\2}', route)
-        path_params = [
-            {'name': key, 'in': 'path', 'required': True, 'schema': PARAMETER_TYPES[kind]}
-            for kind, key in PATH_PARAMETER.findall(route)
-        ]
         operations = {}
         for handler in handlers:
             info = handler.operation
             method = info['method']
-            operation = {'summary': info['summary'], 'operationId': f'{handler.__module__.split(".")[-1]}_{handler.__name__}',
+            path_params = [
+                {'name': key, 'in': 'path', 'required': True,
+                 'schema': info['path_parameters'].get(key, PARAMETER_TYPES[kind])}
+                for kind, key in PATH_PARAMETER.findall(route)
+            ]
+            errors = WRITE_ERRORS if method == 'POST' else READ_ERRORS
+            operation = {'summary': info['summary'], 'operationId': operation_id(handler),
                          'parameters': path_params + [
-                             {'name': name, 'in': 'query', 'required': False, 'schema': schema}
+                             {'name': name, 'in': 'query', 'required': name in info['required_query'], 'schema': schema}
                              for name, schema in info['query'].items()
                          ], 'responses': {
                              str(info['status']): {'description': 'Success', 'content': json_content(info['response'])},
+                             **{code: {'$ref': f'#/components/responses/Http{code}'} for code in sorted(errors)},
                              'default': {'description': 'Request or domain error',
                                          'content': json_content({'$ref': '#/components/schemas/Error'})},
                          }}
@@ -130,12 +155,20 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.0.0'},
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.1.0',
+            'description': 'Use the current same-origin Django session. For JSON writes, read the session CSRF token from '
+                           'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,
-        'components': {'schemas': {'Error': ERROR}, 'securitySchemes': {
-            'Session': {'type': 'apiKey', 'in': 'cookie', 'name': 'sessionid',
-                        'description': 'Sign in at the ordinary Django account page on the same origin.'},
-        }},
+        'components': {
+            'schemas': {'Error': ERROR},
+            'responses': {f'Http{code}': {'description': description,
+                          'content': json_content({'$ref': '#/components/schemas/Error'})}
+                          for code, description in ERROR_RESPONSES.items()},
+            'securitySchemes': {
+                'Session': {'type': 'apiKey', 'in': 'cookie', 'name': settings.SESSION_COOKIE_NAME,
+                            'description': 'Sign in at the ordinary Django account page on the same origin.'},
+            },
+        },
     }
 
 

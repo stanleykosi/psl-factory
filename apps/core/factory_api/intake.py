@@ -1,12 +1,14 @@
 """Typed intake over exact records owned by each factory line."""
 from datetime import date
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 
 from apps.core.workbench import granted
+from apps.core.presentation import workspace_name
 from apps.workflows.process_directory import entries
 from apps.finance.schedules import DETAIL
 from apps.workflows import (
@@ -17,8 +19,8 @@ from apps.workflows import (
     factory_ppe, factory_progress, factory_reporting, factory_rfp, factory_schedules, factory_views,
 )
 
-from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
-from .work import WORK_RESULT, result
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
+from .work import PAGE, WORK_RESULT, page_number, result
 
 
 REF = {**TEXT, 'maxLength': 160}
@@ -101,8 +103,14 @@ START_INPUT = {'oneOf': [
          **({} if line in DERIVED_REFERENCES else {'reference': REF})},
         optional=('background',)) for line, (_, schema) in STARTS.items()
 ]}
-LINE = obj({'key': TEXT, 'title': TEXT, 'description': TEXT, 'can_submit_via_api': BOOLEAN, 'django_url': TEXT})
+LINE = obj({'key': choice(*STARTS, factory_views.rfp_fresh_intake.LINE), 'title': TEXT, 'description': TEXT,
+            'can_submit_via_api': BOOLEAN, 'django_url': TEXT, 'project_options_url': nullable(TEXT), 'submit_url': TEXT})
 TRIGGER_GUIDE = obj({'action': TEXT, 'screen': TEXT, 'source_url': TEXT, 'tracking_url': TEXT})
+LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, 'sample': BOOLEAN, 'django_url': TEXT})
+
+
+def start_projects(actor, line):
+    return granted(actor, INTAKE_GRANTS[line]).filter(kind='project')
 
 
 @endpoint(response=obj({'items': array(obj({'process': TEXT, 'title': TEXT, 'department': choice('PMO', 'Finance'),
@@ -119,16 +127,37 @@ def lines(request):
     return {'items': [
         {'key': item['definition'], 'title': item['title'], 'description': item['description'],
          'can_submit_via_api': item['definition'] in STARTS or item['definition'] == factory_views.rfp_fresh_intake.LINE,
-         'django_url': reverse('factory_create') + '?definition=' + item['definition']}
+         'django_url': reverse('factory_create') + '?definition=' + item['definition'],
+         'project_options_url': '/api/v1/lines/projects?line=' + item['definition'] if item['definition'] in STARTS else None,
+         'submit_url': '/api/v1/work' if item['definition'] in STARTS else '/api/v1/received-bids'}
         for item in factory_views.intake_options(request.user)
     ], 'as_of': timezone.now()}
+
+
+@endpoint(response=obj({'items': array(LINE_PROJECT, limit=25), 'page': PAGE, 'next_page': nullable(PAGE)}),
+          query={'line': choice(*STARTS), 'q': {'type': 'string', 'maxLength': 120}, 'page': PAGE},
+          required_query=('line',), summary='List projects and current revisions for a specific Start work type')
+def projects(request):
+    line = request.GET.get('line')
+    search = request.GET.get('q', '')
+    if line not in STARTS or len(search) > 120:
+        raise Problem(422, 'invalid_filter', 'Choose a Start work type and a shorter project search.')
+    cases = start_projects(request.user, line).order_by('title', 'pk')
+    if search.strip():
+        cases = cases.filter(title__icontains=search.strip())
+    page = Paginator(cases, 25).get_page(page_number(request))
+    return {'items': [{
+        'case_id': case.pk, 'title': workspace_name(case), 'case_revision': case.revision, 'sample': case.synthetic,
+        'django_url': reverse('factory_create', query={'case': case.pk, 'definition': line}),
+    } for case in page], 'page': page.number,
+        'next_page': page.next_page_number() if page.has_next() and page.number < PAGE['maximum'] else None}
 
 
 @endpoint(method='POST', request=START_INPUT,
           response=obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')}),
           summary='Start the selected factory line using the current exact native sources')
 def start(request, *, body):
-    case = get_object_or_404(granted(request.user, INTAKE_GRANTS[body['line']]), kind='project', pk=body['case_id'])
+    case = get_object_or_404(start_projects(request.user, body['line']), pk=body['case_id'])
     starter, _ = STARTS[body['line']]
     inputs = dict(body['intake'])
     if body['line'] not in DERIVED_REFERENCES:

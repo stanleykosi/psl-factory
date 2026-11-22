@@ -58,6 +58,8 @@ def run(group, token, role_access):
     if group == "accounts":
         modules.append("tests.test_finance_import_projection")
     cmd = [sys.executable, "manage.py", "test", *modules, "--keepdb", "--noinput", "--verbosity", "1"]
+    if group == 'directory':
+        cmd += ["--testrunner", "tests.api_contract_runner.ContractRunner"]
     observed = set()
     role_observed = set()
     with subprocess.Popen(cmd, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as process:
