@@ -132,7 +132,13 @@ class FactoryApiTests(TestCase):
         self.assertTrue(run_once(case_id=case.pk))
         handoff = Handoff.objects.get(milestone_id=saved.json()['id'])
         self.assertEqual(handoff.milestone.evidence_id, proof.pk)
+        milestone = f'{BASE}/projects/{case.pk}/milestones/{handoff.milestone_id}'
+        readback = self.check(self.client.get(milestone), '/projects/{case_id}/milestones/{milestone_id}')
+        self.assertEqual((readback['id'], readback['evidence_id'], readback['proof_version']),
+                         (handoff.milestone_id, proof.pk, proof.version))
         self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
+        self.client.force_login(self.outsider)
+        self.assertEqual(self.client.get(milestone).status_code, 404)
 
     def post(self, url, body, client=None, **headers):
         return (client or self.client).post(BASE + url, body, content_type='application/json', **headers)

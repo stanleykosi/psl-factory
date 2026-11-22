@@ -131,7 +131,23 @@ class IssueTeamTests(TestCase):
         self.work.refresh_from_db()
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         self.assertFalse(factory_issues.verify(self.work, self.a)['issue_resolution_verified'])
-        self.assertEqual(self.client.get(detail_path).json()['issue']['status'], 'Open')
+        current = self.client.get(detail_path).json()
+        self.assertEqual(current['issue']['status'], 'Open')
+        team_reply = {**reply, 'operation_key': str(uuid4()), 'source_ref': 'synthetic:email:api-2',
+                      'case_revision': current['case_revision'], 'state_id': current['issue']['state_id'],
+                      'operation': 'start', 'evidence_id': self.e['requirements'].pk,
+                      'note': 'The external team confirmed that its investigation started.',
+                      'next_action': 'Review the investigation findings.', 'fix_id': None,
+                      'root_cause_id': None, 'resolution_role': None}
+        replied = self.client.post(detail_path + '/team-replies', team_reply, content_type='application/json')
+        self.assertEqual(replied.status_code, 201, replied.content)
+        repeated = self.client.post(detail_path + '/team-replies', team_reply, content_type='application/json')
+        self.assertEqual(repeated.status_code, 201, repeated.content)
+        self.assertEqual(replied.json(), repeated.json())
+        persisted = IssueTeamReply.objects.get(operation_key=team_reply['operation_key'])
+        self.assertEqual((persisted.state_id, persisted.evidence_id, persisted.actor_id),
+                         (replied.json()['state_id'], self.e['requirements'].pk, self.a.pk))
+        self.assertEqual(IssueTeamReply.objects.filter(assignment_id=assigned.json()['id']).count(), 2)
 
     def test_missing_team_rules_hold_only_external_assignment_and_pending_owner_is_readable(self):
         transition(self.a, self.config.pk, 'revoked')

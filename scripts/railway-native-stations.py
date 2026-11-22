@@ -185,6 +185,7 @@ def run(group, token, role_access):
                    'tests.test_factory_accounting_intake.AccountingSuppliedIntakeTests.test_http_supplied_intake_to_reviewed_accounts_and_recipient_receipt']
     elif group == 'change-api':
         modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_factory_api.FactoryApiTests.test_milestone_completion_queues_exact_finance_handoff',
                    'tests.test_factory_issues.FactoryIssueTests.test_api_issue_register_capture_and_exact_owner_acknowledgement',
                    'tests.test_issue_teams.IssueTeamTests.test_api_issue_owner_assignment_exact_response_and_verified_investigation',
                    'tests.test_issue_messages.IssueMessageTests.test_api_message_review_release_and_original_receipt_leave_issue_open',
