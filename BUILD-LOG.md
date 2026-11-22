@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Exposed reviewed policy scopes, explicit application, bounded impact review and scoped invoice, change, Emergency and forecast intake choices. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Added exact engagement registration and Planning handoff APIs, and scoped costing rule, oracle, proposal, calculation and binding APIs. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Added weekly and leadership narrative APIs, source coverage, private draft recovery and exact report receipts. Connected scoped escalation requests, client decisions, communication review and original receipt recovery. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

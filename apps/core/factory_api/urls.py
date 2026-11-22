@@ -14,7 +14,7 @@ from . import (
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, setup, short_payments, staff_access, support_replies, weekly_reports, work, work_access, workspaces,
+    role_work, roles, scoped_policy, setup, short_payments, staff_access, support_replies, weekly_reports, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -49,6 +49,7 @@ ROUTES = (
     ('lines', intake.lines),
     ('lines/projects', intake.projects),
     ('projects/<uuid:case_id>/intake-sources', intake_sources.options),
+    ('projects/<uuid:case_id>/forecast-scenarios/<int:scenario_id>/intake', intake_sources.forecast_selection),
     ('projects/<uuid:case_id>/engagement-intake', engagements.options),
     ('projects/<uuid:case_id>/weekly-report-intake', weekly_reports.intake_options, weekly_reports.intake_command),
     ('projects/<uuid:case_id>/leadership-report-intake', leadership_reports.options, leadership_reports.submit),
@@ -192,6 +193,10 @@ ROUTES = (
     ('setup/<uuid:case_id>/decision-appointments', policy_reviews.appointments, policy_reviews.draft_appointments),
     ('setup/<uuid:case_id>/policy-configurations', policy_reviews.versions),
     ('setup/<uuid:case_id>/policy-configurations/<int:configuration_id>/review', policy_reviews.review),
+    ('setup/<uuid:case_id>/policy-scopes', scoped_policy.catalogue, scoped_policy.command),
+    ('setup/<uuid:case_id>/policy-impact', scoped_policy.impacts, scoped_policy.capture),
+    ('setup/<uuid:case_id>/policy-impact/<int:assessment_id>', scoped_policy.assessment, scoped_policy.review),
+    ('setup/<uuid:case_id>/policy-impact/records/<int:configuration_id>/<str:domain>', scoped_policy.impact_records),
     ('setup/primary-roles', roles.built_ins),
     ('setup/<uuid:case_id>/primary-roles', roles.catalogue, roles.create),
     ('setup/<uuid:case_id>/people/<int:person_id>/primary-role', roles.review, roles.apply),
@@ -302,7 +307,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.11.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.12.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

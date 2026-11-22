@@ -50,6 +50,37 @@ class PolicyScopeTests(TestCase):
         transition(self.a,cfg.pk,'validated');transition(self.a,cfg.pk,'active')
         return src,cfg
 
+    def test_api_scope_requires_explicit_application_and_current_source_reader(self):
+        self.client.force_login(self.a)
+        origin = f'/api/v1/setup/{self.s.pk}/policy-scopes'
+        target = f'/api/v1/setup/{self.t.pk}/policy-scopes'
+        config = save_draft(self.a, self.s.pk, envelope(self.s, COMPONENT, 'UTC', self.se))
+        transition(self.a, config.pk, 'validated')
+
+        def write(url, **body):
+            response = self.client.post(url, body, content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()
+
+        source = write(origin, action='create', configuration_id=config.pk, kind='organization', ref=self.s.tenant,
+                       binding_paths=[])
+        for state in ('validated', 'active'):
+            self.assertEqual(write(origin, action='transition', source_id=source['id'], state=state)['state'], state)
+        self.assertEqual(self.client.get(origin).json()['sources'][0]['health'], 'ACTIVE')
+        self.assertEqual(resolve(COMPONENT, self.t).status, 'MISSING')
+        target_config = write(target, action='apply', source_id=source['id'], evidence_id=self.te.pk, bindings=[])
+        transition(self.a, target_config['id'], 'validated')
+        transition(self.a, target_config['id'], 'active')
+        self.assertEqual(self.client.get(target).json()['applications'][0]['source_id'], source['id'])
+        denied = Grant.objects.filter(user=self.a, case=self.s, action='policy.read')
+        denied.update(active=False)
+        hold = self.client.get(target).json()['applications'][0]
+        self.assertEqual(hold['status'], 'source_access_needed')
+        self.assertIsNone(hold['source_id'])
+        response = self.client.post(target, {'action': 'apply', 'source_id': source['id'],
+            'evidence_id': self.te.pk, 'bindings': []}, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
     def test_explicit_application_preserves_local_fk_and_narrow_holds(self):
         src=source_version(self.a,self.s,self.se)
         self.assertEqual(resolve(COMPONENT,self.t).status,'MISSING')

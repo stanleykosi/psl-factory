@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI policy scopes, impact and exact intake sources · 22 November 2026
+
+Two local PostgreSQL tests passed in 11.738 seconds and checked all seven new policy operations. They exercised scoped activation, separate local application, revoked source access and independent impact review. Six more local tests passed in 22.888 seconds, including exact incident profile and forecast source choices, original-owner grant revocation and contract drift. The Railway checks use the `scope-api` group. [Screen map](contracts/factory-api-screen-map.json)
+
 ## OpenAPI engagement registration and costing · 22 November 2026
 
 Two local PostgreSQL engagement checks passed in 37.485 seconds, including the existing Django route and the new API assignment, source attestation, registration and exact Planning receipt. Three successful operations were schema-checked. The first local costing run passed independent proposal review but the second test attempted to create a duplicate fixture instead of using the class fixture. The corrected test reuses the isolated fixture and revokes its synthetic rule before drafting and reviewing a replacement. The report and cost suite on Railway uses synthetic projects and separate human roles.

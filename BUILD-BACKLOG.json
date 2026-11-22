@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_policy_scope_intake_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.12.0",
+    "live_paths": 201,
+    "live_operations": 279,
+    "added_operations": 8,
+    "partially_extended_groups": ["SCR-04", "SCR-13"],
+    "screen_groups_with_remaining_json": 25,
+    "states_in_groups_with_remaining_json": 156,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Income schedules and assets", "Policy settings and Start work source fields", "Remaining bid, PMO and Finance workflow commands", "Full Railway API acceptance"],
+    "owner_decisions": "Live scoped policy values and authority remain deferred."
+  },
   "frontend_cutover_engagement_costing_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.11.0",

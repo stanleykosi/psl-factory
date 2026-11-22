@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Keep scoped policy publication separate from target application and local review. Hide a source ID when current source access is missing. Reuse the exact forecast scenario, horizon and evidence inventory for both intake and submission, and validate the original authority before returning the selection.
+
 22 November 2026. Keep project registration tied to the source-owned project, current engagement capture and original Planning child. Apply calculator proposal approval separately from rule owner confirmation, independent oracle evidence, use in a calculation and approval of the resulting project cost.
 
 22 November 2026. Preserve weekly private working copies and use source-bound report correction after a return. Keep leadership scope, internal recipients and reviewer settings as separately reviewed drafts. Use the exact version and recorded recipient contract for publication readback. Carry client escalation review and delivery independently from issue closure.

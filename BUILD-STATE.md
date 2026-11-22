@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI policy scopes, impact and exact intake sources · 22 November 2026
+
+OpenAPI 1.12.0 lists 279 operations on 201 paths. Eight new operations cover scope applications, policy reassessment and exact forecast intake. Existing intake options also provide scoped invoice, ordinary change and Emergency sources. Twenty-five groups covering 156 states still need API work. Full acceptance of all 262 states through the API remains pending. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## OpenAPI engagement registration and independent costing · 22 November 2026
 
 OpenAPI 1.11.0 lists 271 operations on 196 paths. Nine added operations map SCR-39 and SCR-41, covering engagement source and assigned PM, verified registration and Planning handoff, calculator rule and independent example review, proposed comparisons and scoped calculation readback. The map lists 25 outstanding groups across 156 states. Full API acceptance across all 262 design states remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

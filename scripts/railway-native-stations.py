@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api')
 
 
 def run(group, token, role_access):
@@ -160,6 +160,14 @@ def run(group, token, role_access):
                    'tests.test_costing.CostingTests.test_api_rule_oracle_reviews_bind_supported_calculation_and_preserve_source_scope',
                    'tests.test_costing.CostingTests.test_connected_calculation_cost_approvals_signature_and_af13',
                    'tests.test_costing_proposals.CostingProposalTests.test_api_comparison_and_independent_proposal_review_preserve_source_checks']
+    elif group == 'scope-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_policy_scopes.PolicyScopeTests.test_api_scope_requires_explicit_application_and_current_source_reader',
+                   'tests.test_policy_scopes.PolicyScopeTests.test_four_scope_identities_and_no_cross_case_precedence',
+                   'tests.test_policy_impact.PolicyImpactTests.test_api_observes_affected_records_and_requires_second_current_reviewer',
+                   'tests.test_policy_impact.PolicyImpactTests.test_paged_projection_is_actor_configuration_bound_and_cannot_hide_truncation',
+                   'tests.test_factory_forecast.ForecastFactoryTests.test_api_intake_picker_requires_current_scenario_source_grant',
+                   'tests.test_emergency_incident_intake.EmergencyIncidentIntakeTests.test_api_incident_and_classification_pin_the_original_request']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

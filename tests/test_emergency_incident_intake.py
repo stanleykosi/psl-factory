@@ -129,6 +129,10 @@ class EmergencyIncidentIntakeTests(TestCase):
         self.assertEqual(self.client.get(exact_url).json()['work_id'], work.pk)
         source, _ = factory_emergency.source(work, self.viewer)
         self.assertEqual((source.p1, source.critical_production), (None, None))
+        selected = self.client.get(f'/api/v1/projects/{self.case.pk}/intake-sources', {
+            'line': 'pmo-emergency/v1', 'field': 'profile_id',
+        }).json()
+        self.assertEqual([row['id'] for row in selected['items']], [source.pk])
         self.assertFalse(EmergencyAuthorization.objects.filter(profile=source).exists())
 
     def test_exact_existing_native_profile_resumes_and_rejects_an_unrelated_selection(self):

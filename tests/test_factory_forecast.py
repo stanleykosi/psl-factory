@@ -44,6 +44,20 @@ class ForecastFactoryTests(TestCase):
     def advance(self):
         factory.run_until_wait(self.work.pk);self.work.refresh_from_db();return self.work
 
+    def test_api_intake_picker_requires_current_scenario_source_grant(self):
+        self.client.force_login(self.actor)
+        url = f'/api/v1/projects/{self.case.pk}/intake-sources'
+        query = {'line': 'finance-forecast/v1', 'field': 'value.scenario_id'}
+        current = self.client.get(url, query).json()
+        self.assertEqual([row['id'] for row in current['items']], [self.scenario.pk])
+        selection_url = f'/api/v1/projects/{self.case.pk}/forecast-scenarios/{self.scenario.pk}/intake'
+        exact = self.client.get(selection_url).json()
+        self.assertEqual(exact['source_ids'], self.selected['source_ids'])
+        self.assertEqual(exact['months'], self.selected['months'])
+        Grant.objects.filter(case=self.case, user=self.actor, action='finance.forecast.capture').update(active=False)
+        self.assertEqual(self.client.get(url, query).json()['items'], [])
+        self.assertEqual(self.client.get(selection_url).status_code, 403)
+
     def test_complete_native_review_and_aggregate_receipt_chain(self):
         self.start()
         check_investigation_progress(self, self.actor, self.work, 'Investigating the selected cash forecast sources.')

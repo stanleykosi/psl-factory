@@ -1,17 +1,21 @@
 """Bounded source choices for Start work, under the native line's grants."""
-from django.core.exceptions import PermissionDenied
-from django.db.models import Exists, F, Max, OuterRef
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db.models import Exists, F, Max, OuterRef, Q
 from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.documents.models import Template
 from apps.documents.template_access import visible_templates
-from apps.finance.models import FinanceAdjustment, FinanceRun, FinanceSource, LedgerLineage, ScheduleWork
+from apps.finance.fixed_charge import preparation_access
+from apps.finance.forecast_workbook import source_ids as workbook_source_ids
+from apps.finance.models import BillingCoverage, BillingPreparation, FinanceAdjustment, FinanceRun, FinanceSource
+from apps.finance.models import ForecastScenario, Handoff, Invoice, LedgerLineage, ScheduleWork
 from apps.identity.services import require
 from apps.pmo.issue_access import public_current_issues
-from apps.pmo.models import CommercialRevision, DeliveryDossier, DeliveryRecord, MeetingVersion
-from apps.workflows import factory, factory_archive, factory_go_live, factory_handover
+from apps.pmo.models import ChangeAuthorization, ChangeVersion, CommercialRevision, DeliveryDossier, DeliveryRecord
+from apps.pmo.models import EmergencyAuthorization, EmergencyOutcome, EmergencyProfile, MeetingVersion
+from apps.workflows import factory, factory_archive, factory_forecast_sources, factory_go_live, factory_handover
 
 from .http import ID, REVISION, TEXT, Problem, array, choice, endpoint, nullable, obj
 from .intake import STARTS, start_projects
@@ -31,6 +35,7 @@ TEMPLATE_TYPES = {
     'pmo-change/v1': ('project_artifact', 'status_report'),
     'pmo-emergency/v1': ('project_artifact', 'status_report'),
     'pmo-escalation/v1': ('project_artifact', 'status_report'),
+    'finance-forecast/v1': ('finance_report', 'finance_group_report'),
 }
 EVIDENCE_FIELDS = {
     'pmo-minutes/v1': {'data.evidence_id': ('meeting_notes',)},
@@ -45,7 +50,7 @@ EVIDENCE_FIELDS = {
     },
 }
 TEMPLATE_FIELDS = {key: 'inputs.template_id' for key in TEMPLATE_TYPES} | {
-    'pmo-minutes/v1': 'data.template_id', 'pmo-escalation/v1': 'template_id',
+    'pmo-minutes/v1': 'data.template_id', 'pmo-escalation/v1': 'template_id', 'finance-forecast/v1': 'value.template_id',
 }
 
 
@@ -82,6 +87,34 @@ def source_choices(actor, case, line, parent_id):
     if line == 'pmo-issues/v1':
         issues = public_current_issues(case).filter(current__status__in=('Open', 'In Progress'))
         choices['issue_id'] = (issues, ('reference', 'current__title'))
+    if line == 'pmo-change/v1':
+        versions = ChangeVersion.objects.filter(change__case=case, change__current_id=F('pk'),
+            category__in=['Normal', 'Standard'], evidence__in=public)
+        choices['version_id'] = (versions, ('change__reference', 'category', 'number'))
+        choices['inputs.authorization_id'] = (ChangeAuthorization.objects.filter(version__in=versions, version_id=parent_id),
+                                              ('version__change__reference',))
+    if line == 'pmo-emergency/v1':
+        current = EmergencyProfile.objects.filter(version__change__case=case, version__change__current_id=F('version_id'),
+            version__incident__in=public, evidence__in=public)
+        current = current.exclude(Exists(current.filter(version_id=OuterRef('version_id'), pk__gt=OuterRef('pk'))))
+        choices['profile_id'] = (current, ('version__change__reference', 'version__number'))
+        selected = current.filter(pk=parent_id)
+        choices['inputs.authorization_id'] = (EmergencyAuthorization.objects.filter(profile__in=selected), ('created_at',))
+        choices['inputs.outcome_id'] = (EmergencyOutcome.objects.filter(profile__in=selected), ('implemented_at',))
+    if line == 'pmo-finance/v1':
+        coverage = BillingCoverage.objects.filter(case=case)
+        current = coverage.exclude(Exists(coverage.filter(reference=OuterRef('reference'), version__gt=OuterRef('version'))))
+        choices['coverage_id'] = (current, ('reference', 'version'))
+        choices['handoff_id'] = (Handoff.objects.filter(case=case), ('milestone__name',))
+        preparation = BillingPreparation.objects.filter(case=case).filter(
+            Q(kind='fixed_contract') | Q(kind='usage', usage__collective_acceptance__isnull=False))
+        choices['preparation_id'] = (preparation, ('kind', 'coverage__reference'))
+        choices['invoice_id'] = (Invoice.objects.filter(case=case, preparation__in=preparation, preparation_id=parent_id),
+                                 ('reference', 'version'))
+    if line == 'finance-forecast/v1':
+        scenarios = ForecastScenario.objects.filter(case=case)
+        current = scenarios.exclude(Exists(scenarios.filter(reference=OuterRef('reference'), number__gt=OuterRef('number'))))
+        choices['value.scenario_id'] = (current, ('reference', 'number'))
     if line in ('pmo-minutes/v1', 'delivery-closure/v1'):
         # Retrospective metadata inherits the meeting source boundary.
         meetings = MeetingVersion.objects.filter(meeting__case=case, meeting__current_id=F('pk'),
@@ -118,6 +151,25 @@ def source_choices(actor, case, line, parent_id):
     return choices
 
 
+def scoped_finance_choices(actor, queryset, ids):
+    if queryset.model is ForecastScenario:
+        return set(queryset.filter(pk__in=ids, actor__is_active=True, actor__grant__case_id=F('case_id'),
+                                   actor__grant__active=True, actor__grant__action='finance.forecast.capture')
+                   .values_list('pk', flat=True))
+    if queryset.model is Invoice:
+        sources = ((row.pk, row.preparation) for row in queryset.filter(pk__in=ids).select_related('preparation'))
+    else:
+        sources = ((row.pk, row) for row in queryset.filter(pk__in=ids))
+    visible = set()
+    for key, preparation in sources:
+        try:
+            preparation_access(actor, preparation)
+        except (PermissionDenied, ValidationError):
+            continue
+        visible.add(key)
+    return visible
+
+
 def positive_id(request, name):
     value = request.GET.get(name)
     if value is None:
@@ -130,7 +182,7 @@ def positive_id(request, name):
 @endpoint(response=obj({'case_revision': REVISION, 'fields': array(FIELD, limit=30), 'field': nullable(FIELD),
                        'items': array(obj({'id': ID, 'label': TEXT}), limit=PAGE_SIZE), 'next_before': nullable(ID)}),
           query={'line': choice(*STARTS), 'field': FIELD, 'before': ID, 'parent_id': ID}, required_query=('line',),
-          summary='List authorised exact source references for an intake field; use parent_id for trial-balance adjustments')
+          summary='List authorised intake sources, using the selected parent for dependent fields')
 def options(request, case_id):
     line, field = request.GET.get('line'), request.GET.get('field')
     if line not in STARTS or (field is not None and not 1 <= len(field) <= FIELD['maxLength']):
@@ -159,8 +211,39 @@ def options(request, case_id):
             rows = [row for row in rows if row[0] in allowed]
             if more and not rows:
                 raise ReadLimit
+        elif queryset.model in (BillingPreparation, Invoice, ForecastScenario):
+            allowed = scoped_finance_choices(actor, queryset, [row[0] for row in rows])
+            cursor = rows[-1][0] if rows else None
+            rows = [row for row in rows if row[0] in allowed]
+            if more:
+                answer['next_before'] = cursor
+            more = False
         if more:
             answer['next_before'] = rows[-1][0]
         answer['items'] = [{'id': pk, 'label': ' · '.join(str(value) for value in values) + f' · #{pk}'}
                            for pk, *values in rows]
     return answer
+
+
+@endpoint(response=obj({'case_revision': REVISION, 'scenario_id': ID, 'reference': TEXT, 'number': REVISION,
+    'as_of': {'type': 'string', 'format': 'date'}, 'months': array(TEXT, limit=120), 'source_ids': array(ID, limit=4000),
+    'protocol': {'const': factory_forecast_sources.PROTOCOL}}),
+    summary='Read the exact current forecast horizon and source inventory without exposing amounts')
+def forecast_selection(request, case_id, scenario_id):
+    actor = request.user
+    line = 'finance-forecast/v1'
+    case = get_object_or_404(start_projects(actor, line), pk=case_id)
+    factory.access(actor, case, 'factory.start', line)
+    scenario = get_object_or_404(ForecastScenario.objects.select_related('actor'), case=case, pk=scenario_id)
+    require(scenario.actor, case, 'finance.forecast.capture')
+    payload = scenario.payload
+    source_ids = sorted({scenario.evidence_id, *workbook_source_ids(scenario),
+                         *(item['evidence_id'] for item in payload['openings'] + payload['items'])})
+    if len(source_ids) > 4000 or len(payload['months']) > 120:
+        raise ReadLimit
+    value = {'protocol': factory_forecast_sources.PROTOCOL, 'scenario_id': scenario.pk,
+             'as_of': payload['as_of'], 'months': payload['months'], 'source_ids': source_ids}
+    # Keep the same provenance check as submission. The exact record may be superseded.
+    with limit_queries(300):
+        factory_forecast_sources.selection(actor, case, {**value, 'template_id': None, 'audience': 'internal'})
+    return {**value, 'case_revision': case.revision, 'reference': scenario.reference, 'number': scenario.number}
