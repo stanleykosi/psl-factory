@@ -27,7 +27,8 @@ PLANNING_API_TESTS = (
     'tests.test_planning_department_inputs.PlanningDepartmentInputTests.test_five_departments_reach_native_handoff_and_changed_effort_requires_exact_human_review',
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
-API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api')
+API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
+              'recover-api', 'go-live-api')
 
 
 def run(group, token, role_access):
@@ -110,6 +111,22 @@ def run(group, token, role_access):
                    'tests.test_payroll_questions.PayrollQuestionTests.test_api_question_review_send_answer_and_exact_recipient_receipt',
                    'tests.test_payroll_questions.PayrollQuestionTests.test_original_source_owner_revocation_holds_before_private_loading',
                    'tests.test_payroll_question_reads']
+    elif group == 'recover-api':
+        modules = [
+            'tests.test_factory_api.ContractTests',
+            'tests.test_payroll_api_cutover.PayrollApiCutoverTests.test_multipart_sources_are_nominee_scoped_and_held_rows_stay_private',
+            'tests.test_payroll_identity.PayrollIdentityTests.test_api_compares_original_owner_attestations_and_routes_private_hr_correction',
+            'tests.test_factory_payroll_restart.PayrollRestartTests.test_api_restarts_the_exact_unpublished_work_with_its_current_profile',
+            'tests.test_factory_payroll.FactoryPayrollTests.test_withdrawal_preserves_original_receipt_and_requires_new_reviewed_sources',
+            'tests.test_design_reminders_staff.PaymentReminderTests.test_api_schedules_checked_attachment_and_reads_verified_mailbox_receipt',
+        ]
+    elif group == 'go-live-api':
+        modules = [
+            'tests.test_factory_hypercare.FactoryHypercareTests.test_api_records_observed_release_and_acceptance_before_stability_work_runs',
+            'tests.test_factory_hypercare.FactoryHypercareTests.test_actual_release_ui_remains_available_before_execution_and_stability_configuration',
+            'tests.test_go_live_replies.GoLiveReplyTests.test_decline_moves_through_an_owned_issue_fix_fresh_candidate_gates_and_new_acceptance',
+            'tests.test_go_live_replies.GoLiveReplyTests.test_http_roles_exact_receipts_draft_rules_and_unavailable_actions',
+        ]
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

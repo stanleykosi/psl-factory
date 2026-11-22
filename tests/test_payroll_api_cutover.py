@@ -40,10 +40,10 @@ class PayrollApiCutoverTests(TestCase):
         choices = {row['provider']: row['formats'] for row in prepared.json()['provider_options']}
         self.assertEqual(choices['PAY-B'], ['json', 'csv', 'xlsx'])
 
-        def upload(name, content, key, provider='PAY-B', *, total='150'):
+        def upload(name, content, key, provider='PAY-B', *, total='150', **fields):
             return self.client.post(path, {'revision': rev(case), 'provider': provider, 'operation_key': key,
                 'source_version': key, 'extracted_at': (timezone.now() - timedelta(seconds=1)).isoformat(),
-                'completeness': 'complete', 'control_total': total, 'file': SimpleUploadedFile(name, content)})
+                'completeness': 'complete', 'control_total': total, 'file': SimpleUploadedFile(name, content), **fields})
 
         for name, data in [('sample.csv', CSV), ('sample.xlsx', worksheet())]:
             imported = upload(name, data, 'import-' + name)
@@ -64,6 +64,16 @@ class PayrollApiCutoverTests(TestCase):
         self.assertEqual(page.status_code, 200, page.content)
         self.assertEqual((page.json()['rows'][0]['employee'], page.json()['rows'][0]['amount']), ('E002', None))
         self.assertEqual(page.json()['held'], 1)
+        self.client.force_login(f['owner'])
+        self.assertEqual(upload('corrected.csv', CSV, 'stale-predecessor', replaces_input_id=1).status_code, 409)
+        replacement = upload('corrected.csv', CSV, 'current-predecessor', replaces_input_id=source['id'])
+        self.assertEqual(replacement.status_code, 201, replacement.content)
+        self.assertEqual(replacement.json()['input']['replaces_input_id'], source['id'])
+        history = self.client.get(path).json()['inputs']
+        self.assertEqual(history[0]['replaces_input_id'], source['id'])
+        self.assertIn(source['id'], {item['id'] for item in history})
+        self.client.force_login(f['preparer'])
+        self.assertEqual(self.client.get(rows_path).status_code, 422)
         Grant.objects.filter(user=f['preparer'], case=case, action='payroll.private.read').update(active=False)
         self.assertEqual(self.client.get(rows_path).status_code, 403)
         self.assertFalse(PayrollInput.objects.get(pk=source['id']).reviews.exists())

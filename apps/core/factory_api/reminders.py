@@ -2,16 +2,27 @@
 from datetime import datetime
 
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.http import Http404
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.core.evidence_access import public_evidence
+from apps.core.models import ClientContactRevision
+from apps.core.services import lock_case
 from apps.core.views import accessible_case
 from apps.finance import reminders
 from apps.finance.reminder_views import DraftForm
 from apps.identity.services import active_case_grants, require
+from apps.policy import impact
+from apps.policy.models import Configuration
+from apps.policy.operator_drafts import draft_operator_policy
+from apps.policy.reminder_validators import COMPONENT, VALUE
+from apps.policy.services import reference_values
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, Problem, array, choice, endpoint, nullable, obj
+from .policy_reviews import CONFIG, config_payload, states
 from .workspaces import DATES
 
 
@@ -23,6 +34,50 @@ DRAFT = obj({'id': ID, 'number': REVISION, 'subject': TEXT, 'message': TEXT, 'se
              'dispatch': nullable(DISPATCH)})
 RIGHTS = ('finance.reminder.prepare', 'finance.reminder.send', 'finance.reminder.confirm')
 CHOICE = obj({'id': ID, 'label': TEXT})
+
+
+def rule_head(actor, case):
+    record = Configuration.objects.filter(case=case, component=COMPONENT).order_by('-revision').first()
+    return impact.configuration(actor, case.pk, record.pk) if record else None
+
+
+@endpoint(response=obj({'revision': REVISION, 'latest_id': nullable(ID), 'settings': nullable(VALUE),
+    'contacts': array(CHOICE, limit=100), 'senders': array(CHOICE, limit=100),
+    'receipt_recorders': array(CHOICE, limit=100), 'proofs': array(CHOICE, limit=25)}),
+    summary='Read the current reminder draft and its scoped contact, sender and evidence choices')
+def rule_options(request, case_id):
+    actor = request.user
+    case = impact.context(actor, case_id)
+    require(actor, case, 'policy.configure')
+    record = rule_head(actor, case)
+    contacts = ClientContactRevision.objects.filter(case=case, purpose='billing').exclude(email='').order_by('-pk')[:100]
+    choices = {}
+    for key, action in (('senders', 'finance.reminder.send'), ('receipt_recorders', 'finance.reminder.confirm')):
+        people = get_user_model().objects.filter(is_active=True, grant__case=case, grant__active=True,
+                                                  grant__action=action).order_by('pk')[:100]
+        choices[key] = [{'id': person.pk, 'label': person.get_full_name() or person.username} for person in people]
+    proofs = public_evidence(case.evidence.filter(kind='policy_decision')).only('version').order_by('-pk')[:25]
+    return {'revision': case.revision, 'latest_id': record.pk if record else None,
+            'settings': reference_values(record)[0] if record else None, **choices,
+            'contacts': [{'id': contact.pk, 'label': f'{contact.name} · {contact.email}'} for contact in contacts],
+            'proofs': [{'id': proof.pk, 'label': f'Owner decision · version {proof.version}'} for proof in proofs]}
+
+
+@endpoint(method='POST', request=obj({'revision': REVISION, 'latest_id': nullable(ID),
+    'evidence_id': ID, 'settings': VALUE}), response=CONFIG, status=201,
+    summary='Draft exact reminder delivery settings for independent review')
+@transaction.atomic
+def draft_rule(request, case_id, *, body):
+    actor = request.user
+    case = impact.context(actor, case_id)
+    case = lock_case(actor, case.pk, 'policy.configure', body['revision'])
+    previous = rule_head(actor, case)
+    if (previous.pk if previous else None) != body['latest_id']:
+        raise Problem(409, 'stale_version', 'Review the latest reminder settings before drafting a new version.')
+    if not public_evidence(case.evidence.filter(kind='policy_decision', pk=body['evidence_id'])).exists():
+        raise Problem(422, 'invalid_input', 'Choose a recorded owner decision in this workspace.')
+    draft = draft_operator_policy(actor, case.pk, COMPONENT, body['settings'], body['evidence_id'], timezone.now())
+    return config_payload(states(Configuration.objects.only('component', 'revision')).get(pk=draft.pk))
 
 
 def exact(actor, case_id, issue_id):

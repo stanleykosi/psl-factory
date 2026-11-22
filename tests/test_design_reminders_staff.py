@@ -57,9 +57,31 @@ class PaymentReminderTests(TestCase):
         return config
 
     def test_api_schedules_checked_attachment_and_reads_verified_mailbox_receipt(self):
-        self.activate_delivery('synthetic_mailbox', attachment_required=True, schedule_days_ahead=2)
         actor, case, issue = self.actor, self.case, self.issue
         self.client.force_login(actor)
+        setup = f'/api/v1/setup/{case.pk}/payment-reminder-rules'
+        policy_url = f'/api/v1/setup/{case.pk}/policy-configurations'
+        settings = self.client.get(setup)
+        self.assertEqual(settings.status_code, 200, settings.content)
+        self.assertIsNone(settings.json()['settings'])
+        self.assertIn(actor.pk, {row['id'] for row in settings.json()['senders']})
+        proposed = {'revision': settings.json()['revision'], 'latest_id': settings.json()['latest_id'],
+                    'evidence_id': self.policy.pk, 'settings': {
+                        'contact_revision_ids': [self.contact.pk], 'sender_ids': [actor.pk],
+                        'receipt_recorder_ids': [actor.pk], 'mode': 'synthetic_mailbox',
+                        'days_after_due': 0, 'minimum_days_between': 1, 'attachment_required': True, 'schedule_days_ahead': 2}}
+        response = self.client.post(setup, proposed, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        state = response.json()
+        self.assertEqual(state['state'], 'draft')
+        duplicate = self.client.post(setup, {**proposed, 'revision': rev(case)}, content_type='application/json')
+        self.assertEqual(duplicate.status_code, 409, duplicate.content)
+        for transition_name in ('validated', 'active'):
+            reviewed = self.client.post(f"{policy_url}/{state['id']}/review", {
+                'case_revision': rev(case), 'state_id': state['state_id'], 'transition': transition_name},
+                content_type='application/json')
+            self.assertEqual(reviewed.status_code, 200, reviewed.content)
+            state = reviewed.json()
         url = f'/api/v1/projects/{case.pk}/invoices/{issue.pk}/reminder'
         options = self.client.get(url).json()
         self.assertEqual(options['recipient']['email'], 'billing@example.invalid')

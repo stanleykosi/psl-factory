@@ -170,6 +170,11 @@ class GoLiveReplyTests(TestCase):
             accept(f)
         self.client.force_login(f.actor)
         url=reverse('factory_work_response',args=[f.work.pk])
+        api = f'/api/v1/work/{f.work.pk}/go-live-replies/decline'
+        choices = self.client.get(api)
+        self.assertEqual(choices.status_code, 200, choices.content)
+        self.assertEqual(choices.json()['issues'][0]['reply_id'], response.pk)
+        self.assertIn(f.actor.pk, {option['id'] for option in choices.json()['issues'][0]['owners']})
         f.work.refresh_from_db()
         self.assertRedirects(self.client.post(url,{'action':'client_decline_issue','revision':f.work.revision,
             'case_revision':rev(f.case),'reply_id':response.pk,'owner_id':f.actor.pk,
@@ -204,6 +209,9 @@ class GoLiveReplyTests(TestCase):
         unrelated = register_candidate(f.actor, f.case.pk, 'UNRELATED-CANDIDATE', f.e['requirements'].pk, rev(f.case))
         unrelated_dossier = delivery.open_dossier(f.actor, f.case.pk, unrelated.pk, proof.pk,
             'Independent candidate without the client-decline origin.', rev(f.case))
+        available = self.client.get(api)
+        self.assertEqual(available.status_code, 200, available.content)
+        self.assertEqual([row['id'] for row in available.json()['review_options'][0]['destinations']], [successor.pk])
         with self.assertRaisesMessage(ValidationError, 'exact client decline'):
             go_live_replies.remediate(f.actor, f.case.pk, response.pk, None, unrelated_dossier.pk,
                 'PMO Lead', proof.pk, 'An unrelated candidate cannot receive this fix handoff.', rev(f.case))
@@ -321,9 +329,13 @@ class GoLiveReplyTests(TestCase):
         self.assertEqual(GoLiveClientReply.objects.count(),1)
         self.assertContains(self.client.post(reverse('factory_invoice_recovery',args=[f.work.pk]),data),'available action')
         f.work.refresh_from_db()
-        draft_data={**RULES,'action':'client_reply_rules','revision':f.work.revision,'case_revision':rev(f.case),
-            'base_configuration':policy.pk,'evidence_id':f.e['policy_decision'].pk,'allow_recorder_correction':'yes'}
-        self.assertRedirects(self.client.post(url,draft_data),url)
+        api = f'/api/v1/work/{f.work.pk}/go-live-replies/decline'
+        rules = {key: value for key, value in RULES.items() if key not in {'key', 'kind'}}
+        rules['allow_recorder_correction'] = True
+        draft_data = {'rules': rules, 'expected_revision': f.work.revision, 'case_revision': rev(f.case),
+                      'base_configuration_id': policy.pk, 'evidence_id': f.e['policy_decision'].pk}
+        drafted = self.client.post(api, draft_data, content_type='application/json')
+        self.assertEqual(drafted.status_code, 201, drafted.content)
         draft=Configuration.objects.filter(case=f.case,component=go_live_replies.COMPONENT).latest('pk')
         self.assertNotEqual(draft.pk,policy.pk)
         self.assertEqual(active_component(go_live_replies.COMPONENT,f.case).pk,policy.pk)

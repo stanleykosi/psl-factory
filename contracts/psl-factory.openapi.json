@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "Use the current same-origin Django session. For JSON writes, read the session CSRF token from GET /api/v1/me. Follow returned Django links for workflow steps that use native forms."
   },
   "security": [
@@ -12304,6 +12304,661 @@
         }
       }
     },
+    "/api/v1/projects/{case_id}/payroll/name-checks": {
+      "get": {
+        "summary": "Read which private payroll and HR name-check actions apply to the current user",
+        "operationId": "payroll_identity_options",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "configured": {
+                      "type": "boolean"
+                    },
+                    "can_compare": {
+                      "type": "boolean"
+                    },
+                    "can_route_difference": {
+                      "type": "boolean"
+                    },
+                    "attestation_sides": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "payroll",
+                          "hr"
+                        ]
+                      },
+                      "maxItems": 2
+                    }
+                  },
+                  "required": [
+                    "revision",
+                    "configured",
+                    "can_compare",
+                    "can_route_difference",
+                    "attestation_sides"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Compare the two owner-attested names for one exact matched staff ID",
+        "operationId": "payroll_identity_compare",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "awaiting_source",
+                        "same",
+                        "different"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "result"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "run_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "input_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "row_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                  }
+                },
+                "required": [
+                  "revision",
+                  "run_id",
+                  "input_id",
+                  "row_key"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/payroll/name-attestations": {
+      "post": {
+        "summary": "Record a private name exactly as held by the authorised owner of that payroll or HR source",
+        "operationId": "payroll_identity_attest",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attestation_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "attestation_id",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "payroll",
+                      "hr"
+                    ]
+                  },
+                  "record_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "row_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "source_reference": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  }
+                },
+                "required": [
+                  "revision",
+                  "side",
+                  "record_id",
+                  "row_key",
+                  "name",
+                  "source_reference"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{case_id}/payroll/name-checks/{comparison_id}": {
+      "get": {
+        "summary": "Read the authorised name comparison and HR correction status",
+        "operationId": "payroll_identity_detail",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "comparison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "awaiting_source",
+                        "same",
+                        "different"
+                      ]
+                    },
+                    "followup": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "response",
+                            "correction_return",
+                            "correction_reject"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "result",
+                    "followup",
+                    "review"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Send the recorded name difference to HR through the existing correction workflow",
+        "operationId": "payroll_identity_route",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "comparison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "followup_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "request_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "followup_id",
+                    "request_id",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  }
+                },
+                "required": [
+                  "revision"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/work/{work_id}/history": {
       "get": {
         "summary": "Read recent work, decision or evidence history",
@@ -19186,6 +19841,785 @@
         }
       }
     },
+    "/api/v1/work/{work_id}/go-live-replies/decline": {
+      "get": {
+        "summary": "Read approved options for declined replies and the source-backed response rule draft",
+        "operationId": "go_live_replies_decline_options",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "reply_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "existing_issues": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "label": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "label"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "maxItems": 50
+                          },
+                          "owners": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "label": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "label"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "maxItems": 50
+                          }
+                        },
+                        "required": [
+                          "reply_id",
+                          "existing_issues",
+                          "owners"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "new_candidates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "reply_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "requirements_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          }
+                        },
+                        "required": [
+                          "reply_id",
+                          "requirements_id"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "review_options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "reply_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "previous_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "roles": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 100
+                            }
+                          },
+                          "destinations": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "label": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "label"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "maxItems": 50
+                          }
+                        },
+                        "required": [
+                          "reply_id",
+                          "previous_id",
+                          "roles",
+                          "destinations"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "rules": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "base_configuration_id": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "current": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "recording_roles": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "uniqueItems": true,
+                                      "items": {
+                                        "enum": [
+                                          "HR",
+                                          "PM",
+                                          "Head of PMO",
+                                          "CEO",
+                                          "PMO Lead",
+                                          "Product",
+                                          "Product Owner",
+                                          "Engineering",
+                                          "Engineering Lead",
+                                          "Security Manager",
+                                          "Client",
+                                          "QA",
+                                          "PMO",
+                                          "CTO",
+                                          "Security Lead",
+                                          "Finance",
+                                          "BaaS",
+                                          "Data",
+                                          "Legal",
+                                          "Support",
+                                          "Reconciliation",
+                                          "Process User",
+                                          "Automation Team"
+                                        ]
+                                      }
+                                    },
+                                    "correction_roles": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "uniqueItems": true,
+                                      "items": {
+                                        "enum": [
+                                          "HR",
+                                          "PM",
+                                          "Head of PMO",
+                                          "CEO",
+                                          "PMO Lead",
+                                          "Product",
+                                          "Product Owner",
+                                          "Engineering",
+                                          "Engineering Lead",
+                                          "Security Manager",
+                                          "Client",
+                                          "QA",
+                                          "PMO",
+                                          "CTO",
+                                          "Security Lead",
+                                          "Finance",
+                                          "BaaS",
+                                          "Data",
+                                          "Legal",
+                                          "Support",
+                                          "Reconciliation",
+                                          "Process User",
+                                          "Automation Team"
+                                        ]
+                                      }
+                                    },
+                                    "remediation_roles": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "uniqueItems": true,
+                                      "items": {
+                                        "enum": [
+                                          "HR",
+                                          "PM",
+                                          "Head of PMO",
+                                          "CEO",
+                                          "PMO Lead",
+                                          "Product",
+                                          "Product Owner",
+                                          "Engineering",
+                                          "Engineering Lead",
+                                          "Security Manager",
+                                          "Client",
+                                          "QA",
+                                          "PMO",
+                                          "CTO",
+                                          "Security Lead",
+                                          "Finance",
+                                          "BaaS",
+                                          "Data",
+                                          "Legal",
+                                          "Support",
+                                          "Reconciliation",
+                                          "Process User",
+                                          "Automation Team"
+                                        ]
+                                      }
+                                    },
+                                    "allow_recorder_correction": {
+                                      "type": "boolean"
+                                    },
+                                    "channels": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "uniqueItems": true,
+                                      "items": {
+                                        "enum": [
+                                          "email",
+                                          "customer_portal",
+                                          "meeting",
+                                          "phone",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "changes_handling": {
+                                      "enum": [
+                                        "reviewed_document_successor",
+                                        "owner_review"
+                                      ]
+                                    },
+                                    "decline_handling": {
+                                      "enum": [
+                                        "new_release_candidate",
+                                        "owner_review"
+                                      ]
+                                    },
+                                    "issue_states_for_new_release": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "uniqueItems": true,
+                                      "items": {
+                                        "enum": [
+                                          "Resolved",
+                                          "Closed"
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "recording_roles",
+                                    "correction_roles",
+                                    "remediation_roles",
+                                    "allow_recorder_correction",
+                                    "channels",
+                                    "changes_handling",
+                                    "decline_handling",
+                                    "issue_states_for_new_release"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "proofs": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "version",
+                                  "kind"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 50
+                            }
+                          },
+                          "required": [
+                            "base_configuration_id",
+                            "current",
+                            "proofs"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "issues",
+                    "new_candidates",
+                    "review_options",
+                    "rules"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Draft the Go-live client response rules for separate policy validation and activation",
+        "operationId": "go_live_replies_draft_rules",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "base_configuration_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "rules": {
+                    "type": "object",
+                    "properties": {
+                      "recording_roles": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "enum": [
+                            "HR",
+                            "PM",
+                            "Head of PMO",
+                            "CEO",
+                            "PMO Lead",
+                            "Product",
+                            "Product Owner",
+                            "Engineering",
+                            "Engineering Lead",
+                            "Security Manager",
+                            "Client",
+                            "QA",
+                            "PMO",
+                            "CTO",
+                            "Security Lead",
+                            "Finance",
+                            "BaaS",
+                            "Data",
+                            "Legal",
+                            "Support",
+                            "Reconciliation",
+                            "Process User",
+                            "Automation Team"
+                          ]
+                        }
+                      },
+                      "correction_roles": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "enum": [
+                            "HR",
+                            "PM",
+                            "Head of PMO",
+                            "CEO",
+                            "PMO Lead",
+                            "Product",
+                            "Product Owner",
+                            "Engineering",
+                            "Engineering Lead",
+                            "Security Manager",
+                            "Client",
+                            "QA",
+                            "PMO",
+                            "CTO",
+                            "Security Lead",
+                            "Finance",
+                            "BaaS",
+                            "Data",
+                            "Legal",
+                            "Support",
+                            "Reconciliation",
+                            "Process User",
+                            "Automation Team"
+                          ]
+                        }
+                      },
+                      "remediation_roles": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "enum": [
+                            "HR",
+                            "PM",
+                            "Head of PMO",
+                            "CEO",
+                            "PMO Lead",
+                            "Product",
+                            "Product Owner",
+                            "Engineering",
+                            "Engineering Lead",
+                            "Security Manager",
+                            "Client",
+                            "QA",
+                            "PMO",
+                            "CTO",
+                            "Security Lead",
+                            "Finance",
+                            "BaaS",
+                            "Data",
+                            "Legal",
+                            "Support",
+                            "Reconciliation",
+                            "Process User",
+                            "Automation Team"
+                          ]
+                        }
+                      },
+                      "allow_recorder_correction": {
+                        "type": "boolean"
+                      },
+                      "channels": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "enum": [
+                            "email",
+                            "customer_portal",
+                            "meeting",
+                            "phone",
+                            "other"
+                          ]
+                        }
+                      },
+                      "changes_handling": {
+                        "enum": [
+                          "reviewed_document_successor",
+                          "owner_review"
+                        ]
+                      },
+                      "decline_handling": {
+                        "enum": [
+                          "new_release_candidate",
+                          "owner_review"
+                        ]
+                      },
+                      "issue_states_for_new_release": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "enum": [
+                            "Resolved",
+                            "Closed"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "recording_roles",
+                      "correction_roles",
+                      "remediation_roles",
+                      "allow_recorder_correction",
+                      "channels",
+                      "changes_handling",
+                      "decline_handling",
+                      "issue_states_for_new_release"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "base_configuration_id",
+                  "rules",
+                  "evidence_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/work/{work_id}/go-live-milestone": {
       "post": {
         "summary": "Draft a sourced milestone mapping or record its independently evidenced PMO completion",
@@ -20903,8 +22337,299 @@
                       "reason"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "restart"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "request_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "inputs": {
+                        "type": "object",
+                        "properties": {
+                          "input_ids": {
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "uniqueItems": true,
+                            "items": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            }
+                          },
+                          "hr_snapshot_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "input_ids",
+                          "hr_snapshot_id"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "configuration_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "instruction_key": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "request_id",
+                      "inputs",
+                      "configuration_id",
+                      "instruction_key",
+                      "reason"
+                    ],
+                    "additionalProperties": false
                   }
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/payroll-recovery": {
+      "get": {
+        "summary": "Read the caller\u2019s prior payroll receipt or the current profile for a fresh preparation instruction",
+        "operationId": "payroll_sources_recovery",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "restart": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "expected_revision": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2147483647
+                            },
+                            "case_revision": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2147483647
+                            },
+                            "request_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "selected": {
+                              "type": "object",
+                              "properties": {
+                                "input_ids": {
+                                  "type": "array",
+                                  "minItems": 2,
+                                  "maxItems": 2,
+                                  "uniqueItems": true,
+                                  "items": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  }
+                                },
+                                "hr_snapshot_id": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 9223372036854775807
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "input_ids",
+                                "hr_snapshot_id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "configuration_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            }
+                          },
+                          "required": [
+                            "expected_revision",
+                            "case_revision",
+                            "request_id",
+                            "selected",
+                            "configuration_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "previous_receipt": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "publication": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2147483647
+                            },
+                            "withdrawn_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "receipt_id": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "received_at": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "publication",
+                            "version",
+                            "withdrawn_at",
+                            "receipt_id",
+                            "received_at"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "restart",
+                    "previous_receipt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -23219,6 +24944,599 @@
                   "effective_from"
                 ],
                 "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/stability/events": {
+      "get": {
+        "summary": "Read actual release and Go-live acceptance controls for independently started stability work",
+        "operationId": "hypercare_events",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "can_record_release": {
+                      "type": "boolean"
+                    },
+                    "readiness_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "maxItems": 50
+                    },
+                    "release_evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "signatures": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "private_logs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "filename": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "filename"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "acceptance_packet": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "receipts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version_id",
+                          "at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "can_record_release",
+                    "readiness_ids",
+                    "release_evidence",
+                    "signatures",
+                    "private_logs",
+                    "acceptance_packet",
+                    "receipts"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record the observed release or the separate exact PM and client signatures",
+        "operationId": "hypercare_record_event",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "release"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "readiness_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "released_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "reference": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 240
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "environment": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "private_log_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "readiness_id",
+                      "released_at",
+                      "reference",
+                      "evidence_id",
+                      "note",
+                      "environment",
+                      "private_log_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "acceptance"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "packet": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "receipt_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "pm_signature_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "client_signature_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "signers": {
+                        "type": "object",
+                        "properties": {
+                          "PM": {
+                            "type": "object",
+                            "properties": {
+                              "source_system": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "source_reference": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "decision_id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "decision_version": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "signer_reference": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "signed_at": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
+                            },
+                            "required": [
+                              "source_system",
+                              "source_reference",
+                              "decision_id",
+                              "decision_version",
+                              "signer_reference",
+                              "signed_at"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "Client": {
+                            "type": "object",
+                            "properties": {
+                              "source_system": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "source_reference": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "decision_id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "decision_version": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "signer_reference": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 160
+                              },
+                              "signed_at": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
+                            },
+                            "required": [
+                              "source_system",
+                              "source_reference",
+                              "decision_id",
+                              "decision_version",
+                              "signer_reference",
+                              "signed_at"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "PM",
+                          "Client"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "packet",
+                      "receipt_id",
+                      "pm_signature_id",
+                      "client_signature_id",
+                      "signers",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
               }
             }
           }
@@ -29231,6 +31549,514 @@
         }
       }
     },
+    "/api/v1/setup/{case_id}/payment-reminder-rules": {
+      "get": {
+        "summary": "Read the current reminder draft and its scoped contact, sender and evidence choices",
+        "operationId": "reminders_rule_options",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "latest_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "settings": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "contact_revision_ids": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 100,
+                              "uniqueItems": true,
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1
+                              }
+                            },
+                            "sender_ids": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 100,
+                              "uniqueItems": true,
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1
+                              }
+                            },
+                            "receipt_recorder_ids": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 100,
+                              "uniqueItems": true,
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1
+                              }
+                            },
+                            "mode": {
+                              "enum": [
+                                "manual_evidence",
+                                "synthetic_inbox",
+                                "synthetic_mailbox"
+                              ]
+                            },
+                            "days_after_due": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 365
+                            },
+                            "minimum_days_between": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 365
+                            },
+                            "attachment_required": {
+                              "type": "boolean"
+                            },
+                            "schedule_days_ahead": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 365
+                            }
+                          },
+                          "required": [
+                            "contact_revision_ids",
+                            "sender_ids",
+                            "receipt_recorder_ids",
+                            "mode",
+                            "days_after_due",
+                            "minimum_days_between"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "contacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "senders": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "receipt_recorders": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "proofs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 25
+                    }
+                  },
+                  "required": [
+                    "revision",
+                    "latest_id",
+                    "settings",
+                    "contacts",
+                    "senders",
+                    "receipt_recorders",
+                    "proofs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Draft exact reminder delivery settings for independent review",
+        "operationId": "reminders_draft_rule",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "component": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "state_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "validated",
+                        "active",
+                        "revoked",
+                        "superseded"
+                      ]
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "validated",
+                          "active",
+                          "revoked"
+                        ]
+                      },
+                      "maxItems": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "component",
+                    "version",
+                    "state_id",
+                    "state",
+                    "actions"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "latest_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "settings": {
+                    "type": "object",
+                    "properties": {
+                      "contact_revision_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "sender_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "receipt_recorder_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "mode": {
+                        "enum": [
+                          "manual_evidence",
+                          "synthetic_inbox",
+                          "synthetic_mailbox"
+                        ]
+                      },
+                      "days_after_due": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 365
+                      },
+                      "minimum_days_between": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 365
+                      },
+                      "attachment_required": {
+                        "type": "boolean"
+                      },
+                      "schedule_days_ahead": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 365
+                      }
+                    },
+                    "required": [
+                      "contact_revision_ids",
+                      "sender_ids",
+                      "receipt_recorder_ids",
+                      "mode",
+                      "days_after_due",
+                      "minimum_days_between"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "revision",
+                  "latest_id",
+                  "evidence_id",
+                  "settings"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/projects/{case_id}/invoices/{issue_id}/payments": {
       "get": {
         "summary": "Read payment reporting controls for an exact invoice",
@@ -31006,6 +33832,18 @@
                           "created_at": {
                             "type": "string",
                             "format": "date-time"
+                          },
+                          "replaces_input_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -31015,7 +33853,8 @@
                           "accepted",
                           "status",
                           "codes",
-                          "created_at"
+                          "created_at",
+                          "replaces_input_id"
                         ],
                         "additionalProperties": false
                       },
@@ -31168,6 +34007,18 @@
                         "created_at": {
                           "type": "string",
                           "format": "date-time"
+                        },
+                        "replaces_input_id": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -31177,7 +34028,8 @@
                         "accepted",
                         "status",
                         "codes",
-                        "created_at"
+                        "created_at",
+                        "replaces_input_id"
                       ],
                       "additionalProperties": false
                     }
@@ -31283,6 +34135,11 @@
                   "control_total": {
                     "type": "string",
                     "maxLength": 100
+                  },
+                  "replaces_input_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
                   }
                 },
                 "required": [

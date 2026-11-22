@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Payroll recovery, reminder settings and release closeout APIs · 22 November 2026
+
+OpenAPI 1.6.0 adds 12 operations. A payroll source owner can import a corrected successor with `replaces_input_id`. Restricted name checks take separate source-owner attestations and return comparison and HR correction status. Payroll recovery gives prior withdrawal and recipient receipt details or the profile for settled unpublished restart. Go-live decline options list exact linked candidates, and stability events record the actual release and exact signed acceptance through the original services. Use the shared policy review operations to validate and activate drafts. [Contract](contracts/psl-factory.openapi.json)
+
+The work leaves 35 groups with API gaps across 198 states. Next are account and staff administration, specialist source decisions, commercial and reporting actions, and Finance close. Run the `recover-api` and `go-live-api` isolated Railway suites. HOD rules and real appointments remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+
 ## HR handoff and payroll question APIs · 22 November 2026
 
 OpenAPI 1.5.0 adds 12 operations. Read and act on a Finance need or exact HR disclosure through `hr-disclosures`. Upload the original UTF-8 export as multipart against its approved disclosure, and read named-recipient rows through a separate paged resource. Read the original approval and receipt and the corrected successor. Use `payroll/reports` for current aggregate-only totals and a recipient receipt, and `payroll/questions` for a participant-scoped review, dispatch, HR reply and acknowledgement. [Frontend handoff](docs/design/frontend-api.md)

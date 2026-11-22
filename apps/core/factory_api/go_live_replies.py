@@ -1,14 +1,16 @@
 """Evidence and decisions following a delivered Go-live report."""
 from time import monotonic
 
+from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.pmo.go_live_reply_forms import panels
-from apps.policy.go_live_reply_validators import CHANNELS
+from apps.pmo.issue_access import public_current_issues
+from apps.policy.go_live_reply_validators import CHANNELS, VALUE as RULE_VALUE
 from apps.workflows import factory_go_live as domain, factory_go_live_milestone as milestones
 
 from .commands import require_line
-from .delivery import NOTE, RESPONSE, recorded
+from .delivery import NOTE, PROOF, RESPONSE, proof_rows, recorded
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, array, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
 from .work import WORK_RESULT, result
@@ -20,6 +22,66 @@ REPLY = obj({'id': ID, 'receipt_id': ID, 'version_id': ID, 'number': REVISION, '
     'party': nullable(TEXT), 'channel': nullable(choice(*CHANNELS)), 'responded_at': nullable(DATETIME),
     'note': nullable(TEXT), 'evidence_id': nullable(ID)})
 CHOICE = obj({'receipt_id': ID, 'previous_id': nullable(ID), 'roles': array(ROLE)})
+DECLINE_OPTION = obj({'id': ID, 'label': TEXT})
+RULE_INPUT = obj({key: value for key, value in RULE_VALUE['properties'].items() if key not in {'kind', 'key'}})
+
+
+@endpoint(response=obj({**VERSIONS,
+    'issues': array(obj({'reply_id': ID, 'existing_issues': array(DECLINE_OPTION, limit=50),
+                         'owners': array(DECLINE_OPTION, limit=50)})),
+    'new_candidates': array(obj({'reply_id': ID, 'requirements_id': ID})),
+    'review_options': array(obj({'reply_id': ID, 'previous_id': nullable(ID), 'roles': array(ROLE),
+                                 'destinations': array(DECLINE_OPTION, limit=50)})),
+    'rules': nullable(obj({'base_configuration_id': nullable(ID), 'current': nullable(RULE_INPUT),
+                           'proofs': array(PROOF, limit=50)})),
+}), summary='Read approved options for declined replies and the source-backed response rule draft')
+@read_observation
+def decline_options(request, work_id):
+    actor = request.user
+    work = require_line(actor, work_id, domain.DEFINITION)
+    with limit_queries(650, deadline=monotonic() + 8):
+        state = domain.reply_state(actor, work)
+        actions = panels(actor, work, state)
+        issue_options = []
+        if actions['problems']:
+            fields = actions['problems'][0]['form'].fields
+            users = fields['owner_id'].queryset.only('first_name', 'last_name', 'username')[:50]
+            owners = [{'id': user.pk, 'label': user.get_full_name() or user.username} for user in users]
+            issues = fields['existing_issue_id'].queryset.filter(pk__in=public_current_issues(work.case).values('pk'))
+            active = [{'id': pk, 'label': reference} for pk, reference in issues.values_list('pk', 'reference')[:50]]
+            issue_options = [{'reply_id': row['reply'].pk, 'existing_issues': active, 'owners': owners}
+                             for row in actions['problems']]
+        reviews = []
+        for row in actions['remediation']:
+            reply, form = row['reply'], row['form']
+            choices = form.fields['destination_id'].queryset.filter(declined_reply__receipt_id=reply.receipt_id)
+            candidates = choices.exclude(records__kind__in=['closure', 'release_outcome']).order_by('-pk')
+            reviews.append({'reply_id': reply.pk, 'previous_id': form.initial['previous_id'],
+                            'roles': [key for key, _ in form.fields['role'].choices if key],
+                            'destinations': [{'id': pk, 'label': reference} for pk, reference in
+                                             candidates.values_list('pk', 'candidate__reference')[:50]]})
+        rules = None
+        if actions['rules'] is not None:
+            current = state['client_responses']['rules']
+            proofs = public_evidence(work.case.evidence.filter(kind='policy_decision')).only('kind', 'version').order_by('-pk')[:50]
+            rules = {'base_configuration_id': actions['rules'].initial['base_configuration'] or None,
+                     'current': {key: current[key] for key in RULE_INPUT['properties']} if current else None,
+                     'proofs': proof_rows(proofs)}
+    return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'issues': issue_options,
+            'new_candidates': [{'reply_id': row['reply'].pk, 'requirements_id': row['form'].initial['requirements_id']}
+                               for row in actions['candidates']], 'review_options': reviews, 'rules': rules}
+
+
+@endpoint(method='POST', request=obj({**VERSIONS, 'base_configuration_id': nullable(ID),
+                                     'rules': RULE_INPUT, 'evidence_id': ID}), response=RESPONSE, status=201,
+          summary='Draft the Go-live client response rules for separate policy validation and activation')
+def draft_rules(request, work_id, *, body):
+    work = require_line(request.user, work_id, domain.DEFINITION)
+    fields = {**body['rules'], 'base_configuration': body['base_configuration_id'] or 0, 'evidence_id': body['evidence_id']}
+    fields['allow_recorder_correction'] = 'yes' if fields['allow_recorder_correction'] else 'no'
+    row = domain.client_response_action(request.user, work.pk, body['expected_revision'], body['case_revision'],
+                                        'client_reply_rules', fields)
+    return recorded(work, row)
 
 
 @endpoint(response=obj({**VERSIONS, 'channels': array(choice(*CHANNELS)), 'finding': {'type': 'string'},

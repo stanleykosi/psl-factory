@@ -84,6 +84,28 @@ class PayrollRestartTests(TestCase):
         response=self.client.post(url,{'action':'restart','revision':self.work.revision,'case_revision':rev(f['case']),'request_id':f['request'].pk,'input_ids':self.inputs['input_ids'],'hr_snapshot_id':f['hr'].pk,'configuration_id':self.work.policy_id,'instruction_key':'console-restart','reason':'Fresh console instruction'})
         self.assertEqual(response.status_code,302);self.work.refresh_from_db();self.assertEqual(self.work.status,'ready')
 
+    def test_api_restarts_the_exact_unpublished_work_with_its_current_profile(self):
+        self.cancelled()
+        f, work = self.f, self.work
+        self.client.force_login(f['preparer'])
+        base = f'/api/v1/work/{work.pk}'
+        read = self.client.get(base + '/payroll-recovery')
+        self.assertEqual(read.status_code, 200, read.content)
+        options = read.json()['restart']
+        selected = options.pop('selected')
+        request = {'action': 'restart', 'inputs': selected, 'instruction_key': 'explicit-fresh-instruction',
+                   'reason': 'Use the reviewed original source selection.', **options}
+        budget = work.budget_used, work.budget_limit
+        before = work.source_head_id
+        for _ in range(2):
+            response = self.client.post(base + '/payroll-operations', request, content_type='application/json')
+            self.assertEqual(response.status_code, 200, response.content)
+        work.refresh_from_db()
+        self.assertEqual((work.budget_used, work.budget_limit), budget)
+        self.assertNotEqual(work.source_head_id, before)
+        self.assertEqual(response.json()['work_id'], work.pk)
+        self.assertEqual(Audit.objects.filter(action='factory.payroll_restarted', data__work=work.pk).count(), 1)
+
     def test_restart_by_other_manager_preserves_original_executor_and_revoked_grants(self):
         from apps.finance.payroll_models import PayrollRun
         from apps.workflows.models import FactoryExecutionBinding

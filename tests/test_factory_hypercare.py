@@ -264,6 +264,55 @@ class FactoryHypercareTests(TestCase):
         self.assertContains(self.client.get(reverse('factory_create')+'?definition=delivery-hypercare/v1&case='+str(f.case.pk)),'Start release follow-up')
         self.assertContains(self.client.get(reverse('factory_configuration',args=[f.case.pk])+'?definition=delivery-hypercare/v1'),'Release observations and hypercare')
 
+    def test_api_records_observed_release_and_acceptance_before_stability_work_runs(self):
+        from tests.test_delivery import CRITERIA
+
+        f = setup()
+        readiness = f.ready()
+        self.client.force_login(f.actor)
+        root = f'/api/v1/work/{f.work.pk}/stability'
+        url = root + '/events'
+        options = self.client.get(url)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertIn(readiness.pk, options.json()['readiness_ids'])
+
+        def post(action, **fields):
+            f.work.refresh_from_db()
+            return self.client.post(url, {'action': action, 'expected_revision': f.work.revision,
+                'case_revision': rev(f.case), **fields}, content_type='application/json')
+
+        observed = post('release', readiness_id=readiness.pk, released_at=timezone.now().isoformat(),
+                        reference='SAMPLE API actual release', evidence_id=f.e['completion'].pk,
+                        note='Independent observation of the actual environment.', environment=None, private_log_id=None)
+        self.assertEqual(observed.status_code, 201, observed.content)
+        inputs = {key: f.evidence(kind).pk for key, kind in [('checklist', 'deployment_checklist'),
+                  ('incident_reporting', 'incident_reporting'), ('rollback', 'rollback_plan')]}
+        version = draft_delivery_document(f.actor, f.case.pk, f.d.pk, 'go_live', f.t.pk, inputs, rev(f.case))
+        receipt = f.publish(version)
+        pm, client = f.evidence('signature', 'Observed PM signature'), f.evidence('signature', 'Observed client signature')
+        options = self.client.get(url)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual(options.json()['receipts'][0]['version_id'], version.pk)
+        payload = f.attestation(receipt, pm, client)
+        signatures = {role: {key: value for key, value in fact.items() if key not in {'evidence', 'purpose'}}
+                      for role, fact in payload['signatures'].items()}
+        accepted = post('acceptance', packet=options.json()['acceptance_packet'], receipt_id=receipt.pk,
+                        pm_signature_id=pm.pk, client_signature_id=client.pk, signers=signatures,
+                        note='Exact PM and client signatures were recorded.')
+        self.assertEqual(accepted.status_code, 201, accepted.content)
+        self.assertEqual(closure.accepted_go_live(f.d).pk, accepted.json()['record_id'])
+        draft = self.client.post(root + '/criteria', {'criteria': CRITERIA, 'case_revision': rev(f.case),
+            'evidence_id': f.e['policy_decision'].pk, 'effective_from': timezone.now().isoformat()}, content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        config = draft.json()['configuration_id']
+        transition(f.actor, config, 'validated')
+        transition(f.actor, config, 'active')
+        f.observations()
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        self.assertEqual(f.work.status, 'verified', f.work.finding)
+        self.assertTrue(factory_hypercare.assessed(f.work).snapshot['qualified'])
+
     def test_unknown_and_negative_observations_are_recorded_without_false_qualification(self):
         f=setup();f.accepted();f.criteria();f.observations(errors=None,confirmed=None)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();row=factory_hypercare.assessed(f.work)

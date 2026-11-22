@@ -24,6 +24,7 @@ from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollReview
 from .hrfinance_models import HRReadSnapshot
 REQUEST=obj({'entity':KEY,'period':{'type':'string','pattern':r'^\d{4}-(0[1-9]|1[0-2])$'},'currency':KEY,'providers':{'type':'array','minItems':2,'maxItems':2,'uniqueItems':True,'items':KEY},'purpose':{'const':'bu_staff_cost'}})
 STAGE_POLICY={'combine':MERGE,'match':MATCH,'aggregate':REPORT}
+INPUT_REPLACED = 'factory.payroll_input_replaced'
 
 def locked(actor,case_id,action,expected=None):
  c=lock_case(actor,case_id,action,expected);list(Grant.objects.select_for_update().filter(case=c).order_by('pk'))
@@ -141,7 +142,7 @@ def request(actor,case_id,reference,metadata,evidence_id,expected):
  event(actor,c,'payroll.request',request=r.pk,version=v);bump(c);return r
 
 @transaction.atomic
-def capture(actor,case_id,request_id,provider,operation_key,body,expected,*,spreadsheet=None):
+def capture(actor,case_id,request_id,provider,operation_key,body,expected,*,spreadsheet=None,replaces=None):
  c=locked(actor,case_id,'payroll.capture',expected);q=exact(c,PayrollRequest,request_id);validate(KEY,operation_key)
  config,v=access(q);owner=next((r for r in v['providers'] if r['provider']==provider),None)
  if not owner or owner['owner_id']!=actor.pk:raise PermissionDenied('This provider requires its actual nominated owner')
@@ -162,9 +163,14 @@ def capture(actor,case_id,request_id,provider,operation_key,body,expected,*,spre
   import_pin={'spreadsheet_format':format_,'import_sha256':digest({'layout':layout,'extraction':declared,'source':source_hash})}
  old=q.inputs.defer('payload').filter(operation_key=operation_key).first()
  if old:
+  prior=Audit.objects.filter(case=c,action=INPUT_REPLACED,data__input=old.pk).values_list('data__previous',flat=True).first()
   if (old.actor_id!=actor.pk or old.provider!=provider or old.source_sha256!=source_hash or
-      old.metadata.get('import_sha256')!=import_pin.get('import_sha256')):raise ValidationError('Input retry key used for changed intent')
+      old.metadata.get('import_sha256')!=import_pin.get('import_sha256') or prior!=replaces):raise ValidationError('Input retry key used for changed intent')
   return old
+ if replaces is not None:
+  current=q.inputs.filter(provider=provider).order_by('-version').values_list('pk',flat=True).first()
+  if type(replaces) is not int or current!=replaces:
+   raise ValidationError('STALE_VERSION: Reload the latest export for this request and provider.')
  try:
   if spreadsheet is not None:
    body=json.dumps({**declared,'provider':provider,'unit':'major_currency',
@@ -177,7 +183,9 @@ def capture(actor,case_id,request_id,provider,operation_key,body,expected,*,spre
  version=(q.inputs.filter(provider=provider).order_by('-version').values_list('version',flat=True).first() or 0)+1
  meta={'accepted':accepted,'status':'complete' if accepted and not codes else 'held','codes':sorted(set(codes)),'access_policy_id':config.pk,'owner_authority':authority,'extracted_at':p.get('extracted_at'),'source_version':p.get('source_version'),'native_authenticity_verified':False,**import_pin}
  i=PayrollInput.objects.create(request=q,provider=provider,version=version,operation_key=operation_key,source_sha256=source_hash,sha256=digest({'payload':p,'metadata':meta,'source_sha256':source_hash}),metadata=meta,payload=p,retain_until=timezone.now()+timedelta(seconds=v['retention_seconds']),actor=actor)
- event(actor,c,'payroll.input',input=i.pk,accepted=accepted,codes=codes);bump(c);return i
+ event(actor,c,'payroll.input',input=i.pk,accepted=accepted,codes=codes)
+ if replaces is not None:event(actor,c,INPUT_REPLACED,input=i.pk,previous=replaces)
+ bump(c);return i
 
 def run_old(q,key,actor,kind,intent):
  old=q.runs.defer('result').filter(operation_key=key).first()

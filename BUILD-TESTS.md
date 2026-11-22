@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI recovery and release closeout · 22 November 2026
+
+The first four PostgreSQL checks passed locally in 94.300 seconds, including original payroll replacement, separately attested names, an idempotent stopped-work restart, and reminder policy through mailbox receipt. The first Go-live and contract batch passed six of seven cases in 165.418 seconds. The stability case reached verified work, then an assertion accidentally carried over from the preceding Django missing-configuration test expected no assessment. That assertion was restored to its original test and the stability test now checks the qualified result it produced.
+
 ## OpenAPI HR handoffs and payroll questions · 22 November 2026
 
 The first combined local run passed the two HR disclosure tests and four contract checks. One payroll question test returned 503 on the assigned HR reader's exact view. The report read was validating its source lineage twice. The narrower path uses the exact review for lineage and authority checks and omits the aggregate amount payload for question metadata. The revised local suite passed all 11 tests in 80.797 seconds, with successful responses for all twelve new operations. It checked rejected and corrected HR exports, the distinct Finance recipient, exact aggregate receipt, scoped reply and original source-owner revocation. The existing Django two-report test deferred at its configured read limit after 1,116 queries, then opened the exact question separately.

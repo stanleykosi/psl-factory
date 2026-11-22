@@ -2,11 +2,13 @@
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, Func, JSONField, OuterRef, Subquery
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from adapters.forecast import KEY
 from apps.core.evidence_access import public_evidence
+from apps.core.models import Audit
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.core.views import accessible_case
@@ -15,8 +17,11 @@ from apps.finance.hrfinance_models import HRHandoffRecord
 from apps.finance.payroll_forms import commands
 from apps.finance.payroll_models import PayrollInput, PayrollPublication, PayrollReportReceipt, PayrollRequest, PayrollRun
 from apps.identity.services import active_case_grants, require, visible_cases
-from apps.policy.services import decision_authority
+from apps.policy.services import active_component, decision_authority
 from apps.workflows import factory_payroll
+from apps.workflows.factory_definitions import definition
+from apps.workflows.factory_payroll_views import recipient_withdrawal
+from apps.workflows.factory_views import permitted
 
 from .commands import require_line
 from .delivery import PROOF, RESPONSE, proof_rows, recorded
@@ -62,11 +67,13 @@ def create_request(request, case_id, *, body):
 
 
 IMPORT = obj({'id': ID, 'provider': TEXT, 'version': REVISION, 'accepted': BOOLEAN,
-              'status': choice('complete', 'held'), 'codes': array(TEXT), 'created_at': DATETIME})
+              'status': choice('complete', 'held'), 'codes': array(TEXT), 'created_at': DATETIME,
+              'replaces_input_id': nullable(ID)})
 
 
 def import_payload(row):
     return {'id': row.pk, 'provider': row.provider, 'version': row.version, 'created_at': row.created_at,
+            'replaces_input_id': row.replaces_input_id,
             **{key: row.metadata[key] for key in ('accepted', 'status', 'codes')}}
 
 
@@ -97,7 +104,9 @@ def imports(request, case_id, request_id):
                           for row in entry.get('spreadsheet_layouts', [])]]})
     if not (readable or available):
         raise PermissionDenied
-    rows = payroll.inputs.defer('payload').order_by('-pk')
+    replacements = Audit.objects.filter(case=case, action=native.INPUT_REPLACED,
+        data__input=Func(OuterRef('pk'), function='to_jsonb', output_field=JSONField())).order_by('-pk')
+    rows = payroll.inputs.defer('payload').annotate(replaces_input_id=Subquery(replacements.values('data__previous')[:1])).order_by('-pk')
     if not readable:
         rows = rows.filter(actor=actor, provider__in=[row['provider'] for row in available])
     page = Paginator(rows, 25).get_page(page_number(request))
@@ -109,13 +118,18 @@ def imports(request, case_id, request_id):
 @endpoint(method='POST', request=obj({'revision': REVISION, 'provider': {**TEXT, 'maxLength': 100}, 'operation_key': KEY,
     'file': {'type': 'string', 'format': 'binary'}, 'source_version': {**TEXT, 'maxLength': 100}, 'extracted_at': DATETIME,
     'completeness': choice('complete', 'partial', 'unknown'), 'control_total': {'type': 'string', 'maxLength': 100},
-}, optional=('source_version', 'extracted_at', 'completeness', 'control_total')),
+    'replaces_input_id': ID,
+}, optional=('source_version', 'extracted_at', 'completeness', 'control_total', 'replaces_input_id')),
           response=obj({'revision': REVISION, 'input': IMPORT}), status=201, multipart=True,
           summary='Import an original provider JSON, CSV or Excel export as its authorised source owner')
 def upload(request, case_id, request_id):
     case = workspace(request, case_id)
     require(request.user, case, 'payroll.capture')
     values = request.POST.copy()
+    prior = values.pop('replaces_input_id', [None])[0]
+    if prior is not None and (not prior.isascii() or not prior.isdecimal() or len(prior) > 19
+                              or not 1 <= int(prior) <= ID['maximum']):
+        raise Problem(422, 'invalid_input', 'Choose the exact previous export.')
     values['action'] = 'capture'
     values['request_record'] = str(request_id)
     form = next((item['form'] for item in commands(request.user, case, values, request.FILES) if item['action'] == 'capture'), None)
@@ -125,7 +139,9 @@ def upload(request, case_id, request_id):
         raise Problem(422, 'invalid_input', 'Check the payroll file and the required extraction details.')
     data = form.cleaned_data
     saved = native.capture(request.user, case.pk, request_id, data['provider'], data['operation_key'],
-                          data['body'], data['revision'], spreadsheet=data.get('spreadsheet'))
+                          data['body'], data['revision'], spreadsheet=data.get('spreadsheet'),
+                          replaces=int(prior) if prior is not None else None)
+    saved.replaces_input_id = int(prior) if prior is not None else None
     case.refresh_from_db(fields=['revision'])
     return {'revision': case.revision, 'input': import_payload(saved)}
 
@@ -166,6 +182,8 @@ OPERATIONS = {
     'publish': {},
     'withdraw': {'publication_id': ID, 'evidence_id': ID, 'reason': {**TEXT, 'maxLength': 2000}},
     'successor': {'publication_id': ID, 'request_id': ID, 'inputs': factory_payroll.INPUT, 'reason': {**TEXT, 'maxLength': 2000}},
+    'restart': {'request_id': ID, 'inputs': factory_payroll.INPUT, 'configuration_id': ID,
+                'instruction_key': KEY, 'reason': {**TEXT, 'maxLength': 2000}},
 }
 
 
@@ -211,9 +229,38 @@ def operate(request, work_id, *, body):
         row = factory_payroll.withdraw_publication(*args, **values)
     elif action == 'successor':
         row = factory_payroll.prepare_successor(*args, **values)
+    elif action == 'restart':
+        row = factory_payroll.restart(*args, **values)
     else:
         row = factory_payroll.human_action(*args, action, values)
     return recorded(work, row)
+
+
+@endpoint(response=obj({'work_id': ID, 'restart': nullable(obj({**VERSIONS, 'request_id': ID,
+    'selected': factory_payroll.INPUT, 'configuration_id': ID})), 'previous_receipt': nullable(obj({
+        'publication': ID, 'version': REVISION, 'withdrawn_at': DATETIME,
+        'receipt_id': nullable(ID), 'received_at': nullable(DATETIME),
+    }))}), summary='Read the caller’s prior payroll receipt or the current profile for a fresh preparation instruction')
+def recovery(request, work_id):
+    actor = request.user
+    work = require_line(actor, work_id, factory_payroll.DEFINITION)
+    restart = None
+    if (work.status == 'cancelled' and work.cancel_requested and permitted(actor, work, 'factory.manage')
+            and (work.lease_until is None or work.lease_until <= timezone.now())
+            and not factory_payroll.publication_history(work).exists()):
+        try:
+            payroll, selected = factory_payroll.source(work, actor, False)
+            configuration = active_component(definition(work.definition)['component'], work.case)
+        except (PermissionDenied, ValidationError):
+            pass
+        else:
+            restart = {'expected_revision': work.revision, 'case_revision': work.case.revision,
+                       'request_id': payroll.pk, 'selected': selected['inputs'], 'configuration_id': configuration.pk}
+    previous = recipient_withdrawal(actor, work)
+    if previous is None and restart is None:
+        # Match the exact source boundary used by the Django recovery screen before revealing a protected work ID.
+        factory_payroll.source(work, actor, False)
+    return {'work_id': work.pk, 'previous_receipt': previous, 'restart': restart}
 
 
 AGGREGATE = obj({'id': ID, 'version': REVISION, 'period': TEXT, 'entity': TEXT, 'currency': TEXT,

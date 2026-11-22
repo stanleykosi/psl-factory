@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_recovery_and_closeout_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.6.0",
+    "live_paths": 152,
+    "live_operations": 202,
+    "added_operations": 12,
+    "completed_groups": ["SCR-09", "SCR-18", "SCR-32", "SCR-45", "SCR-46", "SCR-59"],
+    "screen_groups_with_remaining_json": 35,
+    "states_in_groups_with_remaining_json": 198,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Staff administration and credential flows", "Specialist source decisions and commercial and reporting actions", "Finance close and full Railway API acceptance"],
+    "owner_decisions": "Live role appointments, rule values and external destinations remain deferred."
+  },
   "frontend_cutover_hr_handoffs_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.5.0",

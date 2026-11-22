@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Added versioned payroll replacement and restart, same-ID source-owner comparison and correction, withdrawal receipt readback, payment reminder policy drafting, Go-live decline options and the separate actual release and acceptance controls in stability work. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Added HR disclosure and correction commands, authenticated private export uploads and recipient row readback, aggregate payroll reports and receipts, and private payroll questions through acknowledged HR reply. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Added OpenAPI 1.4.0 commands for Planning and Delivery, release stability, private archive recovery, Support and closure. Added source-owner payroll upload and exact private row paging, including HR receipt and publication follow-up commands. Added Setup appointment drafts and policy version review, and exact original received bid readback. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

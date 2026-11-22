@@ -5,6 +5,7 @@ from itertools import islice
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, RequestDataTooBig, ValidationError
 from django.http import Http404, JsonResponse
 from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from jsonschema import Draft202012Validator, FormatChecker, validators
 
 from apps.core.read_budget import ReadLimit
@@ -62,6 +63,7 @@ def missing():
     return error(404, 'not_found', 'This record is unavailable.')
 
 
+@sensitive_variables('raw', 'body', 'failures')
 def json_body(request, schema):
     if request.content_type != 'application/json':
         raise Problem(415, 'unsupported_media_type', 'Send an application/json request.')
@@ -126,6 +128,8 @@ def endpoint(*, method='GET', request=None, response=None, status=200, summary, 
     def decorate(fn):
         @never_cache
         @wraps(fn)
+        @sensitive_post_parameters()
+        @sensitive_variables('kwargs')
         def view(http, *args, **kwargs):
             methods = [method, 'HEAD'] if method == 'GET' else [method]
             if not http.user.is_authenticated or not http.user.is_active:

@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI payroll recovery, reminder settings and release closeout · 22 November 2026
+
+OpenAPI 1.6.0 lists 202 operations on 152 paths. Twelve additional operations and extended commands cover versioned payroll import replacement, same-staff identity checks and HR correction, the original receipt after withdrawal and protected restart. Reminder delivery settings and Go-live response settings can be drafted and reviewed separately. Independently started stability work accepts an observed release and the exact PM and client signatures. The screen map records 35 groups covering 198 states with remaining API actions. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI HR handoffs and payroll questions · 22 November 2026
 
 OpenAPI 1.5.0 covers 190 operations on 145 paths. The twelve additions cover Finance needs, reviewed HR disclosures, exact private export capture and readback, corrections and recipient receipts, and HR questions on aggregate payroll. The API and Django share source checks and current human authority. The 41 screen groups with outstanding API actions cover 223 states. [Contract](contracts/psl-factory.openapi.json) · [Screen map](contracts/factory-api-screen-map.json)

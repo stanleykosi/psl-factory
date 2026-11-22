@@ -113,13 +113,19 @@ def receipts(d):
     if len(rows)>100:raise ValidationError('Narrow the go-live receipt history before acceptance')
     return rows
 
-def projection(actor,work):
+def event_subject(actor, work):
     from .factory import access
-    access(actor,work.case,envelope=DEFINITION)
-    try:d=subject(work,actor,current=False);subject(work,actor);intake_valid=True
-    except (ValidationError,PermissionDenied):
-        d=delivery.dossier_for(work.case,work.request['dossier'],current=False);intake_valid=False
-    observed=checks(d);can_release=can_accept=False;packet=None;current_receipts=[]
+    access(actor, work.case, envelope=DEFINITION)
+    try:
+        dossier = subject(work, actor, current=False)
+        subject(work, actor)
+    except (ValidationError, PermissionDenied):
+        return delivery.dossier_for(work.case, work.request['dossier'], current=False), False
+    return dossier, True
+
+
+def event_controls(actor, work, d, observed):
+    can_release=can_accept=False;packet=None;current_receipts=[]
     stopped=work.cancel_requested or work.status in ['verified','cancelled','followup_needed']
     if not stopped and not d.records.filter(kind='release_outcome').exists():
         try:require(actor,work.case,'delivery.release_record');can_release=True
@@ -135,6 +141,14 @@ def projection(actor,work):
                     'receipts':[(r.pk,r.publication.version_id,r.payload_sha256,r.publication.version.deliverydocumentbinding.snapshot) for r in current_receipts]})
                 can_accept=True
         except (ValidationError,PermissionDenied):pass
+    return {'dossier': d, 'can_record_release': can_release, 'can_accept_go_live': can_accept,
+            'acceptance_packet': packet, 'go_live_receipts': current_receipts}
+
+
+def projection(actor,work):
+    d,intake_valid=event_subject(actor,work)
+    observed=checks(d);events=event_controls(actor,work,d,observed)
+    can_release=events['can_record_release'];can_accept=events['can_accept_go_live'];current_receipts=events['go_live_receipts']
     changed=False
     if work.status=='verified':
         try:verify(work,actor=actor)
@@ -162,12 +176,12 @@ def projection(actor,work):
             logs = list(own_pdfs(actor, work.case).order_by('-pk')[:50])
         except PermissionDenied:
             pass
-    return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
+    return {**events,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,
         'issue_clearance': project_issue_clearance(actor, d) if observed['stability']['status'] == 'ready' else None,
         'private_release_logs': logs, 'can_attach_release_log': logs is not None,
         'observation_forms':observation_forms(actor,work),
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,
-        'can_accept_go_live':can_accept,'acceptance_packet':packet,'go_live_receipts':current_receipts,'readiness_changed':changed,
+        'readiness_changed':changed,
         'public_sources':list(public_evidence(Evidence.objects.filter(case=work.case,pk__in=public_ids))),
         'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_release or can_accept else [],
         'readiness_records':list(d.records.filter(kind='release_ready').order_by('-pk')[:100]) if can_release else []}
@@ -181,7 +195,8 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     case=lock_case(actor,work.case_id,'delivery.read',case_expected);work.case=case
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
     if work.revision!=expected or work.cancel_requested:raise ValidationError('STALE_VERSION: refresh current stability work')
-    panel=projection(actor,work);d=panel['dossier']
+    d,_=event_subject(actor,work)
+    panel=event_controls(actor,work,d,checks(d))
     if kind=='release':
         if not panel['can_record_release']:raise PermissionDenied('Current actual-release recording authority required')
         if not public_evidence(Evidence.objects.filter(case=case,pk=data['evidence'])).exists():raise ValidationError('Available public event evidence required')

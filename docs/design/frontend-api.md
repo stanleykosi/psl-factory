@@ -63,7 +63,7 @@ The role dashboard supplies an `invite_url` for a team lead’s own position. It
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.5.0 describes 190 operations across 145 paths. The map records remaining JSON work in 41 groups covering 223 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists JSON operations, Django routes and remaining steps. OpenAPI 1.6.0 describes 202 operations across 152 paths. The map records remaining JSON work in 35 groups covering 198 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
 
 Use `GET /api/v1/received-bids/{case_id}/receipts/{receipt_id}` with the identifiers returned by received-bid intake. It identifies the exact version and gives the authenticated download link for the original. A later intake leaves the original receipt intact and changes its `current` indicator. Both reads enforce the owning bid service’s current access rules.
 

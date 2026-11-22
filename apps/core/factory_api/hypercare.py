@@ -8,7 +8,8 @@ from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.core.services import lock_case
-from apps.identity.services import active_case_grants
+from apps.identity.services import active_case_grants, require
+from apps.pmo.release_proofs import own_pdfs
 from apps.policy.change_drafts import draft_standard_policy
 from apps.policy.delivery_validators import METRIC, criteria_schema
 from apps.policy.services import active_component, reference_values
@@ -16,7 +17,7 @@ from apps.workflows import factory_hypercare as domain
 from apps.workflows.stability_forms import observation_forms
 
 from .commands import require_line
-from .delivery import PROOF, proof_rows, recorded, RESPONSE
+from .delivery import NOTE, PIN, PROOF, REFERENCE, RESPONSE, SIGNER, proof_rows, recorded, signer_attestation
 from .http import BOOLEAN, DATETIME, ID, TEXT, array, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
 
@@ -27,6 +28,68 @@ CONFIRMED = nullable(BOOLEAN)
 CRITERIA = {'oneOf': [criteria_schema(), criteria_schema(include_issue_clearance=True)]}
 METRIC_KEY = METRIC['properties']['key']
 SECTION = obj({'name': choice(*domain.TITLES), 'status': choice('ready', 'held'), 'finding': nullable(TEXT)})
+
+
+@endpoint(response=obj({**VERSIONS, 'can_record_release': BOOLEAN, 'readiness_ids': array(ID, limit=50),
+    'release_evidence': array(PROOF, limit=50), 'signatures': array(PROOF, limit=50),
+    'private_logs': array(obj({'id': ID, 'filename': TEXT}), limit=50),
+    'acceptance_packet': nullable(PIN), 'receipts': array(obj({'id': ID, 'version_id': ID, 'at': DATETIME}))}),
+    summary='Read actual release and Go-live acceptance controls for independently started stability work')
+@read_observation
+def events(request, work_id):
+    actor = request.user
+    work = require_line(actor, work_id, domain.DEFINITION)
+    with limit_queries(800, deadline=monotonic() + 8):
+        dossier = domain.subject(work, actor, current=False)
+        controls = domain.event_controls(actor, work, dossier, domain.checks(dossier))
+        evidence = public_evidence(work.case.evidence.all()).only('kind', 'version').order_by('-pk')
+        can_release = controls['can_record_release']
+        logs = []
+        if can_release:
+            try:
+                require(actor, work.case, 'evidence.add')
+            except PermissionDenied:
+                pass
+            else:
+                logs = [{'id': row.pk, 'filename': row.name} for row in own_pdfs(actor, work.case).order_by('-pk')[:50]]
+        return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'can_record_release': can_release,
+                'readiness_ids': list(dossier.records.filter(kind='release_ready').order_by('-pk').values_list('pk', flat=True)[:50])
+                                 if can_release else [],
+                'release_evidence': proof_rows(evidence[:50]) if can_release else [],
+                'signatures': proof_rows(evidence.filter(kind='signature')[:50]) if controls['can_accept_go_live'] else [],
+                'private_logs': logs, 'acceptance_packet': controls['acceptance_packet'],
+                'receipts': [{'id': row.pk, 'version_id': row.publication.version_id, 'at': row.created_at}
+                             for row in controls['go_live_receipts']]}
+
+
+@endpoint(method='POST', request={'oneOf': [
+    obj({'action': {'const': 'release'}, **VERSIONS, 'readiness_id': nullable(ID), 'released_at': DATETIME,
+         'reference': REFERENCE, 'evidence_id': ID, 'note': NOTE,
+         'environment': nullable({**TEXT, 'maxLength': 160}), 'private_log_id': nullable(ID)}),
+    obj({'action': {'const': 'acceptance'}, **VERSIONS, 'packet': PIN, 'receipt_id': ID,
+         'pm_signature_id': ID, 'client_signature_id': ID, 'signers': obj({'PM': SIGNER, 'Client': SIGNER}),
+         'note': NOTE}),
+]}, response=RESPONSE, status=201,
+    summary='Record the observed release or the separate exact PM and client signatures')
+def record_event(request, work_id, *, body):
+    actor = request.user
+    work = require_line(actor, work_id, domain.DEFINITION)
+    action = body['action']
+    if action == 'release':
+        data = {'readiness': body['readiness_id'], 'released_at': body['released_at'], 'reference': body['reference'],
+                'evidence': body['evidence_id'], 'note': body['note'], 'deployment_environment': body['environment'],
+                'private_log': body['private_log_id']}
+    else:
+        require(actor, work.case, 'delivery.manage')
+        dossier = domain.subject(work, actor, current=False)
+        receipt = next((row for row in domain.receipts(dossier) if row.pk == body['receipt_id']), None)
+        if receipt is None:
+            raise ValidationError('Choose the exact delivered Go-live receipt.')
+        ids = {'PM': body['pm_signature_id'], 'Client': body['client_signature_id']}
+        data = {'receipt': receipt.pk, 'packet': body['packet'], 'pm_signature': ids['PM'], 'client_signature': ids['Client'],
+                'note': body['note'], 'attestation': signer_attestation(actor, dossier, receipt, ids, body['signers'])}
+    row = domain.observe(actor, work.pk, body['expected_revision'], body['case_revision'], action, data)
+    return recorded(work, row)
 
 
 @endpoint(response=obj({**VERSIONS, 'dossier_id': ID, 'checks': array(SECTION), 'proofs': array(PROOF, limit=50),

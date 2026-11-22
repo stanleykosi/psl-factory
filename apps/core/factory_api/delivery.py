@@ -196,6 +196,18 @@ SIGNER = obj({
 })
 
 
+def signer_attestation(actor, dossier, receipt, ids, signers):
+    release = delivery.latest(dossier, 'release_outcome', False)
+    evidence = public_evidence(dossier.case.evidence.filter(kind='signature', pk__in=ids.values())).in_bulk()
+    if not release or len(evidence) != 2:
+        raise ValidationError('Choose the actual release and two distinct signature sources.')
+    purpose = go_live_attestations.PURPOSE
+    return {**go_live_attestations.subject_pins(dossier, receipt, release),
+            'protocol': go_live_attestations.PROTOCOL, 'purpose': purpose, 'attesting_actor_id': actor.pk,
+            'signatures': {role: {**signers[role], 'evidence': go_live_attestations.pin(evidence[key]),
+                                  'purpose': purpose} for role, key in ids.items()}}
+
+
 def current_signoff(actor, work):
     require(actor, work.case, 'delivery.manage')
     dossier, _, version, _, receipts = factory_go_live.published(work, actor)
@@ -228,18 +240,10 @@ def record_go_live(http, work_id, *, body):
     work = require_line(actor, work_id, factory_go_live.DEFINITION)
     dossier, version, receipts = current_signoff(actor, work)
     receipt = next((row for row in receipts if row.pk == body['receipt_id']), None)
-    release = delivery.latest(dossier, 'release_outcome', False)
     ids = {'PM': body['pm_signature_id'], 'Client': body['client_signature_id']}
-    evidence = public_evidence(work.case.evidence.filter(kind='signature', pk__in=ids.values())).in_bulk()
-    if not receipt or not release or len(evidence) != 2 or version.pk != body['version_id']:
-        raise ValidationError('Choose the exact delivered report, current receipt and two distinct signature sources.')
-    purpose = go_live_attestations.PURPOSE
-    attestation = {
-        **go_live_attestations.subject_pins(dossier, receipt, release),
-        'protocol': go_live_attestations.PROTOCOL, 'purpose': purpose, 'attesting_actor_id': actor.pk,
-        'signatures': {role: {**body['signers'][role], 'evidence': go_live_attestations.pin(evidence[key]), 'purpose': purpose}
-                       for role, key in ids.items()},
-    }
+    if not receipt or version.pk != body['version_id']:
+        raise ValidationError('Choose the exact delivered report and current receipt.')
+    attestation = signer_attestation(actor, dossier, receipt, ids, body['signers'])
     record = factory_go_live.accept(actor, work.pk, body['expected_revision'], body['case_revision'], version.pk,
                                     receipt.pk, ids['PM'], ids['Client'], body['note'], body['prior_acceptance_id'],
                                     attestation=attestation, mode=body['mode'])

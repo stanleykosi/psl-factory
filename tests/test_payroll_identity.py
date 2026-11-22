@@ -123,6 +123,42 @@ class PayrollIdentityTests(TestCase):
         self.assertNotContains(self.client.get(hr_workspace), queue_path)
         self.assertEqual(self.client.get(hr_path).status_code, 403)
 
+    def test_api_compares_original_owner_attestations_and_routes_private_hr_correction(self):
+        url = f'/api/v1/projects/{self.case.pk}/payroll'
+        self.configure([self.reader.pk])
+        match = self.match()
+
+        def post(actor, suffix, expected, **fields):
+            self.client.force_login(actor)
+            response = self.client.post(url + suffix, {'revision': rev(self.case), **fields}, content_type='application/json')
+            self.assertEqual(response.status_code, expected, response.content)
+            return response.json()
+
+        self.client.force_login(self.reader)
+        actions = self.client.get(url + '/name-checks').json()
+        self.assertTrue(actions['can_compare'])
+        self.assertEqual(actions['attestation_sides'], [])
+        period = {'run_id': match.pk, 'input_id': self.input.pk, 'row_key': self.row}
+        first = post(self.reader, '/name-checks', 201, **period)
+        self.assertEqual(first['result'], 'awaiting_source')
+        left = {'side': 'payroll', 'record_id': self.input.pk, 'row_key': self.row,
+                'name': 'Synthetic left name', 'source_reference': 'SAMPLE reference'}
+        post(self.reader, '/name-attestations', 403, **left)
+        post(self.payroll_owner, '/name-attestations', 201, **left)
+        post(self.hr_owner, '/name-attestations', 201, side='hr', record_id=self.f['hr'].pk,
+             row_key=self.employee, name='Synthetic right name', source_reference='Original HR sample')
+        checked = post(self.reader, '/name-checks', 201, **period)
+        self.assertEqual(checked['result'], 'different')
+        route = f"/name-checks/{checked['id']}"
+        request = post(self.reader, route, 200)
+        answer = self.client.get(url + route)
+        self.assertEqual(answer.status_code, 200, answer.content)
+        self.assertEqual(answer.json()['followup'], request['followup_id'])
+        self.assertNotContains(answer, 'Synthetic left name')
+        self.assertNotContains(answer, 'Synthetic right name')
+        self.client.force_login(self.f['manager'])
+        self.assertEqual(self.client.get(url + route).status_code, 403)
+
     def test_legacy_and_unset_rule_keep_matching_by_id_without_turning_membership_into_departure(self):
         self.client.force_login(self.reader)
         self.assertContains(self.client.get(self.path), 'Name checks need a reviewed rule')

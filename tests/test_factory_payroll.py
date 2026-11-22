@@ -188,6 +188,13 @@ class FactoryPayrollTests(TestCase):
         self.client.force_login(f['manager']);page=self.client.get(url)
         self.assertContains(page,'Your published payroll report was withdrawn')
         self.assertNotContains(page,'Acknowledge receipt as myself');self.assertNotContains(page,'Amounts by business unit')
+        recovery_url = f'/api/v1/work/{self.work.pk}/payroll-recovery'
+        recovered = self.client.get(recovery_url)
+        self.assertEqual(recovered.status_code, 200, recovered.content)
+        history = recovered.json()['previous_receipt']
+        self.assertEqual(history['publication'], p.pk)
+        self.assertEqual(history['receipt_id'], PayrollReportReceipt.objects.get(publication=p, actor=f['manager']).pk)
+        self.assertIsNone(recovered.json()['restart'])
         with self.assertRaisesMessage(ValidationError,'This published payroll version was withdrawn'):
             approve(f,p.run,'replay-withdrawn-publication')
         with self.assertRaisesMessage(ValidationError,'Choose a corrected provider input'):
@@ -215,6 +222,8 @@ class FactoryPayrollTests(TestCase):
         payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':new.pk})
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertEqual(PayrollReportReceipt.objects.filter(publication__in=[p,new]).count(),2)
+        self.client.force_login(f['manager'])
+        self.assertEqual(self.client.get(recovery_url).json()['previous_receipt'], history)
     def test_returned_work_rebuilds_without_erasing_prior_native_result(self):
         f=self.f;self.start()
         for i in f['inputs']:approve(f,i)
