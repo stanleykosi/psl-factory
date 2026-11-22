@@ -17,13 +17,15 @@ CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-sta
 GROUPS = ('pmo', 'accounts', 'operations', 'original', 'surface', 'directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api', 'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api', 'journey-api', 'final-api')
 
 
-def stage(revision, service, groups, coordinator_ticket=None, design_regression=False):
+def stage(revision, service, groups, coordinator_ticket=None, design_regression=False, replay_suites=()):
     if groups and service != 'checks':
         raise ValueError('Test groups require the checks image.')
     if coordinator_ticket and (service != 'checks' or groups):
         raise ValueError('A live coordinator ticket requires a standalone checks image.')
     if design_regression and (service != 'checks' or groups or coordinator_ticket):
         raise ValueError('The design regression uses a standalone checks image.')
+    if replay_suites and (service != 'checks' or groups or coordinator_ticket or design_regression):
+        raise ValueError('State replay uses a standalone checks image.')
     commit = subprocess.check_output(['git', 'rev-parse', '--verify', '--end-of-options', revision + '^{commit}'],
                                      cwd=ROOT, text=True).strip()
     parent = ROOT / '.runtime'
@@ -32,8 +34,10 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
     paths = RUNTIME + (CHECKS if service == 'checks' else ())
     if coordinator_ticket:
         paths += ('scripts/railway-specialist-roles.py',)
-    if design_regression:
+    if design_regression or replay_suites:
         paths += ('scripts/design_acceptance_batch.py',)
+    if replay_suites:
+        paths += ('docs/design/api-state-replay-plan.csv',)
     with tempfile.TemporaryFile() as archive:
         subprocess.run(['git', 'archive', '--format=tar', commit, '--', *paths], cwd=ROOT, stdout=archive, check=True)
         archive.seek(0)
@@ -57,6 +61,13 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
             before_command += '\nCOPY scripts/design_acceptance_batch.py scripts/design_acceptance_batch.py'
             command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
                        'python scripts/design_acceptance_batch.py --parallel-groups 3 --api-contract')
+        if replay_suites:
+            before_command += ('\nCOPY scripts/design_acceptance_batch.py scripts/design_acceptance_batch.py'
+                               '\nCOPY docs/design/api-state-replay-plan.csv docs/design/api-state-replay-plan.csv')
+            suites = ' '.join(f'--suite {name}' for name in replay_suites)
+            command = ('python manage.py check && python manage.py makemigrations --check --dry-run && exec '
+                       f'env PSL_API_STATE_REVISION={commit} python scripts/design_acceptance_batch.py '
+                       f'--state-replay --parallel-groups 3 {suites}')
     else:
         command = ('if [ "$PSL_SERVICE_ROLE" = worker ]; then exec sh /app/railway-worker.sh; fi; '
                    'python manage.py migrate --noinput && exec gunicorn config.wsgi:application '
@@ -77,5 +88,7 @@ if __name__ == '__main__':
     parser.add_argument('--group', choices=GROUPS, action='append', default=[])
     parser.add_argument('--coordinator-ticket', type=UUID)
     parser.add_argument('--design-regression', action='store_true')
+    parser.add_argument('--replay-suite', choices=('shared', 'commercial', 'project_delivery', 'finance_reporting'),
+                        action='append', default=[])
     args = parser.parse_args()
-    print(stage(args.revision, args.service, args.group, args.coordinator_ticket, args.design_regression))
+    print(stage(args.revision, args.service, args.group, args.coordinator_ticket, args.design_regression, args.replay_suite))

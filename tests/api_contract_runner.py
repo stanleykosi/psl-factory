@@ -12,6 +12,9 @@ from apps.core.factory_api.urls import PREFIX, contract, operation_id
 
 
 class ContractRunner(DiscoverRunner):
+    def record_response(self, identity, status):
+        """Allow specialised runners to collect the validated operation and status."""
+
     def run_tests(self, test_labels, **kwargs):
         document = contract()
         operations = {
@@ -52,6 +55,7 @@ class ContractRunner(DiscoverRunner):
             if media_type != 'application/json':
                 if schema.get('format') != 'binary' or not response.get('Content-Disposition', '').startswith('attachment;'):
                     raise AssertionError(f'{identity} returned {status} without the declared attachment.')
+                self.record_response(identity, status)
                 if response.status_code < 300:
                     successful.add(identity)
                 return response
@@ -62,6 +66,7 @@ class ContractRunner(DiscoverRunner):
             if failure:
                 field = '.'.join(map(str, failure.absolute_path)) or 'body'
                 raise AssertionError(f'{identity} {status} failed the {failure.validator} contract at {field}.')
+            self.record_response(identity, status)
             if response.status_code < 300:
                 successful.add(identity)
             return response

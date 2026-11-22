@@ -115,9 +115,36 @@ def main():
     parser.add_argument('--candidate-gate', action='store_true', help='Check the staged corrections and browser fixtures before deployment.')
     parser.add_argument('--api-contract', action='store_true',
                         help='Check every API response produced by the selected integration cases against the mounted OpenAPI contract.')
+    parser.add_argument('--state-replay', action='store_true', help='Run the named API assertions from the state replay plan.')
+    parser.add_argument('--record-state-replay', nargs=2, metavar=('RAILWAY_DEPLOYMENT', 'LOG_PATH'),
+                        help='Record the validated state markers from an isolated checks deployment.')
     parser.add_argument('--parallel-groups', type=int, choices=(2, 3, 4),
                         help='Run acceptance groups on separate PostgreSQL test databases on Railway.')
     args = parser.parse_args()
+    if args.record_state_replay or args.state_replay:
+        sys.path.insert(0, str(ROOT))
+        from tests.api_state_plan import read_plan, record_results
+
+        if args.record_state_replay:
+            deployment, log_path = args.record_state_replay
+            print(json.dumps(record_results(Path(log_path).read_text(encoding='utf-8-sig'), deployment)))
+            return 0
+        _, plan = read_plan()
+        tests_by_suite = {
+            suite: list(dict.fromkeys(row['test'] for row in plan if row['suite'] == suite))
+            for suite in (args.suite or PARALLEL_ORDER)
+        }
+        tests_by_suite = {suite: tests for suite, tests in tests_by_suite.items() if tests}
+        if args.list:
+            print('\n'.join(test for tests in tests_by_suite.values() for test in tests))
+            return 0
+        if (args.settings or args.candidate_gate or not tests_by_suite
+                or os.environ.get('RAILWAY_SERVICE_NAME') != 'psl-design-checks'):
+            parser.error('State replays need test manifests and the isolated Railway checks service.')
+        with ThreadPoolExecutor(max_workers=args.parallel_groups or 1) as pool:
+            results = list(pool.map(run_replay_group, tests_by_suite.items()))
+        print('PSL_STATE_REPLAY_GROUPS=' + json.dumps(dict(zip(tests_by_suite, results))), flush=True)
+        return int(any(results))
     if args.audit:
         audit()
         return 0
@@ -153,11 +180,13 @@ def main():
     return run_tests(labels, settings=args.settings, api_contract=args.api_contract)
 
 
-def run_tests(labels, *, settings=None, env=None, api_contract=False, log_group=None):
+def run_tests(labels, *, settings=None, env=None, api_contract=False, log_group=None, state_replay=False):
     command = [sys.executable, 'manage.py', 'test', *labels, '--keepdb', '--noinput', '--verbosity', '2']
     if settings:
         command.extend(['--settings', settings])
-    if api_contract:
+    if state_replay:
+        command.extend(['--testrunner', 'tests.api_state_replay.StateReplayRunner'])
+    elif api_contract:
         command.extend(['--testrunner', 'tests.api_contract_runner.ContractRunner'])
     if log_group is None:
         return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
@@ -175,6 +204,13 @@ def run_group(name, *, api_contract=False):
                        settings='config.design_batch_settings', env=env, api_contract=api_contract, log_group=name)
     print(f'PSL_GROUP_EXIT={name}:{status}', flush=True)
     return status
+
+
+def run_replay_group(group):
+    name, tests = group
+    env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': name, 'PYTHONUTF8': '1'}
+    return run_tests(tests, settings='config.design_batch_settings', env=env,
+                     log_group=name, state_replay=True)
 
 
 if __name__ == '__main__':
