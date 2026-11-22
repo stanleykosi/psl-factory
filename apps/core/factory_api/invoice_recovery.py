@@ -104,7 +104,12 @@ def draft_stop(http, work_id):
         can_stop = cancellation.eligible(actor, work)
     except (PermissionDenied, ValidationError):
         can_stop = False
-    issue = cancellation.existing_issue(actor, work) if can_stop else None
+    issue = None
+    if can_stop:
+        try:
+            issue = cancellation.existing_issue(actor, work)
+        except (PermissionDenied, ValidationError):
+            pass
     stopped = cancellation.readback(actor, work)
     recorded = None
     if stopped:

@@ -6,6 +6,10 @@ The isolated local PostgreSQL batch passed all 11 tests in 84.374 seconds. The r
 
 The final minutes recovery run and four contract tests passed in 34.058 seconds. The minutes test verified a held delivery retried using the original job and checked both receipts through the API. The response audit covered five successful operations in this run, including the newly exercised retry command. Together these runs checked successful responses for every operation added in 1.3.0.
 
+Railway deployment `5bb381fb-ed68-450f-bafc-ffe41576d6a9` passed system checks and migration drift detection. Django rejected the 66-character isolated database name before any tests. The replacement suite uses `project-api`, which keeps the complete database name within PostgreSQL’s 63-character limit. [First checks deployment](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=5bb381fb-ed68-450f-bafc-ffe41576d6a9)
+
+Railway deployment `f736209f-2bc4-4f92-ae3f-d3789dc0e328` on `a839c5ac` passed system checks, migration drift and all 15 tests in 91.367 seconds. The schema audit recorded 32 successful operations, including every new command. A final local PostgreSQL run added the exact superseded client coverage check and matched the Django fallback for inaccessible alternate invoice evidence. All eight tests passed in 59.707 seconds, with 17 schema-checked successful operations. OpenAPI validation and TypeScript generation passed against the final snapshot. [Verified checks deployment](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=f736209f-2bc4-4f92-ae3f-d3789dc0e328)
+
 ## Workflow API cutover · 22 November 2026
 
 The Windows frontend verification passed 441 focused tests, then all 3,629 tests in 151 files. Both previously timed-out test files ran in the focused and full passes. TypeScript passed. The fixes cover shell-specific source checks, path separators, paging retries and test worker startup.

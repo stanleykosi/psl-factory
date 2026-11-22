@@ -25150,6 +25150,9 @@
                         }
                       ]
                     },
+                    "coverage_changed": {
+                      "type": "boolean"
+                    },
                     "history": {
                       "type": "array",
                       "items": {
@@ -25326,6 +25329,7 @@
                     "revision",
                     "can_propose",
                     "current",
+                    "coverage_changed",
                     "history",
                     "coverage",
                     "proposals"

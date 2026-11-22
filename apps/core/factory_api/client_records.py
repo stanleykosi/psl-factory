@@ -7,6 +7,7 @@ from apps.core import client_billing_identity as identity, client_contacts, clie
 from apps.core import client_workspace_links as links
 from apps.core.client_workspace_link_views import ProposalForm
 from apps.core.evidence_access import CLIENT_WORKSPACE_LINK_PROOF
+from apps.finance.client_billing import current_coverages
 from apps.identity.services import active_case_grants, require
 
 from .http import BOOLEAN, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
@@ -125,7 +126,7 @@ def linked_record(record):
             'evidence_id': record.evidence_id}
 
 
-@endpoint(response=obj({'revision': REVISION, 'can_propose': BOOLEAN, 'current': nullable(LINK),
+@endpoint(response=obj({'revision': REVISION, 'can_propose': BOOLEAN, 'current': nullable(LINK), 'coverage_changed': BOOLEAN,
     'history': array(LINK, limit=9), 'coverage': array(OPTION, limit=100), 'proposals': array(obj({
         'id': ID, 'action': choice('link', 'unlink'), 'label': nullable(NAME), 'coverage_id': nullable(ID),
         'issuer': nullable(TEXT), 'reference': nullable(TEXT), 'can_confirm': BOOLEAN,
@@ -138,6 +139,8 @@ def workspace_links(http, case_id):
     can_propose = {'finance.billing.register', 'evidence.add'}.issubset(grants)
     history = list(case.clientworkspacelink_set.order_by('-number')[:10])
     current = history[0] if history else None
+    coverage_changed = bool(current and current.coverage_id and
+                            not current_coverages(case).filter(pk=current.coverage_id).exists())
     candidates = case.evidence.filter(kind=CLIENT_WORKSPACE_LINK_PROOF, clientworkspacelink__isnull=True).order_by('-pk')[:20]
     proposals = []
     for evidence in candidates:
@@ -152,6 +155,7 @@ def workspace_links(http, case_id):
                 'reference': value.get('reference'),
                 'can_confirm': 'policy.activate' in grants and evidence.created_by_id != actor.pk})
     return {'revision': case.revision, 'can_propose': can_propose, 'current': linked_record(current) if current else None,
+            'coverage_changed': coverage_changed,
             'history': [linked_record(row) for row in history[1:]], 'proposals': proposals,
             'coverage': form_options(ProposalForm(case).fields['coverage']) if can_propose else []}
 
