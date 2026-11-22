@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api')
 
 
 def run(group, token, role_access):
@@ -145,6 +145,14 @@ def run(group, token, role_access):
                    'tests.test_authority_recovery.AuthorityRecoveryTests.test_api_records_fresh_authority_without_moving_historical_times',
                    'tests.test_authority_recovery.EmergencyFollowupTests.test_api_links_exact_ordinary_revision_without_inheriting_emergency_authority',
                    'tests.test_role_scoped_work.RoleScopedWorkTests.test_16_my_work_links_only_current_specialist_desks_in_that_workspace']
+    elif group == 'report-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_factory_reporting.FactoryReportingTests.test_api_weekly_save_start_return_correct_and_confirm_original_receipt',
+                   'tests.test_factory_reporting.FactoryReportingTests.test_returned_report_requires_explicit_rework_and_new_exact_version_review',
+                   'tests.test_factory_leadership.FactoryLeadershipTests.test_api_cited_monthly_report_returns_for_fresh_review_and_records_receipt',
+                   'tests.test_factory_leadership.FactoryLeadershipTests.test_tuesday_no_extra_approval_and_exact_receipts',
+                   'tests.test_factory_escalation.FactoryEscalationTests.test_api_client_escalation_requires_authority_and_returns_exact_communication_receipt',
+                   'tests.test_factory_escalation.FactoryEscalationTests.test_primary_http_intake_decisions_review_and_get_preserves_rows']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

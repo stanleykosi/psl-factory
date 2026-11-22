@@ -8,13 +8,13 @@ from django.views.decorators.http import require_safe
 
 from . import (
     accounts, agents, archive_files, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections,
-    delivery, documents, emergency,
+    delivery, documents, emergency, escalations,
     finance_operations, financial_corrections, go_live_replies, handoffs, hr_handoffs, hypercare,
-    intake, intake_sources, invoice_recovery, meeting_records, minutes, notifications, payment_controls, payroll_identity,
+    intake, intake_sources, invoice_recovery, leadership_reports, meeting_records, minutes, notifications, payment_controls, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
     reminders, reviews,
-    role_work, roles, setup, short_payments, staff_access, support_replies, work, work_access, workspaces,
+    role_work, roles, setup, short_payments, staff_access, support_replies, weekly_reports, work, work_access, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -49,6 +49,8 @@ ROUTES = (
     ('lines', intake.lines),
     ('lines/projects', intake.projects),
     ('projects/<uuid:case_id>/intake-sources', intake_sources.options),
+    ('projects/<uuid:case_id>/weekly-report-intake', weekly_reports.intake_options, weekly_reports.intake_command),
+    ('projects/<uuid:case_id>/leadership-report-intake', leadership_reports.options, leadership_reports.submit),
     ('projects/<uuid:case_id>/minutes/intake', intake.upload_minutes),
     ('processes', intake.processes),
     ('received-bids/organisations', received_bids.organisations),
@@ -102,6 +104,9 @@ ROUTES = (
     ('work/<int:work_id>/archive-files/<int:job_id>/recovery', archive_files.recover),
     ('work/<int:work_id>/archive-files/rules', archive_files.draft_rules),
     ('work/<int:work_id>/emergency', emergency.detail, emergency.command),
+    ('work/<int:work_id>/weekly-report', weekly_reports.detail, weekly_reports.correction),
+    ('work/<int:work_id>/leadership-report', leadership_reports.detail, leadership_reports.correct),
+    ('work/<int:work_id>/escalation', escalations.detail, escalations.command),
     ('work/<int:work_id>/stability', hypercare.detail, hypercare.observe),
     ('work/<int:work_id>/stability/criteria', hypercare.draft_criteria),
     ('work/<int:work_id>/stability/events', hypercare.events, hypercare.record_event),
@@ -133,6 +138,7 @@ ROUTES = (
     ('projects/<uuid:case_id>/emergency-outcomes/<int:outcome_id>/followups/<int:followup_id>', emergency.followup_options),
     ('projects/<uuid:case_id>/authority-recoveries', authority_recovery.collection, authority_recovery.command),
     ('projects/<uuid:case_id>/authority-recoveries/<int:request_id>', authority_recovery.detail),
+    ('projects/<uuid:case_id>/escalation-register', escalations.register, escalations.prepare),
     ('projects/<uuid:case_id>/financial-corrections/<str:kind>/<int:record_id>', financial_corrections.detail),
     ('projects/<uuid:case_id>/cash-lots/<int:lot_id>', financial_corrections.lot_details),
     ('projects/<uuid:case_id>/month-end', workspaces.close),
@@ -290,7 +296,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.9.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.10.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

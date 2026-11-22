@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Added weekly and leadership narrative APIs, source coverage, private draft recovery and exact report receipts. Connected scoped escalation requests, client decisions, communication review and original receipt recovery. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Added payment exception and release-control APIs, incident intake through Emergency decisions, ordinary follow-up, historical authority recovery and JSON links for the supported decision desks. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Added typed cash successor, correction, bank reversal and short-payment APIs, with exact original receipt and allocation readback. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

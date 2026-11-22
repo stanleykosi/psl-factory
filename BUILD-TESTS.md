@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI reports and escalation communication · 22 November 2026
+
+The first local weekly and leadership report tests needed the synthetic policy that explicitly grants the test reviewer the return decision. The first leadership receipt read after a verified publication hit the query budget. The verified read now follows the exact same native publication and recipient checks without recalculating unneeded workbench sections. Weekly report acceptance passed locally in 22.847 seconds. Escalation and leadership acceptance passed together in 74.111 seconds, including original receipt readback and preserved issue state. All twelve additions had a successful schema-checked response across those three local tests. OpenAPI 3.1 validation, TypeScript generation and migration drift passed. [Screen map](contracts/factory-api-screen-map.json)
+
 ## OpenAPI payment exceptions and Emergency decisions · 22 November 2026
 
 The first local pair passed the payment exception and independent release test and exposed an assertion assuming the CTO role had a single permitted verdict in the synthetic case. The fixture supplied both approval and rejection. The revised test asserts the required rejection, then verifies that it remains recorded and that actual implementation remains independently capturable. Seven subsequent local PostgreSQL checks passed in 25.827 seconds, including incident intake, classification, refusal, ordinary follow-up and the generated contract. OpenAPI 3.1 validation and TypeScript generation passed.
@@ -7,6 +11,8 @@ The first local pair passed the payment exception and independent release test a
 The 14-test local suite passed 13 in 227.482 seconds and checked 17 successful API operations. Its sole failure compared the expected decision desk URL to a test helper's HTTP response. The corrected URL and readback test passed locally in 2.110 seconds. The first Railway run stopped before launching the tests because the generated isolated database name had 64 characters. The shorter `decide-api` suite retains the same checks and fits PostgreSQL's identifier limit.
 
 Railway checks `274eaf04-29a6-4983-8d0f-82f4ee770834` from `dfa0be91` passed all 14 PostgreSQL tests in 228.926 seconds. They recorded 17 successful schema-checked operations and covered the 16 new routes and decision-desk projection. Django system checks and migration drift passed. [Decision checks](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=274eaf04-29a6-4983-8d0f-82f4ee770834)
+
+Web deployment `9c5a0ded-9d89-4743-b21e-50466f5806a6` served the exact 1.9.0 snapshot. Health and Django sign-in returned 200, signed-out session state was correct and the private `/me` endpoint returned 401. Worker `17e8dd01-0af5-42a5-ab0d-3aa87f147728` polled its queues from the same revision. [Hosted contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
 
 ## OpenAPI cash and invoice corrections · 22 November 2026
 

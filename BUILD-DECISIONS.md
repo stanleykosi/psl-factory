@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Preserve weekly private working copies and use source-bound report correction after a return. Keep leadership scope, internal recipients and reviewer settings as separately reviewed drafts. Use the exact version and recorded recipient contract for publication readback. Carry client escalation review and delivery independently from issue closure.
+
 22 November 2026. Record a payment exception separately from independent release checks. Apply exact Emergency decision authority to an incident-linked current profile. Keep actual implementation capture available after a refusal and preserve original timestamps through current authority recovery. Apply remaining scope and cost through a distinct ordinary change.
 
 22 November 2026. Read short-payment decisions against the exact balance fingerprint. Use the existing Finance services for corrections, reversals, independent review and effect. Return the original correction and receipt references separately from reservation or approval, and keep fixed-charge allocation information behind its existing source boundary.

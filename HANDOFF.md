@@ -1,10 +1,16 @@
 # PSL Operations Factory handoff
 
+## Weekly reports, leadership reports and escalation communication · 22 November 2026
+
+OpenAPI 1.10.0 adds twelve routes. Start work project choices link to `weekly-report-intake`, `leadership-report-intake` and `escalation-register` for the actions that precede work. Weekly drafts keep separate citations for the four sections and maintain private saved revisions through return and resubmission. Leadership reports keep selected source coverage and audience, and read the validated original receipts after the current review. Escalations separate client approval, communication review and original receipt recovery. [Contract](contracts/psl-factory.openapi.json)
+
+Run `report-api` on Railway before deploying this checkpoint. The map has 27 groups with API gaps across 162 states. The next connected work is engagement registration and fresh source choices, followed by signed commercial and bidding decisions, Planning costing and broader Finance. Full Railway API acceptance across the 262 design states remains open. HOD choices remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Payment exceptions and Emergency decisions · 22 November 2026
 
 OpenAPI 1.9.0 adds 16 operations. Payment assessment, independent human exception review and local release controls use `payment-controls` and exact assessment and exception resources. Start an Emergency request from the project `emergency-intake` resource, classify the same request, then use the work-scoped `emergency` resource for prescribed decisions and observed implementation. Follow the exact outcome into ordinary scope and cost follow-up or historical authority recovery. The decision desk provides API links for those specialist packets. [Contract](contracts/psl-factory.openapi.json)
 
-The `decide-api` Railway suite passed all 14 PostgreSQL tests. SCR-50 now maps its operational API actions. Thirty groups across 179 states still have a group-level API gap. Next, connect report authoring and delivery, broader intake choices, the commercial bid flow and Finance close. HOD decisions and live external actions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+The `decide-api` Railway suite passed all 14 PostgreSQL tests. Railway web and worker run `dfa0be91` and the web serves the exact 1.9.0 contract. SCR-50 maps its operational API actions. At this checkpoint 30 groups across 179 states still had a group-level API gap. HOD decisions and live external actions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
 
 ## Payment adjustments and cash successors · 22 November 2026
 

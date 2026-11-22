@@ -4,6 +4,8 @@ Generate the frontend client from the [checked-in live OpenAPI contract](../../c
 
 For a short payment, read the exact invoice `short-payment` resource and send its current `position` fingerprint and `revision`. The decision leaves the receivable unchanged. For a legal note or cash correction, open the project's `financial-corrections` resource for available actions, then follow the exact correction ID for reviews and receipts. The `cash-lots` resource shows the prior lot, confirmed successor and readable allocations.
 
+Use `workflow_intake_url` from the selected Start work project when it is present. Weekly reports use `weekly-report-intake` and `work/{work_id}/weekly-report` for private drafts and corrections. Leadership reports use `leadership-report-intake` and `work/{work_id}/leadership-report` for selected coverage and reviewed publication. Escalation starts with the project's `escalation-register`, then `work/{work_id}/escalation` records the client decision and sends the current communication for review. Each work resource exposes the original receipt IDs.
+
 ## Use the live API
 
 Run these from the repository root to refresh OpenAPI and export the complete inventory of design states, process entry points, and prototype operations without an exact live route.

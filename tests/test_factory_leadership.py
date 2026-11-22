@@ -54,6 +54,38 @@ class FactoryLeadershipTests(TestCase):
         self.review();self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertIn('performance',v.fields);self.assertIn('critical_incidents',v.fields)
 
+    def test_api_cited_monthly_report_returns_for_fresh_review_and_records_receipt(self):
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'PMO Lead', 'actions': ['return']}]}, self.owner)
+        self.client.force_login(self.actor)
+        intake = f'/api/v1/projects/{self.case.pk}/leadership-report-intake'
+        options = self.client.get(intake, {'kind': self.kind, 'domain': 'meetings'}).json()
+        self.assertIn(self.template.pk, [row['id'] for row in options['templates']])
+        selected = dict(self.inputs, content_id=None)
+        sections = json.loads(self.content.body)['sections']
+        body = {'action': 'start', 'case_revision': options['revision'], 'selection': selected, 'sections': sections,
+                'key': 'API-LEADERSHIP', 'reference': 'Synthetic monthly report', 'background': False}
+        started = self.client.post(intake, body, content_type='application/json')
+        self.assertEqual(started.status_code, 201, started.content)
+        self.work = FactoryWork.objects.get(pk=started.json()['work_id'])
+        detail = f'/api/v1/work/{self.work.pk}/leadership-report'
+        self.advance()
+        old = self.review('return')
+        panel = self.client.get(detail).json()
+        self.assertEqual(panel['editable_sections'], sections)
+        self.assertEqual(panel['document_version_id'], old.pk)
+        sections['risks']['text'] = 'The recorded risks relate to the selected reporting period and evidence.'
+        corrected = self.client.post(detail, {'expected_revision': panel['expected_revision'], 'case_revision': panel['case_revision'],
+            'selection': selected, 'sections': sections, 'reason': 'Review requested clearer risk coverage'}, content_type='application/json')
+        self.assertEqual(corrected.status_code, 200, corrected.content)
+        self.advance()
+        new = self.review()
+        self.advance()
+        self.assertNotEqual(new.pk, old.pk)
+        proof = reporting.verify(self.work, self.actor)
+        delivery = self.client.get(detail).json()
+        self.assertEqual([row['receipt_id'] for row in delivery['recipients']], proof['receipt_ids'])
+
     def test_live_drafting_uses_the_current_claim_and_stops_at_review(self):
         from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
 

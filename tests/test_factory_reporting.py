@@ -152,6 +152,47 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(job.status, 'unknown', self.work.finding)
         return job, PublicationReceipt.objects.get(publication=job.publication)
 
+    def test_api_weekly_save_start_return_correct_and_confirm_original_receipt(self):
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'PMO Lead', 'actions': ['return']}]}, self.owner)
+        self.client.force_login(self.actor)
+        intake = f'/api/v1/projects/{self.case.pk}/weekly-report-intake'
+        selection = dict(self.inputs, content_id=None)
+        window = {key: selection[key] for key in ('start_at', 'end_at')}
+        options = self.client.get(intake, window).json()
+        self.assertIn(self.template.pk, [row['id'] for row in options['templates']])
+        self.assertIn(self.notes.pk, [row['id'] for row in options['evidence']])
+
+        def post(url, **payload):
+            response = self.client.post(url, payload, content_type='application/json')
+            self.assertLess(response.status_code, 300, response.content)
+            return response.json()
+
+        parts = self.content_body['sections']
+        initial = {'case_revision': options['case_revision'], 'draft_id': None, 'selection': selection,
+                   'parts': parts, 'key': 'WEEKLY-API', 'reference': 'Weekly API test report', 'background': False}
+        draft = post(intake, action='save_draft', **initial)['draft_id']
+        self.assertEqual(self.client.get(intake).json()['draft']['id'], draft)
+        started = post(intake, action='start', **dict(initial, draft_id=draft))
+        self.work = FactoryWork.objects.get(pk=started['work_id'])
+        detail = f'/api/v1/work/{self.work.pk}/weekly-report'
+        self.advance()
+        old_version = self.review('return')
+        self.work.refresh_from_db()
+        packet = self.client.get(detail).json()
+        self.assertEqual(packet['document_version_id'], old_version.pk)
+        self.assertEqual(packet['editable_parts'], parts)
+        corrected_parts = {**parts, 'risks': {**parts['risks'], 'text': 'The client will review acceptance evidence separately'}}
+        fields = {'expected_revision': self.work.revision, 'case_revision': rev(self.case), 'draft_id': None,
+                  'selection': selection, 'parts': corrected_parts, 'reason': 'Review requested a clearer risk statement'}
+        replacement = post(detail, action='save_draft', **fields)['draft_id']
+        self.assertEqual(self.client.get(detail).json()['draft']['id'], replacement)
+        post(detail, action='correct', **dict(fields, draft_id=replacement))
+        proof = self.finish()
+        delivered = self.client.get(detail).json()
+        self.assertNotEqual(delivered['document_version_id'], old_version.pk)
+        self.assertEqual([row['receipt_id'] for row in delivered['recipients']], proof['receipt_ids'])
+
     def test_live_weekly_assembly_shows_only_the_current_claim_before_review(self):
         from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
 

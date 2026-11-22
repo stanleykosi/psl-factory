@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## OpenAPI reports and escalation communication · 22 November 2026
+
+OpenAPI 1.10.0 lists 262 operations on 190 paths. Twelve added operations cover weekly client report drafts, returned revisions and original receipts, leadership source coverage and narrative plus separate settings, and escalation requests through reviewed communication. The map covers SCR-25, SCR-51 and SCR-52 and lists 27 outstanding groups across 162 states. The number of OpenAPI operations is a separate measurement from completed acceptance of the 262 design states. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## OpenAPI payment exceptions and Emergency decisions · 22 November 2026
 
 OpenAPI 1.9.0 lists 250 operations on 184 paths. Sixteen additions connect independent payment assessment and release checks, incident intake and Emergency decisions, actual implementation and retrospective evidence, ordinary follow-up and historical authority recovery. The Django and API actions use the same domain services. Thirty groups covering 179 states still have at least one API gap in the map. The 262-state API acceptance run remains pending. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)

@@ -1,4 +1,18 @@
 {
+  "frontend_cutover_report_communication_20261122": {
+    "status": "partial_json_cutover",
+    "contract_version": "1.10.0",
+    "live_paths": 190,
+    "live_operations": 262,
+    "added_operations": 12,
+    "completed_groups": ["SCR-25", "SCR-51", "SCR-52"],
+    "screen_groups_with_remaining_json": 27,
+    "states_in_groups_with_remaining_json": 162,
+    "remaining_detail": "contracts/factory-api-screen-map.json",
+    "test_record": "BUILD-TESTS.md",
+    "next": ["Engagement registration and exact intake sources", "Bid and signed commercial decisions", "Planning costing and Finance close", "Full Railway API acceptance"],
+    "owner_decisions": "Live coverage rules, leadership reviewers, recipients and escalation delivery destinations remain deferred."
+  },
   "frontend_cutover_payment_and_emergency_decisions_20261122": {
     "status": "partial_json_cutover",
     "contract_version": "1.9.0",

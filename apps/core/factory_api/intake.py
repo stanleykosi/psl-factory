@@ -108,8 +108,10 @@ LINE = obj({'key': choice(*STARTS, factory_views.rfp_fresh_intake.LINE), 'title'
             'can_submit_via_api': BOOLEAN, 'django_url': TEXT, 'project_options_url': nullable(TEXT), 'submit_url': TEXT})
 TRIGGER_GUIDE = obj({'action': TEXT, 'screen': TEXT, 'source_url': TEXT, 'tracking_url': TEXT})
 LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, 'sample': BOOLEAN, 'django_url': TEXT,
-                    'source_options_url': TEXT})
+                    'source_options_url': TEXT, 'workflow_intake_url': nullable(TEXT)})
 START_RESULT = obj({**WORK_RESULT['properties'], 'background': choice('queued', 'existing', 'held', 'not_requested')})
+WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1': 'weekly-report-intake',
+                   'pmo-leadership-report/v1': 'leadership-report-intake', 'pmo-escalation/v1': 'escalation-register'}
 
 
 def start_projects(actor, line):
@@ -149,10 +151,12 @@ def projects(request):
     if search.strip():
         cases = cases.filter(title__icontains=search.strip())
     page = Paginator(cases, 25).get_page(page_number(request))
+    resource = WORKFLOW_INTAKE.get(line)
     return {'items': [{
         'case_id': case.pk, 'title': workspace_name(case), 'case_revision': case.revision, 'sample': case.synthetic,
         'django_url': reverse('factory_create', query={'case': case.pk, 'definition': line}),
         'source_options_url': f'/api/v1/projects/{case.pk}/intake-sources?line={line}',
+        'workflow_intake_url': f'/api/v1/projects/{case.pk}/{resource}' if resource else None,
     } for case in page], 'page': page.number,
         'next_page': page.next_page_number() if page.has_next() and page.number < PAGE['maximum'] else None}
 

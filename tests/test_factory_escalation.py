@@ -55,6 +55,45 @@ class FactoryEscalationTests(TestCase):
         self.state.issue.refresh_from_db();self.assertEqual(self.state.issue.current.status,'Open');self.assertEqual(len(proof['receipt_ids']),1)
     def test_client_deescalation_requires_its_current_approval(self):
         self.start('de_escalate');self.advance();self.assertIsNone(domain.document(self.w));self.decision();self.advance();self.review();proof=self.finish();self.assertEqual(proof['direction'],'de_escalate')
+
+    def test_api_client_escalation_requires_authority_and_returns_exact_communication_receipt(self):
+        self.client.force_login(self.a)
+        register = f'/api/v1/projects/{self.c.pk}/escalation-register'
+        options = self.client.get(register).json()
+        self.assertIn(self.state.pk, [row['current_id'] for row in options['issues']])
+
+        def write(url, **body):
+            response = self.client.post(url, body, content_type='application/json')
+            self.assertLess(response.status_code, 300, response.content)
+            return response.json()
+
+        source = write(register, action='classify', revision=options['revision'], issue_id=self.state.issue_id,
+            state_id=self.state.pk, classification='client_dependent', timeline_impact=True, trigger_at=None,
+            evidence_id=self.e.pk, note='Client evidence is required for the current issue')
+        native_request = write(register, action='request', revision=source['revision'], profile_id=source['id'],
+            direction='escalate', target='Client', evidence_id=self.e.pk, note='Request a client communication')
+        self.r = EscalationRequest.objects.get(pk=native_request['id'])
+        self.w = domain.start(self.a, self.c.pk, 'API-P44', self.r.pk, self.t.pk, 'Scoped escalation', rev(self.c))
+        self.advance()
+        detail = f'/api/v1/work/{self.w.pk}/escalation'
+        controls = self.client.get(detail).json()
+        self.assertTrue(any(row['role'] == 'Head of PMO' and 'approve' in row['verdicts']
+                            for row in controls['client_decisions']))
+        fields = {'action': 'decide_client_action', 'request_id': self.r.pk, 'role': 'Head of PMO', 'verdict': 'approve',
+                  'note': 'I reviewed this exact request', 'delegated': False, 'expected_revision': controls['expected_revision'],
+                  'case_revision': controls['case_revision']}
+        decision = write(detail, **fields)
+        self.advance()
+        panel = self.client.get(detail).json()
+        self.assertTrue(panel['can_request_communication_review'])
+        write(detail, action='request_communication_review', version_id=panel['document_version_id'],
+              expected_revision=panel['expected_revision'], case_revision=panel['case_revision'])
+        self.review()
+        proof = self.finish()
+        delivered = self.client.get(detail).json()
+        self.assertEqual([item['id'] for item in delivered['receipts']], proof['receipt_ids'])
+        self.assertEqual(delivered['history'][0]['id'], decision['record_id'])
+        self.assertEqual(self.state.issue.current.status, 'Open')
     def test_internal_route_has_no_invented_business_decision(self):
         ref=register_reference(self.a,self.c.pk,'role:internal-pmo','schema:psl/role-assignment/v1',{'role':'PMO','user_id':self.a.pk},self.owner.pk)
         from apps.policy.services import active_component
