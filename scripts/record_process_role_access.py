@@ -64,6 +64,15 @@ def render(runs):
         for level, record, states in sorted(evidence[pid]):
             cells = [pid, level.replace('_', ' ').replace('-', ' '), f'`{record}`'] + ['Read' if v == 'read' else '—' for v in states]
             lines.append('| ' + ' | '.join(cells) + ' |')
+    restricted = sorted(pid for pid, observations in evidence.items()
+                        if all('read' not in states for _, _, states in observations))
+    lines.extend(['', '## Reading the restricted rows', '',
+                  f'On the sampled records, {len(restricted)} processes required authority beyond the eight unappointed accounts: '
+                  + ', '.join(restricted) + '.', '',
+                  '- For controlled documents, the source version, audience and distribution evidence have their own access checks. Department approval records check access to each contributing department’s evidence.',
+                  '- Work crossing from PMO into Finance can require the original milestone or signature recorder, a Finance reader or a commercial reviewer. The receiving record can have a different audience from its source.',
+                  '- Private payroll, business-unit costs and contract coverage check the original source permissions. For an HR disclosure, only the Finance recipient named on the approved snapshot can acknowledge it.',
+                  '- The independent decision tests also exercise named PMO and Finance reviewers and the appointed HR handoff recipient. [Decision tests and live specialist receipts](../../BUILD-TESTS.md)'])
     return '\n'.join(lines) + '\n'
 
 

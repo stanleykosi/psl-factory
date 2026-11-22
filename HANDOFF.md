@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Department role acceptance · 22 November 2026
+
+The build branch adds a shared 108-process directory, subject-scoped department work and review APIs, original-authority HR acknowledgement, and role checks on the original intake and receiving records. The live specialist ledger covers all eight roles in three Railway workflows. All nine initial model readings raised evidence gaps. [Specialist receipts](docs/design/specialist-role-acceptance.md) · [API contract](docs/design/frontend-api.md) · [Test ledger](BUILD-TESTS.md)
+
+Railway checks deployment `5b614961-9e3d-470c-98d2-23735250361b` tests the first integrated revision in five isolated databases. The build branch also contains a versioned trial-balance projection. Operational projects require explicit authorisation for the extra aggregate checks. Earlier stations retain the projection they were given. Continue from the latest test results below before promoting a release.
+
 ## Native department handoffs · 21 November 2026
 
 The 63 formerly unbound processes now use the same O01 workflow worker as the original Start work paths. All 108 release IDs have a coordinator binding. The project’s Department handoffs page shows the signed-in reader’s current evidence and opens the business review. [Process routes](docs/design/specialist-process-routes.md) · [Per-process Railway receipts](docs/design/native-department-receipts.md) · [Test ledger](BUILD-TESTS.md)

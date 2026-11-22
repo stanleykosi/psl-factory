@@ -2,8 +2,10 @@
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.test import Client
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.workflows.native_station_contracts import registry
+from tests.helpers import rev
 from tests.process_role_helpers import role_accounts
 
 # These sources require the department's ordinary read capability. Their
@@ -11,7 +13,7 @@ from tests.process_role_helpers import role_accounts
 # makes both the domain service and the API reject all staff must fail here.
 DEPARTMENT_READS = frozenset("""
     P08 P09 P22 P23 P24 P27 P29 P30 P31 P38 P45 P51 P54 P55 P56 P58 P63
-    F02 F04 F05 F06 F08 F10 F11 F14 F15 F19 F24 F25 F26 F27 F28 F32 F33 F34
+    F02 F04 F05 F06 F08 F10 F11 F14 F15 F19 F24 F25 F26 F27 F28 F32 F33 F34 F36 F37 F38 F40 F41 F42 F43
 """.split())
 
 
@@ -65,6 +67,14 @@ def verify_roles(test, work, received):
             test.assertContains(page, "The receiving record was verified")
             test.assertNotContains(page, "Resolve source findings")
             test.assertNotContains(page, "Acknowledge HR handoff")
+            if route.process == "F32":
+                from apps.finance.receivables import snapshot
+                with test.assertRaises(PermissionDenied, msg=context):
+                    snapshot(actor, work.case_id, timezone.localdate(), rev(work.case))
+            if route.process == "F43":
+                from apps.documents.controlled import reserve_publication
+                with test.assertRaises(PermissionDenied, msg=context):
+                    reserve_publication(actor, work.case_id, source.version_id, rev(work.case))
         else:
             test.assertEqual(public.json()["code"], "not_found", context)
             test.assertEqual(page.status_code, 404, context)

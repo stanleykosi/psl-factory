@@ -141,7 +141,6 @@ def matched_actual(match, actor):
 def publication(binding, actor):
     run, version = binding.run, binding.version
     current_scenario(run.scenario, actor)
-    documents.sender(actor, version)
     if version.document.case_id != run.case_id or forecast_documents.report_inputs(run, version.audience) != binding.snapshot:
         raise ValidationError("The declared audience must match the reviewed forecast projection.")
     current_version(run.case, version.pk)

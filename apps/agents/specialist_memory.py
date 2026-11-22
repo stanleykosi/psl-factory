@@ -121,11 +121,11 @@ def inputs_for(work, sources, profile, actor, process):
 def read_context(work, actor, process):
     from apps.workflows.factory_views import visible
     if work.definition == "process-handoff/v1":
-        from apps.workflows.factory_views import work_grant_scope
+        from apps.workflows.native_station_access import candidates
         from apps.workflows.native_stations import PROJECTION, checked_work, current_receipt
 
         if (work.cancel_requested or work.status == "cancelled" or work.native_station.process != process
-                or not work_grant_scope(actor, include_native=True).filter(pk=work.pk).exists()):
+                or not candidates(actor).filter(pk=work.pk).exists()):
             raise PermissionDenied("This department handoff is unavailable.")
         _, profile = factory.profile(work)
         shared = None
