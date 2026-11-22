@@ -109,10 +109,12 @@ def start(actor,case_id,key,dossier_id,reference,expected=None,*,envelope=DEFINI
     work=Work.objects.create(case=case,actor=actor,key=key,definition=envelope,request=payload,request_hash=sha,business_key=business,source_head=e)
     event(actor,case,'factory.started',work=work.pk,definition=envelope);return work
 
-def checks(d):
+def checks(d, *, planning_only=False):
     result={}
     def plan(x):return {'planning_id':delivery.approved_plan(x).pk}
     for name,fn in [('planning_sources',delivery.planning_inputs),('planning_decision',plan),('kickoff_and_upstream',delivery.upstream),('release_evidence',delivery.readiness_inputs)]:
+        if planning_only and name not in {'planning_sources', 'planning_decision'}:
+            continue
         try:result[name]={'status':'ready','title':STATIONS[name][0],'inputs':fn(d)}
         except MissingDesignSignoff as exc:
             result[name]=held(name,exc)
@@ -237,13 +239,13 @@ def verify(work,actor=None):
     return {'head':work.source_head_id,'dossier':d.pk,'release_ready':row.pk,'verified':True,
         'verification_scope':'synthetic_native_release_evidence_readiness','deployment_authorized':False,'deployment_dispatched':False,'financial_release_granted':False,'external_authenticity_verified':False}
 
-def projection(actor,work,*,decision_evidence_limit=None):
+def projection(actor,work,*,decision_evidence_limit=None,decision_only=False):
     from .factory import access
     access(actor,work.case,envelope=DEFINITION);current=True;intake_finding=None
     try:d=subject(work,actor,current=False);subject(work,actor)
     except (ValidationError,PermissionDenied) as exc:
         d=delivery.dossier_for(work.case,work.request['dossier'],current=False);current=False;intake_finding=str(exc)
-    observed=checks(d)
+    observed=checks(d, planning_only=decision_only)
     if intake_finding:observed['intake']=held('intake',intake_finding)
     try:delivery.dossier_for(work.case,d.pk)
     except (ValidationError,PermissionDenied) as exc:current=False;observed['baseline']=held('baseline',exc)
@@ -314,6 +316,15 @@ def projection(actor,work,*,decision_evidence_limit=None):
                              if state_public(issue.current)]
         except PermissionDenied:
             pass
+    decision_evidence = []
+    if can_decide and decision_evidence_limit != 0:
+        evidence = public_evidence(Evidence.objects.filter(case=work.case))
+        if decision_evidence_limit is not None:
+            evidence = evidence.only('kind', 'version').order_by('-pk')[:decision_evidence_limit]
+        decision_evidence = list(evidence)
+    if decision_only:
+        return {'checks': observed, 'decision_packet': packet, 'allowed_verdicts': list(authorities),
+                'return_issues': return_issues, 'decision_evidence': decision_evidence}
     changed=False
     if work.status=='verified':
         try:verify(work,actor=actor)
@@ -339,12 +350,6 @@ def projection(actor,work,*,decision_evidence_limit=None):
     except PermissionDenied:author_current=False
     from apps.pmo.progress import optional_report
     from apps.pmo.phase_evidence import projection as phase_projection
-    decision_evidence = []
-    if can_decide and decision_evidence_limit != 0:
-        evidence = public_evidence(Evidence.objects.filter(case=work.case))
-        if decision_evidence_limit is not None:
-            evidence = evidence.only('kind', 'version').order_by('-pk')[:decision_evidence_limit]
-        decision_evidence = list(evidence)
     return {'dossier':d,'checks':observed,'can_decide':can_decide,'ready':prepared(work),'readiness_changed':changed,
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
         'planning_owner_names':owner_names,'design_signoff_hold':design_hold,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
@@ -378,7 +383,7 @@ def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_
     if type(case_expected) is not int or case_expected<1:raise ValidationError('Exact rendered project version required')
     case=lock_case(actor,work.case_id,'delivery.planning_decide',case_expected)
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
-    work.case=case;panel=projection(actor,work,decision_evidence_limit=0)
+    work.case=case;panel=projection(actor,work,decision_evidence_limit=0,decision_only=True)
     if work.revision!=expected or verdict not in panel['allowed_verdicts'] or not packet_sha256 or packet_sha256!=panel['decision_packet']:raise ValidationError('STALE_VERSION: current exact Planning exit sources and authority required')
     if not public_evidence(Evidence.objects.filter(case=case,pk=evidence_id)).exists():raise ValidationError('Choose an available public delivery decision source')
     result=delivery.decide_planning(actor,case.pk,work.request['dossier'],verdict,evidence_id,note,case.revision,issue_id=issue_id)

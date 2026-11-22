@@ -2,6 +2,7 @@
 from time import monotonic
 
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
@@ -37,7 +38,7 @@ def recorded(work, row):
 def planning_exit(http, work_id):
     work = require_line(http.user, work_id, factory_delivery.DEFINITION)
     with limit_queries(350, deadline=monotonic() + 8):
-        panel = factory_delivery.projection(http.user, work, decision_evidence_limit=50)
+        panel = factory_delivery.projection(http.user, work, decision_evidence_limit=50, decision_only=True)
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'packet': panel['decision_packet'],
             'verdicts': panel['allowed_verdicts'], 'proofs': proof_rows(panel['decision_evidence']),
             'blockers': [{'id': issue.pk, 'reference': issue.reference} for issue in panel['return_issues']],
@@ -123,19 +124,23 @@ def support_receipt(http, work_id):
     actor = http.user
     work = require_line(actor, work_id, factory_handover.DEFINITION)
     with limit_queries(350, deadline=monotonic() + 8):
-        panel = factory_handover.projection(actor, work)
-    own = [item for item in panel['receipts'] if item['receipt'].recipient_id == actor.pk]
+        factory_handover.source(work, actor, current=False)
+        version = factory_handover.document(work)
+        _, own = factory_handover.receipt_state(work, version, recipient=actor)
+        can_ack = bool(own and factory_handover.can_acknowledge(actor, work, version))
     records = public_evidence(work.case.evidence.all()).only('kind', 'version').order_by('-pk')[:50]
     return {'expected_revision': work.revision, 'case_revision': work.case.revision,
-            'receipts': [{'id': row['receipt'].pk, 'can_acknowledge': row['can_ack'],
+            'receipts': [{'id': row['receipt'].pk, 'can_acknowledge': can_ack,
                           'status': row['ack'].data['status'] if row['ack'] else None} for row in own],
-            'proofs': proof_rows(records) if any(row['can_ack'] for row in own) else []}
+            'proofs': proof_rows(records) if can_ack else []}
 
 
 @endpoint(method='POST', request=obj({**VERSIONS, 'receipt_id': ID, 'evidence_id': ID, 'status': HANDOVER_STATUS, 'note': NOTE}),
           response=RESPONSE, summary='Let the actual Support recipient acknowledge the exact handover or record gaps')
 def acknowledge_support(http, work_id, *, body):
     work = require_line(http.user, work_id, factory_handover.DEFINITION)
+    require(http.user, work.case, 'delivery.support_receive')
+    get_object_or_404(public_evidence(work.case.evidence.all()), pk=body['evidence_id'])
     record = factory_handover.acknowledge(http.user, work.pk, body['expected_revision'], body['case_revision'],
                                          body['receipt_id'], body['status'], body['evidence_id'], body['note'])
     return recorded(work, record)

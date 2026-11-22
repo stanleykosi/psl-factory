@@ -103,14 +103,27 @@ def prerequisites(d,data):
     return closure.handover_inputs(d,{k:data['inputs'][k] for k in FIELDS[1:]})
 
 
-def receipt_state(work,version):
+def receipt_state(work,version,*,recipient=None):
     p=Publication.objects.filter(version=version).first() if version else None
-    receipts=list(PublicationReceipt.objects.filter(publication=p).order_by('pk')) if p else []
+    receipts=PublicationReceipt.objects.filter(publication=p).order_by('pk') if p else PublicationReceipt.objects.none()
+    if recipient is not None:
+        receipts = receipts.filter(recipient=recipient, publication__factory_work=work,
+                                   publication__factory_source=work.source_head)
     rows=[]
     for r in receipts:
         ack=DeliveryRecord.objects.select_related('actor').filter(dossier_id=work.request['dossier'],kind='handover',data__receipt_id=r.pk).order_by('-pk').first()
         rows.append({'receipt':r,'ack':ack})
     return p,rows
+
+
+def can_acknowledge(actor, work, version):
+    try:
+        require(actor, work.case, 'delivery.support_receive')
+        require(actor, work.case, 'document.receive:internal')
+        current_version(work.case, version.pk)
+    except (ValidationError, PermissionDenied):
+        return False
+    return True
 
 
 def snapshot(work,value,reader=None):
@@ -505,11 +518,7 @@ def projection(actor,work):
         can_correct=not work.cancel_requested and work.status not in ['cancelled','followup_needed'] and not (work.lease_until and work.lease_until>timezone.now()) and not PublicationJob.objects.filter(publication__factory_work=work,status__in=['pending','unknown','leased','held']).exists()
     except (ValidationError,PermissionDenied):pass
     for item in receipts:
-        item['can_ack']=False
-        if item['receipt'].recipient_id==actor.pk:
-            try:
-                require(actor,work.case,'delivery.support_receive');require(actor,work.case,'document.receive:internal');current_version(work.case,v.pk);item['can_ack']=True
-            except (ValidationError,PermissionDenied):pass
+        item['can_ack'] = item['receipt'].recipient_id == actor.pk and can_acknowledge(actor, work, v)
     from apps.pmo.handover_replies import available_roles, decorate_receipts
     decorate_receipts(work.case, receipts)
     reply_roles = available_roles(actor, work.case)
