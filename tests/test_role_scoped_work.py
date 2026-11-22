@@ -795,7 +795,7 @@ class RoleScopedWorkTests(TestCase):
         response = self.checked(self.api('/role-dashboard'),'/role-dashboard')
         self.assertEqual([desk['url'] for desk in response['approval_desks']],[url])
         [desk] = response['approval_desks']
-        self.assertEqual(desk['api_url'], self.api(f'/projects/{self.case.pk}/payment-controls'))
+        self.assertEqual(desk['api_url'], f'/api/v1/projects/{self.case.pk}/payment-controls')
         self.assertEqual(self.client.get(desk['api_url']).status_code, 200)
         self.assertContains(self.client.get(reverse('home'), {'queue': 'decisions'}),url)
         self.assertEqual(self.client.get(url).status_code,200)

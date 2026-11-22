@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decisions-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api')
 
 
 def run(group, token, role_access):
@@ -136,7 +136,7 @@ def run(group, token, role_access):
                    'tests.test_admitted_cash_successor_walkthrough',
                    'tests.test_financial_corrections.FinancialCorrectionTests.test_api_exact_credit_receipt_and_reversed_cash_successor',
                    'tests.test_financial_corrections.FinancialCorrectionTests.test_full_correction_staff_ui_calls_real_services_and_preserves_one_debt']
-    elif group == 'decisions-api':
+    elif group == 'decide-api':
         modules = ['tests.test_factory_api.ContractTests',
                    'tests.test_payments.PaymentTests.test_api_payment_exception_and_release_keep_independent_authorities',
                    'tests.test_factory_emergency.FactoryEmergencyTests.test_current_cto_refusal_holds_preauthorization_and_preserves_actual_outcome_capture',
