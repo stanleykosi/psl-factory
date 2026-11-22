@@ -49,10 +49,10 @@ class NativeRoleAccess(TransactionTestCase):
                     self.assertIsNone(details.json()["receipt"])
                     self.assertIsNone(details.json()["finance_acknowledgement"])
         member = users["pmo_member"]
-        from apps.identity import staff
+        from apps.identity import teams
         membership = StaffMembership.objects.get(case=case, user=member, active=True)
-        staff.deactivate(membership.invitation.authority.user, case.pk, member.pk, {}, None,
-                         "The synthetic member has left this project.", rev(case))
+        teams.revoke(membership.invitation.authority.user, case.pk, membership.pk,
+                     "The synthetic member has left this project.")
         with self.assertRaises(Http404):
             read_work(member,work.pk)
         self.assertIn(self.client_for(member).get(api).status_code, (401,404))

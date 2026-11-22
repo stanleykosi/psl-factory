@@ -1,5 +1,6 @@
 """Run synthetic OpenRouter acceptance for each specialist on an isolated Railway clone."""
 
+import argparse
 import json
 import os
 from pathlib import Path
@@ -12,7 +13,7 @@ from psycopg import sql
 from psycopg.types.json import Jsonb
 
 
-def main(ticket):
+def main(ticket, processes):
     if (os.getenv("RAILWAY_SERVICE_ID"), os.getenv("RAILWAY_SERVICE_NAME")) != (
         "00c14ca1-5361-4bee-97a5-2ec7aba6ef18", "psl-design-checks"
     ):
@@ -50,9 +51,12 @@ def main(ticket):
             return prior == (True,)
     # PostgreSQL requires all template sessions to close before cloning.
     evidence = []
-    required = {(process, role) for process, team in TEAMS.items() for role in team}
-    if {role for _, role in required} != {f"A{i:02}" for i in range(1, 9)}:
+    methods = {"F02": "test_f02_trial_balance_review_and_mapping",
+               "F35": "test_f35_hr_approval_before_private_finance_receipt",
+               "P52": "test_p52_approved_document_delivered_to_named_recipient"}
+    if set(methods) != set(TEAMS) or set().union(*TEAMS.values()) != {f"A{i:02}" for i in range(1, 9)}:
         raise RuntimeError("Representative routes must cover all eight configured specialists.")
+    required = {(process, role) for process in processes for role in TEAMS[process]}
     passed = False
     try:
         for key in ("PSL_ACCEPTANCE_SOURCE_KEY", "PSL_ACCEPTANCE_SOURCE_MODEL"):
@@ -71,8 +75,8 @@ def main(ticket):
             try:
                 environment = dict(os.environ, DJANGO_SETTINGS_MODULE="config.native_station_acceptance",
                                    PSL_STATION_LIVE="1", PSL_STATION_SUITE="roles", PSL_STATION_RUN=ticket.hex)
-                command = [sys.executable, "manage.py", "test", "tests.test_specialist_role_receipts.LiveRoleApprovalTests",
-                           "--keepdb", "--noinput", "--verbosity", "2"]
+                labels = ["tests.test_specialist_role_receipts.LiveRoleApprovalTests." + methods[pid] for pid in processes]
+                command = [sys.executable, "manage.py", "test", *labels, "--keepdb", "--noinput", "--verbosity", "2"]
                 with subprocess.Popen(command, env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as run:
                     for line in run.stdout:
                         print(line, end="", flush=True)
@@ -88,11 +92,13 @@ def main(ticket):
         with psycopg.connect(**{**params, "dbname": template}, autocommit=True) as state:
             state.execute("UPDATE specialist_acceptance.role_run SET passed=%s,evidence=%s WHERE ticket=%s",
                           (passed, Jsonb(evidence), ticket))
-    print(f"Specialist approval checks: passed={passed}; verified={len(evidence)} routes/roles.", flush=True)
+    print(f"Specialist approval checks: processes={processes}; passed={passed}; verified={len(evidence)} routes/roles.", flush=True)
     return passed
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise SystemExit("Supply the unique UUID for this explicitly authorised acceptance run.")
-    sys.exit(0 if main(UUID(sys.argv[1])) else 1)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("ticket", type=UUID, help="One-time UUID for this specific authorised run.")
+    parser.add_argument("--process", choices=("F02", "F35", "P52"), help="Run just one independent approval and its team.")
+    args = parser.parse_args()
+    sys.exit(0 if main(args.ticket, [args.process] if args.process else ["F02", "F35", "P52"]) else 1)

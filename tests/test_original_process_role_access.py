@@ -34,6 +34,42 @@ def original_fixture(component, cls=None, method=None, *, class_data=False, **kw
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class OriginalProcessRoleAccessTests(TestCase):
+    def test_source_triggered_work_uses_its_department_detail_and_own_commands(self):
+        from . import planning_helpers
+        from .native_station_helpers import start_station
+
+        f = planning_helpers.fixture()
+        work = start_station(self, 'P17', f['packet'])
+        roles = role_accounts(work.case)
+        base = f'/api/v1/work/{work.pk}'
+        progress = work.background_progress
+        initial = (progress.status, work.revision)
+        for actor, allowed in ((work.actor, True), (roles['pmo_member'], True), (roles['cto'], False)):
+            self.client.force_login(actor)
+            detail = self.client.get(base)
+            self.assertEqual(detail.status_code, 200 if allowed else 404, detail.content[:400])
+            if allowed:
+                card = detail.json()
+                destination = card['department_handoff_url']
+                self.assertEqual(destination, base + '/department-handoff')
+                native = self.client.get(destination).json()
+                self.assertEqual((native['title'], native['process']), (card['title'], 'P17'))
+                self.assertEqual(card['actions'], [])
+                self.assertIsNone(card['revision'])
+            history = self.client.get(base + '/history')
+            self.assertEqual(history.status_code, 200 if allowed else 404)
+            if allowed:
+                self.assertEqual(history.json()['items'], [])
+            for suffix, data in [('background', {'enabled': False}), ('actions', {'action': 'reconcile'})]:
+                attempted = self.client.post(base + '/' + suffix, {**data, 'expected_revision': work.revision},
+                                             content_type='application/json')
+                self.assertEqual(attempted.status_code, 404, attempted.content[:400])
+            generic = self.client.get('/api/v1/work', {'queue': 'active', 'line': work.definition})
+            self.assertEqual(generic.json()['items'], [])
+        work.refresh_from_db()
+        progress.refresh_from_db()
+        self.assertEqual((progress.status, work.revision), initial)
+
     def check_work(self, work, *processes, restricted=False, dispatched=False, investigation=None, roles=None):
         self.assertTrue(work.case.synthetic)
         self.assertTrue(set(processes) <= set(PROCESS_IDS[work.definition]))

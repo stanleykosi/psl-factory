@@ -33,17 +33,18 @@ def verify_roles(test, work, received):
                 pass
         public = client.get(f"/api/v1/work/{work.pk}/department-handoff")
         page = client.get(reverse("factory_detail", args=[work.pk]))
-        with test.subTest(process=route.process, role=key):
-            test.assertEqual(public.status_code, 200 if expected else 404)
-            test.assertEqual(any(t.name == "factory/department_handoff.html" for t in page.templates), expected)
-            if expected:
-                test.assertEqual(page.status_code, 200)
-                test.assertEqual(public.json()["process"], route.process)
-                test.assertEqual(public.json()["evidence"], list(current.lines.values()))
-                test.assertIsNotNone(public.json()["receipt"])
-                test.assertContains(page, "The receiving record was verified")
-            else:
-                test.assertEqual(public.json()["code"], "not_found")
-                test.assertNotIn(b"The receiving record was verified", page.content)
+        context = f"{route.process}: {key}"
+        test.assertEqual(public.status_code, 200 if expected else 404, context)
+        test.assertEqual(any(t.name == "factory/department_handoff.html" for t in page.templates), expected, context)
+        if expected:
+            test.assertEqual(page.status_code, 200, context)
+            test.assertEqual(public.json()["process"], route.process, context)
+            test.assertEqual(public.json()["evidence"], list(current.lines.values()), context)
+            test.assertIsNotNone(public.json()["receipt"], context)
+            test.assertContains(page, "The receiving record was verified")
+        else:
+            test.assertEqual(public.json()["code"], "not_found", context)
+            test.assertEqual(page.status_code, 404, context)
+            test.assertNotIn(b"The receiving record was verified", page.content, context)
         results[key] = "read" if expected else "restricted"
     print("ROLE_ACCESS", route.process, *(f"{key}={result}" for key, result in results.items()), flush=True)
