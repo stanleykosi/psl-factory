@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Django page separation · 22 November 2026
+
+37 local PostgreSQL tests passed in 77.127 seconds. They covered API-only sign-in and CSRF, private upload and download scope, the signed inbox rejection, retired page and form requests, contract parity, local archived pages and account delivery. Django system checks and migration drift checks passed in API-only mode. Private object storage calls used controlled test doubles. The existing 262-state ledger retains its original deployments and revisions.
+
 ## Next.js handoff validation · 22 November 2026
 
 The Railway preview returned 200 for health and Django sign-in. Its OpenAPI 1.22.0 document matched the GitHub main snapshot exactly, with 268 paths and 379 operations. Four contract tests passed in 10.561 seconds. TypeScript generation passed. The handoff crosswalk resolved all 262 passing states to present design files, mounted operations and the original Railway evidence across 59 groups. The Next.js design integration is a separate acceptance step and has no new run in this handoff.

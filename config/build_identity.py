@@ -4,7 +4,7 @@ import hashlib,json
 
 def identity(root):
     files={}
-    for directory in ['apps','adapters','config','templates','contracts']:
+    for directory in ['apps','adapters','config','legacy_ui','contracts']:
         for path in sorted((root/directory).rglob('*')):
             if path==root/'contracts/implementation-coverage.json':continue
             if path.is_file() and path.suffix in ['.py','.json','.html']:

@@ -10,7 +10,7 @@ from uuid import UUID
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = ('Dockerfile', 'adapters', 'apps', 'config', 'contracts', 'fixtures', 'manage.py',
-           'reference', 'static', 'templates', 'requirements.lock', 'requirements.deploy.txt',
+           'reference', 'legacy_ui', 'requirements.lock', 'requirements.deploy.txt',
            'SOURCE-MANIFEST.json', 'scripts/railway-worker.sh')
 CHECKS = ('tests', 'scripts/railway-native-stations.py', 'docs/design/screen-state-inventory.csv',
           'architecture/packages/v7/openapi.json')
@@ -53,6 +53,7 @@ def stage(revision, service, groups, coordinator_ticket=None, design_regression=
     if not marker:
         raise ValueError('The base Dockerfile has changed. Review its startup command.')
     if service == 'checks':
+        before_command += '\nENV PSL_DJANGO_UI=1'
         before_command += ('\nCOPY tests tests\nCOPY scripts/railway-native-stations.py scripts/railway-native-stations.py'
                            '\nCOPY docs/design/screen-state-inventory.csv docs/design/screen-state-inventory.csv'
                            '\nCOPY architecture/packages/v7/openapi.json architecture/packages/v7/openapi.json')

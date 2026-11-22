@@ -2,7 +2,7 @@
 
 ## Next.js developer handoff
 
-Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and the six-role permissions for My work, workspace visibility, invitations and decisions. Keep Django serving Railway during incremental frontend integration. HOD policy choices remain deferred.
+Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and six-role permissions. Run the backend in API-only mode and implement the replacement pages under `frontend/`. The archived Django page routes, templates and assets live in [`legacy_ui/`](legacy_ui/README.md). Its local preview uses `PSL_DJANGO_UI=1`. Use the API for sign-in, recovery and invitations and connect authenticated downloads through the frontend proxy. HOD policy choices remain deferred.
 
 ## API replay complete · 22 November 2026
 

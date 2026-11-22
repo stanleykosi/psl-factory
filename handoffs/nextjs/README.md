@@ -1,6 +1,6 @@
 # PSL Operations Factory · Next.js handoff
 
-Start from the existing [Next.js app](https://github.com/stanleykosi/psl-factory/tree/ad243b1eada4036d546b4a8f8bb0f22169f2c7bd/frontend) at GitHub main revision `ad243b1e`. The Railway preview serves OpenAPI 1.22.0 with 379 operations across 268 paths. Django owns sessions, work, approvals, uploads and the background workers. Keep Django available throughout the cutover and switch users to the Next.js pages as each journey is verified. [Railway preview](https://psl-design-web-design-acceptance.up.railway.app) · [Live OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+Start from the existing [Next.js app](../../frontend/). The Railway Django service is API-only and serves OpenAPI 1.22.0 with 379 operations across 268 paths. Django owns sessions, work, approvals, uploads and the background workers. The [archived Django pages](../../legacy_ui/README.md) are available for local comparison. [Live OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
 
 ## Files to use
 
@@ -26,17 +26,21 @@ npm exec -- openapi-typescript ../contracts/psl-factory.openapi.json -o src/api/
 npm run dev
 ```
 
-`npm run dev` starts the design prototype and its mock. Existing `npm run gen:api` regenerates the v7 mock types. Use the separate live types in the adapter for connected screens and leave the mock available for design fixtures. Point `API_ORIGIN` at the Django backend when running against an authorised environment. `frontend/next.config.ts` already proxies `/api/v1`, accounts, static files and Django form fallbacks. Use an approved HTTPS frontend origin for Railway session testing. A separate frontend origin needs an exact Django `PSL_FRONTEND_ORIGINS` entry for CSRF. Keep browser API requests same-origin through the proxy and preserve Django cookies and CSRF checks.
+`npm run dev` starts the design prototype and its mock. Existing `npm run gen:api` regenerates the v7 mock types. Use the separate live types in the adapter for connected screens and leave the mock available for design fixtures. Point `API_ORIGIN` at the Django backend. Keep `/api/v1` same-origin through the Next.js proxy. Replace the prototype’s `/accounts`, `/factory-forms`, `/factory-assets`, `/static` and catch-all Django rewrites as Next.js takes over those routes. Use an approved HTTPS frontend origin for Railway session testing. A separate frontend origin needs an exact Django `PSL_FRONTEND_ORIGINS` entry for CSRF. Preserve Django cookies and CSRF checks.
+
+Use the screen map and API operation links to build page navigation. Values such as `django_url`, `next_url`, and the process guide’s `source_url` and `tracking_url` may still identify retired pages. Route those references to the corresponding Next.js screen. Proxy authenticated file URLs as well as `/api/v1`. The six [compatibility download routes](../../config/urls.py) keep their existing paths and access checks.
 
 ### Session and work flow
 
-1. Keep the existing **My work** route, full menu and **Start work** available to signed-in staff. For the first connected route, use the native sign-in or `GET /api/v1/session` followed by `POST /api/v1/session`. Send cookies and the current `X-CSRFToken` on writes. Refresh the token after sign-in, sign-out or password change. Read `GET /api/v1/me` for navigation, assistant availability and the session context.
+1. Keep the existing **My work** route, full menu and **Start work** available to signed-in staff. Sign in using `GET /api/v1/session` followed by `POST /api/v1/session`. Send cookies and the current `X-CSRFToken` on writes. Refresh the token after sign-in, sign-out or password change. Read `GET /api/v1/me` for navigation, assistant availability and the session context.
 2. Build My work from `GET /api/v1/work` and fold `GET /api/v1/role-dashboard` into the same page for the role heading, team invitations and eligible decisions. Build the project list and tabs from `/api/v1/projects` and returned links. Keep the role data in My work with the existing navigation.
 3. Use `GET /api/v1/lines`, its project picker and the returned intake URL for the 25 Start work types. Keep received bids as their own intake. `GET /api/v1/processes` supplies the 108 PMO and Finance entries, including the action and tracking links for the 63 department-triggered processes. If a line has no eligible project, present that in the picker.
 4. After starting work, read the work detail, its panels and the latest history. The coordinator and eight specialists run on the backend. Show their scoped progress and drafts inside the work item. Use the department Assistant for conversations and verified source reuse. Poll during a current worker step, then refresh on decisions, exceptions and receipts.
 5. Render approvals from the current review packet and permitted verdicts. Submit its exact IDs, revisions and token. After a return, show the reason and exact correction path. After an uncertain delivery, use the original receipt lookup before offering any permitted retry. A queued request earns a progress state, and a confirmed business output earns the verified state.
 
 Handle expired sessions, forbidden or unavailable records, stale revisions and field errors. On a conflict, refresh the source or review and let the person confirm again. Render unknown amounts and missing owner or rule values explicitly. Preserve pagination, scope and `no-store` for private reads. Follow authenticated download URLs with the same session.
+
+Implement browser destinations for invitations at `/staff/join/` and recovery at `/accounts/recovery/link/`. Both links carry a token in the fragment. Read it in the browser and send it in the JSON body to the corresponding token API. For recovery, redeem via `POST /api/v1/accounts/recovery/link`, then set the password via `POST /api/v1/accounts/recovery/password`. Point delivered links at the approved Next.js origin before enabling those journeys for staff.
 
 ## Six-role permissions
 
@@ -56,7 +60,7 @@ Supervisors can see scoped assignment status. The exact packet and verdict go to
 | API | Purpose |
 | --- | --- |
 | `GET /api/v1/me/workspaces/{case_id}/primary-role` | Current role, mode and team in an exact workspace, if assigned. |
-| `GET /api/v1/role-dashboard` | My work role positions, scoped actions, available decisions, team decision status and current invitation links. Use the returned Django team link during the initial cutover. |
+| `GET /api/v1/role-dashboard` | My work role positions, scoped actions, available decisions, team decision status and invitation scope. Route invitations to the Next.js My work page. |
 | `GET/POST /api/v1/setup/{case_id}/invitations` | Read invitation authority and create the exact role-scoped invitation. Team leads supply the selected team ID. |
 | `POST /api/v1/accounts/invitations/preview` and `POST /api/v1/accounts/invitations/accept` | Preview the current scope and set up the account using the verified invitation token. |
 | `GET/POST /api/v1/setup/{case_id}/primary-roles` | List role definitions, permitted functions and `can_create`. A delegated Admin can add a definition here. The team and invitation APIs use the six built-in role keys. |
@@ -68,4 +72,4 @@ Supervisors can see scoped assignment status. The exact packet and verdict go to
 - Sign in on the intended origin. Open My work and Start work with a lead, a member and a standalone account. Confirm each sees the shared menu and appropriate workspace and action scope.
 - Run one PMO intake through background work and a human decision. Run one Finance review through return, exact correction, fresh approval and original receipt readback. Use the current state ledger to choose the precise scenarios.
 - Check cross-team invitations, private-file access, an out-of-scope direct URL, a stale verdict and an uncertain delivery before moving the corresponding Next.js pages into navigation.
-- Use the server's current holds when an owner, authority, rule or connector needs configuration. Department-head policy decisions remain deferred. Keep native Django links available while their corresponding Next.js flow is being connected.
+- Use the server's current holds when an owner, authority, rule or connector needs configuration. Department-head policy decisions remain deferred.

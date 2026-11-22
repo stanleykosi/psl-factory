@@ -1,5 +1,9 @@
 # PSL Operations Factory build state
 
+## Django page separation
+
+The Django pages, templates and assets are archived in `legacy_ui/`. The API-only runtime keeps the JSON routes, health check, signed Finance inbox and six authenticated file routes returned by the API. The next frontend work is to connect the design in `frontend/` using the published handoff. HOD policy choices remain deferred. [Frontend handoff](handoffs/nextjs/README.md) · [Test ledger](BUILD-TESTS.md)
+
 ## Next.js handoff prepared
 
 The [frontend handoff folder](handoffs/nextjs/README.md) includes the OpenAPI 1.22.0 snapshot, the map for all 59 screen groups, the 262-state crosswalk and the six-role access model. The Railway preview serves the verified contract.

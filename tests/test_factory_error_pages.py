@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.test import Client, SimpleTestCase, override_settings
 from django.urls import path
 
-from config.urls import handler403, handler404, handler500, urlpatterns as application_urls
+from legacy_ui.preview_urls import handler403, handler404, handler500, urlpatterns as application_urls
 
 
 def forbidden(request):

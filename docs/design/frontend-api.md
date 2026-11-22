@@ -21,11 +21,11 @@ npm ci
 npm exec --offline openapi-typescript -- ../contracts/psl-factory.openapi.json -o src/api/live-schema.d.ts
 ```
 
-- Serve the future frontend and Django API on the same origin. Native Django login, recovery and invitations remain available, and the API uses the same services and session.
+- Serve the Next.js frontend and Django API on the same origin through the frontend proxy. Use the JSON APIs for login, recovery and invitations. Railway serves the backend in API-only mode.
 - Read `GET /api/v1/session` before the first sign-in or recovery action, and use the refreshed `csrf_token` returned by sign-in. Send the current token in `X-CSRFToken` on writes, with the session cookie. Private responses are marked `no-store`.
 - Use the site origin as the client base URL. The OpenAPI paths already include `/api/v1`. Handle the declared HTTP statuses and use the JSON error `code` and optional `fields` for application errors.
 - Use the current server-issued record identifiers and revisions. Treat a conflict as a request to reload, inspect the current record and make a fresh decision. A permission response or an unavailable record stops that operation.
-- Submit multipart private files through the existing upload service. Fetch file and detailed source links through their authenticated Django URLs. Agent drafts keep the exact source or attempt pin through review, recovery and handoff.
+- Submit multipart private files through the existing upload service. Fetch download URLs with the authenticated session. Agent drafts keep the exact source or attempt pin through review, recovery and handoff.
 - Send initiation and Assistant requests with the same idempotency key for the same intent. Treat an accepted command as an acknowledgement. Refresh authorized work or receipt status for the business outcome. Explicit release and receipt reconciliation remain separate.
 - Read queue coverage and handle incomplete results and pages. Amounts are decimal strings where projected as money. Unknown values remain null.
 - Use a work item's optional `current_activity` label when present. Poll while `watching` is true and use the latest authorised result to clear an ended activity.
@@ -110,30 +110,30 @@ The current API covers intake against exact native sources for all 25 existing f
 
 Prioritize the next cutover in this order.
 
-1. Shared navigation, work queues, project directory and project tabs, using current scope and pagination. Keep native links for controlled record and proof readback.
+1. Shared navigation, work queues, project directory and project tabs, using current scope and pagination. Use the mapped API for controlled record readback and follow its authorised file links.
 2. Exact Finance review and recovery, minutes and bid packs, and current-source Assistant conversations. Use the typed draft and start endpoints to require the saved version during handoff.
 3. Connect the mapped JSON projections and scoped commands for delivery, release, Change, Finance and HR. Verify independent decisions, action holds and original receipts against the state ledger.
-4. Connect account and staff administration and policy Setup. Use Django forms during the transition and test permission, concurrency and browser parity before switching navigation. HOD-owned values remain deferred.
+4. Connect account and staff administration and policy Setup. Test permission, concurrency and browser parity in Next.js. HOD-owned values remain deferred.
 
 Keep the current Railway browser ledger as the Django functional baseline. Test newly migrated screens against live API responses with synthetic data and the ordinary test roles before switching their navigation.
 ### Connecting a separate frontend host
 
 Set `API_ORIGIN` on the Next server to the Django server and keep browser requests same-origin through the Next proxy. If Django sees a separate public frontend origin, configure `PSL_FRONTEND_ORIGINS` with the exact approved origin, including any port. Django uses that setting for CSRF checks. Preserve the session cookie and current CSRF token on authenticated writes.
 
-The Next.js prototype includes the design pages and a mock-backed client. Connect each live route using the Django contract. Native forms can open through the frontend proxy. A deployment with a separately reachable public Django site may set `NEXT_PUBLIC_FACTORY_ORIGIN` for those form links.
+The Next.js prototype includes the design pages and a mock-backed client. Connect each live route using the Django contract. The archived pages in `legacy_ui/` are available for local comparison. On Railway, their URLs identify reference screens. Use the screen map and live API operations to route those links within Next.js.
 
 ## PMO and Finance process access
 
 `GET /api/v1/processes` returns the same 108 process entries as **Find a process** in Start work. Each entry identifies whether it continues from a department record and whether the signed-in person has a project where they can submit its intake. Project evidence and decisions are fetched separately under the current reader’s access. The JSON contract is served at `/api/v1/openapi.json`.
 
-The 63 department-triggered entries expose `guide.action`, `guide.screen`, `guide.source_url` and `guide.tracking_url`. The two URLs open the native action or the process-filtered Department handoffs view after the reader chooses an accessible project. A client can pass `?project=<project UUID>` when it already knows the project. An unavailable project is rejected. Other entries return a null guide. Start work retains its 25 workflow types and the separate received bid intake.
+The 63 department-triggered entries expose `guide.action`, `guide.screen`, `guide.source_url` and `guide.tracking_url`. Map the two reference URLs to the equivalent Next.js action or the process-filtered Department handoffs view after the reader chooses an accessible project. A client can pass `?project=<project UUID>` when it already knows the project. An unavailable project is rejected. Other entries return a null guide. Start work retains its 25 workflow types and the separate received bid intake.
 
 PMO Lead, Finance Lead, CEO and CTO see every project in their organisation and data classification through `GET /api/v1/projects` and can open project handoffs. A source link opens the exact screen when the reader has its native permission. For a workspace they can open without that permission, the link explains who owns the action and offers the workspace and tracking views. Handoff rows still require permission to read the original work. Use `intake_available` for permission to start a line.
 
 | Operation | Use |
 | --- | --- |
 | `GET /api/v1/lines` | Find intakes available to this person, their submission URL and their project picker URL when applicable. |
-| `GET /api/v1/lines/projects?line=planning/v1` | Find projects where the current person can submit that Start work type. Use the returned `case_id` and `case_revision`. Keep the returned Django URL for source selection and forms that still run there. |
+| `GET /api/v1/lines/projects?line=planning/v1` | Find projects where the current person can submit that Start work type. Use the returned `case_id` and `case_revision` to load the mapped intake. |
 | `POST /api/v1/work` | Start an available workflow on an authorised project. Engagement accepts an existing capture or the source evidence and route from the Django form. |
 | `GET /api/v1/received-bids/organisations` and `POST /api/v1/received-bids` | Select a current organisation delegation and submit a received bid with its original private file. Repeating the same intake uses its original receipt. |
 | `GET /api/v1/projects/{case_id}/department-handoffs` | Page through this person’s visible department work in a project. Retain the optional `process` filter alongside `before` when loading earlier results. |

@@ -31,8 +31,10 @@ MIDDLEWARE = ['django.middleware.security.SecurityMiddleware', 'django.contrib.s
               'django.contrib.auth.middleware.AuthenticationMiddleware', 'apps.identity.staff_sessions.StaffSessionMiddleware',
               'django.contrib.messages.middleware.MessageMiddleware',
               'django.middleware.clickjacking.XFrameOptionsMiddleware']
-ROOT_URLCONF = 'config.urls'
-TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [BASE_DIR / 'templates'],
+PSL_DJANGO_UI = os.getenv('PSL_DJANGO_UI', '0' if RAILWAY_DOMAIN else '1') == '1'
+ROOT_URLCONF = 'legacy_ui.preview_urls' if PSL_DJANGO_UI else 'config.urls'
+LEGACY_UI_DIR = BASE_DIR / 'legacy_ui'
+TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [LEGACY_UI_DIR / 'templates'],
               'APP_DIRS': True, 'OPTIONS': {'context_processors': ['django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth', 'django.contrib.messages.context_processors.messages','apps.core.context.interface']}}]
 DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql', 'NAME': os.getenv('PGDATABASE', 'psl'),
@@ -42,9 +44,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USE_TZ = True
 TIME_ZONE = 'Africa/Lagos'
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [LEGACY_UI_DIR / 'static'] if PSL_DJANGO_UI else []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-if RAILWAY_DOMAIN:
+if RAILWAY_DOMAIN and PSL_DJANGO_UI:
     MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'

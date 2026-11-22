@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Run Railway with the Django page callbacks disabled. Preserve compatibility route names so existing JSON responses and published screen mappings keep their shape. Keep the signed Finance inbox and the six API-linked downloads on their established endpoints. The archive can run locally for comparison and regression tests.
+
 22 November 2026. Next.js will use the generated live Django contract for connected pages and retain the v7 client for prototype fixtures during integration. My work uses the existing route and presents role data inline. Django owns workspace and record permission checks, business decisions and background workflow state.
 
 22 November 2026. Reuse a single read's exact Finance review subjects and route packet. Keep independent current checks inside mutations. Match a staff result to its checked payroll and exact reviewed exceptions before reusing the source review. Emergency readback reuses completed retrospective evidence and excludes worker planning from the human API panel.

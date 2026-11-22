@@ -45,7 +45,7 @@ def run(group, token, role_access):
                    'tests.test_role_scoped_work.RoleScopedWorkTests.test_role_accounts_keep_the_full_factory_shell_and_scoped_destinations']
     elif group == 'cutover':
         modules = [
-            'tests.test_factory_api', 'tests.test_railway_worker',
+            'tests.test_factory_api', 'tests.test_railway_worker', 'tests.test_api_only_surface',
             'tests.test_bank_receipt_capture.BankReceiptCaptureTests.test_api_report_verify_allocate_and_private_readback',
             'tests.test_rfp_assignment_queue.RFPAssignmentQueueTests.test_api_assigns_current_bid_to_named_manager_and_prevents_repeat',
             'tests.test_design_consolidation.DesignConsolidationTests.test_api_project_action_assignment_completion_and_history',

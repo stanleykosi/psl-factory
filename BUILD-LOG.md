@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Moved the Django page routes and assets into `legacy_ui/`. Made the Railway image API-only and documented how Next.js takes over navigation, account links and private file access. [Test ledger](BUILD-TESTS.md)
+
 22 November 2026. Packaged the Next.js integration handoff in its own repository folder with the OpenAPI 1.22.0 snapshot, generated types, screen map, state crosswalk and six-role permissions. Checked Railway health and sign-in and matched the live schema to GitHub main. [Frontend handoff](handoffs/nextjs/README.md)
 
 22 November 2026. Completed all 262 Railway API state replays with individual revision and deployment evidence. Retested the final 16 states and deployed OpenAPI 1.22.0 with the Django frontend and existing worker on Railway. Verified the hosted contract, health, sign-in and worker polling. [State results](docs/design/api-state-replay-results.csv)

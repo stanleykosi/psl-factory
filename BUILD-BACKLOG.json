@@ -1,4 +1,12 @@
 {
+  "django_frontend_separation_20261122": {
+    "status": "implemented_local_verified",
+    "archive": "legacy_ui/",
+    "backend_routes": "config/urls.py",
+    "verification": "tests/test_api_only_surface.py",
+    "next": "Verify the API-only Railway rollout, then connect the Next.js frontend from the published handoff.",
+    "hod_choices": "deferred"
+  },
   "nextjs_frontend_handoff_20261122": {
     "status": "published",
     "guide": "handoffs/nextjs/README.md",
@@ -7,7 +15,7 @@
     "screen_map": "handoffs/nextjs/factory-api-screen-map.json",
     "groups": 59,
     "states": 262,
-    "next": "Connect the existing Next.js prototype one journey at a time while Django serves the current workflow.",
+    "next": "Connect the existing Next.js prototype to the API-only Django service using the existing design and state crosswalk.",
     "hod_choices": "deferred"
   },
   "named_api_state_replay_20261122": {

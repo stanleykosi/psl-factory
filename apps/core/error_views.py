@@ -1,11 +1,16 @@
 """Plain factory error pages with the framework's original status and access checks."""
+from django.conf import settings
 from django.core.exceptions import RequestDataTooBig
 from django.shortcuts import render
 from django.views import defaults
 
 
+def _json_errors(request):
+    return not settings.PSL_DJANGO_UI or request.path_info.startswith('/api/v1/')
+
+
 def bad_request(request, exception):
-    if request.path_info.startswith('/api/v1/'):
+    if _json_errors(request):
         from .factory_api.http import error
 
         if isinstance(exception, RequestDataTooBig):
@@ -15,7 +20,7 @@ def bad_request(request, exception):
 
 
 def forbidden(request, exception):
-    if request.path_info.startswith('/api/v1/'):
+    if _json_errors(request):
         from .factory_api.http import error
 
         return error(403, 'forbidden', 'You do not have permission for this action.')
@@ -25,7 +30,7 @@ def forbidden(request, exception):
 
 
 def missing(request, exception):
-    if request.path_info.startswith('/api/v1/'):
+    if _json_errors(request):
         from .factory_api.http import missing as missing_record
 
         return missing_record()
@@ -35,7 +40,7 @@ def missing(request, exception):
 
 
 def failed(request):
-    if request.path_info.startswith('/api/v1/'):
+    if _json_errors(request):
         from .factory_api.http import error
 
         return error(500, 'internal_error', 'The request could not be completed. Check the current work before retrying.')
@@ -45,7 +50,7 @@ def failed(request):
 
 
 def csrf_failure(request, reason=''):
-    if request.path_info.startswith('/api/v1/'):
+    if _json_errors(request):
         from .factory_api.http import error
 
         return error(403, 'csrf_failed', 'Refresh your session and try again.')

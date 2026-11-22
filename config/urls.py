@@ -1,330 +1,48 @@
-from apps.finance import usage_intake_views
-from apps.documents import template_views
-from apps.pmo import leadership_report_views
-from apps.pmo import planning_views
-from apps.pmo import project_view_views
-from apps.finance import receipt_followup_views
-from apps.finance.followup_intake import endpoint as finance_followup_inbox
-from apps.documents import protection_acceptance_views
-from apps.finance import readiness_acceptance_views
-from apps.finance import accepted_document_views
-from apps.finance import acceptance_views
-from apps.workflows import readiness_views
-from apps.workflows import operator_views
-from apps.pmo import costing_views
-from apps.pmo import costing_proposal_views
-from apps.finance import d03_views
-from apps.documents import migration_views
-from apps.pmo import approval_views
-from apps.pmo import client_uat_views
-from apps.baas import support_views
-from apps.finance import ledger_views,ledger_agent_views
-from apps.finance import ppe_views
-from apps.finance import schedule_views
-from apps.finance import bu_views
-from django.contrib.auth import views as auth_views
+"""Public backend routes and compatibility names for the retired Django pages."""
 from django.urls import include, path
-from apps.workflows import native_station_views, process_directory_views
+from django.urls.resolvers import URLPattern
+
+from apps.agents import upload_views
+from apps.core.factory_api.http import error
+from apps.documents import template_catalog
+from apps.finance import bank_receipt_views, reminder_views
+from apps.finance.followup_intake import endpoint as finance_followup_inbox
+from apps.pmo import rfp_views
+from apps.workflows import factory_invoice_information_views
+from legacy_ui.urls import urlpatterns as page_patterns
+
 from .health import health
-from apps.agents import specialist_views, upload_views
-from apps.policy import delegation_views
-finance_intake_patterns=[path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',finance_followup_inbox,name='finance_followup_inbox')]
-from apps.documents import validation_views
-from apps.finance import payroll_views, payroll_correction_views, payroll_row_controls, reminder_views
-from apps.identity import staff_views
-from apps.identity import staff_account_views
-from apps.identity import staff_profile_views, primary_role_views, role_work_views, scope_move_views
-from apps.finance import hrfinance_views
-from apps.finance import recognition_views
-from apps.finance import payment_views
-from apps.finance import short_payment_views
-from apps.core import views
-from apps.core import design_views
-from apps.core import recovery_views as account_recovery_views
-from apps.agents import assistant_views
-from apps.baas import views as baas_views, partner_views
-from apps.documents import views as document_views
-from apps.pmo import views as pmo_views
-from apps.pmo import commercial_views
-from apps.pmo import commercial_client_views
-from apps.pmo import issue_views
-from apps.pmo import issue_team_views
-from apps.pmo import issue_message_views
-from apps.pmo import escalation_views
-from apps.pmo import emergency_views, recovery_views, delivery_views
-from apps.pmo import rfp_assignment_views, rfp_views
-from apps.finance import views as finance_views
-from apps.finance import performance_views,billing_views,settlement_views,correction_views,forecast_views
-from apps.baas import support_agent_views,support_release_views,support_channel_views
-from apps.agents import boundary_views
-from apps.workflows import application_recovery_views
-from apps.policy import pilot_views
-from apps.policy import pilot_binding_views
-pilot_patterns=[path('cases/<uuid:case_id>/pilot/',pilot_views.workbench,name='pilot_preflight'),
-    path('cases/<uuid:case_id>/pilot/contracts/<int:pk>/',pilot_views.contract,name='pilot_contract'),
-    path('cases/<uuid:case_id>/pilot/observations/<int:pk>/',pilot_views.report,name='pilot_observation')]
+
 handler400 = 'apps.core.error_views.bad_request'
 handler403 = 'apps.core.error_views.forbidden'
 handler404 = 'apps.core.error_views.missing'
 handler500 = 'apps.core.error_views.failed'
 
-urlpatterns = [
+backend_patterns = [
     path('api/v1/', include('apps.core.factory_api.urls')),
-    path('cases/<uuid:case_id>/costing/proposals/<int:pk>/', costing_proposal_views.detail, name='costing_proposal'),
     path('health/', health, name='health'),
-    path('cases/<uuid:case_id>/files/', upload_views.workbench, name='case_uploads'),
-    path('cases/<uuid:case_id>/department-handoffs/', native_station_views.project, name='project_handoffs'),
-    path('work/<int:work_id>/source-readings/<int:pk>/', specialist_views.report, name='specialist_report'),
-    path('work/<int:work_id>/source-reviews/<int:pk>/resolve/', specialist_views.resolve_findings, name='resolve_source_findings'),
-    path('work/<int:work_id>/coordination/<int:pk>/retry/', specialist_views.retry_coordination, name='retry_specialist_coordination'),
+    path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',
+         finance_followup_inbox, name='finance_followup_inbox'),
+    # The JSON API returns these authenticated file URLs to clients.
     path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),
-    path('cases/<uuid:case_id>/documents/templates/current/', template_views.workbench, name='template_current'),
-    path('cases/<uuid:case_id>/documents/templates/current/sources/<int:source_id>/', template_views.source_detail, name='template_source_detail'),
-    path('cases/<uuid:case_id>/documents/templates/current/authority/<str:kind>/<int:pk>/', template_views.owner_pin_detail, name='template_owner_pin_detail'),
-    path('cases/<uuid:case_id>/documents/templates/current/history/', template_views.owner_metadata, name='template_owner_metadata'),
-    path('cases/<uuid:case_id>/leadership-reports/<str:kind>/', leadership_report_views.prepare, name='leadership_report'),path('cases/<uuid:case_id>/planning/',planning_views.workbench,name='planning'),path('project-views/',project_view_views.index,name='project_views'),path('cases/<uuid:case_id>/project-view/<slug:key>/',project_view_views.audience,name='project_audience'),path('cases/<uuid:case_id>/project-sharing/configuration/',project_view_views.configuration,name='project_view_configuration'),path('cases/<uuid:case_id>/finance/receipt-followup/',receipt_followup_views.workbench,name='finance_receipt_followup'),path('cases/<uuid:case_id>/application-recovery/',application_recovery_views.workbench,name='application_recovery'),path('cases/<uuid:case_id>/application-recovery/<int:plan_id>/',application_recovery_views.report,name='application_recovery_report'),path('cases/<uuid:case_id>/validation/protection/',protection_acceptance_views.workbench,name='protection_acceptance'),path('cases/<uuid:case_id>/validation/protection/<int:pk>/',protection_acceptance_views.report,name='protection_acceptance_report'),path('cases/<uuid:case_id>/validation/protection/<int:pk>/export/',protection_acceptance_views.export,name='protection_acceptance_export'),path('cases/<uuid:case_id>/finance/readiness-acceptance/',readiness_acceptance_views.workbench,name='private_readiness_acceptance'),path('cases/<uuid:case_id>/finance/readiness-acceptance/<int:pk>/',readiness_acceptance_views.report,name='private_readiness_report'),path('cases/<uuid:case_id>/finance/readiness-acceptance/<int:pk>/export/',readiness_acceptance_views.export,name='private_readiness_export'),path('cases/<uuid:case_id>/finance/accepted-documents/',accepted_document_views.workbench,name='accepted_finance'),path('cases/<uuid:case_id>/finance/accepted-documents/<int:pk>/',accepted_document_views.report,name='accepted_finance_report'),path('cases/<uuid:case_id>/finance/acceptance/',acceptance_views.workbench,name='finance_acceptance'),path('cases/<uuid:case_id>/finance/acceptance/<int:pk>/',acceptance_views.report,name='finance_acceptance_report'),path('cases/<uuid:case_id>/finance/ledger/agents/drafts/<int:pk>/approved-evidence/',ledger_agent_views.approved,name='ledger_approved_evidence'),path('cases/<uuid:case_id>/finance/ledger/agents/',ledger_agent_views.workbench,name='ledger_agents'),path('cases/<uuid:case_id>/finance/ledger/agents/drafts/<int:pk>/',ledger_agent_views.report,name='ledger_agent_report'),path('cases/<uuid:case_id>/support/channels/',support_channel_views.workbench,name='support_channels'),path('cases/<uuid:case_id>/support/channels/guidance/',support_channel_views.guidance,name='support_channel_guidance'),path('cases/<uuid:case_id>/support/channels/<int:pk>/',support_channel_views.report,name='support_channel_report'),path('cases/<uuid:case_id>/support/responses/operations/',support_release_views.diagnostics,name='support_response_operations'),path('cases/<uuid:case_id>/support/responses/',support_release_views.workbench,name='support_responses'),path('cases/<uuid:case_id>/support/responses/<int:pk>/',support_release_views.report,name='support_response_report'),path('cases/<uuid:case_id>/support/response-receipts/<int:pk>/',support_release_views.receipt,name='support_response_receipt'),path('cases/<uuid:case_id>/support/agents/',support_agent_views.workbench,name='support_agents'),path('cases/<uuid:case_id>/support/agents/drafts/<int:pk>/',support_agent_views.report,name='support_agent_report'),path('cases/<uuid:case_id>/private-evidence/',boundary_views.workbench,name='private_evidence'),path('cases/<uuid:case_id>/private-evidence/results/<int:pk>/',boundary_views.result,name='private_result'),path('cases/<uuid:case_id>/private-evidence/projections/<int:pk>/',boundary_views.projection,name='private_projection'),path('cases/<uuid:case_id>/integrations/',readiness_views.workbench,name='integration_readiness'),path('cases/<uuid:case_id>/integrations/source/<str:kind>/<int:pk>/',readiness_views.source,name='integration_source'),path('cases/<uuid:case_id>/integrations/report/<int:pk>/',readiness_views.report,name='integration_report'),path('cases/<uuid:case_id>/operations/',operator_views.workbench,name='operations'),path('cases/<uuid:case_id>/operations/artifact/<int:pk>/',operator_views.artifact,name='operator_artifact'),path('cases/<uuid:case_id>/operations/source/<str:kind>/<int:pk>/',operator_views.proof,name='operator_proof'),path('cases/<uuid:case_id>/operations/report/<int:pk>/',operator_views.report,name='operator_report'),path('cases/<uuid:case_id>/costing/',costing_views.workbench,name='costing'),path('cases/<uuid:case_id>/costing/report/<int:pk>/',costing_views.report,name='costing_report'),path('cases/<uuid:case_id>/costing/source/<str:kind>/<int:pk>/',costing_views.source,name='costing_source'),path('cases/<uuid:case_id>/finance/billing-evidence/controls/<int:pk>/',d03_views.controls,name='billing_control_history'),path('cases/<uuid:case_id>/finance/billing-evidence/',d03_views.workbench,name='billing_evidence'),path('cases/<uuid:case_id>/finance/billing-evidence/report/<int:pk>/',d03_views.report,name='billing_evidence_report'),path('cases/<uuid:case_id>/finance/billing-evidence/source/<int:pk>/',d03_views.source,name='billing_evidence_source'),path('cases/<uuid:case_id>/migration/',migration_views.workbench,name='migration_readiness'),path('cases/<uuid:case_id>/migration/report/<int:pk>/',migration_views.report,name='migration_report'),path('cases/<uuid:case_id>/migration/evidence/<int:pk>/',migration_views.evidence,name='migration_evidence'),path('approvals/inbox/',approval_views.inbox,name='approval_inbox'),path('cases/<uuid:case_id>/approvals/',approval_views.workbench,name='approvals'),path('cases/<uuid:case_id>/approvals/report/',approval_views.report,name='approval_report'),path('cases/<uuid:case_id>/approvals/source/<int:pk>/',approval_views.source,name='approval_source'),path('support/inbox/',support_views.inbox,name='support_inbox'),path('cases/<uuid:case_id>/support/',support_views.workbench,name='support_flow'),path('cases/<uuid:case_id>/support/reports/<int:pk>/',support_views.report,name='support_report'),path('cases/<uuid:case_id>/finance/ledger/',ledger_views.workbench,name='ledger'),path('cases/<uuid:case_id>/finance/ledger/<int:pk>/report/',ledger_views.report,name='ledger_report'),path('cases/<uuid:case_id>/finance/assets/',ppe_views.workbench,name='ppe'),path('cases/<uuid:case_id>/finance/assets/<int:pk>/report/',ppe_views.report,name='ppe_report'),path('cases/<uuid:case_id>/finance/schedules/',schedule_views.workbench,name='finance_schedules'),path('cases/<uuid:case_id>/finance/schedules/<int:pk>/report/',schedule_views.report,name='schedule_report'),path('cases/<uuid:case_id>/finance/bu-attribution/',bu_views.workbench,name='bu'),path('cases/<uuid:case_id>/finance/bu-attribution/<str:kind>/<int:pk>/',bu_views.inspect,name='bu_inspect'),path('cases/<uuid:case_id>/finance/payroll/inspect/<str:kind>/<int:pk>/',payroll_views.inspect,name='payroll_inspect'),path('cases/<uuid:case_id>/finance/payroll/',payroll_views.workbench,name='payroll'),path('cases/<uuid:case_id>/finance/payroll/data/<str:kind>/<int:pk>/',payroll_views.data,name='payroll_data'),path('cases/<uuid:case_id>/finance/hr-handoff/',hrfinance_views.workbench,name='hrfinance'),path('cases/<uuid:case_id>/finance/hr-handoff/snapshots/<int:snapshot_id>/',hrfinance_views.snapshot,name='hrfinance_snapshot'),path('cases/<uuid:case_id>/finance/recognition/',recognition_views.workbench,name='recognition'),path('cases/<uuid:case_id>/finance/recognition/report/<int:packet_id>/',recognition_views.export,name='recognition_export'),path('cases/<uuid:case_id>/validation/',validation_views.workbench,name='validation'),path('cases/<uuid:case_id>/validation/report/<int:review_id>/',validation_views.export,name='validation_export'),path('cases/<uuid:case_id>/payment-controls/',payment_views.workbench,name='payment_controls'),path('cases/<uuid:case_id>/partners/',partner_views.workbench,name='partner_operations'),path('finance/partner-activity/inbox/',partner_views.inbox,name='partner_finance_inbox'),path('cases/<uuid:case_id>/baas/reconciliation/',baas_views.workbench,name='baas_reconciliation'),path('baas/engineering/inbox/',baas_views.inbox,name='engineering_inbox'),path('cases/<uuid:case_id>/finance/forecast/',forecast_views.workbench,name='finance_forecast'),path('cases/<uuid:case_id>/finance/corrections/',correction_views.workbench,name='finance_corrections'),path('finance/invoices/inbox/',settlement_views.inbox,name='invoice_inbox'),path('cases/<uuid:case_id>/finance/settlement/',settlement_views.workbench,name='finance_settlement'),path('cases/<uuid:case_id>/finance/usage-intake/',usage_intake_views.workbench,name='finance_usage_intake'),path('cases/<uuid:case_id>/finance/billing/',billing_views.workbench,name='finance_billing'),path('cases/<uuid:case_id>/finance/performance/',performance_views.workbench,name='finance_performance'),path('cases/<uuid:case_id>/finance/',finance_views.workbench,name='finance_analysis'),path("cases/<uuid:case_id>/rfp/",rfp_views.workbench,name="rfp"),path("cases/<uuid:case_id>/delivery/",delivery_views.workbench,name="delivery"),path("cases/<uuid:case_id>/authority/",recovery_views.workbench,name="authority_recovery"),path('cases/<uuid:case_id>/meetings/',pmo_views.workbench,name='meetings'),path('documents/inbox/',document_views.inbox,name='document_inbox'),
-    path('cases/<uuid:case_id>/commercial/',commercial_views.workbench,name='commercial'),
-    path('cases/<uuid:case_id>/commercial/client-response/',commercial_client_views.workbench,name='commercial_client_response'),
-    path('cases/<uuid:case_id>/commercial/client-response/<int:metadata_id>/proof/<int:upload_id>/',commercial_client_views.proof,name='commercial_client_proof'),
-    path('cases/<uuid:case_id>/changes/',commercial_views.changes,name='changes'),
-    path('cases/<uuid:case_id>/emergencies/',emergency_views.workbench,name='emergencies'),
-    path('cases/<uuid:case_id>/issues/',issue_views.workbench,name='issues'),
-    path('cases/<uuid:case_id>/issues/team-settings/',issue_team_views.configuration,name='issue_team_configuration'),
-    path('cases/<uuid:case_id>/issues/message-settings/',issue_message_views.configuration,name='issue_message_configuration'),
-    path('cases/<uuid:case_id>/issues/<int:issue_id>/messages/',issue_message_views.index,name='issue_messages'),
-    path('cases/<uuid:case_id>/issues/<int:issue_id>/messages/<int:draft_id>/',issue_message_views.detail,name='issue_message_detail'),
-    path('cases/<uuid:case_id>/issues/<int:issue_id>/owner/',issue_team_views.owner,name='issue_team_owner'),
-    path('cases/<uuid:case_id>/issues/<int:issue_id>/resolution/',issue_team_views.resolution,name='issue_team_resolution'),
-    path('cases/<uuid:case_id>/escalations/',escalation_views.workbench,name='escalations'),
-    path('cases/<uuid:case_id>/documents/',document_views.workbench,name='documents'),
-    path('accounts/login/', design_views.FactoryLogin.as_view(), name='login'),
-    path('accounts/password_reset/', account_recovery_views.recover, name='password_reset'),
-    path('accounts/password_reset/done/', account_recovery_views.sent, name='factory_recovery_sent'),
-    path('accounts/recovery/choose/', account_recovery_views.confirm, name='factory_recovery_confirm'),
-    path('accounts/recovery/complete/', account_recovery_views.complete, name='factory_recovery_complete'),
-    path('accounts/recovery/link/', account_recovery_views.redeem, name='factory_recovery_token'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('accounts/password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
-    path('accounts/password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
-    path('', views.home, name='home'), path('coverage/', views.coverage, name='coverage'),
-    path('cases/<uuid:case_id>/', views.case_detail, name='case'),
-    path('cases/<uuid:case_id>/policy/', views.policy_workbench, name='policy'),
-    path('cases/<uuid:case_id>/policy/delegation/', delegation_views.workspace, name='design_delegation')]
-urlpatterns += finance_intake_patterns
-from apps.finance import document_views as finance_documents
-urlpatterns += [
-    path('finance/document-review/', finance_documents.inbox, name='finance_document_projects'),
-    path('projects/<uuid:case_id>/finance/documents/', finance_documents.inbox, name='finance_document_inbox'),
-    path('projects/<uuid:case_id>/finance/documents/<int:pk>/', finance_documents.review, name='finance_document_review'),
-    path('projects/<uuid:case_id>/finance/documents/<int:pk>/original/', finance_documents.original, name='finance_document_original'),
-]
-from apps.policy import scope_views
-from apps.policy import impact_views
-urlpatterns += [path('cases/<uuid:case_id>/policy/impact/',impact_views.workbench,name='policy_impact'),
-    path('cases/<uuid:case_id>/policy/impact/<int:pk>/',impact_views.assessment,name='policy_impact_assessment'),
-    path('cases/<uuid:case_id>/policy/impact/<int:pk>/agent/',impact_views.investigation,name='policy_impact_agent'),
-    path('cases/<uuid:case_id>/policy/impact/records/<int:configuration_id>/<str:key>/',impact_views.records,name='policy_impact_records')]
-urlpatterns += [path('cases/<uuid:case_id>/policy/scopes/',scope_views.workbench,name='policy_scopes'),
-    path('cases/<uuid:case_id>/policy/scopes/investigate/',scope_views.investigate,name='policy_scope_investigation')]
-
-from apps.identity import intake_views
-urlpatterns += [path('intake/',intake_views.create,name='case_create'),path('cases/<uuid:case_id>/access/',intake_views.access,name='case_access')]
-urlpatterns += [path('tenant-access/',intake_views.provision,name='tenant_access'),path('cases/<uuid:case_id>/intake-investigation/',intake_views.investigate,name='intake_investigate')]
-from apps.pmo import engagement_views
-urlpatterns += [path('cases/<uuid:case_id>/engagement/',engagement_views.workbench,name='engagement')]
-from apps.pmo import identity_resolution_views
-urlpatterns += [path('cases/<uuid:case_id>/identity-resolution/',identity_resolution_views.workbench,name='identity_resolution')]
-from apps.baas import summary_views
-urlpatterns += [path('cases/<uuid:case_id>/support/summaries/',summary_views.workbench,name='complaint_summaries'),path('cases/<uuid:case_id>/support/summaries/<int:pk>/',summary_views.view,name='complaint_summary_draft'),path('cases/<uuid:case_id>/support/summaries/<int:pk>/export/',summary_views.view,{'reviewed':True},name='complaint_summary_export')]
-from apps.core import workbench_views
-from apps.policy import project_use
-urlpatterns += [path('projects/<uuid:case_id>/settings/data-use/', project_use.settings, name='project_data_use')]
-from apps.identity import work_access_views
-urlpatterns += [path('work/',workbench_views.inbox,name='work_inbox')]
-urlpatterns += pilot_patterns
-urlpatterns += [path('cases/<uuid:case_id>/pilot/contracts/<int:contract_id>/bindings/',pilot_binding_views.workbench,name='pilot_bindings'),
-    path('cases/<uuid:case_id>/pilot/bindings/<int:pk>/',pilot_binding_views.detail,name='pilot_binding')]
-from apps.policy import role_views
-from apps.core import setup_views
-urlpatterns += [path('setup/',setup_views.index,name='design_setup')]
-urlpatterns += [path('cases/<uuid:case_id>/settings/',setup_views.overview,name='workspace_settings')]
-urlpatterns += [path('cases/<uuid:case_id>/settings/payroll/<int:configuration_id>/',setup_views.visibility_review,name='visibility_review')]
-urlpatterns += [path('cases/<uuid:case_id>/policy/role-eligibility/',role_views.guidance,name='role_eligibility_guidance')]
-from apps.workflows import factory_ppe_views, factory_views
-from apps.workflows import factory_coordinator_views
-from apps.workflows import factory_execution_views
-from apps.pmo import closure_views
-from apps.pmo import client_testing_pack_views
-urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/closure/',closure_views.preparation,name='closure_preparation'),
-    path('cases/<uuid:case_id>/delivery/<int:dossier_id>/client-response/',client_uat_views.desk,name='client_uat'),
-    path('cases/<uuid:case_id>/delivery/<int:dossier_id>/test-pack/',client_testing_pack_views.desk,name='client_uat_pack'),
-    path('cases/<uuid:case_id>/delivery/<int:dossier_id>/test-pack/<int:row_id>/<slug:side>/',client_testing_pack_views.proof,name='client_uat_pack_file'),
-    path('cases/<uuid:case_id>/client-response/settings/',client_uat_views.configuration,name='client_uat_rules'),
-    path('cases/<uuid:case_id>/client-response/<int:response_id>/proof/<int:upload_id>/',client_uat_views.proof,name='client_uat_proof')]
-from apps.core import workbench_views
-from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
-urlpatterns += [path('factory/my-work/', login_required(TemplateView.as_view(
-    template_name='factory/connected_work.html')), name='connected_factory_work')]
-urlpatterns += [path('workspaces/',workbench_views.home,name='workspace_overview'),
-    path('factory/new/',factory_views.create,name='factory_create'),
-    path('factory/start/',factory_views.intake,name='factory_intake'),
-    path('factory/processes/<slug:process>/<slug:target>/',process_directory_views.destination,name='process_destination'),
-    path('work/<int:work_id>/',factory_views.detail,name='factory_detail'),
-    path('work/<int:work_id>/ask-for-access/',work_access_views.request_access,name='work_access_request'),
-    path('work/<int:work_id>/worker-recovery/',factory_execution_views.review,name='factory_execution_review'),
-    path('cases/<uuid:case_id>/factory/worker-recovery/',factory_execution_views.configuration,name='factory_execution_configuration'),
-    path('work/<int:work_id>/coordinator/reconcile/',factory_coordinator_views.reconcile,name='factory_coordinator_reconcile'),
-    path('cases/<uuid:case_id>/factory/responsibility/',factory_views.responsibility_configuration,name='factory_responsibility'),
-    path('cases/<uuid:case_id>/factory/configuration/',factory_views.configuration,name='factory_configuration'),
-    path('cases/<uuid:case_id>/factory/coordinator/',factory_coordinator_views.configuration,name='factory_coordinator_configuration')]
-
-from apps.workflows import factory_receipt_recovery_views
-urlpatterns += [path('work/<int:work_id>/response-recovery/',factory_receipt_recovery_views.review,name='factory_receipt_recovery_review'),
-    path('cases/<uuid:case_id>/factory/response-recovery/',factory_receipt_recovery_views.configuration,name='factory_receipt_recovery_configuration')]
-
-from apps.workflows import factory_change_intake_views
-urlpatterns += [path('cases/<uuid:case_id>/factory/change-intake/',factory_change_intake_views.create,name='p56_intake'),
-    path('cases/<uuid:case_id>/factory/change-intake/<int:receipt_id>/',factory_change_intake_views.detail,name='p56_intake_detail')]
-
-from apps.workflows import factory_intake_views
-urlpatterns += [path('work/<int:work_id>/project-instruction/',factory_intake_views.review,name='factory_intake_reaffirm')]
-from apps.workflows import factory_rfp_views
-from apps.workflows import factory_rfp_pricing
-from apps.workflows import factory_rfp_estimate_views
-from apps.pmo import rfp_answer_views
-from apps.pmo import bid_sharing_views
-from apps.agents import payroll_recipient_views
-
-urlpatterns += [
-    path('assistant/payroll/received/', payroll_recipient_views.reports, name='payroll_received_reports'),
-    path('cases/<uuid:case_id>/finance/payroll/received/<int:pk>/', payroll_recipient_views.report_action,
-         name='payroll_recipient_action'),
+    path('projects/<uuid:case_id>/templates/<int:template_id>/file/',
+         template_catalog.download, name='design_template_download'),
+    path('cases/<uuid:case_id>/rfp/intake/<int:intake_id>/attachment/',
+         rfp_views.intake_attachment, name='rfp_intake_attachment'),
+    path('work/<int:work_id>/invoice-proof/<int:proof_id>/',
+         factory_invoice_information_views.download, name='factory_invoice_milestone_proof'),
+    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/<int:receipt_id>/proof/<str:kind>/',
+         bank_receipt_views.download, name='finance_bank_proof'),
+    path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
+         reminder_views.download, name='design_reminder_download'),
 ]
 
-urlpatterns += [
-    path('projects/<uuid:case_id>/bid-library/', bid_sharing_views.library, name='bid_library'),
-    path('projects/<uuid:case_id>/bid-library/<int:bid_id>/', bid_sharing_views.record, name='bid_record'),
-    path('projects/<uuid:case_id>/bid-library/<int:bid_id>/file/', bid_sharing_views.original_file, name='bid_original_file'),
+
+def retired_page(request, **kwargs):
+    return error(404, 'page_retired', 'This service provides the PSL Factory API at /api/v1/.')
+
+
+urlpatterns = backend_patterns + [
+    URLPattern(page.pattern, retired_page, default_args=page.default_args, name=page.name)
+    for page in page_patterns
 ]
-from apps.pmo import rfp_staged_upload_views
-urlpatterns += [path('work/<int:work_id>/requirements/', rfp_answer_views.workbench, name='factory_rfp_answers')]
-urlpatterns += [path('work/<int:work_id>/pricing/', factory_rfp_pricing.detail, name='factory_rfp_pricing')]
-urlpatterns += [path('work/<int:work_id>/security-estimate/', factory_rfp_estimate_views.detail, name='factory_rfp_security_estimate')]
-urlpatterns += [path('cases/<uuid:case_id>/factory/rfp-outcome-settings/',factory_rfp_views.outcome_configuration,name='factory_rfp_outcome_configuration')]
-urlpatterns += [path('cases/<uuid:case_id>/rfp/intake/<int:intake_id>/attachment/', rfp_views.intake_attachment, name='rfp_intake_attachment')]
-urlpatterns += [path('bids/private-uploads/', rfp_staged_upload_views.workbench, name='rfp_staged_uploads')]
-urlpatterns += [path('bids/unassigned/', rfp_assignment_views.index, name='rfp_assignment_queue'),
-                path('cases/<uuid:case_id>/rfp/assignment/', rfp_assignment_views.assign, name='rfp_assignment')]
-
-from apps.pmo import rfp_submission_artifacts
-urlpatterns += [path('cases/<uuid:case_id>/rfp/submission-pack/<int:version_id>/pdf/',
-                     rfp_submission_artifacts.open_pdf, name='rfp_submission_pdf')]
-
-from apps.finance import coverage_views
-urlpatterns += [path('cases/<uuid:case_id>/finance/contract-coverage/', coverage_views.workbench, name='finance_contract_coverage')]
-
-from apps.pmo import progress_views
-urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/progress/',progress_views.workbench,name='delivery_progress')]
-
-from apps.pmo import change_stage_views
-urlpatterns += [path('projects/<uuid:case_id>/milestones/change-link/', change_stage_views.milestone_link,
-                     name='design_change_milestone_link')]
-
-urlpatterns += [path('overview/', design_views.overview, name='design_overview'),
-                path('assistant/', design_views.agents, name='design_agents'),
-                path('assistant/new/<slug:persona>/', assistant_views.start, name='assistant_start'),
-                path('assistant/records/<slug:persona>/<uuid:case_id>/', assistant_views.department_records, name='department_records'),
-                path('assistant/handoff/<uuid:turn_id>/<slug:persona>/', assistant_views.transfer, name='assistant_transfer'),
-                path('assistant/<uuid:conversation_id>/', assistant_views.thread, name='assistant_thread'),
-                path('getting-started/', design_views.getting_started, name='getting_started'),
-                path('projects/<uuid:case_id>/', design_views.project, name='design_project'),
-                path('projects/<uuid:case_id>/<slug:tab>/', design_views.project, name='design_project_tab')]
-
-from apps.workflows import factory_progress_views
-from apps.core import alerts_views
-from apps.core import client_contacts
-from apps.documents import design_review, template_catalog
-from apps.finance import month_end
-from apps.pmo import project_action_views
-
-urlpatterns += [path('work/<int:work_id>/background/', factory_progress_views.change, name='factory_background')]
-from apps.workflows import factory_invoice_information_views
-urlpatterns += [path('work/<int:work_id>/invoice-proof/<int:proof_id>/', factory_invoice_information_views.download,
-                     name='factory_invoice_milestone_proof')]
-urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'focus': 'decision'}, name='factory_invoice_decision'),
-                path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery'),
-                path('work/<int:work_id>/response/', factory_views.detail, {'focus': 'response'}, name='factory_work_response')]
-urlpatterns += [path('work/<int:work_id>/opening-proof/<int:register_id>/', factory_ppe_views.opening_proof,
-                    name='factory_ppe_opening_proof'),
-                path('work/<int:work_id>/date-explanation/<int:fact_id>/proof/', factory_ppe_views.date_proof,
-                    name='factory_ppe_date_proof')]
-from apps.workflows import factory_ledger_views
-urlpatterns += [path('work/<int:work_id>/observation-proof/<int:check_id>/', factory_ledger_views.download_observation_proof,
-                    name='factory_ledger_observation_proof')]
-urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catalog.upload, name='design_template_upload'),
-                path('projects/<uuid:case_id>/templates/<int:template_id>/file/', template_catalog.download, name='design_template_download')]
-urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
-                path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
-from apps.core import client_workspace_link_views
-urlpatterns += [path('clients/<uuid:case_id>/client-link/', client_workspace_link_views.detail,
-                     name='design_client_workspace_link')]
-urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
-from apps.finance import payments_overview
-urlpatterns += [path('finance/payments/', payments_overview.show, name='design_payments')]
-urlpatterns += [path('finance/month-end/<uuid:case_id>/receivables/capture/', month_end.capture, name='design_capture_month_end_receivables')]
-urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
-urlpatterns += [path('cases/<uuid:case_id>/finance/short-payments/<int:issue_id>/', short_payment_views.detail, name='invoice_short_payment')]
-from apps.finance import bank_receipt_views
-urlpatterns += [
-    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/new/',bank_receipt_views.payment,name='finance_record_payment'),
-    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/<int:receipt_id>/',bank_receipt_views.payment,name='finance_bank_receipt'),
-    path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/<int:receipt_id>/proof/<str:kind>/',bank_receipt_views.download,name='finance_bank_proof'),
-]
-urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
-                     reminder_views.download, name='design_reminder_download')]
-urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]
-from apps.finance import forecast_actuals_views
-urlpatterns += [path('cases/<uuid:case_id>/finance/forecast/<int:scenario_id>/actuals/',
-                     forecast_actuals_views.workspace, name='finance_forecast_actuals')]
-urlpatterns += [path(f'cases/<uuid:case_id>/finance/payroll/{key}/', payroll_views.workbench, {'focus': key},
-                     name=f'design_payroll_{key}') for key in payroll_views.SECTIONS]
-urlpatterns += [path('cases/<uuid:case_id>/hr/payroll-corrections/', payroll_correction_views.desk, name='design_hr_payroll_corrections'),
-                path('cases/<uuid:case_id>/hr/payroll-corrections/<int:followup_id>/', payroll_correction_views.desk,
-                     name='design_hr_payroll_correction')]
-urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/row-controls/', payroll_row_controls.settings,name='payroll_row_controls')]
-from apps.finance import payroll_departure_views, payroll_identity_views
-urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/name-checks/', payroll_identity_views.workbench,
-                     name='payroll_name_checks'),
-                path('cases/<uuid:case_id>/finance/payroll/payment-timing/', payroll_departure_views.workbench,
-                     name='payroll_departure_check')]
-from apps.finance import payroll_question_views
-urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/questions/',payroll_question_views.desk,name='payroll_questions'),
-                path('cases/<uuid:case_id>/finance/payroll/question-routing/',payroll_question_views.routing,name='payroll_question_routing')]
-urlpatterns += [path('cases/<uuid:case_id>/staff/invitations/', staff_views.invites, name='staff_invites'),
-                path('cases/<uuid:case_id>/staff/invitations/<int:invitation_id>/renew/', staff_views.invites, name='staff_renew_invite'),
-                path('my-role/<uuid:case_id>/teams/<int:team_id>/invite/',staff_views.invites,name='staff_team_invite'),
-                path('my-role/<uuid:case_id>/teams/<int:team_id>/invite/<int:invitation_id>/renew/',staff_views.invites,name='staff_team_renew'),
-                path('cases/<uuid:case_id>/staff/<int:person_id>/remove-access/', staff_views.departure, name='staff_departure'),
-                path('staff/join/', staff_views.accept, name='staff_accept_invite')]
-urlpatterns += [path('staff/',staff_account_views.roster,name='staff_roster'),
-                path('staff/<int:person_id>/',staff_profile_views.person,name='staff_person'),
-                path('cases/<uuid:case_id>/staff/<int:person_id>/access/',staff_profile_views.access,name='staff_profile_access'),
-                path('setup/<uuid:case_id>/roles/',primary_role_views.catalogue,name='staff_primary_roles'),
-                path('setup/<uuid:case_id>/teams/',role_work_views.manage,name='staff_teams'),
-                path('my-role/',role_work_views.workspace_redirect),
-                path('my-role/work/<int:assignment_id>/',role_work_views.detail,name='role_work_detail'),
-                path('setup/<uuid:case_id>/people/<int:person_id>/primary-role/',primary_role_views.assignment,name='staff_primary_role'),
-                path('setup/<uuid:case_id>/people/<int:person_id>/team-scope/',scope_move_views.move,name='staff_scope_move'),
-                path('staff/delegation/<int:authority_id>/profiles/',staff_profile_views.configure,name='staff_profile_configuration'),
-                path('staff/<int:person_id>/deactivate/',staff_account_views.departure,name='staff_account_departure'),
-                path('staff/<int:person_id>/reactivate/',staff_account_views.reactivate,name='staff_account_reactivation'),
-                path('staff/delegation/<int:authority_id>/',staff_account_views.controls,name='staff_account_controls')]
-urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]
-from apps.pmo import sow_review
-urlpatterns += [path('projects/<uuid:case_id>/statement-of-work/<int:version_id>/', sow_review.show, name='design_sow_review')]
-urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
-                path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),
-                path('notifications/read/', alerts_views.mark_read, name='design_alert_read'),
-                path('settings/alerts/', alerts_views.preferences, name='design_alert_preferences'),
-                path('settings/alerts/sample-mailbox/', alerts_views.sample_mailbox, name='design_sample_mailbox')]
