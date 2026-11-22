@@ -6,6 +6,8 @@
     "verification": "tests/test_api_only_surface.py",
     "railway_web_deployment": "380f1e05-7879-40fd-87e9-afc726dcccdf",
     "railway_revision": "ba17acd9",
+    "railway_cutover_tests_passed_after_retest": 39,
+    "railway_focused_retest": "02af6504-c601-4e07-9fb1-9bf30a774a33",
     "next": "Connect the Next.js frontend from the published handoff.",
     "hod_choices": "deferred"
   },

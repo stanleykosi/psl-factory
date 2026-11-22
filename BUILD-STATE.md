@@ -2,7 +2,7 @@
 
 ## Django page separation
 
-The Django pages, templates and assets are archived in `legacy_ui/`. Railway web `380f1e05-7879-40fd-87e9-afc726dcccdf` serves API-only revision `ba17acd9`. The runtime keeps the JSON routes, health check, signed Finance inbox and six authenticated file routes returned by the API. The next frontend work is to connect the design in `frontend/` using the published handoff. HOD policy choices remain deferred. [Frontend handoff](handoffs/nextjs/README.md) · [Test ledger](BUILD-TESTS.md)
+The Django pages, templates and assets are archived in `legacy_ui/`. Railway web `380f1e05-7879-40fd-87e9-afc726dcccdf` serves API-only revision `ba17acd9`. The runtime keeps the JSON routes, health check, signed Finance inbox and six authenticated file routes returned by the API. All 39 cutover tests have passing Railway evidence across the main run and targeted retest. The next frontend work is to connect the design in `frontend/` using the published handoff. HOD policy choices remain deferred. [Frontend handoff](handoffs/nextjs/README.md) · [Test ledger](BUILD-TESTS.md)
 
 ## Next.js handoff prepared
 

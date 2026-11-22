@@ -8,6 +8,8 @@ Railway web `380f1e05-7879-40fd-87e9-afc726dcccdf` at `ba17acd9` returned 200 fo
 
 Railway cutover checks `0e1cec96-f84a-4a3b-a6f9-daba1087b188` passed 38 of 39 tests in 605.254 seconds. The contract parity check errored because the checks image omitted `docs/design/api-state-replay-plan.csv`. The checks image now includes that fixture for every group.
 
+The first focused retry `cea81ade-d308-4731-bc4a-e9b9d11ae3a5` stopped before tests because the new suite name was absent from the isolated service allowlist. After registering the suite, `02af6504-c601-4e07-9fb1-9bf30a774a33` passed all eight tests in 8.756 seconds, including the previously blocked contract check and all four API-only tests. Together the cutover and focused retest cover all 39 cutover tests.
+
 ## Next.js handoff validation · 22 November 2026
 
 The Railway preview returned 200 for health and Django sign-in. Its OpenAPI 1.22.0 document matched the GitHub main snapshot exactly, with 268 paths and 379 operations. Four contract tests passed in 10.561 seconds. TypeScript generation passed. The handoff crosswalk resolved all 262 passing states to present design files, mounted operations and the original Railway evidence across 59 groups. The Next.js design integration is a separate acceptance step and has no new run in this handoff.
