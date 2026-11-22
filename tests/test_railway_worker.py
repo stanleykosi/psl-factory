@@ -1,12 +1,10 @@
 """Check the queue supervisor with a deliberately blocked model process."""
+import os
 from pathlib import Path
 import shutil
 import subprocess
-import os
 import tempfile
-from unittest import skipUnless
-
-from django.test import SimpleTestCase
+from unittest import TestCase, skipUnless
 
 
 SHELL = shutil.which('sh') if os.name == 'posix' else None
@@ -43,7 +41,7 @@ exit 1
 
 
 @skipUnless(SHELL, 'A POSIX shell is required to exercise the Railway worker entrypoint.')
-class RailwayWorkerTests(SimpleTestCase):
+class RailwayWorkerTests(TestCase):
     def test_native_work_advances_while_both_model_queues_are_blocked(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

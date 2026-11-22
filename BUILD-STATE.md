@@ -8,6 +8,8 @@ The map retains remaining JSON work for 53 groups across 256 states. Major engin
 
 The local PostgreSQL runs observed a schema-valid success for all 42 added operations. All 3,629 frontend tests passed. The worker now polls upload and Assistant queues separately from effects and workflow progression. [Test ledger](BUILD-TESTS.md)
 
+Railway design acceptance serves the matching OpenAPI 1.2.0 contract. The web health and sign-in routes returned 200, and the unauthenticated session API returned 401. The updated worker started the separate pollers. [Hosted OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+
 ## Live frontend API contract · 22 November 2026
 
 OpenAPI 1.1.1 describes the 73 registered JSON operations across 63 paths. The versioned snapshot matches the Django registry and generates TypeScript types. Start work now supplies its submission URL and a scoped project picker with the current revision. Multipart fields, HTTP errors and path constraints have explicit contracts. The received-bid contract preserves the existing Django form and its original-document replay. [OpenAPI snapshot](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)

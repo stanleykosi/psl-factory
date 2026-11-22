@@ -14,6 +14,8 @@ The first Delivery run passed Go-live through two independently declared signatu
 
 Across the local runs, the response validator exercised successful responses for all 42 added operations and 72 of the 115 total operations. The four contract tests passed, including the binding check for all 17 correction request variants. The closure correction ran end to end through a new review. The other correction variants were checked against their native service signatures. Django system checks, migration drift, OpenAPI 3.1 validation and TypeScript client generation passed. Storage and mail effects used synthetic fixtures and test adapters.
 
+The worker supervisor test passed on Ubuntu in 3.506 seconds. It deliberately blocked both model queues and observed the effects and native progression commands start within the same probe. Railway web `fc17c996-4477-44c6-85c8-82fd3f0f29a3` returned the exact checked-in OpenAPI 1.2.0 document, health 200, the Django sign-in page 200 and the signed-out session API 401. Worker `e6cd2c07-be4f-4969-924c-10f4e058069d` started source readers and polled the application queues on the matching application revision `649ebec3`.
+
 ## Live OpenAPI handoff · 22 November 2026
 
 The checked-in snapshot passed the official OpenAPI 3.1 document schema and generated TypeScript with openapi-typescript 7.13.0. The three contract tests passed locally and exercised route resolution to the exact declared handler, all 25 intake signatures, and the inventory of 262 design states and 108 processes.

@@ -134,8 +134,9 @@ def main():
     provider.add_argument("--live", action="store_true", help="Also run both synthetic provider and storage checks.")
     provider.add_argument("--live-case", choices=LIVE_CASES, help="Run one fresh synthetic provider case before the department suites.")
     options = parser.parse_args()
-    available = (*SUITES, 'original', 'surface', 'directory', 'cutover') if options.role_access else tuple(SUITES)
-    groups = options.groups or available
+    default_groups = (*SUITES, 'original', 'surface', 'directory') if options.role_access else tuple(SUITES)
+    available = (*default_groups, 'cutover') if options.role_access else default_groups
+    groups = options.groups or default_groups
     if set(groups) - set(available) or len(set(groups)) != len(groups):
         parser.error("Choose distinct department suites.")
     os.environ["DJANGO_SETTINGS_MODULE"] = "config.specialist_acceptance"
