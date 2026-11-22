@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api', 'change-api', 'bid-api', 'private-api', 'source-api')
 
 
 def run(group, token, role_access):
