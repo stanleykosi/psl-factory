@@ -1,5 +1,11 @@
 # PSL Operations Factory build state
 
+## Automatic process navigation · 22 November 2026
+
+Start work → **Find a process** now explains exactly which action or source receipt starts each of the 63 automatic processes. Each entry links to its native action and to the project’s **Department handoffs** filtered to that process. The 108-entry catalogue, the 25 Start work types and the separately delegated received-bid intake all remain available under their existing access rules. The API exposes the same guide and filter. [Frontend contract](docs/design/frontend-api.md#pmo-and-finance-process-access)
+
+Railway design acceptance serves revision `810d1f27` on web deployment `b58453d5-09ab-437e-856e-2c251fe866fe`. The matching isolated Railway suite passed all 18 tests and verified all 63 routes across 22 real action screens and all six roles’ access to the 108-entry directory. Tracking checked a populated project with two automatic handoffs and a reader from the other department. Operational source access, reviewer appointments and decision policies still follow the existing authority settings. [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/factory/start/?directory=1#process-directory) · [Actual checks](BUILD-TESTS.md)
+
 ## OpenRouter coordinator · 22 November 2026
 
 The coordinator now orders the required specialists and can focus their reading on exact, permitted lines. It checks the team’s private reports and routes supported citations or questions to the native workflow. The retired planner’s original receipts remain available for historical reconciliation. Railway design acceptance runs `8346a89c` and verified the complete loop with Tola, Chidi and Zainab using DeepSeek V4.1 Flash, independent test decision principals and the original receiving records. [Coordinator contract](docs/design/coordinator-specialists.md) · [Test ledger](BUILD-TESTS.md)

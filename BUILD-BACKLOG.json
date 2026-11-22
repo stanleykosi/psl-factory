@@ -1,4 +1,18 @@
 {
+  "automatic_process_navigation_20261122": {
+    "scope": "Source actions, screen links and project-scoped tracking for all source-triggered PMO and Finance processes",
+    "status": "verified_on_railway_design_acceptance",
+    "guided_processes": 63,
+    "source_screens_checked": 22,
+    "start_work_types": 25,
+    "application_revision": "810d1f27",
+    "web_deployment": "b58453d5-09ab-437e-856e-2c251fe866fe",
+    "checks_deployment": "f7e29fb0-68d8-49f9-b14f-c6e1de36e441",
+    "passing_railway_postgres_tests": 18,
+    "test_record": "BUILD-TESTS.md",
+    "next": "Use the directory in department rehearsals and prepare the approved project source, reviewer and destination settings when owners supply their decisions.",
+    "owner_decisions": "Operational reviewer appointments, disclosure, external destinations and business rules remain deferred."
+  },
   "openrouter_coordinator_20261122": {
     "scope": "Coordinator routing and quality review for the eight active specialists, with verified results available to Tola, Chidi and Zainab",
     "status": "verified_on_railway_design_acceptance",

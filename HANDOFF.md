@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Automatic process navigation · 22 November 2026
+
+Use `build/design-consolidation`. In Start work, open **Find a process**. All 63 automatic entries explain the source action and link to its screen and **Track in Department handoffs**. If several projects are accessible, the link opens a project picker. Tracking is filtered to the selected process and opens the same verified work detail and receipt. The 25 Start work types and separate received-bid intake use their existing flows. The matching API uses `guide` on `GET /api/v1/processes` and optional `process` on project handoffs. [Frontend contract](docs/design/frontend-api.md#pmo-and-finance-process-access)
+
+Railway design acceptance web deployment `b58453d5-09ab-437e-856e-2c251fe866fe` runs `810d1f27`. The worker continues to use the active OpenRouter coordinator. The matching checks deployment `f7e29fb0-68d8-49f9-b14f-c6e1de36e441` passed all 18 PostgreSQL tests. Reproduce the run with `scripts/stage_railway_role_checks.py checks --revision 810d1f27 --group directory` and the Railway runbook. Continue with departmental rehearsals using the source guides. Current source access, reviewer appointments, real-data disclosure and external destinations still follow the owning department’s authority and deferred decisions. [Railway runbook](docs/runbooks/railway.md) · [Acceptance site](https://psl-design-web-design-acceptance.up.railway.app/factory/start/?directory=1#process-directory) · [Test ledger](BUILD-TESTS.md)
+
 ## OpenRouter coordinator · 22 November 2026
 
 Use `build/design-consolidation`. The OpenRouter coordinator routes each source packet to its required specialists, chooses which approved lines to read first and checks the team’s private reports. The native service checks authority and records each business decision and downstream receipt. The old planner is retired for new work. Its recorded requests still support original receipt lookup. [Coordinator contract](docs/design/coordinator-specialists.md)
