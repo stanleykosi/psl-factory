@@ -21,6 +21,46 @@ from .billing_helpers import evidence,policy
 from .helpers import rev
 
 class GroupForecastFactoryTests(TestCase):
+    def test_api_group_disclosure_draft_requires_oracle_then_exact_group_approval(self):
+        from apps.policy.services import resolve
+
+        self.start()
+        self.advance()
+        self.client.force_login(self.a)
+        url = f'/api/v1/work/{self.w.pk}/forecast'
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        current = page.json()
+        self.assertEqual(current['stage'], 'group_review')
+        base = active_component('D10.audience_projection_rules', self.c)
+        draft = {'run_id': self.run.pk, 'expected_revision': current['expected_revision'],
+                 'case_revision': current['case_revision'], 'base_configuration': base.pk,
+                 'rows': self.g['rows'], 'fields': self.g['fields'], 'metadata': self.g['metadata'],
+                 'recipients': [self.reader.pk], 'reviewer_roles': ['Finance'], 'publisher_roles': ['Finance'],
+                 'allow_preparer_review': True, 'oracle': self.g['oracle_evidence_id'],
+                 'decision': self.c.evidence.filter(kind='policy_decision').first().pk,
+                 'effective_from': timezone.now().isoformat()}
+        mismatch = evidence(self.a, self.c, 'forecast_group_oracle', '{}')
+        draft['case_revision'] = rev(self.c)
+        incomplete = self.client.post(url + '/disclosure', dict(draft, oracle=mismatch.pk), content_type='application/json')
+        self.assertNotEqual(incomplete.status_code, 201)
+        created = self.client.post(url + '/disclosure', draft, content_type='application/json')
+        self.assertEqual(created.status_code, 201, created.content)
+        self.assertEqual(resolve('D10.audience_projection_rules', self.c).configuration.pk, base.pk)
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        current = self.client.get(url).json()
+        command = {key: current[key] for key in ('expected_revision', 'case_revision', 'scenario_id', 'version_id')}
+        decided = self.client.post(url, {**command, 'action': 'group_review', 'role': 'Finance', 'verdict': 'approve',
+                                         'reason': 'Scope and the exact group recipients were reviewed.'},
+                                   content_type='application/json')
+        self.assertEqual(decided.status_code, 201, decided.content)
+        self.advance()
+        original = PublicationReceipt.objects.get(publication__factory_work=self.w)
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertEqual(page.json()['jobs'][0]['receipt_ids'], [original.pk])
+        self.assertEqual(page.json()['stage'], 'complete')
+
     def test_structured_group_rule_editor_retains_base_requires_oracle_and_saves_only_a_draft(self):
         from apps.policy.models import Configuration
         from apps.policy.services import resolve

@@ -1,5 +1,7 @@
 # Build progress log
 
+22 November 2026. Added forecast calculation, actuals and group disclosure APIs, original delivery recovery, and management-account trial balance correction and reviewed receipt readback. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
+
 22 November 2026. Added exact Finance schedule, asset and supplied accounting intake APIs, including versioned adjustments, private asset PDFs and current mapping readback. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)
 
 22 November 2026. Exposed reviewed policy scopes, explicit application, bounded impact review and scoped invoice, change, Emergency and forecast intake choices. [Contract](contracts/psl-factory.openapi.json) · [Actual tests](BUILD-TESTS.md)

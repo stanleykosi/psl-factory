@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## OpenAPI forecast and management accounts · 22 November 2026
+
+The first forecast test reached a query limit reading the published run. The detail now shares exact calculation checks within one read and keeps the query limit. The corrected local forecast and group disclosure tests passed in 157.645 seconds with five successful operations schema-checked. They covered the original Finance receipt, group oracle mismatch and separate review, observed actual, unmatched reason, verification and scoped match. Two local management-account tests passed in 302.236 seconds, covering corrected CSV, unit confirmation, a fresh successor and Django input through verified recipient receipt. A separate PostgreSQL test passed in 41.031 seconds and checked the original uncertain delivery, private evidence download and preservation of paused work.
+
 ## OpenAPI income schedules, assets and accounting intake · 22 November 2026
 
 Local PostgreSQL verified held duplicate correction, returned row correction and bounded inventory. The native accounting workflow verified exact unit confirmation and queued work. The receiving adjustment remained blocked until Finance approved it. The new mapping then showed the exact adjustment source line and recorded no ledger posting. Asset date and opening proof used a synthetic private storage adapter. Current asset readback initially exceeded its query budget, then passed after reusing already validated Finance calculations within the read transaction. The first contract check assumed every success had a JSON response. The corrected checker validates each declared media type, and the integration runner checks binary attachment headers as well as JSON bodies. All four corrected contract tests, the official OpenAPI schema and TypeScript generation passed.

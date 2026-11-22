@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.13.0",
+    "version": "1.14.0",
     "description": "Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or GET /api/v1/me. Follow returned Django links for workflow steps that use native forms."
   },
   "security": [
@@ -33104,6 +33104,3759 @@
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/accounting": {
+      "get": {
+        "summary": "Read the exact Finance review stations and source recovery with the current verified report receipt",
+        "operationId": "accounting_work_detail",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "state": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "next_action": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "finding": {
+                      "type": "string"
+                    },
+                    "source_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "mapping_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "allocation_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "formula_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "report_version_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "publication": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "run_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "version_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "receipt_ids": {
+                              "type": "array",
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              }
+                            },
+                            "ledger_posted": {
+                              "const": false
+                            },
+                            "published_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "verified_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "run_id",
+                            "version_id",
+                            "receipt_ids",
+                            "ledger_posted",
+                            "published_at",
+                            "verified_at"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "tasks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 2147483647
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "can_claim": {
+                            "type": "boolean"
+                          },
+                          "can_decide": {
+                            "type": "boolean"
+                          },
+                          "verdicts": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "approve",
+                                "return",
+                                "reject"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "revision",
+                          "label",
+                          "can_claim",
+                          "can_decide",
+                          "verdicts"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "calculated_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_stations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "subjects": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "review_id": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 9223372036854775807
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "evidence_id": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 9223372036854775807
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "reviewed_at": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "status",
+                                "review_id",
+                                "evidence_id",
+                                "reviewed_at"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "subjects"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "delivery_jobs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 30
+                    },
+                    "can_reassess": {
+                      "type": "boolean"
+                    },
+                    "can_recheck_reviewers": {
+                      "type": "boolean"
+                    },
+                    "can_reconcile": {
+                      "type": "boolean"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "maxItems": 30
+                    },
+                    "setup_missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "correction": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "work": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "head": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "decision": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "source": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "batch": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "status_reason": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "entity": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "period": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "pattern": "^[A-Z]{3}$"
+                            },
+                            "accounting_basis": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "work",
+                            "head",
+                            "decision",
+                            "source",
+                            "batch",
+                            "status_reason",
+                            "entity",
+                            "period",
+                            "currency",
+                            "accounting_basis"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "predecessor_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "successor_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "review_evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 35
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "state",
+                    "next_action",
+                    "finding",
+                    "source_id",
+                    "mapping_id",
+                    "allocation_id",
+                    "formula_id",
+                    "report_version_id",
+                    "publication",
+                    "tasks",
+                    "calculated_at",
+                    "review_stations",
+                    "delivery_jobs",
+                    "can_reassess",
+                    "can_recheck_reviewers",
+                    "can_reconcile",
+                    "sources",
+                    "setup_missing",
+                    "correction",
+                    "predecessor_id",
+                    "successor_id",
+                    "review_evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Refresh exact reviewer routing or reassess the existing source and adjustments",
+        "operationId": "accounting_work_command",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "recheck_reviewers"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "reassess"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "source_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "adjustment_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        "maxItems": 100
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "source_id",
+                      "adjustment_ids",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/accounting/corrected-extract": {
+      "post": {
+        "summary": "Upload a corrected trial balance against its exact returned source and original extraction scope",
+        "operationId": "accounting_work_upload_correction",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "batch_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "source_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "work_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "can_confirm_units": {
+                      "type": "boolean"
+                    },
+                    "successor_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "case_revision",
+                    "status",
+                    "findings",
+                    "batch_id",
+                    "source_id",
+                    "work_id",
+                    "can_confirm_units",
+                    "successor_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "head_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "decision_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "source_evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_.:-]{1,100}$"
+                  },
+                  "reference": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$"
+                  },
+                  "extracted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "completeness": {
+                    "type": "string",
+                    "enum": [
+                      "complete",
+                      "partial",
+                      "unknown"
+                    ]
+                  },
+                  "control_total": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "case_revision",
+                  "head_id",
+                  "decision_id",
+                  "source_evidence_id",
+                  "idempotency_key",
+                  "reference",
+                  "extracted_at",
+                  "completeness",
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/forecast": {
+      "get": {
+        "summary": "Read the exact forecast calculation, actual links, group state and original delivery receipt references",
+        "operationId": "forecasting_detail",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "scenario_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "run_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "version_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "finding": {
+                      "type": "string"
+                    },
+                    "review_roles": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      }
+                    },
+                    "audience": {
+                      "type": "string",
+                      "enum": [
+                        "internal",
+                        "management",
+                        "group"
+                      ]
+                    },
+                    "result": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "entity": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "currency": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "basis": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "as_of": {
+                              "type": "string",
+                              "format": "date"
+                            },
+                            "findings": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "key": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "expected_on": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "format": "date"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "matched": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "residual": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "evidence_id": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "kind",
+                                  "expected_on",
+                                  "matched",
+                                  "residual",
+                                  "evidence_id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 2000
+                            },
+                            "periods": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "month": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "opening": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "inflow": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "outflow": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "closing": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "expected_inflow": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "expected_outflow": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "actual_inflow": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "actual_outflow": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "month",
+                                  "opening",
+                                  "inflow",
+                                  "outflow",
+                                  "closing",
+                                  "expected_inflow",
+                                  "expected_outflow",
+                                  "actual_inflow",
+                                  "actual_outflow"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 120
+                            },
+                            "actuals": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "direction": {
+                                    "type": "string",
+                                    "enum": [
+                                      "inflow",
+                                      "outflow"
+                                    ]
+                                  },
+                                  "amount": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "verified": {
+                                    "type": "boolean"
+                                  },
+                                  "unmatched": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 128
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "direction",
+                                  "amount",
+                                  "verified",
+                                  "unmatched"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 200
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "entity",
+                            "currency",
+                            "basis",
+                            "as_of",
+                            "findings",
+                            "items",
+                            "periods",
+                            "actuals"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "receipt_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            }
+                          },
+                          "can_retry": {
+                            "type": "boolean"
+                          },
+                          "can_operate": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "receipt_ids",
+                          "can_retry",
+                          "can_operate"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 30
+                    },
+                    "disclosure": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "configuration_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "row_keys": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 100
+                              }
+                            },
+                            "recipient_ids": {
+                              "type": "array",
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              "maxItems": 100
+                            },
+                            "oracle_choices": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "version",
+                                  "kind"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 35
+                            },
+                            "decision_choices": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9223372036854775807
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "version",
+                                  "kind"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maxItems": 35
+                            },
+                            "selected_rows": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 100
+                              }
+                            },
+                            "selected_fields": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "kind",
+                                  "amount",
+                                  "expected_on",
+                                  "original_due",
+                                  "commitment",
+                                  "residual",
+                                  "matched"
+                                ]
+                              }
+                            },
+                            "selected_metadata": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "entity",
+                                  "currency",
+                                  "basis",
+                                  "as_of"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "configuration_id",
+                            "row_keys",
+                            "recipient_ids",
+                            "oracle_choices",
+                            "decision_choices",
+                            "selected_rows",
+                            "selected_fields",
+                            "selected_metadata"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "can_restart": {
+                      "type": "boolean"
+                    },
+                    "restart_policy_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "observation": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "outcome": {
+                              "type": "string",
+                              "enum": [
+                                "delivered",
+                                "not_delivered",
+                                "unknown"
+                              ]
+                            },
+                            "has_proof": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "outcome",
+                            "has_proof"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "matches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "item_key": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "actual_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "amount": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "item_key",
+                          "actual_id",
+                          "amount"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "scenario_id",
+                    "run_id",
+                    "version_id",
+                    "stage",
+                    "finding",
+                    "review_roles",
+                    "audience",
+                    "result",
+                    "jobs",
+                    "disclosure",
+                    "can_restart",
+                    "restart_policy_id",
+                    "observation",
+                    "matches"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record an exact human forecast, disclosure, actual or match decision on the selected work",
+        "operationId": "forecasting_command",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "review"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "run_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "verdict": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "run_id",
+                      "role",
+                      "verdict",
+                      "evidence_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "priority"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "run_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "reference": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      },
+                      "owner_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "due_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "run_id",
+                      "role",
+                      "reference",
+                      "description",
+                      "owner_id",
+                      "due_at",
+                      "evidence_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "support"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "item_key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "previous_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "observed_on": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "renewed_support",
+                          "reaffirmation"
+                        ]
+                      },
+                      "uncertainty": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "disputed",
+                          "uncertain",
+                          "no_known_uncertainty"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "item_key",
+                      "previous_id",
+                      "evidence_id",
+                      "role",
+                      "reason",
+                      "observed_on",
+                      "mode",
+                      "uncertainty"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "actual"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "lot_id": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "evidence_id",
+                      "lot_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "verify"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "actual_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "actual_id",
+                      "role",
+                      "evidence_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "match"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "item_key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "actual_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "amount": {
+                        "type": "string",
+                        "maxLength": 128
+                      },
+                      "operation_key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "item_key",
+                      "actual_id",
+                      "amount",
+                      "operation_key",
+                      "evidence_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "unmatch"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "match_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "match_id",
+                      "evidence_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "group_review"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "scenario_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "version_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "HR",
+                          "PM",
+                          "Head of PMO",
+                          "CEO",
+                          "PMO Lead",
+                          "Product",
+                          "Product Owner",
+                          "Engineering",
+                          "Engineering Lead",
+                          "Security Manager",
+                          "Client",
+                          "QA",
+                          "PMO",
+                          "CTO",
+                          "Security Lead",
+                          "Finance",
+                          "BaaS",
+                          "Data",
+                          "Legal",
+                          "Support",
+                          "Reconciliation",
+                          "Process User",
+                          "Automation Team"
+                        ]
+                      },
+                      "verdict": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "scenario_id",
+                      "version_id",
+                      "role",
+                      "verdict",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/forecast/disclosure": {
+      "post": {
+        "summary": "Draft exact group forecast disclosure against a reviewed run and independent expected output",
+        "operationId": "forecasting_disclosure",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "run_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "base_configuration": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "rows": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "maxItems": 200
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "kind",
+                        "amount",
+                        "expected_on",
+                        "original_due",
+                        "commitment",
+                        "residual",
+                        "matched"
+                      ]
+                    }
+                  },
+                  "metadata": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "entity",
+                        "currency",
+                        "basis",
+                        "as_of"
+                      ]
+                    }
+                  },
+                  "recipients": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "maxItems": 100
+                  },
+                  "reviewer_roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "HR",
+                        "PM",
+                        "Head of PMO",
+                        "CEO",
+                        "PMO Lead",
+                        "Product",
+                        "Product Owner",
+                        "Engineering",
+                        "Engineering Lead",
+                        "Security Manager",
+                        "Client",
+                        "QA",
+                        "PMO",
+                        "CTO",
+                        "Security Lead",
+                        "Finance",
+                        "BaaS",
+                        "Data",
+                        "Legal",
+                        "Support",
+                        "Reconciliation",
+                        "Process User",
+                        "Automation Team"
+                      ]
+                    }
+                  },
+                  "publisher_roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "HR",
+                        "PM",
+                        "Head of PMO",
+                        "CEO",
+                        "PMO Lead",
+                        "Product",
+                        "Product Owner",
+                        "Engineering",
+                        "Engineering Lead",
+                        "Security Manager",
+                        "Client",
+                        "QA",
+                        "PMO",
+                        "CTO",
+                        "Security Lead",
+                        "Finance",
+                        "BaaS",
+                        "Data",
+                        "Legal",
+                        "Support",
+                        "Reconciliation",
+                        "Process User",
+                        "Automation Team"
+                      ]
+                    }
+                  },
+                  "allow_preparer_review": {
+                    "type": "boolean"
+                  },
+                  "oracle": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "decision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "effective_from": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "run_id",
+                  "base_configuration",
+                  "rows",
+                  "fields",
+                  "metadata",
+                  "recipients",
+                  "reviewer_roles",
+                  "publisher_roles",
+                  "allow_preparer_review",
+                  "oracle",
+                  "decision",
+                  "effective_from"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/forecast/actuals/{month}": {
+      "get": {
+        "summary": "Read expected and actual cash for one exact forecast month",
+        "operationId": "forecasting_month",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "scenario_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "month": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "expected": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 128
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "actual": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 128
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "notes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "actual_id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "reason": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 4000
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "actual_id",
+                                "reason"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "maxItems": 50
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "expected",
+                          "actual",
+                          "status",
+                          "notes"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "actuals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "direction": {
+                            "type": "string",
+                            "enum": [
+                              "inflow",
+                              "outflow"
+                            ]
+                          },
+                          "amount": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 128
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "verified": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "direction",
+                          "amount",
+                          "verified"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "item_key": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "actual_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "amount": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "reversed": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "item_key",
+                          "actual_id",
+                          "amount",
+                          "reversed"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "more_actuals": {
+                      "type": "boolean"
+                    },
+                    "more_history": {
+                      "type": "boolean"
+                    },
+                    "more_notes": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "scenario_id",
+                    "month",
+                    "rows",
+                    "actuals",
+                    "history",
+                    "more_actuals",
+                    "more_history",
+                    "more_notes"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record a source-bound reason that the selected forecast item and actual remain unmatched",
+        "operationId": "forecasting_leave_unmatched",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "item_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "actual_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "item_key",
+                  "actual_id",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/forecast/observations": {
+      "post": {
+        "summary": "Record a human observation about the exact uncertain original forecast delivery",
+        "operationId": "forecasting_observe_delivery",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "job_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "outcome": {
+                    "type": "string",
+                    "enum": [
+                      "delivered",
+                      "not_delivered",
+                      "unknown"
+                    ]
+                  },
+                  "proof": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "job_id",
+                  "outcome"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/forecast/observations/{observation_id}": {
+      "get": {
+        "summary": "Read private evidence of the actor\u2019s delivery observation",
+        "operationId": "forecasting_delivery_proof",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "observation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/forecast/lifecycle": {
+      "post": {
+        "summary": "Check the original forecast delivery or explicitly stop or restart allowed work",
+        "operationId": "forecasting_lifecycle",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Http429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "cancel"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "lookup"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "job_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "job_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "operate"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "job_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "cancel",
+                          "retry"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "job_id",
+                      "operation",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "restart"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "configuration_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      },
+                      "selection": {
+                        "type": "object",
+                        "properties": {
+                          "protocol": {
+                            "const": "factory-forecast-selection/v1"
+                          },
+                          "scenario_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "as_of": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "months": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "maxItems": 120
+                          },
+                          "source_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "maxItems": 4000,
+                            "uniqueItems": true
+                          },
+                          "template_id": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9223372036854775807
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "audience": {
+                            "type": "string",
+                            "enum": [
+                              "internal",
+                              "management",
+                              "group"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "protocol",
+                          "scenario_id",
+                          "as_of",
+                          "months",
+                          "source_ids",
+                          "template_id",
+                          "audience"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "configuration_id",
+                      "reason",
+                      "selection"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
               }
             }
           }

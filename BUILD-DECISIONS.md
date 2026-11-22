@@ -1,5 +1,7 @@
 # Build decisions
 
+22 November 2026. Use the work's selected scenario for actuals and keep review, group disclosure, matching and publication receipts separate. Allow a human delivery observation to attach private evidence without authorizing a new send. Keep a corrected accounts extract within the exact returned entity, period, currency and accounting basis. Require fresh source review on its successor.
+
 22 November 2026. Keep preparer changes on new native schedule and asset versions. Review an exported reporting adjustment separately before including it in an exact mapping. Serve protected PDFs from the current bound proof through the existing private storage adapter and return its declared media type. Record file units against the original supplied import and keep each confirmation linked to its own receipt.
 
 22 November 2026. Keep scoped policy publication separate from target application and local review. Hide a source ID when current source access is missing. Reuse the exact forecast scenario, horizon and evidence inventory for both intake and submission, and validate the original authority before returning the selection.

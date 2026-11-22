@@ -28,7 +28,7 @@ PLANNING_API_TESTS = (
     'tests.test_factory_planning.FactoryPlanningTests.test_exact_department_panel_records_only_native_owner_observation',
 )
 API_GROUPS = ('directory', 'cutover', 'project-api', 'delivery-api', 'planning-api', 'payroll-api', 'setup-api', 'hr-api',
-              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api')
+              'recover-api', 'go-live-api', 'staff-api', 'money-api', 'decide-api', 'report-api', 'cost-api', 'scope-api', 'close-api', 'cash-api')
 
 
 def run(group, token, role_access):
@@ -175,6 +175,13 @@ def run(group, token, role_access):
                    'tests.test_ppe_date_proof.PPEAssetDateProofTests.test_api_register_capture_date_proof_and_independent_basis_review',
                    'tests.test_ppe_opening_proof.PPEOpeningProofTests.test_api_opening_proof_successor_and_current_approved_readback',
                    'tests.test_factory_accounting_intake.AccountingSuppliedIntakeTests.test_api_supplied_import_unit_confirmation_preserves_original_and_queues_work',
+                   'tests.test_factory_accounting_intake.AccountingSuppliedIntakeTests.test_http_supplied_intake_to_reviewed_accounts_and_recipient_receipt']
+    elif group == 'cash-api':
+        modules = ['tests.test_factory_api.ContractTests',
+                   'tests.test_factory_forecast.ForecastFactoryTests.test_api_forecast_approval_actual_match_and_original_receipt',
+                   'tests.test_factory_group_forecast.GroupForecastFactoryTests.test_api_group_disclosure_draft_requires_oracle_then_exact_group_approval',
+                   'tests.test_forecast_receipt_recovery.ForecastReceiptRecoveryTests.test_api_observation_stays_private_and_lookup_reconciles_only_original',
+                   'tests.test_accounting_source_return.AccountingSourceReturnTests.test_api_source_return_upload_and_exact_unit_successor',
                    'tests.test_factory_accounting_intake.AccountingSuppliedIntakeTests.test_http_supplied_intake_to_reviewed_accounts_and_recipient_receipt']
     elif group == 'surface':
         required = set()

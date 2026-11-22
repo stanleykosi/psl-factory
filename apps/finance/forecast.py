@@ -4,6 +4,7 @@ from decimal import Decimal,localcontext
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.identity.models import Grant
@@ -215,6 +216,7 @@ def record_support(actor,case_id,scenario_id,item_key,previous_id,evidence_id,mo
         observed_on=observed_on,role=role,snapshot=snapshot,authority=auth,reason=reason,actor=actor)
     event(actor,case,'forecast.support_declared',support=record.pk,scenario=s.pk,item=item_key,mode=mode,uncertainty=uncertainty);bump(case);return record
 
+@observed_fact
 def calculate(s):
     case=s.case;v=s.payload;findings=[]
     r=resolve(METHOD,case);c=r.configuration;m=reference_values(c)[0] if r.status=='ACTIVE' else None
@@ -306,6 +308,7 @@ def prepare(actor,case_id,scenario_id,expected):
     run=ForecastRun.objects.create(case=case,scenario=s,manifest=manifest,result=result,sha256=h,actor=actor)
     event(actor,case,'forecast.prepared',run=run.pk,status=result['status']);bump(case);return run
 
+@observed_fact
 def ensure_current(run):
     require(run.actor,run.case,'finance.forecast.calculate');require(run.scenario.actor,run.case,'finance.forecast.capture')
     if ForecastScenario.objects.filter(case=run.case,reference=run.scenario.reference,number__gt=run.scenario.number).exists():raise ValidationError('A newer forecast scenario revision exists')

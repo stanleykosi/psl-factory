@@ -1,5 +1,11 @@
 # PSL Operations Factory handoff
 
+## Forecast and management-account source recovery · 22 November 2026
+
+OpenAPI 1.14.0 adds reviewed forecast and actuals actions with distinct match, verification and disclosure decisions. The monthly view records unresolved comparisons and keeps the match history. Private observation files bind to the exact uncertain delivery and lookup checks the original operation. Management accounts exposes review stations and verified publication. A corrected CSV is tied to the exact returned work, and confirmation of the supplied units starts a distinct successor without carrying the return forward as approval. [Contract](contracts/psl-factory.openapi.json)
+
+Run the `cash-api` Railway suite on the frozen implementation. Twenty-one groups across 124 states still have API gaps. Continue with issue ownership and messages, ordinary change, bid and commercial steps, and remaining Finance and cross-workflow reads and commands. HOD decisions remain deferred. [Screen map](contracts/factory-api-screen-map.json) · [Actual tests](BUILD-TESTS.md)
+
 ## Income schedules, assets and accounting intake · 22 November 2026
 
 OpenAPI 1.13.0 adds sixteen operations. Finance schedule work reads the exact selected schedule, holds possible duplicate additions, and rebuilds returned rows with a fresh review. A reviewed adjustment export links to a distinct Finance decision before mapping. Asset work captures exact register and date evidence with private PDF upload and download, keeps opening-proof correction tied to the original return and exposes the current schedule and accounting note. Supplied accounting intake retains distinct import and unit-confirmation receipts and queues new work after the current source can be used. [Contract](contracts/psl-factory.openapi.json)

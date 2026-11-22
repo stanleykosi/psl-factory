@@ -281,10 +281,10 @@ def _presentation(actor,work,*,include_progress=False):
     elif not planning_ready and not waiting:
         status='Execution owner needs review' if execution_owner is None else 'Work coordination needs setup'
         next_action='Review execution authority before continuing' if execution_owner is None else 'Choose how this work will be coordinated'
-    changed=False
+    changed=False; verified_report=None
     if work.status=='verified':
         owner='No action required';next_action='Inspect the reviewed report and native recipient receipts'
-        try:service.verified(work,value,observed)
+        try:verified_report=service.verified(work,value,observed)
         except (ValidationError,PermissionDenied,TypeError):
             changed=True;status='Published report needs review';next_action='Review changed source or authority; earlier publication remains in the history'
     if work.cancel_requested or work.status in ['cancelled','followup_needed']:
@@ -329,7 +329,8 @@ def _presentation(actor,work,*,include_progress=False):
         'can_reassess':can_reassess,
         'readiness_changed':changed,'blocker':blocker,'profile_available':value is not None,'adoption':adoption,
         'coordination_needed':current and not planning_ready and execution_owner is not None,'execution_owner_needed':current and execution_owner is None,'can_configure_coordination':permitted('policy.configure'),
-        'accounting':{'state':observed,'formula':formula,'value':value,'progress':progress,'setup':setup},'evidence_as_of':work.updated_at}
+        'accounting':{'state':observed,'formula':formula,'value':value,'progress':progress,'setup':setup,
+                      'verified_report':verified_report},'evidence_as_of':work.updated_at}
 
 
 def accounting_setup(work, state, value, can_read_rules):

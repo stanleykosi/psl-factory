@@ -7,9 +7,9 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    accounting, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections, costing,
+    accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery, bank_payments, bid_assignments, bid_delivery, client_records, clients, closure, commands, corrections, costing,
     delivery, documents, emergency, engagements, escalations,
-    finance_operations, financial_corrections, go_live_replies, handoffs, hr_handoffs, hypercare,
+    finance_operations, financial_corrections, forecasting, go_live_replies, handoffs, hr_handoffs, hypercare,
     intake, intake_sources, invoice_recovery, leadership_reports, meeting_records, minutes, notifications, payment_controls, payroll_identity,
     payroll_questions, payroll_sources, planning, policy_reviews,
     project_operations, received_bids,
@@ -110,6 +110,14 @@ ROUTES = (
     ('projects/<uuid:case_id>/accounting-adjustments/<int:adjustment_id>', accounting.adjustment, accounting.review_adjustment),
     ('projects/<uuid:case_id>/accounting-sources/<int:source_id>/mappings', accounting.map_source),
     ('projects/<uuid:case_id>/accounting-mappings/<int:mapping_id>', accounting.mapping),
+    ('work/<int:work_id>/accounting', accounting_work.detail, accounting_work.command),
+    ('work/<int:work_id>/accounting/corrected-extract', accounting_work.upload_correction),
+    ('work/<int:work_id>/forecast', forecasting.detail, forecasting.command),
+    ('work/<int:work_id>/forecast/disclosure', forecasting.disclosure),
+    ('work/<int:work_id>/forecast/actuals/<str:month>', forecasting.month, forecasting.leave_unmatched),
+    ('work/<int:work_id>/forecast/observations', forecasting.observe_delivery),
+    ('work/<int:work_id>/forecast/observations/<int:observation_id>', forecasting.delivery_proof),
+    ('work/<int:work_id>/forecast/lifecycle', forecasting.lifecycle),
     ('work/<int:work_id>/payroll-recovery', payroll_sources.recovery),
     ('work/<int:work_id>/minutes', minutes.detail),
     ('work/<int:work_id>/minutes/action-options', minutes.action_options),
@@ -319,7 +327,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.13.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.14.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
         'security': [{'Session': []}], 'paths': paths,

@@ -323,6 +323,19 @@ class AccountingSuppliedIntakeTests(TestCase):
         receipt=PublicationReceipt.objects.get(publication__factory_work=work)
         self.assertEqual(receipt.recipient_id,recipient.pk)
         self.assertFalse(FinanceRun.objects.get(pk=receipt.publication.version.financedocumentbinding.run_id).result['ledger_posted'])
+        detail = client.get(f'/api/v1/work/{work.pk}/accounting')
+        self.assertEqual(detail.status_code, 200, detail.content)
+        exact = detail.json()
+        self.assertEqual(exact['publication']['receipt_ids'], [receipt.pk])
+        self.assertFalse(exact['publication']['ledger_posted'])
+        self.assertIsNotNone(exact['allocation_id'])
+        command = {key: exact[key] for key in ('expected_revision', 'case_revision', 'source_id')}
+        reassessed = client.post(f'/api/v1/work/{work.pk}/accounting',
+                                 {**command, 'action': 'reassess', 'adjustment_ids': [],
+                                  'reason': 'The source owner requested a further current comparison.'},
+                                 content_type='application/json')
+        self.assertEqual(reassessed.status_code, 200, reassessed.content)
+        self.assertTrue(PublicationReceipt.objects.filter(pk=receipt.pk).exists())
 
     def test_http_missing_inventory_and_csrf_do_not_capture(self):
         a,c,*_=self.data;evidence,context=self.supplied();client=Client();client.force_login(a)

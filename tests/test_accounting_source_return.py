@@ -127,6 +127,38 @@ class AccountingSourceReturnTests(TestCase):
         self.assertEqual(FinanceReview.objects.get(source=current).actor_id, self.reviewer.pk)
         self.assertFalse(Publication.objects.filter(factory_work__in=(self.work, new)).exists())
 
+    def test_api_source_return_upload_and_exact_unit_successor(self):
+        decision = self.returned()
+        self.client.force_login(self.maker)
+        url = f'/api/v1/work/{self.work.pk}/accounting'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, response.content)
+        pin = response.json()['correction']
+        self.assertEqual(pin['decision'], decision.pk)
+        command = {'case_revision': response.json()['case_revision'], 'head_id': pin['head'], 'decision_id': pin['decision'],
+                   'source_evidence_id': self.sample['extraction_proof'], 'idempotency_key': 'EXTRACT-API-RETURN',
+                   'reference': 'Corrected-accounts', 'extracted_at': self.sample['extracted_at'], 'completeness': 'complete',
+                   'control_total': self.sample['control_total'], 'file': SimpleUploadedFile('corrected.csv', self.csv)}
+        submitted = self.client.post(url + '/corrected-extract', command)
+        self.assertEqual(submitted.status_code, 201, submitted.content)
+        held = submitted.json()
+        self.assertEqual(held['status'], 'source_units_needed')
+        units = f"/api/v1/projects/{self.case.pk}/accounting-intake/{held['id']}"
+        accepted = self.client.post(units, {'action': 'confirm_units', 'unit': 'major_currency',
+            'evidence_id': self.sample['extraction_proof'], 'note': 'The synthetic corrected file shows whole currency units.',
+            'case_revision': held['case_revision']}, content_type='application/json')
+        self.assertEqual(accepted.status_code, 200, accepted.content)
+        successor = accepted.json()['work_id']
+        self.assertEqual(self.client.get(url).json()['successor_id'], successor)
+        self.assertEqual(self.client.get(f'/api/v1/work/{successor}/accounting').json()['predecessor_id'], self.work.pk)
+        factory.run_until_wait(successor)
+        task = HumanTask.objects.get(case=self.case, kind='factory_accounting_review', status='open',
+                                     context__work=successor, context__purpose='source')
+        self.assertEqual(task.context['packet']['target'], accepted.json()['source_id'])
+        self.assertFalse(FinanceReview.objects.filter(source_id=accepted.json()['source_id']).exists())
+        decision.refresh_from_db()
+        self.assertEqual(decision.verdict, 'return')
+
     def test_stale_return_and_wrong_period_never_link_corrected_work(self):
         decision = self.returned()
         self.client.force_login(self.maker)

@@ -112,6 +112,32 @@ class ForecastReceiptRecoveryTests(TestCase):
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         self.assertEqual(PublicationJob.objects.filter(publication__factory_work=self.work).count(), 1)
 
+    def test_api_observation_stays_private_and_lookup_reconciles_only_original(self):
+        self.waiting_delivery(accepted=True, pause=True)
+        url = f'/api/v1/work/{self.work.pk}/forecast'
+        contents = b'Synthetic test observation attachment'
+        fields = {'job_id': self.job.pk, 'expected_revision': self.work.revision, 'case_revision': rev(self.case),
+                  'outcome': 'delivered', 'proof': SimpleUploadedFile('test-observation.txt', contents)}
+        with patch.object(recovery.case_uploads, 'put') as store:
+            observed = self.client.post(url + '/observations', fields)
+        self.assertEqual(observed.status_code, 200, observed.content)
+        receipt = recovery.observations(self.work).get()
+        store.assert_called_once_with(receipt.data['proof']['key'], contents)
+        with patch.object(recovery.case_uploads, 'read', return_value=contents):
+            response = self.client.get(f'{url}/observations/{receipt.pk}')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(b''.join(response.streaming_content), contents)
+        self.job.refresh_from_db()
+        self.assertEqual(self.job.status, 'unknown')
+        self.assertTrue(delivery.run_publication_once(job_id=self.job.pk, lookup_only=True))
+        self.work.refresh_from_db()
+        response = self.client.post(url + '/lifecycle', {'action': 'lookup', 'job_id': self.job.pk,
+                                    'expected_revision': self.work.revision}, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        self.progress.refresh_from_db()
+        self.assertEqual(self.progress.status, 'paused')
+        self.assertEqual(PublicationReceipt.objects.filter(publication__factory_work=self.work).count(), 1)
+
     def test_competing_lease_and_held_result_keep_original_work_waiting(self):
         self.waiting_delivery()
         saved_revision = self.work.revision
