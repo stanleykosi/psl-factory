@@ -17,7 +17,7 @@ from .schedules import save_schedule, arm_schedule, pause_schedule
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'meeting.read')
+    case=accessible_case(request.user,case_id,source_action='meeting.read');require(request.user,case,'meeting.read')
     evidence=case.evidence.order_by('-pk');meetings=Meeting.objects.filter(case=case).select_related('current').order_by('-pk')
     owners=get_user_model().objects.filter(is_active=True,grant__case=case,grant__active=True,grant__action='action.own').distinct()
     participants=get_user_model().objects.filter(is_active=True,grant__case=case,grant__active=True,grant__action='meeting.participate').distinct()

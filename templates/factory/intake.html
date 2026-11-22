@@ -6,7 +6,7 @@
   <h1>Choose a line</h1>
   <p class="lede">Step 1 of 2 · Choose the work you want to start.</p>
   {% if not request.GET.directory %}<p><a href="{% url 'factory_intake' %}?directory=1#process-directory" data-native-navigation>Find a process and where it starts</a></p>{% endif %}
-  {% if not options %}<p>You have no projects available to start work in yet.</p>{% endif %}
+  {% if not options %}<p>{% if has_projects %}Your role can open projects and follow work. Starting work requires the relevant workflow permission.{% else %}You have no projects available to start work in yet.{% endif %}</p>{% endif %}
   <form method="get" action="{% url 'factory_create' %}" class="start-chooser-form">
     <input type="hidden" name="queue" value="{{ queue }}">
     {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
@@ -17,13 +17,13 @@
       <legend>{{ title }}</legend>
       {% for option in entries %}
       <label class="start-line" data-start-option>
-        <input type="radio" name="definition" value="{{ option.definition }}" required>
-        <span><strong>{{ option.title }}</strong><span>{{ option.description }}{% if not option.available %} Workspace access needed.{% endif %}</span></span>
+        <input type="radio" name="definition" value="{{ option.definition }}" required{% if not option.available %} disabled data-start-unavailable{% endif %}>
+        <span><strong>{{ option.title }}</strong><span>{{ option.description }}{% if not option.available %} Starting permission needed.{% endif %}</span></span>
       </label>
       {% endfor %}
     </fieldset>
     {% endif %}{% endfor %}
-    <div class="start-chooser-actions"><button class="button primary" type="submit">Next</button></div>
+    <div class="start-chooser-actions"><button class="button primary" type="submit"{% if not options %} disabled{% endif %}>Next</button></div>
   </form>
   <details class="card process-directory" id="process-directory"{% if request.GET.directory %} open{% endif %}>
     <summary>Find a process</summary>
@@ -40,7 +40,7 @@
           <a href="{{ process.guide.tracking_url }}" aria-label="Track {{ process.title }} in Department handoffs">Track in Department handoffs</a>
           {% if process.intake_available %}<a href="{{ process.intake_url }}">Log a received bid</a>{% endif %}
         </div>
-      {% elif not process.intake_available %}<small>Workspace access needed.</small>{% endif %}
+      {% elif not process.intake_available %}<small>Starting permission needed.</small>{% endif %}
     </li>{% endfor %}</ul></div>{% endfor %}
   </details>
   {% if can_ask_tola %}<p><a href="{% url 'assistant_start' 'tola' %}">Describe it to Tola</a> for help choosing a line.</p>{% endif %}

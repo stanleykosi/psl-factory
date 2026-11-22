@@ -5,6 +5,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_safe
 from apps.agents.specialists import routes
+from apps.identity.factory_access import management_cases
 from .native_station_access import acknowledge_finance, finance_acknowledgement, listed, project_scope, read_work
 from .process_directory import trigger_guide
 from .process_directory_views import source_projects
@@ -23,7 +24,8 @@ def project(request, case_id):
     items, continuation = listed(request.user, case, before, process=process)
     rows = [(work, routes()[work.native_station.process]["original_title"]) for work in items]
     guide = trigger_guide(process) if process else None
-    source_here = bool(process and source_projects(request.user, TRIGGERS[process]).filter(pk=case.pk).exists())
+    source_here = bool(process and (source_projects(request.user, TRIGGERS[process]) | management_cases(request.user))
+                       .filter(pk=case.pk).exists())
     response = render(request, "factory/project_handoffs.html", {
         "case": case, "rows": rows, "cursor": continuation, "process": process,
         "title": routes()[process]["original_title"] if process else None,

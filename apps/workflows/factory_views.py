@@ -117,7 +117,8 @@ def intake(request):
             title = 'Delivery and closure'
         groups[title].append({**option, 'available': key in available})
     from .process_directory import entries
-    response=render(request,'factory/intake.html',{'options':options,'groups':groups,'processes':entries(available),'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
+    from apps.identity.factory_access import project_cases
+    response=render(request,'factory/intake.html',{'options':options,'has_projects':project_cases(request.user).exists(),'groups':groups,'processes':entries(available),'change_intakes':pending_intakes(request.user),'queue':queue,'q':q,
         'can_ask_tola': cases_for(request.user, 'tola').exists()})
     response['Cache-Control']='no-store';return response
 

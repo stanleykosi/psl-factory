@@ -64,20 +64,24 @@
     search.querySelector('input').addEventListener('input', (event) => {
       const query = event.target.value.trim().toLocaleLowerCase();
       let matches = 0;
+      let startable = 0;
       for (const group of container.querySelectorAll('[data-start-group]')) {
         let groupMatches = 0;
         for (const option of group.querySelectorAll('[data-start-option]')) {
           const input = option.querySelector('input');
           option.hidden = !option.textContent.toLocaleLowerCase().includes(query);
-          input.disabled = option.hidden;
+          input.disabled = option.hidden || input.hasAttribute('data-start-unavailable');
           if (option.hidden) input.checked = false;
-          else groupMatches += 1;
+          else {
+            groupMatches += 1;
+            if (!input.disabled) startable += 1;
+          }
         }
         group.hidden = groupMatches === 0;
         matches += groupMatches;
       }
       container.querySelector('[data-start-empty]').hidden = matches !== 0;
-      container.querySelector('button[type="submit"]').disabled = matches === 0;
+      container.querySelector('button[type="submit"]').disabled = startable === 0;
     });
   }
 

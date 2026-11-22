@@ -12,6 +12,14 @@
 </header>
 <section class="card">
   <h2>{% if tracking %}Department handoffs{% else %}{{ guide.screen }}{% endif %}</h2>
+  {% if case %}
+    <p>This project is open to you. The source action requires permission from the department that owns it.</p>
+    <div class="process-links">
+      <a href="{% url 'design_project' case.pk %}">Open {{ case|workspace_name }}</a>
+      <a href="{{ tracking_link }}">Track in Department handoffs</a>
+      <a href="{{ guide.source_url }}?page=1">Choose another project</a>
+    </div>
+  {% else %}
   {% if search or page.paginator.count %}
   <form method="get" class="actions">
     <label>Find a project <input type="search" name="q" value="{{ search }}" maxlength="100"></label>
@@ -22,11 +30,12 @@
     <a class="floor-line" href="{{ url }}"><strong>{{ case|workspace_name }}</strong><span>{{ case.tenant }}</span></a>
   {% empty %}
     {% if search %}<p>No accessible projects match this search.</p>
-    {% else %}<p>This destination needs access to the relevant project and department record.</p>{% endif %}
+    {% else %}<p>There are no projects available for this step.</p>{% endif %}
   {% endfor %}
   <nav class="actions" aria-label="Project pages">
     {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&amp;q={{ search|urlencode }}">Previous</a>{% endif %}
     {% if page.has_next %}<a href="?page={{ page.next_page_number }}&amp;q={{ search|urlencode }}">More projects</a>{% endif %}
   </nav>
+  {% endif %}
 </section>
 {% endblock %}

@@ -18,7 +18,7 @@ from .changes import log_change, assess_change, decide_change, authorize_change,
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'commercial.read')
+    case=accessible_case(request.user,case_id,source_action='commercial.read');require(request.user,case,'commercial.read')
     form=ProposalForm(case=case,auto_id='proposal_%s')
     from .signatures import capture_packet, latest, packet_status
     from .models import CommercialSignaturePacket
@@ -107,7 +107,7 @@ def workbench(request,case_id):
 
 @login_required
 def changes(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'change.read')
+    case=accessible_case(request.user,case_id,source_action='change.read');require(request.user,case,'change.read')
     from .standard_changes import preapprove, bind_standard, catalogue
     from .standard_forms import StandardPolicyForm
     from apps.policy.change_drafts import draft_standard_policy

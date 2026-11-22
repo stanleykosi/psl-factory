@@ -9,7 +9,7 @@ from apps.workflows.models import FactoryWork
 from apps.workflows.native_station_contracts import PROCESSES
 from apps.workflows.process_triggers import TRIGGERS
 from tests import planning_helpers
-from tests.helpers import setup_case
+from tests.helpers import rev, setup_case
 from tests.native_station_helpers import start_station
 from tests.process_role_helpers import role_accounts
 
@@ -113,6 +113,92 @@ class TriggerTrackingTests(TransactionTestCase):
         self.assertEqual(self.client.get(api, {'process': 'B01'}).status_code, 422)
         self.assertEqual(self.client.get(target, {'process': 'B01'}).status_code, 404)
         self.client.force_login(people['finance_head'])
-        self.assertEqual(self.client.get(scoped_url).status_code, 404)
-        self.assertEqual(self.client.get(api, {'process': 'P17'}).status_code, 404)
-        self.assertNotContains(self.client.get(reverse('process_destination', args=['P17', 'track'])), str(case.pk))
+        self.assertNotContains(self.client.get(scoped_url), f'href="{reverse("factory_detail", args=[selected.pk])}"')
+        self.assertEqual(self.client.get(api, {'process': 'P17'}).json()['items'], [])
+        self.assertEqual(self.client.get(reverse('factory_detail', args=[selected.pk])).status_code, 404)
+
+
+class ManagementWorkspaceTests(TestCase):
+    managers = ('pmo_head', 'finance_head', 'ceo', 'cto')
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner, cls.home = setup_case(username='management-home-owner')
+        cls.other_owner, cls.project = setup_case(username='management-project-owner')
+        cls.external = Case.objects.create(tenant='separate-company', title='Other company project', kind='project', synthetic=True)
+        cls.operational = Case.objects.create(tenant=cls.home.tenant, title='Operational project', kind='project', synthetic=False)
+        cls.people = role_accounts(cls.home)
+
+    def test_all_four_roles_can_open_each_workspace_and_track_a_protected_process(self):
+        for name, actor in self.people.items():
+            with self.subTest(role=name):
+                self.client.force_login(actor)
+                manager = name in self.managers
+                project = self.project.pk
+                workspace = reverse('design_project', args=[project])
+                listing = self.client.get('/api/v1/projects')
+                self.assertEqual(listing.status_code, 200)
+                self.assertEqual(str(project) in {item['case_id'] for item in listing.json()['items']}, manager)
+                self.assertEqual(self.client.get(workspace).status_code, 200 if manager else 404)
+                self.assertEqual(self.client.get(f'/api/v1/projects/{project}').status_code, 200 if manager else 404)
+                for outside in (self.external, self.operational):
+                    self.assertEqual(self.client.get(reverse('design_project', args=[outside.pk])).status_code, 404)
+                track = reverse('process_destination', args=['F35', 'track'])
+                if manager:
+                    target = reverse('project_handoffs', args=[project])
+                    self.assertRedirects(self.client.get(track, {'project': project}), target + '?process=F35')
+                    self.assertRedirects(self.client.get(reverse('case', args=[project])), workspace)
+                    self.assertEqual(self.client.get(f'/api/v1/projects/{project}/department-handoffs?process=F35').json()['items'], [])
+                    self.assertEqual(self.client.get(reverse('hrfinance', args=[project])).status_code, 404)
+                    guide = self.client.get(reverse('process_destination', args=['F35', 'source']), {'project': project})
+                    self.assertContains(guide, 'This project is open to you.')
+                    self.assertContains(guide, f'href="{workspace}"')
+                    self.assertEqual(self.client.post(reverse('case', args=[project]), {'action': 'complete'}).status_code, 404)
+                else:
+                    self.assertEqual(self.client.get(track, {'project': project}).status_code, 404)
+
+    def test_each_lead_can_open_native_department_sources_and_use_preparation_on_another_project(self):
+        from apps.core.services import add_evidence
+        from apps.identity.services import require
+        from django.core.exceptions import PermissionDenied
+
+        for name, line, processes in (
+            ('pmo_head', 'planning/v1', ('P01', 'P04', 'P17', 'P22', 'P45', 'P51', 'P56')),
+            ('finance_head', 'finance-accounts/v1', ('F02', 'F10', 'F20', 'F28', 'F31', 'F32', 'F33', 'F36')),
+        ):
+            with self.subTest(role=name):
+                user = self.people[name]
+                self.client.force_login(user)
+                self.assertContains(self.client.get(reverse('factory_create'), {'definition': line}), self.project.pk)
+                for process in processes:
+                    with self.subTest(process=process):
+                        trigger = TRIGGERS[process]
+                        screen = reverse(trigger.screen, args=[self.project.pk])
+                        guide = reverse('process_destination', args=[process, 'source'])
+                        self.assertRedirects(self.client.get(guide, {'project': self.project.pk}),
+                                             screen + '#' + trigger.section)
+                for permission in ('payroll.private.read', 'hrfinance.snapshot.read', 'policy.configure', 'milestone.complete'):
+                    with self.assertRaises(PermissionDenied):
+                        require(user, self.project, permission)
+        author = self.people['pmo_head']
+        incoming = add_evidence(self.other_owner, self.project.pk, 'engagement_source', 'Synthetic request', 'Client brief')
+        self.client.force_login(author)
+        result = self.client.post('/api/v1/work', {
+            'line': 'engagement/v1', 'case_id': str(self.project.pk), 'case_revision': rev(self.project),
+            'idempotency_key': 'manager-start-from-sibling-project', 'reference': 'CROSS-WORKSPACE-PMO',
+            'intake': {'route': 'B', 'evidence_id': incoming.pk},
+        }, content_type='application/json')
+        self.assertEqual(result.status_code, 200, result.content)
+        self.assertTrue(FactoryWork.objects.filter(actor=author, case=self.project, definition='engagement/v1').exists())
+
+    def test_revoked_management_position_loses_workspace_access(self):
+        from apps.identity import teams
+        from apps.identity.team_models import StaffMembership
+
+        for key in ('pmo_head', 'ceo'):
+            actor = self.people[key]
+            position = StaffMembership.objects.get(user=actor, case=self.home)
+            teams.revoke(position.invitation.authority.user, self.home.pk, position.pk, 'Synthetic position ended.')
+            self.client.force_login(actor)
+            self.assertIn(self.client.get(reverse('design_project', args=[self.project.pk])).status_code, (302, 404))
+            self.assertIn(self.client.get(f'/api/v1/projects/{self.project.pk}').status_code, (401, 404))

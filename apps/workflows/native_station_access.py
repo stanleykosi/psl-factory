@@ -6,7 +6,7 @@ from django.http import Http404
 
 from apps.agents.specialists import routes
 from apps.core.models import Case
-from apps.identity.factory_access import department_cases
+from apps.identity.factory_access import department_cases, management_cases
 from apps.identity.models import Grant
 from apps.identity.services import visible_cases
 from .models import FactoryWork
@@ -22,7 +22,7 @@ def legacy_cases(actor):
 
 
 def project_scope(actor, *, process=None):
-    available = Q(pk__in=legacy_cases(actor))
+    available = Q(pk__in=legacy_cases(actor)) | Q(pk__in=management_cases(actor))
     for department, role in (("PMO", "pmo-lead"), ("Finance", "finance-lead")):
         if process is None or routes()[process]["department"] == department:
             available |= Q(pk__in=department_cases(actor, role))

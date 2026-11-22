@@ -82,6 +82,8 @@ The separate frontend serves the signed-in work queue and Finance invoice review
 
 The 63 department-triggered entries expose `guide.action`, `guide.screen`, `guide.source_url` and `guide.tracking_url`. The two URLs open the native action or the process-filtered Department handoffs view after the reader chooses an accessible project. A client can pass `?project=<project UUID>` when it already knows the project. An unavailable project is rejected. Other entries return a null guide. Start work retains its 25 workflow types and the separate received bid intake.
 
+PMO Lead, Finance Lead, CEO and CTO see every project in their organisation and data classification through `GET /api/v1/projects` and can open project handoffs. A source link opens the exact screen when the reader has its native permission. For a workspace they can open without that permission, the link explains who owns the action and offers the workspace and tracking views. Handoff rows still require permission to read the original work. Use `intake_available` for permission to start a line.
+
 | Operation | Use |
 | --- | --- |
 | `GET /api/v1/lines` | Find intakes available to this person. |

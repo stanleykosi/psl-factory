@@ -16,7 +16,7 @@ from . import planning_forms
 
 @login_required
 def workbench(request,case_id):
-    c=accessible_case(request.user,case_id);d.readable(request.user,c)
+    c=accessible_case(request.user,case_id,source_action='planning.read');d.readable(request.user,c)
     grants=set(Grant.objects.filter(case=c,user=request.user,active=True).values_list('action',flat=True))
     report=d.report(request.user,c.pk)
     from .engagement_won import projection as won_projection

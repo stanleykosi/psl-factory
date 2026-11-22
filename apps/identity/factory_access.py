@@ -6,6 +6,8 @@ from apps.core.models import Case
 from .team_models import StaffMembership
 
 
+DEPARTMENT_LEADS = ('pmo-lead', 'finance-lead')
+
 # Preparation and source discovery. Decisions, publishing, private source
 # access and external effects continue to require their native authority.
 LEAD_ACTIONS = {
@@ -44,11 +46,22 @@ def department_memberships(actor, role):
 
 def department_cases(actor, role, *, heads_only=False):
     memberships = department_memberships(actor, role)
-    heads = memberships.filter(mode='lead', case__tenant=OuterRef('tenant'), case__synthetic=OuterRef('synthetic'))
-    scope = Q(Exists(heads)) if role in ('pmo-lead', 'finance-lead') else Q(pk__in=[])
+    scope = organisation_scope(memberships.filter(mode='lead')) if role in DEPARTMENT_LEADS else Q(pk__in=[])
     if not heads_only:
         scope |= Q(pk__in=memberships.values('case_id'))
     return Case.objects.filter(scope, kind='project')
+
+
+def organisation_scope(memberships):
+    return Q(Exists(memberships.filter(case__tenant=OuterRef('tenant'), case__synthetic=OuterRef('synthetic'))))
+
+
+def management_cases(actor):
+    """Workspace entry for current PSL department leads and executives."""
+    current = StaffMembership.objects.filter(user=actor, user__is_active=True, active=True, case__kind='project')
+    positions = current.filter(Q(role__in=DEPARTMENT_LEADS, mode='lead') |
+                               Q(role__in=('ceo', 'cto'), mode='standalone'))
+    return Case.objects.filter(organisation_scope(positions), kind='project').distinct()
 
 
 def role_managed(actor):
@@ -63,14 +76,16 @@ def leads(actor):
 
 def authorized_leads(actor, actions):
     actions = frozenset(actions)
-    # A head can combine preparation rights with the department reads they
-    # already hold in their assigned workspace. No extra action is granted.
+    # Match the complete combination to one current role before expanding its
+    # workspace scope.
     roles = [name for name, allowed in LEAD_ACTIONS.items() if actions <= (allowed | DEPARTMENT_READS.get(name, frozenset()))]
     return leads(actor).filter(role__in=roles)
 
 
 def role_cases(actor, actions):
-    query = Q(pk__in=authorized_leads(actor, actions).values('case_id'))
+    eligible = authorized_leads(actor, actions)
+    query = Q(pk__in=eligible.values('case_id')) | (
+        Q(kind='project') & organisation_scope(eligible.filter(role__in=DEPARTMENT_LEADS)))
     for role, allowed in DEPARTMENT_READS.items():
         if actions and set(actions) <= allowed:
             query |= Q(pk__in=department_cases(actor, role).values('pk'))
@@ -80,7 +95,7 @@ def role_cases(actor, actions):
 def project_cases(actor):
     from .services import visible_cases
 
-    return (visible_cases(actor) | role_cases(actor, ['case.read'])).filter(kind='project')
+    return (visible_cases(actor) | role_cases(actor, ['case.read']) | management_cases(actor)).filter(kind='project')
 
 
 def project_actions(actor, case):
@@ -92,8 +107,10 @@ def project_actions(actor, case):
     for role, allowed in DEPARTMENT_READS.items():
         if department_cases(actor, role).filter(pk=case.pk).exists():
             actions.update(allowed)
-    for role in leads(actor).filter(case=case).values_list('role', flat=True):
+    lead_scope = Q(case=case) | Q(role__in=DEPARTMENT_LEADS, case__tenant=case.tenant,
+                                 case__synthetic=case.synthetic, case__kind=case.kind)
+    for role in leads(actor).filter(lead_scope).values_list('role', flat=True).distinct():
         actions.update(LEAD_ACTIONS[role])
-        if role == 'pmo-lead':
-            actions.add('team.actions.read')
+    if leads(actor).filter(case=case, role='pmo-lead').exists():
+        actions.add('team.actions.read')
     return actions

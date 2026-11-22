@@ -34,7 +34,8 @@ def run(group, token, role_access):
         modules = ['tests.test_original_process_role_access']
     elif group == 'directory':
         modules = ['tests.test_process_trigger_navigation', 'tests.test_process_role_directory',
-                   'tests.test_native_station_role_access', 'tests.test_factory_api']
+                   'tests.test_native_station_role_access', 'tests.test_factory_api',
+                   'tests.test_role_scoped_work.RoleScopedWorkTests.test_role_accounts_keep_the_full_factory_shell_and_scoped_destinations']
     elif group == 'surface':
         required = set()
         modules = ['tests.test_process_role_directory', 'tests.test_native_station_role_access', 'tests.test_factory_api',

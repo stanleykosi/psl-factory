@@ -19,7 +19,7 @@ from .forms import commands
 def workbench(request,case_id):
     from .statement_ppe import held_opening_statement_ids, recipient_access
 
-    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read')
+    case=accessible_case(request.user,case_id,source_action='finance.read');require(request.user,case,'finance.read')
     held_runs=held_opening_statement_ids(case)
     forms=commands(case,request.POST if request.method=='POST' else None,held_runs=held_runs)
     draft_diagnostic=None

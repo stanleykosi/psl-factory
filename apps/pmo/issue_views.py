@@ -17,7 +17,7 @@ import json
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'issue.read')
+    case=accessible_case(request.user,case_id,source_action='issue.read');require(request.user,case,'issue.read')
     if request.method=='POST':
         try:
             p=request.POST;expected=int(p['revision']);action=p['action']

@@ -49,7 +49,7 @@ def commands(actor, case, data=None):
 
 @login_required
 def workbench(request, case_id):
-    case = accessible_case(request.user, case_id)
+    case = accessible_case(request.user, case_id, source_action='finance.read')
     domain.access(request.user, case)
     forms = commands(request.user, case, request.POST if request.method == 'POST' else None)
     receipt = None

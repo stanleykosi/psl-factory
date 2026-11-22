@@ -226,14 +226,16 @@ class RoleScopedWorkTests(TestCase):
                 self.assertContains(chooser, 'Log an engagement and connect planning')
                 self.assertContains(chooser, 'Prepare management accounts')
                 projects = self.checked(self.api('/projects'), '/projects')['items']
-                department_head = position.mode == 'lead' and position.role in ('pmo-lead', 'finance-lead')
-                expected = {str(self.case.pk)} if agents else set()
-                if department_head:
+                management = position.mode == 'standalone' or (
+                    position.mode == 'lead' and position.role in ('pmo-lead', 'finance-lead'))
+                expected = {str(self.case.pk)} if agents or management else set()
+                if management:
                     expected.add(str(self.other.pk))
                 self.assertEqual({row['case_id'] for row in projects}, expected)
                 self.assertEqual(self.client.get(reverse('design_project', args=[self.other.pk])).status_code,
-                                 200 if department_head else 404)
-                self.assertEqual(self.client.get(reverse('case', args=[self.case.pk])).status_code, 404)
+                                 200 if management else 404)
+                self.assertEqual(self.client.get(reverse('case', args=[self.case.pk])).status_code,
+                                 302 if management else 404)
                 if starter:
                     self.assertIn(starter, profile['startable_lines'])
                     self.assertContains(self.client.get(reverse('factory_create'), {'definition': starter}), self.case.pk)

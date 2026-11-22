@@ -16,7 +16,7 @@ from .models import ForecastScenario,ForecastRun,ForecastActual,ForecastReview,F
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read');forms=commands(case,request.POST if request.method=='POST' else None)
+    case=accessible_case(request.user,case_id,source_action='finance.read');require(request.user,case,'finance.read');forms=commands(case,request.POST if request.method=='POST' else None)
     if request.method=='POST':
         try:
             f=next((r['form'] for r in forms if r['action']==request.POST.get('action')),None)

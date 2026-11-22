@@ -21,7 +21,7 @@ from .rfp_forms import forms_for
 @login_required
 @never_cache
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'rfp.read')
+    case=accessible_case(request.user,case_id,source_action='rfp.read');require(request.user,case,'rfp.read')
     upload_grants = ['rfp.intake', 'evidence.add', 'document.read']
     available=active_case_grants(request.user,[case.pk],actions=upload_grants+['rfp.assign']+[f'rfp.contribute:{team}' for team in rfp.TEAMS])
     teams=[team for team in rfp.TEAMS if (case.pk,f'rfp.contribute:{team}') in available]

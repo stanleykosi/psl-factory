@@ -24,7 +24,7 @@ Outputs are complete only with the source-required validation, review/acceptance
 
 All signed-in staff use the same factory navigation and Start work catalogue. The existing My work page uses the person's role as its heading and brings together their assignments, decisions and available team invitations. Each entry checks the person's current workspace and record access. The catalogue stays available when a person has no eligible project, and the form only offers projects they can use.
 
-The six base roles guide dashboards, access, decision routing and invitations. Each organisation has one PMO head. That person sees all its PMO projects, including new intake, and can ask Tola about one project or the whole department. The Finance head has the same reach in Finance through Chidi. Project leads and team members see their department’s records on the projects where they have a current staff assignment. The same limits apply to the project list, assistant conversations and record links. Sample and operational workspaces have separate audiences.
+The six base roles guide dashboards, access, decision routing and invitations. The PMO Lead, Finance Lead, CEO and CTO can open all project workspaces in their organisation. Sample and operational workspaces have separate audiences. The PMO Lead can prepare PMO work and ask Tola about one project or the whole department. The Finance Lead has the same reach for Finance work and Chidi. Project leads and team members see their department’s records on the projects where they have a current staff assignment. Department records and Assistant sources keep their own permissions.
 
 The current bid owner may share an original bid and its recorded client conversation with other PMO teams in the same organisation. New bids are private. Choosing Public gives those teams read access to the bid from their own workspace and lets Tola cite it. Returning to Private closes that access. The receiving project manager reviews any winning answer proposed for a new bid.
 
@@ -32,7 +32,7 @@ A current named payroll report recipient can ask Zainab for the total staff cost
 
 For management-accounts files, Chidi reads the original and proposes the currency, units, amounts and their source locations. A Finance member assigned to the project or the Finance lead can correct, approve or return the reading. Approved figures retain their original and full-currency amounts and can be used for management accounts and cited in Finance conversations.
 
-Zainab is available to HR staff in their assigned workspaces. The live HR system still needs to be connected. Admin manages changes to the PMO appointment. Work and decisions remain assigned to the people responsible for them. CTO and CEO have standalone scopes. Cross-department sharing is a future decision.
+Zainab is available to HR staff in their assigned workspaces. The live HR system still needs to be connected. Admin manages changes to the PMO appointment. CTO and CEO hold standalone roles. Their work and decisions remain assigned under the native workflow rules. The same rules apply to protected records shared across departments.
 
 | Base role | Dashboard focus |
 | --- | --- |

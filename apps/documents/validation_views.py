@@ -18,7 +18,7 @@ from . import validation as domain
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'validation.read')
+    case=accessible_case(request.user,case_id,source_action='validation.read');require(request.user,case,'validation.read')
     forms=commands(case,request.POST if request.method=='POST' else None,request.user)
     from apps.identity.models import Grant
     actions=set(Grant.objects.filter(case=case,user=request.user,active=True).values_list('action',flat=True))

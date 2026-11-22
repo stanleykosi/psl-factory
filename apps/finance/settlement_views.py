@@ -16,7 +16,7 @@ from .settlement_forms import commands
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read')
+    case=accessible_case(request.user,case_id,source_action='finance.read');require(request.user,case,'finance.read')
     from .fixed_charge import case_access
     case_access(request.user,case)
     forms=commands(case,request.POST if request.method=='POST' else None)

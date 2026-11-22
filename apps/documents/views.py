@@ -18,7 +18,7 @@ from .delivery import operate_publication
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id)
+    case=accessible_case(request.user,case_id,source_action='document.read')
     require(request.user,case,'document.read')
     templates=Template.objects.filter(case=case).exclude(definition__document_type='accepted_finance_metadata').order_by('name','-version')
     versions=Version.objects.filter(document__case=case).exclude(template__definition__document_type='accepted_finance_metadata').select_related('document','template').order_by('-pk')

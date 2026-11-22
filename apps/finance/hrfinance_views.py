@@ -18,7 +18,7 @@ from .payroll_correction_views import reviewer as payroll_correction_reviewer
 
 @login_required
 def workbench(request,case_id):
- case=accessible_case(request.user,case_id);require(request.user,case,'hrfinance.read')
+ case=accessible_case(request.user,case_id,source_action='hrfinance.read');require(request.user,case,'hrfinance.read')
  forms=commands(request.user,case,request.POST if request.method=='POST' else None)
  if request.method=='POST':
   try:

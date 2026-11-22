@@ -25,6 +25,14 @@ def granted(actor,actions,*,include_roles=True):
         query = query | role_cases(actor, actions)
     return query
 
+def source_workspaces(actor, action):
+    from apps.identity.factory_access import management_cases
+
+    # A management workspace can open a native source only with its existing
+    # department read permission. Legacy workbenches retain their explicit grants.
+    return granted(actor, [action]).filter(
+        Q(pk__in=visible_cases(actor).values('pk')) | Q(pk__in=management_cases(actor).values('pk')))
+
 def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifecycle=''):
     active(actor)
     if not all(isinstance(x,str) for x in [q,tenant,kind,area]) or len(q)>120 or len(tenant)>100 or kind not in ['', 'project','support'] or area not in ['', 'finance'] or type(page_size) is not int or not 1<=page_size<=50:raise ValidationError('Valid workspace search, organization, type, area and page size required')

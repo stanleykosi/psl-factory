@@ -26,7 +26,7 @@ def optional_bool(value):return {'true':True,'false':False,'unknown':None}.get(v
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'delivery.read')
+    case=accessible_case(request.user,case_id,source_action='delivery.read');require(request.user,case,'delivery.read')
     if request.method=='POST':
         try:
             p=request.POST;action=p['action'];expected=int(p['revision']);d=int(p.get('dossier') or 0)
