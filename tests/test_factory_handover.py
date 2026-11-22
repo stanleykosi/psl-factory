@@ -166,8 +166,15 @@ class FactoryHandoverTests(TestCase):
         self.client.force_login(receiver);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Record your actual receipt or gaps');self.assertNotContains(page,'Continue eligible work')
         generic=self.client.get(reverse('case',args=[f.case.pk]));self.assertEqual(list(generic.context['runs']),[])
-        body={'action':'acknowledge','revision':f.work.revision,'case_revision':rev(f.case),'receipt':r.pk,'status':'received','evidence':f.e['requirements'].pk,'note':'Actual synthetic Support received this exact package'}
-        self.assertRedirects(self.client.post(url,body),url);self.assertContains(self.client.post(url,body),'Stale revision')
+        api = f'/api/v1/work/{f.work.pk}/support-receipt'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual(options.json()['receipts'], [{'id': r.pk, 'status': None, 'can_acknowledge': True}])
+        body = {'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'receipt_id': r.pk,
+                'status': 'received', 'evidence_id': f.e['requirements'].pk, 'note': 'Actual synthetic Support receipt'}
+        saved = self.client.post(api, body, content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content)
+        self.assertEqual(self.client.post(api, body, content_type='application/json').status_code, 409)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='handover').get().actor_id,receiver.pk)
 

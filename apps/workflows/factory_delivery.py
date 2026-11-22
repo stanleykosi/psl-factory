@@ -237,7 +237,7 @@ def verify(work,actor=None):
     return {'head':work.source_head_id,'dossier':d.pk,'release_ready':row.pk,'verified':True,
         'verification_scope':'synthetic_native_release_evidence_readiness','deployment_authorized':False,'deployment_dispatched':False,'financial_release_granted':False,'external_authenticity_verified':False}
 
-def projection(actor,work):
+def projection(actor,work,*,decision_evidence_limit=None):
     from .factory import access
     access(actor,work.case,envelope=DEFINITION);current=True;intake_finding=None
     try:d=subject(work,actor,current=False);subject(work,actor)
@@ -339,13 +339,19 @@ def projection(actor,work):
     except PermissionDenied:author_current=False
     from apps.pmo.progress import optional_report
     from apps.pmo.phase_evidence import projection as phase_projection
+    decision_evidence = []
+    if can_decide and decision_evidence_limit != 0:
+        evidence = public_evidence(Evidence.objects.filter(case=work.case))
+        if decision_evidence_limit is not None:
+            evidence = evidence.only('kind', 'version').order_by('-pk')[:decision_evidence_limit]
+        decision_evidence = list(evidence)
     return {'dossier':d,'checks':observed,'can_decide':can_decide,'ready':prepared(work),'readiness_changed':changed,
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
         'planning_owner_names':owner_names,'design_signoff_hold':design_hold,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
         'last_decision':prior,'returned':returned,'remedy_finding':remedy_finding,'return_issue':return_issue,'return_issues':return_issues,
         'workaround_option':workaround_option,'reviewed_workaround':bool(workaround),'workaround_statement':workaround_statement,
         'progress_tracking':optional_report(actor,d),'phase_evidence':phase_projection(actor,work.case_id,d.pk),
-        'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_decide else []}
+        'decision_evidence':decision_evidence}
 
 @transaction.atomic
 def link_client_workaround(actor, work_id, expected, case_expected, *, return_id, issue_state_id, response_id, review_id, note):
@@ -372,7 +378,7 @@ def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_
     if type(case_expected) is not int or case_expected<1:raise ValidationError('Exact rendered project version required')
     case=lock_case(actor,work.case_id,'delivery.planning_decide',case_expected)
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
-    work.case=case;panel=projection(actor,work)
+    work.case=case;panel=projection(actor,work,decision_evidence_limit=0)
     if work.revision!=expected or verdict not in panel['allowed_verdicts'] or not packet_sha256 or packet_sha256!=panel['decision_packet']:raise ValidationError('STALE_VERSION: current exact Planning exit sources and authority required')
     if not public_evidence(Evidence.objects.filter(case=case,pk=evidence_id)).exists():raise ValidationError('Choose an available public delivery decision source')
     result=delivery.decide_planning(actor,case.pk,work.request['dossier'],verdict,evidence_id,note,case.revision,issue_id=issue_id)

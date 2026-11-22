@@ -100,12 +100,16 @@ class CashReportedAmountBrowserTests(TestCase):
         stored={}
         with (patch('adapters.case_uploads.put',side_effect=stored.__setitem__),
               patch('adapters.case_uploads.read',side_effect=lambda proof:stored[proof.key]) as read):
-            self.assertRedirects(self.client.post(url,{
-                'action':'supply_amount','revision':rev(case),'amount':'12.50','locator':'confirmed-original-transfer',
+            api = f'/api/v1/projects/{case.pk}/invoices/{issue.pk}/payments/{original.pk}'
+            self.assertTrue(self.client.get(api).json()['can_supply_amount'])
+            captured = self.client.post(api + '/reported-amount', {
+                'revision':rev(case),'amount':'12.50','locator':'confirmed-original-transfer',
                 'reason':'Read a confirmed amount on the original bank transaction.',
                 'file':pdf_file('sample-confirmed-amount.pdf'),
-            }),url)
+            })
+            self.assertEqual(captured.status_code, 201, captured.content)
             supplied=CashReportedAmount.objects.get(receipt=original)
+            self.assertEqual(self.client.get(api).json()['amount_update_id'], supplied.pk)
             page=self.client.get(url)
             self.assertContains(page,'<dt>Reported amount</dt><dd>Unknown</dd>',html=True)
             self.assertContains(page,'Amount supplied from bank proof')

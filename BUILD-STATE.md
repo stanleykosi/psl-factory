@@ -2,7 +2,7 @@
 
 ## Frontend API cutover increment · 22 November 2026
 
-OpenAPI 1.2.0 adds 36 registered operations and updates 35 screen groups. The added paths cover project actions, milestones, signed change links, bid assignment, portal receipts, bid follow-up, templates, client contact history, payments and bank receipts, reminders, receivables and Finance close, rules and delegation drafts, invoice comments and 17 typed workflow source corrections. The same Django services own permissions, versions and operational effects. [Frontend handoff](docs/design/frontend-api.md) · [Screen map](contracts/factory-api-screen-map.json)
+OpenAPI 1.2.0 adds 42 registered operations and updates 37 screen groups. The added paths cover project actions, milestones, signed change links, bid assignment, portal receipts, bid follow-up, templates, client contact history, payments and bank receipts, reminders, receivables and Finance close, rules and delegation drafts, invoice comments, 17 typed workflow source corrections, Planning exit decisions, Go-live sign-off and Support receipt. The same Django services own permissions, versions and operational effects. [Frontend handoff](docs/design/frontend-api.md) · [Screen map](contracts/factory-api-screen-map.json)
 
 The map retains remaining JSON work for 53 groups across 256 states. Major engineering gaps include source pickers, specialist decision packets and recovery commands, detailed payroll and Finance work, account administration and policy authoring. HOD decisions on values, approvers and live destinations are deferred. [Build backlog](BUILD-BACKLOG.json)
 

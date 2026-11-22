@@ -2,7 +2,7 @@
 
 ## Frontend API cutover increment · 22 November 2026
 
-Build on the OpenAPI 1.2.0 contract. There are 109 operations across 90 paths. The new paths and typed corrections are mapped across 35 screen groups. The 262-state inventory, 108 release processes and Django execution paths remain available. Generate frontend types from the checked-in contract. [Contract](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)
+Build on the OpenAPI 1.2.0 contract. There are 115 operations across 93 paths. The new paths and typed corrections are mapped across 37 screen groups. The 262-state inventory, 108 release processes and Django execution paths remain available. Generate frontend types from the checked-in contract. [Contract](contracts/psl-factory.openapi.json) · [Frontend handoff](docs/design/frontend-api.md)
 
 Use the `remaining` entries of the screen map and the new backlog item for the next JSON batches. Add exact source selection, specialist decisions and recovery, protected Finance and HR commands, and staff and Setup authoring. Check each new route through real PostgreSQL services and audit successful responses with `tests.api_contract_runner.ContractRunner`. The Railway `cutover` check group covers integration plus the blocking-model worker probe. HOD values, appointments and real delivery destinations are deferred. [Remaining steps](contracts/factory-api-screen-map.json) · [Results](BUILD-TESTS.md)
 

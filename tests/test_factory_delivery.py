@@ -187,10 +187,16 @@ class FactoryDeliveryTests(TestCase):
         self.client.force_login(f.actor);url=reverse('factory_invoice_decision',args=[w.pk])+'?queue=decisions&q=Delivery'
         self.assertContains(self.client.get(url),'Planning exit decision')
         self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[w.pk])),'Approve exact Planning exit')
-        data={'action':'delivery_decision','revision':w.revision,'case_revision':rev(f.case),'packet':factory_delivery.projection(f.actor,w)['decision_packet'],'verdict':'approve','evidence':f.e['plan'].pk,'note':'Synthetic PMO Lead exact Planning exit'}
-        self.assertRedirects(self.client.post(url,data),url)
+        api = f'/api/v1/work/{w.pk}/planning-exit'
+        panel = self.client.get(api).json()
+        self.assertIn('approve', panel['verdicts'])
+        data = {'expected_revision': panel['expected_revision'], 'case_revision': panel['case_revision'],
+                'packet': panel['packet'], 'verdict': 'approve', 'evidence_id': f.e['plan'].pk,
+                'note': 'Synthetic PMO Lead exact Planning exit'}
+        result = self.client.post(api, data, content_type='application/json')
+        self.assertEqual(result.status_code, 200, result.content)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').count(),1)
-        self.assertContains(self.client.post(url,data),'Stale revision; refresh before retrying')
+        self.assertEqual(self.client.post(api, data, content_type='application/json').status_code, 409)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').count(),1)
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.status,'waiting',w.finding)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='kickoff').exists())

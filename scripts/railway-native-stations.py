@@ -54,6 +54,12 @@ def run(group, token, role_access):
             'tests.test_rfp_pdf_portal.RFPReviewedPDFPortalTests.test_manual_pdf_receipt_binds_exact_approved_artifact_through_verified_outcome',
             'tests.test_factory_closure.FactoryClosureTests.test_corrected_report_requires_new_head_decision_and_preserves_native_history_and_budget',
             'tests.test_factory_human_independence.IndependentInvoiceReviewTests.test_reading_finance_user_can_comment_on_exact_other_review_without_any_decision',
+            'tests.test_cash_reported_amount.CashReportedAmountBrowserTests',
+            'tests.test_payments_overview.PaymentsOverviewTests.test_trial_reads_exact_part_payment_and_only_current_reviewed_ageing',
+            'tests.test_client_workspace_link.ClientWorkspaceLinkTests.test_current_groups_use_only_reviewed_same_tenant_visible_projects',
+            'tests.test_factory_delivery.FactoryDeliveryTests.test_native_planning_decision_is_available_in_primary_ui_without_finance',
+            'tests.test_factory_go_live.FactoryGoLiveTests.test_agent_drafts_reviews_and_publishes_but_only_human_attestation_establishes_native_acceptance',
+            'tests.test_factory_handover.FactoryHandoverTests.test_distinct_actual_recipient_uses_exact_http_receipt_and_has_no_execution_or_private_run_access',
         ]
     elif group == 'surface':
         required = set()

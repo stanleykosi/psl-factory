@@ -9283,6 +9283,1149 @@
         }
       }
     },
+    "/api/v1/work/{work_id}/planning-exit": {
+      "get": {
+        "summary": "Read current Planning exit checks, decision fingerprint and allowed outcomes",
+        "operationId": "delivery_planning_exit",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "packet": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "verdicts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return",
+                          "reject"
+                        ]
+                      }
+                    },
+                    "proofs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    },
+                    "blockers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "reference": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "reference"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "checklist": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "status"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "packet",
+                    "verdicts",
+                    "proofs",
+                    "blockers",
+                    "checklist"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record a Planning exit decision against the current reviewed delivery packet",
+        "operationId": "delivery_decide_planning_exit",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "packet": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "verdict": {
+                    "type": "string",
+                    "enum": [
+                      "approve",
+                      "return",
+                      "reject"
+                    ]
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  },
+                  "issue_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "packet",
+                  "verdict",
+                  "evidence_id",
+                  "note"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/go-live-signoff": {
+      "get": {
+        "summary": "Read the exact delivered go-live report and signature evidence options for the appointed PM",
+        "operationId": "delivery_go_live",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "version_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "receipts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "recorded_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "recorded_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "prior_acceptance_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9223372036854775807
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "proofs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "version_id",
+                    "receipts",
+                    "prior_acceptance_id",
+                    "proofs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record distinct real PM and client signatures for the exact delivered go-live report",
+        "operationId": "delivery_record_go_live",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "version_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "receipt_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "pm_signature_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "client_signature_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "signers": {
+                    "type": "object",
+                    "properties": {
+                      "PM": {
+                        "type": "object",
+                        "properties": {
+                          "source_system": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "source_reference": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "decision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "decision_version": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "signer_reference": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "signed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "source_system",
+                          "source_reference",
+                          "decision_id",
+                          "decision_version",
+                          "signer_reference",
+                          "signed_at"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "Client": {
+                        "type": "object",
+                        "properties": {
+                          "source_system": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "source_reference": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "decision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "decision_version": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "signer_reference": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 160
+                          },
+                          "signed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "source_system",
+                          "source_reference",
+                          "decision_id",
+                          "decision_version",
+                          "signer_reference",
+                          "signed_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "PM",
+                      "Client"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "fresh_signatures",
+                      "metadata_binding"
+                    ]
+                  },
+                  "prior_acceptance_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "version_id",
+                  "receipt_id",
+                  "pm_signature_id",
+                  "client_signature_id",
+                  "signers",
+                  "mode",
+                  "prior_acceptance_id",
+                  "note"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work/{work_id}/support-receipt": {
+      "get": {
+        "summary": "Read your exact Support handover receipts and acknowledgement controls",
+        "operationId": "delivery_support_receipt",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expected_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "case_revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "receipts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "can_acknowledge": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "received",
+                                  "gaps"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "can_acknowledge",
+                          "status"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "proofs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9223372036854775807
+                          },
+                          "kind": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    }
+                  },
+                  "required": [
+                    "expected_revision",
+                    "case_revision",
+                    "receipts",
+                    "proofs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Let the actual Support recipient acknowledge the exact handover or record gaps",
+        "operationId": "delivery_acknowledge_support",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "waiting",
+                        "action_needed",
+                        "owner_needed",
+                        "setup_needed",
+                        "verified",
+                        "cancelled",
+                        "awaiting_reconciliation",
+                        "followup_needed",
+                        "processing",
+                        "effect_uncertain"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "record_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9223372036854775807
+                    }
+                  },
+                  "required": [
+                    "work_id",
+                    "state",
+                    "revision",
+                    "record_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Http400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Http401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Http403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Http404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Http405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Http409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Http413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Http415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Http422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Http500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Http503"
+          },
+          "default": {
+            "description": "Request or domain error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "case_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "receipt_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "evidence_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "received",
+                      "gaps"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "expected_revision",
+                  "case_revision",
+                  "receipt_id",
+                  "evidence_id",
+                  "status",
+                  "note"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/work/{work_id}/aggregate-receipt": {
       "post": {
         "summary": "Record your own receipt for the exact current aggregate publication",

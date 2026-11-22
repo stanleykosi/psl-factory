@@ -7,7 +7,7 @@ from django.urls import path, re_path
 from django.views.decorators.http import require_safe
 
 from . import (
-    agents, assistant_drafts, bank_payments, bid_assignments, bid_delivery, clients, commands, corrections, documents,
+    agents, assistant_drafts, bank_payments, bid_assignments, bid_delivery, clients, commands, corrections, delivery, documents,
     finance_operations, handoffs,
     intake, notifications, project_operations, received_bids, reminders, reviews, role_work, roles, setup, work, workspaces,
 )
@@ -39,6 +39,9 @@ ROUTES = (
     ('work/<int:work_id>/actions', work.action),
     ('work/<int:work_id>/reviews', reviews.review),
     ('work/<int:work_id>/corrections', corrections.correct),
+    ('work/<int:work_id>/planning-exit', delivery.planning_exit, delivery.decide_planning_exit),
+    ('work/<int:work_id>/go-live-signoff', delivery.go_live, delivery.record_go_live),
+    ('work/<int:work_id>/support-receipt', delivery.support_receipt, delivery.acknowledge_support),
     ('work/<int:work_id>/aggregate-receipt', reviews.acknowledge_aggregate),
     ('work/<int:work_id>/minutes/confirmation', commands.confirm_minutes),
     ('work/<int:work_id>/minutes/review-request', commands.request_minutes_review),

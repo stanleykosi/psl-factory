@@ -1,5 +1,15 @@
 # Actual test execution ledger
 
+## Workflow API cutover · 22 November 2026
+
+The Windows frontend verification passed 441 focused tests, then all 3,629 tests in 151 files. Both previously timed-out test files ran in the focused and full passes. TypeScript passed. The fixes cover shell-specific source checks, path separators, paging retries and test worker startup.
+
+The first PostgreSQL batch exposed a route shadowing the existing Milestones tab and a stale test expectation for revoked template access. The route moved to the exact completion subresource. The template test now checks the existing hidden-tab response. A later bank test caught exponential notation for zero remaining cash. The API now returns fixed-point decimal strings. The first template download test used the wrong storage mock target, and the milestone fixture carried an unrelated superseding role policy.
+
+The four-test PostgreSQL rerun passed in 46.260 seconds and checked ten successful HTTP responses against the contract. It verified report-to-verified-lot-to-allocation, private template upload and download, new milestone to a Finance handoff, and independent invoice review comments. A separate three-test PostgreSQL run passed in 18.046 seconds for an unknown bank amount successor, payment search and an exact scoped client group. Both used synthetic data and isolated PostgreSQL databases.
+
+The first Railway cutover check reached Django system checks and migration drift detection. The isolated test settings rejected the new suite name. The suite is now explicitly admitted on the checks service.
+
 ## Live OpenAPI handoff · 22 November 2026
 
 The checked-in snapshot passed the official OpenAPI 3.1 document schema and generated TypeScript with openapi-typescript 7.13.0. The three contract tests passed locally and exercised route resolution to the exact declared handler, all 25 intake signatures, and the inventory of 262 design states and 108 processes.

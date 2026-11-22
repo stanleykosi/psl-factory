@@ -43,6 +43,11 @@ class PaymentsOverviewTests(TestCase):
         self.assertContains(response, 'Record a payment received')
         [row] = response.context['rows']
         self.assertEqual((row['face'], row['paid'], row['owed']), (SIGNED_AMOUNT, PART_PAYMENT, Decimal('22.50')))
+        api = self.client.get('/api/v1/payments', query)
+        self.assertEqual(api.status_code, 200, api.content)
+        [payment] = api.json()['items']
+        self.assertEqual(payment['issue_id'], prepared['issue'])
+        self.assertEqual((Decimal(payment['paid']), Decimal(payment['owed'])), (PART_PAYMENT, Decimal('22.50')))
         self.assertEqual(row['state'], 'Part paid')
         self.assertEqual(row['reminder'], reverse('design_payment_reminder', args=[invoice.case_id, prepared['issue']]))
         self.assertEqual(row['record_payment'], reverse('finance_record_payment', args=[invoice.case_id, prepared['issue']]))

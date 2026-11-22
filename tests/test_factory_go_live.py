@@ -233,7 +233,19 @@ class FactoryGoLiveTests(TestCase):
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
         progress.refresh_from_db()
         self.assertEqual(progress.observation, 'signoff-pending')
-        self.assertRedirects(self.client.post(response_url,payload),response_url,fetch_redirect_response=False)
+        api = f'/api/v1/work/{f.work.pk}/go-live-signoff'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual(options.json()['receipts'][0]['id'], receipt.pk)
+        facts = ('source_system', 'source_reference', 'decision_id', 'decision_version', 'signer_reference', 'signed_at')
+        recorded = self.client.post(api, {
+            'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'version_id': v.pk,
+            'receipt_id': receipt.pk, 'pm_signature_id': pm.pk, 'client_signature_id': customer.pk,
+            'prior_acceptance_id': None, 'mode': 'fresh_signatures', 'note': payload['note'],
+            'signers': {label: {field: payload[f'{key}-fact-{field}'] for field in facts}
+                        for label, key in (('PM', 'pm'), ('Client', 'client'))},
+        }, content_type='application/json')
+        self.assertEqual(recorded.status_code, 200, recorded.content)
         progress.refresh_from_db()
         self.assertEqual(progress.observation, '')
         decision=DeliveryRecord.objects.get(dossier=f.d,kind='go_live')

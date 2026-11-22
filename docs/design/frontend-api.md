@@ -63,7 +63,7 @@ The role dashboard supplies an `invite_url` for a team lead’s own position. It
 
 ## Workflow coverage
 
-The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists the mapped JSON operations, working Django routes and remaining steps. OpenAPI 1.2.0 describes 109 operations across 90 paths. The map records remaining JSON work in 53 groups covering 256 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
+The [cutover map](../../contracts/factory-api-screen-map.json) groups 262 design states into 59 screen groups and lists the mapped JSON operations, working Django routes and remaining steps. OpenAPI 1.2.0 describes 115 operations across 93 paths. The map records remaining JSON work in 53 groups covering 256 states. Some states share a workflow, and some still use a Django form for one action. Of the 51 design-prototype operations, 22 have an exact method and path match. Compare their field shapes before migrating a call.
 
 The current API covers intake against exact native sources for all 25 existing factory work definitions. It also covers work and project readback, invoice and Accounting task claims and decisions, reviewed project and Finance document actions, minutes confirmation, bid pack and outcome handling, authorised receipt reconciliation, department chat, eight scoped file agents, client contacts, alerts and verified-channel preferences. Its invoice, Payroll and document commands use the same durable services and authority checks as the Django pages.
 
@@ -76,12 +76,13 @@ The current API covers intake against exact native sources for all 25 existing f
 | Payments and reminders | Keep reported payments, verified cash and allocations separate. A reminder reservation and a verified delivery receipt are separate records. Attach a checked private PDF from the current user's uploads. |
 | Finance close and client directory | Page through authorised workspaces and contact groups. Use current-day receivables capture and read the resulting snapshot. |
 | Delegation and corrections | Save a delegation as a draft for separate review. Correction requests require the exact work and case revisions plus a source selection whose shape depends on the line. |
+| Planning exit, Go-live and Support receipt | Use the Planning packet fingerprint for a decision. For Go-live, select the current delivered report and supply both signers' observed facts. Support recipients can acknowledge their own receipt or record gaps. |
 
 Prioritize the next cutover in this order.
 
 1. Shared navigation, work queues, project directory and project tabs, using current scope and pagination. Keep native links for controlled record and proof readback.
 2. Exact Finance review and recovery, minutes and bid packs, and current-source Assistant conversations. Use the typed draft and start endpoints to require the saved version during handoff.
-3. Finish JSON projections for detailed domain records and their scoped commands. The map tracks remaining release and Go-live attestations, change and incident authority, planning and costing detail, Finance imports and payment corrections, private HR and Payroll records, reports and publication receipts.
+3. Finish JSON projections for detailed domain records and their scoped commands. The map tracks remaining release evidence, Go-live client replies, change and incident authority, planning and costing detail, Finance imports and payment corrections, private HR and Payroll records, reports and publication receipts.
 4. Finish account and staff administration and policy Setup. Retain the native Django forms for these steps until equivalents have permission, concurrency and browser parity. HOD-owned values remain deferred.
 
 Keep the current Railway browser ledger as the Django functional baseline. Test newly migrated screens against live API responses with synthetic data and the ordinary test roles before switching their navigation.
