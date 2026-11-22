@@ -1,0 +1,2157 @@
+{
+ "SCR-01": {
+  "title": "My work (work queue)",
+  "boards": "main 9 (+2 concept): default, my-work, empty, filter, lead",
+  "fe_tasks": [
+   "FE-MYWORK"
+  ],
+  "fe_features": [
+   "F-02 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work",
+   "GET /lines",
+   "GET /role-dashboard",
+   "GET /role-work/{assignment_id}",
+   "POST /role-work/{assignment_id}/actions",
+   "GET /work/source-queues"
+  ],
+  "states": [
+   "SCR-01",
+   "SCR-01-empty",
+   "SCR-01-filter",
+   "SCR-01-lead",
+   "SCR-01-my-work"
+  ],
+  "earlier_gap_files": [
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-a-frame-core.md",
+  "wave": 2
+ },
+ "SCR-02": {
+  "title": "Work item",
+  "boards": "main 26: default, ready, processing, waiting, setup-needed, awaiting-reconciliation, cancelled, owner-needed, effect-uncertain, verified, permission, issue, history; fin 6: evidence-asked, evidence-supplied, returned",
+  "fe_tasks": [
+   "FE-WORKITEM",
+   "FE-M2B-RESPONSE",
+   "FE-WORKSPACE-FRAME"
+  ],
+  "fe_features": [
+   "F-03 (DONE)",
+   "F-09 (DONE)",
+   "F-14 (DONE)",
+   "F-17 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work/{work_id}",
+   "GET /work/{work_id}/history",
+   "GET /work/{work_id}/department-handoff",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/background",
+   "POST /work/{work_id}/coordination/{check_id}/retry",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/access-request",
+   "POST /work/{work_id}/access-request",
+   "GET /work/{work_id}/invoice-milestone-proof",
+   "POST /work/{work_id}/invoice-milestone-proof/{task_id}/claim",
+   "POST /work/{work_id}/invoice-milestone-proof",
+   "GET /work/{work_id}/invoice-draft-stop",
+   "POST /work/{work_id}/invoice-draft-stop",
+   "GET /work/{work_id}/information/{task_id}",
+   "POST /work/{work_id}/information/{task_id}",
+   "POST /work/{work_id}/control",
+   "GET /projects/{case_id}/billing-invoices/{invoice_id}",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/pack",
+   "POST /projects/{case_id}/delivery/{dossier_id}/client-testing/pack",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/pack/{pack_id}/{side}",
+   "POST /work/{work_id}/invoice-preparation"
+  ],
+  "states": [
+   "SCR-02",
+   "SCR-02-awaiting-reconciliation",
+   "SCR-02-cancelled",
+   "SCR-02-effect-uncertain",
+   "SCR-02-evidence-asked",
+   "SCR-02-evidence-supplied",
+   "SCR-02-history",
+   "SCR-02-issue",
+   "SCR-02-owner-needed",
+   "SCR-02-permission",
+   "SCR-02-processing",
+   "SCR-02-ready",
+   "SCR-02-returned",
+   "SCR-02-setup-needed",
+   "SCR-02-verified",
+   "SCR-02-waiting"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-a-frame-core.md",
+  "wave": 2
+ },
+ "SCR-03": {
+  "title": "Decision",
+  "boards": "main 14: default, done, not-yours, stale, payment-exception, ceo-costing, cto-emergency; fin 2: own",
+  "fe_tasks": [
+   "FE-DECIDE",
+   "FE-DECIDE-VARIANTS"
+  ],
+  "fe_features": [
+   "F-04 (DONE)",
+   "F-16 (DONE)"
+  ],
+  "live_ops": [
+   "GET /tasks/{task_id}",
+   "POST /tasks/{task_id}/claim",
+   "POST /tasks/{task_id}/decision",
+   "POST /tasks/{task_id}/comments",
+   "POST /work/{work_id}/reviews",
+   "GET /role-dashboard",
+   "GET /role-work/{assignment_id}",
+   "POST /role-work/{assignment_id}/decision",
+   "GET /work/{work_id}/emergency",
+   "POST /work/{work_id}/emergency",
+   "GET /projects/{case_id}/payment-controls",
+   "POST /projects/{case_id}/payment-controls",
+   "GET /projects/{case_id}/payment-controls/assessments/{assessment_id}",
+   "GET /projects/{case_id}/payment-controls/exceptions/{request_id}",
+   "GET /work",
+   "GET /work/{work_id}/history",
+   "GET /work/{work_id}/forecast",
+   "GET /work/{work_id}/payroll-operations",
+   "GET /work/{work_id}/bid-submission",
+   "GET /work/{work_id}/department-handoff",
+   "GET /projects/{case_id}/costing/proposals/{proposal_id}",
+   "POST /projects/{case_id}/costing/proposals/{proposal_id}"
+  ],
+  "states": [
+   "SCR-03",
+   "SCR-03-ceo-costing",
+   "SCR-03-cto-emergency",
+   "SCR-03-done",
+   "SCR-03-not-yours",
+   "SCR-03-own",
+   "SCR-03-payment-exception",
+   "SCR-03-stale"
+  ],
+  "earlier_gap_files": [
+   "gaps-e-finance-payroll.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-a-frame-core.md",
+  "wave": 2
+ },
+ "SCR-04": {
+  "title": "Start work",
+  "boards": "main 34 (+2 concept): default, lines, validation, weekly, minutes, issue, change, incident, escalation, leadership, accounts, schedules, ppe, forecast, bu, ledger, payroll",
+  "fe_tasks": [
+   "FE-M2A",
+   "FE-M2A-PROOF"
+  ],
+  "fe_features": [
+   "F-05 (DONE)",
+   "F-47 (DONE)",
+   "F-51 (DONE)"
+  ],
+  "live_ops": [
+   "GET /processes",
+   "GET /lines",
+   "GET /lines/projects",
+   "GET /projects/{case_id}/intake-sources",
+   "POST /work",
+   "POST /projects/{case_id}/minutes/intake",
+   "GET /received-bids/organisations",
+   "POST /received-bids",
+   "GET /projects/{case_id}/emergency-intake",
+   "POST /projects/{case_id}/emergency-intake",
+   "GET /projects/{case_id}/emergency-intake/{version_id}",
+   "POST /projects/{case_id}/emergency-intake/{version_id}",
+   "GET /projects/{case_id}/engagement-intake",
+   "GET /projects/{case_id}/weekly-report-intake",
+   "GET /projects/{case_id}/leadership-report-intake",
+   "GET /projects/{case_id}/escalation-register",
+   "GET /projects/{case_id}/payroll/requests",
+   "GET /projects/{case_id}/forecast-scenarios/{scenario_id}/intake",
+   "GET /projects/{case_id}/business-unit-intake",
+   "GET /projects/{case_id}/ordinary-changes",
+   "GET /projects/{case_id}/incumbent-resolutions",
+   "GET /projects/{case_id}/issues",
+   "GET /projects/{case_id}/payroll/requests/{request_id}/start-choices",
+   "GET /projects/{case_id}/validation-intake",
+   "POST /projects/{case_id}/validation-intake",
+   "GET /projects/{case_id}/validation-intake/{package_id}",
+   "POST /projects/{case_id}/validation-intake/{package_id}",
+   "GET /projects/{case_id}/validation-acceptance/{review_id}"
+  ],
+  "states": [
+   "SCR-04",
+   "SCR-04-accounts",
+   "SCR-04-bu",
+   "SCR-04-change",
+   "SCR-04-escalation",
+   "SCR-04-forecast",
+   "SCR-04-incident",
+   "SCR-04-issue",
+   "SCR-04-leadership",
+   "SCR-04-ledger",
+   "SCR-04-lines",
+   "SCR-04-minutes",
+   "SCR-04-payroll",
+   "SCR-04-ppe",
+   "SCR-04-schedules",
+   "SCR-04-validation",
+   "SCR-04-weekly"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md",
+   "gaps-f-finance-workspaces.md",
+   "gaps-e-finance-payroll.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-a-frame-core.md",
+  "wave": 3
+ },
+ "SCR-05": {
+  "title": "Assistant",
+  "boards": "main 10: default, thread, draft-started, cant, working",
+  "fe_tasks": [
+   "FE-ASSISTANT",
+   "FE-ASSISTANT-SPEECH"
+  ],
+  "fe_features": [
+   "F-24 (DONE)",
+   "F-48 (DONE)"
+  ],
+  "live_ops": [
+   "GET /assistant/conversations",
+   "POST /assistant/conversations",
+   "GET /assistant/conversations/{conversation_id}",
+   "POST /assistant/conversations/{conversation_id}/messages",
+   "POST /assistant/turns/{turn_id}/transfer",
+   "GET /assistant/turns/{turn_id}/draft",
+   "POST /assistant/turns/{turn_id}/draft",
+   "POST /assistant/turns/{turn_id}/start",
+   "GET /projects/{case_id}/intake-sources",
+   "GET /assistant/turns/{turn_id}/draft-options"
+  ],
+  "states": [
+   "SCR-05",
+   "SCR-05-cant",
+   "SCR-05-draft-started",
+   "SCR-05-thread",
+   "SCR-05-working"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-a-frame-core.md",
+  "wave": 4
+ },
+ "SCR-06": {
+  "title": "Overview: factory floor",
+  "boards": "main 2 (+1 concept): default (reduced-motion uses the flat view)",
+  "fe_tasks": [
+   "FE-M3-OVERVIEW"
+  ],
+  "fe_features": [
+   "F-08 (DONE)"
+  ],
+  "live_ops": [
+   "GET /overview"
+  ],
+  "states": [
+   "SCR-06"
+  ],
+  "earlier_gap_files": [
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-a-frame-core.md",
+  "wave": 4
+ },
+ "SCR-07": {
+  "title": "Project journey",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-M3-PROJECTS"
+  ],
+  "fe_features": [
+   "F-07 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects",
+   "GET /projects/{case_id}",
+   "GET /projects/{case_id}/department-handoffs",
+   "POST /assistant/conversations",
+   "GET /work/{work_id}"
+  ],
+  "states": [
+   "SCR-07"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 4
+ },
+ "SCR-08": {
+  "title": "Document review",
+  "boards": "main 4: default, returned",
+  "fe_tasks": [
+   "FE-DOCUMENT-REVIEW"
+  ],
+  "fe_features": [
+   "F-29 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/document-reviews/{version_id}",
+   "POST /projects/{case_id}/document-reviews/{version_id}",
+   "GET /projects/{case_id}/document-reviews/{version_id}/publication",
+   "POST /projects/{case_id}/document-reviews/{version_id}/publication"
+  ],
+  "states": [
+   "SCR-08",
+   "SCR-08-returned"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 4
+ },
+ "SCR-09": {
+  "title": "Import and reconcile",
+  "boards": "fin 4: default, error",
+  "fe_tasks": [
+   "FE-FIN-PAYROLL-IMPORT"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "GET /work/{work_id}",
+   "POST /work",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/payroll/requests",
+   "POST /projects/{case_id}/payroll/requests",
+   "GET /projects/{case_id}/payroll/requests/{request_id}/inputs",
+   "POST /projects/{case_id}/payroll/requests/{request_id}/inputs",
+   "GET /projects/{case_id}/payroll/{kind}/{record_id}/working-rows",
+   "GET /work/{work_id}/payroll-operations",
+   "POST /work/{work_id}/payroll-operations",
+   "GET /projects/{case_id}/hr-disclosures/snapshots/{snapshot_id}/rows"
+  ],
+  "states": [
+   "SCR-09",
+   "SCR-09-error"
+  ],
+  "earlier_gap_files": [
+   "gaps-e-finance-payroll.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 6
+ },
+ "SCR-10": {
+  "title": "All exceptions",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-M2B"
+  ],
+  "fe_features": [
+   "F-06 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/invoice-milestone-proof",
+   "POST /work/{work_id}/invoice-milestone-proof/{task_id}/claim",
+   "POST /work/{work_id}/invoice-milestone-proof",
+   "GET /work/{work_id}/invoice-draft-stop",
+   "POST /work/{work_id}/invoice-draft-stop",
+   "GET /work/{work_id}/information/{task_id}",
+   "POST /work/{work_id}/information/{task_id}",
+   "POST /work/{work_id}/control",
+   "POST /work/{work_id}/forecast/lifecycle",
+   "GET /work/{work_id}/payroll-recovery",
+   "GET /work/{work_id}/accounting",
+   "GET /work/{work_id}/incumbent-reference"
+  ],
+  "states": [
+   "SCR-10"
+  ],
+  "earlier_gap_files": [
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "S\u2013M",
+  "file": "screens-a-frame-core.md",
+  "wave": 2
+ },
+ "SCR-11": {
+  "title": "Registers (issues, changes, RFPs)",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-M3-PROJECT-TABS"
+  ],
+  "fe_features": [
+   "F-25 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/{tab}",
+   "GET /projects/{case_id}/issues/{issue_id}",
+   "POST /projects/{case_id}/issues/{issue_id}",
+   "GET /projects/{case_id}/escalation-register/{request_id}",
+   "POST /projects/{case_id}/escalation-register",
+   "GET /projects/{case_id}/change-versions/{version_id}",
+   "POST /projects/{case_id}/ordinary-changes",
+   "POST /projects/{case_id}/emergency-intake/{version_id}",
+   "GET /received-bids/{case_id}/receipts/{receipt_id}",
+   "POST /received-bids/{case_id}/assignment"
+  ],
+  "states": [
+   "SCR-11"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 4
+ },
+ "SCR-12": {
+  "title": "Report with drill-down",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-M3-REPORT"
+  ],
+  "fe_features": [
+   "F-26 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/money",
+   "GET /payments",
+   "GET /projects/{case_id}/invoices/{issue_id}/payments/{receipt_id}",
+   "GET /projects/{case_id}/billing-invoices/{invoice_id}",
+   "GET /projects/{case_id}/milestones/{milestone_id}",
+   "GET /projects/{case_id}/financial-corrections/{kind}/{record_id}",
+   "GET /projects/{case_id}/cash-lots/{lot_id}",
+   "GET /projects/{case_id}/commercial-response"
+  ],
+  "states": [
+   "SCR-12"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 2
+ },
+ "SCR-13": {
+  "title": "Setup: roles, rules, delegation",
+  "boards": "main 16: default, validation, permission, fields, rules, delegation, delivery-rules, finance-rules",
+  "fe_tasks": [
+   "FE-M3-SETUP",
+   "FE-SETUP-DELEGATION",
+   "FE-SETUP-ROLES",
+   "FE-SETUP-PAYROLL-FIELDS"
+  ],
+  "fe_features": [
+   "F-11 (DONE)",
+   "F-27 (DONE)"
+  ],
+  "live_ops": [
+   "GET /setup/primary-roles",
+   "GET /setup/{case_id}/primary-roles",
+   "POST /setup/{case_id}/primary-roles",
+   "POST /setup/{case_id}/team-decisions",
+   "GET /setup/{case_id}/delegations",
+   "GET /setup/{case_id}/delegations/options",
+   "POST /setup/{case_id}/delegations/drafts",
+   "GET /setup/{case_id}/rules",
+   "GET /setup/{case_id}/decision-appointments",
+   "POST /setup/{case_id}/decision-appointments",
+   "GET /setup/{case_id}/policy-configurations",
+   "POST /setup/{case_id}/policy-configurations/{configuration_id}/review",
+   "GET /setup/{case_id}/policy-scopes",
+   "POST /setup/{case_id}/policy-scopes",
+   "GET /setup/{case_id}/policy-impact",
+   "POST /setup/{case_id}/policy-impact",
+   "GET /setup/{case_id}/policy-impact/{assessment_id}",
+   "POST /setup/{case_id}/policy-impact/{assessment_id}",
+   "GET /setup/{case_id}/policy-impact/records/{configuration_id}/{domain}",
+   "POST /setup/{case_id}/policy-configurations",
+   "POST /setup/{case_id}/policy-configurations/references",
+   "POST /setup/{case_id}/policy-configurations/typed-drafts",
+   "GET /setup/{case_id}/hr-field-visibility",
+   "POST /setup/{case_id}/hr-field-visibility",
+   "GET /setup/{case_id}/hr-field-visibility/{configuration_id}",
+   "POST /setup/{case_id}/hr-field-visibility/{configuration_id}"
+  ],
+  "states": [
+   "SCR-13",
+   "SCR-13-delegation",
+   "SCR-13-delivery-rules",
+   "SCR-13-fields",
+   "SCR-13-finance-rules",
+   "SCR-13-permission",
+   "SCR-13-rules",
+   "SCR-13-validation"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md",
+   "gaps-a-project-setup.md",
+   "gaps-f-finance-workspaces.md",
+   "gaps-e-finance-payroll.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "partly",
+  "effort": "L",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 5
+ },
+ "SCR-14": {
+  "title": "Verified outputs",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-MYWORK"
+  ],
+  "fe_features": [
+   "F-02 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work",
+   "GET /work/{work_id}/history",
+   "GET /work/{work_id}/department-handoff",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/billing-invoices/{invoice_id}",
+   "GET /work/{work_id}/engagement",
+   "GET /work/{work_id}/weekly-report",
+   "GET /work/{work_id}/leadership-report",
+   "GET /work/{work_id}/stability",
+   "GET /work/{work_id}/bid-submission",
+   "GET /work/{work_id}/forecast",
+   "GET /work/{work_id}/accounting",
+   "GET /work/{work_id}/incumbent-reference",
+   "GET /projects/{case_id}/delivery/{dossier_id}/closure-checklist"
+  ],
+  "states": [
+   "SCR-14"
+  ],
+  "earlier_gap_files": [],
+  "built": "partly",
+  "effort": "M",
+  "file": "screens-a-frame-core.md",
+  "wave": 2
+ },
+ "SCR-15": {
+  "title": "Alerts and notification settings",
+  "boards": "main 10: default, settings, email, whatsapp, account",
+  "fe_tasks": [
+   "FE-ALERTS",
+   "FE-ALERTS-MENU"
+  ],
+  "fe_features": [
+   "F-12 (DONE)",
+   "F-15 (DONE)",
+   "F-46 (CLOSED)"
+  ],
+  "live_ops": [
+   "GET /notifications",
+   "POST /notifications/{notification_id}/read",
+   "GET /me/alert-preferences",
+   "POST /me/alert-preferences",
+   "GET /me/account",
+   "POST /me/account/password"
+  ],
+  "states": [
+   "SCR-15",
+   "SCR-15-account",
+   "SCR-15-email",
+   "SCR-15-settings",
+   "SCR-15-whatsapp"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-a-frame-core.md",
+  "wave": 1
+ },
+ "SCR-16": {
+  "title": "Record a response",
+  "boards": "main 26: default, validation, success, team-input, sow-signed, rfp-outcome(-lost/-pending/-unknown), rfp-won/-lost/-pending/-unknown",
+  "fe_tasks": [
+   "FE-M2B-RESPONSE",
+   "FE-M2B-RFP"
+  ],
+  "fe_features": [
+   "F-09 (DONE)",
+   "F-18 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/rfp-outcome",
+   "POST /work/{work_id}/reviews",
+   "GET /projects/{case_id}/commercial-response",
+   "POST /projects/{case_id}/commercial-response",
+   "POST /projects/{case_id}/commercial-response/files",
+   "GET /projects/{case_id}/commercial-response/{evidence_id}/files/{upload_id}",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing",
+   "POST /projects/{case_id}/delivery/{dossier_id}/client-testing",
+   "POST /projects/{case_id}/delivery/{dossier_id}/client-testing/files",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/{response_id}/files/{upload_id}",
+   "GET /work/{work_id}/bid-outcomes",
+   "POST /work/{work_id}/planning-owner-requests",
+   "GET /projects/{case_id}/validation-acceptance/{review_id}",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/pack",
+   "POST /projects/{case_id}/delivery/{dossier_id}/client-testing/pack",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/pack/{pack_id}/{side}",
+   "GET /received-bids/{case_id}/team-inputs",
+   "POST /received-bids/{case_id}/team-inputs"
+  ],
+  "states": [
+   "SCR-16",
+   "SCR-16-rfp-lost",
+   "SCR-16-rfp-outcome",
+   "SCR-16-rfp-outcome-lost",
+   "SCR-16-rfp-outcome-pending",
+   "SCR-16-rfp-outcome-unknown",
+   "SCR-16-rfp-pending",
+   "SCR-16-rfp-unknown",
+   "SCR-16-rfp-won",
+   "SCR-16-sow-signed",
+   "SCR-16-success",
+   "SCR-16-team-input",
+   "SCR-16-validation"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 3
+ },
+ "SCR-17": {
+  "title": "Sign in",
+  "boards": "main 8: default, error, reset, setup",
+  "fe_tasks": [
+   "FE-SIGNIN"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "GET /me",
+   "GET /role-dashboard",
+   "GET /session",
+   "POST /session",
+   "POST /session/logout",
+   "POST /accounts/recovery/request",
+   "POST /accounts/recovery/link",
+   "GET /accounts/recovery/password",
+   "POST /accounts/recovery/password",
+   "POST /accounts/invitations/preview",
+   "POST /accounts/invitations/accept",
+   "GET /me/onboarding"
+  ],
+  "states": [
+   "SCR-17",
+   "SCR-17-error",
+   "SCR-17-reset",
+   "SCR-17-setup"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "no",
+  "effort": "M",
+  "file": "screens-a-frame-core.md",
+  "wave": 1
+ },
+ "SCR-18": {
+  "title": "Restricted payroll matching",
+  "boards": "fin 4: default, permission",
+  "fe_tasks": [
+   "FE-FIN-PAYROLL-IMPORT"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/aggregate-receipt",
+   "GET /assistant/conversations/{conversation_id}",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/payroll/{kind}/{record_id}/working-rows",
+   "GET /work/{work_id}/payroll-operations",
+   "GET /projects/{case_id}/payroll/reports/{publication_id}",
+   "POST /projects/{case_id}/payroll/reports/{publication_id}",
+   "GET /projects/{case_id}/payroll/questions",
+   "POST /projects/{case_id}/payroll/questions",
+   "GET /projects/{case_id}/payroll/questions/{question_id}",
+   "POST /projects/{case_id}/payroll/questions/{question_id}",
+   "GET /projects/{case_id}/payroll/name-checks",
+   "POST /projects/{case_id}/payroll/name-checks",
+   "POST /projects/{case_id}/payroll/name-attestations",
+   "GET /projects/{case_id}/payroll/name-checks/{comparison_id}",
+   "POST /projects/{case_id}/payroll/name-checks/{comparison_id}"
+  ],
+  "states": [
+   "SCR-18",
+   "SCR-18-permission"
+  ],
+  "earlier_gap_files": [
+   "gaps-e-finance-payroll.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 6
+ },
+ "SCR-19": {
+  "title": "Mark a milestone complete",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-MILESTONE-COMPLETE"
+  ],
+  "fe_features": [
+   "F-50 (BLOCKED)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/{tab}",
+   "GET /projects/{case_id}/money",
+   "GET /projects/{case_id}/milestones/completions",
+   "POST /projects/{case_id}/milestones/completions",
+   "GET /projects/{case_id}/change-milestone-link",
+   "POST /projects/{case_id}/change-milestone-link"
+  ],
+  "states": [
+   "SCR-19"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "gaps-d-delivery.md"
+  ],
+  "built": "no",
+  "effort": "M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 6
+ },
+ "SCR-20": {
+  "title": "Payments and follow-up",
+  "boards": "fin 4: default, record",
+  "fe_tasks": [
+   "FE-PAYMENTS",
+   "FE-PAYMENTS-RECEIPT"
+  ],
+  "fe_features": [
+   "F-41 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/money",
+   "GET /payments",
+   "GET /projects/{case_id}/invoices/{issue_id}/payments",
+   "POST /projects/{case_id}/invoices/{issue_id}/payments",
+   "GET /projects/{case_id}/invoices/{issue_id}/payments/{receipt_id}",
+   "POST /projects/{case_id}/invoices/{issue_id}/payments/{receipt_id}/reported-amount",
+   "POST /projects/{case_id}/invoices/{issue_id}/payments/{receipt_id}/verification",
+   "POST /projects/{case_id}/invoices/{issue_id}/payments/{receipt_id}/allocations",
+   "GET /projects/{case_id}/invoices/{issue_id}/short-payment",
+   "POST /projects/{case_id}/invoices/{issue_id}/short-payment",
+   "GET /projects/{case_id}/financial-corrections",
+   "POST /projects/{case_id}/financial-corrections",
+   "GET /projects/{case_id}/financial-corrections/{kind}/{record_id}",
+   "GET /projects/{case_id}/cash-lots/{lot_id}"
+  ],
+  "states": [
+   "SCR-20",
+   "SCR-20-record"
+  ],
+  "earlier_gap_files": [
+   "gaps-e-finance-payroll.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "partly",
+  "effort": "M",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 3
+ },
+ "SCR-21": {
+  "title": "Staff accounts",
+  "boards": "main 6: default, invite, deactivate",
+  "fe_tasks": [
+   "FE-SETUP-ROLES"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "GET /setup/{case_id}/people/{person_id}/primary-role",
+   "POST /setup/{case_id}/people/{person_id}/primary-role",
+   "GET /setup/{case_id}/people/{person_id}/team-scope",
+   "POST /setup/{case_id}/people/{person_id}/team-scope",
+   "GET /me/workspaces/{case_id}/primary-role",
+   "GET /staff",
+   "GET /staff/{person_id}",
+   "GET /staff/{person_id}/deactivation",
+   "POST /staff/{person_id}/deactivation",
+   "GET /staff/{person_id}/restoration",
+   "POST /staff/{person_id}/restoration",
+   "GET /staff/delegations/{authority_id}",
+   "POST /staff/delegations/{authority_id}",
+   "GET /setup/{case_id}/invitations",
+   "POST /setup/{case_id}/invitations",
+   "GET /setup/{case_id}/people/{person_id}/profile",
+   "POST /setup/{case_id}/people/{person_id}/profile",
+   "GET /setup/{case_id}/people/{person_id}/departure",
+   "POST /setup/{case_id}/people/{person_id}/departure"
+  ],
+  "states": [
+   "SCR-21",
+   "SCR-21-deactivate",
+   "SCR-21-invite"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-a-frame-core.md",
+  "wave": 5
+ },
+ "SCR-22": {
+  "title": "Project list",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-M3-PROJECTS"
+  ],
+  "fe_features": [
+   "F-07 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects",
+   "GET /projects/{case_id}"
+  ],
+  "states": [
+   "SCR-22"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "S",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 2
+ },
+ "SCR-23": {
+  "title": "Log a received RFP",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-RFP-INTAKE"
+  ],
+  "fe_features": [
+   "F-36 (DONE)",
+   "F-49 (DONE)"
+  ],
+  "live_ops": [
+   "GET /received-bids/organisations",
+   "POST /received-bids",
+   "GET /received-bids/{case_id}/receipts/{receipt_id}"
+  ],
+  "states": [
+   "SCR-23"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 3
+ },
+ "SCR-24": {
+  "title": "Assign the accountable PM",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-RFP-INTAKE"
+  ],
+  "fe_features": [
+   "F-36 (DONE)",
+   "F-49 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work",
+   "GET /received-bids/assignments",
+   "GET /received-bids/{case_id}/assignment",
+   "POST /received-bids/{case_id}/assignment"
+  ],
+  "states": [
+   "SCR-24"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 3
+ },
+ "SCR-25": {
+  "title": "Weekly client update",
+  "boards": "main 12: default, invalid, assembling, review, returned, received",
+  "fe_tasks": [
+   "FE-LINE-WEEKLY"
+  ],
+  "fe_features": [
+   "F-21 (DONE)",
+   "F-22 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/weekly-report-intake",
+   "POST /projects/{case_id}/weekly-report-intake",
+   "GET /work/{work_id}/weekly-report",
+   "POST /work/{work_id}/weekly-report"
+  ],
+  "states": [
+   "SCR-25",
+   "SCR-25-assembling",
+   "SCR-25-invalid",
+   "SCR-25-received",
+   "SCR-25-returned",
+   "SCR-25-review"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 4
+ },
+ "SCR-26": {
+  "title": "RFP response workspace",
+  "boards": "main 12 (+1 concept): default, review, edit, accepted, reject, response-review",
+  "fe_tasks": [
+   "FE-RFP-RESPONSE"
+  ],
+  "fe_features": [
+   "F-37 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/rfp-outcome",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/bid-answers",
+   "POST /work/{work_id}/bid-answers",
+   "GET /work/{work_id}/bid-outcomes",
+   "GET /work/{work_id}/bid-outcomes/{outcome_id}/followup",
+   "POST /work/{work_id}/bid-outcomes/{outcome_id}/followup"
+  ],
+  "states": [
+   "SCR-26",
+   "SCR-26-accepted",
+   "SCR-26-edit",
+   "SCR-26-reject",
+   "SCR-26-response-review",
+   "SCR-26-review"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 4
+ },
+ "SCR-27": {
+  "title": "Costing sheet",
+  "boards": "main 8: default, adjust, ask, approvals",
+  "fe_tasks": [
+   "FE-COSTING"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "GET /work/{work_id}/bid-pricing",
+   "POST /work/{work_id}/bid-pricing",
+   "GET /work/{work_id}/security-estimate",
+   "POST /work/{work_id}/security-estimate"
+  ],
+  "states": [
+   "SCR-27",
+   "SCR-27-adjust",
+   "SCR-27-approvals",
+   "SCR-27-ask"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md",
+   "gaps-e-finance-payroll.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "no",
+  "effort": "M",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 6
+ },
+ "SCR-28": {
+  "title": "Confirm the minutes",
+  "boards": "main 12: default, suggesting, drafted, review, internal, published",
+  "fe_tasks": [
+   "FE-LINE-MINUTES"
+  ],
+  "fe_features": [
+   "F-23 (DONE)",
+   "F-28 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /projects/{case_id}/intake-sources",
+   "POST /projects/{case_id}/minutes/intake",
+   "GET /work/{work_id}/minutes",
+   "GET /work/{work_id}/minutes/action-options",
+   "POST /work/{work_id}/minutes/confirmation",
+   "POST /work/{work_id}/minutes/review-request",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/minutes/delivery",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/meetings/options"
+  ],
+  "states": [
+   "SCR-28",
+   "SCR-28-drafted",
+   "SCR-28-internal",
+   "SCR-28-published",
+   "SCR-28-review",
+   "SCR-28-suggesting"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 4
+ },
+ "SCR-29": {
+  "title": "Project actions",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-M3-PROJECT-TABS"
+  ],
+  "fe_features": [
+   "F-25 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/{tab}",
+   "GET /projects/{case_id}/actions/{item_id}",
+   "POST /projects/{case_id}/actions/{item_id}",
+   "GET /projects/{case_id}/meetings/options",
+   "POST /projects/{case_id}/actions/create",
+   "GET /projects/{case_id}/meetings/{meeting_id}",
+   "POST /projects/{case_id}/meetings/{meeting_id}/actions"
+  ],
+  "states": [
+   "SCR-29"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md"
+  ],
+  "built": "yes",
+  "effort": "S\u2013M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 2
+ },
+ "SCR-30": {
+  "title": "Issue detail",
+  "boards": "main 8: default, overdue, no-owner, verified",
+  "fe_tasks": [
+   "FE-ISSUE"
+  ],
+  "fe_features": [
+   "F-30 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "GET /projects/{case_id}/{tab}",
+   "GET /projects/{case_id}/issues",
+   "POST /projects/{case_id}/issues",
+   "GET /projects/{case_id}/issues/{issue_id}",
+   "POST /projects/{case_id}/issues/{issue_id}",
+   "POST /projects/{case_id}/issues/{issue_id}/assignment",
+   "POST /projects/{case_id}/issues/{issue_id}/team-replies",
+   "GET /projects/{case_id}/issues/{issue_id}/messages",
+   "POST /projects/{case_id}/issues/{issue_id}/messages",
+   "GET /work/{work_id}/issue-followup",
+   "POST /work/{work_id}/issue-followup"
+  ],
+  "states": [
+   "SCR-30",
+   "SCR-30-no-owner",
+   "SCR-30-overdue",
+   "SCR-30-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 3
+ },
+ "SCR-31": {
+  "title": "Change request detail",
+  "boards": "main 18: default, impact, decision, rejected, authorise, notice, execution, go-live-note, closed",
+  "fe_tasks": [
+   "FE-CHANGE"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/ordinary-changes",
+   "POST /projects/{case_id}/ordinary-changes",
+   "GET /work/{work_id}/change",
+   "POST /work/{work_id}/change"
+  ],
+  "states": [
+   "SCR-31",
+   "SCR-31-authorise",
+   "SCR-31-closed",
+   "SCR-31-decision",
+   "SCR-31-execution",
+   "SCR-31-go-live-note",
+   "SCR-31-impact",
+   "SCR-31-notice",
+   "SCR-31-rejected"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md",
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 6
+ },
+ "SCR-32": {
+  "title": "Payment reminder",
+  "boards": "fin 2: default",
+  "fe_tasks": [
+   "FE-PAYMENTS"
+  ],
+  "fe_features": [
+   "F-41 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/money",
+   "GET /payments",
+   "GET /projects/{case_id}/invoices/{issue_id}/reminder",
+   "POST /projects/{case_id}/invoices/{issue_id}/reminder",
+   "POST /projects/{case_id}/invoices/{issue_id}/reminder/actions",
+   "GET /setup/{case_id}/payment-reminder-rules",
+   "POST /setup/{case_id}/payment-reminder-rules",
+   "POST /setup/{case_id}/policy-configurations/{configuration_id}/review"
+  ],
+  "states": [
+   "SCR-32"
+  ],
+  "earlier_gap_files": [
+   "gaps-e-finance-payroll.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 4
+ },
+ "SCR-33": {
+  "title": "Project retrospective",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-DELIVERY-CLOSURE"
+  ],
+  "fe_features": [
+   "F-40 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/{tab}",
+   "GET /projects/{case_id}/meetings",
+   "GET /projects/{case_id}/meetings/options",
+   "POST /projects/{case_id}/meetings",
+   "GET /projects/{case_id}/meetings/{meeting_id}",
+   "POST /projects/{case_id}/meetings/{meeting_id}/actions",
+   "POST /projects/{case_id}/actions/create"
+  ],
+  "states": [
+   "SCR-33"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "no",
+  "effort": "M",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 6
+ },
+ "SCR-34": {
+  "title": "Setup: templates",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-SETUP-TEMPLATES"
+  ],
+  "fe_features": [
+   "F-20 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/templates",
+   "POST /projects/{case_id}/templates",
+   "POST /projects/{case_id}/templates/replacements"
+  ],
+  "states": [
+   "SCR-34"
+  ],
+  "earlier_gap_files": [
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 5
+ },
+ "SCR-35": {
+  "title": "Clients and client details",
+  "boards": "main 4: default, detail",
+  "fe_tasks": [
+   "FE-CLIENTS"
+  ],
+  "fe_features": [
+   "F-19 (DONE)"
+  ],
+  "live_ops": [
+   "GET /clients",
+   "GET /clients/groups/{group}",
+   "GET /clients/{case_id}",
+   "POST /clients/{case_id}/contacts",
+   "GET /clients/{case_id}/contacts/history",
+   "GET /clients/{case_id}/contacts/options",
+   "GET /clients/{case_id}/project-people",
+   "POST /clients/{case_id}/project-people",
+   "GET /clients/{case_id}/billing-identities",
+   "POST /clients/{case_id}/billing-identities",
+   "GET /clients/{case_id}/workspace-link",
+   "POST /clients/{case_id}/workspace-link",
+   "POST /clients/{case_id}/workspace-link/{evidence_id}/confirmation"
+  ],
+  "states": [
+   "SCR-35",
+   "SCR-35-detail"
+  ],
+  "earlier_gap_files": [
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 5
+ },
+ "SCR-36": {
+  "title": "Month-end",
+  "boards": "fin 2: default",
+  "fe_tasks": [
+   "FE-M3-FINANCE"
+  ],
+  "fe_features": [
+   "F-10 (DONE)"
+  ],
+  "live_ops": [
+   "GET /month-end",
+   "GET /projects/{case_id}/month-end",
+   "POST /projects/{case_id}/month-end/receivables"
+  ],
+  "states": [
+   "SCR-36"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 3
+ },
+ "SCR-37": {
+  "title": "Payroll corrections (restricted)",
+  "boards": "fin 2: default",
+  "fe_tasks": [
+   "FE-FIN-PAYROLL-CORRECTIONS"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "GET /projects/{case_id}/hr",
+   "GET /projects/{case_id}/department-handoffs",
+   "GET /work/{work_id}/department-handoff",
+   "POST /work/{work_id}/department-handoff/finance-acknowledgement",
+   "GET /projects/{case_id}/hr-disclosures",
+   "POST /projects/{case_id}/hr-disclosures",
+   "GET /projects/{case_id}/hr-disclosures/{contract_id}",
+   "POST /projects/{case_id}/hr-disclosures/{contract_id}/exports",
+   "GET /projects/{case_id}/hr-disclosures/snapshots/{snapshot_id}/rows",
+   "GET /projects/{case_id}/hr-disclosures/clarifications/{task_id}",
+   "GET /projects/{case_id}/payroll/questions",
+   "POST /projects/{case_id}/payroll/questions",
+   "GET /projects/{case_id}/payroll/questions/{question_id}",
+   "POST /projects/{case_id}/payroll/questions/{question_id}"
+  ],
+  "states": [
+   "SCR-37"
+  ],
+  "earlier_gap_files": [
+   "gaps-e-finance-payroll.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 6
+ },
+ "SCR-38": {
+  "title": "Project milestones",
+  "boards": "main 4: default, changed",
+  "fe_tasks": [
+   "FE-M3-PROJECT-TABS"
+  ],
+  "fe_features": [
+   "F-25 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/money",
+   "GET /projects/{case_id}/{tab}",
+   "GET /projects/{case_id}/change-milestone-link",
+   "POST /projects/{case_id}/change-milestone-link",
+   "GET /projects/{case_id}/change-versions/{version_id}",
+   "GET /projects/{case_id}/commercial-response",
+   "POST /projects/{case_id}/commercial-response",
+   "POST /setup/{case_id}/policy-configurations/{configuration_id}/review"
+  ],
+  "states": [
+   "SCR-38",
+   "SCR-38-changed"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 4
+ },
+ "SCR-39": {
+  "title": "Setup: costing rule",
+  "boards": "main 8: default, review, example, review-own",
+  "fe_tasks": [
+   "FE-SETUP-COSTING"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "GET /projects/{case_id}/costing",
+   "POST /projects/{case_id}/costing",
+   "GET /projects/{case_id}/costing/sources/{kind}/{record_id}",
+   "GET /projects/{case_id}/costing/calculations/{run_id}",
+   "GET /projects/{case_id}/costing/proposals/{proposal_id}",
+   "POST /projects/{case_id}/costing/proposals/{proposal_id}"
+  ],
+  "states": [
+   "SCR-39",
+   "SCR-39-example",
+   "SCR-39-review",
+   "SCR-39-review-own"
+  ],
+  "earlier_gap_files": [
+   "gaps-a-project-setup.md",
+   "built-screens-and-open-questions.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-b-projects-setup-clients.md",
+  "wave": 5
+ },
+ "SCR-40": {
+  "title": "RFP submission",
+  "boards": "main 8: draft, review, submitted, submitted-portal",
+  "fe_tasks": [
+   "FE-RFP-SUBMIT"
+  ],
+  "fe_features": [
+   "F-38 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work/{work_id}/bid-pack",
+   "POST /work/{work_id}/bid-pack",
+   "POST /work/{work_id}/bid-pack/review-request",
+   "POST /work/{work_id}/reviews",
+   "GET /work/{work_id}/bid-pack/portal-receipt",
+   "POST /work/{work_id}/bid-pack/portal-receipt",
+   "GET /work/{work_id}/bid-submission",
+   "POST /work/{work_id}/bid-submission",
+   "GET /work/{work_id}/bid-submission/pdf/{version_id}"
+  ],
+  "states": [
+   "SCR-40-draft",
+   "SCR-40-review",
+   "SCR-40-submitted",
+   "SCR-40-submitted-portal"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 4
+ },
+ "SCR-41": {
+  "title": "Engagement",
+  "boards": "main 4: default, register",
+  "fe_tasks": [
+   "FE-ENGAGEMENT-PLANNING"
+  ],
+  "fe_features": [
+   "F-31 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "GET /projects/{case_id}/engagement-intake",
+   "GET /work/{work_id}/engagement",
+   "POST /work/{work_id}/engagement"
+  ],
+  "states": [
+   "SCR-41",
+   "SCR-41-register"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 4
+ },
+ "SCR-42": {
+  "title": "Planning",
+  "boards": "main 10: default, record, held, readiness, ready",
+  "fe_tasks": [
+   "FE-ENGAGEMENT-PLANNING"
+  ],
+  "fe_features": [
+   "F-31 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/background",
+   "GET /projects/{case_id}/planning",
+   "POST /projects/{case_id}/planning",
+   "POST /projects/{case_id}/planning/department-inputs",
+   "POST /projects/{case_id}/planning/effort-review",
+   "GET /work/{work_id}/planning-owner-requests",
+   "POST /work/{work_id}/planning-owner-requests",
+   "GET /projects/{case_id}/planning/source-clarifications",
+   "POST /projects/{case_id}/planning/source-clarifications"
+  ],
+  "states": [
+   "SCR-42",
+   "SCR-42-held",
+   "SCR-42-readiness",
+   "SCR-42-ready",
+   "SCR-42-record"
+  ],
+  "earlier_gap_files": [
+   "gaps-b-rfp-planning.md",
+   "gaps-d-delivery.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-c-rfp-planning-reports.md",
+  "wave": 4
+ },
+ "SCR-43": {
+  "title": "Delivery overview",
+  "boards": "main 2: default",
+  "fe_tasks": [
+   "FE-DELIVERY-RELEASE"
+  ],
+  "fe_features": [
+   "F-32 (DONE)"
+  ],
+  "live_ops": [
+   "GET /work/{work_id}",
+   "GET /work/{work_id}/planning-exit",
+   "GET /work/{work_id}/release-register",
+   "POST /work/{work_id}/release-register"
+  ],
+  "states": [
+   "SCR-43"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 4
+ },
+ "SCR-44": {
+  "title": "Release gates",
+  "boards": "main 12: default, decision, returned, owner-needed, readiness, ready",
+  "fe_tasks": [
+   "FE-DELIVERY-RELEASE"
+  ],
+  "fe_features": [
+   "F-32 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "GET /work/{work_id}/planning-exit",
+   "POST /work/{work_id}/planning-exit",
+   "POST /work/{work_id}/planning-exit/workaround",
+   "GET /work/{work_id}/release-register",
+   "POST /work/{work_id}/release-register",
+   "GET /setup/{case_id}/decision-appointments",
+   "POST /setup/{case_id}/decision-appointments",
+   "GET /setup/{case_id}/policy-configurations",
+   "POST /setup/{case_id}/policy-configurations/{configuration_id}/review",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/pack",
+   "POST /projects/{case_id}/delivery/{dossier_id}/client-testing/pack",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing/pack/{pack_id}/{side}",
+   "GET /projects/{case_id}/delivery/{dossier_id}/client-testing",
+   "POST /projects/{case_id}/delivery/{dossier_id}/client-testing"
+  ],
+  "states": [
+   "SCR-44",
+   "SCR-44-decision",
+   "SCR-44-owner-needed",
+   "SCR-44-readiness",
+   "SCR-44-ready",
+   "SCR-44-returned"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "partly",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 4
+ },
+ "SCR-45": {
+  "title": "Go-live acceptance",
+  "boards": "main 10: default, signatures, accepted, changes, declined",
+  "fe_tasks": [
+   "FE-DELIVERY-RELEASE"
+  ],
+  "fe_features": [
+   "F-32 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/go-live-signoff",
+   "POST /work/{work_id}/go-live-signoff",
+   "GET /work/{work_id}/go-live-replies",
+   "POST /work/{work_id}/go-live-replies",
+   "POST /work/{work_id}/go-live-replies/successor",
+   "POST /work/{work_id}/go-live-milestone",
+   "GET /work/{work_id}/go-live-replies/decline",
+   "POST /work/{work_id}/go-live-replies/decline",
+   "POST /setup/{case_id}/policy-configurations/{configuration_id}/review"
+  ],
+  "states": [
+   "SCR-45",
+   "SCR-45-accepted",
+   "SCR-45-changes",
+   "SCR-45-declined",
+   "SCR-45-signatures"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 6
+ },
+ "SCR-46": {
+  "title": "Hypercare",
+  "boards": "main 12: default, record, evaluating, qualified, not-met, setup-needed",
+  "fe_tasks": [
+   "FE-DELIVERY-HYPERCARE-ARCHIVE"
+  ],
+  "fe_features": [
+   "F-34 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/background",
+   "GET /work/{work_id}/stability",
+   "POST /work/{work_id}/stability",
+   "POST /work/{work_id}/stability/criteria",
+   "GET /work/{work_id}/release-register",
+   "POST /work/{work_id}/release-register",
+   "GET /work/{work_id}/stability/events",
+   "POST /work/{work_id}/stability/events",
+   "POST /setup/{case_id}/policy-configurations/{configuration_id}/review"
+  ],
+  "states": [
+   "SCR-46",
+   "SCR-46-evaluating",
+   "SCR-46-not-met",
+   "SCR-46-qualified",
+   "SCR-46-record",
+   "SCR-46-setup-needed"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "partly",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 4
+ },
+ "SCR-47": {
+  "title": "Archive",
+  "boards": "main 6: default, working, uncertain",
+  "fe_tasks": [
+   "FE-DELIVERY-HYPERCARE-ARCHIVE"
+  ],
+  "fe_features": [
+   "F-34 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/intake-sources",
+   "POST /work",
+   "GET /work/{work_id}",
+   "GET /work/{work_id}/history",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/archive-files",
+   "POST /work/{work_id}/archive-files",
+   "POST /work/{work_id}/archive-files/{job_id}/recovery",
+   "POST /work/{work_id}/archive-files/rules"
+  ],
+  "states": [
+   "SCR-47",
+   "SCR-47-uncertain",
+   "SCR-47-working"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "no",
+  "effort": "M",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 6
+ },
+ "SCR-48": {
+  "title": "Handover to Support",
+  "boards": "main 8: default, record, gaps, received",
+  "fe_tasks": [
+   "FE-DELIVERY-CLOSURE"
+  ],
+  "fe_features": [
+   "F-40 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/intake-sources",
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/support-receipt",
+   "POST /work/{work_id}/support-receipt",
+   "GET /work/{work_id}/support-replies",
+   "POST /work/{work_id}/support-replies"
+  ],
+  "states": [
+   "SCR-48",
+   "SCR-48-gaps",
+   "SCR-48-received",
+   "SCR-48-record"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 3
+ },
+ "SCR-49": {
+  "title": "Closure",
+  "boards": "main 10: default, blocked, decision, returned, closed",
+  "fe_tasks": [
+   "FE-DELIVERY-CLOSURE"
+  ],
+  "fe_features": [
+   "F-40 (DONE)"
+  ],
+  "live_ops": [
+   "GET /projects/{case_id}/intake-sources",
+   "GET /projects/{case_id}/delivery/{dossier_id}/closure-checklist",
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/corrections",
+   "POST /work/{work_id}/closure-report"
+  ],
+  "states": [
+   "SCR-49",
+   "SCR-49-blocked",
+   "SCR-49-closed",
+   "SCR-49-decision",
+   "SCR-49-returned"
+  ],
+  "earlier_gap_files": [
+   "gaps-d-delivery.md"
+  ],
+  "built": "partly",
+  "effort": "M",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 6
+ },
+ "SCR-50": {
+  "title": "Emergency change",
+  "boards": "main 10: record, refused, review, retro, report",
+  "fe_tasks": [
+   "FE-EMERGENCY-ESCALATION"
+  ],
+  "fe_features": [
+   "F-39 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/emergency",
+   "POST /work/{work_id}/emergency",
+   "GET /projects/{case_id}/emergency-intake",
+   "POST /projects/{case_id}/emergency-intake",
+   "GET /projects/{case_id}/emergency-intake/{version_id}",
+   "POST /projects/{case_id}/emergency-intake/{version_id}",
+   "GET /projects/{case_id}/emergency-outcomes/{outcome_id}/followups",
+   "POST /projects/{case_id}/emergency-outcomes/{outcome_id}/followups",
+   "GET /projects/{case_id}/emergency-outcomes/{outcome_id}/followups/{followup_id}",
+   "GET /projects/{case_id}/authority-recoveries",
+   "POST /projects/{case_id}/authority-recoveries",
+   "GET /projects/{case_id}/authority-recoveries/{request_id}"
+  ],
+  "states": [
+   "SCR-50-record",
+   "SCR-50-refused",
+   "SCR-50-report",
+   "SCR-50-retro",
+   "SCR-50-review"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 6
+ },
+ "SCR-51": {
+  "title": "Escalation",
+  "boards": "main 12: investigating, decide, not-escalated, draft, review, received",
+  "fe_tasks": [
+   "FE-EMERGENCY-ESCALATION"
+  ],
+  "fe_features": [
+   "F-39 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/escalation-register",
+   "POST /projects/{case_id}/escalation-register",
+   "GET /work/{work_id}/escalation",
+   "POST /work/{work_id}/escalation"
+  ],
+  "states": [
+   "SCR-51-decide",
+   "SCR-51-draft",
+   "SCR-51-investigating",
+   "SCR-51-not-escalated",
+   "SCR-51-received",
+   "SCR-51-review"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md"
+  ],
+  "built": "partly",
+  "effort": "M",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 4
+ },
+ "SCR-52": {
+  "title": "Leadership report",
+  "boards": "main 10: setup, drafting, review, tuesday, received",
+  "fe_tasks": [
+   "FE-LEADERSHIP-REPORT"
+  ],
+  "fe_features": [
+   "F-35 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/leadership-report-intake",
+   "POST /projects/{case_id}/leadership-report-intake",
+   "GET /work/{work_id}/leadership-report",
+   "POST /work/{work_id}/leadership-report"
+  ],
+  "states": [
+   "SCR-52-drafting",
+   "SCR-52-received",
+   "SCR-52-review",
+   "SCR-52-setup",
+   "SCR-52-tuesday"
+  ],
+  "earlier_gap_files": [
+   "gaps-c-client-lines.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-d-delivery-issues-escalation.md",
+  "wave": 3
+ },
+ "SCR-53": {
+  "title": "Management accounts",
+  "boards": "fin 22: quarantined, units, investigating, reviews, owner-needed, setup-needed, returned, drafting, publishing, uncertain, verified",
+  "fe_tasks": [
+   "FE-FIN-ACCOUNTS-INTAKE",
+   "FE-FIN-ACCOUNTS-PUBLISH"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /tasks/{task_id}/claim",
+   "POST /tasks/{task_id}/decision",
+   "POST /work/{work_id}/actions",
+   "GET /projects/{case_id}/accounting-intake",
+   "POST /projects/{case_id}/accounting-intake",
+   "POST /projects/{case_id}/accounting-intake/{receipt_id}",
+   "POST /projects/{case_id}/accounting-sources/{source_id}/mappings",
+   "GET /projects/{case_id}/accounting-mappings/{mapping_id}",
+   "GET /work/{work_id}/accounting",
+   "POST /work/{work_id}/accounting",
+   "POST /work/{work_id}/accounting/corrected-extract"
+  ],
+  "states": [
+   "SCR-53-drafting",
+   "SCR-53-investigating",
+   "SCR-53-owner-needed",
+   "SCR-53-publishing",
+   "SCR-53-quarantined",
+   "SCR-53-returned",
+   "SCR-53-reviews",
+   "SCR-53-setup-needed",
+   "SCR-53-uncertain",
+   "SCR-53-units",
+   "SCR-53-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 6
+ },
+ "SCR-54": {
+  "title": "Income detail and schedules",
+  "boards": "fin 14: investigating, held, review, returned, verified, export, withdrawn",
+  "fe_tasks": [
+   "FE-FIN-SCHEDULES"
+  ],
+  "fe_features": [
+   "F-33 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/finance-schedule",
+   "POST /work/{work_id}/finance-schedule",
+   "GET /projects/{case_id}/accounting-adjustments/{adjustment_id}",
+   "POST /projects/{case_id}/accounting-adjustments/{adjustment_id}",
+   "POST /projects/{case_id}/accounting-sources/{source_id}/mappings",
+   "GET /projects/{case_id}/accounting-mappings/{mapping_id}"
+  ],
+  "states": [
+   "SCR-54-export",
+   "SCR-54-held",
+   "SCR-54-investigating",
+   "SCR-54-returned",
+   "SCR-54-review",
+   "SCR-54-verified",
+   "SCR-54-withdrawn"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 4
+ },
+ "SCR-55": {
+  "title": "Fixed asset (PPE) schedule",
+  "boards": "fin 14: investigating, register-review, date-review, calculating, schedule-review, returned, verified",
+  "fe_tasks": [
+   "FE-FIN-PPE"
+  ],
+  "fe_features": [
+   "F-42 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/asset-registers",
+   "POST /projects/{case_id}/asset-registers",
+   "POST /projects/{case_id}/asset-registers/{register_id}/dates",
+   "GET /work/{work_id}/assets",
+   "POST /work/{work_id}/assets/opening-proof",
+   "GET /work/{work_id}/assets/opening-proof",
+   "GET /work/{work_id}/assets/date-proofs/{fact_id}",
+   "GET /projects/{case_id}/accounting-mappings/{mapping_id}"
+  ],
+  "states": [
+   "SCR-55-calculating",
+   "SCR-55-date-review",
+   "SCR-55-investigating",
+   "SCR-55-register-review",
+   "SCR-55-returned",
+   "SCR-55-schedule-review",
+   "SCR-55-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 4
+ },
+ "SCR-56": {
+  "title": "Cash forecast and actuals",
+  "boards": "fin 14: investigating, review, group-rows, group-review, uncertain, verified, actuals",
+  "fe_tasks": [
+   "FE-FIN-FORECAST"
+  ],
+  "fe_features": [
+   "F-43 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/actions",
+   "POST /work/{work_id}/corrections",
+   "GET /work/{work_id}/forecast",
+   "POST /work/{work_id}/forecast",
+   "GET /work/{work_id}/forecast/actuals/{month}",
+   "POST /work/{work_id}/forecast/actuals/{month}",
+   "POST /work/{work_id}/forecast/disclosure",
+   "POST /work/{work_id}/forecast/observations",
+   "GET /work/{work_id}/forecast/observations/{observation_id}",
+   "POST /work/{work_id}/forecast/lifecycle"
+  ],
+  "states": [
+   "SCR-56-actuals",
+   "SCR-56-group-review",
+   "SCR-56-group-rows",
+   "SCR-56-investigating",
+   "SCR-56-review",
+   "SCR-56-uncertain",
+   "SCR-56-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md"
+  ],
+  "built": "yes",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 4
+ },
+ "SCR-57": {
+  "title": "Business-unit totals",
+  "boards": "fin 14: source-review, investigating, held, result-review, publish, receipts, verified",
+  "fe_tasks": [
+   "FE-FIN-BU"
+  ],
+  "fe_features": [
+   "F-44 (BLOCKED)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/aggregate-receipt",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/business-unit-intake",
+   "POST /projects/{case_id}/business-unit-intake",
+   "GET /work/{work_id}/business-units",
+   "POST /work/{work_id}/business-units"
+  ],
+  "states": [
+   "SCR-57-held",
+   "SCR-57-investigating",
+   "SCR-57-publish",
+   "SCR-57-receipts",
+   "SCR-57-result-review",
+   "SCR-57-source-review",
+   "SCR-57-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md",
+   "gaps-e-finance-payroll.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 6
+ },
+ "SCR-58": {
+  "title": "Ledger source reference",
+  "boards": "fin 12: investigating, duplicate, observe, review, rejected, verified",
+  "fe_tasks": [
+   "FE-FIN-LEDGER"
+  ],
+  "fe_features": [
+   "F-45 (DONE)"
+  ],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/corrections",
+   "POST /projects/{case_id}/incumbent-evidence",
+   "GET /work/{work_id}/incumbent-reference",
+   "POST /work/{work_id}/incumbent-reference",
+   "POST /work/{work_id}/incumbent-reference/observations",
+   "GET /work/{work_id}/incumbent-reference/observations/{check_id}",
+   "GET /projects/{case_id}/incumbent-resolutions",
+   "POST /projects/{case_id}/incumbent-resolutions"
+  ],
+  "states": [
+   "SCR-58-duplicate",
+   "SCR-58-investigating",
+   "SCR-58-observe",
+   "SCR-58-rejected",
+   "SCR-58-review",
+   "SCR-58-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md"
+  ],
+  "built": "yes",
+  "effort": "M",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 4
+ },
+ "SCR-59": {
+  "title": "Payroll run (restricted)",
+  "boards": "fin 18: input-review, combine-review, match-held, match-review, totals-review, publish, receipts, verified, followup",
+  "fe_tasks": [
+   "FE-FIN-PAYROLL-RUN"
+  ],
+  "fe_features": [],
+  "live_ops": [
+   "POST /work",
+   "GET /work/{work_id}",
+   "POST /work/{work_id}/reviews",
+   "POST /work/{work_id}/aggregate-receipt",
+   "POST /work/{work_id}/corrections",
+   "GET /projects/{case_id}/payroll/{kind}/{record_id}/working-rows",
+   "GET /work/{work_id}/payroll-operations",
+   "POST /work/{work_id}/payroll-operations",
+   "GET /projects/{case_id}/payroll/reports/{publication_id}",
+   "POST /projects/{case_id}/payroll/reports/{publication_id}",
+   "GET /work/{work_id}/payroll-recovery"
+  ],
+  "states": [
+   "SCR-59-combine-review",
+   "SCR-59-followup",
+   "SCR-59-input-review",
+   "SCR-59-match-held",
+   "SCR-59-match-review",
+   "SCR-59-publish",
+   "SCR-59-receipts",
+   "SCR-59-totals-review",
+   "SCR-59-verified"
+  ],
+  "earlier_gap_files": [
+   "gaps-f-finance-workspaces.md",
+   "gaps-e-finance-payroll.md"
+  ],
+  "built": "no",
+  "effort": "L",
+  "file": "screens-e-finance-payroll.md",
+  "wave": 6
+ }
+}
