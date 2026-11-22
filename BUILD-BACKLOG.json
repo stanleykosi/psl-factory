@@ -1,7 +1,7 @@
 {
   "role_access_release_20261122": {
     "scope": "108 PMO and Finance processes, six staff roles, eight specialist roles",
-    "status": "108_process_role_matrix_passed",
+    "status": "verified_on_railway_design_acceptance",
     "source": "guide/11-FULL-PRODUCT.md#role-based-work-and-supervision",
     "test_record": "BUILD-TESTS.md",
     "record_role_matrix": "docs/design/role-process-acceptance.md",
@@ -9,6 +9,11 @@
     "processes_checked_per_interface": 108,
     "staff_roles": 6,
     "tested_staff_accounts_per_process": 8,
+    "passing_role_and_interface_tests": 166,
+    "record_checks_deployment": "3f368f36-544a-46a5-8f13-2044c410e7c6",
+    "interface_checks_deployment": "d500e234-d2f9-4677-a4fe-1226c48dc0ba",
+    "trial_balance_live_provider_deployment": "26c053b8-44e8-4500-a5a0-b9692e98cc37",
+    "application_revision": "6569e316",
     "source_triggered_receipts": 63,
     "original_work_records": {"dispatched_process": 25, "native_intake": 19, "native_investigation": 1},
     "sampled_records_requiring_separate_appointment_or_private_grant": 26,

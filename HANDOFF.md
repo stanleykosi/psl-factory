@@ -8,6 +8,8 @@ All eight specialists ran against OpenRouter and private storage on three synthe
 
 Continue on `build/design-consolidation`. The approved deployment target for this checkpoint is Railway design acceptance. The 14 BaaS IDs remain in the catalogue for a later release. Operational reviewer appointments, external destinations, source disclosure and financial rules still need their owners. Reproduce the staff checks with `scripts/stage_railway_role_checks.py` and the design-acceptance instructions in the [Railway runbook](docs/runbooks/railway.md).
 
+The deployed application revision is `6569e316`. Web `16a25723-3080-46f2-b306-3fc266743279` and worker `2fc2f226-3547-42de-8a31-592a24a11ce8` reported success. QA closed with 85 passing record tests and 81 passing interface and decision tests across the final two matrix deployments. The richer live Finance case separately passed all seven checks. [Railway site](https://psl-design-web-design-acceptance.up.railway.app/) · [Deployment and tests](BUILD-TESTS.md)
+
 ## Native department handoffs · 21 November 2026
 
 The 63 formerly unbound processes now use the same O01 workflow worker as the original Start work paths. All 108 release IDs have a coordinator binding. The project’s Department handoffs page shows the signed-in reader’s current evidence and opens the business review. [Process routes](docs/design/specialist-process-routes.md) · [Per-process Railway receipts](docs/design/native-department-receipts.md) · [Test ledger](BUILD-TESTS.md)
