@@ -2,7 +2,7 @@
 
 ## OpenAPI policy scopes, impact and exact intake sources · 22 November 2026
 
-Two local PostgreSQL tests passed in 11.738 seconds and checked all seven new policy operations. They exercised scoped activation, separate local application, revoked source access and independent impact review. Six more local tests passed in 22.888 seconds, including exact incident profile and forecast source choices, original-owner grant revocation and contract drift. The Railway checks use the `scope-api` group. [Screen map](contracts/factory-api-screen-map.json)
+Two local PostgreSQL tests passed in 11.738 seconds and checked all seven new policy operations. They exercised scoped activation, separate local application, revoked source access and independent impact review. Six more local tests passed in 22.888 seconds, including exact incident profile and forecast source choices, original-owner grant revocation and contract drift. Railway `scope-api` passed all ten tests in 16.606 seconds and validated successful responses for 13 operations, including all eight additions. Django checks and the migration drift check passed. The official OpenAPI 3.1 schema and TypeScript generation passed. Hosted web `9beda6cd-5005-44e1-a88e-3d3dfe7d7140` matched `5b33d4f2` exactly and returned 200 for health and Django sign-in. Worker `cb85f8b2-b0da-4bef-b774-1bf14c22f6ca` polled the queues. [Railway results](https://railway.com/project/f957481b-c6f7-43af-bc66-449a330a9d53/service/00c14ca1-5361-4bee-97a5-2ec7aba6ef18?id=19ad4994-f611-4d5a-8362-137b8796af74)
 
 ## OpenAPI engagement registration and costing · 22 November 2026
 

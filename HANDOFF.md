@@ -4,7 +4,7 @@
 
 OpenAPI 1.12.0 adds eight operations. Setup can create, validate and activate an exact organization, project, service or contract scope and apply it through an explicit owner-evidenced local draft. Impact records keep their actor-bound cursor and independent reassessment. Start work now lists exact invoice preparations, candidate changes and incident profiles and can read the selected forecast source inventory without its amounts. [Contract](contracts/psl-factory.openapi.json)
 
-Run `scope-api` on Railway before rollout. Twenty-five groups across 156 design states still have at least one API gap. The Setup group still needs department field settings and its remaining rule drafts. Start work still needs approved matching snapshot choices, business-unit choices and validation intake. Continue with Finance schedules and assets, then broader Finance, bids, and commercial and project workflows. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
+Railway `scope-api` passed all ten tests. The web and worker run `5b33d4f2`, with the generated contract confirmed on the preview. Twenty-five groups across 156 design states still have at least one API gap. The Setup group still needs department field settings and its remaining rule drafts. Start work still needs approved matching snapshot choices, business-unit choices and validation intake. Continue with Finance schedules and assets, then broader Finance, bids, and commercial and project workflows. HOD choices remain deferred. [Actual tests](BUILD-TESTS.md) · [Screen map](contracts/factory-api-screen-map.json)
 
 ## Engagement registration and independent costing · 22 November 2026
 
