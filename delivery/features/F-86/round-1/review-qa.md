@@ -1,0 +1,32 @@
+VERDICT: CHANGES
+COMMIT: 7d7d6cc313cb158e9d765a2593d154f06e430d16
+REVIEWER: qa
+AUTHORITY: integrated QA
+
+## Summary
+- Mock (Next 4982, mock 4983, 1440 and 390): chooser, project picker, missing fields, 409, 422 mapping, 503 "Check again", 404, 403 and a valid start landing on /work/4102 all behave as specified. One start per key; body has exactly the weekly keys.
+- Live (Django 8021 on the 55433 test database, Next 4982, account qa-seed): the chooser lists the 25 live lines (1 startable, 24 unavailable with links, no invoice), and the project picker returns the one seeded project ("Project delivery", sample). The real form start FAILS: the server answers 422 "Period start requires an explicit timezone offset" because the form sends date-only values (QA-1-1).
+- With offset datetimes sent directly (not through the form), POST /work answered 200 and `/work/1` opened. F-85's live work item page reads it: title, state, next step, period and weekly-report panel. This closes the live-read gap (F-85 QA-2-1) for the Overview. History shows "No changes recorded yet".
+- Data: no new work item was created. The 200 returned `work_id 1`, `background: "existing"`, which already existed (reference "F-87 live check", sample, project `4a228bcb-f762-4bc6-858e-74e9ab11ebd3` "Project delivery", case_revision 11). Nothing was seeded or migrated.
+- Unproved: uploads and local file storage, template or content choice (null, so the server holds the item at "Report template needed"), the uncertain-start path against real Django, 409 against real Django, a second non-PM user or another tenant (only one seeded account and project), `/work/{id}/history` content, fidelity tool.
+
+## Findings
+- QA-1-1 | blocking | high | frontend | The live weekly start cannot succeed from the form. Spec and `buildBody` send `start_at`/`end_at` as `YYYY-MM-DD` (spec: "the control's ISO dates", flagged as an unverified assumption). Real Django rejects it. Request through the form: `POST /api/v1/work` body `{"line":"pmo-weekly-report/v1","case_id":"4a228bcb-f762-4bc6-858e-74e9ab11ebd3","case_revision":11,"idempotency_key":"4a1584b1-...","intake":{"inputs":{"template_id":null,"content_id":null,"start_at":"2026-11-16","end_at":"2026-11-22"}},"reference":"QA week 47"}` answered 422 `{"code": "action_unavailable", "message": "Period start requires an explicit timezone offset"}` (no `fields`). The same call with `start_at:"2026-11-16T00:00:00+00:00"`, `end_at:"2026-11-22T23:59:59+00:00"` answered 200 `{"work_id": 1, "state": "ready", "revision": 1, "background": "existing"}`. Expected: the form sends offset datetimes (start of the first day, end of the last day, in a timezone the product chooses; the Django period shown back was Nov 16 01:00 to Nov 23 00:59, so the zone choice matters) and the mock rejects date-only bodies like Django does. Actual: path `src/features/start-work/lines/weeklyReport.tsx` `buildBody`, and the mock accepts any 1..64 characters (`mock/start-live.mjs` weeklyProblems), so the mock hid it. The form does show the server message as general text, so the failure is readable; nothing was started.
+- QA-1-2 | non-blocking | low | integration | The weekly start answered `background: "existing"` with the earlier work id 1 and ignored the new `reference` ("QA week 47" vs stored "F-87 live check"). The server reuses the open weekly item for the same project. The page then shows the old reference/title. Backend question for A-24 or a new one: should the start say "an existing report was reused" so the app can tell the person? Not testable further here without more data.
+- QA-1-3 | non-blocking | low | frontend | The My work page (`/my-work`) crashed live for qa-seed with `TypeError: Cannot read properties of undefined (reading 'family')` at `src/features/my-work/WorkRows.tsx:11` (`KINDS[kind]` undefined for a live work row). Not F-86 code, found while opening Start work, so I used `/projects` for the live drawer. Route to the My work owner.
+- QA-1-4 | non-blocking | low | frontend | Live chooser text: the list header reads "Lines you can start · 1" with the unavailable cards above and below it ("Investigate an issue..." first, weekly report sixth), so the single startable line sits among 24 unavailable ones. It follows the spec's "order returned"; flagged for the design engineer, not a defect.
+
+## Verified
+None (round 1: no earlier fixes).
+
+## Evidence
+Mock (`MOCK_PORT=4983 node scripts/dev.mjs -p 4982`, persona pm, Playwright scripts in the session scratchpad, screenshots at 1440 and 390):
+- Chooser: 1 radio, 3 "Open in the full form" links (href `/lines/pmo-minutes/`), no "Next:", no "Invoice", Next disabled. Both widths.
+- Picker: 25 options on first page. Empty press: "Project/Week/Reference is required." and 0 POSTs.
+- Valid start (double click): 1 POST, 1 started, URL `/work/4102`, body keys exactly `case_id, case_revision, idempotency_key, intake, line, reference`, dates `2026-11-16`/`2026-11-22`, template and content null.
+- `start_stale`: 409 text shown, values kept; second press new key, revision 4 to 5, one started. `start_uncertain`: "Not confirmed. Check before trying again.", Check again resent identical body, one started. `start_missing`: "This record is unavailable." `start_denied`: "Your role doesn't let you start this line." plus server message. 422 (intercepted response with `fields` for `intake.inputs.end_at`, `reference` and unknown `zzz`): Week and Reference messages shown, unknown name shown as its own box, none dropped. Five checks first reported FAIL in my script (curly apostrophe, a 400 ms wait at 390); re-run with correct text and longer waits they pass.
+Live:
+- Sign in at `/sign-in` as qa-seed (login read from the runtime file at run time, not recorded). Next proxy to Django 8021 worked; CSRF accepted.
+- `GET /api/v1/lines` 200 (25 lines); `GET /api/v1/lines/projects?line=pmo-weekly-report%2Fv1` 200, one item, `next_page` null.
+- `GET /api/v1/work/1` 200 and `GET /api/v1/work/1/weekly-report` 200 rendered at 1440 and 390 without console errors: title "Reviewed weekly client report", READY TO CONTINUE, "Report template needed", next step "Choose a client report template before Tola can prepare the report.", period, recipients "Nothing here yet.". Created work id: none new; resulting id 1 (project `4a228bcb-f762-4bc6-858e-74e9ab11ebd3`).
+- Stopped by PID: Next/mock (dev.mjs) and Django; ports 4982, 4983 and 8021 are free. The saved browser session file was deleted.

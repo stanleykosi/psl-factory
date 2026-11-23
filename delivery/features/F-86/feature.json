@@ -77,6 +77,18 @@
       "at": "2026-11-23T21:21:39Z",
       "seconds": 677.8,
       "evidence_ref": "delivery/features/F-86/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T21:58:05Z",
+      "seconds": 650.2,
+      "evidence_ref": "delivery/features/F-86/round-1/checks.md"
     }
   ],
   "reviews": {
@@ -125,8 +137,274 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`mock/start-live.mjs:27-36` and the project fixtures (`PROJECTS`) omit fields that 1.26.0 requires. `/lines` items lack `request_schema` and `content_type`; project items lack `django_url`, `source_options_url` and `workflow_intake_url`. The mock is not validated against the contract, so the tests pass on shapes the live server never sends. Add the fields so the mock matches 1.26.0.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T22:07:07Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`tests/assistant.test.tsx` lost the whole post-start behaviour for the assistant's \"Start this invoice\" (the \"Started INV-0415.\" line, the thread re-read, focus, the \"Open INV-0415\" footer, uncertain and 409 through the drawer). The invoice has no live form, so it is unreachable today and the removal is defensible. But `onStarted` still exists for the assistant. A test that starts the weekly line through the assistant drawer would keep it covered. F-92 or F-88 can add it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T22:07:07Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`LineChooser.tsx:4,47-48` filters `invoice`, but 1.26.0's `key` enum has no `invoice`, so the filter is dead code. Harmless. Remove it, or keep it to protect against a restored line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T22:07:07Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a 403 start the callout reads \"Your role doesn't let you start this line. Your role does not allow this.\" The server message repeats the app's own sentence. Show only one. frontend/src/features/start-work/LineForm.tsx (notice kind problem) and useStart.ts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T22:07:07Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Unavailable cards all say the same \"Not available here yet. Open it in the full form.\" The contract gives no reason per line (LC-Q3 option 1), so this is acceptable now. Revisit if the backend adds one. frontend/src/features/start-work/LineChooser.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T22:07:07Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The live weekly start cannot succeed from the form. Spec and `buildBody` send `start_at`/`end_at` as `YYYY-MM-DD` (spec: \"the control's ISO dates\", flagged as an unverified assumption). Real Django rejects it. Request through the form: `POST /api/v1/work` body `{\"line\":\"pmo-weekly-report/v1\",\"case_id\":\"4a228bcb-f762-4bc6-858e-74e9ab11ebd3\",\"case_revision\":11,\"idempotency_key\":\"4a1584b1-...\",\"intake\":{\"inputs\":{\"template_id\":null,\"content_id\":null,\"start_at\":\"2026-11-16\",\"end_at\":\"2026-11-22\"}},\"reference\":\"QA week 47\"}` answered 422 `{\"code\": \"action_unavailable\", \"message\": \"Period start requires an explicit timezone offset\"}` (no `fields`). The same call with `start_at:\"2026-11-16T00:00:00+00:00\"`, `end_at:\"2026-11-22T23:59:59+00:00\"` answered 200 `{\"work_id\": 1, \"state\": \"ready\", \"revision\": 1, \"background\": \"existing\"}`. Expected: the form sends offset datetimes (start of the first day, end of the last day, in a timezone the product chooses; the Django period shown back was Nov 16 01:00 to Nov 23 00:59, so the zone choice matters) and the mock rejects date-only bodies like Django does. Actual: path `src/features/start-work/lines/weeklyReport.tsx` `buildBody`, and the mock accepts any 1..64 characters (`mock/start-live.mjs` weeklyProblems), so the mock hid it. The form does show the server message as general text, so the failure is readable; nothing was started.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T22:22:58Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The weekly start answered `background: \"existing\"` with the earlier work id 1 and ignored the new `reference` (\"QA week 47\" vs stored \"F-87 live check\"). The server reuses the open weekly item for the same project. The page then shows the old reference/title. Backend question for A-24 or a new one: should the start say \"an existing report was reused\" so the app can tell the person? Not testable further here without more data.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T22:22:58Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-3",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The My work page (`/my-work`) crashed live for qa-seed with `TypeError: Cannot read properties of undefined (reading 'family')` at `src/features/my-work/WorkRows.tsx:11` (`KINDS[kind]` undefined for a live work row). Not F-86 code, found while opening Start work, so I used `/projects` for the live drawer. Route to the My work owner.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T22:22:58Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-4",
+      "round": 1,
+      "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Live chooser text: the list header reads \"Lines you can start \u00b7 1\" with the unavailable cards above and below it (\"Investigate an issue...\" first, weekly report sixth), so the single startable line sits among 24 unavailable ones. It follows the spec's \"order returned\"; flagged for the design engineer, not a defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T22:22:58Z",
+          "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), lighter panel D-180",
+          "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+          "evidence_refs": [
+            "delivery/features/F-86/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA",
+          "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+          "evidence_refs": [
+            "delivery/features/F-86/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-86/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+          "evidence_refs": [
+            "delivery/features/F-86/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (lighter panel, D-180)",
+          "snapshot_ref": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+          "evidence_refs": [
+            "delivery/features/F-86/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -226,7 +504,7 @@
     }
   },
   "created_at": "2026-11-23T13:19:16Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -244,6 +522,38 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T21:58:29Z",
+      "round": 1,
+      "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T22:07:18Z",
+      "round": 1,
+      "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-23T22:23:08Z",
+      "round": 1,
+      "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T22:23:09Z",
+      "round": 2,
+      "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+      "reason": null
     }
   ],
   "routing": {
@@ -259,10 +569,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "da0d7b698a60bd7f5800ea238bb7468591ced77a"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
