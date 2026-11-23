@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+23 November 2026. Checked exact coverage of all 224 source question IDs, with no duplicates or missing entries. Verified the audit’s local links and that every outstanding question is represented in the backend register or PSL decision list. The Railway schema read returned OpenAPI 1.22.0. These checks cover the handoff and the live schema.
+
 23 November 2026. Verified the consolidated handoff covers all 13 original questions and five follow-up decisions. Checked its local links and Finance receipt API reference. This update records approved behavior. The existing PostgreSQL results below cover the earlier implementation.
 
 23 November 2026. The first 14 PostgreSQL checks passed for the API contract, frontend sign-in, file downloads, intake forms, scoped work and Emergency outcome capture. A separate seven-test run passed for the API-only surface, Support publication and original delivery recovery, Finance closure confirmation and document comparison without private sections. Eight focused checks passed on the final contract snapshot. A test fixture initially omitted the required Admin roster permission. The corrected fixture verifies that a historical delegation missing an invitation duration keeps administration usable and has invitations disabled.

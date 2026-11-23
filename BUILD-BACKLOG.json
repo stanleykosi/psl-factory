@@ -4,6 +4,10 @@
     "product_decisions": "13 priority questions and 5 follow-ups answered",
     "contract": "contracts/psl-factory.openapi.json",
     "evidence": "delivery/connect/backend-answers-2026-11-23.md",
+    "screen_audit": "delivery/connect/backend-answers-by-screen-2026-11-23.md",
+    "numbered_questions_audited": 224,
+    "questions_requiring_engineering": 74,
+    "questions_awaiting_psl_policy": 4,
     "follow_up": [
       "Direct PMO Lead approval on eligible steps, workflow-specific proof types, complete specialist tracking and panel options",
       "Whole-queue counts for queues that require evaluating each authorised item",

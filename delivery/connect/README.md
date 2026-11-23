@@ -2,6 +2,8 @@
 
 Use the [consolidated PSL answers](backend-answers-2026-11-23.md) for the agreed behavior, the API additions and the implementation still pending. The connection map below records the original comparison.
 
+The full audit covers all 224 numbered questions with routes, known limits and outstanding backend work. Railway still reported 1.22.0 when checked. The audit identifies answers that depend on the 1.23.0 branch. [Screen-by-screen audit](backend-answers-by-screen-2026-11-23.md)
+
 **What this is.** For each of the 59 approved screens, this map lists what the frontend reads and writes today, the live call that replaces each one, how the fields line up, and what has no live source yet. Builders use it to rewire screens without guessing. [backend-questions.md](backend-questions.md) collects everything we need the backend developer to answer.
 
 **Baseline.** Live API: OpenAPI 1.22.0 (`contracts/psl-factory.openapi.json`, main `9bac3109`, 22 Nov 2026), 379 operations on 268 paths, served by Railway design acceptance. Frontend: `fe-upload-field-concept-a` at `f8b28059`. It is typed on the practice contract v7 (`architecture/packages/v7/openapi.json`) and runs on the v7 mock. Written 23 Nov 2026.

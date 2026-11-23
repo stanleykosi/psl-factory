@@ -4,6 +4,8 @@
 
 Use `codex/backend-handoff-answers` for API 1.23.0. The numbered handoff contains the developer’s 13 questions and PSL’s five follow-up decisions, with the implemented API and remaining work beside each answer. Verify the deployed contract before wiring the new routes in Next.js. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md)
 
+The screen-by-screen audit checks all 224 numbered items. It supplies routes and limits for the answers supported by the code and groups the missing backend work by area. The four remaining PSL policy items concern loss reasons, bid price adjustments, go-live milestone mappings and leadership report coverage. Railway still reported 1.22.0 during the audit. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md) · [Backend implementation register](delivery/connect/backend-answers-by-screen-2026-11-23.md#backend-implementation-register)
+
 ## Next.js developer handoff
 
 Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and six-role permissions. Run the backend in API-only mode and implement the replacement pages under `frontend/`. The archived Django page routes, templates and assets live in [`legacy_ui/`](legacy_ui/README.md). Its local preview uses `PSL_DJANGO_UI=1`. Use the API for sign-in, recovery and invitations and connect authenticated downloads through the frontend proxy. HOD policy choices remain deferred.

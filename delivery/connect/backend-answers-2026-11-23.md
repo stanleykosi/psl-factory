@@ -2,6 +2,10 @@
 
 PSL confirmed these answers on 23 November 2026. The numbers match the developer’s thirteen priority questions. The five follow-up decisions are included in questions 1, 11 and 12. The original questions retain their screen IDs. [Frontend developer’s questions](backend-questions.md)
 
+## Screen-by-screen audit
+
+The full audit answers all 224 numbered items from GitHub main. It identifies the existing backend behavior, the 1.23.0 branch additions, the remaining implementation work and the four PSL policy questions. [Screen-by-screen answers](backend-answers-by-screen-2026-11-23.md) · [Backend implementation register](backend-answers-by-screen-2026-11-23.md#backend-implementation-register) · [Questions for PSL](backend-answers-by-screen-2026-11-23.md#questions-for-psl)
+
 ## 1. Proof and attachments
 
 **PSL’s answer.** The current PMO Lead can approve a step that belongs to them directly. Their signed-in approval is the record of that decision. Show **Approved by PMO Lead**, the approver’s name and the time. A separate written note or duplicate signature from the PMO Lead is optional. Other staff attach a copy of the signed PDF where proof is required. The agent identifies the attachment for review. Client signatures, Finance approvals and other independent decisions continue through their own steps.
