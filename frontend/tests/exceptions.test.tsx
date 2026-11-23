@@ -48,6 +48,7 @@ describe('exceptions list', () => {
     expect(within(first).getByText('Unassigned')).toBeTruthy();
     expect(within(second).getByText('Action needed')).toBeTruthy();
     expect(within(second).getByText('Chidi Okafor')).toBeTruthy();
+    expect(screen.getByText(/^The factory never resends after an unknown outcome/)).toBeTruthy();
     expect(screen.queryByText(/OPEN|since|Leads only/)).toBeNull();
     expect(screen.queryByRole('radiogroup', { name: 'Rows per page' })).toBeNull();
     expect(screen.queryByRole('table')?.textContent).not.toMatch(/INV-0\d+\s*$/);

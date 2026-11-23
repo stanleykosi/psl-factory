@@ -115,6 +115,10 @@ export function ExceptionsList() {
       <>
         {state.items.length > 0 && (phone ? <ExceptionsCards rows={state.items} /> : <ExceptionsTable rows={state.items} />)}
         <WorkListFooter more={state.more} onMore={() => void loadMore()} coverage={state.coverage} asOf={state.asOf} />
+        <p className="exc-footer">
+          The factory never resends after an unknown outcome until it has checked for a receipt. Nothing here is lost;
+          each item resumes where it stopped.
+        </p>
       </>
     );
   }
