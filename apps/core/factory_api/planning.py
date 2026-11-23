@@ -153,7 +153,8 @@ def review_effort(request, case_id, *, body):
 
 
 @endpoint(response=obj({'expected_revision': REVISION, 'requests': array(obj({'request_id': ID,
-    'receipt_id': ID, 'role': TEXT, 'proofs': array(PROOF, limit=100)}), limit=2)}),
+    'receipt_id': ID, 'role': TEXT, 'reference': TEXT, 'kind': TEXT, 'requested_at': DATETIME,
+    'source_received_at': DATETIME, 'proofs': array(PROOF, limit=100)}), limit=2)}),
           summary='Read only the current department-owned request and matching supplied proof choices')
 def owner_requests(request, work_id):
     work = require_line(request.user, work_id, factory_planning.DEFINITION)
@@ -161,6 +162,8 @@ def owner_requests(request, work_id):
         available = factory_planning.owner_panels(request.user, work)
     return {'expected_revision': work.revision, 'requests': [
         {'request_id': row['request'].pk, 'receipt_id': row['receipt'].pk, 'role': row['owner_role'],
+           'reference': row['request'].reference, 'kind': row['request'].kind,
+           'requested_at': row['request'].created_at, 'source_received_at': row['receipt'].created_at,
          'proofs': proof_rows(row['evidence'])} for row in available]}
 
 

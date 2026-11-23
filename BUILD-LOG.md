@@ -1,5 +1,7 @@
 # Build progress log
 
+23 November 2026. Closed the backend implementation entries in the 224-question register on API 1.24.0. Recorded the endpoint and access limits for each answer, including private Assistant images, weekly report notes, signed copies, PMO Lead Planning approval, issue and milestone links, Finance receipt checks and alerts. Four questions remain open where PSL has yet to approve the rule. Railway still serves 1.22.0. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md)
+
 23 November 2026. Audited the 224 detailed frontend questions against GitHub main, the backend branch and Railway’s live 1.22.0 schema. Connected the full answer ledger and implementation register to the existing handoff. [Screen-by-screen audit](delivery/connect/backend-answers-by-screen-2026-11-23.md)
 
 23 November 2026. Consolidated PSL’s five follow-up answers into the numbered frontend handoff and updated the approved behavior for proof, receipts and the Assistant, report review and alert screens.

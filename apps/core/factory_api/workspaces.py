@@ -1,9 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import Http404
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from apps.agents.assistant import PERSONAS, cases_for
 from apps.core import client_contacts, project_journey, workbench
@@ -30,6 +32,7 @@ WORKSPACE = obj({'case_id': UUID, 'title': TEXT, 'revision': REVISION, 'sample':
 PROJECT_ROW = obj({
     **WORKSPACE['properties'], 'manager': nullable(TEXT), 'lifecycle': nullable(TEXT), 'phase': nullable(TEXT),
     'reviews': nullable({'type': 'integer', 'minimum': 0}), 'exceptions': nullable({'type': 'integer', 'minimum': 0}),
+    'next_milestone': nullable(obj({'name': TEXT, 'due': nullable(DATES)})),
     'django_url': TEXT,
 })
 
@@ -76,7 +79,8 @@ def me(request):
     }
 
 
-@endpoint(response=obj({'items': array(PROJECT_ROW), 'next_cursor': nullable(TEXT), 'as_of': DATETIME}),
+@endpoint(response=obj({'items': array(PROJECT_ROW), 'next_cursor': nullable(TEXT), 'as_of': DATETIME,
+                        'totals': obj(dict.fromkeys(('all', 'active', 'closed'), {'type': 'integer', 'minimum': 0}))}),
           query={'q': {'type': 'string', 'maxLength': 120}, 'status': choice('all', 'active', 'closed'),
                  'cursor': {**TEXT, 'maxLength': 4096}},
           summary='List authorised projects with current bounded summaries')
@@ -85,12 +89,13 @@ def projects(request):
     if status not in {'all', 'active', 'closed'}:
         raise Problem(422, 'invalid_filter', 'Choose a valid project status.')
     value = workbench.discover(request.user, kind='project', q=request.GET.get('q', ''),
-                               cursor=request.GET.get('cursor'), lifecycle='' if status == 'all' else status)
+                               cursor=request.GET.get('cursor'), lifecycle='' if status == 'all' else status, include_counts=True)
     return {'items': [
         {**workspace(row['case']), 'manager': row['manager'], 'lifecycle': row['lifecycle'],
          'phase': row['phase'], 'reviews': row['reviews'], 'exceptions': row['exceptions'],
+         'next_milestone': row['milestone'],
          'django_url': reverse('design_project', args=[row['case'].pk])} for row in value['project_rows']
-    ], 'next_cursor': value['next_cursor'], 'as_of': timezone.now()}
+    ], 'next_cursor': value['next_cursor'], 'as_of': timezone.now(), 'totals': value['totals']}
 
 
 JOURNEY_ROW = obj({'id': ID, 'line': TEXT, 'reference': nullable({'type': 'string'}), 'state': TEXT,
@@ -136,9 +141,12 @@ def project(request, case_id):
 SECTION_ITEM = obj({
     'title': TEXT, 'state': TEXT, 'state_code': TEXT, 'detail': nullable(TEXT), 'at': nullable(DATETIME), 'due': nullable(DATETIME),
     'severity': nullable(TEXT), 'owner': nullable(TEXT), 'django_url': TEXT, 'record_id': ID, 'api_url': nullable(TEXT),
+    'reference': nullable(TEXT), 'age_days': nullable(COUNTS),
+    'origin_meeting': nullable(obj({'id': ID, 'reference': TEXT, 'at': DATETIME})),
 })
 SECTION = obj({'key': TEXT, 'title': TEXT, 'items': array(SECTION_ITEM, limit=25), 'page': ID, 'has_more': BOOLEAN, 'django_url': TEXT,
-               'api_url': nullable(TEXT)})
+               'api_url': nullable(TEXT), 'total': COUNTS,
+               'counts': nullable(obj({'overdue': COUNTS, 'unassigned': COUNTS, 'total': COUNTS}))})
 PROJECT_TABS = ('milestones', 'documents', 'registers', 'actions')
 
 
@@ -190,12 +198,14 @@ def project_tab(request, case_id, tab):
 
     return {'case_id': case.pk, 'tab': tab, 'sections': [
         {'key': section['page_key'].removesuffix('-page'), 'title': section['title'],
-         'django_url': section['url'], 'page': section['page'].number,
+         'django_url': section['url'], 'page': section['page'].number, 'total': section['page'].paginator.count,
+         'counts': section.get('counts'),
          'api_url': ('/api/v1/received-bids' if section['page_key'] == 'rfp-page'
                      else f"{prefix}/{collection[section['page_key']]}"),
          'has_more': section['page'].has_next(), 'items': [
              {'title': item['title'], 'state': item['state'], 'state_code': item['state_code'], 'detail': item.get('detail') or None,
               'at': item.get('at'), 'due': item.get('due'), 'severity': item.get('severity') or None,
+              'reference': item.get('reference'), 'age_days': item.get('age_days'), 'origin_meeting': item.get('origin_meeting'),
               'owner': item.get('owner') or None, 'django_url': item.get('url', section['url']),
               'record_id': item['record_id'], 'api_url': item_url(section, item)}
              for item in section['items']
@@ -206,11 +216,12 @@ def project_tab(request, case_id, tab):
 INVOICE = obj({'id': ID, 'reference': TEXT, 'version': REVISION, 'currency': TEXT,
                'paid': MONEY, 'owed': MONEY, 'status': TEXT, 'at': DATETIME, 'api_url': TEXT})
 MONEY_SOURCE = obj({'label': TEXT, 'django_url': TEXT, 'at': nullable(DATETIME), 'kind': nullable(TEXT),
-                   'record_id': nullable(ID), 'api_url': nullable(TEXT)})
+                   'record_id': nullable(ID), 'reference': nullable(TEXT), 'api_url': nullable(TEXT)})
 STAGE_CHANGE = obj({'link_id': ID, 'version_id': ID, 'reference': TEXT, 'number': REVISION, 'note': TEXT,
                     'plan_id': ID, 'additional_amount': {'type': 'null'}, 'api_url': TEXT})
 FIGURE = obj({
     'key': TEXT, 'label': TEXT, 'amount': MONEY, 'currency': TEXT, 'due_date': nullable(DATES),
+    'milestone_id': nullable(ID), 'stage_position': nullable(ID),
     'completed_at': nullable(DATETIME), 'contract_stage': BOOLEAN, 'missing_reason': nullable(TEXT),
     'invoices': array(INVOICE), 'sources': array(MONEY_SOURCE), 'changes': array(STAGE_CHANGE, limit=12),
 })
@@ -224,7 +235,7 @@ def money_source(case, source):
            'reviewed-terms': f'/api/v1/setup/{case.pk}/policy-configurations?component=D12.stage_terms',
            'milestone': f'{prefix}/milestones/{pk}', 'preparation': f'{prefix}/intake-sources?line=pmo-finance%2Fv1'}
     return {'label': source['label'], 'django_url': source['url'], 'at': source.get('at'),
-            'kind': kind, 'record_id': pk, 'api_url': api.get(kind)}
+            'kind': kind, 'record_id': pk, 'reference': source.get('reference'), 'api_url': api.get(kind)}
 
 
 @endpoint(response=obj({'items': array(FIGURE), 'limited': BOOLEAN, 'as_of': DATETIME, 'finance_url': TEXT}),
@@ -239,9 +250,12 @@ def money(request, case_id):
     grants = {action for _, action in active_case_grants(request.user, [case.pk], actions=READ_ACTIONS)}
     value = project_money.projection(request.user, case, key, include_change_links=READ_ACTIONS <= grants)
     rows = [value['selected']] if key and value.get('selected') else value['rows']
+    positions = {stage: i for i, stage in enumerate(project_money.STAGES, start=1)}
     return {'items': [
         {'key': row['key'], 'label': row['label'], 'amount': str(row['amount']) if row['amount'] is not None else None,
          'currency': row['currency'], 'due_date': row['due_date'], 'contract_stage': row['contract_stage'],
+         'milestone_id': row['completion'].pk if row['completion'] else None,
+         'stage_position': positions.get(row['key']) if row['contract_stage'] else None,
          'completed_at': row['completion'].completed_at if row['completion'] else None,
          'missing_reason': row['missing_reason'], 'invoices': [
              {**{field: invoice[field] for field in ('reference', 'version', 'currency', 'at', 'status')},
@@ -394,10 +408,30 @@ def close_payload(month, data, as_of):
 
 @endpoint(response=obj({'items': array(obj({
     'role': TEXT, 'principal_id': ID, 'delegate_id': ID, 'valid_from': DATETIME, 'valid_until': DATETIME,
-})), 'as_of': DATETIME, 'django_url': TEXT}), summary='Read the currently accessible delegation assignments')
+    'principal': nullable(TEXT), 'delegate': nullable(TEXT), 'reason': nullable(TEXT),
+    'status': choice('scheduled', 'current_window', 'expired'),
+})), 'as_of': DATETIME, 'django_url': TEXT, 'configuration_id': nullable(ID)}),
+    summary='Read the currently accessible delegation assignments')
 def delegations(request, case_id):
+    from apps.policy.delegation_views import SUBMISSION_ACTION
+
     case = project_for(request.user, case_id)
-    _, rows = invoice_delegation_source(request.user, case)
-    return {'items': [{key: row[key] for key in ('role', 'principal_id', 'delegate_id', 'valid_from', 'valid_until')}
-                      for row in rows], 'as_of': timezone.now(),
+    configuration, rows = invoice_delegation_source(request.user, case)
+    ids = {row[key] for row in rows for key in ('principal_id', 'delegate_id')}
+    people = get_user_model().objects.filter(pk__in=ids, grant__case=case, grant__active=True,
+                                             grant__action='case.read').in_bulk()
+    now = timezone.now()
+    items = []
+    for row in rows:
+        start, end = parse_datetime(row['valid_from']), parse_datetime(row['valid_until'])
+        reason = configuration.case.audit.filter(action=SUBMISSION_ACTION, data__configuration=configuration.pk,
+            data__intent__contains={
+            key: row[key] for key in ('role', 'principal_id', 'delegate_id', 'valid_from', 'valid_until')
+        }, data__intent__reason__isnull=False).order_by('-pk').values_list('data__intent__reason', flat=True).first()
+        names = {key: people.get(row[f'{key}_id']) for key in ('principal', 'delegate')}
+        items.append({**{key: row[key] for key in ('role', 'principal_id', 'delegate_id', 'valid_from', 'valid_until')},
+                      **{key: user.get_full_name() or user.get_username() if user else None for key, user in names.items()},
+                      'reason': reason,
+                      'status': 'expired' if now >= end else 'scheduled' if now < start else 'current_window'})
+    return {'items': items, 'as_of': now, 'configuration_id': configuration.pk if configuration else None,
             'django_url': reverse('design_delegation', args=[case.pk])}

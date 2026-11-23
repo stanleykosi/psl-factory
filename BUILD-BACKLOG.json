@@ -1,20 +1,18 @@
 {
   "frontend_backend_questions_20261123": {
-    "status": "implemented_in_part_pending_frontend_and_live_verification",
+    "status": "backend_branch_pending_frontend_and_live_verification",
     "product_decisions": "13 priority questions and 5 follow-ups answered",
     "contract": "contracts/psl-factory.openapi.json",
     "evidence": "delivery/connect/backend-answers-2026-11-23.md",
     "screen_audit": "delivery/connect/backend-answers-by-screen-2026-11-23.md",
     "numbered_questions_audited": 224,
-    "questions_requiring_engineering": 74,
+    "questions_requiring_engineering": 0,
     "questions_awaiting_psl_policy": 4,
     "follow_up": [
-      "Direct PMO Lead approval on eligible steps, workflow-specific proof types, complete specialist tracking and panel options",
-      "Whole-queue counts for queues that require evaluating each authorised item",
-      "Review-only notes beside report sections and OpenRouter reading for images attached to assistant questions",
-      "In-app daily alert summary. Email and WhatsApp delivery remain deferred.",
-      "Require the known amount and payment source for new Finance receipts and connect the receipt entry point in Next.js",
-      "Next.js host and live contract verification"
+      "Resolve C-1, C-29, D-17 and D-33 when the responsible PSL owner approves the missing rule",
+      "Deploy the branch migrations and verify the versioned Railway contract",
+      "Wire and verify the Next.js screens using the question register",
+      "Check a permitted Assistant image with the configured OpenRouter provider after deployment"
     ]
   },
   "django_frontend_separation_20261122": {

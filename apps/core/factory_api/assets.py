@@ -15,7 +15,7 @@ from apps.core.read_budget import limit_queries
 from apps.core.read_observation import observation_scope
 from apps.finance import ppe, ppe_dates
 from apps.finance.models import ScheduleWork
-from apps.identity.services import active_case_grants
+from apps.identity.services import active_case_grants, require
 from apps.workflows import factory_ppe as native, factory_ppe_date_proof as date_proof, factory_ppe_opening as opening
 
 from .commands import require_line
@@ -127,6 +127,7 @@ def review_options(actor, work, register, schedule, stage):
 
 @endpoint(response=obj({**VERSIONS, 'register_id': ID, 'schedule_id': nullable(ID), 'accounting_note_id': nullable(ID),
     'stage': TEXT, 'finding': {'type': 'string'}, 'register': nullable(ppe.REGISTER), 'schedule': nullable(SCHEDULE),
+    'accounting_note_url': nullable(TEXT),
     'review_options': array(obj({'target_id': ID, 'purpose': PURPOSE, 'verdicts': array(VERDICT)}), limit=3),
     'schedule_review_id': nullable(ID), 'review_evidence': array(PROOF, limit=35),
     'opening_return': nullable(obj({'target_id': ID, 'review_id': ID})), 'has_opening_attachment': BOOLEAN,
@@ -155,8 +156,17 @@ def projection(actor, work, permitted):
         if subject:
             opening_return = {'target_id': subject[0].pk, 'review_id': subject[1].pk}
     evidence = public_evidence(work.case.evidence.filter(kind__in=('finance_review', 'ppe_basis_explanation')))
+    mapping_url = None
+    if permitted and selection['ledger_id']:
+        try:
+            require(actor, work.case, 'finance.read')
+        except PermissionDenied:
+            pass
+        else:
+            mapping_url = f"/api/v1/projects/{work.case_id}/accounting-mappings/{selection['ledger_id']}"
     return {'expected_revision': work.revision, 'case_revision': work.case.revision,
             'register_id': register.pk, 'schedule_id': facts['schedule'], 'accounting_note_id': selection['ledger_id'],
+            'accounting_note_url': mapping_url,
             'stage': facts['stage'], 'finding': facts['finding'], 'register': register.payload if permitted else None,
             'schedule': schedule.result if permitted and facts['stage'] in ('output_review', 'complete') else None,
             'review_options': review_options(actor, work, register, schedule, facts['stage']),

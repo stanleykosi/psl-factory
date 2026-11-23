@@ -4,19 +4,19 @@ PSL confirmed these answers on 23 November 2026. The numbers match the developer
 
 ## Screen-by-screen audit
 
-The full audit answers all 224 numbered items from GitHub main. It identifies the existing backend behavior, the 1.23.0 branch additions, the remaining implementation work and the four PSL policy questions. [Screen-by-screen answers](backend-answers-by-screen-2026-11-23.md) · [Backend implementation register](backend-answers-by-screen-2026-11-23.md#backend-implementation-register) · [Questions for PSL](backend-answers-by-screen-2026-11-23.md#questions-for-psl)
+The full register covers all 224 numbered items from GitHub main. It records 113 answers from existing behavior, 107 from the OpenAPI 1.24.0 branch and four that rely on an approved PSL rule. [Screen-by-screen answers](backend-answers-by-screen-2026-11-23.md) · [Questions for PSL](backend-answers-by-screen-2026-11-23.md#questions-for-psl)
 
 ## 1. Proof and attachments
 
 **PSL’s answer.** The current PMO Lead can approve a step that belongs to them directly. Their signed-in approval is the record of that decision. Show **Approved by PMO Lead**, the approver’s name and the time. A separate written note or duplicate signature from the PMO Lead is optional. Other staff attach a copy of the signed PDF where proof is required. The agent identifies the attachment for review. Client signatures, Finance approvals and other independent decisions continue through their own steps.
 
-**Backend.** Upload the file to the project, then attach its `upload_id` using `POST /work/{work_id}/proofs`. The backend checks the original file, preserves its hash, returns an evidence ID, and records who attached it and to which work item. The written-note route checks current PMO Lead authority. Reviewed file-agent drafts expose `reviewed_evidence_id` for their native handoffs. Work attachments are available for work history and delivery observations. The new direct PMO Lead approval rule still needs to be applied to the relevant approval steps. For those steps, the frontend should use the backend’s permission and show the recorded approval once it succeeds.
+**Backend.** Upload the file to the project, then use the exact action’s upload field or proof endpoint. Milestone completion, project action updates, bid assignment and outcomes, go-live proof and release observations accept checked files through their own routes. The general work proof route retains attachments for work history and delivery observations. An eligible current PMO Lead can approve their named Planning exit directly. The record identifies the PMO Lead and time, and the other required decisions keep their own rules.
 
 ## 2. Work progress
 
 **PSL’s answer.** The API should report the current step, what the agent has done, approvals and what was sent. Staff should see those facts on screen.
 
-**Backend.** Work detail provides `tracking_url` with a common station track, the latest recorded activity, available evidence references, and links to worker, decision and evidence history. Invoice work uses the actual draft, review and delivery receipt. Controlled publications use their exact approved version and recipient receipts. A worker finishing an attempt does not verify the business result. A field with no corresponding record can be unknown. Some specialist lines still need dedicated status and citation mappings to populate every fact.
+**Backend.** Work detail supplies `tracking_url` with the current station, intake and verification times, recorded actors, worker activity, output and paginated worker, decision and evidence history. Invoice work uses the original draft, review and delivery receipt. Controlled publications use the exact approved version and recipient receipts. Specialist checks remain in their linked panels. A field stays empty where the source did not record it.
 
 ## 3. What a work screen shows
 
@@ -30,13 +30,13 @@ The full audit answers all 224 numbered items from GitHub main. It identifies th
 
 **PSL’s answer.** An Admin manages settings across the company. Company-wide settings should be accessible from Setup without needing to know a project first.
 
-**Backend.** `GET /setup/scopes` lists the organisations in the signed-in Admin’s current delegation and the workspace settings the person can open. The existing policy-scope operations create and activate organisation versions, then apply them under the native authority checks. The current write contract anchors policy versions to an authorised workspace. Admin scope follows the company and its real configuration. Independent approval, protected Finance/HR sources and other organisations keep their own access rules.
+**Backend.** `GET /setup/scopes` lists the companies and company policies the signed-in Admin can access, with links to their exact authority workspaces. Use those links to create, review, activate and apply company policy versions under the existing grants. Independent business decisions retain their own authority checks.
 
 ## 5. Totals and page size
 
 **PSL’s answer.** Show accurate totals. The frontend can decide the page sizes to offer. PSL mentioned 10 or 15.
 
-**Backend.** The work queue accepts `limit=8|10|15|20|50`. It returns the chosen size and reports a total for Started by me and Active work, or for a filtered queue when all candidates fit in the evaluated page. It can skip up to two empty candidate pages per call within the read limit. Use the returned page and next-page values. A null total means the backend cannot show the full tab total yet. Overview counts active work by line.
+**Backend.** The work queue accepts `limit=8|10|15|20|50`. `GET /work/counts` returns the authorised queue and line figures with their coverage. A null total indicates an incomplete count. Staff pages give exact authorised totals for accounts and invitations separately.
 
 ## 6. Role words and the menu
 
@@ -72,16 +72,16 @@ The full audit answers all 224 numbered items from GitHub main. It identifies th
 
 **PSL’s answer.** Wait until Finance knows the actual amount received and where the payment came from before a new receipt is recorded. Finance should identify the source of a statement or other file before uploading it, then match the transaction to its original proof. If the amount is missing, staff check the source or ask for confirmation first.
 
-**Handoff.** The missing amount is the amount of money actually received on that transaction. The backend already has an invoice-linked **Record payment** flow at `GET/POST /projects/{case_id}/invoices/{issue_id}/payments`. The form accepts the payment source and transaction reference, with the original private bank statement. Next.js should expose that flow from Finance payments or the invoice detail. The API still permits a new receipt with an unknown amount, so both the server and the form need to enforce the new rule. Keep earlier incomplete receipts and their current correction path. The amount and source are needed at intake, and verification and allocation remain distinct Finance actions. The Payments API already reports known amounts owed and counts of items with unknown balances.
+**Backend.** Use the invoice-linked **Record payment** flow at `GET/POST /projects/{case_id}/invoices/{issue_id}/payments`. The backend requires a positive known amount, the payment source, the transaction reference and original evidence before it records a new receipt. Earlier incomplete entries retain their correction path. Finance verifies and allocates payments separately. The Payments read includes verified receipts for the month with the authorised scope and coverage.
 
 ## 12. Designed features that need backend data
 
 **PSL’s answer.** Provide a backend for the agreed features. The follow-up decisions below define how staff use images, report notes and alerts.
 
 - **Tola’s notes and findings.** Use the recorded work activity and evidence links. Detailed, authorised agent notes on individual work lines still need line-specific mappings.
-- **Report notes and comparison.** Keep each agent note beside the report section it refers to, visible to staff authorised to review the draft. The approved report sent to a client or Support leaves out those notes. The compare endpoint already returns changed, added, removed and unchanged sections for authorised versions of the same standalone report and audience, with the evidence IDs. Storing and showing the review-only notes still needs implementation.
-- **Alerts.** Keep the alert inbox and add a daily summary inside PSL Factory. Email and WhatsApp remain deferred. Quiet hours, notification switches by event, and external summaries can be addressed when those channels are connected. The in-app daily summary still needs implementation.
-- **Assistant images.** Staff can attach images to questions for Tola, Chidi or Zainab. Send the images they attach with the question to OpenRouter. The agent should read them together with the current files and records the person can use for that question before answering. Existing project, role and report access governs that context. Project file upload exists. The attachment link, OpenRouter image reading, combined evidence and answer citations still need to be wired and tested.
+- **Report notes and comparison.** Weekly report reviews return the agent’s notes beside their sections for authorised draft reviewers. The approved copy goes out without those review notes. The compare endpoint gives section changes and evidence from authorised versions of the same standalone report and audience.
+- **Alerts.** The in-app inbox exposes typed links, unread totals, pages and a daily summary. Email and WhatsApp remain deferred.
+- **Assistant images.** Staff can attach private images to questions for Tola, Chidi or Zainab. The backend sends them to OpenRouter with the question and context the person is authorised to use. The adapter test observed the combined request using a test response.
 - **Delivery overview.** `GET /projects/{case_id}/delivery-overview` lists all six Delivery lines, the latest visible work, its reference, state, update date and work link. A line with no visible work keeps those fields empty. Open the linked line panel to read individual gate decisions.
 - **Publish to Support.** `GET /work/{work_id}/support-publication` supplies the current publish-ready flag and document version. POST uses the exact approved version and the configured publisher. The recipient’s receipt remains a separate record.
 - **Finance confirmation at closure.** The new Finance confirmation read and write use the actual milestone-notification inventory and original receipts. They require current Finance authority.
@@ -100,14 +100,14 @@ The full audit answers all 224 numbered items from GitHub main. It identifies th
 
 ## Handoff package
 
-The five follow-up questions have answers. The remaining work is implementation and release verification.
+The five follow-up decisions have backend answers. The frontend uses the versioned contract and links from each exact record.
 
 | Frontend flow | Expected behavior | Backend status |
 | --- | --- | --- |
-| Ask an assistant with an image | Attach the image, send it with the question, and show the answer with its permitted project sources. | File upload exists. Image links to messages and OpenRouter image reading are pending. |
-| Review a report | See the agent’s notes beside each section during staff review. The outward version contains the approved report. | Version comparison and evidence links exist. Section notes are pending. |
-| Check daily alerts | Open a daily summary inside the app and follow the items to the original alerts. | Personal alerts exist. The daily summary is pending. |
-| Approve a PMO step | The current PMO Lead approves their own step directly and can add a note if useful. Show the recorded role, person and time. | Proof attachments exist. The direct approval rule needs to be wired to eligible steps. |
-| Record a payment | Use a Finance entry point and require the real amount and payment source before recording it. | Invoice-linked receipt intake exists. The new checks and Next.js entry point are pending. |
+| Ask an assistant with an image | Attach the image and show the answer with its permitted project sources. | The message links the private images and sends them with permitted context through OpenRouter. |
+| Review a report | See the agent’s notes beside each section during staff review. | The weekly report draft read supplies the review notes and the controlled version comparison. |
+| Check daily alerts | Open a summary inside the app and follow the original alerts. | The personal inbox returns the summary and typed destinations. |
+| Approve a PMO step | Let the eligible current PMO Lead approve their own step. | Planning exit records their role, name and time. |
+| Record a payment | Require the real amount and payment source. | The invoice-linked receipt intake enforces both and retains legacy corrections. |
 
-The backend changes are on `codex/backend-handoff-answers`, based on GitHub main at `924e7cdc`. Next.js sign-in and sign-out have since merged to main at `8f562602`. The OpenAPI 1.23.0 snapshot describes the routes already implemented and tested locally against PostgreSQL. The branch contains the Emergency outcome database migration. Use the deployed contract during Railway testing. The Railway release and Next.js integration are pending. [OpenAPI snapshot](../../contracts/psl-factory.openapi.json) · [Test ledger](../../BUILD-TESTS.md)
+Backend changes are on `codex/backend-handoff-answers`. The branch OpenAPI snapshot is 1.24.0. Railway was last checked at 1.22.0. Use the matching deployed contract during the Next.js integration. Deployment, browser acceptance and a live OpenRouter image check are pending. [OpenAPI snapshot](../../contracts/psl-factory.openapi.json) · [Test ledger](../../BUILD-TESTS.md)

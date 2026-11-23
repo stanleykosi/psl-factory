@@ -2,9 +2,9 @@
 
 ## Frontend connection questions · 23 November 2026
 
-Use `codex/backend-handoff-answers` for API 1.23.0. The numbered handoff contains the developer’s 13 questions and PSL’s five follow-up decisions, with the implemented API and remaining work beside each answer. Verify the deployed contract before wiring the new routes in Next.js. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md)
+Use `codex/backend-handoff-answers` for API 1.24.0. The handoff contains the developer’s 13 priority questions and PSL’s five follow-up decisions with concrete backend answers. The branch includes database migrations for Assistant provenance, PMO Lead Planning approval and work status timestamps. Verify the deployed contract before wiring the new routes in Next.js. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md)
 
-The screen-by-screen audit checks all 224 numbered items. It supplies routes and limits for the answers supported by the code and groups the missing backend work by area. The four remaining PSL policy items concern loss reasons, bid price adjustments, go-live milestone mappings and leadership report coverage. Railway still reported 1.22.0 during the audit. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md) · [Backend implementation register](delivery/connect/backend-answers-by-screen-2026-11-23.md#backend-implementation-register)
+The screen-by-screen register covers all 224 numbered items. The four remaining PSL policy items concern bid loss reasons, bid price adjustments, go-live milestone mappings and leadership report coverage. Railway still reported 1.22.0 in the in-app browser. Local workflow, contract and permission evidence is in the test ledger. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md) · [Test ledger](BUILD-TESTS.md)
 
 ## Next.js developer handoff
 

@@ -8,7 +8,7 @@ from django.views.decorators.http import require_safe
 
 from . import (
     accounting, accounting_work, accounts, agents, archive_files, assets, assistant_drafts, authority_recovery,
-    bank_payments, bid_assignments, bid_delivery, bid_pricing, bid_responses, bid_submission, business_units, changes,
+    bank_payments, bid_assignments, bid_delivery, bid_pricing, bid_requirements, bid_responses, bid_submission, business_units, changes,
     client_records, client_uat, clients, closure, commands, commercial, corrections, costing,
     delivery, documents, emergency, engagements, escalations,
     finance_operations, financial_corrections, forecasting, go_live_replies, handoffs, hr_handoffs, hypercare,
@@ -45,6 +45,7 @@ ROUTES = (
     ('setup/<uuid:case_id>/people/<int:person_id>/profile', staff_access.profile, staff_access.apply_profile),
     ('setup/<uuid:case_id>/people/<int:person_id>/departure', staff_access.workspace_departure, staff_access.remove_workspace_access),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
+    ('projects/<uuid:case_id>/document-versions', documents.version_list),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>/compare', documents.compare),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>/publication', documents.report_controls, documents.report_command),
     ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
@@ -66,7 +67,9 @@ ROUTES = (
     ('received-bids/assignments', bid_assignments.pending),
     ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
     ('received-bids/<uuid:case_id>/team-inputs', bid_responses.team_inputs, bid_responses.record_team_input),
+    ('received-bids/<uuid:case_id>/team-requests', bid_responses.request_team_input),
     ('work', work.queue, intake.start),
+    ('work/counts', work.counts),
     ('work/<int:work_id>/tracking', work_tracking.tracking),
     ('work/<int:work_id>/delivery-observations', work_tracking.delivery_observations,
      work_tracking.record_delivery_observation),
@@ -105,6 +108,7 @@ ROUTES = (
     ('work/<int:work_id>/closure-report', closure.replace_report),
     ('work/<int:work_id>/invoice-preparation', invoice_recovery.replace_preparation),
     ('work/<int:work_id>/go-live-signoff', delivery.go_live, delivery.record_go_live),
+    ('work/<int:work_id>/go-live-signoff/proofs', delivery.go_live_proof),
     ('work/<int:work_id>/go-live-replies', go_live_replies.detail, go_live_replies.command),
     ('work/<int:work_id>/go-live-replies/successor', go_live_replies.prepare_successor),
     ('work/<int:work_id>/go-live-replies/decline', go_live_replies.decline_options, go_live_replies.draft_rules),
@@ -138,11 +142,13 @@ ROUTES = (
     ('projects/<uuid:case_id>/change-versions/<int:version_id>', changes.version),
     ('projects/<uuid:case_id>/issues', issues.register, issues.capture),
     ('projects/<uuid:case_id>/issues/<int:issue_id>', issues.detail, issues.command),
+    ('projects/<uuid:case_id>/issues/<int:issue_id>/blocked-milestone', issues.milestone_options, issues.link_milestone),
     ('projects/<uuid:case_id>/issues/<int:issue_id>/assignment', issues.assign),
     ('projects/<uuid:case_id>/issues/<int:issue_id>/team-replies', issues.team_reply),
     ('projects/<uuid:case_id>/issues/<int:issue_id>/messages', issue_communications.index, issue_communications.command),
     ('work/<int:work_id>/issue-followup', issues.work_detail, issues.work_command),
     ('work/<int:work_id>/bid-answers', bid_responses.answers, bid_responses.answer_command),
+    ('work/<int:work_id>/bid-clarifications', bid_requirements.clarifications, bid_requirements.capture),
     ('work/<int:work_id>/bid-outcomes', bid_responses.outcomes),
     ('work/<int:work_id>/bid-pricing', bid_pricing.detail, bid_pricing.adjust),
     ('work/<int:work_id>/security-estimate', bid_pricing.security, bid_pricing.security_command),
@@ -223,6 +229,7 @@ ROUTES = (
     ('projects/<uuid:case_id>/hr', workspaces.hr),
     ('projects/<uuid:case_id>/payroll/requests', payroll_sources.requests, payroll_sources.create_request),
     ('projects/<uuid:case_id>/payroll/requests/<int:request_id>/inputs', payroll_sources.imports, payroll_sources.upload),
+    ('projects/<uuid:case_id>/payroll/requests/<int:request_id>/template', payroll_sources.template),
     ('projects/<uuid:case_id>/payroll/requests/<int:request_id>/start-choices', payroll_sources.start_choices),
     ('projects/<uuid:case_id>/payroll/<slug:kind>/<int:record_id>/working-rows', payroll_sources.working_rows),
     ('projects/<uuid:case_id>/meetings', meeting_records.collection, meeting_records.record),
@@ -265,6 +272,7 @@ ROUTES = (
     ('setup/<uuid:case_id>/delegations/options', setup.delegation_options),
     ('setup/<uuid:case_id>/delegations/drafts', setup.draft_delegation),
     ('setup/<uuid:case_id>/rules', setup.rules),
+    ('setup/<uuid:case_id>/decision-proofs', setup.decision_proof),
     ('setup/<uuid:case_id>/decision-appointments', policy_reviews.appointments, policy_reviews.draft_appointments),
     ('setup/<uuid:case_id>/policy-configurations', policy_reviews.versions, visibility_settings.draft_envelope),
     ('setup/<uuid:case_id>/policy-configurations/references', visibility_settings.register_policy_reference),
@@ -389,7 +397,7 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.23.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.24.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
                            'GET /api/v1/me. Use the typed API routes for the Next.js app.'},
         'security': [{'Session': []}], 'paths': paths,

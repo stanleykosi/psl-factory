@@ -48,6 +48,53 @@ def return_fixture():
 
 
 class FactoryDeliveryTests(TestCase):
+    def test_current_pmo_lead_records_direct_approval_with_no_uploaded_proof(self):
+        from datetime import timedelta
+
+        from django.contrib.auth import get_user_model
+        from apps.identity import intake, staff, teams
+        from apps.policy.services import active_component, register_reference
+        from tests.helpers import activate
+
+        f = setup()
+        for kind in delivery.PLANNING:
+            payload = {'requires_ui': False, 'client_signoff_required': False} if kind == 'ui_applicability' else {}
+            f.source(kind, payload)
+        root = get_user_model().objects.create_superuser('direct-planning-test-root')
+        actions = ['case.read']
+        intake.provision(root, f.actor, f.case.tenant, {
+            'format': 'psl.tenant-access/v3', 'create_cases': True, 'manage_access': True,
+            'kinds': ['project'], 'allowed_actions': actions, 'initial_actions': actions,
+            'classification': 'synthetic', 'staff_lifecycle': {'invite_minutes': 30, 'allow_invite': True,
+                'allow_deactivation': True, 'allow_profile_edit': True, 'allow_roster': True},
+        }, timezone.now() + timedelta(hours=1), True, 'Synthetic PMO membership')
+        team = teams.create_team(f.actor, f.case.pk, 'pmo-lead', 'Sample PMO team')
+        _, token = staff.invite_person(f.actor, f.case.pk, 'direct-planning-test-lead', 'Sample PMO Lead',
+            'test-lead@example.invalid', rev(f.case), role='pmo-lead', mode='lead', team_id=team.pk)
+        lead = staff.accept(token, 'test-only-planning-password-2026')
+        component = 'D05.role_principal_assignments'
+        previous = active_component(component, f.case)
+        new_role = register_reference(f.actor, f.case.pk, 'role:direct-pmo-lead',
+            'schema:psl/role-assignment/v1', {'role': 'PMO Lead', 'user_id': lead.pk}, f.e['policy_decision'].pk)
+        refs = [ref for ref in previous.envelope['value'] if ref != 'role:3']
+        activate(f.actor, f.case, component, [*refs, new_role.ref], f.e['policy_decision'])
+        self.client.force_login(lead)
+        url = f'/api/v1/work/{f.work.pk}/planning-exit'
+        panel = self.client.get(url)
+        self.assertEqual(panel.status_code, 200, panel.content)
+        packet = panel.json()
+        self.assertTrue(packet['can_approve_directly'], packet)
+        submitted = self.client.post(url, {key: packet[key] for key in ('expected_revision', 'case_revision', 'packet')}
+                                     | {'verdict': 'approve'}, content_type='application/json')
+        self.assertEqual(submitted.status_code, 200, submitted.content)
+        decision = DeliveryRecord.objects.get(pk=submitted.json()['record_id'])
+        self.assertEqual(decision.actor, lead)
+        self.assertTrue(decision.data['direct_pmo_approval'])
+        self.assertEqual(delivery.approved_plan(f.d), decision)
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_progress_plan(%s)', [decision.pk])
+            self.assertTrue(cursor.fetchone()[0])
+
     def test_planning_decision_binds_rendered_case_sources_authority_and_public_evidence(self):
         f=setup()
         for kind in delivery.PLANNING:f.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})

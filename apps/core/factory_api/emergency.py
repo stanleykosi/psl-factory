@@ -119,6 +119,8 @@ def classify(request, case_id, version_id, *, body):
     'authorization_id': nullable(ID), 'recorded_authorizations': array(ID, limit=20),
     'outcome_id': nullable(ID), 'recorded_outcomes': array(ID, limit=20),
     'outcome_impact': nullable(obj(IMPACT)),
+    'authorization_history': array(obj({'id': ID, 'by': TEXT, 'at': DATETIME}), limit=20),
+    'outcome_history': array(obj({'id': ID, 'by': TEXT, 'at': DATETIME}), limit=20),
     'document_version_id': nullable(ID), 'review_verdicts': array(VERDICT),
     'receipt_ids': array(ID, limit=30), 'evidence': array(PROOF, limit=50)}),
     summary='Read the incident, prescribed decisions, actual outcome and retained publication receipts')
@@ -139,8 +141,11 @@ def detail(request, work_id):
                                                                  'reconcile_retrospective')]
         selected_kinds = [HUMAN_ACTIONS[action][1] for action in actions if HUMAN_ACTIONS[action][1]]
         proof = public_evidence(work.case.evidence.filter(kind__in=selected_kinds)).only('id', 'kind', 'version').order_by('-pk')[:50]
-        authorizations = list(EmergencyAuthorization.objects.filter(profile=profile).order_by('-pk').values_list('pk', flat=True)[:20])
-        outcomes = list(EmergencyOutcome.objects.filter(profile=profile).order_by('-pk').values_list('pk', flat=True)[:20])
+        authorizations = list(EmergencyAuthorization.objects.filter(profile=profile).select_related('actor').order_by('-pk')[:20])
+        outcomes = list(EmergencyOutcome.objects.filter(profile=profile).select_related('actor').order_by('-pk')[:20])
+        def history(rows):
+            return [{'id': row.pk, 'by': row.actor.get_full_name() or row.actor.get_username(),
+                     'at': row.created_at} for row in rows]
         outcome_id = panel['data']['inputs']['outcome_id']
         impact = EmergencyOutcome.objects.filter(profile=profile, pk=outcome_id).values(*IMPACT).first() if outcome_id else None
         if work.cancel_requested or work.lease_until and work.lease_until > timezone.now():
@@ -151,8 +156,10 @@ def detail(request, work_id):
                 'finding': status.get('finding', ''), 'actions': actions, 'options': allowed,
                 'decisions': [{'id': row.pk, 'role': row.role, 'authority_role': row.authority_role,
                                'verdict': row.verdict} for row in current],
-                'authorization_id': panel['data']['inputs']['authorization_id'], 'recorded_authorizations': authorizations,
-                'outcome_id': outcome_id, 'recorded_outcomes': outcomes, 'outcome_impact': impact,
+                'authorization_id': panel['data']['inputs']['authorization_id'],
+                'recorded_authorizations': [row.pk for row in authorizations],
+                'outcome_id': outcome_id, 'recorded_outcomes': [row.pk for row in outcomes], 'outcome_impact': impact,
+                'authorization_history': history(authorizations), 'outcome_history': history(outcomes),
                 'document_version_id': panel['document'].pk if panel['document'] else None,
                 'review_verdicts': panel['review_verdicts'], 'receipt_ids': [row.pk for row in panel['receipts'][:30]],
                 'evidence': proof_rows(proof)}

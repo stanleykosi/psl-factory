@@ -5,10 +5,16 @@ from apps.core import account_delivery, alerts
 from apps.core.alert_models import AccountDelivery, AlertPreference, AlertRead
 
 from .http import BOOLEAN, DATETIME, REVISION, TEXT, array, choice, endpoint, nullable, obj
+from .work import PAGE, page_number
 
 
 ALERT = obj({'id': TEXT, 'title': TEXT, 'subject': {'type': 'string'}, 'detail': {'type': 'string'},
-             'group': choice('action', 'update'), 'read': BOOLEAN, 'django_url': TEXT})
+             'group': choice('action', 'update'), 'read': BOOLEAN, 'django_url': TEXT,
+             'at': nullable(DATETIME), 'agent': nullable(TEXT), 'target_kind': nullable(TEXT), 'api_url': nullable(TEXT)})
+COUNT = {'type': 'integer', 'minimum': 0}
+PAGE_SIZE = 25
+SUMMARY = obj({'date': {'type': 'string', 'format': 'date'}, 'actions_open': COUNT,
+               'unread_updates_today': COUNT, 'unread_without_timestamp': COUNT, 'scope': choice('current_inbox')})
 PREFERENCES = obj({'revision': REVISION, 'email_requested': BOOLEAN, 'whatsapp_requested': BOOLEAN})
 STATUS = obj({**PREFERENCES['properties'], 'email_ready': BOOLEAN, 'whatsapp_ready': BOOLEAN})
 RECENT_DELIVERIES = obj({**STATUS['properties'], 'recent_deliveries': array(obj({
@@ -17,12 +23,29 @@ RECENT_DELIVERIES = obj({**STATUS['properties'], 'recent_deliveries': array(obj(
 }), limit=20)})
 
 
-@endpoint(response=obj({'items': array(ALERT), 'as_of': DATETIME}), summary='Read current personal alerts')
+@endpoint(response=obj({'items': array(ALERT, limit=PAGE_SIZE), 'as_of': DATETIME, 'page': PAGE,
+    'next_page': nullable(PAGE), 'unread': COUNT, 'daily_summary': SUMMARY}),
+    query={'page': PAGE}, summary='Read scoped in-app alerts and the daily summary')
 def inbox(request):
-    return {'as_of': timezone.now(), 'items': [
+    as_of = timezone.now()
+    today = timezone.localdate(as_of)
+    page = page_number(request)
+    rows = alerts.items(request.user)
+    unread = [row for row in rows if row['unread']]
+    start = (page - 1) * PAGE_SIZE
+    end = start + PAGE_SIZE
+    return {'as_of': as_of, 'page': page, 'next_page': page + 1 if end < len(rows) else None,
+            'unread': len(unread), 'daily_summary': {
+                'date': today.isoformat(), 'scope': 'current_inbox',
+                'actions_open': sum(row['group'] == 'action' for row in rows),
+                'unread_updates_today': sum(row['group'] == 'update' and row.get('at') is not None
+                                           and timezone.localdate(row['at']) == today for row in unread),
+                'unread_without_timestamp': sum(row.get('at') is None for row in unread),
+            }, 'items': [
         {'id': row['key'], 'title': row['label'], 'subject': row['subject'], 'detail': row['detail'],
-         'group': row['group'], 'read': not row['unread'], 'django_url': row['url']}
-        for row in alerts.items(request.user)
+         'group': row['group'], 'read': not row['unread'], 'django_url': row['url'],
+         **{key: row.get(key) for key in ('at', 'agent', 'target_kind', 'api_url')}}
+        for row in rows[start:end]
     ]}
 
 

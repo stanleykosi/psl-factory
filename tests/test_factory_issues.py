@@ -69,9 +69,32 @@ class FactoryIssueTests(TestCase):
         detail = self.client.get(issue)
         self.assertEqual(detail.status_code, 200, detail.content)
         self.assertIsNotNone(detail.json()['acknowledgement']['at'])
+        self.assertIsNotNone(detail.json()['issue']['opened_at'])
         self.assertEqual(detail.json()['issue']['status'], 'Open')
         replay = self.client.post(issue, values, content_type='application/json')
         self.assertNotEqual(replay.status_code, 201)
+
+    def test_issue_milestone_link_is_scoped_and_can_be_cleared(self):
+        from apps.pmo.services import complete_milestone
+        from tests.helpers import signed
+
+        self.client.force_login(self.a)
+        root = f'/api/v1/projects/{self.c.pk}/issues/{self.state.issue_id}'
+        path = root + '/blocked-milestone'
+        proof = signed(self.a, self.c)['completion']
+        milestone = complete_milestone(self.a, self.c.pk, 'Actual test milestone', proof.pk, rev(self.c))
+        options = self.client.get(path)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual([row['id'] for row in options.json()['choices']], [milestone.pk])
+        body = {'case_revision': rev(self.c), 'state_id': self.state.pk, 'milestone_id': milestone.pk,
+                'evidence_id': self.e['requirements'].pk, 'reason': 'This issue affects the recorded milestone.'}
+        result = self.client.post(path, body, content_type='application/json')
+        self.assertEqual(result.status_code, 201, result.content)
+        self.assertEqual(self.client.get(root).json()['blocked_milestone']['id'], milestone.pk)
+        changed = self.client.post(path, {**body, 'case_revision': rev(self.c), 'milestone_id': None},
+                                   content_type='application/json')
+        self.assertEqual(changed.status_code, 201, changed.content)
+        self.assertIsNone(self.client.get(root).json()['blocked_milestone'])
     def test_scoped_investigation_owned_followup_verified_without_issue_closure(self):
         self.advance();self.assertEqual(self.work.status,'waiting',self.work.finding)
         attempt=FactoryAttempt.objects.get(activity__work=self.work,activity__kind='ACT04',phase='observed')

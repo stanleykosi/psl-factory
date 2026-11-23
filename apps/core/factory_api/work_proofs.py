@@ -31,6 +31,14 @@ INPUT = {'oneOf': [
 ]}
 
 
+def owned_pdf(actor, case, upload_id):
+    require(actor, case, 'evidence.add')
+    upload = get_object_or_404(CaseUpload, pk=upload_id, case=case, actor=actor)
+    data = case_uploads.read(upload)
+    name, _ = pdf_bytes(SimpleUploadedFile(upload.name, data))
+    return {'name': name, 'sha256': upload.sha256, 'upload_id': upload.pk}
+
+
 def attached_work(actor, work_id):
     work, _, restricted = observed_work(actor, work_id)
     if restricted.get('recipient_only') or restricted.get('handoff'):
@@ -64,10 +72,7 @@ def attach(request, work_id, *, body):
     source = f'work-proof/v1:{work.pk}'
     value = {'kind': body['kind'], 'name': None, 'sha256': None, 'note': None}
     if body['kind'] == 'pdf_copy':
-        upload = get_object_or_404(CaseUpload, pk=body['upload_id'], case_id=work.case_id, actor=actor)
-        data = case_uploads.read(upload)
-        name, _ = pdf_bytes(SimpleUploadedFile(upload.name, data))
-        value.update(name=name, sha256=upload.sha256, upload_id=upload.pk)
+        value.update(owned_pdf(actor, work.case, body['upload_id']))
     else:
         if not body['note'].strip():
             raise ValidationError('Enter the PMO Lead’s proof note.')

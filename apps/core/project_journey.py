@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
-from django.db.models import Count, F, OuterRef, Q, Subquery
+from django.db.models import Count, Exists, F, OuterRef, Q, Subquery
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -162,7 +162,7 @@ def issue_register_row(issue, as_of, register_url):
     name = owner.get_full_name() or owner.get_username()
     closed = issue.current.status == 'Closed'
     return {
-        'title': issue.reference, 'detail': issue.current.title,
+        'title': issue.reference, 'reference': issue.reference, 'detail': issue.current.title,
         'state': issue.current.status.replace('_', ' ').capitalize(),
         'state_code': issue.current.status,
         'severity': issue.current.severity,
@@ -230,7 +230,9 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
         assignments = visible_assignments(actor).filter(case=case, action__isnull=False)
         actions = apply(ActionItem.objects.filter(case=case, current__isnull=False)).filter(
             Q(reference__icontains=query) | Q(current__description__icontains=query)
-        ).select_related('current__owner').order_by('current__due_at', 'pk')
+        ).select_related('current__owner', 'meeting__current').annotate(
+            origin_visible=Exists(public_evidence(case.evidence.filter(pk=OuterRef('meeting__current__evidence_id')))),
+        ).order_by('current__due_at', 'pk')
         if project_reader:
             actions = actions.filter(Q(staffassignment__isnull=True) | Q(staffassignment__membership__role='pmo-lead'),
                                      current__evidence__in=public_evidence(case.evidence.all()))
@@ -241,11 +243,20 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
         result = section('Project actions', 'Manage actions and minutes', 'meetings', actions,
             lambda a: {'title': a.current.description, 'state': a.current.status.replace('_', ' ').capitalize(),
              'state_code': a.current.status,
+             'reference': a.reference,
+             'origin_meeting': {'id': a.meeting_id, 'reference': a.meeting.reference, 'at': a.meeting.current.occurred_at}
+                 if a.meeting_id and a.meeting.current and a.origin_visible and not scoped else None,
              'detail': (a.current.owner.get_full_name() or a.current.owner.username) if a.current.owner else 'Owner needed',
              'due': a.current.due_at, 'show_due': True, 'assignment_id': a.role_assignment if scoped and not project_reader else None,
              'url': (reverse('department_records', args=['tola', case.pk]) + f'?group=action&id={a.pk}') if project_reader else
              reverse('role_work_detail', args=[a.role_assignment]) if scoped else
              reverse('design_project_action', args=[case.pk, a.pk])})
+        active = ~Q(current__status__in=['completed', 'cancelled'])
+        paused = Q(current__status='paused', current__clock_meta__pause_behavior='extend_elapsed')
+        result['counts'] = actions.aggregate(
+            overdue=Count('pk', distinct=True, filter=active & ~paused & Q(current__due_at__lt=timezone.now())),
+            unassigned=Count('pk', distinct=True, filter=active & Q(current__owner__isnull=True)),
+            total=Count('pk', distinct=True))
         if project_reader:
             result.update(action='Project action records', url=reverse('department_records', args=['tola', case.pk]) + '?group=action')
         elif scoped:

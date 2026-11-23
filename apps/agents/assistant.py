@@ -17,7 +17,7 @@ from apps.documents.contracts import digest
 from apps.identity.factory_access import PERSONA_ROLES, department_cases, role_managed
 
 from .assistant_models import AssistantConversation, AssistantTurn
-from . import assistant_access
+from . import assistant_access, assistant_images
 
 
 PERSONAS = {
@@ -362,11 +362,19 @@ def turn_context(turn, *, pending=True):
 
         check(turn.conversation.actor, turn.conversation)
         return context_for(suggestion, pending=pending)
-    return message_context(turn.conversation, turn.selected_sources or turn.focus, question=turn.question)
+    sources, next_work = message_context(turn.conversation, turn.selected_sources or turn.focus, question=turn.question)
+    if turn.image_upload_ids:
+        if payroll_report_only(turn.conversation) or any(
+                item.get('record', {}).get('field') == 'payroll_report' for item in sources):
+            raise PermissionDenied('Attachments are unavailable for received payroll report questions.')
+        images = assistant_images.selected(turn.conversation, turn.image_upload_ids)
+        sources += [assistant_images.source(upload) for upload in images]
+        return sources, []
+    return sources, next_work
 
 
 @transaction.atomic
-def reserve(actor, conversation_id, operation_key, question, focus='', *, publication_id=None):
+def reserve(actor, conversation_id, operation_key, question, focus='', *, publication_id=None, image_upload_ids=None):
     keys = [focus] if isinstance(focus, str) and focus else [] if focus == '' else focus
     if not isinstance(keys, list) or len(keys) > 5 or any(
             not isinstance(key, str) or not re.fullmatch('[0-9a-f]{64}', key) for key in keys):
@@ -374,13 +382,18 @@ def reserve(actor, conversation_id, operation_key, question, focus='', *, public
     keys = sorted(set(keys))
     conversation = AssistantConversation.objects.select_for_update(of=('self',)).select_related('case').get(pk=conversation_id)
     check(actor, conversation)
+    image_upload_ids = image_upload_ids if image_upload_ids is not None else []
+    if image_upload_ids and (payroll_report_only(conversation) or question == TOTALS_QUESTION):
+        raise PermissionDenied('Attachments are unavailable for received payroll report questions.')
+    images = assistant_images.selected(conversation, image_upload_ids)
     if payroll_report_only(conversation) and (question not in payroll_questions_for(conversation) or len(keys) > 1):
         raise ValidationError('Choose a question about your received staff-cost report.')
     previous = AssistantTurn.objects.filter(pk=operation_key).first()
     if previous is not None:
         if (previous.conversation_id != conversation.pk or previous.question != question
                 or (publication_id is not None and cited_record(previous, 'payroll_report') != publication_id)
-                or (previous.selected_sources or ([previous.focus] if previous.focus else [])) != keys):
+                or (previous.selected_sources or ([previous.focus] if previous.focus else [])) != keys
+                or previous.image_upload_ids != image_upload_ids):
             raise ValidationError('This request key has already been used. Reload and try again.')
         if question == TOTALS_QUESTION and previous.context_hash != digest(turn_context(previous)[0]):
             raise ValidationError('This report has changed. Open the current report.')
@@ -398,20 +411,26 @@ def reserve(actor, conversation_id, operation_key, question, focus='', *, public
         if keys:
             source_focus(payroll_report_sources(conversation, publication_id), keys)
         turn = AssistantTurn.objects.create(pk=operation_key, conversation=conversation, question=question,
-            status='answered', answer=answer, sources=sources, context_hash=digest(sources), selected_sources=keys)
+            status='answered', answer=answer, sources=sources, context_hash=digest(sources), selected_sources=keys,
+            finished_at=timezone.now())
         conversation.save(update_fields=['updated_at'])
         return turn
     if not conversation.case.synthetic and not role_managed(actor) and not assistant_access.model_rule(conversation.case, conversation.persona):
         raise PermissionDenied('This project requires approval before a question can be sent to the model.')
     if not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('The department assistant needs a configured model.')
-    if keys:
-        message_context(conversation, keys)
+    if keys or images:
+        sources, _ = message_context(conversation, keys, question=question)
+        if images and any(item.get('record', {}).get('field') == 'payroll_report' for item in sources):
+            raise PermissionDenied('Attachments are unavailable for received payroll report questions.')
+    for upload in images:
+        assistant_images.image_data(upload)
     turn, _ = AssistantTurn.objects.get_or_create(pk=operation_key, defaults={
-        'conversation': conversation, 'question': question, 'selected_sources': keys,
+        'conversation': conversation, 'question': question, 'selected_sources': keys, 'image_upload_ids': image_upload_ids,
     })
     if (turn.conversation_id != conversation.pk or turn.question != question
-            or (turn.selected_sources or ([turn.focus] if turn.focus else [])) != keys):
+            or (turn.selected_sources or ([turn.focus] if turn.focus else [])) != keys
+            or turn.image_upload_ids != image_upload_ids):
         raise ValidationError('This request key has already been used. Reload and try again.')
     conversation.save(update_fields=['updated_at'])
     return turn
@@ -423,7 +442,7 @@ def claim_turn(turn_id=None):
     if turn_id is not None:
         turns = turns.filter(pk=turn_id)
     now = timezone.now()
-    turns.filter(status='running', started_at__lt=now - timedelta(minutes=5)).update(status='held')
+    turns.filter(status='running', started_at__lt=now - timedelta(minutes=5)).update(status='held', finished_at=now)
     turn = turns.select_for_update(skip_locked=True).filter(status='queued').order_by('created_at', 'pk').first()
     if turn is not None:
         turn.status = 'running'
@@ -458,6 +477,7 @@ def answer_claim(turn, model):
         if not sources:
             claim.update(
                 status='answered', answer=INSUFFICIENT_EVIDENCE, sources=[], context_hash=context_hash, next_work='',
+                finished_at=timezone.now(),
             )
             return True
         handles = {f'S{index}': source for index, source in enumerate(sources, start=1)}
@@ -468,7 +488,13 @@ def answer_claim(turn, model):
                           .order_by('-created_at', '-pk')[:3])
             history = [{'question': entry.question[:1000], 'answer': entry.answer[:1000]} for entry in reversed(recent)
                        if entry.sources and entry.context_hash == context_hash]
-        raw = openrouter.answer(model, PERSONAS[conversation.persona][1], turn.question, context, next_work, history)
+        options = {}
+        if turn.image_upload_ids:
+            uploads = {image.pk: image for image in assistant_images.selected(conversation, turn.image_upload_ids)}
+            options['images'] = [(handle, assistant_images.image_data(uploads[item['record']['pk']]))
+                                 for handle, item in handles.items()
+                                 if item.get('record', {}).get('field') == assistant_images.IMAGE_SOURCE]
+        raw = openrouter.answer(model, PERSONAS[conversation.persona][1], turn.question, context, next_work, history, **options)
         if (not isinstance(raw, dict) or set(raw) != {'answer', 'citations', 'next_work'}
                 or not isinstance(raw['answer'], str) or not 0 < len(raw['answer'].strip()) <= 4000
                 or not isinstance(raw['citations'], list) or len(raw['citations']) > len(handles)
@@ -483,12 +509,13 @@ def answer_claim(turn, model):
         answer = raw['answer'].strip() if cited else INSUFFICIENT_EVIDENCE
         claim.update(
             status='answered', answer=answer, sources=cited, context_hash=context_hash, next_work=raw['next_work'] if cited else '',
+            finished_at=timezone.now(),
         )
     except Exception as exc:
         import logging
 
         logging.getLogger(__name__).warning('Assistant turn %s held: %s', turn.pk, type(exc).__name__)
-        claim.update(status='held')
+        claim.update(status='held', finished_at=timezone.now())
     return True
 
 

@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+23 November 2026. API 1.24.0 branch checks used an isolated local PostgreSQL database. Early and targeted runs passed 14, 57, 15, 13 and 11 tests, with overlap between runs. They cover receipts and corrections, private Assistant image requests with scoped sources, alerts, reminders, HR handoffs, role access, bid answers and outcomes, weekly reports, project records, milestone proof to Finance, payroll templates, Emergency escalation and direct PMO Lead Planning exit. The OpenRouter and private storage adapters used controlled test responses.
+
+23 November 2026. Railway health rendered `ok` in the ChatGPT in-app browser. The hosted OpenAPI reported 1.22.0 with 268 paths. Local export and migration drift checks cover 1.24.0. The 262 published state results still carry their original deployment evidence. No deployed 1.24.0 feature run is recorded.
+
 23 November 2026. Checked exact coverage of all 224 source question IDs, with no duplicates or missing entries. Verified the audit’s local links and that every outstanding question is represented in the backend register or PSL decision list. The Railway schema read returned OpenAPI 1.22.0. These checks cover the handoff and the live schema.
 
 23 November 2026. Verified the consolidated handoff covers all 13 original questions and five follow-up decisions. Checked its local links and Finance receipt API reference. This update records approved behavior. The existing PostgreSQL results below cover the earlier implementation.

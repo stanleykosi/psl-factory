@@ -39,6 +39,14 @@ class PayrollApiCutoverTests(TestCase):
         self.assertEqual(prepared.status_code, 200, prepared.content)
         choices = {row['provider']: row['formats'] for row in prepared.json()['provider_options']}
         self.assertEqual(choices['PAY-B'], ['json', 'csv', 'xlsx'])
+        from adapters.payroll_spreadsheet import rows as parse_spreadsheet
+
+        template_base = f'{root}/requests/{native.pk}/template'
+        for layout in rules['providers'][1]['spreadsheet_layouts']:
+            template = self.client.get(template_base, {'provider': 'PAY-B', 'format': layout['format']})
+            self.assertEqual(template.status_code, 200)
+            self.assertEqual(parse_spreadsheet(b''.join(template.streaming_content), layout), [])
+        self.assertEqual(self.client.get(template_base, {'provider': 'PAY-A', 'format': 'csv'}).status_code, 404)
 
         def upload(name, content, key, provider='PAY-B', *, total='150', **fields):
             return self.client.post(path, {'revision': rev(case), 'provider': provider, 'operation_key': key,
@@ -54,6 +62,7 @@ class PayrollApiCutoverTests(TestCase):
         self.assertEqual(malformed.status_code, 201, malformed.content)
         rejected = malformed.json()['input']
         self.assertFalse(rejected['accepted'])
+        self.assertIn('spreadsheet_columns', {item['code'] for item in rejected['findings']})
         self.assertNotIn('a,b', malformed.content.decode())
         corrected = upload('corrected-shape.csv', CSV, 'corrected-shape')
         self.assertEqual(corrected.status_code, 201, corrected.content)

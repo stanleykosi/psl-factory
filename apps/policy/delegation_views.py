@@ -49,6 +49,7 @@ class DelegationDraftForm(forms.Form):
     source_configuration = forms.IntegerField(required=False, min_value=1, widget=forms.HiddenInput)
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     submission_key = forms.UUIDField(required=False, widget=forms.HiddenInput)
+    reason = forms.CharField(required=False, max_length=2000, label='Reason for the delegation')
 
     def __init__(self, case, source, members, role, data=None):
         super().__init__(data, initial={'role': role, 'source_configuration': source.pk if source else None,
@@ -97,6 +98,8 @@ def save(actor, case_id, data):
     key = data.get('submission_key')
     intent = dict(entry, evidence=data['evidence'].pk, effective=data['effective'].isoformat(),
                   source=data['source_configuration'])
+    if data.get('reason'):
+        intent['reason'] = data['reason']
     if key:
         previous = case.audit.filter(action=SUBMISSION_ACTION, actor=actor, data__key=str(key)).first()
         if previous:

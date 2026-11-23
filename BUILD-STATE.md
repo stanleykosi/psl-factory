@@ -2,11 +2,11 @@
 
 ## Frontend backend questions · 23 November 2026
 
-Audited all 224 numbered frontend questions against the current code, the handoff branch and the live 1.22.0 schema. The detailed answers record 113 current behaviors and 33 branch answers. The register tracks 74 questions with remaining engineering work and four with PSL policy input needed where it is absent. Some branch answers describe partial support and are also cross-referenced in the register. [Screen-by-screen audit](delivery/connect/backend-answers-by-screen-2026-11-23.md)
+The 224-question register now has 113 existing answers, 107 branch answers and four PSL choices where the corresponding approved rule is absent. The branch adds scoped evidence capture, recorded work and exceptions, bid requests and clarifications, issue and milestone links, project and Finance reads, internal alerts, and protected uploads and draft notes. [Screen-by-screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md)
 
-All 13 priority questions and five follow-ups now have PSL answers. The remaining implementation includes images in Assistant, review-only section notes, the in-app daily alert summary, direct PMO Lead approval for eligible steps, and required amount and source for new Finance receipts. The existing API already supports the invoice-linked receipt intake. The handoff identifies each feature’s current implementation status. [Consolidated answers](delivery/connect/backend-answers-2026-11-23.md)
+All 13 priority questions and five follow-ups have PSL answers. OpenAPI 1.24.0 includes private Assistant images, review-only weekly report notes, the in-app daily alert summary, direct PMO Lead approval on eligible Planning exit, and the known amount and source required for new receipts. The OpenRouter image check used a test response. [Consolidated answers](delivery/connect/backend-answers-2026-11-23.md)
 
-The backend work against GitHub main includes API-only sign-in and downloads, work tracking and proof, typed intake and panel links, Setup discovery, Finance totals, and the Delivery and document changes listed in the answer sheet. The sheet identifies features that still need implementation or live verification. [PSL answers and API changes](delivery/connect/backend-answers-2026-11-23.md)
+Railway returned `ok` and OpenAPI 1.22.0 in the ChatGPT in-app browser. Branch deployment and hosted Next.js acceptance are pending. [Test ledger](BUILD-TESTS.md)
 
 ## Django page separation
 

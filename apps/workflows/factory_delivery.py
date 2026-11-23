@@ -324,7 +324,8 @@ def projection(actor,work,*,decision_evidence_limit=None,decision_only=False):
         decision_evidence = list(evidence)
     if decision_only:
         return {'checks': observed, 'decision_packet': packet, 'allowed_verdicts': list(authorities),
-                'return_issues': return_issues, 'decision_evidence': decision_evidence, 'workaround_option': workaround_option}
+                'return_issues': return_issues, 'decision_evidence': decision_evidence, 'workaround_option': workaround_option,
+                'last_decision': prior}
     changed=False
     if work.status=='verified':
         try:verify(work,actor=actor)
@@ -385,7 +386,8 @@ def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
     work.case=case;panel=projection(actor,work,decision_evidence_limit=0,decision_only=True)
     if work.revision!=expected or verdict not in panel['allowed_verdicts'] or not packet_sha256 or packet_sha256!=panel['decision_packet']:raise ValidationError('STALE_VERSION: current exact Planning exit sources and authority required')
-    if not public_evidence(Evidence.objects.filter(case=case,pk=evidence_id)).exists():raise ValidationError('Choose an available public delivery decision source')
+    if evidence_id is not None and not public_evidence(Evidence.objects.filter(case=case,pk=evidence_id)).exists():
+        raise ValidationError('Choose an available public delivery decision source')
     result=delivery.decide_planning(actor,case.pk,work.request['dossier'],verdict,evidence_id,note,case.revision,issue_id=issue_id)
     work.revision+=1;work.status='ready';work.finding='';work.save();return result
 

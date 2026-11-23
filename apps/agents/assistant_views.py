@@ -193,7 +193,7 @@ def current_turns(actor, conversation, sources, next_work, payroll_only):
         if turn.context_hash:
             try:
                 if (role_sources or conversation.persona == 'tola' or turn.question == assistant.TOTALS_QUESTION
-                        or getattr(turn, 'rfp_answer', None) is not None):
+                        or turn.image_upload_ids or getattr(turn, 'rfp_answer', None) is not None):
                     current, _ = assistant.turn_context(turn, pending=False)
                 else:
                     current = assistant.source_focus(sources, turn.selected_sources or turn.focus)

@@ -31,13 +31,15 @@ STEPS = {
     'intake': 'Intake', 'execution': 'Agent and team work', 'decision': 'Human decision',
     'delivery': 'Delivery and receipt', 'verified': 'Verified result',
 }
+STATION = obj({'key': choice(*STEPS), 'name': TEXT, 'position': ID,
+               'status': choice('recorded', 'current', 'pending', 'unknown'), 'owner': nullable(TEXT)})
 
 
 @endpoint(response=obj({
     'work_id': ID, 'as_of': DATETIME, 'next_step': TEXT, 'blocker': {'type': 'string'},
     'owner': nullable(TEXT),
-    'station': obj({'key': choice(*STEPS), 'name': TEXT}),
-    'stations': array(obj({'key': choice(*STEPS), 'name': TEXT})),
+    'station': STATION, 'stations': array(STATION),
+    'started_at': DATETIME, 'started_by': TEXT, 'verified_at': nullable(DATETIME),
     'facts': obj(dict.fromkeys(FACTS, nullable(BOOLEAN))),
     'worker_history_url': TEXT, 'decision_history_url': TEXT, 'evidence_history_url': TEXT,
     'can_record_delivery_observation': BOOLEAN, 'delivery_observation_url': nullable(TEXT),
@@ -63,7 +65,8 @@ def tracking(request, work_id):
     reviews = TaskEvent.objects.filter(task__case_id=work.case_id, task__context__work=work.pk,
                                        task__factory_key__startswith=f'factory:{work.pk}:',
                                        data__verdict__in=('approve', 'return', 'reject'))
-    latest = reviews.order_by('-pk').values_list('data__verdict', flat=True).first()
+    recorded_decision = reviews.select_related('actor').order_by('-pk').first()
+    latest = recorded_decision.data['verdict'] if recorded_decision else None
     facts = dict.fromkeys(FACTS)
     facts['reviewed'] = True if latest else None
     facts['approved'] = True if latest == 'approve' else False if latest else None
@@ -101,10 +104,23 @@ def tracking(request, work_id):
         station = 'verified'
     history = f'/api/v1/work/{work.pk}/history?kind='
     effects = original_effects(row)
+    owner = row.get('owner') or None
+    initiator = work.actor.get_full_name() or work.actor.get_username()
+    reviewer = recorded_decision.actor if recorded_decision else None
+    station_actors = {'intake': initiator, 'decision': reviewer.get_full_name() or reviewer.get_username() if reviewer else None}
+    recorded = {'intake': True, 'execution': bool(attempt), 'decision': facts['reviewed'],
+                'delivery': facts['receipt'], 'verified': facts['verified']}
+    names = list(STEPS)
+    index = names.index(station)
+    stations = [{'key': key, 'name': STEPS[key], 'position': position + 1,
+                 'status': 'current' if key == station else 'recorded' if recorded[key]
+                 else 'unknown' if position < index else 'pending',
+                 'owner': owner if key == station else station_actors.get(key)} for position, key in enumerate(names)]
     return {'work_id': work.pk, 'as_of': timezone.now(), 'next_step': row.get('next_action') or 'Review the current work.',
-            'blocker': row.get('blocker') or '', 'owner': row.get('owner') or None,
-            'station': {'key': station, 'name': STEPS[station]}, 'facts': facts, 'last_activity': activity,
-            'stations': [{'key': key, 'name': name} for key, name in STEPS.items()],
+            'blocker': row.get('blocker') or '', 'owner': owner,
+            'started_at': work.created_at, 'started_by': initiator,
+            'verified_at': work.last_verification_at if facts['verified'] else None,
+            'station': stations[index], 'facts': facts, 'last_activity': activity, 'stations': stations,
             'can_record_delivery_observation': bool(effects), 'uncertain_effects': effects,
             'delivery_observation_url': f'/api/v1/work/{work.pk}/delivery-observations',
             'worker_history_url': history + 'worker', 'decision_history_url': history + 'decision',
