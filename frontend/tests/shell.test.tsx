@@ -8,7 +8,7 @@ import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Destination } from '@/api/types';
+import type { DestinationKey } from '@/api/types';
 import { AppShell, usePhoneBack } from '@/shell/AppShell';
 import { destinationForPath } from '@/shell/destinations';
 import { DestinationPage, UnknownPage } from '@/shell/DestinationPage';
@@ -37,7 +37,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-const routeOf: Record<string, Destination> = {
+const routeOf: Record<string, DestinationKey> = {
   '/my-work': 'my_work',
   '/projects': 'projects',
   '/overview': 'overview',
@@ -57,7 +57,7 @@ const menuButton = () => within(phoneBar()).getByRole('button', { name: 'Menu' }
 /** The top bar's who-line: full text, the name part and the role part (visually hidden below 1080px). */
 const who = () => {
   const el = topNav().querySelector('.psl-nav__who')!;
-  return { text: el.textContent, name: el.querySelector('.shell-who-name')!.textContent, role: el.querySelector('.shell-who-role')!.textContent };
+  return { text: el.textContent, name: el.querySelector('.shell-who-name')!.textContent, role: el.querySelector('.shell-who-role')?.textContent ?? null };
 };
 
 async function loaded() {
@@ -83,7 +83,8 @@ describe('navigation follows /me', () => {
     expect(links[0].getAttribute('aria-current')).toBe('page');
     expect(links.slice(1).every((a) => !a.hasAttribute('aria-current'))).toBe(true);
     expect(within(topNav()).getByText('PSL FACTORY')).toBeTruthy();
-    expect(who()).toEqual({ text: 'Ada Okafor · Finance Lead', name: 'Ada Okafor', role: ' · Finance Lead' });
+    // Role words come from role-dashboard (tests/shell-live.test.tsx); here that read has no positions, so the name stands alone.
+    expect(who()).toEqual({ text: 'Ada Okafor', name: 'Ada Okafor', role: null });
     expect(screen.getByRole('heading', { level: 1, name: 'My work' })).toBeTruthy();
     expect(screen.getByText('This page is not built yet. It arrives in a later release.')).toBeTruthy();
     expect(fetchStub).toHaveBeenCalledTimes(1);
@@ -96,7 +97,7 @@ describe('navigation follows /me', () => {
     await loaded();
     expect(within(topNav()).getAllByRole('link').map((a) => a.textContent)).toEqual(['My work', 'Projects', 'Assistant']);
     expect(topNav().querySelector('[aria-current]')).toBeNull();
-    expect(who()).toEqual({ text: 'Tunde Bello · PM', name: 'Tunde Bello', role: ' · PM' });
+    expect(who()).toEqual({ text: 'Tunde Bello', name: 'Tunde Bello', role: null });
     const main = screen.getByRole('main');
     expect(within(main).getByText('This section isn’t open to your role.')).toBeTruthy();
     expect(within(main).getByRole('link').getAttribute('href')).toBe('/my-work');
@@ -109,7 +110,7 @@ describe('navigation follows /me', () => {
     renderAt('/my-work');
     await loaded();
     expect(within(topNav()).queryAllByRole('link')).toEqual([]);
-    expect(who()).toEqual({ text: 'Sample Person · Staff', name: 'Sample Person', role: ' · Staff' });
+    expect(who()).toEqual({ text: 'Sample Person', name: 'Sample Person', role: null });
     expect(screen.getByText('No sections are open to your role yet.')).toBeTruthy();
     expect(screen.getByText('Ask a Lead or Admin to check your roles.')).toBeTruthy();
   });
@@ -191,11 +192,12 @@ describe('frame states', () => {
     await loaded();
   });
 
-  it('401 shows signed out with a sign-in link back to this page', async () => {
+  it('401 shows signed out with no sign-in link (sign-in opens in a later release)', async () => {
     fetchStub.mockResolvedValue(json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }));
     renderAt('/my-work');
     await waitFor(() => expect(screen.getByText('You’re signed out.')).toBeTruthy());
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
+    expect(screen.getByText(/Sign-in opens in a later release/)).toBeTruthy();
+    expect(within(screen.getByRole('main')).queryAllByRole('link')).toEqual([]);
     expect(within(topNav()).queryByText('My work')).toBeNull();
     expect(document.querySelector('.psl-callout--warning')).toBeTruthy();
   });

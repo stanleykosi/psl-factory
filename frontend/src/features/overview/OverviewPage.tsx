@@ -8,7 +8,7 @@ import { StationStrip } from '@/features/floor/StationStrip';
 import { useStationWork } from '@/features/floor/stationWork';
 import { webglAvailable, type FloorProps } from '@/features/floor/support';
 import { useMe } from '@/shell/AppShell';
-import { visibleDestinations } from '@/shell/destinations';
+import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 
 import { LINE_IDENTITY, tagTone } from './lines';
@@ -35,7 +35,7 @@ const TOTALS: { key: keyof OverviewData['totals']; label: string }[] = [
 /** /overview: the factory floor, for anyone whose /me lists Overview. */
 export function OverviewPage() {
   const me = useMe();
-  if (!me.destinations.includes('overview')) {
+  if (!hasDestination(me, 'overview')) {
     return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   }
   return <FactoryFloor />;

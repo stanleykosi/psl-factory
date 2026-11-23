@@ -14,7 +14,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody, invoices } from '../mock/invoices.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 const nav = vi.hoisted(() => ({ search: '', listeners: new Set<() => void>(), replaced: [] as string[] }));
 vi.mock('next/navigation', async () => {
@@ -68,6 +68,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
       const call = { method: request.method, path: url.pathname, params: url.searchParams };

@@ -12,7 +12,7 @@ import { createAssistantMock } from '../mock/assistant.mjs';
 import { OPENAPI_PATH } from '../mock/server.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { createStartWorkMock } from '../mock/start-work.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 export const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 export const readFixture = (name: string) => JSON.parse(readFileSync(join(__dirname, '../mock/fixtures', name), 'utf8'));
@@ -31,6 +31,7 @@ export function startBridge(persona = 'pm') {
 
   const stub = vi.fn(async (request: Request): Promise<Response> => {
     if (isBellFeed(request)) return bellFeed();
+    if (isRoleDashboard(request)) return roleDashboard();
     const url = new URL(request.url);
     const multipart = request.headers.get('content-type')?.startsWith('multipart/form-data') ?? false;
     const raw = request.method === 'POST' && !multipart ? await request.clone().text() : '';

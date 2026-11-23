@@ -197,7 +197,7 @@ describe('E-WORK-START', () => {
     const changed = send({ ...body, intake: { ...body.intake, note: 'changed' } });
     expect(changed).toEqual([
       409,
-      { code: 'idempotency_key_reused', message: 'This start was already sent with different details. Close the form and start again.' },
+      { code: 'idempotency_conflict', message: 'This start was already sent with different details. Close the form and start again.' },
     ]);
     expect(mock.started.size).toBe(1);
     mock.reset();
@@ -211,7 +211,7 @@ describe('E-WORK-START', () => {
     expect(a.status).toBe(201);
     const reused = await post({ ...body, case_revision: 7 });
     expect(reused.status).toBe(409);
-    expect(reused.body.code).toBe('idempotency_key_reused');
+    expect(reused.body.code).toBe('idempotency_conflict');
     expectValid('E-WORK-START', 409, reused.body);
   });
 
