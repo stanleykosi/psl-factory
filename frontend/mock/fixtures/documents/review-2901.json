@@ -30,5 +30,8 @@
       "field": "Out of scope",
       "text": "Insurance claims; lab integrations."
     }
-  ]
+  ],
+  "template_name": "Statement of work",
+  "template_version": 1,
+  "sample": true
 }
