@@ -121,6 +121,7 @@ export function SignInView() {
   if (phase === 'loading') {
     body = (
       <div className="signin-form">
+        <h1 className="signin-title">Sign in</h1>
         <Skeleton widths={[60, 90, 90]} />
         <Loading>Preparing sign-in…</Loading>
       </div>
@@ -128,6 +129,7 @@ export function SignInView() {
   } else if (phase === 'unready') {
     body = (
       <div className="signin-form">
+        <h1 className="signin-title">Sign in</h1>
         <Callout kind="problem" announce={false}>
           We couldn’t get sign-in ready. Nothing was changed.
         </Callout>
@@ -139,6 +141,7 @@ export function SignInView() {
   } else if (phase === 'not-admitted') {
     body = (
       <div className="signin-form">
+        <h1 className="signin-title">Sign in</h1>
         <Callout kind="info">You’re signed in, but no work is open to you yet. Ask your administrator.</Callout>
         <Button kind="secondary" size="lg" busy={signingOut} busyLabel="Signing out…" onClick={() => void signOut()}>
           Sign out
@@ -176,6 +179,7 @@ export function SignInView() {
           phone={phone}
           value={password}
           error={missing.password}
+          className={problem && !missing.password ? 'is-error' : undefined}
           onChange={(event) => setPassword(event.target.value)}
         />
         <Checkbox label={phone ? 'Keep me signed in on this phone' : 'Keep me signed in'} checked={remember} onChange={(event) => setRemember(event.target.checked)} />

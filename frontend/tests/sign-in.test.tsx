@@ -235,6 +235,16 @@ describe('errors', () => {
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
   });
 
+  it('a failed sign-in puts the error border on the Password field only', async () => {
+    routes['POST /api/v1/session'] = () => json(422, FAILED);
+    render(<SignInView />);
+    await fill();
+    press();
+    await screen.findByRole('alert');
+    expect(passField().classList.contains('is-error')).toBe(true);
+    expect(userField().classList.contains('is-error')).toBe(false);
+  });
+
   it('a second wrong try shows the callout again with focus on it', async () => {
     routes['POST /api/v1/session'] = () => json(422, FAILED);
     render(<SignInView />);
