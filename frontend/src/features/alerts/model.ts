@@ -1,24 +1,13 @@
-// SCR-15 alerts: contract values to the words on the boards, the list view in the URL, and the settings PUT body.
-// Presentation only: a proposal field the API does not return is never defaulted, and nothing here decides access.
-import { AGENTS as AGENT_INFO, formatClock, formatDayMonth } from '@/components';
+// SCR-15 alerts: contract values to the words on the boards, the typed link of an alert, and the settings body.
+// Presentation only: a field the API returns as null is never defaulted, and nothing here decides access.
+import { AGENTS as AGENT_INFO, agentKey, formatClock, formatDayMonth } from '@/components';
 
-import type { Alert, AlertAgent, AlertPrefs, AlertQuery, AlertWithNeed, PrefsBody } from './types';
+import type { Alert, AlertPrefs, DailySummary, Delivery, PrefsBody } from './types';
 
-export const AGENTS: readonly AlertAgent[] = ['tola', 'chidi', 'zainab'];
-
-const isAgent = (value: string | null | undefined): value is AlertAgent => AGENTS.includes(value as AlertAgent);
-
+/** The agent's display name; a persona key we do not know is shown as it came. */
 export function agentName(agent: string): string {
-  return isAgent(agent) ? AGENT_INFO[agent].name : agent;
-}
-
-const CHANNEL_ORDER = ['whatsapp', 'email', 'in_app'] as const;
-const CHANNEL_WORDS: Record<(typeof CHANNEL_ORDER)[number], string> = { whatsapp: 'WhatsApp', email: 'email', in_app: 'in app' };
-
-/** ["whatsapp","email"] → "WhatsApp and email", ["in_app","email"] → "Email and in app". */
-export function deliveryWords(via: readonly string[]): string {
-  const words = CHANNEL_ORDER.filter((c) => via.includes(c)).map((c) => CHANNEL_WORDS[c]).join(' and ');
-  return words.charAt(0).toUpperCase() + words.slice(1);
+  const key = agentKey(agent);
+  return key ? AGENT_INFO[key].name : agent;
 }
 
 const WAT_DAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -32,29 +21,48 @@ export function dayWords(value: string, now: number): string {
   return formatDayMonth(value);
 }
 
-/** "<Agent> · <how> · <when>", or "<Agent> · In app only (<reason>)". */
+/** The secondary line: subject and detail as returned, "Ojo Foods · INV-0398"; nothing when both are empty. */
+export const subjectLine = (alert: Alert) => [alert.subject, alert.detail].filter((part) => part.trim()).join(' · ');
+
+/** "<Agent> · <time>": each part only when the alert has it (older alerts have neither). */
 export function metaLine(alert: Alert, now: number): string {
-  const name = agentName(alert.agent);
-  if (alert.in_app_reason) return `${name} · In app only (${alert.in_app_reason})`;
-  const when = alert.digest_at ? `${formatClock(alert.digest_at)} daily digest` : dayWords(alert.delivered_at ?? alert.at, now);
-  return [name, alert.delivered_via && deliveryWords(alert.delivered_via), when].filter(Boolean).join(' · ');
+  return [alert.agent && agentName(alert.agent), alert.at && dayWords(alert.at, now)].filter(Boolean).join(' · ');
 }
 
-/** "4 ALERTS" / "1 ALERT" from the returned total; undefined when the API returns none. */
-export function countLine(total: number | undefined): string | undefined {
-  if (typeof total !== 'number') return undefined;
-  return `${total} ${total === 1 ? 'ALERT' : 'ALERTS'}`;
+const SEGMENT = /^[^/.?#\s\\]+$/;
+const LINKS: readonly (readonly [RegExp, string])[] = [
+  [/^\/api\/v1\/work\/([^/]*)$/, '/work/'],
+  [/^\/api\/v1\/projects\/([^/]*)$/, '/projects/'],
+  [/^\/api\/v1\/assistant\/conversations\/([^/]*)$/, '/assistant/'],
+];
+
+function decoded(segment: string): string | undefined {
+  try {
+    const value = decodeURIComponent(segment);
+    return SEGMENT.test(value) ? value : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
-/** The work an alert points to: /work/<work_id>, or the project it names (proposed `case_id`): /projects/<case_id>. */
-export const workHref = (alert: Alert & { case_id?: string }) =>
-  alert.case_id ? `/projects/${encodeURIComponent(alert.case_id)}` : `/work/${encodeURIComponent(alert.work_id)}`;
+/**
+ * The page an alert opens: a same-origin path from its typed `api_url` (work, project, assistant conversation), else
+ * from a `django_url` of the form /work/<id>/. Anything else (null, absolute, protocol-relative, javascript:, several
+ * segments, dots) gives no link; the retired Django page is never linked.
+ */
+export function alertHref(alert: Pick<Alert, 'api_url' | 'django_url'>): string | undefined {
+  for (const [pattern, base] of LINKS) {
+    const id = alert.api_url ? pattern.exec(alert.api_url)?.[1] : undefined;
+    const value = id === undefined ? undefined : decoded(id);
+    if (value) return `${base}${encodeURIComponent(value)}`;
+  }
+  const id = /^\/work\/([^/]*)\/$/.exec(alert.django_url ?? '')?.[1];
+  const value = id === undefined ? undefined : decoded(id);
+  return value ? `/work/${encodeURIComponent(value)}` : undefined;
+}
 
-/** Only `needs_you === true` waits on the person; false, absent or any other value is for information. */
-export const needsYou = (alert: AlertWithNeed) => alert.needs_you === true;
-
-/** Needs-you is known when at least one loaded alert carries a boolean `needs_you`; otherwise it is not supplied. */
-export const needsYouKnown = (items: readonly AlertWithNeed[]) => items.some((alert) => typeof alert.needs_you === 'boolean');
+/** Only `group: "action"` waits on the person; "update" is for information. */
+export const needsYou = (alert: Pick<Alert, 'group'>) => alert.group === 'action';
 
 /** The bell badge: the unread count when it is a number above zero, "99+" above 99; otherwise none (unknown is not zero). */
 export function badgeText(unread: number | undefined): string | undefined {
@@ -70,79 +78,48 @@ export function bellName(unread: number | undefined, need: number): string {
   return parts.join(', ');
 }
 
-/** The list view held in the URL: /notifications?q=<text>&agent=<key>&unread=1. */
-export type View = { q?: string; agent?: AlertAgent; unread?: true };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export function parseView(params: URLSearchParams): View {
-  const view: View = {};
-  const q = params.get('q')?.trim();
-  if (q) view.q = q;
-  const agent = params.get('agent');
-  if (isAgent(agent)) view.agent = agent;
-  if (params.get('unread') === '1') view.unread = true;
-  return view;
+/** "Today, 23 Nov: 3 need you, 2 new updates, 1 older unread." Each part is left out only when its field is missing. */
+export function summaryLine(summary: Partial<DailySummary> | undefined): string | undefined {
+  if (!summary) return undefined;
+  const date = /^\d{4}-(\d{2})-(\d{2})$/.exec(summary.date ?? '');
+  const month = date ? MONTHS[Number(date[1]) - 1] : undefined;
+  const counts = [
+    typeof summary.actions_open === 'number' && `${summary.actions_open} need you`,
+    typeof summary.unread_updates_today === 'number' && `${summary.unread_updates_today} new ${summary.unread_updates_today === 1 ? 'update' : 'updates'}`,
+    typeof summary.unread_without_timestamp === 'number' && `${summary.unread_without_timestamp} older unread`,
+  ].filter(Boolean);
+  if (counts.length === 0) return undefined;
+  return `Today${date && month ? `, ${Number(date[2])} ${month}` : ''}: ${counts.join(', ')}.`;
 }
 
-export function viewSearch(view: View): string {
-  const params = new URLSearchParams();
-  if (view.q) params.set('q', view.q);
-  if (view.agent) params.set('agent', view.agent);
-  if (view.unread) params.set('unread', '1');
-  const text = params.toString();
-  return text ? `?${text}` : '';
-}
+/** The loaded-alerts line: "12 loaded, 7 unread". The API gives no total of alerts, so none is claimed. */
+export const loadedLine = (loaded: number, unread: number | undefined) =>
+  typeof unread === 'number' ? `${loaded} loaded, ${unread} unread` : `${loaded} loaded`;
 
-export const isNarrowed = (view: View) => Boolean(view.q || view.agent || view.unread);
+export const DELIVERY_STATE_WORDS: Record<Delivery['state'], string> = {
+  queued: 'Queued',
+  uncertain: 'Not confirmed',
+  delivered: 'Delivered',
+  held: 'Held',
+};
+export const CHANNEL_WORDS: Record<Delivery['channel'], string> = { email: 'Email', whatsapp: 'WhatsApp' };
 
-/** Facets set in the Filter panel (agent, unread); search is not counted. */
-export const filterCount = (view: View) => (view.agent ? 1 : 0) + (view.unread ? 1 : 0);
+/** The receipt's time: when it was delivered, else when it was queued. */
+export const deliveryTime = (delivery: Delivery) => delivery.delivered_at ?? delivery.created_at;
 
-/** The v7 parameters; `limit` only where a list asks for a page size (the Notifications page, via its footer). */
-export function buildAlertQuery(view: View, cursor?: string, limit?: AlertQuery['limit']): AlertQuery {
-  const query: AlertQuery = {};
-  if (limit) query.limit = limit;
-  if (view.q) query.q = view.q;
-  if (view.agent) query.agent = view.agent;
-  if (view.unread) query.unread = true;
-  if (cursor) query.cursor = cursor;
-  return query;
-}
+/** The two switches the person edits; the rest of the read is held beside them. */
+export type Draft = { email: boolean; whatsapp: boolean };
 
-export type Switches = { key: string; whatsapp: boolean; email: boolean };
-/** The person's edits: switches per event, and the chosen digest time and quiet hours ('' = not set). */
-export type Draft = { events: Switches[]; digest: string; quiet: string };
+export const draftFrom = (prefs: AlertPrefs): Draft => ({ email: prefs.email_requested, whatsapp: prefs.whatsapp_requested });
 
-export function draftFrom(prefs: AlertPrefs): Draft {
-  return {
-    events: prefs.events.map(({ key, whatsapp, email }) => ({ key, whatsapp, email })),
-    digest: prefs.digest_at?.value ?? '',
-    quiet: prefs.quiet_hours?.value ?? '',
-  };
-}
+/** Whether the draft differs from what was read: Save stays off until it does. */
+export const prefsChanged = (prefs: AlertPrefs, draft: Draft) => draft.email !== prefs.email_requested || draft.whatsapp !== prefs.whatsapp_requested;
 
-const hasOptions = (field: { options: unknown[] } | undefined) => Boolean(field && field.options.length > 0);
-
-/** Whether the desktop card shows the digest select and the quiet-hours select. */
-export function selectsShown(prefs: AlertPrefs): { digest: boolean; quiet: boolean } {
-  return { digest: hasOptions(prefs.digest_at), quiet: hasOptions(prefs.quiet_hours) };
-}
-
-/**
- * E-ALERT-PREFS body: channel and frequency exactly as read, the read revision, every event's switches in
- * returned order, and the digest and quiet hours only where the select is shown and set (never on the phone).
- */
-export function buildPrefsBody(prefs: AlertPrefs, draft: Draft, phone: boolean): PrefsBody {
-  const body = { channel: prefs.channel, frequency: prefs.frequency } as PrefsBody;
-  if (prefs.revision !== undefined) body.expected_revision = prefs.revision;
-  body.events = draft.events.map(({ key, whatsapp, email }) => ({ key, whatsapp, email }));
-  const shown = selectsShown(prefs);
-  if (!phone && shown.digest && draft.digest) body.digest_at = draft.digest;
-  if (!phone && shown.quiet && draft.quiet) body.quiet_hours = draft.quiet;
-  return body;
-}
-
-/** "20:00 to 07:00, and weekends": the label of the option whose value is the current one. */
-export function quietLabel(prefs: AlertPrefs): string | undefined {
-  const value = prefs.quiet_hours?.value;
-  return value === undefined ? undefined : prefs.quiet_hours?.options.find((o) => o.value === value)?.label;
-}
+/** The save body: the revision of the last read and both switches, nothing else. */
+export const buildPrefsBody = (prefs: AlertPrefs, draft: Draft): PrefsBody => ({
+  revision: prefs.revision,
+  email_requested: draft.email,
+  whatsapp_requested: draft.whatsapp,
+});

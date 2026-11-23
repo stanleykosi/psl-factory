@@ -1,61 +1,144 @@
 'use client';
 
-// What the Alerts page (SCR-15) and the bell's drawer share: the row's avatar and text over meta, opening an alert,
-// and the error card.
+// What the Alerts page (SCR-15) and the bell's drawer share: the row's avatar and text, opening an alert, marking one
+// read, and the error card.
 import { useRouter } from 'next/navigation';
-import { useCallback, useRef, type MouseEvent } from 'react';
+import { useCallback, useRef, useState, type MouseEvent } from 'react';
 
-import { api, call } from '@/api/client';
+import { call, csrfHeader, liveApi } from '@/api/client';
 import { ApiError } from '@/api/errors';
-import { AgentAvatar, agentKey, ErrorState, formatClock, VisuallyHidden } from '@/components';
+import { AgentAvatar, agentKey, Button, ErrorState, formatClock, VisuallyHidden } from '@/components';
 
 import type { Alert } from './types';
-import { metaLine, workHref } from './model';
+import { alertHref, metaLine, subjectLine } from './model';
+import { ALERT_READ_EVENT } from './useAlertsFeed';
 
-export function AlertAvatar({ agent }: { agent: string }) {
-  // Decorative: the agent's name is in the meta line. An agent we do not know gets a plain circle.
+export function AlertAvatar({ agent }: { agent: string | null }) {
+  // Decorative: the agent's name is in the meta line. No agent, or one we do not know, gets a plain circle.
   const key = agentKey(agent);
   return key ? <AgentAvatar agent={key} size={40} /> : <span className="psl-avatar psl-avatar--40" aria-hidden="true" />;
 }
 
-/** The alert's sentence over its meta line ("Chidi · WhatsApp · 09:42 WAT"). */
+/** The alert's title over its subject and detail, and the agent and time when it has them ("Chidi · 09:42"). */
 export function AlertBody({ alert, now }: { alert: Alert; now: number }) {
+  const subject = subjectLine(alert);
+  const meta = metaLine(alert, now);
   return (
     <span className="alerts-body">
-      <span className="alerts-text">{alert.text}</span>
-      <VisuallyHidden>, </VisuallyHidden>
-      <span className="alerts-meta">{metaLine(alert, now)}</span>
+      <span className="alerts-text">{alert.title}</span>
+      {subject && (
+        <>
+          <VisuallyHidden>, </VisuallyHidden>
+          <span className="alerts-sub">{subject}</span>
+        </>
+      )}
+      {meta && (
+        <>
+          <VisuallyHidden>, </VisuallyHidden>
+          <span className="alerts-meta">{meta}</span>
+        </>
+      )}
     </span>
   );
 }
 
-export type OpenAlert = (event: MouseEvent<HTMLAnchorElement>, alert: Alert) => void;
+/** 'read': marked read, then opened; 'failed': opened although the mark-read failed; 'held': nothing opened from here (a link click left to the browser, or the alert is gone). */
+export type OpenAlert = (event: MouseEvent<HTMLAnchorElement>, alert: Alert) => Promise<'read' | 'failed' | 'held'>;
+/** A row's quiet notice after a mark-read that did not work. */
+export type RowNotice = 'gone' | 'failed' | 'session';
+
+export const NOTICE_WORDS: Record<RowNotice, string> = {
+  gone: 'This alert is no longer available.',
+  failed: 'Couldn’t mark as read. Try again.',
+  session: 'Your session was refreshed. Try again. Nothing was changed.',
+};
+
+type Handlers = { onRead?: (alert: Alert) => void; onGone?: () => void; onSignedOut?: (error: ApiError) => void };
 
 /**
- * An unread alert is marked read first (one POST); the work opens whether or not that worked, and nothing retries.
- * A read alert, or a click with a modifier key or another button, is left to the link. `onRead` hears a mark-read
- * the server accepted; `onError` hears one that failed.
+ * Marking read and opening. POST /notifications/{id}/read with `{}`; only a 200 changes anything (`onRead`, and the
+ * bell's count through ALERT_READ_EVENT). A 401 goes to `onSignedOut`; a 403 or 404 says the alert is gone and
+ * `onGone` re-reads the list; the work still opens after a failure of the server or the network, never after a stale
+ * session token. Nothing retries; a read alert is never posted again.
  */
-export function useOpenAlert(onRead?: (alert: Alert) => void, onError?: (error: ApiError) => void): OpenAlert {
+export function useAlertActions({ onRead, onGone, onSignedOut }: Handlers) {
   const router = useRouter();
+  const sent = useRef(new Set<string>());
   const opening = useRef(false);
-  return useCallback(
-    async (event: MouseEvent<HTMLAnchorElement>, alert: Alert) => {
-      if (alert.read || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      if (opening.current) return;
-      opening.current = true;
+  const [notices, setNotices] = useState<Record<string, RowNotice>>({});
+
+  const setNotice = useCallback((id: string, notice?: RowNotice) => {
+    setNotices((prev) => {
+      if (prev[id] === notice) return prev;
+      const next = { ...prev };
+      if (notice) next[id] = notice;
+      else delete next[id];
+      return next;
+    });
+  }, []);
+
+  /** Marks one alert read; gives the notice when it did not work, or 'signedout' after a 401. */
+  const markRead = useCallback(
+    async (alert: Alert): Promise<RowNotice | 'signedout' | undefined> => {
+      if (alert.read || sent.current.has(alert.id)) return undefined;
+      sent.current.add(alert.id);
       try {
-        await call(api.POST('/api/v1/notifications/{notification_id}/read', { params: { path: { notification_id: alert.id } } }));
-        onRead?.(alert);
+        await call(liveApi.POST('/api/v1/notifications/{notification_id}/read', { params: { ...csrfHeader, path: { notification_id: alert.id } }, body: {} }));
       } catch (caught) {
-        // The row stays unread: the list is re-read later and shows what the server holds.
-        if (caught instanceof ApiError) onError?.(caught);
+        sent.current.delete(alert.id);
+        const e = caught instanceof ApiError ? caught : undefined;
+        if (e?.kind === 'unauthenticated') {
+          onSignedOut?.(e);
+          return 'signedout';
+        }
+        const notice: RowNotice = e?.kind === 'forbidden' || e?.kind === 'not_found' ? 'gone' : e?.kind === 'csrf' ? 'session' : 'failed';
+        setNotice(alert.id, notice);
+        if (notice === 'gone') onGone?.();
+        return notice;
       }
-      opening.current = false;
-      router.push(workHref(alert));
+      setNotice(alert.id);
+      onRead?.(alert);
+      window.dispatchEvent(new CustomEvent(ALERT_READ_EVENT, { detail: alert.id }));
+      return undefined;
     },
-    [router, onRead, onError],
+    [onRead, onGone, onSignedOut, setNotice],
+  );
+
+  /** The row's link: unread, mark read first, then go; read, or a click with a modifier key, is left to the link. */
+  const open: OpenAlert = useCallback(
+    async (event, alert) => {
+      if (alert.read || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return 'held';
+      event.preventDefault();
+      if (opening.current) return 'held';
+      opening.current = true;
+      const href = alertHref(alert);
+      const notice = await markRead(alert);
+      opening.current = false;
+      if (!href || notice === 'gone' || notice === 'session' || notice === 'signedout') return 'held';
+      router.push(href);
+      return notice ? 'failed' : 'read';
+    },
+    [markRead, router],
+  );
+
+  return { open, markRead, notices };
+}
+
+/** A row with no link: a Mark as read button (unread only) and the row's notice. */
+export function RowTail({ alert, notice, onMark }: { alert: Alert; notice?: RowNotice; onMark: (alert: Alert) => void }) {
+  return (
+    <>
+      {notice && (
+        <span className="alerts-rownote" role="status">
+          {NOTICE_WORDS[notice]}
+        </span>
+      )}
+      {!alert.read && !alertHref(alert) && notice !== 'gone' && (
+        <Button kind="bare" className="alerts-markread" onClick={() => onMark(alert)}>
+          Mark as read<VisuallyHidden>: {alert.title}</VisuallyHidden>
+        </Button>
+      )}
+    </>
   );
 }
 
