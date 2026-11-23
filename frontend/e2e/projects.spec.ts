@@ -225,7 +225,8 @@ for (const [label, viewport] of [
       await shot(page, `project-documents-${w}`);
       await expectNoAxeViolations(page);
       await projectTabs(page).first().click();
-      await expect(page).toHaveURL(/\/projects\/00000000-0000-4000-8000-000000000101$/);
+      // the tab links keep the id the page was opened with
+      await expect(page).toHaveURL(/\/projects\/P-0101$/);
       await expect(lineLinks(page)).toHaveCount(8);
     });
 
