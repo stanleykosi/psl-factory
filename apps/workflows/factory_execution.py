@@ -39,7 +39,14 @@ def qualified_rule(work):
     return config,rule,principal,reviewer
 
 def execution_actor(work):
-    if work.execution_binding_id is None:return work.actor
+    if work.execution_binding_id is None:
+        if work.definition == 'pmo-leadership-report/v1':
+            from .factory_leadership import automatic_scope, principal
+            if automatic_scope(work):
+                from .factory import profile
+                _, settings = profile(work)
+                return principal(work, settings, 'preparer_id')
+        return work.actor
     config,rule,principal,_=qualified_rule(work)
     bound=work.execution_binding
     if bound.work_id!=work.pk or bound.configuration_id!=config.pk or bound.rule!=rule or bound.principal_id!=principal.pk:
@@ -57,6 +64,11 @@ def available_actor(work):
 
 def require_control(actor,work):
     from .factory import access
+    if work.definition == 'pmo-leadership-report/v1':
+        from .factory_leadership import can_correct_automatic
+        if can_correct_automatic(actor, work):
+            access(actor, work.case, 'factory.read', work.definition)
+            return
     access(actor,work.case,'factory.execute',work.definition)
     owner=available_actor(work)
     if owner is None or actor.pk!=owner.pk:require(actor,work.case,'factory.manage')

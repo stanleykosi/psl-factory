@@ -2177,7 +2177,7 @@ export interface paths {
         /** Read the reviewed bid calculation sources, amounts, approval and exact adjustment choices */
         get: operations["bid_pricing_detail"];
         put?: never;
-        /** Apply an explicitly bounded adjustment and prepare fresh native bid review */
+        /** Propose or decide an exact naira price change before refreshing native bid review */
         post: operations["bid_pricing_adjust"];
         delete?: never;
         options?: never;
@@ -7928,6 +7928,7 @@ export interface operations {
                             version: number;
                         }[];
                         all_projects_available: boolean;
+                        automatic_project_scope: boolean;
                         setup_actions: ("draft_scope" | "draft_reviewer" | "draft_audience")[];
                         owner_evidence: {
                             id: number;
@@ -7979,16 +7980,16 @@ export interface operations {
                     background: boolean;
                     selection: {
                         template_id: number | null;
-                        content_id: number | null;
+                        content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "internal_tuesday";
                         /** @enum {unknown} */
                         audience: "internal" | "management";
-                        selections: {
+                        selections?: {
                             meetings: number[];
                             actions: number[];
                             milestones: number[];
@@ -8035,16 +8036,16 @@ export interface operations {
                     background: boolean;
                     selection: {
                         template_id: number | null;
-                        content_id: number | null;
+                        content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "monthly_executive";
                         /** @enum {unknown} */
                         audience: "internal" | "management";
-                        selections: {
+                        selections?: {
                             meetings: number[];
                             actions: number[];
                             milestones: number[];
@@ -9035,8 +9036,8 @@ export interface operations {
                         inputs: {
                             template_id: number | null;
                             content_id: number | null;
-                            start_at: string;
-                            end_at: string;
+                            start_at?: string;
+                            end_at?: string;
                             /** @enum {unknown} */
                             kind: "internal_tuesday" | "monthly_executive";
                             /** @enum {unknown} */
@@ -9049,12 +9050,20 @@ export interface operations {
                                 changes: number[];
                                 escalations: number[];
                             };
-                            scope?: {
+                            scope: {
                                 /** @constant */
                                 mode: "all_authorised_projects";
                                 actor: number;
                                 configuration: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
+                            } | {
+                                /** @constant */
+                                mode: "all_psl_projects";
+                                actor: number;
+                                domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
+                                register_id: number | null;
+                                /** @constant */
+                                basis?: "current_information";
                             };
                         };
                     };
@@ -12587,8 +12596,8 @@ export interface operations {
                         inputs: {
                             template_id: number | null;
                             content_id: number | null;
-                            start_at: string;
-                            end_at: string;
+                            start_at?: string;
+                            end_at?: string;
                             /** @enum {unknown} */
                             kind: "internal_tuesday" | "monthly_executive";
                             /** @enum {unknown} */
@@ -12601,12 +12610,20 @@ export interface operations {
                                 changes: number[];
                                 escalations: number[];
                             };
-                            scope?: {
+                            scope: {
                                 /** @constant */
                                 mode: "all_authorised_projects";
                                 actor: number;
                                 configuration: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
+                            } | {
+                                /** @constant */
+                                mode: "all_psl_projects";
+                                actor: number;
+                                domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
+                                register_id: number | null;
+                                /** @constant */
+                                basis?: "current_information";
                             };
                         };
                     };
@@ -13821,6 +13838,17 @@ export interface operations {
                             acceptance_id: number | null;
                             proof_ids: number[];
                             owner_decision_ids: number[];
+                            can_confirm: boolean;
+                            confirmation: {
+                                id: number;
+                                actor_id: number;
+                                /** Format: date-time */
+                                at: string;
+                                /** @enum {string} */
+                                role: "PMO Lead";
+                                name: string;
+                                note: string | null;
+                            } | null;
                         };
                     };
                 };
@@ -14198,6 +14226,15 @@ export interface operations {
                     expected_revision: number;
                     case_revision: number;
                     configuration_id: number;
+                    acceptance_id: number;
+                    evidence_id: number;
+                } | {
+                    /** @constant */
+                    action: "confirm_and_complete";
+                    expected_revision: number;
+                    case_revision: number;
+                    name: string;
+                    note?: string;
                     acceptance_id: number;
                     evidence_id: number;
                 };
@@ -18747,6 +18784,7 @@ export interface operations {
                             result: "won" | "lost" | "pending" | "unknown";
                             /** Format: date-time */
                             observed_at: string;
+                            note: string;
                             award_amount: string | null;
                             award_currency: string | null;
                             customer_expected_on: string | null;
@@ -18855,6 +18893,35 @@ export interface operations {
                         }[];
                         adjustment_currency: string | null;
                         can_configure: boolean;
+                        finance_targets: {
+                            key: string;
+                            /** @enum {string} */
+                            kind: "input" | "output";
+                            label: string;
+                            amount: string;
+                        }[];
+                        finance_pending: {
+                            id: number;
+                            by: number;
+                            /** Format: date-time */
+                            at: string;
+                            target: string;
+                            before: string;
+                            after: string;
+                            reason: string;
+                        } | null;
+                        finance_last_decision: {
+                            id: number;
+                            proposal_id: number;
+                            by: number;
+                            /** Format: date-time */
+                            at: string;
+                            /** @enum {string} */
+                            status: "approved" | "returned";
+                            reason: string;
+                        } | null;
+                        can_propose: boolean;
+                        can_decide: boolean;
                     };
                 };
             };
@@ -18896,6 +18963,21 @@ export interface operations {
                     case_revision: number;
                     target: string;
                     amount: string;
+                    reason: string;
+                } | {
+                    expected_revision: number;
+                    case_revision: number;
+                    /** @constant */
+                    action: "propose";
+                    target: string;
+                    amount: string;
+                    reason: string;
+                } | {
+                    expected_revision: number;
+                    case_revision: number;
+                    /** @enum {string} */
+                    action: "approve" | "return";
+                    proposal_id: number;
                     reason: string;
                 };
             };
@@ -21123,11 +21205,19 @@ export interface operations {
                                 actor: number;
                                 configuration: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
+                            } | {
+                                /** @constant */
+                                mode: "all_psl_projects";
+                                actor: number;
+                                domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
+                                register_id: number | null;
+                                /** @constant */
+                                basis?: "current_information";
                             };
                         };
                         coverage: {
                             /** @enum {string} */
-                            scope: "selected_records" | "approved_project_scope";
+                            scope: "selected_records" | "approved_project_scope" | "all_psl_projects";
                             /** Format: date-time */
                             captured_at: string;
                             projects: number;
@@ -21135,6 +21225,12 @@ export interface operations {
                                 /** @enum {string} */
                                 domain: "meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations";
                                 count: number;
+                            }[];
+                            project_register: {
+                                /** Format: uuid */
+                                id: string;
+                                name: string;
+                                unavailable_domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
                             }[];
                         };
                         editable_sections: ({
@@ -21246,16 +21342,16 @@ export interface operations {
                     reason: string;
                     selection: {
                         template_id: number | null;
-                        content_id: number | null;
+                        content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "internal_tuesday";
                         /** @enum {unknown} */
                         audience: "internal" | "management";
-                        selections: {
+                        selections?: {
                             meetings: number[];
                             actions: number[];
                             milestones: number[];
@@ -21299,16 +21395,16 @@ export interface operations {
                     reason: string;
                     selection: {
                         template_id: number | null;
-                        content_id: number | null;
+                        content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "monthly_executive";
                         /** @enum {unknown} */
                         audience: "internal" | "management";
-                        selections: {
+                        selections?: {
                             meetings: number[];
                             actions: number[];
                             milestones: number[];

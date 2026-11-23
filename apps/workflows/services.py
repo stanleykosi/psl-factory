@@ -4,7 +4,6 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.services import event
-from apps.identity.services import require
 from .models import Outbox
 
 
@@ -37,6 +36,7 @@ def finish(job_id, fence, status, receipt='', error=''):
 
 def run_once(adapter=None,case_id=None):
     from adapters.finance import InternalFinanceAdapter
+    from .factory_go_live_milestone import authorize_dispatch
     adapter = adapter or InternalFinanceAdapter()
     lease = claim(case_id)
     if not lease:
@@ -56,7 +56,7 @@ def run_once(adapter=None,case_id=None):
         finish(job_id, fence, 'confirmed', existing)
         return True
     try:
-        require(job.actor, job.case, 'milestone.complete')
+        authorize_dispatch(job, job.case)
     except PermissionDenied:
         finish(job_id, fence, 'held', error='Dispatch authority revoked; operator review required')
         return True

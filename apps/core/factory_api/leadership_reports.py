@@ -21,7 +21,7 @@ from apps.workflows import factory_leadership as workflow
 
 from .commands import require_line
 from .delivery import NOTE, PROOF, proof_rows
-from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, array, choice, endpoint, nullable, obj
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
 from .intake import KEY, REF, START_RESULT, progress_result, start_projects
 from .intake_sources import positive_id
 from .reviews import VERDICT, VERSIONS
@@ -34,9 +34,10 @@ SECTION = obj({'text': {**TEXT, 'maxLength': 10000}, 'evidence_ids': {**array(ID
 NARRATIVE = {kind: obj({theme: SECTION for theme in themes}) for kind, themes in native.THEMES.items()}
 DOMAINS = tuple(native.DOMAINS)
 DOMAIN = choice(*DOMAINS)
-SOURCE_COUNTS = obj({'scope': choice('selected_records', 'approved_project_scope'), 'captured_at': DATETIME,
+SOURCE_COUNTS = obj({'scope': choice('selected_records', 'approved_project_scope', 'all_psl_projects'), 'captured_at': DATETIME,
     'projects': {'type': 'integer', 'minimum': 1},
-    'counts': array(obj({'domain': DOMAIN, 'count': {'type': 'integer', 'minimum': 0}}), limit=len(DOMAINS))})
+    'counts': array(obj({'domain': DOMAIN, 'count': {'type': 'integer', 'minimum': 0}}), limit=len(DOMAINS)),
+    'project_register': array(obj({'id': UUID, 'name': TEXT, 'unavailable_domains': array(DOMAIN, limit=len(DOMAINS))}))})
 PARTICIPANTS = {**array(ID, limit=100), 'uniqueItems': True}
 WINDOW = {'start_at': DATETIME, 'end_at': DATETIME}
 KINDS = choice(*native.THEMES)
@@ -53,7 +54,8 @@ SETUP_INPUT = [obj({'action': {'const': action}, 'case_revision': REVISION, 'evi
 def input_schema(kind):
     properties = {**workflow.INPUT['properties'], **WINDOW, 'kind': {'const': kind}}
     return obj({**properties, 'scope': obj({'domains': {**array(DOMAIN, limit=len(DOMAINS)), 'minItems': 1,
-                                                       'uniqueItems': True}})}, optional=('scope',))
+                                                       'uniqueItems': True}})},
+               optional=('scope', 'content_id', 'selections', 'start_at', 'end_at'))
 
 
 INPUT = {kind: input_schema(kind) for kind in native.THEMES}
@@ -65,7 +67,10 @@ def work_schema(fields):
 
 def intake_case(actor, case_id, action):
     case = get_object_or_404(start_projects(actor, workflow.DEFINITION), pk=case_id)
-    require(actor, case, action)
+    if action == 'report.read':
+        scope_policy.require_report(actor, case)
+    else:
+        require(actor, case, action)
     return case
 
 
@@ -90,6 +95,7 @@ def picker(actor, case, domain, before):
 
 @endpoint(response=obj({'revision': REVISION, 'source_domain': nullable(DOMAIN), 'sources': array(obj({'id': ID, 'evidence_id': ID}), limit=30),
     'next_before': nullable(ID), 'templates': array(TEMPLATE, limit=30), 'all_projects_available': BOOLEAN,
+    'automatic_project_scope': BOOLEAN,
     'setup_actions': array(choice(*SETUP)), 'owner_evidence': array(PROOF, limit=30)}),
     query={'kind': KINDS, 'domain': DOMAIN, 'before': ID}, required_query=('kind',),
     summary='List permitted leadership source rows, owned templates and reviewed coverage options')
@@ -101,9 +107,16 @@ def options(request, case_id):
         raise ValidationError('Choose a leadership report purpose and available source type.')
     with limit_queries(600):
         rows, cursor = picker(actor, case, domain, positive_id(request, 'before'))
+        automatic = scope_policy.department_lead(actor, case)
         grants = {action for _, action in active_case_grants(actor, [case.pk])}
         templates = []
-        if 'document.read' in grants:
+        if automatic:
+            required = sorted({'executive_summary', *native.THEMES[kind]})
+            templates = list(Template.objects.filter(case=case, definition__document_type='status_report',
+                definition__internal_review_required=kind == 'monthly_executive',
+                definition__required_fields__contains=required, definition__required_fields__contained_by=required
+            ).order_by('-pk').values('id', 'name', 'version')[:30])
+        elif 'document.read' in grants:
             candidates = list(Template.objects.filter(case=case, definition__document_type='status_report',
                 definition__internal_review_required=kind == 'monthly_executive').order_by('-pk').values_list('pk', flat=True)[:30])
             templates = list(visible_templates(actor, case, candidate_ids=candidates, budget=ReadBudget()).order_by('-pk').values(
@@ -117,12 +130,13 @@ def options(request, case_id):
         configure = 'policy.configure' in grants
         proof = public_evidence(case.evidence.filter(kind='policy_decision')).only('id', 'kind', 'version').order_by('-pk')[:30]
         return {'revision': case.revision, 'source_domain': domain, 'sources': rows, 'next_before': cursor,
-                'templates': templates, 'all_projects_available': allowed, 'setup_actions': list(SETUP) if configure else [],
+                'templates': templates, 'all_projects_available': allowed or automatic, 'automatic_project_scope': automatic,
+                'setup_actions': list(SETUP) if configure else [],
                 'owner_evidence': proof_rows(proof) if configure else []}
 
 
 def compose(actor, case, selection, narrative):
-    inputs = dict(selection)
+    inputs = {'content_id': None, 'selections': {domain: [] for domain in DOMAINS}, **selection}
     if narrative is not None:
         if inputs['content_id'] is not None or 'scope' in inputs:
             raise ValidationError('Choose one existing narrative, new cited narrative or reviewed project coverage.')
@@ -171,8 +185,12 @@ def coverage(data):
     manifest = data['manifest']
     scope = manifest.get('project_scope')
     counts = scope['record_counts'] if scope else {key: len(manifest.get(key, ())) for key in DOMAINS}
-    return {'scope': 'approved_project_scope' if scope else 'selected_records',
+    automatic = scope and scope['mode'] == scope_policy.LEAD_MODE
+    return {'scope': scope_policy.LEAD_MODE if automatic else 'approved_project_scope' if scope else 'selected_records',
             'captured_at': data['captured_at'], 'projects': len(scope['projects']) if scope else 1,
+            'project_register': [{'id': project['case'], 'name': project['name'],
+                                  'unavailable_domains': project['unavailable_domains']} for project in scope['projects']]
+            if automatic else [],
             'counts': [{'domain': key, 'count': counts[key]} for key in DOMAINS if key in counts]}
 
 
@@ -227,7 +245,8 @@ def delivered(actor, work):
 def correct(request, work_id, *, body):
     actor = request.user
     work = require_line(actor, work_id, workflow.DEFINITION)
-    case = lock_case(actor, work.case_id, 'factory.manage', body['case_revision'])
+    action = 'evidence.add' if workflow.can_correct_automatic(actor, work) else 'factory.manage'
+    case = lock_case(actor, work.case_id, action, body['case_revision'])
     inputs = compose(actor, case, body['selection'], body['sections'])
     case.refresh_from_db(fields=['revision'])
     return result(workflow.correct(actor, work.pk, body['expected_revision'], case.revision, inputs, body['reason']))

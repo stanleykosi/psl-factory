@@ -269,7 +269,7 @@ def answer_command(request, work_id, *, body):
 SUBMISSION = obj({'id': ID, 'version_id': ID, 'response_id': ID, 'submitted_at': DATETIME, 'late': BOOLEAN,
                   'receipt_ids': array(ID)})
 OUTCOME = obj({'id': ID, 'submission_id': ID, 'result': choice('won', 'lost', 'pending', 'unknown'),
-               'observed_at': DATETIME, 'award_amount': nullable(TEXT), 'award_currency': nullable(TEXT),
+               'observed_at': DATETIME, 'note': TEXT, 'award_amount': nullable(TEXT), 'award_currency': nullable(TEXT),
                'customer_expected_on': nullable({'type': 'string', 'format': 'date'}),
                'followup_on': nullable({'type': 'string', 'format': 'date'}), 'remind_at': nullable(DATETIME),
                'comparison': nullable(obj({'finding': TEXT, 'quote_amount': nullable(TEXT), 'quote_currency': nullable(TEXT),
@@ -333,7 +333,7 @@ def outcomes(request, work_id):
             comparison = rfp_pricing.comparison(work.case, current)
             quote = comparison.get('quote', {}) if comparison else {}
             outcome = {'id': current.pk, 'submission_id': current.submission_id, 'result': current.result,
-                       'observed_at': current.observed_at, 'award_amount': current.award_amount,
+                       'observed_at': current.observed_at, 'note': current.note, 'award_amount': current.award_amount,
                        'customer_expected_on': current.customer_expected_on, 'followup_on': current.followup_on,
                        'remind_at': current.remind_at,
                        'award_currency': current.award_currency or None, 'comparison': {

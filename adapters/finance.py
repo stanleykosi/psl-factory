@@ -23,8 +23,8 @@ class InternalFinanceAdapter:
         from apps.workflows.readiness import gate
         case=Case.objects.select_for_update().get(pk=job.case_id)
         list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
-        from apps.identity.services import require
-        require(job.actor,case,'milestone.complete')
+        from apps.workflows.factory_go_live_milestone import authorize_dispatch
+        authorize_dispatch(job, case, locked=True)
         gate(case,'handoff')
         record, _ = Handoff.objects.get_or_create(milestone=job.milestone,
             defaults={'case': job.case, 'operation_key': job.operation_key, 'payload': job.payload})
