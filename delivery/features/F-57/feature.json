@@ -146,7 +146,7 @@
     "base_branch": "main",
     "base_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
     "task_branch": "fe-connect-1-live-client",
-    "head_sha": null,
+    "head_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
@@ -157,7 +157,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
