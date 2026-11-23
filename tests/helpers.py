@@ -20,6 +20,28 @@ def setup_case(kind='project', synthetic=True, username='human',case_id=None):
     return actor,case
 
 
+def admit_department(owner, case, role, *, member=False):
+    from apps.identity import intake, staff, teams
+
+    root = get_user_model().objects.create_superuser(f'synthetic-{role}-admission-root')
+    intake.provision(root, owner, case.tenant, {
+        'format': 'psl.tenant-access/v3', 'create_cases': True, 'manage_access': True,
+        'kinds': ['project'], 'allowed_actions': ['case.read'], 'initial_actions': ['case.read'],
+        'classification': 'synthetic', 'staff_lifecycle': {'invite_minutes': 30, 'allow_invite': True,
+            'allow_deactivation': True, 'allow_profile_edit': True, 'allow_roster': True},
+    }, timezone.now() + timedelta(hours=1), True, 'Synthetic department access for write checks')
+    team = teams.create_team(owner, case.pk, role, f'Sample {role}')
+
+    def invite(actor, mode):
+        username = f'synthetic-{role}-{mode}'
+        _, token = staff.invite_person(actor, case.pk, username, username, f'{username}@example.invalid',
+                                      rev(case), role=role, mode=mode, team_id=team.pk)
+        return staff.accept(token, 'synthetic-department-password')
+
+    lead = invite(owner, 'lead')
+    return lead, invite(lead, 'member') if member else None
+
+
 def worker_test_environment(connection):
     database = connection.settings_dict['NAME']
     if connection.vendor != 'postgresql' or not database.startswith('test_'):

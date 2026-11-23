@@ -142,14 +142,25 @@ def rule_for_use(actor,case,rule_id):
     return rule
 
 @transaction.atomic
-def run(a,case_id,plan_id,engineering_id,security_id,inputs_id,operation_key,expected=None):
+def run(a,case_id,plan_id,engineering_id,security_id,inputs_id,operation_key,expected=None,*,finance_approval=None):
     c=locked(a,case_id,'costing.calculate',expected);readable(a,c,True);validate(KEY,operation_key);p,r,o,v=configured(c,a)
     sources={k:subject(c,pk,kind) for k,pk,kind in [('plan',plan_id,'plan'),('engineering',engineering_id,'engineering_estimate'),('security',security_id,'security_estimate')]};e=subject(c,inputs_id,'p14_inputs');inputs=read(e.body,ARRAY(VALUE,1));pins={'policy':p.pk,'contract':v,'sources':{k:[ev.pk,ev.sha256] for k,ev in sources.items()},'inputs_sha256':e.sha256}
+    outputs = None
+    if finance_approval is not None:
+        from apps.core.models import Audit
+        from apps.identity.factory_access import department_cases
+
+        approval = Audit.objects.filter(case=c, actor=a, action='factory.finance_bid_adjustment_approved',
+                                        pk=finance_approval, data__input_evidence=e.pk).first()
+        if not approval or not department_cases(a, 'finance-lead', heads_only=True).filter(pk=c.pk).exists():
+            raise PermissionDenied('Current Finance Lead approval for these exact bid inputs is required.')
+        outputs = approval.data['outputs']
+        pins.update(finance_approval=approval.pk, approved_outputs=outputs)
     old=CostingRun.objects.filter(case=c,operation_key=operation_key).first()
     if old:
         if old.snapshot!=pins or old.actor_id!=a.pk or old.evidence_id!=e.pk:raise ValidationError('Calculation key conflicts; never overwrite a prior calculation')
         return old
-    result=calculate(r.payload,inputs);result['oracle_results']=oracle_results(r,o,True)
+    result=calculate(r.payload,inputs,approved_outputs=outputs);result['oracle_results']=oracle_results(r,o,True)
     row=CostingRun.objects.create(case=c,rule=r,operation_key=operation_key,snapshot=pins,inputs=inputs,result=result,evidence=e,actor=a);event(a,c,'costing.calculated',run=row.pk,status=result['status']);bump(c);return row
 
 def current_run(row,require_known=True):

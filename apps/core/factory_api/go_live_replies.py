@@ -89,7 +89,9 @@ def draft_rules(request, work_id, *, body):
     'linked_issues': array(obj({'reply_id': ID, 'issue_id': ID})),
     'reviewed_handoffs': array(obj({'reply_id': ID, 'review_id': ID, 'dossier_id': ID})),
     'milestone': obj({'recorded_id': nullable(ID), 'configuration_id': nullable(ID), 'name': nullable(TEXT),
-        'acceptance_id': nullable(ID), 'proof_ids': array(ID, limit=100), 'owner_decision_ids': array(ID, limit=100)}),
+        'acceptance_id': nullable(ID), 'proof_ids': array(ID, limit=100), 'owner_decision_ids': array(ID, limit=100),
+        'can_confirm': BOOLEAN, 'confirmation': nullable(obj({'id': ID, 'actor_id': ID, 'at': DATETIME,
+            'role': choice('PMO Lead'), 'name': TEXT, 'note': nullable(NOTE)}))}),
 }), summary='Read exact Go-live replies, current role controls and the evidenced milestone handoff')
 @read_observation
 def detail(request, work_id):
@@ -112,14 +114,24 @@ def detail(request, work_id):
                              for row in available[kind]]
         activity = milestones.panel(actor, work, state)
         completion = activity.get('completion', {})
+        direct = activity.get('direct_confirmation', {})
+        confirmation = activity.get('confirmation')
     return {'expected_revision': work.revision, 'case_revision': work.case.revision,
             'channels': response['rules']['channels'] if response['rules'] else CHANNELS, 'finding': response['finding'],
             **opening, 'replies': replies, 'linked_issues': [{'reply_id': row.reply_id, 'issue_id': row.issue_id}
                                                             for row in response['issues']],
             'reviewed_handoffs': response['destinations'],
             'milestone': {'recorded_id': activity['recorded'].pk if 'recorded' in activity else None,
-                'configuration_id': completion.get('configuration'), 'name': completion.get('name'),
-                'acceptance_id': completion.get('acceptance'), 'proof_ids': [row['pk'] for row in completion.get('sources', [])],
+                'configuration_id': completion.get('configuration'),
+                'name': activity['recorded'].name if 'recorded' in activity else completion.get('name'),
+                'acceptance_id': confirmation.data['acceptance'] if confirmation else
+                    completion.get('acceptance') or direct.get('acceptance'),
+                'proof_ids': [row['pk'] for row in (completion or direct).get('sources', [])],
+                'can_confirm': bool(direct),
+                'confirmation': {'id': confirmation.pk, 'actor_id': confirmation.actor_id, 'at': confirmation.created_at,
+                                 'role': 'PMO Lead',
+                                 'name': confirmation.data['milestone_name'], 'note': confirmation.data['note']}
+                if confirmation else None,
                 'owner_decision_ids': [row['pk'] for row in activity.get('settings', [])]}}
 
 
@@ -158,12 +170,16 @@ def prepare_successor(request, work_id, *, body):
 @endpoint(method='POST', request={'oneOf': [
     obj({'action': {'const': 'draft_mapping'}, **VERSIONS, 'name': {**TEXT, 'maxLength': 200}, 'owner_decision_id': ID}),
     obj({'action': {'const': 'record_completion'}, **VERSIONS, 'configuration_id': ID, 'acceptance_id': ID, 'evidence_id': ID}),
+    obj({'action': {'const': 'confirm_and_complete'}, **VERSIONS, 'name': {**TEXT, 'maxLength': 200},
+         'note': NOTE, 'acceptance_id': ID, 'evidence_id': ID}, optional=('note',)),
 ]}, response=RESPONSE, status=201, summary='Draft a sourced milestone mapping or record its independently evidenced PMO completion')
 def milestone(request, work_id, *, body):
     work = require_line(request.user, work_id, domain.DEFINITION)
     args = (request.user, work.pk, body['expected_revision'], body['case_revision'])
     if body['action'] == 'draft_mapping':
         row = milestones.draft_mapping(*args, body['name'], body['owner_decision_id'])
+    elif body['action'] == 'confirm_and_complete':
+        row = milestones.confirm_and_complete(*args, body['name'], body['acceptance_id'], body['evidence_id'], body.get('note', ''))
     else:
         row = milestones.record(*args, body['configuration_id'], body['acceptance_id'], body['evidence_id'])
     return recorded(work, row)
