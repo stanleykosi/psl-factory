@@ -46,7 +46,7 @@ import { resetTemplates, templatesList, templateVersion } from './templates.mjs'
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
-import { isMoneyRequest, moneyRoute } from './money.mjs';
+import { isMilestoneRequest, isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
@@ -334,6 +334,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           return send(res, ...roleDashboardRoute({ persona }));
         }
       }
+      // F-71: one recorded completion of a project (live, not in v7); money.mjs answers it.
+      if (method === 'get' && isMilestoneRequest(url)) return send(res, ...moneyRoute({ route: { statuses: ['401', '403', '404'] }, url, req, cookies: parseCookies(req.headers.cookie) }));
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -354,7 +356,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
         return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       }
-      // F-26: the money tab of E-PROJECT-TAB and E-REPORT go to money.mjs (its own persona and scenario check); other tabs stay 501.
+      // F-26, F-71: the money tab of E-PROJECT-TAB goes to money.mjs (its own persona and scenario check); other tabs stay 501.
       if (isMoneyRequest(route.operationId, url)) return send(res, ...moneyRoute({ route, url, req, cookies: parseCookies(req.headers.cookie) }));
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 

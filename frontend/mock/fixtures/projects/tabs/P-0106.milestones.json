@@ -1,5 +1,18 @@
 {
-  "items": [],
+  "case_id": "00000000-0000-4000-8000-000000000106",
+  "tab": "milestones",
   "as_of": "2026-11-12T15:40:00Z",
-  "milestones": []
+  "sections": [
+    {
+      "key": "completions",
+      "title": "Recorded completions",
+      "items": [],
+      "page": 1,
+      "has_more": false,
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/milestones/",
+      "api_url": null,
+      "total": 0,
+      "counts": null
+    }
+  ]
 }

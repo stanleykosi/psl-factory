@@ -1,147 +1,47 @@
 {
-  "items": [
-    {
-      "position": 1,
-      "name": "Kick-off",
-      "contract_amount": {
-        "amount": "3000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-10-27T10:00:00Z",
-        "evidence_id": "EV-3101"
-      },
-      "invoice": {
-        "reference": "INV-0398",
-        "work_id": "W-1713",
-        "state": "verified"
-      },
-      "paid": {
-        "status": "part_paid",
-        "owed": {
-          "amount": "500000.00",
-          "currency": "NGN",
-          "unknown": false
-        }
-      }
-    },
-    {
-      "position": 2,
-      "name": "UAT sign-off",
-      "contract_amount": {
-        "amount": "4250000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-11-11T10:00:00Z",
-        "proof": "client UAT sign-off"
-      },
-      "invoice": {
-        "reference": "INV-0412",
-        "work_id": "W-1001",
-        "state": "waiting"
-      }
-    },
-    {
-      "position": 3,
-      "name": "Go-live",
-      "contract_amount": {
-        "amount": "4250000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      }
-    },
-    {
-      "position": 4,
-      "name": "Hypercare",
-      "contract_amount": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "amount_note": "amount set at go-live",
-      "completion": {
-        "status": "not_yet"
-      }
-    }
-  ],
+  "case_id": "00000000-0000-4000-8000-000000000101",
+  "tab": "milestones",
   "as_of": "2026-11-12T15:40:00Z",
-  "milestones": [
+  "sections": [
     {
-      "position": 1,
-      "name": "Kick-off",
-      "contract_amount": {
-        "amount": "3000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-10-27T10:00:00Z",
-        "evidence_id": "EV-3101"
-      },
-      "invoice": {
-        "reference": "INV-0398",
-        "work_id": "W-1713",
-        "state": "verified"
-      },
-      "paid": {
-        "status": "part_paid",
-        "owed": {
-          "amount": "500000.00",
-          "currency": "NGN",
-          "unknown": false
+      "key": "completions",
+      "title": "Recorded completions",
+      "items": [
+        {
+          "title": "Kick-off",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-10-27T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3101,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3101"
+        },
+        {
+          "title": "UAT sign-off",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": null,
+          "at": "2026-11-11T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3102,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3102"
         }
-      }
-    },
-    {
-      "position": 2,
-      "name": "UAT sign-off",
-      "contract_amount": {
-        "amount": "4250000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-11-11T10:00:00Z",
-        "proof": "client UAT sign-off"
-      },
-      "invoice": {
-        "reference": "INV-0412",
-        "work_id": "W-1001",
-        "state": "waiting"
-      }
-    },
-    {
-      "position": 3,
-      "name": "Go-live",
-      "contract_amount": {
-        "amount": "4250000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      }
-    },
-    {
-      "position": 4,
-      "name": "Hypercare",
-      "contract_amount": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "amount_note": "amount set at go-live",
-      "completion": {
-        "status": "not_yet"
-      }
+      ],
+      "page": 1,
+      "has_more": false,
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+      "api_url": null,
+      "total": 2,
+      "counts": null
     }
   ]
 }

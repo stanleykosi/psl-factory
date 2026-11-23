@@ -1,331 +1,397 @@
 {
-  "items": [
-    {
-      "position": 1,
-      "name": "Discovery",
-      "contract_amount": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "completion": {
-        "status": "done"
-      },
-      "paid": {
-        "status": "unknown"
-      }
-    },
-    {
-      "position": 2,
-      "name": "Design (billed in USD)",
-      "contract_amount": {
-        "amount": "1250000.50",
-        "currency": "USD",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "paid": {
-        "status": "paid"
-      }
-    },
-    {
-      "position": 3,
-      "name": "Build",
-      "contract_amount": {
-        "amount": "9500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-11-05T09:00:00Z",
-        "proof": "build sign-off"
-      },
-      "invoice": {
-        "reference": "INV-0501",
-        "work_id": "W-1001",
-        "state": "verified"
-      },
-      "changes": [
-        {
-          "reference": "CR-0090",
-          "title": "Biometric login",
-          "amount": {
-            "amount": "750000.00",
-            "currency": "NGN",
-            "unknown": false
-          },
-          "work_id": "W-1005"
-        }
-      ]
-    },
-    {
-      "position": 4,
-      "name": "Pilot",
-      "contract_amount": {
-        "amount": "2000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-11-08T09:00:00Z",
-        "evidence_id": "EV-3201"
-      },
-      "invoice": {
-        "reference": "INV-0502",
-        "state": "ready"
-      },
-      "paid": {
-        "status": "part_paid",
-        "owed": {
-          "currency": "NGN",
-          "unknown": true
-        }
-      },
-      "changes": [
-        {
-          "reference": "CR-0091",
-          "title": "Dark mode",
-          "amount": {
-            "currency": "NGN",
-            "unknown": true
-          }
-        }
-      ]
-    },
-    {
-      "position": 5,
-      "name": "Rollout",
-      "contract_amount": {
-        "amount": "3000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "invoice": {
-        "reference": "INV-0503",
-        "work_id": "W-1713",
-        "state": "action_needed"
-      },
-      "paid": {
-        "status": "not_paid",
-        "owed": {
-          "amount": "3000000.00",
-          "currency": "NGN",
-          "unknown": false
-        }
-      }
-    },
-    {
-      "position": 6,
-      "name": "Training",
-      "contract_amount": {
-        "amount": "500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "paid": {
-        "status": "not_due"
-      }
-    },
-    {
-      "position": 7,
-      "name": "Support retainer",
-      "contract_amount": {
-        "amount": "1200000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "paid": {
-        "status": "finance_tracks"
-      }
-    },
-    {
-      "position": 8,
-      "name": "Close-out",
-      "contract_amount": {
-        "amount": "400000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      }
-    }
-  ],
+  "case_id": "00000000-0000-4000-8000-000000000102",
+  "tab": "milestones",
   "as_of": "2026-11-12T15:40:00Z",
-  "milestones": [
+  "sections": [
     {
-      "position": 1,
-      "name": "Discovery",
-      "contract_amount": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "completion": {
-        "status": "done"
-      },
-      "paid": {
-        "status": "unknown"
-      }
-    },
-    {
-      "position": 2,
-      "name": "Design (billed in USD)",
-      "contract_amount": {
-        "amount": "1250000.50",
-        "currency": "USD",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "paid": {
-        "status": "paid"
-      }
-    },
-    {
-      "position": 3,
-      "name": "Build",
-      "contract_amount": {
-        "amount": "9500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-11-05T09:00:00Z",
-        "proof": "build sign-off"
-      },
-      "invoice": {
-        "reference": "INV-0501",
-        "work_id": "W-1001",
-        "state": "verified"
-      },
-      "changes": [
+      "key": "completions",
+      "title": "Recorded completions",
+      "items": [
         {
-          "reference": "CR-0090",
-          "title": "Biometric login",
-          "amount": {
-            "amount": "750000.00",
-            "currency": "NGN",
-            "unknown": false
-          },
-          "work_id": "W-1005"
-        }
-      ]
-    },
-    {
-      "position": 4,
-      "name": "Pilot",
-      "contract_amount": {
-        "amount": "2000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "done",
-        "at": "2026-11-08T09:00:00Z",
-        "evidence_id": "EV-3201"
-      },
-      "invoice": {
-        "reference": "INV-0502",
-        "state": "ready"
-      },
-      "paid": {
-        "status": "part_paid",
-        "owed": {
-          "currency": "NGN",
-          "unknown": true
-        }
-      },
-      "changes": [
+          "title": "Recorded step 1",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3200,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3200"
+        },
         {
-          "reference": "CR-0091",
-          "title": "Dark mode",
-          "amount": {
-            "currency": "NGN",
-            "unknown": true
-          }
+          "title": "Recorded step 2",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3201,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3201"
+        },
+        {
+          "title": "Recorded step 3",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3202,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3202"
+        },
+        {
+          "title": "Recorded step 4",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3203,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3203"
+        },
+        {
+          "title": "Recorded step 5",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3204,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3204"
+        },
+        {
+          "title": "Recorded step 6",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3205,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3205"
+        },
+        {
+          "title": "Recorded step 7",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3206,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3206"
+        },
+        {
+          "title": "Recorded step 8",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3207,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3207"
+        },
+        {
+          "title": "Recorded step 9",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3208,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3208"
+        },
+        {
+          "title": "Recorded step 10",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3209,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3209"
+        },
+        {
+          "title": "Recorded step 11",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3210,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3210"
+        },
+        {
+          "title": "Recorded step 12",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3211,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3211"
+        },
+        {
+          "title": "Recorded step 13",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3212,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3212"
+        },
+        {
+          "title": "Recorded step 14",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3213,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3213"
+        },
+        {
+          "title": "Recorded step 15",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3214,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3214"
+        },
+        {
+          "title": "Recorded step 16",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3215,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3215"
+        },
+        {
+          "title": "Recorded step 17",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3216,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3216"
+        },
+        {
+          "title": "Recorded step 18",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3217,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3217"
+        },
+        {
+          "title": "Recorded step 19",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3218,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3218"
+        },
+        {
+          "title": "Recorded step 20",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3219,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3219"
+        },
+        {
+          "title": "Recorded step 21",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3220,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3220"
+        },
+        {
+          "title": "Recorded step 22",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3221,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3221"
+        },
+        {
+          "title": "Recorded step 23",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3222,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3222"
+        },
+        {
+          "title": "Recorded step 24",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3223,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3223"
+        },
+        {
+          "title": "Recorded step 25",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3224,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3224"
+        },
+        {
+          "title": "Recorded step 26",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3225,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3225"
+        },
+        {
+          "title": "Recorded step 27",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-11-01T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3226,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3226"
         }
-      ]
-    },
-    {
-      "position": 5,
-      "name": "Rollout",
-      "contract_amount": {
-        "amount": "3000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "invoice": {
-        "reference": "INV-0503",
-        "work_id": "W-1713",
-        "state": "action_needed"
-      },
-      "paid": {
-        "status": "not_paid",
-        "owed": {
-          "amount": "3000000.00",
-          "currency": "NGN",
-          "unknown": false
-        }
-      }
-    },
-    {
-      "position": 6,
-      "name": "Training",
-      "contract_amount": {
-        "amount": "500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "paid": {
-        "status": "not_due"
-      }
-    },
-    {
-      "position": 7,
-      "name": "Support retainer",
-      "contract_amount": {
-        "amount": "1200000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      },
-      "paid": {
-        "status": "finance_tracks"
-      }
-    },
-    {
-      "position": 8,
-      "name": "Close-out",
-      "contract_amount": {
-        "amount": "400000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "completion": {
-        "status": "not_yet"
-      }
+      ],
+      "page": 1,
+      "has_more": false,
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/milestones/",
+      "api_url": null,
+      "total": 27,
+      "counts": null
     }
   ]
 }

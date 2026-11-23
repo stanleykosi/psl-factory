@@ -60,3 +60,6 @@
 @media (max-width: 719.98px) {
   .money__title { font-size: var(--text-body-phone-size); }
 }
+
+/* F-71: one line per invoice in the invoice and paid cells */
+.money__block { display: block; }
