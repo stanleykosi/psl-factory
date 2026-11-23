@@ -7,5 +7,6 @@ class Command(BaseCommand):
   limit=options['limit']
   if not 1<=limit<=100:raise ValueError('Limit must be 1-100')
   count=0
-  while count<limit and run_once():count+=1
+  seen=set()
+  while count<limit and run_once(seen_jobs=seen):count+=1
   self.stdout.write(f'Processed {count} prerequisite routes')

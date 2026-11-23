@@ -57,7 +57,8 @@ def invoice_rows(actor, case, budget):
         'preparation__coverage', 'preparation__handoff__milestone', 'invoiceissue', 'invoicedelivery',
     ).filter(invoiceissue__isnull=False)
     drafts = Invoice.objects.filter(case=case).annotate(known_issue=Exists(issued)).filter(known_issue=False)
-    current_draft_ids = drafts.order_by('obligation_key', '-version', '-pk').distinct('obligation_key').values('pk')
+    # Draft versions are per reference. The newest draft for the obligation wins across references.
+    current_draft_ids = drafts.order_by('obligation_key', '-pk').distinct('obligation_key').values('pk')
     drafts = Invoice.objects.filter(pk__in=current_draft_ids).select_related('preparation__coverage', 'preparation__handoff__milestone')
     result = []
     for invoice in budget.take(current.order_by('-pk'), 35) + budget.take(drafts.order_by('-pk'), 35):

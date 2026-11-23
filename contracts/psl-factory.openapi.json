@@ -67757,6 +67757,9 @@
                           "amount": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "sample": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
@@ -67764,7 +67767,8 @@
                           "workspace",
                           "currency",
                           "basis",
-                          "amount"
+                          "amount",
+                          "sample"
                         ],
                         "additionalProperties": false
                       },

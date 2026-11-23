@@ -23511,6 +23511,7 @@ export interface operations {
                             currency: string;
                             basis: string;
                             amount: string;
+                            sample: boolean;
                         }[];
                         more_cash_groups: boolean;
                         counts: {

@@ -263,7 +263,8 @@ class RoleScopedWorkTests(TestCase):
         for position, available in ((preparer, True), (teammate, True), (outsider, False), (member, True)):
             self.client.force_login(position.user)
             self.assertEqual(self.api(f'/work/{work.pk}').status_code, 200 if available else 404)
-        for action in ('factory.execute', 'finance.read', 'document.review', 'delivery.planning_decide'):
+        require(preparer.user, self.case, 'delivery.planning_decide')
+        for action in ('factory.execute', 'finance.read', 'document.review'):
             with self.assertRaises(PermissionDenied):
                 require(preparer.user, self.case, action)
         teams.revoke(self.admin, self.case.pk, teammate.pk, 'Synthetic membership ended')

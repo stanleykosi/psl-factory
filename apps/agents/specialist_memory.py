@@ -419,7 +419,7 @@ def run_once():
             size=len(data),
             citation_lines=citations,
             anchors=anchors,
-            disposition=answer["assessment"],
+            disposition="insufficient" if answer["gaps"] and answer["assessment"] == "supported" else answer["assessment"],
         )
     except (PermissionDenied, ValidationError) as exc:
         finding = "Source permission changed." if isinstance(exc, PermissionDenied) else exc.messages[0][:160]
@@ -489,9 +489,9 @@ def sources_for(actor, cases, definitions, *, work_id=None, review=False):
 
 
 def outcome_sources(actor, cases, definitions):
-    from apps.workflows.factory_views import visible
+    from apps.workflows.factory_views import visible, work_grant_scope
 
-    allowed = visible(actor).filter(case_id__in=cases, definition__in=definitions, status="verified")
+    allowed = work_grant_scope(actor).filter(case_id__in=cases, definition__in=definitions, status="verified")
     from apps.workflows.native_station_access import candidates, observe
     from apps.workflows.native_station_models import NativeStationReceipt
     from django.db.models import Q
@@ -522,10 +522,12 @@ def outcome_sources(actor, cases, definitions):
     attempts = (
         FactoryAttempt.objects.filter(activity__work__in=allowed, activity__kind="ACT13", phase="observed")
         .select_related("activity__work__case", "activity__work__actor")
-        .order_by("-pk")[:6]
+        .order_by("-pk")[:18]
     )
+    attempts = list(attempts)
+    visible_ids = set(visible(actor, candidates=[row.activity.work_id for row in attempts]).values_list("pk", flat=True))
     result = []
-    for attempt in attempts:
+    for attempt in (row for row in attempts if row.activity.work_id in visible_ids):
         work = attempt.activity.work
         try:
             factory.access(actor, work.case, "factory.read", work.definition)
@@ -552,6 +554,8 @@ def outcome_sources(actor, cases, definitions):
                 "url": reverse("factory_detail", args=[work.pk]),
             }
         )
+        if len(result) == 6:
+            break
     return native_results + result
 
 

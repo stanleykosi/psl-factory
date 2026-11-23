@@ -187,7 +187,7 @@ def current_turns(actor, conversation, sources, next_work, payroll_only):
     if started_ids:
         from apps.workflows.factory_views import visible
 
-        visible_work = set(visible(actor).filter(pk__in=started_ids).values_list('pk', flat=True))
+        visible_work = set(visible(actor, candidates=started_ids).values_list('pk', flat=True))
     for turn in turns:
         turn.stale = False
         if turn.context_hash:
