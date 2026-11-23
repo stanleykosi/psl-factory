@@ -457,3 +457,9 @@ The first batch (`delivery/connect/questions-batch.md`: lane A F-60, F-61, F-62,
 - F-65, "As recommended": Overview shows one row per line with its total and an "Open work" link, a ninth "Other lines" floor for the PMO lines, and in 3D one neutral machine per line.
 - F-76, "Read-only list now": the staff list and person page ship read-only. Writes wait for PSL's D-ADMIN-AUTHORITY.
 F-77 (costing rule, D-COSTING-RULE) and F-78 (mark a milestone complete) stay BLOCKED on PSL.
+
+## D-183 (23 Nov 2026): batch 2 answered, F-58 accepted and approved for merge
+- F-58 (PR #100), "Accept and merge": the design engineer accepts sign-in and sign-out as built on 57ae81e8 and approves the merge. SEC-1-1 (sign-out is an in-app move, not a fresh load) stays a non-blocking follow-up.
+- "Accept all recs": every recommended option for F-59 Q1 to Q7, B18 (read-only person page), LC-Q10 to LC-Q13 and LC-Q15 is accepted.
+- LC-Q16, "Hold Approve": the weekly report review offers no "Approve and send" until the report parts show on the page. Return and Refuse stay.
+- LC-Q14, "Add Refuse": the review draws a button for each verdict the API lists. Return and Refuse need a note.

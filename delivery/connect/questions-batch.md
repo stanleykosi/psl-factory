@@ -257,3 +257,7 @@ _LC-Q10 onwards were added after batch 1 went out; D-182 covers LC-Q1 to LC-Q9 o
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.
+
+## Answers, batch 2 (23 Nov 2026, D-183)
+
+F-58: accepted, merge approved. All recommended options accepted for F-59 Q1 to Q7, B18, LC-Q10 to LC-Q16 (LC-Q16 "Hold Approve", the recommendation), and LC-Q14 "Add Refuse".
