@@ -572,7 +572,7 @@
     "pr_number": 101,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -670,12 +670,22 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-85/decision.md"
+    ],
+    "script_decision": "BLOCKED",
+    "script_reasons": [
+      "technical review covers '35189b4503a76ae516ba153f77434a9a562bdc0d', not head '6a09ff21cf6f75f7466743fcb3609bf3b8f54195'",
+      "integrated_qa review covers '35189b4503a76ae516ba153f77434a9a562bdc0d', not head '6a09ff21cf6f75f7466743fcb3609bf3b8f54195'",
+      "pmo_acceptance review covers '35189b4503a76ae516ba153f77434a9a562bdc0d', not head '6a09ff21cf6f75f7466743fcb3609bf3b8f54195'",
+      "ux review covers '35189b4503a76ae516ba153f77434a9a562bdc0d', not head '6a09ff21cf6f75f7466743fcb3609bf3b8f54195'",
+      "ui review covers '35189b4503a76ae516ba153f77434a9a562bdc0d', not head '6a09ff21cf6f75f7466743fcb3609bf3b8f54195'",
+      "security review covers '35189b4503a76ae516ba153f77434a9a562bdc0d', not head '6a09ff21cf6f75f7466743fcb3609bf3b8f54195'",
+      "product acceptance does not cover the current head"
+    ],
+    "decided_for_head_sha": "6a09ff21cf6f75f7466743fcb3609bf3b8f54195",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
