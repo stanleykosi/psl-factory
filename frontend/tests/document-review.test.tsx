@@ -288,7 +288,7 @@ describe('access, versions and failures', () => {
     docAnswers = [() => json(401, { code: 'not_signed_in', message: 'Sign in.' })];
     await open();
     const link = await screen.findByRole('link', { name: 'Sign in' });
-    expect(link.getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fdocuments%2FD-2901%3Fv%3D2');
+    expect(link.getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fdocuments%2FD-2901%3Fv%3D2');
   });
 
   it.each([[''], ['latest'], ['0'], ['2x']])('a missing or unreadable version (%j) is not found and requests nothing', async (v) => {

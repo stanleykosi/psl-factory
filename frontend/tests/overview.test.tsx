@@ -247,7 +247,7 @@ describe('who may see it and what fails', () => {
     overview = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
     await until(() => expect(screen.getByText('You’re signed out.')).toBeTruthy());
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Foverview');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Foverview');
     await act(() => vi.advanceTimersByTimeAsync(30_000));
     expect(overviewCalls()).toHaveLength(1);
   });
