@@ -210,6 +210,8 @@ class AccountingSuppliedIntakeTests(TestCase):
             self.assertEqual(response.status_code, 201, response.content)
             self.assertEqual(response.json()['status'], expected)
             self.assertIsNone(response.json()['work_id'])
+            self.assertEqual(response.json()['finding_details'][0]['code'],
+                             'columns_invalid' if key == 'malformed' else 'source_units_needed')
         self.assertCountEqual([row['status'] for row in self.client.get(url).json()['submissions']],
                               ['quarantined', 'source_units_needed'])
         self.assertFalse(FinanceRun.objects.exists())

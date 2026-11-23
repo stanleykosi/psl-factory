@@ -161,7 +161,8 @@ def authorize_emergency(actor,case_id,profile_id,expected):
 
 
 @transaction.atomic
-def capture_outcome(actor,case_id,profile_id,authorization_id,implemented_at,evidence_id,note,expected):
+def capture_outcome(actor,case_id,profile_id,authorization_id,implemented_at,evidence_id,note,expected,
+                    *, customers_affected=None, side_effects=None):
     # Recording an actual external outcome must remain possible even if authority is missing/stale.
     case=lock_case(actor,case_id,'emergency.record_outcome',expected);profile=profile_for(case,profile_id,current=False)
     implemented_at=aware(implemented_at)
@@ -170,8 +171,13 @@ def capture_outcome(actor,case_id,profile_id,authorization_id,implemented_at,evi
     if authorization_id and not auth:raise ValidationError('Authorization must belong to this exact emergency profile')
     if profile.outcomes.exists():raise ValidationError('Outcome already recorded; retain evidence and use an attributable new revision for corrections')
     note_required(note)
+    if customers_affected is not None and (type(customers_affected) is not int or not 0 <= customers_affected <= 2**31 - 1):
+        raise ValidationError('Use the known number of affected customers or leave it unknown.')
+    if side_effects is not None:
+        note_required(side_effects)
     result=EmergencyOutcome.objects.create(profile=profile,authorization=auth,implemented_at=implemented_at,
-        evidence=subject(case,evidence_id,'change_implementation'),note=note,actor=actor)
+        evidence=subject(case,evidence_id,'change_implementation'),note=note,actor=actor,
+        customers_affected=customers_affected,side_effects=side_effects)
     event(actor,case,'emergency.outcome_recorded',outcome=result.pk,authorization=authorization_id,
         preauthorization_preceded=bool(auth and auth.created_at<=implemented_at))
     bump(case);return result

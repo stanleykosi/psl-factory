@@ -1,17 +1,15 @@
 """Same-origin login, staff onboarding and one-use account recovery."""
 
-from django.conf import settings
+from urllib.parse import urlsplit
+
 from django.contrib.auth import login as django_login, logout as django_logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.middleware.csrf import get_token
-from django.shortcuts import resolve_url
-from django.urls import reverse
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.debug import sensitive_variables
 
 from apps.core import account_delivery, recovery_views
-from apps.core.design_views import FactorySignInForm, factory_landing
+from apps.core.design_views import FactorySignInForm
 from apps.core.workbench import visible_cases
 from apps.identity import staff, teams
 from apps.identity.intake import options as authority_options
@@ -27,16 +25,28 @@ CODE = {'type': 'string', 'minLength': 43, 'maxLength': 43, 'pattern': '^[A-Za-z
 SESSION = obj({'csrf_token': TEXT, 'signed_in': BOOLEAN, 'next_url': TEXT})
 CONFIRM = obj({'complete': BOOLEAN})
 PASSWORD_PAIR = {'new_password1': PASSWORD, 'new_password2': PASSWORD}
+FRONTEND_PAGES = frozenset(('my-work', 'projects', 'overview', 'assistant', 'setup', 'clients', 'work',
+                            'exceptions', 'finance', 'notifications', 'settings'))
+FRONTEND_SIGN_IN = '/sign-in'
+FRONTEND_HOME = '/my-work'
 
 
-def landing(actor):
-    return factory_landing(actor) or resolve_url(settings.LOGIN_REDIRECT_URL)
+def frontend_next(value):
+    if (not value or not value.startswith('/') or value.startswith('//') or '\\' in value
+            or any(ord(char) < 32 or ord(char) == 127 for char in value)):
+        return None
+    path = urlsplit(value).path
+    segments = path.split('/')
+    if path == '/' or (segments[1] in FRONTEND_PAGES and not any(
+            segment in ('.', '..') or '%' in segment for segment in segments)):
+        return value
+    return None
 
 
 def session_data(request, next_url=None):
     signed_in = bool(request.user.is_authenticated and request.user.is_active)
     return {'csrf_token': get_token(request), 'signed_in': signed_in,
-            'next_url': next_url or (landing(request.user) if signed_in else reverse('login'))}
+            'next_url': next_url or (FRONTEND_HOME if signed_in else FRONTEND_SIGN_IN)}
 
 
 def form_problem(form, message):
@@ -59,10 +69,7 @@ def sign_in(request, *, body):
         raise Problem(422, 'sign_in_failed', 'Check the sign-in details.')
     django_login(request, form.get_user())
     request.session.set_expiry(None if form.cleaned_data['remember'] else 0)
-    next_url = body.get('next_url')
-    if next_url and not url_has_allowed_host_and_scheme(next_url, {request.get_host()}, require_https=request.is_secure()):
-        next_url = None
-    return session_data(request, next_url)
+    return session_data(request, frontend_next(body.get('next_url')))
 
 
 @endpoint(method='POST', request=obj({}), response=SESSION, authenticated=False, summary='End the current session')
@@ -77,7 +84,7 @@ def onboarding(request):
     actor = request.user
     admitted = teams.memberships(actor).exists() or visible_cases(actor).exists()
     return {'admitted': admitted, 'can_create_workspace': bool(authority_options(actor, 'create_cases')),
-            'next_url': landing(actor)}
+            'next_url': FRONTEND_HOME if admitted else FRONTEND_SIGN_IN}
 
 
 @endpoint(response=obj({'name': TEXT, 'username': TEXT, 'email': {'type': 'string'}, 'alerts': STATUS}),
@@ -161,6 +168,5 @@ def accept_invitation(request, *, body):
         staff.accept(body['token'], body['password'], role_required=True)
     except PermissionDenied as exc:
         raise Problem(422, 'invitation_unavailable', 'This invitation is unavailable.') from exc
-    next_url = (reverse('login', query={'next': reverse('design_alert_preferences')})
-                if body.get('review_alerts') else reverse('login'))
+    next_url = FRONTEND_SIGN_IN + ('?next=%2Fsettings%2Falerts' if body.get('review_alerts') else '')
     return {'complete': True, 'next_url': next_url}

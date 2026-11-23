@@ -21,7 +21,8 @@ from .work import PAGE, WORK_RESULT, page_number, result
 @endpoint(response=obj({
     **VERSIONS, 'source_head_id': ID, 'notes_evidence_id': ID, 'predecessor_id': nullable(ID),
     'extraction_id': nullable(ID), 'can_confirm': BOOLEAN, 'confirmed_meeting_version_id': nullable(ID),
-    'suggestions': array(obj({'key': TEXT, 'kind': choice('decision', 'action'), 'quote': TEXT, 'evidence_id': ID})),
+    'suggestions': array(obj({'key': TEXT, 'kind': choice('decision', 'action'), 'quote': TEXT, 'evidence_id': ID,
+        'proposed_title': TEXT, 'proposed_owner_id': nullable(ID), 'proposed_due_at': nullable(DATETIME)})),
     'document': nullable(obj({'version_id': ID, 'audience': choice('internal', 'client'),
         'can_request_review': BOOLEAN,
         'preview': array(obj({'heading': TEXT, 'text': {'type': 'string'}}))})),
@@ -44,6 +45,7 @@ def detail(request, work_id):
                   'can_confirm': active and not confirmation and 'meeting.record' in grants,
                   'confirmed_meeting_version_id': confirmation.data['meeting_version'] if confirmation else None,
                   'suggestions': [{'key': row['key'], 'kind': row['label'].lower(), 'quote': row['quote'],
+                                   'proposed_title': row['quote'], 'proposed_owner_id': None, 'proposed_due_at': None,
                                    'evidence_id': notes.pk} for row in suggestion_rows(extraction, notes.pk)],
                   'document': None, 'delivery': None}
         if 'document.read' not in grants:

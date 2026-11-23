@@ -15,6 +15,7 @@ class FactoryWork(models.Model):
     request_hash=models.CharField(max_length=64)
     business_key=models.CharField(max_length=64)
     status=models.CharField(max_length=32,default='ready')
+    status_changed_at=models.DateTimeField(null=True,editable=False)
     finding=models.CharField(max_length=300,blank=True)
     revision=models.PositiveIntegerField(default=1)
     fence=models.PositiveIntegerField(default=0)

@@ -80,9 +80,12 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         self.assertContains(self.client.post(decision_url,fields),'Choose an available action on this page')
         self.assertFalse(EmergencyOutcome.objects.exists())
         recorded = record('capture_outcome', implemented_at=fields['implemented_at'],
-                          evidence_id=self.implementation.pk, note=fields['note'])
+                          evidence_id=self.implementation.pk, note=fields['note'],
+                          customers_affected=3, side_effects='A temporary delay in sign-in')
         actual=EmergencyOutcome.objects.get(pk=recorded, profile=self.profile);self.assertGreaterEqual(actual.implemented_at,auth.created_at)
         self.select(auth,actual);self.clocks()
+        self.assertEqual(self.client.get(api).json()['outcome_impact'],
+                         {'customers_affected': 3, 'side_effects': 'A temporary delay in sign-in'})
         record('record_review', evidence_id=self.review_evidence.pk, note='Actual human post-implementation review')
         for role in ['Product', 'Engineering Lead']:
             record('retrospective_decision', role=role, verdict='approve', evidence_id=self.decision.pk,

@@ -1,17 +1,23 @@
 """Project actions and exact signed-stage evidence."""
-from django.core.exceptions import PermissionDenied
+import json
+
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
-from apps.identity.services import require, visible_cases
+from apps.core.services import add_evidence
+from apps.identity.services import active_case_grants, require, visible_cases
 from apps.pmo import change_stage_links
 from apps.pmo.meetings import action_timing, change_action
 from apps.pmo.models import ChangeMilestoneLink, Milestone
 from apps.pmo.project_action_views import ActionForm, action_options, load_action
 from apps.pmo.services import complete_milestone
+from apps.pmo.signature_exemptions import assert_current_baseline_assurance
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
+from .work_proofs import owned_pdf
 
 
 LABEL = {'type': 'string'}
@@ -27,12 +33,17 @@ ACTION_DETAIL = obj(ACTION['properties'] | {
     'operations': array(OPERATIONS), 'owners': array(OPTION, limit=50), 'evidence': array(OPTION, limit=50),
     'owner_page': nullable(ID), 'evidence_page': nullable(ID),
     'history': array(STATE, limit=20), 'next_page': nullable(ID),
+    'can_attach_pdf': BOOLEAN,
 })
-ACTION_WRITE = obj({
+ACTION_FIELDS = {
     'revision': REVISION, 'action_revision': REVISION, 'operation': OPERATIONS,
-    'owner': nullable(ID), 'due_at': nullable(DATETIME), 'evidence': ID,
+    'owner': nullable(ID), 'due_at': nullable(DATETIME),
     'reason': {**TEXT, 'maxLength': 4000},
-}, optional=('owner', 'due_at'))
+}
+ACTION_WRITE = {'oneOf': [
+    obj({**ACTION_FIELDS, 'evidence': ID}, optional=('owner', 'due_at')),
+    obj({**ACTION_FIELDS, 'upload_id': ID, 'checked': {'const': True}}, optional=('owner', 'due_at')),
+]}
 
 
 def state_payload(state):
@@ -69,6 +80,7 @@ def action(http, case_id, item_id):
     history = Paginator(item.states.select_related('owner').order_by('-number'), 20).get_page(http.GET.get('page'))
     return action_payload(case, item, state) | {
         'operations': [operation for operation, _ in choices],
+        'can_attach_pdf': bool(choices and active_case_grants(http.user, [case.pk], actions=['evidence.add'])),
         'owners': [{'id': owner.pk, 'label': owner.get_full_name() or owner.username} for owner in owner_page],
         'evidence': [{'id': source.pk, 'label': f'{source.kind.replace("_", " ").capitalize()} · version {source.version}'}
                      for source in evidence_page],
@@ -78,6 +90,7 @@ def action(http, case_id, item_id):
 
 
 @endpoint(method='POST', request=ACTION_WRITE, response=ACTION, summary='Apply a permitted project action transition')
+@transaction.atomic
 def update_action(http, case_id, item_id, *, body):
     actor = http.user
     case, item = load_action(actor, case_id, item_id)
@@ -89,6 +102,13 @@ def update_action(http, case_id, item_id, *, body):
         choices = [('reassign', 'Change owner')]
     if body['operation'] not in dict(choices):
         raise PermissionDenied()
+    if 'upload_id' in body:
+        proof = owned_pdf(actor, case, body['upload_id'])
+        evidence = add_evidence(actor, case.pk, 'action_proof_copy',
+            json.dumps({**proof, 'action': item.pk, 'action_version': item.current.number,
+                        'operation': body['operation'], 'checked': body['checked']}, sort_keys=True),
+            f"project-action-copy/v1:{proof['upload_id']}", case.revision)
+        body = {**body, 'evidence': evidence.pk, 'revision': case.revision + 1}
     form = ActionForm(case, item.current, choices, body, owner_only=reassign)
     if not form.is_valid():
         raise Problem(422, 'invalid_input', 'Check the action fields.',
@@ -140,27 +160,56 @@ def link_stage(http, case_id, *, body):
             'revision': result.case.revision}
 
 
-@endpoint(method='POST', request=obj({'revision': REVISION, 'evidence_id': ID, 'name': {**TEXT, 'maxLength': 200}}),
+MILESTONE_INPUT = {'revision': REVISION, 'name': {**TEXT, 'maxLength': 200}}
+
+
+@endpoint(method='POST', request={'oneOf': [
+    obj({**MILESTONE_INPUT, 'evidence_id': ID}),
+    obj({**MILESTONE_INPUT, 'upload_id': ID, 'checked': {'const': True}}),
+]},
           response=obj({'id': ID, 'revision': REVISION, 'name': TEXT, 'evidence_id': ID}), status=201,
           summary='Complete a milestone with exact evidence and queue its Finance handoff')
+@transaction.atomic
 def record_milestone(http, case_id, *, body):
     case = project(http.user, case_id)
     require(http.user, case, 'milestone.complete')
-    get_object_or_404(public_evidence(case.evidence.filter(kind='completion')), pk=body['evidence_id'])
-    milestone = complete_milestone(http.user, case.pk, body['name'], body['evidence_id'], body['revision'])
+    revision = body['revision']
+    if 'upload_id' in body:
+        proof = owned_pdf(http.user, case, body['upload_id'])
+        evidence = add_evidence(http.user, case.pk, 'completion',
+            json.dumps({**proof, 'milestone': body['name'], 'checked': body['checked']}, sort_keys=True),
+            f"milestone-completion-copy/v1:{proof['upload_id']}", revision)
+        revision += 1
+    else:
+        evidence = get_object_or_404(public_evidence(case.evidence.filter(kind='completion')), pk=body['evidence_id'])
+    milestone = complete_milestone(http.user, case.pk, body['name'], evidence.pk, revision)
     case.refresh_from_db(fields=['revision'])
     return {'id': milestone.pk, 'revision': case.revision, 'name': milestone.name, 'evidence_id': milestone.evidence_id}
 
 
-@endpoint(response=obj({'revision': REVISION, 'proofs': array(OPTION, limit=50), 'next_page': nullable(ID)}),
-          query={'page': ID}, summary='Read exact supporting records for milestone completion')
+@endpoint(response=obj({'revision': REVISION, 'proofs': array(OPTION, limit=50), 'next_page': nullable(ID),
+    'can_complete': BOOLEAN, 'can_attach_pdf': BOOLEAN,
+    'hold': nullable(choice('baseline_required', 'proof_required', 'name_in_use'))}),
+          query={'page': ID, 'name': {**TEXT, 'maxLength': 200}}, summary='Read exact supporting records for milestone completion')
 def milestone_options(http, case_id):
     case = project(http.user, case_id)
     require(http.user, case, 'milestone.complete')
     proofs = public_evidence(case.evidence.filter(kind='completion')).only('version').order_by('-pk')
     page = Paginator(proofs, 50).get_page(http.GET.get('page'))
+    attach = bool(active_case_grants(http.user, [case.pk], actions=['evidence.add']))
+    hold = None
+    try:
+        assert_current_baseline_assurance(case)
+    except (ValidationError, PermissionDenied):
+        hold = 'baseline_required'
+    name = http.GET.get('name')
+    if hold is None and name and Milestone.objects.filter(case=case, name=name).exists():
+        hold = 'name_in_use'
+    if hold is None and not (page.paginator.count or attach):
+        hold = 'proof_required'
     return {'revision': case.revision, 'proofs': [{'id': source.pk, 'label': f'Completion evidence · version {source.version}'}
-                                                for source in page], 'next_page': next_page(page)}
+                                                for source in page], 'next_page': next_page(page),
+            'can_complete': hold is None, 'can_attach_pdf': attach, 'hold': hold}
 
 
 @endpoint(response=obj({'id': ID, 'name': TEXT, 'completed_at': DATETIME, 'evidence_id': ID, 'proof_version': REVISION}),

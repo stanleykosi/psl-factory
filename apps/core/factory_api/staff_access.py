@@ -16,7 +16,7 @@ from apps.identity import primary_roles, staff, staff_accounts, staff_profiles, 
 from apps.identity.intake_models import TenantAuthority
 from apps.identity.models import Grant
 from apps.identity.staff_account_views import DepartureForm, roster_projection
-from apps.identity.staff_models import StaffInvitation
+from apps.identity.staff_models import StaffAccountChange, StaffInvitation
 from apps.identity.staff_profile_views import person_projection
 from apps.identity.staff_views import DepartureForm as WorkspaceDepartureForm
 from apps.identity.team_models import StaffTeam
@@ -29,9 +29,12 @@ from .work import PAGE, page_number
 NAMED = obj({'id': ID, 'name': TEXT})
 PERSON = obj({'id': ID, 'name': TEXT, 'username': TEXT, 'email': {'type': 'string'}, 'active': BOOLEAN})
 INVITATION = obj({'id': ID, 'case_id': UUID, 'name': TEXT, 'username': TEXT, 'email': {'type': 'string'},
-                  'access': TEXT, 'expires_at': DATETIME, 'status': choice('pending', 'expired', 'accepted', 'superseded')})
+                  'access': TEXT, 'created_at': DATETIME, 'expires_at': DATETIME,
+                  'status': choice('pending', 'expired', 'accepted', 'superseded')})
 ROSTER_PERSON = obj({**PERSON['properties'], 'workspace_count': {'type': 'integer', 'minimum': 0},
-                     'access': TEXT, 'departure_available': BOOLEAN, 'reactivation_available': BOOLEAN})
+                     'access': TEXT, 'departure_available': BOOLEAN, 'reactivation_available': BOOLEAN,
+                     'last_signed_in_at': nullable(DATETIME), 'deactivated_at': nullable(DATETIME)})
+COUNT = {'type': 'integer', 'minimum': 0}
 REASON = {**TEXT, 'maxLength': 1000}
 PIN = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
 ROLE = choice(*(row['key'] for row in primary_roles.built_ins()))
@@ -48,7 +51,7 @@ def person_payload(user):
 def invitation_payload(row):
     return {'id': row.pk, 'case_id': row.case_id, 'name': row.name, 'username': row.username, 'email': row.email,
             'access': teams.describe_pin(row.role_scope) if row.role_scope else row.profile_label or 'Individual workspace access',
-            'expires_at': row.expires_at, 'status': 'accepted' if hasattr(row, 'admission') else
+            'created_at': row.created_at, 'expires_at': row.expires_at, 'status': 'accepted' if hasattr(row, 'admission') else
             'superseded' if getattr(row, 'superseded', False) else 'expired' if row.expires_at <= timezone.now() else 'pending'}
 
 
@@ -57,6 +60,7 @@ def next_page(page):
 
 
 @endpoint(response=obj({'people': array(ROSTER_PERSON, limit=25), 'invitations': array(INVITATION, limit=25),
+    'people_total': COUNT, 'invitations_total': COUNT,
     'next_page': nullable(PAGE), 'next_invitations_page': nullable(PAGE), 'observed_at': DATETIME, 'available': BOOLEAN}),
     query={'page': PAGE, 'invitations_page': PAGE, 'q': {'type': 'string', 'maxLength': 120},
            'status': choice('all', 'active', 'inactive')}, summary='Read staff and pending invitations in workspaces you administer')
@@ -66,10 +70,15 @@ def roster(request):
     if status not in {'all', 'active', 'inactive'} or len(search) > 120 or invitation_page > PAGE['maximum']:
         raise Problem(422, 'invalid_filter', 'Choose a supported roster filter and page.')
     data = roster_projection(request.user, search, status, page_number(request), invitation_page)
+    inactive_ids = [user.pk for user in data['people'] if not user.is_active]
+    deactivated = dict(StaffAccountChange.objects.filter(user_id__in=inactive_ids, kind='deactivated')
+                       .order_by('user_id', '-pk').distinct('user_id').values_list('user_id', 'created_at'))
     return {'people': [{**person_payload(user), 'access': user.first_profile_label,
                         'workspace_count': user.managed_workspace_count, 'departure_available': user.departure_available,
-                        'reactivation_available': user.reactivation_available} for user in data['people']],
+                        'reactivation_available': user.reactivation_available, 'last_signed_in_at': user.last_login,
+                        'deactivated_at': deactivated.get(user.pk)} for user in data['people']],
             'invitations': [invitation_payload(row) for row in data['invitations']], 'next_page': next_page(data['people']),
+            'people_total': data['people'].paginator.count, 'invitations_total': data['invitations'].paginator.count,
             'next_invitations_page': next_page(data['invitations']),
             'observed_at': data['observed_at'], 'available': data['available']}
 

@@ -33,7 +33,7 @@ def source_workspaces(actor, action):
     return granted(actor, [action]).filter(
         Q(pk__in=visible_cases(actor).values('pk')) | Q(pk__in=management_cases(actor).values('pk')))
 
-def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifecycle=''):
+def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifecycle='',include_counts=False):
     active(actor)
     if not all(isinstance(x,str) for x in [q,tenant,kind,area]) or len(q)>120 or len(tenant)>100 or kind not in ['', 'project','support'] or area not in ['', 'finance'] or type(page_size) is not int or not 1<=page_size<=50:raise ValidationError('Valid workspace search, organization, type, area and page size required')
     from apps.identity.factory_access import project_cases
@@ -55,7 +55,6 @@ def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifec
         closed = Q(has_closed_dossier=True, has_open_dossier=False)
         if lifecycle:
             filters['lifecycle'] = lifecycle
-            query = query.filter(project_status_visible=True).filter(closed if lifecycle == 'closed' else ~closed)
     if filters['q']:
         from apps.pmo.engagement_models import ProjectIdentifier,EngagementRecord
         permitted=granted(actor,['engagement.read']).values('pk')
@@ -75,6 +74,17 @@ def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifec
         match|=Q(pk__in=ProjectIdentifier.objects.filter(case_id__in=permitted,value__icontains=term).values('case_id'))
         match|=Q(pk__in=EngagementRecord.objects.filter(case_id__in=permitted,kind='capture',data__reference__icontains=term).values('case_id'))
         query=query.filter(match)
+    totals = None
+    if kind == 'project':
+        if include_counts:
+            from django.db.models import Count
+
+            known = Q(project_status_visible=True)
+            totals = query.aggregate(all=Count('pk', distinct=True),
+                active=Count('pk', distinct=True, filter=known & ~closed),
+                closed=Count('pk', distinct=True, filter=known & closed))
+        if lifecycle:
+            query = query.filter(project_status_visible=True).filter(closed if lifecycle == 'closed' else ~closed)
     if cursor:
         try:
             if not isinstance(cursor,str) or len(cursor)>4096:raise ValueError
@@ -89,6 +99,8 @@ def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifec
     if more:
         last=rows[-1];next_cursor=signing.dumps({'actor':actor.pk,'filters':filters,'size':page_size,'last':[last.created_at.isoformat(),str(last.pk)]},salt=CURSOR_SALT,compress=True)
     result = {'cases': rows, 'next_cursor': next_cursor, 'filters': filters}
+    if totals is not None:
+        result['totals'] = totals
     if kind == 'project' and not area:
         from .project_list import summaries
         result['project_rows'] = summaries(actor, rows)

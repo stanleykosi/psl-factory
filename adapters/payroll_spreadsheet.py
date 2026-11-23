@@ -1,10 +1,10 @@
 """Read an explicitly mapped payroll table without retaining the supplied file."""
 import csv
-from io import StringIO
+from io import BytesIO, StringIO
 from pathlib import PurePosixPath
 import re
-from xml.etree.ElementTree import ParseError
-from zipfile import BadZipFile
+from xml.etree.ElementTree import Element, ParseError, SubElement, tostring
+from zipfile import BadZipFile, ZipFile
 
 from adapters.upload_text import xml_parts
 from django.core.exceptions import ValidationError
@@ -16,6 +16,46 @@ REL = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id'
 
 def csv_rows(content, delimiter):
     yield from csv.reader(StringIO(content.decode('utf-8-sig'), newline=''), delimiter=delimiter, strict=True)
+
+
+def blank_template(layout):
+    headers = list(layout['columns'].values())
+    if layout['format'] == 'csv':
+        if any(header.lstrip().startswith(('=', '+', '-', '@')) for header in headers):
+            raise ValidationError('The payroll source owner needs to correct a spreadsheet heading.')
+        out = StringIO(newline='')
+        csv.writer(out, delimiter=layout['delimiter']).writerow(headers)
+        return out.getvalue().encode('utf-8-sig')
+
+    main = NS[1:-1]
+    office = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    package = 'http://schemas.openxmlformats.org/package/2006/relationships'
+    types = 'http://schemas.openxmlformats.org/package/2006/content-types'
+    workbook = Element('workbook', {'xmlns': main, 'xmlns:r': office})
+    SubElement(SubElement(workbook, 'sheets'), 'sheet', {'name': layout['sheet'], 'sheetId': '1', 'r:id': 'rId1'})
+    sheet = Element('worksheet', {'xmlns': main})
+    row = SubElement(SubElement(sheet, 'sheetData'), 'row', {'r': '1'})
+    for column, name in enumerate(headers):
+        cell = SubElement(row, 'c', {'r': f'{chr(65 + column)}1', 't': 'inlineStr'})
+        SubElement(SubElement(cell, 'is'), 't').text = name
+    content = Element('Types', {'xmlns': types})
+    SubElement(content, 'Default', {'Extension': 'rels',
+                                     'ContentType': 'application/vnd.openxmlformats-package.relationships+xml'})
+    SubElement(content, 'Default', {'Extension': 'xml', 'ContentType': 'application/xml'})
+    SubElement(content, 'Override', {'PartName': '/xl/workbook.xml',
+        'ContentType': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'})
+    SubElement(content, 'Override', {'PartName': '/xl/worksheets/sheet1.xml',
+        'ContentType': 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml'})
+    root_links = Element('Relationships', {'xmlns': package})
+    SubElement(root_links, 'Relationship', {'Id': 'rId1', 'Type': office + '/officeDocument', 'Target': 'xl/workbook.xml'})
+    book_links = Element('Relationships', {'xmlns': package})
+    SubElement(book_links, 'Relationship', {'Id': 'rId1', 'Type': office + '/worksheet', 'Target': 'worksheets/sheet1.xml'})
+    out = BytesIO()
+    with ZipFile(out, 'w') as archive:
+        for name, part in [('[Content_Types].xml', content), ('_rels/.rels', root_links), ('xl/workbook.xml', workbook),
+                           ('xl/_rels/workbook.xml.rels', book_links), ('xl/worksheets/sheet1.xml', sheet)]:
+            archive.writestr(name, tostring(part, encoding='utf-8', xml_declaration=True))
+    return out.getvalue()
 
 
 def excel_rows(content, name, width=4):

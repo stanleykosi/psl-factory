@@ -41,6 +41,8 @@ class EmergencyOutcome(AppendOnly):
     profile=models.ForeignKey(EmergencyProfile,on_delete=models.PROTECT,related_name='outcomes')
     authorization=models.OneToOneField(EmergencyAuthorization,null=True,on_delete=models.PROTECT)
     implemented_at=models.DateTimeField()
+    customers_affected = models.PositiveIntegerField(null=True, blank=True)
+    side_effects = models.TextField(null=True, blank=True)
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
     note=models.TextField()
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)

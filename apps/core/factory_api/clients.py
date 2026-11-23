@@ -1,12 +1,17 @@
 """The authorised client directory and contact version history."""
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.utils import timezone
 
 from apps.core import client_contacts, client_directory
 from apps.core.models import ClientContactRevision
+from apps.core.workbench import granted
+from apps.finance import payments_overview
+from apps.finance.fixed_charge import case_access
 from apps.identity.services import require
 
-from .http import ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
+from .http import BOOLEAN, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
 from .workspaces import CONTACT, contact, project_for
 
 
@@ -14,6 +19,9 @@ GROUP = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
 STATUS = choice('recorded', 'needed', 'unknown')
 PROJECT = obj({'case_id': UUID, 'title': TEXT, 'client': nullable(TEXT), 'billing': STATUS})
 FILTERS = {'q': {'type': 'string', 'maxLength': 100}, 'billing': STATUS, 'page': ID, 'clients_page': ID}
+COUNT = {'type': 'integer', 'minimum': 0}
+DEBT = obj({'as_of': {'type': 'string', 'format': 'date'}, 'workspace_count': COUNT, 'limited': BOOLEAN,
+    'totals': array(obj({'currency': TEXT, 'basis': TEXT, 'known_owed': nullable(TEXT), 'unknown_owed_count': COUNT}))})
 
 
 def next_page(page):
@@ -27,7 +35,7 @@ def project_row(case, label, billing):
 @endpoint(response=obj({
     'projects': array(PROJECT, limit=25), 'next_page': nullable(ID),
     'groups': array(obj({'key': GROUP, 'label': TEXT, 'project_count': ID,
-                         'contacts_needed': {'type': 'integer', 'minimum': 0}}), limit=25),
+                         'contacts_needed': COUNT, 'api_url': TEXT}), limit=25),
     'next_group_page': nullable(ID),
 }), query=FILTERS, summary='Read client groups and ungrouped projects within your authorised scope')
 def directory(http):
@@ -42,11 +50,34 @@ def directory(http):
     return {'projects': [project_row(case, case.client_name, case.billing_status) for case in projects],
             'next_page': next_page(projects),
             'groups': [{'key': row['group_key'], 'label': row['label'], 'project_count': row['project_count'],
-                        'contacts_needed': row['contacts_needed']} for row in groups],
+                        'contacts_needed': row['contacts_needed'], 'api_url': f"/api/v1/clients/{row['group_key']}"}
+                       for row in groups],
             'next_group_page': next_page(groups)}
 
 
-@endpoint(response=obj({'key': GROUP, 'label': TEXT, 'projects': array(PROJECT, limit=25), 'next_page': nullable(ID)}),
+def group_debt(actor, members):
+    candidates = list(granted(actor, ['finance.read']).filter(
+        pk__in=members.paginator.object_list.values('case_id')).order_by('pk')[:13])
+    visible = []
+    for case in candidates[:12]:
+        try:
+            case_access(actor, case)
+        except (PermissionDenied, ValidationError):
+            continue
+        visible.append(case)
+    if not visible:
+        return None
+    today = timezone.localdate()
+    _, totals, cursor, limited = payments_overview.page(actor, visible, '', '', None, today)
+    return {'as_of': today, 'workspace_count': len(visible),
+            'limited': limited or cursor is not None or len(visible) != members.paginator.count,
+            'totals': [{'currency': item['currency'], 'basis': item['basis'],
+                        'known_owed': str(item['known_owed']) if item['known_owed'] is not None else None,
+                        'unknown_owed_count': item['unknown_owed_count']} for item in totals]}
+
+
+@endpoint(response=obj({'key': GROUP, 'label': TEXT, 'projects': array(PROJECT, limit=25), 'next_page': nullable(ID),
+    'debt': nullable(DEBT)}),
           query={'page': ID}, path_parameters={'group': GROUP}, summary='Read visible projects for an exact client group')
 def group(http, group):
     if len(group) != 64 or any(char not in '0123456789abcdef' for char in group):
@@ -57,7 +88,7 @@ def group(http, group):
         raise Http404
     return {'key': group, 'label': label,
             'projects': [project_row(link.case, label, link.billing_status) for link in members],
-            'next_page': next_page(members)}
+            'next_page': next_page(members), 'debt': group_debt(http.user, members)}
 
 
 @endpoint(response=obj({'revision': REVISION, 'items': array(CONTACT, limit=25), 'next_page': nullable(ID)}),

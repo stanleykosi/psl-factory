@@ -216,6 +216,24 @@ class RFPAnswerTests(TestCase):
         self.assertNotIn('not adopted', work.source_head.body)
         self.assertEqual(RFPAnswerReview.objects.get().note, 'SAMPLE internal rejection explanation.')
         self.assertEqual(factory_rfp.inputs(work)['matrix'][0]['disposition'], 'clarification')
+        endpoint = f'/api/v1/work/{work.pk}/bid-clarifications'
+        evidence = self.data['evidence']['requirements']
+        current = {'expected_revision': work.revision, 'case_revision': rev(work.case), 'key': 'R1'}
+        citation = self.client.post(endpoint, {**current, 'action': 'cite', 'operation_key': str(uuid4()),
+            'text': evidence.body, 'page': 1, 'checked': True}, content_type='application/json')
+        self.assertEqual(citation.status_code, 201, citation.content)
+        self.assertEqual(self.client.get(url).json()['rows'][0]['citation']['page'], 1)
+        current['case_revision'] = rev(work.case)
+        question = self.client.post(endpoint, {**current, 'action': 'record_question', 'operation_key': str(uuid4()),
+            'text': 'Which delivery date applies?', 'observed_at': timezone.now().isoformat(),
+            'evidence_id': evidence.pk, 'question_id': None}, content_type='application/json')
+        self.assertEqual(question.status_code, 201, question.content)
+        current['case_revision'] = rev(work.case)
+        reply = self.client.post(endpoint, {**current, 'action': 'record_reply', 'operation_key': str(uuid4()),
+            'text': 'The client confirmed the date in the source.', 'observed_at': timezone.now().isoformat(),
+            'evidence_id': evidence.pk, 'question_id': question.json()['record_id']}, content_type='application/json')
+        self.assertEqual(reply.status_code, 201, reply.content)
+        self.assertEqual([item['kind'] for item in self.client.get(endpoint).json()['items']], ['reply', 'question'])
         with self.assertRaises(DatabaseError), transaction.atomic():
             RFPAnswerReview.objects.filter(suggestion=suggestion).update(note='overwrite')
         with self.assertRaises(DatabaseError), transaction.atomic():

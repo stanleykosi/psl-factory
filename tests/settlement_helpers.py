@@ -5,7 +5,7 @@ from django.utils import timezone
 from apps.policy.services import register_reference
 from apps.identity.models import Grant
 from apps.finance import invoices,cash,invoice_delivery
-from apps.finance.models import InvoiceIssue
+from apps.finance.models import CashReceipt, InvoiceIssue
 from .helpers import setup_case,rev,activate
 from .billing_helpers import coverage,prices,usage,prepare,policy,evidence
 
@@ -34,7 +34,14 @@ def issue(a,c,i,e):
 
 def receipt(a,c,amount='50.00',ref='tx-cash-1',verify=True,*,received_at=None):
     value={'source':'synthetic-bank','transaction_ref':ref,'customer':'client-example','amount':amount,'currency':'NGN','amount_basis':'gross_including_tax','received_at':received_at if received_at is not None else (timezone.now()-timedelta(hours=1)).isoformat()}
-    report=evidence(a,c,'cash_report',json.dumps(value));r=cash.report(a,c.pk,report.pk,rev(c))
+    report=evidence(a,c,'cash_report',json.dumps(value))
+    if amount is None:
+        assert not verify
+        # Historical rows predate the rule that requires an amount at intake.
+        r=CashReceipt.objects.create(tenant=c.tenant,case=c,source=value['source'],
+            transaction_ref=ref,payload=value,evidence=report,actor=a)
+        return r,None
+    r=cash.report(a,c.pk,report.pk,rev(c))
     if not verify:return r,None
     proof=evidence(a,c,'cash_verification',json.dumps(value));lot=cash.verify(a,c.pk,r.pk,'Finance',proof.pk,rev(c));return r,lot
 
