@@ -15,7 +15,7 @@ from django.views.decorators.http import require_safe
 
 from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.core.workbench import granted
-from apps.identity.services import active_case_grants
+from apps.identity.services import active_case_grants, require
 from apps.policy.services import reference_values, resolve
 
 from .fixed_charge import preparation_access
@@ -65,8 +65,8 @@ def case_scope(actor, case, budget):
         'case.read', 'finance.read', 'finance.reminder.read', 'finance.cash.record', 'evidence.add',
         'finance.cash.verify','finance.cash.allocate',
     })}
-    if not {'case.read', 'finance.read'}.issubset(actions):
-        raise PermissionDenied
+    for action in ('case.read', 'finance.read'):
+        require(actor, case, action)
     method = resolve('D14.allocation_rule_ref', case, budget=budget)
     ageing = method.status == 'ACTIVE' and reference_values(method.configuration, budget=budget)[0]['overdue_definition'] == 'due_date_before_as_of'
     settlement = reverse('finance_settlement', args=[case.pk])
@@ -156,6 +156,7 @@ def page(actor, cases, search, state, before, as_of):
                             scopes[invoice.case_id] = None
                     scope = scopes[invoice.case_id]
                     if not scope:
+                        seen = invoice.pk
                         continue
                     row = observation(invoice, scope, as_of, budget)
                     if matches(row, state):

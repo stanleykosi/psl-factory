@@ -20,7 +20,7 @@ def reconcile(request,work_id):
     from .factory_views import visible
     from apps.agents.factory_coordinator import reconcile as lookup
     from django.urls import reverse
-    work=get_object_or_404(visible(request.user),pk=work_id)
+    work=get_object_or_404(visible(request.user, candidates=[work_id]),pk=work_id)
     try:lookup(request.user,work.pk,int(request.POST.get('revision','0')))
     except (ValidationError,ValueError) as exc:
         messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Use the current work revision.')

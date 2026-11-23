@@ -17,6 +17,6 @@
   .signin-agents, .signin-tagline { display: none; }
   .signin-form { box-sizing: border-box; flex: 1 1 auto; max-width: none; padding: 28px 20px; }
   .signin-title { font-size: var(--text-page-title-phone-size); }
-  .signin-form .psl-input--phone { min-height: 52px; }
+  .signin-form .psl-input--phone { min-height: var(--control-phone); }
   .signin-forgot { font-size: 13px; }
 }

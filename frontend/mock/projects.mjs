@@ -70,13 +70,15 @@ function projectList(url, persona) {
   // D-164: the projects won RFPs created in the live demo come first, newest first
   const demo = demoProjects().filter(() => demoVisible(persona)).map((p) => ({ personas: [persona], status: 'active', item: demoListItem(p) })).reverse();
   const visible = [...demo, ...list.rows.filter((row) => row.personas.includes(persona))];
-  const items = visible
-    .filter((row) => status === 'all' || row.status === status)
-    .map((row) => row.item)
-    .filter((item) => !needle || item.title.toLowerCase().includes(needle));
+  const matching = visible.filter(({ item }) => !needle || item.title.toLowerCase().includes(needle));
+  const totals = { all: matching.length, active: 0, closed: 0 };
+  for (const row of matching) {
+    if (row.status === 'active' || row.status === 'closed') totals[row.status] += 1;
+  }
+  const items = matching.filter((row) => status === 'all' || row.status === status).map((row) => row.item);
   const page = items.slice(offset, offset + PAGE_SIZE);
   const nextCursor = offset + PAGE_SIZE < items.length ? `o${offset + PAGE_SIZE}` : null;
-  return { status: 200, body: { items: page, next_cursor: nextCursor, as_of: list.as_of } };
+  return { status: 200, body: { items: page, next_cursor: nextCursor, as_of: list.as_of, totals } };
 }
 
 /** One page of a journey body: the fixture holds every work item; 20 go out a page with page and next_page. */

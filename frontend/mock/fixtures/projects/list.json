@@ -20,7 +20,8 @@
         "phase": "Release · UAT with client",
         "reviews": 2,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000101/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000101/",
+        "next_milestone": null
       }
     },
     {
@@ -42,7 +43,8 @@
         "phase": "Go-live · report sent",
         "reviews": 1,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000102/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000102/",
+        "next_milestone": null
       }
     },
     {
@@ -64,7 +66,8 @@
         "phase": "Pre-sale · costing approval",
         "reviews": 1,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000103/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000103/",
+        "next_milestone": null
       }
     },
     {
@@ -86,7 +89,8 @@
         "phase": "Planning · held",
         "reviews": 0,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000106/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000106/",
+        "next_milestone": null
       }
     },
     {
@@ -108,7 +112,8 @@
         "phase": null,
         "reviews": null,
         "exceptions": null,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000125/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000125/",
+        "next_milestone": null
       }
     },
     {
@@ -130,7 +135,8 @@
         "phase": "Closed 09 Nov",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000105/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000105/",
+        "next_milestone": null
       }
     },
     {
@@ -151,7 +157,8 @@
         "phase": "Delivery · sprint 4 of 6",
         "reviews": 2,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000104/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000104/",
+        "next_milestone": null
       }
     },
     {
@@ -172,7 +179,8 @@
         "phase": "Delivery · sprint 2 of 5",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000107/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000107/",
+        "next_milestone": null
       }
     },
     {
@@ -193,7 +201,8 @@
         "phase": "Planning · costing review",
         "reviews": 1,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000108/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000108/",
+        "next_milestone": null
       }
     },
     {
@@ -214,7 +223,8 @@
         "phase": "Hypercare · week 2",
         "reviews": 2,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000109/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000109/",
+        "next_milestone": null
       }
     },
     {
@@ -235,7 +245,8 @@
         "phase": "Release · UAT with client",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000110/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000110/",
+        "next_milestone": null
       }
     },
     {
@@ -256,7 +267,8 @@
         "phase": "Delivery · sprint 5 of 8",
         "reviews": 1,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000111/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000111/",
+        "next_milestone": null
       }
     },
     {
@@ -277,7 +289,8 @@
         "phase": "Go-live · report sent",
         "reviews": 2,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000112/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000112/",
+        "next_milestone": null
       }
     },
     {
@@ -298,7 +311,8 @@
         "phase": "Pre-sale · costing approval",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000113/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000113/",
+        "next_milestone": null
       }
     },
     {
@@ -319,7 +333,8 @@
         "phase": "Closure · retrospective",
         "reviews": 1,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000114/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000114/",
+        "next_milestone": null
       }
     },
     {
@@ -340,7 +355,8 @@
         "phase": "Delivery · sprint 1 of 6",
         "reviews": 2,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000115/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000115/",
+        "next_milestone": null
       }
     },
     {
@@ -361,7 +377,8 @@
         "phase": "Planning · plan approval",
         "reviews": 0,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000116/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000116/",
+        "next_milestone": null
       }
     },
     {
@@ -382,7 +399,8 @@
         "phase": "Release · release checklist",
         "reviews": 1,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000117/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000117/",
+        "next_milestone": null
       }
     },
     {
@@ -403,7 +421,8 @@
         "phase": "Handover · support handover",
         "reviews": 2,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000118/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000118/",
+        "next_milestone": null
       }
     },
     {
@@ -424,7 +443,8 @@
         "phase": "Delivery · sprint 3 of 4",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000119/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000119/",
+        "next_milestone": null
       }
     },
     {
@@ -445,7 +465,8 @@
         "phase": "Pre-sale · RFP response",
         "reviews": 1,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000120/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000120/",
+        "next_milestone": null
       }
     },
     {
@@ -466,7 +487,8 @@
         "phase": "Hypercare · week 1",
         "reviews": 2,
         "exceptions": 1,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000121/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000121/",
+        "next_milestone": null
       }
     },
     {
@@ -487,7 +509,8 @@
         "phase": "Delivery · sprint 6 of 6",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000122/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000122/",
+        "next_milestone": null
       }
     },
     {
@@ -508,7 +531,8 @@
         "phase": "Planning · held",
         "reviews": 1,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000123/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000123/",
+        "next_milestone": null
       }
     },
     {
@@ -529,7 +553,8 @@
         "phase": "Archive · records kept",
         "reviews": 0,
         "exceptions": 0,
-        "django_url": "/projects/00000000-0000-4000-8000-000000000124/"
+        "django_url": "/projects/00000000-0000-4000-8000-000000000124/",
+        "next_milestone": null
       }
     }
   ]

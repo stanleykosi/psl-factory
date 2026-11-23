@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from apps.core.models import Case
 from apps.core.services import event, lock_case, bump
@@ -13,12 +14,13 @@ from .controlled import current_version, validate_review, publication_requiremen
 @transaction.atomic
 def claim_publication(case_id=None,job_id=None,*,include_previous=False,seen_jobs=None):
     now=timezone.now()
-    query=PublicationJob.objects.select_for_update(skip_locked=True).filter(
+    query=PublicationJob.objects.select_for_update(skip_locked=True,of=('self',)).filter(
         Q(status__in=['pending','unknown'])|Q(status='leased',lease_until__lte=now))
     if case_id is not None:query=query.filter(publication__version__document__case_id=case_id)
     if job_id is not None:query=query.filter(pk=job_id)
     if seen_jobs:query=query.exclude(pk__in=seen_jobs)
-    job=query.order_by('pk').first()
+    # An attempted job moves behind earlier unattempted work across worker polls.
+    job=query.order_by(Coalesce('lease_until','publication__created_at'),'pk').first()
     if not job:
         return None
     previous=job.status
