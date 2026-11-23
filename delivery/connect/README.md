@@ -1,5 +1,9 @@
 # Connection map: frontend screens to the live API
 
+Use the [consolidated PSL answers](backend-answers-2026-11-23.md) for the 13 priorities and five follow-up decisions. The connection map below records the original comparison.
+
+The frontend handoff pairs each answered screen question with its API 1.24.0 answer under the original question ID. [Backend Answers](backend-answers.md)
+
 **What this is.** For each of the 59 approved screens, this map lists what the frontend reads and writes today, the live call that replaces each one, how the fields line up, and what has no live source yet. Builders use it to rewire screens without guessing. [backend-questions.md](backend-questions.md) collects everything we need the backend developer to answer.
 
 **Baseline.** Live API: OpenAPI 1.22.0 (`contracts/psl-factory.openapi.json`, main `9bac3109`, 22 Nov 2026), 379 operations on 268 paths, served by Railway design acceptance. Frontend: `fe-upload-field-concept-a` at `f8b28059`. It is typed on the practice contract v7 (`architecture/packages/v7/openapi.json`) and runs on the v7 mock. Written 23 Nov 2026.

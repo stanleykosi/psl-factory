@@ -120,7 +120,10 @@ class IssueMessageTests(TestCase):
         self.assertEqual(msg['receipt']['id'], IssueMessageReceipt.objects.get(dispatch_id=dispatch_id).pk)
         self.assertEqual(observed.json()['timing']['last_receipt_id'], msg['receipt']['id'])
         self.assertIsNotNone(observed.json()['timing']['reminder_due_at'])
-        self.assertIsNone(self.client.get(path).json()['acknowledgement']['at'])
+        issue = self.client.get(path).json()
+        self.assertIsNone(issue['acknowledgement']['at'])
+        self.assertIn(('request', 'delivered', msg['receipt']['id']),
+                      [(row['kind'], row['status'], row['id']) for row in issue['timeline']])
         self.assertFalse(messages.run_once(dispatch_id))
 
     def test_exact_retries_return_original_records_and_conflicting_intents_are_refused(self):

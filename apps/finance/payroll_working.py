@@ -59,8 +59,12 @@ def rows(value,kind,*,page=None,status='all'):
             'sources':[{'input_id':p['input_id'],'row_ref':p['row_ref'],'provider':p['provider'],'data_row':p.get('data_row')}
                        for p in row.get('provenance',[])]})
     counts=Counter('ready' if row['ready'] else 'held' for row in output)
+    matched = sum(row.get('match_status') == 'matched' for row in source) if kind in ('match','aggregate') else None
+    conflicts = {'ambiguous_hr_membership', 'duplicate_source_row_or_component', 'overlap_unresolved'}
     selected=[row for row in output if status=='all' or row['ready']==(status=='ready')]
     return {'page':Paginator(selected,25).get_page(page),'status':status,'total':len(output),
         'ready':counts['ready'],'held':counts['held'],'publication_ready':False,
+        'matched':matched,'unmatched':len(source)-matched if matched is not None else None,
+        'conflict':sum(bool(conflicts.intersection(row['codes'])) for row in output),
         'item_label':'source rows' if kind=='input' else 'working pay items',
         'source_rows':len(source) if kind=='input' else sum(len(row.get('provenance',[])) or 1 for row in source)}

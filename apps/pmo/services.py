@@ -8,7 +8,10 @@ from apps.workflows.models import Outbox
 from .models import Baseline, Decision, Milestone
 
 
-def subject(case, pk, kind=None, *, metadata_only=False):
+GO_LIVE_PDF = 'go-live-pdf-copy/v1:'
+
+
+def subject(case, pk, kind=None, *, metadata_only=False, proof_scope=None):
     candidates = Evidence.objects.filter(case=case, pk=pk)
     if metadata_only:
         candidates = candidates.defer('body')
@@ -17,6 +20,8 @@ def subject(case, pk, kind=None, *, metadata_only=False):
         raise ValidationError('Evidence must match this case and required kind')
     if evidence.kind.startswith('agent_private_'):
         raise ValidationError('Private agent source evidence requires its scoped data interface')
+    if evidence.source.startswith(GO_LIVE_PDF) and evidence.source != proof_scope:
+        raise ValidationError('This signed copy belongs to its exact go-live receipt and signer role')
     return evidence
 
 

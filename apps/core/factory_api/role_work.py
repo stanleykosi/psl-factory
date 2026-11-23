@@ -7,6 +7,9 @@ from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, en
 
 
 ROLE = choice(*FOCUS)
+POSITION = obj({'role': ROLE, 'mode': choice(*MODE_LABELS,'administrator'), 'name': TEXT, 'area': TEXT,
+                'focus': TEXT, 'workspace': TEXT, 'team': nullable(TEXT), 'invite_url': nullable(TEXT),
+                'manage_url': nullable(TEXT)})
 REASON = {**TEXT, 'maxLength': 1000}
 TOKEN = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
 CARD = obj({'id': ID, 'case_id': UUID, 'workspace': TEXT, 'role': ROLE, 'owner': TEXT, 'mine': BOOLEAN,
@@ -18,9 +21,7 @@ PINS = {'expected': REVISION, 'case_expected': REVISION}
 
 
 @endpoint(response=obj({
-    'positions': array(obj({'role': ROLE, 'mode': choice(*MODE_LABELS,'administrator'), 'name': TEXT, 'area': TEXT,
-                           'focus': TEXT, 'workspace': TEXT, 'team': nullable(TEXT), 'invite_url':nullable(TEXT),
-                           'manage_url':nullable(TEXT)}), limit=50),
+    'positions': array(POSITION, limit=50),
     'actions': array(CARD, limit=domain.SIZE), 'decisions': array(CARD, limit=domain.SIZE),
     'team_decisions': array(CARD, limit=domain.SIZE), 'limited': BOOLEAN,
     'workspace_decisions':array(obj({'work_id':ID,'title':TEXT,'workspace':TEXT,'state':TEXT,'url':TEXT,'api_url':TEXT}),limit=8),

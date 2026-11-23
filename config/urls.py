@@ -1,4 +1,6 @@
 """Public backend routes and compatibility names for the retired Django pages."""
+from functools import wraps
+
 from django.urls import include, path
 from django.urls.resolvers import URLPattern
 
@@ -18,23 +20,33 @@ handler403 = 'apps.core.error_views.forbidden'
 handler404 = 'apps.core.error_views.missing'
 handler500 = 'apps.core.error_views.failed'
 
+
+def api_download(view):
+    @wraps(view)
+    def download(request, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_active:
+            return error(401, 'unauthenticated', 'Sign in to open this file.')
+        return view(request, **kwargs)
+    return download
+
+
 backend_patterns = [
     path('api/v1/', include('apps.core.factory_api.urls')),
     path('health/', health, name='health'),
     path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',
          finance_followup_inbox, name='finance_followup_inbox'),
     # The JSON API returns these authenticated file URLs to clients.
-    path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),
+    path('cases/<uuid:case_id>/files/<int:upload_id>/', api_download(upload_views.download), name='case_upload_download'),
     path('projects/<uuid:case_id>/templates/<int:template_id>/file/',
-         template_catalog.download, name='design_template_download'),
+         api_download(template_catalog.download), name='design_template_download'),
     path('cases/<uuid:case_id>/rfp/intake/<int:intake_id>/attachment/',
-         rfp_views.intake_attachment, name='rfp_intake_attachment'),
+         api_download(rfp_views.intake_attachment), name='rfp_intake_attachment'),
     path('work/<int:work_id>/invoice-proof/<int:proof_id>/',
-         factory_invoice_information_views.download, name='factory_invoice_milestone_proof'),
+         api_download(factory_invoice_information_views.download), name='factory_invoice_milestone_proof'),
     path('cases/<uuid:case_id>/finance/invoices/<int:issue_id>/payments/<int:receipt_id>/proof/<str:kind>/',
-         bank_receipt_views.download, name='finance_bank_proof'),
+         api_download(bank_receipt_views.download), name='finance_bank_proof'),
     path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
-         reminder_views.download, name='design_reminder_download'),
+         api_download(reminder_views.download), name='design_reminder_download'),
 ]
 
 

@@ -1,11 +1,14 @@
 """Client escalation authority, exact outward review and delivery receipts."""
 
+from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import F, OuterRef, Subquery
 from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
 from apps.core.views import accessible_case
+from apps.documents.controlled import publication_requirements
 from apps.identity.services import active_case_grants, require
 from apps.pmo import escalations as native
 from apps.pmo.issue_access import public_current_issues
@@ -30,6 +33,8 @@ COMMANDS = {
     'check_original_delivery': {},
 }
 DECISION = obj({'id': ID, 'request_id': ID, 'role': TEXT, 'verdict': VERDICT, 'created_at': DATETIME})
+COMMUNICATION = obj({'title': TEXT, 'version': ID, 'sections': array(
+    obj({'heading': TEXT, 'text': {'type': 'string'}})), 'recipients': nullable(array(TEXT))})
 RECEIPT = obj({'id': ID, 'publication_id': ID, 'recorded_at': DATETIME})
 REGISTER = {
     'classify': {'issue_id': ID, 'state_id': ID, 'classification': CLASSIFICATION, 'timeline_impact': nullable(BOOLEAN),
@@ -110,7 +115,8 @@ def prepare(request, case_id, *, body):
 @endpoint(response=obj({**VERSIONS, 'id': ID, 'direction': TEXT, 'target': TEXT, 'stage': {'type': 'string'},
     'document_version_id': nullable(ID), 'can_request_communication_review': BOOLEAN, 'review_verdicts': array(VERDICT),
     'client_decisions': array(obj({'role': ROLE, 'verdicts': array(VERDICT)})),
-    'history': array(DECISION, limit=30), 'receipts': array(RECEIPT, limit=30),
+    'history': array(obj({**DECISION['properties'], 'note': nullable({'type': 'string'})}), limit=30),
+    'communication': nullable(COMMUNICATION), 'receipts': array(RECEIPT, limit=30),
     'jobs': array(obj({'id': ID, 'state': TEXT, 'operations': array(choice('cancel', 'retry'))}), limit=30),
     'next_action': TEXT}), summary='Read the scoped client decision, communication review and original delivery records')
 def detail(request, work_id):
@@ -120,13 +126,35 @@ def detail(request, work_id):
         panel = factory.projection(actor, work)
         row = panel['request']
         eligible = factory.decision_controls(actor, work.case, panel['decision_roles'])
+        communication = None
+        if panel['document'] and (panel['review_verdicts'] or panel['can_request_review'] or
+                                  actor.pk == panel['document'].created_by_id):
+            try:
+                require(actor, work.case, 'document.read')
+                _, _, version = factory.exact_document(work, actor)
+            except (PermissionDenied, ValidationError):
+                pass
+            else:
+                recipients = None
+                try:
+                    _, ids, _ = publication_requirements(work.case, version)
+                except (PermissionDenied, ValidationError):
+                    pass
+                else:
+                    people = get_user_model().objects.in_bulk(ids)
+                    recipients = [people[pk].get_full_name() or people[pk].get_username() for pk in ids]
+                communication = {'title': version.document.title, 'version': version.number, 'recipients': recipients,
+                                 'sections': [{'heading': item['heading'], 'text': item['text']}
+                                              for item in version.payload['sections']]}
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'id': row.pk,
             'direction': row.direction, 'target': row.target, 'stage': panel['native'].get('stage', ''),
             'document_version_id': panel['document'].pk if panel['document'] else None,
             'can_request_communication_review': panel['can_request_review'], 'review_verdicts': panel['review_verdicts'],
-            'client_decisions': eligible, 'next_action': panel['next_action'],
+            'client_decisions': eligible, 'next_action': panel['next_action'], 'communication': communication,
             'history': [{'id': decision.pk, 'request_id': decision.request_id, 'role': decision.role,
-                         'verdict': decision.verdict, 'created_at': decision.created_at} for decision in panel['decision_history'][-30:]],
+                         'verdict': decision.verdict, 'created_at': decision.created_at,
+                         'note': decision.note if eligible or actor.pk in (row.actor_id, decision.actor_id) else None}
+                        for decision in panel['decision_history'][-30:]],
             'receipts': [{'id': receipt.pk, 'publication_id': receipt.publication_id,
                           'recorded_at': receipt.created_at} for receipt in panel['receipts'][-30:]],
             'jobs': [{'id': job.pk, 'state': job.status,

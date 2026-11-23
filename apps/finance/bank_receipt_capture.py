@@ -150,6 +150,7 @@ def report(actor, case_id, issue_id, revision, facts, locator, file):
                     or proof.sha256!=hashlib.sha256(data).hexdigest()):
                 raise ValidationError('This bank reference already has a receipt. Review the original before correcting it.')
             return previous
+        cash.require_reported_amount(value)
         evidence=supplied_evidence(actor,case,'cash_report',value,locator)
         receipt=cash.report(actor,case.pk,evidence.pk,case.revision)
         if receipt.evidence_id!=evidence.pk:

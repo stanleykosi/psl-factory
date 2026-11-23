@@ -122,11 +122,15 @@ def recorded_totals(rows):
     groups = {}
     for row in rows:
         key = row['currency'], row['basis']
-        group = groups.setdefault(key, {'currency': key[0], 'basis': key[1], 'owed': Decimal(0), 'overdue': Decimal(0)})
+        group = groups.setdefault(key, {'currency': key[0], 'basis': key[1], 'owed': Decimal(0), 'overdue': Decimal(0),
+                                        'known_owed': Decimal(0), 'unknown_owed_count': 0})
         if row['owed'] is None:
+            group['unknown_owed_count'] += 1
             group['owed'] = None
-        elif group['owed'] is not None:
-            group['owed'] += row['owed']
+        else:
+            group['known_owed'] += row['owed']
+            if group['owed'] is not None:
+                group['owed'] += row['owed']
         if row['age_days'] is None or row['owed'] is None:
             group['overdue'] = None
         elif group['overdue'] is not None and row['age_days']:

@@ -67,12 +67,15 @@ def current_authority(actor, authority_id):
 
 
 def record(actor, authority_id, start_key, reference, received_at, deadline_status, deadline_at, file,
-           *, source_context=None, context_attested=False):
+           *, source_context=None, context_attested=False, note=''):
     if type(authority_id) is not int or not isinstance(start_key, UUID) or not isinstance(reference, str):
         raise ValidationError('Choose the organization and enter a bid reference.')
     reference = reference.strip()
     if not reference or len(reference) > 160 or not reference.isprintable():
         raise ValidationError('Enter a bid reference of at most 160 characters.')
+    if not isinstance(note, str) or len(note) > 4000:
+        raise ValidationError('Enter a bid intake note of at most 4000 characters.')
+    note = note.strip()
     current = current_authority(actor, authority_id)
     received = aware(received_at, 'Received time').astimezone(datetime_timezone.utc)
     rfp.past(received)
@@ -84,7 +87,8 @@ def record(actor, authority_id, start_key, reference, received_at, deadline_stat
     fingerprint = hashlib.sha256(data).hexdigest()
     payload_hash = digest({'reference': reference, 'received': received.isoformat(),
         'deadline_status': deadline_status, 'deadline': deadline.isoformat() if deadline else None,
-        'context': asdict(context), 'file_sha256': fingerprint, 'file_size': len(data)})
+        'context': asdict(context), 'file_sha256': fingerprint, 'file_size': len(data),
+        **({'note': note} if note else {})})
     start_reference = 'received-bid:' + digest([actor.pk, start_key.hex])
     operation = digest([LINE, current.tenant, start_reference])
     try:
@@ -115,7 +119,7 @@ def record(actor, authority_id, start_key, reference, received_at, deadline_stat
                     }, sort_keys=True), DEADLINE_SOURCE, case.revision)
                     case.refresh_from_db(fields=['revision'])
                 facts = (reference, received, deadline_status, deadline,
-                         deadline_proof.pk if deadline_proof else None, RECEIPT_NOTE)
+                         deadline_proof.pk if deadline_proof else None, note or RECEIPT_NOTE)
                 intake = upload.persist(actor, case, facts, file.name, data, intent, first=first,
                                         context=context, context_attested=context_attested)
                 event(actor, case, ACTION, case_intake=case.caseintake.pk, intake=intake.pk, sha256=payload_hash)

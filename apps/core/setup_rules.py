@@ -82,11 +82,12 @@ def _lookup(actor, case, permissions, component, domains, at, budget):
         return ObservedRule('UNKNOWN', None, ())
 
 
-def _row(label, area, observed, *, value=None, details=(), roles=(), route=None, case=None):
+def _row(label, area, observed, component, *, value=None, details=(), roles=(), route=None, case=None):
     present = bool(value or roles)
     status = 'MISSING' if observed.status == 'ACTIVE' and not present else observed.status
     return {
         'label': label, 'area': area, 'status': status, 'version': observed.revision if present else None,
+        'component': component,
         'value': value, 'details': details, 'roles': tuple(roles),
         'url': reverse(route, args=[case.pk]) if route and status != 'UNAVAILABLE' else None,
     }
@@ -156,20 +157,20 @@ def rows(actor, case, permissions, at):
         adjustments, limits = _cost_limits(case, calculation, read(BID_ADJUSTMENTS, COST_READ))
 
     return [
-        _row('Who may assign a bid to a project manager', 'Pre-sale', matrix, roles=bid_roles.get('assignment_roles', ()), route='rfp', case=case),
-        _row('Who reviews client documents', 'All lines', assignments, roles=reviewers, route='documents', case=case),
-        _row('Costing rule', 'Pre-sale', calculation, value='Reviewed calculation and independent examples' if calculation.values else None, route='costing', case=case),
-        _row('Short payments (e.g. tax deducted)', 'Finance', short_pay, value='Finance review' if treatments else None,
+        _row('Who may assign a bid to a project manager', 'Pre-sale', matrix, MATRIX, roles=bid_roles.get('assignment_roles', ()), route='rfp', case=case),
+        _row('Who reviews client documents', 'All lines', assignments, ASSIGNMENTS, roles=reviewers, route='documents', case=case),
+        _row('Costing rule', 'Pre-sale', calculation, COSTING, value='Reviewed calculation and independent examples' if calculation.values else None, route='costing', case=case),
+        _row('Short payments (e.g. tax deducted)', 'Finance', short_pay, SHORT_PAYMENT, value='Finance review' if treatments else None,
              details=tuple(TREATMENTS[key] for key in treatments), route='finance_settlement', case=case),
-        _row('Hypercare criteria', 'Delivery', hypercare,
+        _row('Hypercare criteria', 'Delivery', hypercare, HYPERCARE,
              value=f'{criteria["minimum_hours"]} hours after release' if criteria else None,
              details=tuple(criteria.get('confirmation_owners', ())), route='delivery', case=case),
-        _row('Archive storage and retention', 'Delivery', archive, value=archive_value, route='delivery', case=case),
-        _row('Invoice payment terms default', 'Finance', payment_terms,
+        _row('Archive storage and retention', 'Delivery', archive, ARCHIVE, value=archive_value, route='delivery', case=case),
+        _row('Invoice payment terms default', 'Finance', payment_terms, PAYMENT_TERMS,
              value='From the signed agreement' if due_dates else None, details=due_dates, route='finance_billing', case=case),
-        _row('Who may record a bid outcome', 'Pre-sale', matrix, roles=bid_roles.get('outcome_roles', ()), route='rfp', case=case),
-        _row('Who may adjust a project’s costing', 'Pre-sale', adjustments,
+        _row('Who may record a bid outcome', 'Pre-sale', matrix, MATRIX, roles=bid_roles.get('outcome_roles', ()), route='rfp', case=case),
+        _row('Who may adjust a project’s costing', 'Pre-sale', adjustments, BID_ADJUSTMENTS,
              value='Assigned project manager' if limits else None, route='costing', case=case),
-        _row('Costing adjustment limit', 'Pre-sale', adjustments, value='Maximum resulting value for each configured input' if limits else None,
+        _row('Costing adjustment limit', 'Pre-sale', adjustments, BID_ADJUSTMENTS, value='Maximum resulting value for each configured input' if limits else None,
              details=limits, route='costing', case=case),
     ]

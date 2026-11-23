@@ -1,37 +1,49 @@
 """Requirement answers and the actual submitted-bid outcome handoff."""
 
+import json
 from datetime import datetime
 
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
 from django.db.models import OuterRef, Subquery
 from django.shortcuts import get_object_or_404
 
 from apps.agents.rfp_answer_models import RFPAnswerReview, RFPAnswerSuggestion
 from apps.core.evidence_access import public_evidence, restricted
 from apps.core.read_budget import limit_queries
+from apps.core.services import add_evidence, bump, event, lock_case
 from apps.core.views import accessible_case
 from apps.identity.services import active_case_grants, require
-from apps.pmo import rfp, rfp_answers, rfp_outcomes, rfp_pricing, winning_answers
+from apps.pmo import rfp, rfp_answers, rfp_loss, rfp_outcomes, rfp_pricing, winning_answers
 from apps.pmo.models import RFPCase, RFPDisposition, RFPOutcome, RFPSubmission
+from apps.policy.services import active_component, reference_values
 from apps.workflows import factory_rfp as native
 
 from .commands import require_line
+from .bid_requirements import citation_data
 from .delivery import PROOF, proof_rows
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
-from .work import WORK_RESULT, result
+from .work import PAGE, WORK_RESULT, page_number, result
+from .work_proofs import owned_pdf
 
 
 KEY = {**TEXT, 'maxLength': 100}
 PROSE = {'type': 'string', 'maxLength': 4000}
 DISPOSITION = choice('addressed', 'clarification', 'out_of_scope')
 ANSWER_REVIEW = choice('accept', 'edit', 'replace', 'undo')
+ANSWER_SOURCE = obj({'id': ID, 'kind': TEXT, 'version': REVISION, 'reference': {'type': 'string'}})
 ROW = obj({'key': KEY, 'evidence_id': nullable(ID), 'response': nullable(PROSE), 'disposition': DISPOSITION,
            'status': choice('current', 'queued', 'running', 'held', 'suggested', 'reviewed', 'stale'),
            'suggestion_id': nullable(ID), 'suggested_answer': nullable(PROSE), 'review_id': nullable(ID),
-           'review_verdict': nullable(ANSWER_REVIEW), 'can_review': BOOLEAN, 'can_undo': BOOLEAN})
+           'review_verdict': nullable(ANSWER_REVIEW), 'can_review': BOOLEAN, 'can_undo': BOOLEAN,
+           'position': ID, 'source': nullable(ANSWER_SOURCE),
+           'citation': nullable(obj({'wording': PROSE, 'page': nullable(ID), 'evidence_id': ID}))})
 PRIOR = obj({'token': TEXT, 'label': TEXT})
+COUNT = {'type': 'integer', 'minimum': 0}
 TEAM = choice(*rfp.TEAMS)
+TEAM_REQUEST_EVENT = 'factory.bid_team_request'
+TEAM_REQUEST = obj({'id': ID, 'team': TEAM, 'summary': PROSE, 'requested_at': DATETIME, 'blocked': BOOLEAN})
 DAYS = {'type': 'string', 'pattern': r'^\d{1,9}(\.\d{1,3})?$'}
 TEAM_INPUT = obj({'id': ID, 'intake_id': ID, 'team': TEAM, 'evidence_id': ID,
     'received_at': nullable(DATETIME), 'source_party': nullable({'type': 'string'}), 'summary': nullable({'type': 'string'}),
@@ -51,6 +63,8 @@ def team_case(actor, case_id):
 
 
 @endpoint(response=obj({'revision': REVISION, 'intake_id': ID, 'items': array(TEAM_INPUT, limit=4),
+    'team_status': array(obj({'team': TEAM, 'status': choice('not_requested', 'awaiting_reply', 'blocked', 'received'),
+        'request': nullable(TEAM_REQUEST), 'receipt_id': nullable(ID)}), limit=4),
     'choices': array(obj({'team': TEAM, 'proofs': array(PROOF, limit=40)}), limit=4)}),
     summary='Read the current bid team inputs and allowed original proofs')
 def team_inputs(request, case_id):
@@ -62,21 +76,74 @@ def team_inputs(request, case_id):
             .defer('evidence__body').order_by('team', '-pk').distinct('team'))
     actions = active_case_grants(actor, [case.pk])
     proofs = public_evidence(case.evidence.all()).only('kind', 'version').order_by('-pk')
+    received = {row.team: row for row in rows if not restricted(row.evidence)}
+    requests = {team: team_request(row) for team in rfp.TEAMS if (row := case.audit.filter(
+        action=TEAM_REQUEST_EVENT, data__intake_id=current.pk, data__team=team).order_by('-pk').first())}
     return {'revision': case.revision, 'intake_id': current.pk,
-            'items': [team_input(row) for row in rows if not restricted(row.evidence)],
+            'items': [team_input(row) for row in received.values()],
+            'team_status': [{'team': team, 'status': 'received' if team in received else 'blocked' if requests.get(team, {}).get('blocked')
+                             else 'awaiting_reply' if team in requests else 'not_requested',
+                             'request': requests.get(team), 'receipt_id': received[team].pk if team in received else None}
+                            for team in rfp.TEAMS],
             'choices': [{'team': team, 'proofs': proof_rows(proofs.filter(kind=kind)[:40])}
                         for team, kind in rfp.TEAMS.items() if (case.pk, f'rfp.contribute:{team}') in actions]}
 
 
-@endpoint(method='POST', request=obj({'revision': REVISION, 'team': TEAM, 'evidence_id': ID, 'received_at': DATETIME,
+def team_request(row):
+    return {'id': row.pk, 'team': row.data['team'], 'summary': row.data['summary'], 'requested_at': row.created_at,
+            'blocked': row.data.get('blocked', False)}
+
+
+@endpoint(method='POST', request=obj({'revision': REVISION, 'intake_id': ID, 'team': TEAM, 'summary': PROSE,
+    'blocked': BOOLEAN}, optional=('blocked',)), response=TEAM_REQUEST, status=201,
+          summary='Record a request or actual block for a named bid input team')
+@transaction.atomic
+def request_team_input(request, case_id, *, body):
+    actor = request.user
+    case = team_case(actor, case_id)
+    case = lock_case(actor, case.pk, 'rfp.prepare', body['revision'])
+    bid = rfp.root(case)
+    rfp.ensure_open(bid)
+    if bid.current_intake_id != body['intake_id']:
+        raise ValidationError('Choose the current bid intake.')
+    if rfp.current_assignment(bid, metadata_only=True).pm_id != actor.pk:
+        raise PermissionDenied('The assigned project manager records team requests.')
+    summary = body['summary'].strip()
+    if not summary:
+        raise ValidationError('Describe the request made to this team.')
+    if bid.current_intake.contributions.filter(team=body['team']).exists():
+        raise ValidationError('This team already has a received input on the current intake.')
+    row = event(actor, case, TEAM_REQUEST_EVENT, intake_id=body['intake_id'], team=body['team'], summary=summary,
+                blocked=body.get('blocked', False))
+    bump(case)
+    return team_request(row)
+
+
+TEAM_INPUT_FIELDS = {'revision': REVISION, 'team': TEAM, 'received_at': DATETIME,
     'source_party': {**TEXT, 'maxLength': 160}, 'summary': {**TEXT, 'maxLength': 4000},
-    'person_days': nullable(DAYS), 'attested': BOOLEAN}), response=TEAM_INPUT, status=201,
+    'person_days': nullable(DAYS), 'attested': BOOLEAN}
+
+
+@endpoint(method='POST', request={'oneOf': [
+    obj({**TEAM_INPUT_FIELDS, 'evidence_id': ID}),
+    obj({**TEAM_INPUT_FIELDS, 'upload_id': ID}),
+]}, response=TEAM_INPUT, status=201,
     summary='Record actual named-team evidence, time and exact known or unknown person-days')
+@transaction.atomic
 def record_team_input(request, case_id, *, body):
     actor = request.user
     case = team_case(actor, case_id)
     facts = {key: body[key] for key in ('source_party', 'summary', 'person_days', 'attested')}
-    row = rfp.record_team_input(actor, case.pk, body['team'], body['evidence_id'], body['revision'],
+    team, revision = body['team'], body['revision']
+    evidence_id = body.get('evidence_id')
+    if 'upload_id' in body:
+        require(actor, case, f'rfp.contribute:{team}')
+        proof = owned_pdf(actor, case, body['upload_id'])
+        created = add_evidence(actor, case.pk, rfp.TEAMS[team],
+            json.dumps({**proof, 'team': team, 'received_at': body['received_at'], **facts}, sort_keys=True),
+            f"bid-team-input-copy/v1:{proof['upload_id']}", revision)
+        evidence_id, revision = created.pk, revision + 1
+    row = rfp.record_team_input(actor, case.pk, team, evidence_id, revision,
                                 received_at=datetime.fromisoformat(body['received_at']), **facts)
     row.refresh_from_db(fields=['person_days'])
     return team_input(row)
@@ -111,7 +178,11 @@ def answer_row(actor, work, row, suggestion, anchors, writable, readable_source)
 
 
 @endpoint(response=obj({**VERSIONS, 'can_write': BOOLEAN, 'rows': array(ROW, limit=100),
-                        'prior_options': array(PRIOR, limit=100)}),
+    'prior_options': array(PRIOR, limit=100), 'next_page': nullable(PAGE),
+    'response_review': nullable(obj({'response_id': ID, 'role': TEXT, 'verdict': TEXT,
+                                      'reason': {'type': 'string'}, 'reviewed_at': DATETIME})),
+    'counts': obj({'total': COUNT, 'visible': COUNT, 'answered': COUNT, 'clarification': COUNT, 'reviewed': COUNT})}),
+    query={'page': PAGE},
           summary='Read current requirement answers, authorised suggestions and reusable reviewed winning precedents')
 def answers(request, work_id):
     actor = request.user
@@ -133,15 +204,37 @@ def answers(request, work_id):
                 if pk in source_access:
                     continue
                 try:
-                    rfp_answers.source_for(actor, work, row)
+                    source = rfp_answers.source_for(actor, work, row)
                 except (PermissionDenied, ValidationError):
-                    source_access[pk] = False
+                    source_access[pk] = None
                 else:
-                    source_access[pk] = True
+                    source_access[pk] = {'id': source.pk, 'kind': source.kind, 'version': source.version,
+                                         'reference': source.source}
         options = winning_answers.options(actor, work.case)[:100] if writable else []
+        citations = citation_data(work) if anchors is not None else {}
+        results = [{**answer_row(actor, work, row, suggestions.get(row['key']), anchors, writable,
+                                 source_access.get(row['evidence_id'])),
+                    'position': position, 'source': source_access.get(row['evidence_id'])}
+                   for position, row in enumerate(rows, start=1)]
+        for row in results:
+            citation = citations.get(row['key'])
+            row['citation'] = citation if citation and citation['evidence_id'] == row['evidence_id'] else None
+        readable = [row for row in results if row['source'] is not None]
+        page = page_number(request) if 'page' in request.GET else None
+        end = page * 25 if page else len(results)
+        response = native.response_for(work) if anchors is not None else None
+        review = response.reviews.filter(role='Engineering Lead').order_by('-pk').first() if response else None
+        if review and not public_evidence(work.case.evidence.filter(pk=review.evidence_id)).exists():
+            review = None
         return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'can_write': writable,
-                'rows': [answer_row(actor, work, row, suggestions.get(row['key']), anchors,
-                                   writable, source_access.get(row['evidence_id'], False)) for row in rows],
+                'rows': results[end - 25:end] if page else results,
+                'next_page': page + 1 if page and end < len(results) else None,
+                'response_review': {'response_id': response.pk, 'role': review.role, 'verdict': review.verdict,
+                                    'reason': review.note, 'reviewed_at': review.created_at} if review else None,
+                'counts': {'total': len(results), 'visible': len(readable),
+                           'answered': sum(bool(row['response']) for row in readable),
+                           'clarification': sum(row['disposition'] == 'clarification' for row in readable),
+                           'reviewed': sum(row['status'] == 'reviewed' for row in readable)},
                 'prior_options': [{'token': token, 'label': facts['label']} for token, _, facts in options]}
 
 
@@ -183,9 +276,39 @@ OUTCOME = obj({'id': ID, 'submission_id': ID, 'result': choice('won', 'lost', 'p
                                           'quote_basis': nullable(TEXT), 'award_basis': nullable(TEXT)}))})
 
 
+def outcome_choices(actor, case):
+    choices = {'roles': [], 'loss_catalog_id': None, 'loss_reasons': [], 'debriefs': []}
+    try:
+        require(actor, case, 'rfp.outcome')
+        config = active_component('D05.decision_action_matrix', case)
+    except (PermissionDenied, ValidationError):
+        return choices
+    for role in reference_values(config)[0].get('rfp', {}).get('outcome_roles', []):
+        try:
+            rfp.authority(actor, case, 'outcome', role)
+        except (PermissionDenied, ValidationError):
+            continue
+        choices['roles'].append(role)
+    if choices['roles']:
+        try:
+            catalog, choices['loss_reasons'] = rfp_loss.catalog(actor, case)
+            choices['loss_catalog_id'] = catalog.pk if catalog else None
+        except (PermissionDenied, ValidationError):
+            pass
+        try:
+            choices['debriefs'] = [{'version_id': row.pk, 'reference': row.meeting.reference, 'at': row.occurred_at}
+                                  for row in rfp_loss.current_debriefs(actor, case).select_related('meeting')
+                                  .order_by('-occurred_at', '-pk')[:25]]
+        except PermissionDenied:
+            pass
+    return choices
+
+
 @endpoint(response=obj({**VERSIONS, 'submissions': array(SUBMISSION, limit=100), 'submission_count': {'type': 'integer'},
     'selection_required': BOOLEAN, 'selection_packet': TEXT, 'selection_policy_id': nullable(ID),
     'selection_finding': {'type': 'string'}, 'outcome': nullable(OUTCOME),
+    'roles': array(TEXT), 'loss_catalog_id': nullable(ID), 'loss_reasons': array(obj({'key': TEXT, 'label': TEXT}), limit=25),
+    'debriefs': array(obj({'version_id': ID, 'reference': TEXT, 'at': DATETIME}), limit=25),
     'handoff': nullable(obj({'id': ID, 'outcome_id': ID, 'kind': choice('route_a', 'loss_archive'),
                              'baseline_imported': {'const': False}}))}), query={'submission_id': ID},
     summary='Read original submissions, exact award comparison and verified conversion or loss disposition')
@@ -226,6 +349,7 @@ def outcomes(request, work_id):
         else:
             handoff = None
         return {'expected_revision': work.revision, 'case_revision': work.case.revision,
+                **outcome_choices(actor, work.case),
                 'submissions': [{'id': row.pk, 'version_id': row.version_id, 'response_id': row.response_id,
                                  'submitted_at': row.submitted_at, 'late': row.late, 'receipt_ids': row.receipt_ids}
                                 for row in history[:100]],

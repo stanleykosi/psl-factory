@@ -46,19 +46,23 @@ def metadata(**scope):
     return RFPSubmissionArtifact.objects.filter(**scope).only(*METADATA).first()
 
 
-def requirement_findings(pack, artifact):
+def requirement_checks(pack, artifact):
     """Evaluate one verified PDF against the exact stated facts, when present."""
     issues = []
     if pack.file_extension and pack.file_extension != 'pdf':
-        issues.append('The client requested a different file format.')
+        issues.append(('file_format_mismatch', 'The client requested a different file format.'))
     if pack.file_count is not None and pack.file_count != 1:
-        issues.append('The number of PDFs does not match the requested file count.')
+        issues.append(('file_count_mismatch', 'The number of PDFs does not match the requested file count.'))
     if pack.file_size_bytes is not None:
         oversized = (artifact.size > pack.file_size_bytes or
                      (pack.file_size_rule == 'less_than' and artifact.size == pack.file_size_bytes))
         if oversized:
-            issues.append('The PDF exceeds the requested file size limit.')
+            issues.append(('file_size_exceeded', 'The PDF exceeds the requested file size limit.'))
     return issues
+
+
+def requirement_findings(pack, artifact):
+    return [message for _, message in requirement_checks(pack, artifact)]
 
 
 def approved_format(binding, artifact):
@@ -88,8 +92,10 @@ def panel(actor, case, version):
     except PermissionDenied:
         return None
     pack = bound_pack(artifact.binding)
+    checks = requirement_checks(pack, artifact)
     return {'file': artifact, 'version': version.pk, 'requirements': bool(requirements(pack)),
-            'findings': requirement_findings(pack, artifact)}
+            'findings': [message for _, message in checks],
+            'checks': [{'code': code, 'message': message} for code, message in checks]}
 
 
 @login_required

@@ -117,6 +117,16 @@ def _bound_content(actor, case, issue, item):
     return cfg, values
 
 
+def reminder_dates(issue, values):
+    due = issue.invoice.due_date
+    deliveries = PaymentReminderDispatch.objects.filter(draft__issue=issue)
+    earlier = PaymentReminderReceipt.objects.filter(dispatch__in=deliveries, delivered=True).order_by('-created_at').first()
+    due_on = due + timedelta(days=values['days_after_due']) if due else None
+    interval_on = (timezone.localdate(earlier.created_at) + timedelta(days=values['minimum_days_between'])
+                   if earlier else None)
+    return due_on, interval_on, deliveries.filter(receipt__isnull=True).exists()
+
+
 def send_ready(actor, case, issue, item, *, scheduled_for=None):
     cfg, values = _bound_content(actor, case, issue, item)
     now = timezone.now()
@@ -126,13 +136,12 @@ def send_ready(actor, case, issue, item, *, scheduled_for=None):
                 not now < scheduled_for <= now + timedelta(days=horizon)):
             raise ValidationError('Choose a future time within the configured scheduling window.')
     date = timezone.localdate(scheduled_for or now)
-    if issue.invoice.due_date is None or date < issue.invoice.due_date + timedelta(days=values['days_after_due']):
+    due_on, interval_on, uncertain = reminder_dates(issue, values)
+    if due_on is None or date < due_on:
         raise ValidationError('The usual reminder date has not arrived or its due date is unknown.')
-    deliveries = PaymentReminderDispatch.objects.filter(draft__issue=issue)
-    if deliveries.filter(receipt__isnull=True).exists():
+    if uncertain:
         raise ValidationError('Confirm the earlier delivery outcome before sending another reminder.')
-    earlier = PaymentReminderReceipt.objects.filter(dispatch__in=deliveries, delivered=True).order_by('-created_at').first()
-    if earlier and date < timezone.localdate(earlier.created_at) + timedelta(days=values['minimum_days_between']):
+    if interval_on and date < interval_on:
         raise ValidationError('The configured interval between reminders has not elapsed.')
     return cfg, values
 

@@ -76,7 +76,15 @@ class ClosurePreparationTests(DeliveryFixture,TestCase):
         with self.assertRaises(ValidationError):
             confirm_finance(self.actor,self.case.pk,self.d.pk,[],True,self.e['completion'].pk,'Empty is not current coverage',rev(self.case))
         ids=list(Milestone.objects.filter(case=self.case).order_by('pk').values_list('pk',flat=True))
-        current=confirm_finance(self.actor,self.case.pk,self.d.pk,ids,True,self.e['completion'].pk,'Actual Finance attestation of complete updated inventory',rev(self.case))
+        endpoint = f'/api/v1/projects/{self.case.pk}/delivery/{self.d.pk}/finance-confirmation'
+        options = self.client.get(endpoint)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual([row['milestone_id'] for row in options.json()['milestones']], ids)
+        response = self.client.post(endpoint, {'revision': options.json()['revision'], 'milestone_ids': ids,
+            'inventory_complete': True, 'evidence_id': self.e['completion'].pk,
+            'note': 'Actual Finance attestation of complete updated inventory'}, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        current = DeliveryRecord.objects.get(pk=response.json()['confirmation_id'], dossier=self.d, kind='finance_confirmation')
         self.assertEqual(self.checks(self.selected)['finance']['references'],[current.pk]);self.assertNotEqual(old,[current.pk])
         self.assertTrue(closure_requirements(self.d,self.selected)['ready_to_prepare'])
 

@@ -24,11 +24,15 @@ KEY = {**TEXT, 'maxLength': 100}
 CHANNEL = choice('email', 'whatsapp')
 DATE = {'type': 'string', 'format': 'date'}
 FILE = obj({'id': ID, 'name': TEXT})
+APPROVAL_STATUS = {'Not yet recorded': 'pending', 'Approved': 'approved', 'Returned': 'returned',
+                   'Rejected': 'rejected', 'Withdrawn': 'withdrawn', 'Recorded decision': 'recorded',
+                   'Earlier decision needs fresh review': 'review_needed'}
 
 
 @endpoint(response=obj({**VERSIONS, 'commercial_revision_id': nullable(ID), 'commercial_revision': nullable(ID),
     'inputs': array(obj({'label': TEXT, 'version': nullable(ID)})), 'amounts': array(VALUE),
-    'approvals': array(obj({'label': TEXT, 'status': TEXT, 'recorded_at': nullable(DATETIME)})),
+    'approvals': array(obj({'label': TEXT, 'role': TEXT, 'status': TEXT, 'status_code': choice(*APPROVAL_STATUS.values()),
+                           'recorded_at': nullable(DATETIME)})),
     'costing_note': TEXT, 'current': BOOLEAN, 'estimate_missing': BOOLEAN, 'security_estimate_missing': BOOLEAN,
     'can_open_calculator': BOOLEAN, 'adjustment_run_id': nullable(ID),
     'adjustment_targets': array(obj({'key': KEY, 'label': TEXT, 'max_absolute_value': AMOUNT})),
@@ -46,8 +50,9 @@ def detail(request, work_id):
     return {'expected_revision': work.revision, 'case_revision': work.case.revision,
             'commercial_revision_id': row['revision_id'], 'commercial_revision': row['revision'],
             'inputs': [{'label': label, 'version': version} for label, version in row['inputs']],
-            'amounts': row['amounts'], 'approvals': [{'label': label, 'status': status, 'recorded_at': at}
-                                                  for label, status, at in row['approvals']],
+            'amounts': row['amounts'], 'approvals': [
+                {'label': label, 'role': role, 'status': status, 'status_code': APPROVAL_STATUS[status], 'recorded_at': at}
+                for (role, _), (label, status, at) in zip(pricing.APPROVERS, row['approvals'], strict=True)],
             **{key: row[key] for key in ('costing_note', 'current', 'estimate_missing', 'security_estimate_missing',
                                          'can_open_calculator')},
             'adjustment_run_id': run.pk if run else None, 'adjustment_currency': run.rule.payload['currency'] if run else None,

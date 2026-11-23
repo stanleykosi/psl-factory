@@ -121,6 +121,10 @@ def proof_choices(case):
     'balance': obj({'due_date': nullable(DATES), 'currency': TEXT, 'amount_basis': TEXT, 'owed': TEXT}),
     'recipient': nullable(obj({'id': ID, 'name': TEXT, 'email': {'type': 'string'}})),
     'suggested_subject': TEXT, 'suggested_message': TEXT, 'mode': nullable(MODE), 'hold': nullable(TEXT),
+    'timing': nullable(obj({
+        'minimum_days_between': VALUE['properties']['minimum_days_between'],
+        'earliest_date': nullable(DATES), 'awaiting_receipt': BOOLEAN,
+    })),
     'can_prepare': BOOLEAN, 'can_schedule': BOOLEAN, 'can_confirm': BOOLEAN,
     'history': array(DRAFT, limit=20), 'attachments': array(CHOICE, limit=50), 'receipt_proofs': array(CHOICE, limit=25),
 }), summary='Read the exact outstanding balance, reminder history and current delivery controls')
@@ -132,6 +136,16 @@ def detail(http, case_id, issue_id):
     current = history[0] if history else None
     contact, balance = reminders.contact(issue), reminders.facts(issue)
     subject, message = reminders.suggested(issue, balance)
+    timing = None
+    try:
+        _, rules = reminders._settings(case)
+    except ValidationError:
+        pass
+    else:
+        due_on, interval_on, awaiting_receipt = reminders.reminder_dates(issue, rules)
+        earliest = max(due_on, interval_on) if due_on and interval_on else due_on
+        timing = {'minimum_days_between': rules['minimum_days_between'], 'awaiting_receipt': awaiting_receipt,
+                  'earliest_date': earliest.isoformat() if earliest and not awaiting_receipt else None}
     can_prepare = 'finance.reminder.prepare' in rights
     can_confirm = False
     if 'finance.reminder.confirm' in rights:
@@ -156,7 +170,7 @@ def detail(http, case_id, issue_id):
             'balance': {**{name: balance[name] for name in ('currency', 'amount_basis', 'owed')},
                         'due_date': balance['due_date'] or None},
             'recipient': {'id': contact.pk, 'name': contact.name, 'email': contact.email} if contact else None,
-            'suggested_subject': subject, 'suggested_message': message, 'mode': mode, 'hold': hold,
+            'suggested_subject': subject, 'suggested_message': message, 'mode': mode, 'hold': hold, 'timing': timing,
             'can_prepare': can_prepare, 'can_schedule': scheduling, 'can_confirm': can_confirm,
             'history': [draft_payload(case, issue, item) for item in history],
             'attachments': [{'id': upload.pk, 'label': upload.name} for upload in attachments],

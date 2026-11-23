@@ -69,6 +69,23 @@ def item(actor, draft):
             'dispatch_id': dispatch.pk if dispatch else None, 'receipt': visible_receipt, 'finding': finding}
 
 
+def timeline_events(actor, issue):
+    require(actor, issue.case, 'issue.message.read')
+    events = []
+    for draft in issue.message_drafts.select_related('issue__case', 'state', 'actor').order_by('-number')[:20]:
+        try:
+            summary = item(actor, draft)
+        except (PermissionDenied, ValidationError):
+            continue
+        events.append({'kind': draft.kind, 'id': draft.pk, 'at': draft.created_at, 'status': 'prepared'})
+        receipt = summary['receipt']
+        if receipt:
+            events.append({'kind': draft.kind, 'id': receipt['id'],
+                           'at': receipt['delivered_at'] or receipt['recorded_at'],
+                           'status': 'delivered' if receipt['delivered'] else 'delivery_not_confirmed'})
+    return events
+
+
 @endpoint(response=obj({'case_revision': REVISION, 'state_id': ID, 'items': array(ITEM, limit=20),
                         'evidence': array(PROOF, limit=35), 'timing': nullable(TIMING)}),
           summary='Read scoped owner message versions, human reviews and exact original receipt evidence')
