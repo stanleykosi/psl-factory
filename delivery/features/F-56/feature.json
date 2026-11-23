@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-56",
   "outcome": "Remove the Django embed: the shell always draws our own frame, and the proxy forwards only the API and file downloads",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -288,9 +288,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -309,9 +309,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
     "merge_policy": "not_configured",
     "changed_paths": [
       "architecture/build_model.py",
@@ -450,6 +450,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-23T00:31:19Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-23T00:37:30Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-23T00:37:30Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-23T00:37:53Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-23T00:37:58Z",
       "round": 1,
       "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
       "reason": null
