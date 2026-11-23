@@ -13,7 +13,8 @@ import { AppShell } from '@/shell/AppShell';
 import { moneyRoute } from '../mock/money.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { projects } from '../mock/projects.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { destinationList } from './destinations';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 // F-26 Money tab (SCR-12) against the contract mock's own handlers. Every money rule is a test here: Unknown is never
 // 0 or blank, nothing is totalled, invoice and paid are separate, the drill-down shows only the figure's own sources,
@@ -77,8 +78,9 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
-      if (url.pathname === '/api/v1/me') return json(200, { ...me(persona), ...(destinations ? { destinations } : {}) });
+      if (url.pathname === '/api/v1/me') return json(200, { ...me(persona), ...(destinations ? { destinations: destinationList(destinations) } : {}) });
       calls.push(url);
       return respond(url);
     }),

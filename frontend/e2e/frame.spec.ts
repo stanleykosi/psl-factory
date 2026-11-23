@@ -137,11 +137,12 @@ test.describe('desktop 1440', () => {
     }
   });
 
-  test('401 shows signed out with a sign-in link', async ({ page, context }) => {
+  test('401 shows signed out with no sign-in link (it opens in a later release)', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '401' });
     await page.goto('/my-work');
     await expect(page.getByText('You’re signed out.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fmy-work');
+    await expect(page.getByText('Sign-in opens in a later release. Ask your administrator if you need access now.')).toBeVisible();
+    await expect(page.getByRole('main').getByRole('link')).toHaveCount(0);
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveCount(0);
     await expect(page.locator('.psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);
@@ -156,7 +157,7 @@ test.describe('desktop 1440', () => {
     await setCookies(context, { psl_mock_persona: 'none' });
     await page.goto('/my-work');
     await expect(page.getByText('No sections are open to your role yet.')).toBeVisible();
-    await expect(page.getByText('Sample Person · Staff')).toBeVisible();
+    await expect(page.locator('.psl-nav__who')).toHaveText('Sample Person');
     await expect(page.locator('.psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });

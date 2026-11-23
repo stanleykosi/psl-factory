@@ -9,7 +9,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import type { ApiError } from '@/api/errors';
 import { EmptyState, PageTitle, Tabs, usePagedRows, type PageSize } from '@/components';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
-import { visibleDestinations } from '@/shell/destinations';
+import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
@@ -86,7 +86,7 @@ export function useSetupRead(status: SetupRead['status'], counts?: SetupRead['co
 /** The setup destination gate: without it nothing below renders and no Setup call is made. */
 export function SetupGate({ children }: { children: ReactNode }) {
   const me = useMe();
-  if (!me.destinations.includes('setup')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
+  if (!hasDestination(me, 'setup')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   return <>{children}</>;
 }
 

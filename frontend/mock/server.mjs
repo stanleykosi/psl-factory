@@ -4,7 +4,7 @@
 // Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead | hr | hr_lead; default finance_lead). hr is a stand-in (D-142): PSL has not defined what HR staff may see..
 // ceo (D-150) has sample data of its own: W-50xx rows and items, alerts, Assistant conversations; and it sees every project.
 // Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
-// Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
+// Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422 | csrf_failed),
 // applied only when the operation declares that status.
 // Work items: E-WORK-ITEM and E-WORK-HISTORY pick fixtures/work/<id>.json and <id>.history.json when
 // present (else the default fixture); W-1099 is the reserved no-access id. History honours kind, limit, cursor.
@@ -45,6 +45,7 @@ import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
+import { ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
@@ -311,6 +312,15 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
         return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
       }
+      // Live frame reads (session.mjs): not in v7. Reads only, so no token check.
+      if (method === 'get' && (url.pathname === SESSION_PATH || url.pathname === ROLE_DASHBOARD_PATH)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (url.pathname === SESSION_PATH) return send(res, ...sessionRoute({ scenario, me: me[persona] }));
+        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        return send(res, ...roleDashboardRoute({ persona }));
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -341,6 +351,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (scenario && SCENARIO_BODIES[scenario] && route.statuses.includes(String(scenario))) {
         return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
       }
+      // Scenario csrf_failed: the live 403 for a stale token, on /me and on writes (the app must say "press again").
+      if (scenario === 'csrf_failed' && (WRITE_METHODS.has(method) || route.operationId === 'E-ME')) return send(res, 403, CSRF_FAILED);
       if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) {
         return send(res, 403, CSRF_FAILED);
       }

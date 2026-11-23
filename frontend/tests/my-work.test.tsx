@@ -11,7 +11,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { workList } from '../mock/work-list.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 import { optionsOf, pick } from './controls';
 
 process.env.TZ = 'Africa/Lagos';
@@ -68,6 +68,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me(persona));
       calls.push(url);

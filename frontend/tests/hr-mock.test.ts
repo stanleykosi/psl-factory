@@ -8,6 +8,7 @@ import { join } from 'node:path';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
+import { destinationList } from './destinations';
 // @ts-expect-error plain ESM module without type declarations
 import { startMockServer } from '../mock/server.mjs';
 
@@ -167,7 +168,7 @@ describe('hr start work', () => {
 describe('hr is still refused Exceptions', () => {
   it('answers 403 where it did before; Projects and Setup stay out of the destinations', async () => {
     expect((await get('/api/v1/exceptions')).status).toBe(403);
-    expect((await get('/api/v1/me')).body.destinations).toEqual(['my_work', 'assistant']);
+    expect((await get('/api/v1/me')).body.destinations.map((d: { key: string }) => d.key)).toEqual(['my_work', 'assistant']);
   });
 });
 
@@ -209,7 +210,7 @@ describe('hr_lead (the HR Lead stand-in)', () => {
     for (const c of list) expect((await lead(`/api/v1/assistant/conversations/${c.conversation_id}`)).body.messages).toHaveLength(2);
     expect((await lead('/api/v1/assistant/conversations/CV-2433')).body.messages[1].text).toMatch(/has not been set up yet/);
     expect((await get('/api/v1/assistant/conversations/CV-2431')).status).toBe(404);
-    expect((await lead('/api/v1/me')).body).toMatchObject({ roles: ['HR Lead'], startable_lines: ['hr_staff_list'], destinations: ['my_work', 'overview', 'assistant'], assistant_agents: ['zainab'] });
+    expect((await lead('/api/v1/me')).body).toMatchObject({ startable_lines: ['hr_staff_list'], destinations: destinationList(['my_work', 'overview', 'assistant']), assistant_agents: ['zainab'] });
     expect((await lead('/api/v1/lines')).body.items.map((l: any) => l.key)).toEqual(['hr_staff_list']);
   });
 

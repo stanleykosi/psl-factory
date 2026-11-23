@@ -1,0 +1,25 @@
+{
+  "positions": [
+    {
+      "role": "pmo-lead",
+      "mode": "lead",
+      "name": "PMO Lead",
+      "area": "PMO Lead",
+      "focus": "Your work",
+      "workspace": "PMO Lead",
+      "team": null,
+      "invite_url": null,
+      "manage_url": null
+    }
+  ],
+  "actions": [],
+  "decisions": [],
+  "team_decisions": [],
+  "limited": false,
+  "workspace_decisions": [],
+  "approval_desks": [],
+  "has_teams": false,
+  "page": 1,
+  "has_next": false,
+  "as_of": "2026-11-23T09:00:00Z"
+}

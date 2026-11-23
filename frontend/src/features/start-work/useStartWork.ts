@@ -432,7 +432,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
       }
       if (response.status === 409) {
         setKey(newIdempotencyKey());
-        if (apiError.code === 'idempotency_key_reused') return show({ kind: 'problem', message: apiError.message });
+        if (apiError.code === 'idempotency_conflict') return show({ kind: 'problem', message: apiError.message });
         onConflict?.();
         return await reloadRevision();
       }

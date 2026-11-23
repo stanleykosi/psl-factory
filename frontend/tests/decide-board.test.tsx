@@ -11,6 +11,8 @@ import type { WorkItem } from '@/api/types';
 import { DecideView } from '@/features/decide/DecideView';
 import { AppShell } from '@/shell/AppShell';
 
+import { isRoleDashboard, roleDashboard } from './bell-feed';
+
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-1901/decide',
   useRouter: () => ({ replace: vi.fn(), push: vi.fn(), prefetch: vi.fn() }),
@@ -44,6 +46,7 @@ beforeEach(() => {
       const c: Call = { method: request.method, path: url.pathname, body: text ? JSON.parse(text) : undefined };
       calls.push(c);
       if (url.pathname === '/api/v1/me') return json(200, read('me.finance_lead.json'));
+      if (isRoleDashboard(request)) return roleDashboard();
       if (url.pathname === '/api/v1/work') return answers.list(0, c);
       if (url.pathname.endsWith('/claim')) return answers.claim(n.claim++, c);
       if (url.pathname.endsWith('/decision')) return answers.decide(n.decide++, c);
@@ -70,12 +73,12 @@ const text = () => document.body.textContent ?? '';
 const main = () => document.querySelector('main') ?? document.body;
 const phoneBar = () => document.querySelector('header.psl-phonebar') as HTMLElement;
 const decisionControls = () => screen.queryAllByRole('button', { name: /^(approve|return|reject)/i });
-/** Only the three contract operations: GET E-WORK-ITEM, POST E-TASK-CLAIM and E-TASK-DECIDE (and the frame's /me). */
+/** Only the three contract operations: GET E-WORK-ITEM, POST E-TASK-CLAIM and E-TASK-DECIDE (and the frame's /me and role-dashboard). */
 // The shell's alert bell (F-15) reads GET /api/v1/notifications; it is the frame's read, not the page's.
 const onlyContractCalls = () =>
   calls.every(
     (c) =>
-      (c.method === 'GET' && (c.path === '/api/v1/me' || c.path === '/api/v1/notifications' || c.path === '/api/v1/work' || /^\/api\/v1\/work\/W-\d+$/.test(c.path))) ||
+      (c.method === 'GET' && (c.path === '/api/v1/me' || c.path === '/api/v1/role-dashboard' || c.path === '/api/v1/notifications' || c.path === '/api/v1/work' || /^\/api\/v1\/work\/W-\d+$/.test(c.path))) ||
       (c.method === 'POST' && /^\/api\/v1\/tasks\/T-\d+\/(claim|decision)$/.test(c.path)),
   );
 const factTexts = () => within(screen.getByRole('list', { name: 'Facts' })).getAllByRole('listitem').map((li) => li.textContent);

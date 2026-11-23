@@ -28,6 +28,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
 import { DEFAULT_PERSONA, OPENAPI_PATH, PERSONAS, SCENARIO_BODIES } from './server.mjs';
+import { roleWords } from './session.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const RESPONSE_OPERATIONS = ['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION', 'E-RFP-OUTCOME', 'E-RFP-FOLLOWUP'];
@@ -146,7 +147,7 @@ function upload(body, ctx) {
 }
 
 function respond(body, ctx) {
-  const { items, taskId, overrides, me } = ctx;
+  const { items, taskId, overrides, me, persona } = ctx;
   const found = [...items].map(([workId, item]) => ({ workId, item, task: item.tasks.find((t) => t.id === taskId) })).find((f) => f.task);
   if (!found) return [404, SCENARIO_BODIES[404]];
   const { workId, item, task } = found;
@@ -183,7 +184,7 @@ function respond(body, ctx) {
   // F-31: one team's input on a task that stays open for the other teams (the sidecar carries no `recorded`): the 200 says who recorded it and the task is not marked recorded
   const staysOpen = done.response.variant === 'team_input' && !done.response.recorded;
   const board = staysOpen ? `${response.teams.find((t) => t.key === body.team).name}\u2019s input` : done.response.recorded?.summary;
-  const recorded = { by: { name: me.name, role: me.roles[0], is_you: true }, at: new Date().toISOString() };
+  const recorded = { by: { name: me.name, role: roleWords(persona), is_you: true }, at: new Date().toISOString() };
   if (board) {
     Object.assign(recorded, { responded_at: body.responded_at, proof_count: 1 + (body.evidence_ids?.length ?? 0), summary: board });
     if (body.received_via) recorded.received_via = body.received_via;
@@ -324,7 +325,7 @@ function handle(operationId, { req, url, raw, cookies, me, work, overrides }) {
   if (!request(body)) return invalid([...errorFields(request.errors), ...gapFields]);
   if (gapFields.length) return invalid(gapFields);
 
-  const ctx = { items, overrides, work, me: me[persona], caseId: segment, taskId: segment, workId: segment };
+  const ctx = { items, overrides, work, me: me[persona], persona, caseId: segment, taskId: segment, workId: segment };
   const writes = { 'E-EVIDENCE-UPLOAD': upload, 'E-RESPONSE': respond, 'E-WORK-ACTION': act, 'E-RFP-OUTCOME': recordOutcome, 'E-RFP-FOLLOWUP': sendFollowup };
   const result = writes[operationId](body, ctx);
   if (scenario === RECORD_THEN_FAIL && operationId !== 'E-EVIDENCE-UPLOAD' && result[0] === 200) return [502, MOCK_LOST];

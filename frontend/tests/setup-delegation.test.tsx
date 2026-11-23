@@ -15,7 +15,8 @@ import { DelegationPageView } from '@/features/setup/DelegationView';
 import { dateRange } from '@/features/setup/format';
 import { SetupLayoutFrame } from '@/features/setup/SetupFrame';
 import { AppShell } from '@/shell/AppShell';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { destinationList } from './destinations';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 const pathname = { value: '/setup/delegation' };
 vi.mock('next/navigation', () => ({
@@ -77,6 +78,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       const text = request.method === 'GET' ? '' : await request.clone().text();
       const c: Call = { method: request.method, path: url.pathname, query: url.search, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };
@@ -257,7 +259,7 @@ describe('the add control follows the response only (AC 4, 5)', () => {
   it('admin, finance_lead and ceo with the same fixture get the same controls; /me roles are not read', async () => {
     const seen: string[] = [];
     for (const persona of ['admin', 'finance_lead', 'ceo']) {
-      answers.me = meWith(persona, { destinations: ['my_work', 'setup'], roles: ['Somebody'] });
+      answers.me = meWith(persona, { destinations: destinationList(['my_work', 'setup']) });
       const view = render(
         <AppShell>
           <SetupLayoutFrame>

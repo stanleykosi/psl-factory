@@ -16,6 +16,7 @@ export type PhoneBack = { label: string; href: string; note?: string; /** Makes 
 
 type Props = {
   me: Me | null;
+  roleWords: string | null;
   destinations: DestinationInfo[];
   current: DestinationInfo | undefined;
   back?: PhoneBack | null;
@@ -27,7 +28,7 @@ type Props = {
  * "+ Start" (CMP-23). On a sub-page that sets a back link the bar shows "← label" instead of Menu and PSL FACTORY
  * (SCR-10-mobile, SCR-22-mobile); the bell stays.
  */
-export function PhoneBar({ me, destinations, current, back = null, bell }: Props) {
+export function PhoneBar({ me, roleWords, destinations, current, back = null, bell }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const hasMenu = me !== null && back === null;
@@ -81,7 +82,7 @@ export function PhoneBar({ me, destinations, current, back = null, bell }: Props
         <nav id="phone-menu" aria-label="Main" className="psl-pop psl-menu">
           <p className="shell-menuwho">
             <strong>{me.name}</strong>
-            <small>{me.roles.join(', ')}</small>
+            {roleWords && <small>{roleWords}</small>}
           </p>
           <div className="psl-sep" aria-hidden="true" />
           {destinations.map((d) => (
