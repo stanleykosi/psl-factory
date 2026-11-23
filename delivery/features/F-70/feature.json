@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-70",
   "outcome": "The project list and project journey read from the live API",
-  "state": "IMPLEMENTING",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -70,55 +70,386 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T14:28:05Z",
+      "seconds": 890.7,
+      "evidence_ref": "delivery/features/F-70/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T15:03:57Z",
+      "seconds": 475.2,
+      "evidence_ref": "delivery/features/F-70/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (lighter panel, D-180)",
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance (delivery acceptance only)",
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-70/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the lane B coordinator",
+      "authority": "accepted in batch, delegated under D-184 (batch 1 answer D-182, 23 Nov 2026)",
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer (lighter panel, D-180)",
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (lighter panel, D-180)",
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On `/projects/{id}/delivery` the Delivery tab is not in the bar by design, so `selected=\"delivery\"` matches no tab. `Tabs` sets `tabIndex 0` only on the selected tab (`src/components/Tabs.tsx:65`), so no tab in the bar is tab-reachable by keyboard on that page. The same happens on any route whose key is missing from live `tabs[]`. Expected: when the selected key is absent, the first tab keeps `tabIndex 0`. Seen at `src/features/projects/ProjectTabs.tsx:13` (passes `selected={current}`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T14:31:19Z",
+          "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A builder-edited e2e step fails. `e2e/projects.spec.ts:228` opens `/projects/P-0101/documents`, clicks the first tab, then expects the URL to end in the UUID `.../00000000-0000-4000-8000-000000000101`. The tab links keep the id the route was opened with, so the URL is `/projects/P-0101`. Both widths fail on the same step. The mock accepts both id forms, so this is a wrong expectation in the spec, not a product bug. Fix the expectation (accept either id form, or open the Documents tab by UUID), then rerun the spec. The builder reported these specs as edited but not run.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T14:42:47Z",
+          "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T15:03:57Z",
+          "refs": [
+            "Documents-tab e2e now expects /projects/P-0101 after clicking the first tab"
+          ],
+          "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T15:04:49Z",
+          "refs": [
+            "the diff replaces the UUID URL regex with /\\/projects\\/P-0101$/, matching the opened id at projects.spec.ts:217. It is still anchored and followed by the same line-link count assertion."
+          ],
+          "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Documents-tab e2e now expects /projects/P-0101 after clicking the first tab"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "the diff replaces the UUID URL regex with /\\/projects\\/P-0101$/, matching the opened id at projects.spec.ts:217. It is still anchored and followed by the same line-link count assertion."
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The live journey and populated list were never run on this head, so acceptance criteria 1, 7, 9 to 12 and 16 have no live evidence. Before merge, run once with a project-reading account (for example live-lead) with the live-lead credentials held by the user.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T14:42:47Z",
+          "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried forward from UX-1-1. On /projects/{id}/delivery no tab is selected, so none has tabIndex 0 and the tab bar cannot be reached by keyboard. Expected: when the selected key matches no tab, the first tab keeps tabIndex 0. Seen at src/components/Tabs.tsx:65 and src/features/projects/ProjectTabs.tsx:13.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T15:04:48Z",
+          "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-2-1, carried from UX-1-1, is still open. On /projects/{id}/delivery no tab is selected, so none has tabIndex 0 and the tab bar cannot be reached by keyboard. The fix is in the shared src/components/Tabs.tsx (line 65): when the selected key matches no tab, the first tab should keep tabIndex 0. That file is lane A's area. Follow-up for lane A or the coordinator.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T15:09:47Z",
+          "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-1-2 is only partly closed. Live evidence covers the model and the contract, using local data with `items` empty and `finance` and `engagement` null. QA used live-lead, live-multi and live-admin through the Django test client. The list and journey bodies validated against the contract, and the model handled every field. QA did not render the pages against live bodies. Still unproved live: rows with work items, a non-null manager, lifecycle, phase, finance or engagement values, \"Show more\" paging, and the live Delivery tab. These cover the live side of acceptance criteria 1, 7 and 9 to 12. The mock tests cover them. Follow-up: run once against richer live data before the live cutover is called complete.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T15:09:47Z",
+          "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The two flaky tests (tests/start-work.test.tsx project-picker paging, tests/shell-live.test.tsx assistant NotOpenState) failed under full-suite load and passed alone. They are not caused by this merge, but shell-live.test.tsx was touched by F-58. If they fail again on a quiet machine, treat them as real.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T15:33:18Z",
+          "head": "cf5074164183ccd9027b818fe6a3b64099288c2b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Process slip. The coordinator merged origin/main into the branch as cf507416 and squash-merged PR #102 at that head before the technical, UX, UI, QA and PMO records covered it. Those records were reconciled after the fact: each now carries COMMIT cf507416 and says it was written post-merge. The merge was not gated by head-matching reviews, so the order the delivery process requires (gate, reviews, QA, PMO, then merge) was broken. Follow-up: merge only after every record names the head being merged, and have the coordinator note the slip in the decision log.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T15:33:18Z",
+          "head": "cf5074164183ccd9027b818fe6a3b64099288c2b"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The gate record (round-2/checks.md) and builder record (round-2/build.md) still say COMMIT ed72928f. Technical review reports that checks.sh on cf507416 had 2 failures of 3810 (start-work paging, shell-live assistant NotOpenState). Both passed when run alone (93/93), and the targeted run was 218/218. They are judged load timing (TECH-2-1). No gate PASS file exists for cf507416. Follow-up: rerun the gate on a quiet machine, or have the coordinator record that decision. If either test fails again on a quiet machine, treat it as real.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-70/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T15:33:18Z",
+          "head": "cf5074164183ccd9027b818fe6a3b64099288c2b"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), lighter panel D-180",
+          "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+          "evidence_refs": [
+            "delivery/features/F-70/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA (lighter panel, D-180)",
+          "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+          "evidence_refs": [
+            "delivery/features/F-70/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-70/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer (lighter panel, D-180)",
+          "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+          "evidence_refs": [
+            "delivery/features/F-70/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (lighter panel, D-180)",
+          "snapshot_ref": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+          "evidence_refs": [
+            "delivery/features/F-70/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -141,18 +472,128 @@
     "base_branch": "main",
     "base_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
     "task_branch": "fe-connect-1-projects-list-journey",
-    "head_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
-    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
-    "pr_url": null,
-    "pr_number": null,
+    "head_sha": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b-records-f70",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/102",
+    "pr_number": 102,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
+    "ci_status": "passed",
+    "human_approval": "delegated under D-180 (board changes accepted in batch, D-182; delegation D-184)",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/alerts-bell.spec.ts",
+      "frontend/e2e/alerts.spec.ts",
+      "frontend/e2e/ceo.spec.ts",
+      "frontend/e2e/delivery-hypercare.spec.ts",
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/demo.spec.ts",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/project-tabs.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/e2e/sign-in.spec.ts",
+      "frontend/mock/demo-projects.mjs",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/E-PROJECT.json",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/projects/P-0102.json",
+      "frontend/mock/fixtures/projects/P-0103.json",
+      "frontend/mock/fixtures/projects/P-0104.json",
+      "frontend/mock/fixtures/projects/P-0105.json",
+      "frontend/mock/fixtures/projects/P-0106.json",
+      "frontend/mock/fixtures/projects/P-0107.json",
+      "frontend/mock/fixtures/projects/P-0108.json",
+      "frontend/mock/fixtures/projects/P-0109.json",
+      "frontend/mock/fixtures/projects/P-0110.json",
+      "frontend/mock/fixtures/projects/P-0111.json",
+      "frontend/mock/fixtures/projects/P-0112.json",
+      "frontend/mock/fixtures/projects/P-0113.json",
+      "frontend/mock/fixtures/projects/P-0114.json",
+      "frontend/mock/fixtures/projects/P-0115.json",
+      "frontend/mock/fixtures/projects/P-0116.json",
+      "frontend/mock/fixtures/projects/P-0117.json",
+      "frontend/mock/fixtures/projects/P-0118.json",
+      "frontend/mock/fixtures/projects/P-0119.json",
+      "frontend/mock/fixtures/projects/P-0120.json",
+      "frontend/mock/fixtures/projects/P-0121.json",
+      "frontend/mock/fixtures/projects/P-0122.json",
+      "frontend/mock/fixtures/projects/P-0123.json",
+      "frontend/mock/fixtures/projects/P-0124.json",
+      "frontend/mock/fixtures/projects/P-0125.json",
+      "frontend/mock/fixtures/projects/list.json",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/mock/projects.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/session.mjs",
+      "frontend/src/api/client.ts",
+      "frontend/src/app/sign-in/page.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/projects/DeliveryTab.tsx",
+      "frontend/src/features/projects/MoreFooter.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectTabContent.tsx",
+      "frontend/src/features/projects/ProjectTabs.tsx",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/projects/model.ts",
+      "frontend/src/features/projects/projects.css",
+      "frontend/src/features/projects/useProject.ts",
+      "frontend/src/features/sign-in/SignInView.tsx",
+      "frontend/src/features/sign-in/sign-in.css",
+      "frontend/src/features/sign-in/useSignOut.ts",
+      "frontend/src/shell/AccountMenu.tsx",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/FrameStates.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/shell/destinations.ts",
+      "frontend/src/shell/sample.ts",
+      "frontend/src/shell/signInNext.ts",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/ceo-mock.test.ts",
+      "frontend/tests/delivery-hypercare-mock.test.ts",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/demo-mock.test.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/engagement-planning-mock.test.ts",
+      "frontend/tests/engagement-planning.test.tsx",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/finance-month-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-live-me.test.ts",
+      "frontend/tests/mock-live-projects.test.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/money.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/overview.test.tsx",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects-model.test.ts",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/shell-live.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/sign-in-next.test.ts",
+      "frontend/tests/sign-in.test.tsx",
+      "frontend/tests/start-work-ppe-forecast.test.tsx",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx",
+      "frontend/tests/support-handover-mock.test.ts",
+      "frontend/tests/weekly-returned-received.test.tsx",
+      "frontend/tests/work-item.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -172,12 +613,19 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-70/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "109 changed files exceed the auto-merge limit of 15"
+    ],
+    "decided_for_head_sha": "cf5074164183ccd9027b818fe6a3b64099288c2b",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -185,7 +633,7 @@
     }
   },
   "created_at": "2026-11-23T13:18:10Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -203,6 +651,78 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T14:28:47Z",
+      "round": 1,
+      "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T14:31:31Z",
+      "round": 1,
+      "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-23T14:42:53Z",
+      "round": 1,
+      "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T14:42:58Z",
+      "round": 2,
+      "head": "020724df7e55a58ab2e00d32d4bdde5b273f088a",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T15:04:09Z",
+      "round": 2,
+      "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T15:04:49Z",
+      "round": 2,
+      "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T15:09:13Z",
+      "round": 2,
+      "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-23T15:10:21Z",
+      "round": 2,
+      "head": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-23T15:34:07Z",
+      "round": 2,
+      "head": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "reason": null
     }
   ],
   "routing": {
@@ -218,10 +738,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "ed72928f9f4da97ba1a1f0b9b64981109cc1a14f"
   },
   "blocked": null
 }

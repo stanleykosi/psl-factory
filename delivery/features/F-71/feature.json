@@ -3,26 +3,57 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-71",
-  "outcome": "The project Money and Milestones tabs read from the live money operation, with unknown money kept unknown",
-  "state": "PLANNED",
+  "outcome": "Money and Milestones tabs on the live project API",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "With `/money` returning stages in a given order, the Money tab rows appear in exactly that order, with no position number \u2014 verify: `tests/money.test.tsx` renders a fixture whose keys are out of any alphabetical order and asserts the row order.",
+    "A null `amount` shows Unknown (the existing `Unknown` tag) with its `missing_reason`, and never \"0\", \"0.00\" or blank \u2014 verify: test asserts the cell text and that no `0.00` appears in the table.",
+    "A null `paid` or `owed` on an invoice shows Unknown for that figure. The page makes no \"Paid\" or \"Part paid\" word of its own. An invoice with `status: \"Awaiting Finance decision\"` shows that text exactly \u2014 verify: component test, plus a model test that `paid === amount` does not change any text.",
+    "No total, subtotal or sum appears anywhere. A fixture with two known stage amounts and one null shows only the individual figures \u2014 verify: test asserts no element contains the arithmetic sum.",
+    "A stage with two invoices lists both, each with its own status, paid and owed \u2014 verify: component test.",
+    "Currency comes from the item: an `USD` item shows `USD 1,000.00`, never `\u20a6` \u2014 verify: model test.",
+    "`limited: true` shows the \"Some figures may be incomplete.\" warning, and `limited: false` shows none; \"As of\" shows `as_of` \u2014 verify: component test and the `/money` page in the mock.",
+    "Pressing an amount sets `?figure=<key>`, issues `GET \u2026/money?figure=<key>`, and the panel (phone: the sheet) lists the item's sources in order with label, kind and time. An item with no sources reads \"No source recorded\". An unknown key shows \"That figure isn't available.\" and leaves the table \u2014 verify: component test with the mock server, 1440 and 390 widths.",
+    "`/money` returning 404 or 403 shows only \"You can't see this project's money.\", with no stage, amount or server message. A 500 shows the error card with Try again, and pressing it re-reads. A body missing `items` shows the error card and draws nothing partial \u2014 verify: tests for each, and no `ApiError` message text in the DOM.",
+    "The Milestones tab shows `contract_stage: true` items only, with due and completion text, and the CHANGES column only when a change exists. A change with `additional_amount: null` reads \"change amount Unknown\", and the contract amount is not combined with it \u2014 verify: component tests for `default` and for the `psl_mock_milestones=changed` cookie page.",
+    "\"Recorded completions\" is its own list under the table and is never merged into table rows. A second page (`has_more`) appends through \"Show more\" with `?page=2` \u2014 verify: test asserts the request query and the appended rows.",
+    "When `/money` is 404, the Milestones tab shows the completions and the \"aren't available to your role\" note, and no amount, invoice or column header \u2014 verify: test and `/projects/<id>/milestones` with the scripted persona. When `/milestones` is refused and `/money` is ok, the table shows without a completions heading. When both are refused, only the note shows.",
+    "Wrong user and wrong tenant: a project the persona cannot see (P-0099 and its UUID) answers 404 from both mock routes, and the pages show no data for it \u2014 verify: `tests/mock-live-money.test.ts`.",
+    "`tests/mock-live-money.test.ts` (new, modelled on `mock-live-projects.test.ts`) validates every money fixture and every body the mock serves for `/money`, `/money?figure=`, and `/milestones` (every persona and scenario that returns 200) against the live contract with Ajv 2020 and `addFormats`, with UUID `case_id` values, and checks that P-nnnn requests still resolve \u2014 verify: `npx vitest run tests/mock-live-money.test.ts`.",
+    "The old tests for the removed shapes (`money.test.tsx`, `money-model.test.ts`, `mock-money.test.ts`, and the milestone cases in `project-tabs*.test*` and `mock-project-tabs.test.ts`) are rewritten for the live shape with every behaviour above still asserted. None is deleted without a replacement, and no assertion is weakened \u2014 verify: `npx vitest run` passes from `frontend/`.",
+    "No `api.GET('/api/v1/reports/\u2026')`, `E-PROJECT-TAB` or `E-REPORT` reference remains in `MoneyTab.tsx`, `MilestonesTab.tsx`, `useMoney.ts` or their models \u2014 verify: `grep -rn \"E-REPORT\\|E-PROJECT-TAB\" src/features/projects/{Money,Milestones,money,milestones,useMoney,useMilestones}*` has no hits. `npx tsc --noEmit` and `npm run lint` are clean.",
+    "Live smoke (integration owner): with Django on 8010, a signed-in account that holds `finance.read` opens `/projects/<case_id>/money` and `/milestones` on port 4970, and both render without console errors, with a real `as_of`. A local account without `finance.read` (for example live-none, if it can see a project) opens `/milestones` and sees no figures. If no local project carries money data, record that and rely on criteria 1 to 16 \u2014 verify: the build.md records the account, the case and what each page showed.",
+    "Money display has no write control: no button or form submits anything from either tab, and no request other than GET leaves them \u2014 verify: component test spies on `fetch`, and asserts only GET calls."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Reads only, but it replaces typed v7 mock rows with the live `/money` shapes and the sectioned milestones tab, so `moneyModel.ts` and `tabsModel.ts` must be rebuilt on display-text states. Money display is the hazard. A null amount, `paid` or `owed` rendered as 0, or a paid state worked out from the numbers, would misstate finance. That is why the surfaces include contract-change and the spec must test these cases. Product acceptance is required because the client sees changed columns, hidden fields and new \"unknown\" and \"not available to your role\" states."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-71/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +90,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-71/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +183,28 @@
   "created_at": "2026-11-23T13:18:19Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T15:34:48Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-71/readiness.md",
+      "delivery/features/F-71/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

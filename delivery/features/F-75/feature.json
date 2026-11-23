@@ -3,26 +3,58 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
-  "outcome": "The project Registers and Actions tabs read from the live sectioned tab operation",
-  "state": "PLANNED",
+  "outcome": "Registers and Actions tabs read the live sectioned project tab",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Registers on the mock read the live endpoint: opening `/projects/00000000-0000-4000-8000-000000000101/registers` (and `/projects/P-0101/registers`) makes `GET /api/v1/projects/<uuid>/registers` with no `limit`, `register`, `cursor`, `state`, `owner` or `severity`; the page shows a \"Register\" tab list `Issues, Changes, Emergencies, RFPs` \u2014 verify: Playwright request log in `e2e/project-tabs.spec.ts` and the tab names at 1440 and 390.",
+    "The register switch has no count badges and there is no count text beside the search; Actions has no \"N ACTIONS \u00b7 N OVERDUE \u00b7 N WITHOUT OWNER\" line \u2014 verify: page at P-0101, text absent; a test asserts no digit-only badge on the register tabs.",
+    "An Issues row shows reference (mono), the issue title, severity, owner and state exactly as returned; a \"Critical\" row shows a neutral tag reading \"Critical\" (not High); there is no AGE column and no row link \u2014 verify: P-0101 registers page and `tests/project-tabs.test.tsx`.",
+    "Changes shows reference, module and \"Version N\"; Emergencies and RFPs show \"\u2014\" for severity and owner; a null owner on an Issues row reads \"Owner needed\" \u2014 verify: switch registers on P-0101; `?register=changes` in the URL; unit test on the row text.",
+    "A person whose response has no Issues section sees only the registers returned and `?register=issues` falls back to the first available; with none of the four returned the page shows \"No access to this tab\" \u2014 verify: the variant fixture and a unit test with `sections: []`.",
+    "The Escalations section is never drawn, and no section title outside the mapping table appears anywhere \u2014 verify: P-0101 fixture has an Escalations row whose reference text is not on the page.",
+    "Paging on P-0102 (Issues 30 rows): the first read shows 25 Issues and a \"Show more\" button; pressing it requests `?page=2`, appends 5 rows (30 shown), and the button goes; switching to Changes afterwards shows its 1 row once, not twice (the clamped answer is not appended again) \u2014 verify: `tests/project-tabs.test.tsx` with the mock and the request log.",
+    "With a search, changing register does not request again, but changing the search does, from page 1, and drops the rows held \u2014 verify: request log; URL `?q=android` and `?register=changes&q=android`.",
+    "A failed \"Show more\" keeps every row, shows \"We couldn\u2019t load more. Your rows are safe; try again.\" with Retry, and Retry succeeds \u2014 verify: test forcing a 503 on `page=2`.",
+    "Actions: the section \"Project actions\" is shown with ACTION, OWNER, DUE, STATE; a null `due` shows the amber `Unknown` tag, not a date and not 0; `detail` \"Owner needed\" or null shows \"Owner needed\"; state tags show the live word in capitals with the tone table; no \"From\" line and no OVERDUE tag unless the live word is itself \"Overdue\" (it is then neutral) \u2014 verify: P-0101 actions page at 1440 and 390.",
+    "A due date-time shows as \"13 Nov\" in the Africa/Lagos test timezone \u2014 verify: unit test of `dueText` and the e2e run (`timezoneId: 'Africa/Lagos'`).",
+    "Negative: `P-0099` and a case outside the persona show the same \"No access to this tab\" state with no row text; `P-0103` (403) the same; a 401 shows the signed-out state with the tab's path kept; a 422 or 503 shows the error card with Try again and nothing was changed \u2014 verify: mock cases in `tests/project-tabs.test.tsx`.",
+    "A 200 whose `tab` is not the requested one, or whose sections are malformed, is shown as the error card, not as an empty list \u2014 verify: unit test of `isSectionsBody` and a hook test.",
+    "Search with no match shows \"No <word> match \u201cq\u201d.\" with Clear search; a section with zero rows and no search shows \"No <word> on this project yet.\" \u2014 verify: `?q=zzz` on P-0101; `P-0106`.",
+    "Mock contract: every served body for registers and actions (all personas, `P-0101`, `P-0102`, `P-0106`, UUID and `P-nnnn` ids, `page=1..3`, `q`) validates against the live 200 schema with Ajv (`strict: true`, `ajv-formats`), `case_id` is a UUID, page 3 of P-0102 answers each section's last page with its own `page`, `page=0` / `page=x` / `q=` answer 422 \u2014 verify: new `tests/mock-live-project-sections.test.ts` (pattern of `tests/mock-live-projects.test.ts`), run `npx vitest run tests/mock-live-project-sections.test.ts`.",
+    "`mergePage` and `isSectionsBody`, `parseSectionView`, `sectionSearch`, `stateTone`, `severityTag`, `dueText` have unit tests, including the clamp case and the duplicate case \u2014 verify: `tests/project-sections-model.test.ts`.",
+    "A grep of the two tab files and the new hook finds no `api.GET` and no import of the v7 `E-PROJECT-TAB` types \u2014 verify: `grep -rn \"E-PROJECT-TAB\\|useProjectTab\" src/features/projects/RegistersTab.tsx src/features/projects/ActionsTab.tsx` returns nothing.",
+    "Against the real backend (Django 8010): signed in as `live-lead`, `/projects/<case_id>/registers` and `/actions` render without console errors and the as-of time shows; a case the account cannot read shows \"No access to this tab\" \u2014 verify: manual run with the lane ports, recorded in build.md.",
+    "Accessibility and layout: axe WCAG 2.2 AA clean and no horizontal scroll at 390 and 1440 on both tabs; the register switch keeps arrow, Home and End keys; after \"Show more\" removes the button, focus moves to the first new row \u2014 verify: `e2e/project-tabs.spec.ts` (registers and actions cases updated)."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It is read-only and touches no money, identity or data migration. It is a cross-layer contract change: the typed v7 arrays become display-text sections with a different paging model, and the tab model and tag mapping are rewritten (`tabsModel.ts`, `useProjectTab.ts`, `STATE_TAGS`). The main hazards are matching sections by `title` text (B-12), showing unknown values as 0 or as an invented status, and the shared-page behaviour across sections. Product acceptance is required because the client sees dropped counts, age and meeting origin, and a changed register switch (D-182, D-184). Surfaces are ui, api and contract-change. Security and auth are not in scope: the live API filters sections and tabs by permission, and the UI only renders what it receives."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-75/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +91,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-75/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +184,28 @@
   "created_at": "2026-11-23T13:22:09Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T15:34:49Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-75/readiness.md",
+      "delivery/features/F-75/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

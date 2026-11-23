@@ -163,6 +163,36 @@ Context: every review passed on head `57ae81e8` (see merge-batch.md). Product ac
   2. No person page; the list only, and the per-workspace access is not shown.
   Context: no write controls either way; invite, deactivate and roles wait for PSL (D-ADMIN-AUTHORITY).
 
+### Batch 3 (lane B)
+
+Plain hides in these two specs are covered by D-182 and are not asked again. We build option 1 of each item below.
+
+- **F-71 · B19. Money and Milestones tabs: live data the boards do not draw.**
+  1. (Recommended) Show the "figures may be partial" warning, a "Due <date>" line, several invoices per stage as a stacked list, and invoice rows that are not contract stages.
+  2. Show none of them (the table matches the boards, but partial figures carry no warning).
+  3. Show only the partial-figures warning.
+- **F-71 · B20. Milestones tab for someone who may not see Finance figures.**
+  1. (Recommended) Show the recorded completions plus one line: "Contract amounts, invoices and payments aren't available to your role."
+  2. One empty state and no completions.
+  3. Hide the Milestones tab for them.
+- **F-71 · B21. "Recorded completions" list.** Completions and contract stages can't be joined in live (backend B-47).
+  1. (Recommended) A separate list under the table.
+  2. Leave it out (people without Finance figures then see nothing).
+- **F-71 · B22. Paid column wording.** Live gives amounts only, no paid word.
+  1. (Recommended) "Paid <amount> · Owed <amount>", with Unknown for each missing amount.
+  2. A dash when both are missing (hides the unknown; not recommended).
+- **F-75 · B23. Severity "Critical" in Registers.** The boards draw Low/Medium/High; live also sends Critical.
+  1. (Recommended) Its own neutral tag with the live word.
+  2. Show it as High.
+  3. Hide Critical rows.
+- **F-75 · B24. Escalations register.** Live returns an Escalations section that no board draws.
+  1. (Recommended) Leave it out of the register switch for now.
+  2. Add a fifth register (needs a board).
+  3. Fold it into Issues.
+- **F-75 · B25. Changes, Emergencies and RFPs columns.**
+  1. (Recommended) Use the Issues columns, with "—" where live has no value.
+  2. Give each register its own columns (needs a board).
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
