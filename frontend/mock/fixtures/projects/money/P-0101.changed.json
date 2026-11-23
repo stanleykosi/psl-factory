@@ -164,7 +164,7 @@
           "reference": "INV-0420",
           "version": 1,
           "currency": "USD",
-          "paid": "0.00",
+          "paid": null,
           "owed": "1000.00",
           "status": "Draft",
           "at": "2026-11-20T09:00:00Z",
