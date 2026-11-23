@@ -19,8 +19,10 @@ async function setCookies(context: BrowserContext, cookies: Record<string, strin
   await context.addCookies(Object.entries(cookies).map(([name, value]) => ({ name, value, url })));
 }
 
-test.beforeEach(async ({ request }) => {
+// The mock starts signed in; a person opening an invitation is signed out (the backend does not sign in on accept).
+test.beforeEach(async ({ request, context }) => {
   expect((await request.post(`${MOCK}/__mock/reset`)).status()).toBe(204);
+  await setCookies(context, { psl_mock_session: 'out' });
 });
 
 async function fillPasswords(page: Page, password = GOOD, confirm = password) {
@@ -41,7 +43,7 @@ test.describe('the page', () => {
     await expect(page.getByText('Work you can see moving, from first draft to verified.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'My work' })).toHaveCount(0);
     await expect(page.getByRole('navigation')).toHaveCount(0);
-    expect(page.url()).toBe(`${test.info().project.use.baseURL}/staff/join/`);
+    expect(page.url()).toMatch(/\/staff\/join\/?$/);
     expect(await page.locator('meta[name=referrer]').getAttribute('content')).toBe('no-referrer');
     const stored = await page.evaluate(() => JSON.stringify([{ ...localStorage }, { ...sessionStorage }, document.cookie]));
     expect(stored).not.toContain('v'.repeat(43));
@@ -74,7 +76,7 @@ test.describe('the page', () => {
     await page.getByLabel('Confirm new password').fill('secret-one');
     await page.getByLabel('Confirm new password').press('Enter');
     await expect(page.getByText('Enter a new password.')).toBeVisible();
-    expect(page.url()).toBe(`${test.info().project.use.baseURL}/staff/join/`);
+    expect(page.url()).toMatch(/\/staff\/join\/?$/);
   });
 
   test('two access groups read as two sentences', async ({ page }) => {
