@@ -111,7 +111,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), lighter panel (D-180)",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
+      "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
       "evidence_refs": [
         "delivery/features/F-85/round-1/review-technical.md"
       ]
@@ -167,7 +167,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "reviewer-security (lighter panel, D-180)",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
+      "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
       "evidence_refs": [
         "delivery/features/F-85/round-1/review-security.md"
       ]
@@ -573,7 +573,7 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
+    "human_approval": "approved",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
