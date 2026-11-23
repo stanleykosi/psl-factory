@@ -4327,3 +4327,5 @@
 {"at":"2026-11-23T18:29:35Z","feature":"F-78","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T18:30:02Z","feature":"F-107","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","auth","product-decision"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-23T18:30:03Z","feature":"F-107","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T18:37:50Z","feature":"F-92","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T18:37:51Z","feature":"F-92","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
