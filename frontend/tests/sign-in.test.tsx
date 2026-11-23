@@ -223,7 +223,7 @@ describe('errors', () => {
     press();
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toBe(wording);
-    expect(document.activeElement).toBe(alert);
+    await waitFor(() => expect(document.activeElement).toBe(alert));
     expect(passField().value).toBe('');
     expect(userField().value).toBe('someone@psl.example');
     expect(userField().getAttribute('aria-invalid')).toBeNull();
@@ -245,7 +245,7 @@ describe('errors', () => {
     (document.activeElement as HTMLElement).blur();
     press();
     await waitFor(() => expect(screen.getByRole('alert')).not.toBe(first));
-    expect(document.activeElement).toBe(screen.getByRole('alert'));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('alert')));
   });
 
   it('a wrong password and an unknown name give the same page text', async () => {
