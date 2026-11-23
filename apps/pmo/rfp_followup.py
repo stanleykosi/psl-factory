@@ -132,4 +132,6 @@ def reminders(actor):
             continue
         detail = reminder_time_label(outcome) if outcome.remind_at else outcome.followup_on.isoformat()
         yield {'key':digest(['rfp-check',outcome.pk]),'label':'Bid follow-up due','subject':rfp.reference,
-               'detail':detail,'url':reverse('rfp',args=[rfp.case_id]),'group':'action'}
+               'detail':detail,'url':reverse('rfp',args=[rfp.case_id]),'group':'action',
+               'at':outcome.created_at,'target_kind':'bid_followup',
+               'api_url':f'/api/v1/projects/{rfp.case_id}'}

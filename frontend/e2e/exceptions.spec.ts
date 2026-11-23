@@ -145,11 +145,11 @@ test.describe('desktop 1440', () => {
     }
   });
 
-  test('signed out (cookie 401) shows the frame signed-out state, with no sign-in link (F-57)', async ({ page, context }) => {
+  test('signed out (cookie 401) shows the frame signed-out state, with its link to /sign-in', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '401' });
     await page.goto('/exceptions');
     await expect(page.getByText('You’re signed out.')).toBeVisible();
-    await expect(page.getByRole('main').getByRole('link')).toHaveCount(0);
+    await expect(page.getByRole('main').getByRole('link')).toHaveAttribute('href', '/sign-in?next=%2Fexceptions');
   });
 
   test('a 401 on the list itself shows the signed-out state inside the page', async ({ page }) => {
@@ -157,7 +157,7 @@ test.describe('desktop 1440', () => {
     await page.goto('/exceptions');
     await loaded(page);
     await expect(page.getByText('You’re signed out.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fexceptions');
+    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fexceptions');
   });
 
   test('a 503 shows the error card; Try again loads the list', async ({ page }) => {

@@ -34,6 +34,9 @@ SECTION = obj({'text': {**TEXT, 'maxLength': 10000}, 'evidence_ids': {**array(ID
 NARRATIVE = {kind: obj({theme: SECTION for theme in themes}) for kind, themes in native.THEMES.items()}
 DOMAINS = tuple(native.DOMAINS)
 DOMAIN = choice(*DOMAINS)
+SOURCE_COUNTS = obj({'scope': choice('selected_records', 'approved_project_scope'), 'captured_at': DATETIME,
+    'projects': {'type': 'integer', 'minimum': 1},
+    'counts': array(obj({'domain': DOMAIN, 'count': {'type': 'integer', 'minimum': 0}}), limit=len(DOMAINS))})
 PARTICIPANTS = {**array(ID, limit=100), 'uniqueItems': True}
 WINDOW = {'start_at': DATETIME, 'end_at': DATETIME}
 KINDS = choice(*native.THEMES)
@@ -164,7 +167,17 @@ def submit(request, case_id, *, body):
     return {'configuration_id': draft.pk, 'case_revision': case.revision}
 
 
+def coverage(data):
+    manifest = data['manifest']
+    scope = manifest.get('project_scope')
+    counts = scope['record_counts'] if scope else {key: len(manifest.get(key, ())) for key in DOMAINS}
+    return {'scope': 'approved_project_scope' if scope else 'selected_records',
+            'captured_at': data['captured_at'], 'projects': len(scope['projects']) if scope else 1,
+            'counts': [{'domain': key, 'count': counts[key]} for key in DOMAINS if key in counts]}
+
+
 @endpoint(response=obj({**VERSIONS, 'kind': KINDS, 'audience': AUDIENCES, 'selection': workflow.INPUT,
+    'coverage': SOURCE_COUNTS,
     'editable_sections': nullable({'oneOf': list(NARRATIVE.values())}), 'document_version_id': nullable(ID),
     'review_verdicts': array(VERDICT), 'can_correct': BOOLEAN, 'recipients': array(RECIPIENT), 'next_action': TEXT}),
     summary='Read the exact leadership review, editable narrative and verified recipient receipts')
@@ -188,6 +201,7 @@ def detail(request, work_id):
         delivery = recipient_rows(selected, document, panel['receipts'])
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'kind': inputs['kind'],
             'audience': inputs['audience'], 'selection': inputs, 'editable_sections': sections,
+            'coverage': coverage(panel['data']),
             'document_version_id': document.pk if document else None, 'review_verdicts': panel['review_verdicts'],
             'can_correct': panel['can_correct'], 'next_action': panel['next_action'],
             'recipients': [{'name': row['recipient'], 'status': row['status'], 'recorded_at': row['at'],
@@ -200,6 +214,7 @@ def delivered(actor, work):
     rows = recipient_rows(publication.job, document, receipts)
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'kind': inputs['kind'],
             'audience': inputs['audience'], 'selection': inputs, 'editable_sections': None,
+            'coverage': coverage(data),
             'document_version_id': document.pk, 'review_verdicts': [], 'can_correct': False,
             'next_action': 'Inspect the reviewed leadership report and its original delivery receipts.',
             'recipients': [{'name': row['recipient'], 'status': row['status'], 'recorded_at': row['at'],

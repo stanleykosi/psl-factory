@@ -242,10 +242,32 @@ class FactoryGoLiveTests(TestCase):
         options = self.client.get(api)
         self.assertEqual(options.status_code, 200, options.content)
         self.assertEqual(options.json()['receipts'][0]['id'], receipt.pk)
+        from hashlib import sha256
+        from io import BytesIO
+        from unittest.mock import patch
+        from pypdf import PdfWriter
+        from apps.agents.models import CaseUpload
+        from apps.pmo.services import subject
+
+        stream = BytesIO()
+        pdf = PdfWriter()
+        pdf.add_blank_page(width=100, height=100)
+        pdf.write(stream)
+        content = stream.getvalue()
+        upload = CaseUpload.objects.create(case=f.case, actor=f.actor, name='signed-copy.pdf', key='test-go-live-pdf',
+                                           sha256=sha256(content).hexdigest(), size=len(content))
+        with patch('adapters.case_uploads.read', return_value=content):
+            attached = self.client.post(api + '/proofs', {'case_revision': rev(f.case), 'receipt_id': receipt.pk,
+                'upload_id': upload.pk, 'role': 'PM', 'checked': True}, content_type='application/json')
+        self.assertEqual(attached.status_code, 201, attached.content)
+        pm_id = attached.json()['evidence_id']
+        with self.assertRaisesMessage(ValidationError, 'exact go-live receipt and signer role'):
+            subject(f.case, pm_id, 'signature')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d, kind='go_live').exists())
         facts = ('source_system', 'source_reference', 'decision_id', 'decision_version', 'signer_reference', 'signed_at')
         recorded = self.client.post(api, {
             'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'version_id': v.pk,
-            'receipt_id': receipt.pk, 'pm_signature_id': pm.pk, 'client_signature_id': customer.pk,
+            'receipt_id': receipt.pk, 'pm_signature_id': pm_id, 'client_signature_id': customer.pk,
             'prior_acceptance_id': None, 'mode': 'fresh_signatures', 'note': payload['note'],
             'signers': {label: {field: payload[f'{key}-fact-{field}'] for field in facts}
                         for label, key in (('PM', 'pm'), ('Client', 'client'))},

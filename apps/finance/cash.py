@@ -64,11 +64,17 @@ def report(actor,case_id,evidence_id,expected):
         if previous.case_id!=case.pk:raise ValidationError('Source transaction identity is already registered in this tenant; reconcile under authorised Finance access')
         if previous.payload!=value:raise ValidationError('Same source transaction has changed facts; investigate explicit correction, never duplicate cash')
         return previous
+    require_reported_amount(value)
     try:
         with transaction.atomic():r=CashReceipt.objects.create(case=case,tenant=case.tenant,source=value['source'],transaction_ref=value['transaction_ref'],payload=value,evidence=e,actor=actor)
     except IntegrityError:
         raise ValidationError('Source transaction identity was concurrently registered; reconcile before retry')
     event(actor,case,'cash.reported',receipt=r.pk);bump(case);return r
+
+
+def require_reported_amount(value):
+    if value['amount'] is None:
+        raise ValidationError('Confirm the amount received before recording a new payment.')
 
 @transaction.atomic
 def verify(actor,case_id,receipt_id,role,evidence_id,expected):

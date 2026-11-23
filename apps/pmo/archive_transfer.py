@@ -331,6 +331,8 @@ def projection(actor, work):
         file.can_lookup = can_operate and file.evidence_id in visible and file.job.status in ['unknown', 'missing', 'held']
         file.can_retry = False
         group = FILE_GROUPS.get(source_kinds.get(file.evidence_id), 'Project documents')
+        file.display_group = group if can_operate else 'Project documents'
+        file.display_source_kind = source_kinds.get(file.evidence_id) if can_operate else None
         summary = groups.setdefault(group, {'label': group, 'total': 0, 'confirmed': 0})
         summary['total'] += 1
         summary['confirmed'] += file.job.status == 'confirmed'

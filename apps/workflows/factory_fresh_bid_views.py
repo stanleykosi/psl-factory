@@ -15,6 +15,7 @@ class ReceivedBidForm(forms.Form):
     start_key = forms.UUIDField(widget=forms.HiddenInput, initial=uuid4)
     authority = forms.TypedChoiceField(label='Organization', coerce=int)
     reference = forms.CharField(max_length=160, label='Bid reference')
+    note = forms.CharField(required=False, max_length=4000, label='Intake note', widget=forms.Textarea)
     prospect_name = forms.CharField(required=False, max_length=160, label='Client or prospect')
     document = forms.FileField(label='Attach the bid document',
         help_text='Upload a Word or PDF file up to 5 MiB. The original is private.',
@@ -50,7 +51,7 @@ class ReceivedBidForm(forms.Form):
         context = rfp_intake_context.SourceContext(value['prospect_name'], value['submission_method'], value['submission_target'])
         return rfp_fresh_intake.record(actor, value['authority'], value['start_key'], value['reference'],
             value['received_at'], value['deadline_status'], value['deadline_at'], value['document'],
-            source_context=context, context_attested=value['context_attested'])
+            source_context=context, context_attested=value['context_attested'], note=value['note'])
 
 
 @require_http_methods(['GET', 'HEAD', 'POST'])

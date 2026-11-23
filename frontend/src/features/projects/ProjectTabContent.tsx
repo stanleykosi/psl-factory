@@ -7,20 +7,20 @@ import { Suspense } from 'react';
 import { ActionsTab } from './ActionsTab';
 import { DocumentsTab } from './DocumentsTab';
 import { MilestonesTab } from './MilestonesTab';
-import { pmNameOf, textOf, type JourneyView } from './model';
+import type { Journey } from './model';
 import { RegistersTab } from './RegistersTab';
 import type { ListTab } from './tabsModel';
 
 import './project-tabs.css';
 
-/** "PM Tunde Bello · Route A from RFP-0031": each part only when present; hidden on phones, as the Journey line is. */
-function PmRoute({ journey }: { journey: JourneyView }) {
-  const pm = pmNameOf(journey.pm);
-  const text = [pm && `PM ${pm}`, textOf(journey.route)].filter(Boolean).join(' · ');
+/** "PM Tunde Bello · Route A": each part only when present; hidden on phones, as the Journey line is. */
+function PmRoute({ journey }: { journey: Journey }) {
+  const engagement = journey.facts.engagement;
+  const text = [engagement?.manager && `PM ${engagement.manager}`, engagement?.route].filter(Boolean).join(' · ');
   return text ? <p className="ptabs__route">{text}</p> : null;
 }
 
-export function ProjectTabContent({ caseId, journey, base, tab }: { caseId: string; journey: JourneyView; base: string; tab: ListTab }) {
+export function ProjectTabContent({ caseId, journey, base, tab }: { caseId: string; journey: Journey; base: string; tab: ListTab }) {
   // useSearchParams needs a Suspense boundary so `next build` can prerender the route.
   return (
     <Suspense fallback={null}>

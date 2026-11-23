@@ -28,8 +28,8 @@ class RevisionForm(forms.Form):
 
 class ReportForm(RevisionForm):
     customer=forms.RegexField(KEY,max_length=100,label='Received from')
-    amount=forms.DecimalField(required=False,min_value=Decimal('0.00000001'),max_digits=32,
-                              decimal_places=8,label='Amount received',help_text='Leave blank if the amount is unknown.')
+    amount=forms.DecimalField(min_value=Decimal('0.00000001'),max_digits=32,
+                              decimal_places=8,label='Amount received')
     currency=forms.RegexField(r'^[A-Z]{3}$',label='Currency')
     amount_basis=forms.ChoiceField(choices=[('', 'Choose basis'),('gross_including_tax','Gross including tax'),
         ('net_excluding_tax','Net excluding tax'),('unknown','Unknown')],label='Amount basis')
@@ -43,7 +43,7 @@ class ReportForm(RevisionForm):
     def facts(self):
         values=self.cleaned_data
         return {'customer':values['customer'],'source':values['source'],'transaction_ref':values['transaction_ref'],
-                'amount':format(values['amount'],'f') if values['amount'] is not None else None,
+                'amount':format(values['amount'],'f'),
                 'currency':values['currency'],'amount_basis':values['amount_basis'],'received_at':values['received_at'].isoformat()}
 
 

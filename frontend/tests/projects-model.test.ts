@@ -4,97 +4,110 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
-  agentSummaryOf,
   buildProjectsQuery,
   clientOf,
   countOf,
-  factsOf,
   factText,
   isJourney,
   isProjectList,
-  lineDetail,
-  nextMilestoneText,
+  MAX_Q,
   parseProjectsView,
-  pmNameOf,
+  projectCounts,
   projectsSearch,
   routeCaseId,
-  workCounts,
+  shownText,
+  visibleTabs,
+  whereText,
 } from '@/features/projects/model';
 
 const view = (search: string) => parseProjectsView(new URLSearchParams(search));
 
 describe('projects view and query', () => {
-  it('reads q, limit and the tab from the URL; an empty q, an invalid limit or an unknown status fall back to the defaults', () => {
-    expect(view('')).toEqual({ q: undefined, limit: 10, tab: 'active' });
-    expect(view('q=lagoon&limit=20')).toEqual({ q: 'lagoon', limit: 20, tab: 'active' });
-    expect(view('q=%20%20&limit=7')).toEqual({ q: undefined, limit: 10, tab: 'active' });
-    expect(view('limit=50&status=closed')).toEqual({ q: undefined, limit: 50, tab: 'closed' });
-    expect(view('limit=abc&status=all')).toEqual({ q: undefined, limit: 10, tab: 'all' });
-    expect(view('status=open')).toEqual({ q: undefined, limit: 10, tab: 'active' });
+  it('reads q and the tab from the URL; an empty q or an unknown status fall back, and an old limit is ignored', () => {
+    expect(view('')).toEqual({ q: undefined, tab: 'active' });
+    expect(view('q=lagoon&limit=20')).toEqual({ q: 'lagoon', tab: 'active' });
+    expect(view('q=%20%20&limit=7')).toEqual({ q: undefined, tab: 'active' });
+    expect(view('limit=50&status=closed')).toEqual({ q: undefined, tab: 'closed' });
+    expect(view('status=all')).toEqual({ q: undefined, tab: 'all' });
+    expect(view('status=open')).toEqual({ q: undefined, tab: 'active' });
   });
 
-  it('writes status only when not Active, q only when set and limit only when not 10; never a cursor', () => {
-    expect(projectsSearch({ limit: 10, tab: 'active' })).toBe('');
-    expect(projectsSearch({ q: 'lagoon', limit: 10, tab: 'active' })).toBe('?q=lagoon');
-    expect(projectsSearch({ q: 'a b', limit: 20, tab: 'all' })).toBe('?status=all&q=a+b&limit=20');
-    expect(projectsSearch({ limit: 50, tab: 'closed' })).toBe('?status=closed&limit=50');
+  it('writes status only when not Active and q only when set; never a cursor or a limit', () => {
+    expect(projectsSearch({ tab: 'active' })).toBe('');
+    expect(projectsSearch({ q: 'lagoon', tab: 'active' })).toBe('?q=lagoon');
+    expect(projectsSearch({ q: 'a b', tab: 'all' })).toBe('?status=all&q=a+b');
+    expect(projectsSearch({ tab: 'closed' })).toBe('?status=closed');
   });
 
-  it('always sends limit, status only off the default Active tab (TECH-2-2), q only with text and the cursor only when given', () => {
-    expect(buildProjectsQuery({ limit: 10, tab: 'active' })).toEqual({ limit: 10 });
-    expect(buildProjectsQuery({ q: '  ', limit: 20, tab: 'all' })).toEqual({ limit: 20, status: 'all' });
-    expect(buildProjectsQuery({ q: ' lagoon ', limit: 10, tab: 'closed' }, 'o10')).toEqual({ limit: 10, status: 'closed', q: 'lagoon', cursor: 'o10' });
+  it('always sends status (the live default is All), q only with text, trimmed and at most 120 long, the cursor only when given, and no limit', () => {
+    expect(buildProjectsQuery({ tab: 'active' })).toEqual({ status: 'active' });
+    expect(buildProjectsQuery({ q: '  ', tab: 'all' })).toEqual({ status: 'all' });
+    expect(buildProjectsQuery({ q: ' lagoon ', tab: 'closed' }, 'o20')).toEqual({ status: 'closed', q: 'lagoon', cursor: 'o20' });
+    for (const query of [buildProjectsQuery({ q: 'x'.repeat(200), tab: 'active' }), buildProjectsQuery(view(`q=${'y'.repeat(300)}`))]) {
+      expect(query.q?.length).toBeLessThanOrEqual(MAX_Q);
+      expect(query).not.toHaveProperty('limit');
+    }
+    // a cut that lands on a space does not leave a trailing one
+    expect(buildProjectsQuery({ q: `${'a'.repeat(119)} b`, tab: 'active' }).q).toBe('a'.repeat(119));
   });
 
-  it('counts pieces of work and distinct lines, names the client and decodes the route segment once', () => {
-    const lines = [
-      { line: 'Prepare an invoice', state: 'verified', work_id: 'W-1' },
-      { line: 'Prepare an invoice', state: 'waiting', work_id: 'W-2' },
-      { line: 'RFP response', state: 'verified', work_id: 'W-3' },
-    ] as const;
-    const journey = { case_id: 'P-1', title: 'Lagoon Health · patient app', lines: [], next: 'x' };
-    expect(workCounts({ ...journey, lines: [...lines] })).toEqual({ pieces: 3, lines: 2 });
-    expect(workCounts(journey)).toEqual({ pieces: 0, lines: 0 });
-    expect(workCounts({ ...journey, lines: [...lines], work_count: 9, line_count: 4 })).toEqual({ pieces: 9, lines: 4 });
-    expect(clientOf(journey)).toBe('Lagoon Health');
+  it('names the client from the title, and decodes the route segment once', () => {
+    expect(clientOf('Lagoon Health · patient app')).toBe('Lagoon Health');
+    expect(clientOf('Standalone fit-out')).toBeUndefined();
+    expect(clientOf(' · odd')).toBeUndefined();
     expect(routeCaseId('P%2F..%3Cb%3E')).toBe('P/..<b>');
     expect(routeCaseId('P-0101')).toBe('P-0101');
     expect(routeCaseId('%E0%A4%A')).toBe('%E0%A4%A');
   });
+
+  it('says where it is from phase, then lifecycle, then Unknown; and counts loaded rows only', () => {
+    expect(whereText({ phase: 'Release · UAT with client', lifecycle: 'active' })).toBe('Release · UAT with client');
+    expect(whereText({ phase: null, lifecycle: 'active' })).toBe('active');
+    expect(whereText({ phase: null, lifecycle: null })).toBe('Unknown');
+    expect(shownText(20, true)).toBe('20 shown, more available');
+    expect(shownText(5, false)).toBe('5 shown');
+  });
 });
 
-describe('PROPOSAL field guards (TECH-2-1)', () => {
-  it('read the v7 shapes and return undefined for any other shape', () => {
-    expect(nextMilestoneText({ name: 'UAT sign-off', due: { date: '2026-11-14', unknown: false } })).toBe('UAT sign-off · due 14 Nov');
-    expect(nextMilestoneText({ name: 'Go-live', due: { unknown: true } })).toBe('Go-live · due Unknown');
-    expect(nextMilestoneText({ name: 'SOW signed' })).toBe('SOW signed');
-    for (const value of ['UAT sign-off', { due: { unknown: true } }, null, 3]) expect(nextMilestoneText(value)).toBeUndefined();
-    expect([countOf(0), countOf(4), countOf(-1), countOf(1.5), countOf('2')]).toEqual([0, 4, undefined, undefined, undefined]);
-    expect([pmNameOf({ name: 'Tunde Bello' }), pmNameOf('Tunde Bello'), pmNameOf({ name: '' })]).toEqual(['Tunde Bello', undefined, undefined]);
-    expect(factsOf({ stopped: 1 })).toBeUndefined();
-    expect(factsOf([{ label: 'Paid', value: '1' }, { value: '2' }, 'x'])).toEqual([{ label: 'Paid', value: '1' }]);
-    expect(factText({ label: 'Paid', money: { amount: '1200.00', currency: 'USD', unknown: false } })).toBe('USD 1,200.00');
-    expect(factText({ label: 'Paid', money: { currency: 'NGN', unknown: true } })).toBeUndefined();
-    expect(factText({ label: 'Stopped', value: '0' })).toBe('0');
-    expect(factText({ label: 'Stopped', value: '1', unknown: true })).toBeUndefined();
-    expect(lineDetail({ line: 'x', state: 'ready', work_id: 'W-1', station: { index: 2, count: 5, name: 'client UAT' } })).toBe('Station 2 of 5 · client UAT');
-    expect(lineDetail({ line: 'x', state: 'ready', work_id: 'W-1', detail: 'Won 02 Jun', station: { index: 2, count: 5 } })).toBe('Won 02 Jun');
-    expect(agentSummaryOf({ agent: 'tola', text: 'One.\n\nTwo.' })).toEqual({ name: 'Tola', role: 'PMO agent', paragraphs: ['One.', 'Two.'] });
-    for (const value of [{ agent: 'Tola', paragraphs: ['x'] }, { agent: 'robot', text: 'x' }, 'Tola']) expect(agentSummaryOf(value)).toBeUndefined();
+describe('values the response may not carry', () => {
+  it('a null figure reads Not available and never 0; a real 0 reads 0', () => {
+    expect(factText(null)).toBe('Not available');
+    expect(factText(undefined)).toBe('Not available');
+    expect(factText('')).toBe('Not available');
+    expect(factText(Number.NaN)).toBe('Not available');
+    expect(factText(0)).toBe('0');
+    expect(factText(4)).toBe('4');
+    expect(factText('UAT sign-off')).toBe('UAT sign-off');
+    expect([countOf(0), countOf(4), countOf(null), countOf(-1), countOf(1.5), countOf('2')]).toEqual([0, 4, undefined, undefined, undefined, undefined]);
+  });
+
+  it('counts come from the whole project facts', () => {
+    const journey = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/projects/P-0101.json'), 'utf8'));
+    expect(projectCounts(journey)).toEqual({ pieces: 8, waiting: 2, stopped: 1 });
+  });
+});
+
+describe('tabs', () => {
+  it('keeps the keys the frontend routes, in the returned order; Delivery and unrouted keys never show', () => {
+    const keys = (list: string[]) => visibleTabs(list.map((key) => ({ key }))).map((t) => t.key);
+    expect(keys(['journey', 'milestones', 'documents', 'templates', 'money', 'month-end', 'registers', 'actions', 'hr'])).toEqual(['journey', 'milestones', 'documents', 'money', 'registers', 'actions']);
+    expect(keys(['actions', 'journey', 'delivery'])).toEqual(['actions', 'journey']);
+    expect(keys(['journey', 'milestones'])).toEqual(['journey', 'milestones']);
+    expect(keys([])).toEqual([]);
   });
 });
 
 describe('response checks', () => {
   const me = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/me.finance_lead.json'), 'utf8'));
-  const journey = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/E-PROJECT.json'), 'utf8'));
-  const list = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/E-PROJECTS.json'), 'utf8'));
+  const journey = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/projects/P-0101.json'), 'utf8'));
+  const list = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/projects/list.json'), 'utf8'));
 
-  it('accepts the contract bodies and refuses others, such as the E-ME body', () => {
-    expect(isProjectList(list)).toBe(true);
-    expect(isProjectList({ items: [], as_of: '2026-11-14T09:00:00Z' })).toBe(true);
+  it('accepts the live bodies and refuses others, such as the /me body', () => {
+    expect(isProjectList({ items: list.rows.map((r: { item: unknown }) => r.item), next_cursor: null, as_of: list.as_of })).toBe(true);
+    expect(isProjectList({ items: [], next_cursor: null, as_of: '2026-11-23T09:00:00Z' })).toBe(true);
     expect(isJourney(journey)).toBe(true);
-    expect(isJourney({ ...journey, lines: [] })).toBe(true);
+    expect(isJourney({ ...journey, items: [] })).toBe(true);
     for (const body of [me, null, 'text', [], { items: 'x' }, { items: [{}] }]) expect(isProjectList(body)).toBe(false);
-    for (const body of [me, null, list, { ...journey, lines: undefined }, { ...journey, next: '' }]) expect(isJourney(body)).toBe(false);
+    for (const body of [me, null, { items: [] }, { ...journey, items: undefined }, { ...journey, title: '' }, { ...journey, facts: undefined }]) expect(isJourney(body)).toBe(false);
   });
 });

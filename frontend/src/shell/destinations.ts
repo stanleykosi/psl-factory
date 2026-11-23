@@ -11,6 +11,9 @@ export const DESTINATIONS: readonly DestinationInfo[] = [
   { key: 'setup', label: 'Setup', href: '/setup' },
 ];
 
+/** The path prefixes of the frame's pages, for the sign-in page's safe destination (signInNext.ts). Add a new route here. */
+export const FRAME_ROUTES: readonly string[] = ['/my-work', '/projects', '/overview', '/assistant', '/setup', '/clients', '/work', '/exceptions', '/finance', '/notifications', '/settings'];
+
 /** The destinations /me lists, matched by key, in display order. Keys the frame has no link for (clients) draw none. Presentation only; the API enforces access. */
 export function visibleDestinations(listed: Me['destinations']): DestinationInfo[] {
   return DESTINATIONS.filter((d) => listed.some((l) => l.key === d.key));

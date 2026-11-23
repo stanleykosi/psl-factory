@@ -1,0 +1,22 @@
+/* Sign in (SCR-17). Token variables only; one layout, switching at 720px (bp-phone). */
+.signin { min-height: 100vh; display: flex; flex-wrap: wrap; background: var(--steel); color: var(--ink); }
+.signin-brand { flex: 1 1 520px; display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-5); padding: 48px; background: var(--ink); color: var(--on-strong); }
+.signin-wordmark { align-self: flex-start; font-family: var(--font-display); font-stretch: 125%; font-weight: 800; font-size: 20px; }
+.signin-agents { display: flex; align-items: flex-end; gap: var(--space-2); }
+.signin-agents img { width: auto; max-width: 100%; }
+.signin-tagline { margin: 0; color: var(--nav-muted); }
+.signin-form { box-sizing: content-box; flex: 1 1 420px; max-width: 520px; margin: 0; padding: 64px 56px; display: flex; flex-direction: column; gap: var(--space-4); align-items: stretch; }
+.signin-form > .psl-btn:not(.psl-btn--block) { align-self: flex-start; }
+.signin-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 32px; line-height: 1.08; }
+.signin-form .psl-label { font-weight: var(--text-label-weight); }
+.signin-forgot { margin: 0; color: var(--ink-muted); text-align: center; }
+@media (max-width: 719.98px) {
+  .signin { flex-direction: column; flex-wrap: nowrap; }
+  .signin-brand { flex: none; padding: var(--space-4) 20px; }
+  .signin-wordmark { font-size: 17px; letter-spacing: 0.02em; line-height: var(--text-fact-line); }
+  .signin-agents, .signin-tagline { display: none; }
+  .signin-form { box-sizing: border-box; flex: 1 1 auto; max-width: none; padding: 28px 20px; }
+  .signin-title { font-size: var(--text-page-title-phone-size); }
+  .signin-form .psl-input--phone { min-height: 52px; }
+  .signin-forgot { font-size: 13px; }
+}

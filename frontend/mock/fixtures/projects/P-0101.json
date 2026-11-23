@@ -1,230 +1,158 @@
 {
-  "case_id": "P-0101",
+  "case_id": "00000000-0000-4000-8000-000000000101",
   "title": "Lagoon Health · patient app",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101"
+    },
+    {
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions"
+    }
+  ],
+  "items": [
+    {
+      "id": 1801,
       "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1801",
-      "title": "RFP response",
       "reference": "RFP-0031",
-      "detail": "Won 02 Jun"
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1801/",
+      "api_url": "/api/v1/work/1801"
     },
     {
+      "id": 1712,
       "line": "Log an engagement",
-      "state": "verified",
-      "work_id": "W-1712",
-      "title": "Log an engagement",
       "reference": "ENG-0102",
-      "detail": "Route A · PM Tunde Bello"
+      "state": "Verified",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1712/",
+      "api_url": "/api/v1/work/1712"
     },
     {
+      "id": 1802,
       "line": "Commercial submission",
-      "state": "verified",
-      "work_id": "W-1802",
-      "title": "Commercial submission",
       "reference": "COM-0198",
-      "detail": "SOW v2 signed 30 Jun"
+      "state": "Verified",
+      "started": "2026-05-12T09:00:00Z",
+      "updated": "2026-11-07T14:30:00Z",
+      "django_url": "/work/1802/",
+      "api_url": "/api/v1/work/1802"
     },
     {
+      "id": 1804,
       "line": "Plan a project",
-      "state": "verified",
-      "work_id": "W-1804",
-      "title": "Plan a project",
       "reference": "PLN-0140",
-      "detail": "Planning exit approved"
+      "state": "Verified",
+      "started": "2026-06-13T09:00:00Z",
+      "updated": "2026-11-10T14:30:00Z",
+      "django_url": "/work/1804/",
+      "api_url": "/api/v1/work/1804"
     },
     {
-      "line": "Prepare an invoice",
-      "state": "verified",
-      "work_id": "W-1713",
-      "title": "Invoice · Milestone 1",
+      "id": 1713,
+      "line": "Invoice · Milestone 1",
       "reference": "INV-0398",
-      "detail": "Delivered 03 Nov"
+      "state": "Verified",
+      "started": "2026-07-14T09:00:00Z",
+      "updated": "2026-11-13T14:30:00Z",
+      "django_url": "/work/1713/",
+      "api_url": "/api/v1/work/1713"
     },
     {
-      "line": "Prepare for release",
-      "state": "waiting",
-      "work_id": "W-1803",
-      "title": "Prepare for release",
+      "id": 1803,
+      "line": "Invoice · Milestone 2",
       "reference": "REL-0077",
-      "detail": "Station 2 of 5 · client UAT"
+      "state": "Waiting",
+      "started": "2026-08-15T09:00:00Z",
+      "updated": "2026-11-16T14:30:00Z",
+      "django_url": "/work/1803/",
+      "api_url": "/api/v1/work/1803"
     },
     {
-      "line": "Prepare an invoice",
-      "state": "waiting",
-      "work_id": "W-1001",
-      "title": "Invoice · Milestone 2",
+      "id": 1001,
+      "line": "Invoice · Milestone 2",
       "reference": "INV-0412",
-      "detail": "Station 4 of 7 · Finance review"
+      "state": "Waiting",
+      "started": "2026-03-16T09:00:00Z",
+      "updated": "2026-11-19T14:30:00Z",
+      "django_url": "/work/1001/",
+      "api_url": "/api/v1/work/1001"
     },
     {
-      "line": "Prepare an invoice",
-      "state": "owner_needed",
-      "work_id": "W-1714",
-      "title": "Invoice · Milestone 3",
-      "reference": "INV-0419",
-      "detail": "Held · no Finance Lead"
+      "id": 1714,
+      "line": "Invoice · Milestone 3",
+      "reference": null,
+      "state": "Owner needed",
+      "started": "2026-04-17T09:00:00Z",
+      "updated": "2026-11-22T14:30:00Z",
+      "django_url": "/work/1714/",
+      "api_url": "/api/v1/work/1714"
     }
   ],
-  "next": "Client UAT response, then Finance review of the milestone 2 invoice.",
-  "revision": 7,
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 6,
-    "registers": 6,
-    "actions": 9
-  },
-  "pm": {
-    "name": "Tunde Bello",
-    "role": "Project manager"
-  },
-  "route": "Route A from RFP-0031",
-  "facts": [
-    {
-      "label": "CONTRACT STAGES",
-      "value": "4"
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 8,
+    "waiting": 2,
+    "stopped": 1,
+    "finance": {
+      "stages": 4,
+      "delivered": 1,
+      "next": "UAT sign-off",
+      "limited": true
     },
-    {
-      "label": "INVOICES VERIFIED",
-      "value": "1"
-    },
-    {
-      "label": "WAITING ON PEOPLE",
-      "value": "2"
-    },
-    {
-      "label": "STOPPED",
-      "value": "1"
-    },
-    {
-      "label": "NEXT MILESTONE",
-      "value": "UAT sign-off"
-    },
-    {
-      "label": "PAID",
-      "value": "Finance tracks"
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0102",
+      "manager": "Tunde Bello"
     }
-  ],
-  "agent_summary": {
-    "agent": "tola",
-    "text": "Lagoon Health is moving. Two things wait on people: the client's UAT response and Finance review of the milestone 2 invoice.\n\nMilestone 3's invoice is held because nobody holds the Finance Lead role for this project."
   },
-  "delivery": [
+  "assistant": [
     {
-      "line_key": "delivery_release",
-      "title": "Release gates",
-      "short_title": "Release",
-      "state": "verified",
-      "reference": "REL-0091",
-      "gate": {
-        "label": "Release ready",
-        "tone": "verified"
-      },
-      "at": {
-        "date": "2026-03-25",
-        "unknown": false
-      },
-      "work_id": "W-2503"
-    },
-    {
-      "line_key": "delivery_go_live",
-      "title": "Go-live acceptance",
-      "short_title": "Go-live",
-      "state": "verified",
-      "reference": "GLV-0104",
-      "gate": {
-        "label": "Accepted",
-        "tone": "verified"
-      },
-      "detail": "Signed 02 Apr",
-      "work_id": "W-2510"
-    },
-    {
-      "line_key": "delivery_hypercare",
-      "title": "Hypercare",
-      "short_title": "Hypercare",
-      "state": "processing",
-      "reference": "HYP-0062",
-      "work_id": "W-3101",
-      "gate": {
-        "label": "Running",
-        "tone": "uncertain"
-      },
-      "detail": "Day 10 of the window"
-    },
-    {
-      "line_key": "delivery_archive",
-      "title": "Archive",
-      "short_title": "Archive",
-      "state": "verified",
-      "reference": "ARC-0130",
-      "gate": {
-        "label": "Archived and verified",
-        "tone": "verified"
-      },
-      "at": {
-        "date": "2026-04-05",
-        "unknown": false
-      }
-    },
-    {
-      "line_key": "delivery_handover",
-      "title": "Handover to Support",
-      "short_title": "Handover",
-      "state": "waiting",
-      "reference": "HND-0048",
-      "work_id": "W-3704",
-      "gate": {
-        "label": "Support listed 2 gaps",
-        "tone": "person"
-      },
-      "at": {
-        "date": "2026-04-10",
-        "unknown": false
-      }
-    },
-    {
-      "line_key": "delivery_closure",
-      "title": "Closure",
-      "short_title": "Closure",
-      "state": "waiting",
-      "gate": {
-        "label": "Not yet",
-        "tone": "neutral"
-      },
-      "detail": "Needs hypercare, handover, retrospective"
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
     }
-  ],
-  "delivery_agent": {
-    "agent": "tola",
-    "title": "Checked where delivery stands",
-    "status": "done",
-    "finished_at": "2026-04-12T08:00:00Z",
-    "steps": [
-      {
-        "text": "Read the delivery file and every line’s status",
-        "status": "done",
-        "source": "DLV-0052 · 12 APR"
-      },
-      {
-        "text": "Hypercare: 1 open medium issue, no incidents",
-        "status": "done",
-        "source": "ISS-0301"
-      },
-      {
-        "text": "Handover: Support listed 2 gaps",
-        "status": "done",
-        "source": "HND-0048 · 10 APR"
-      },
-      {
-        "text": "Closure can’t start yet",
-        "status": "done",
-        "source": "HYPERCARE · HANDOVER · RETROSPECTIVE"
-      }
-    ]
-  },
-  "delivery_summary": {
-    "note": "Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance’s confirmation."
-  }
+  ]
 }

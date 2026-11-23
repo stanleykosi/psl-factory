@@ -1,12 +1,17 @@
 """Received bid assignment with current appointment and source checks."""
+import json
+
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from apps.core.views import accessible_case
+from apps.core.services import add_evidence
 from apps.pmo import rfp_assignment_queue as queue
 from apps.pmo.rfp_assignment_views import AssignmentForm
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, endpoint, nullable, obj
+from .work_proofs import owned_pdf
 
 
 CURSOR = {**TEXT, 'maxLength': 1024}
@@ -20,6 +25,7 @@ ASSIGNMENT = obj({'id': ID, 'person_id': ID, 'role': TEXT, 'intake_id': ID})
 ASSIGNMENT_SCREEN = obj({
     'bid': BID, 'setup_required': BOOLEAN, 'assignment': nullable(ASSIGNMENT),
     'roles': array(TEXT), 'nominees': array(CHOICE), 'proofs': array(CHOICE, limit=26),
+    'next_steps': array(obj({'key': TEXT, 'label': TEXT, 'api_url': nullable(TEXT)})),
 })
 
 
@@ -55,16 +61,30 @@ def detail(http, case_id):
     current, access_required = queue.assignment_state(bid)
     people = [] if current else queue.nominees(case, records)
     proofs = [] if current else queue.source_choices(bid)
+    if current:
+        path = f'/api/v1/received-bids/{case.pk}/receipts/{bid.current_intake_id}'
+        steps = [{'key': 'inspect_bid', 'label': 'Review the original bid and its submission instructions.', 'api_url': path}]
+    elif access_required:
+        steps = [{'key': 'grant_access', 'label': 'Arrange project manager access to this bid.', 'api_url': None}]
+    else:
+        steps = [{'key': 'assign_pm', 'label': 'Choose the responsible project manager and record the assignment.', 'api_url': None}]
     return {'bid': bid_payload(bid, access_required), 'setup_required': False,
+            'next_steps': steps,
             'assignment': assignment_payload(current) if current else None, 'roles': roles if not current else [],
             'nominees': [{'id': person.pk, 'label': person.get_full_name() or person.username} for person in people],
             'proofs': [{'id': proof.pk, 'label': f'{proof.kind.replace("_", " ").capitalize()} · version {proof.version}'}
                        for proof in proofs]}
 
 
-@endpoint(method='POST', request=obj({'intake': ID, 'revision': REVISION, 'candidate': ID, 'role': TEXT,
-                                     'evidence': ID, 'reason': {**TEXT, 'maxLength': 4000}}),
+ASSIGN_FIELDS = {'intake': ID, 'revision': REVISION, 'candidate': ID, 'role': TEXT, 'reason': {**TEXT, 'maxLength': 4000}}
+
+
+@endpoint(method='POST', request={'oneOf': [
+    obj({**ASSIGN_FIELDS, 'evidence': ID}),
+    obj({**ASSIGN_FIELDS, 'upload_id': ID, 'checked': {'const': True}}),
+]},
           response=ASSIGNMENT, status=201, summary='Assign an eligible project manager to an exact received bid')
+@transaction.atomic
 def assign(http, case_id, *, body):
     actor = http.user
     case = accessible_case(actor, case_id)
@@ -73,6 +93,13 @@ def assign(http, case_id, *, body):
     if case.revision != body['revision'] or bid.current_intake_id != body['intake'] or queue.assignment_state(bid)[0]:
         raise Problem(409, 'stale_version', 'The received bid or its assignment changed. Reload it.')
     people = queue.nominees(case, records)
+    if 'upload_id' in body:
+        proof = owned_pdf(actor, case, body['upload_id'])
+        evidence = add_evidence(actor, case.pk, 'rfp_assignment_proof_copy',
+            json.dumps({**proof, 'intake': bid.current_intake_id, 'candidate': body['candidate'],
+                        'checked': body['checked']}, sort_keys=True),
+            f"bid-assignment-copy/v1:{proof['upload_id']}", case.revision)
+        body = {**body, 'evidence': evidence.pk, 'revision': case.revision + 1}
     form = AssignmentForm(bid, roles, people, body)
     if not form.is_valid():
         raise Problem(422, 'invalid_input', 'Check the assignment fields.',

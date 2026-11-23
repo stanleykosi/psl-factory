@@ -135,6 +135,7 @@ class FactoryApiTests(TestCase):
         url = f'{BASE}/projects/{case.pk}/milestones/completions'
         options = self.client.get(url).json()
         self.assertIn(proof.pk, [row['id'] for row in options['proofs']])
+        self.assertTrue(options['can_complete'])
         body = {'revision': options['revision'], 'evidence_id': proof.pk, 'name': 'Synthetic completion'}
         saved = self.client.post(url, body, content_type='application/json')
         self.assertEqual(saved.status_code, 201, saved.content)
@@ -148,6 +149,33 @@ class FactoryApiTests(TestCase):
         self.assertEqual(self.client.post(url, body, content_type='application/json').status_code, 409)
         self.client.force_login(self.outsider)
         self.assertEqual(self.client.get(milestone).status_code, 404)
+
+    def test_milestone_uses_a_checked_private_pdf_copy_and_keeps_the_finance_handoff(self):
+        from hashlib import sha256
+
+        from apps.core.models import Evidence
+        from apps.finance.models import Handoff
+        from apps.workflows.services import run_once
+        from tests.helpers import signed
+        from tests.test_bank_receipt_capture import pdf_file
+
+        actor, case = setup_case(username='api-pdf-milestone-operator')
+        signed(actor, case)
+        data = pdf_file('completion.pdf').read()
+        upload = CaseUpload.objects.create(case=case, actor=actor, name='completion.pdf', key='milestone-test-copy',
+                                           size=len(data), sha256=sha256(data).hexdigest())
+        self.client.force_login(actor)
+        url = f'{BASE}/projects/{case.pk}/milestones/completions'
+        body = {'revision': rev(case), 'name': 'Completion recorded by PMO', 'upload_id': upload.pk, 'checked': True}
+        with patch('adapters.case_uploads.read', return_value=data):
+            result = self.client.post(url, body, content_type='application/json')
+        self.assertEqual(result.status_code, 201, result.content)
+        evidence = Evidence.objects.get(pk=result.json()['evidence_id'], case=case)
+        self.assertEqual(evidence.kind, 'completion')
+        self.assertIn(upload.sha256, evidence.body)
+        self.assertTrue(run_once(case_id=case.pk))
+        self.assertTrue(Handoff.objects.filter(milestone_id=result.json()['id']).exists())
+        self.assertEqual(self.client.get(f'{url}?name=Completion recorded by PMO').json()['hold'], 'name_in_use')
 
     def post(self, url, body, client=None, **headers):
         return (client or self.client).post(BASE + url, body, content_type='application/json', **headers)
@@ -193,7 +221,13 @@ class FactoryApiTests(TestCase):
         self.assertEqual(detail['line'], self.work.definition)
         self.assertFalse(detail['tasks'])
         self.check(self.client.get(work_url + '/history'), '/work/{work_id}/history')
-        self.check(self.client.get(f'{BASE}/work?queue=mine'), '/work')
+        queue = self.check(self.client.get(f'{BASE}/work?queue=mine'), '/work')
+        row = next(row for row in queue['items'] if row['id'] == self.work.pk)
+        self.assertIsNotNone(row['station'])
+        counts = self.check(self.client.get(f'{BASE}/work/counts?verified_month=2026-11'), '/work/counts')
+        self.assertEqual(counts['verified_month'], '2026-11')
+        line = next(line for line in counts['lines'] if line['key'] == self.work.definition)
+        self.assertGreaterEqual(sum(station['count'] for station in line['stations']), 1)
         finance = self.check(self.client.get(f'{BASE}/work/source-queues'), '/work/source-queues')
         self.assertIn('accounting-intake', [source['key'] for row in finance['items'] for source in row['sources']])
         self.check(self.client.get(f'{BASE}/projects'), '/projects')

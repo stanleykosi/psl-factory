@@ -35,10 +35,12 @@ HUMAN_ACTIONS = {
     'reconcile_retrospective': ('emergency.manage', None),
 }
 PROOF_AND_NOTE = {'evidence_id': ID, 'note': NOTE}
+IMPACT = {'customers_affected': nullable({'type': 'integer', 'minimum': 0, 'maximum': 2**31 - 1}),
+          'side_effects': nullable(NOTE)}
 FIELDS = {
     'preauthorization_decision': {**PROOF_AND_NOTE, 'role': PREAUTH_ROLE, 'authority_role': AUTHORITY, 'verdict': VERDICT},
     'authorize': {},
-    'capture_outcome': {**PROOF_AND_NOTE, 'implemented_at': DATETIME},
+    'capture_outcome': {**PROOF_AND_NOTE, 'implemented_at': DATETIME, **IMPACT},
     'record_review': PROOF_AND_NOTE,
     'retrospective_decision': {**PROOF_AND_NOTE, 'role': choice('Product', 'Engineering Lead'), 'verdict': VERDICT},
     'reconcile_retrospective': {},
@@ -116,6 +118,9 @@ def classify(request, case_id, version_id, *, body):
     'actions': array(choice(*HUMAN_ACTIONS)), 'options': array(OPTION), 'decisions': array(RECORD),
     'authorization_id': nullable(ID), 'recorded_authorizations': array(ID, limit=20),
     'outcome_id': nullable(ID), 'recorded_outcomes': array(ID, limit=20),
+    'outcome_impact': nullable(obj(IMPACT)),
+    'authorization_history': array(obj({'id': ID, 'by': TEXT, 'at': DATETIME}), limit=20),
+    'outcome_history': array(obj({'id': ID, 'by': TEXT, 'at': DATETIME}), limit=20),
     'document_version_id': nullable(ID), 'review_verdicts': array(VERDICT),
     'receipt_ids': array(ID, limit=30), 'evidence': array(PROOF, limit=50)}),
     summary='Read the incident, prescribed decisions, actual outcome and retained publication receipts')
@@ -136,8 +141,13 @@ def detail(request, work_id):
                                                                  'reconcile_retrospective')]
         selected_kinds = [HUMAN_ACTIONS[action][1] for action in actions if HUMAN_ACTIONS[action][1]]
         proof = public_evidence(work.case.evidence.filter(kind__in=selected_kinds)).only('id', 'kind', 'version').order_by('-pk')[:50]
-        authorizations = list(EmergencyAuthorization.objects.filter(profile=profile).order_by('-pk').values_list('pk', flat=True)[:20])
-        outcomes = list(EmergencyOutcome.objects.filter(profile=profile).order_by('-pk').values_list('pk', flat=True)[:20])
+        authorizations = list(EmergencyAuthorization.objects.filter(profile=profile).select_related('actor').order_by('-pk')[:20])
+        outcomes = list(EmergencyOutcome.objects.filter(profile=profile).select_related('actor').order_by('-pk')[:20])
+        def history(rows):
+            return [{'id': row.pk, 'by': row.actor.get_full_name() or row.actor.get_username(),
+                     'at': row.created_at} for row in rows]
+        outcome_id = panel['data']['inputs']['outcome_id']
+        impact = EmergencyOutcome.objects.filter(profile=profile, pk=outcome_id).values(*IMPACT).first() if outcome_id else None
         if work.cancel_requested or work.lease_until and work.lease_until > timezone.now():
             allowed = []
         return {'expected_revision': work.revision, 'case_revision': work.case.revision,
@@ -146,21 +156,24 @@ def detail(request, work_id):
                 'finding': status.get('finding', ''), 'actions': actions, 'options': allowed,
                 'decisions': [{'id': row.pk, 'role': row.role, 'authority_role': row.authority_role,
                                'verdict': row.verdict} for row in current],
-                'authorization_id': panel['data']['inputs']['authorization_id'], 'recorded_authorizations': authorizations,
-                'outcome_id': panel['data']['inputs']['outcome_id'], 'recorded_outcomes': outcomes,
+                'authorization_id': panel['data']['inputs']['authorization_id'],
+                'recorded_authorizations': [row.pk for row in authorizations],
+                'outcome_id': outcome_id, 'recorded_outcomes': [row.pk for row in outcomes], 'outcome_impact': impact,
+                'authorization_history': history(authorizations), 'outcome_history': history(outcomes),
                 'document_version_id': panel['document'].pk if panel['document'] else None,
                 'review_verdicts': panel['review_verdicts'], 'receipt_ids': [row.pk for row in panel['receipts'][:30]],
                 'evidence': proof_rows(proof)}
 
 
-@endpoint(method='POST', request={'oneOf': [obj({'action': {'const': action}, **VERSIONS, 'profile_id': ID, **fields})
+@endpoint(method='POST', request={'oneOf': [obj({'action': {'const': action}, **VERSIONS, 'profile_id': ID, **fields},
+    optional=tuple(IMPACT) if action == 'capture_outcome' else ())
     for action, fields in FIELDS.items()]}, response=obj({**WORK_RESULT['properties'], 'record_id': ID}), status=201,
     summary='Record the exact human Emergency decision, implementation evidence or retrospective')
 def command(request, work_id, *, body):
     actor = request.user
     work = require_line(actor, work_id, workflow.DEFINITION)
     action = body['action']
-    values = {key: body[key] for key in FIELDS[action]}
+    values = {key: body[key] for key in FIELDS[action] if key in body}
     if 'evidence_id' in values:
         evidence_id = values.pop('evidence_id')
         if not public_evidence(work.case.evidence.filter(pk=evidence_id, kind=HUMAN_ACTIONS[action][1])).exists():

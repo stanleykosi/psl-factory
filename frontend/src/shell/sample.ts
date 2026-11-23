@@ -5,4 +5,4 @@ export const showSampleLabel = () => process.env.NEXT_PUBLIC_SHOW_SAMPLE_LABEL =
 /** The frame (top bar, phone bar) is sample unless the build explicitly says the API is live. */
 export const frameIsSample = () => process.env.NEXT_PUBLIC_API_MODE !== 'live';
 
-export const SIGN_IN_URL = process.env.NEXT_PUBLIC_SIGN_IN_URL ?? '/accounts/login/';
+export const SIGN_IN_URL = '/sign-in';

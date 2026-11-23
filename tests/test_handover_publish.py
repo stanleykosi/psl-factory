@@ -1,11 +1,14 @@
 """The explicit Handover action reserves only its current reviewed package."""
 
+from io import BytesIO
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection
 from django.test import TestCase
 from django.urls import reverse
+from pypdf import PdfWriter
 
 from adapters.publications import InternalPublicationAdapter
 from apps.documents import delivery
@@ -27,9 +30,11 @@ class HandoverPublishTests(TestCase):
         version = factory_handover.document(work)
         main = reverse('factory_detail', args=[work.pk])
         recovery = reverse('factory_invoice_recovery', args=[work.pk])
+        api = f'/api/v1/work/{work.pk}/support-publication'
         self.client.force_login(sample.actor)
         rows = Publication.objects.filter(factory_work=work)
         self.assertNotContains(self.client.get(main), 'Publish to Support')
+        self.assertFalse(self.client.get(api).json()['can_publish'])
 
         def command(**changes):
             work.refresh_from_db()
@@ -43,6 +48,7 @@ class HandoverPublishTests(TestCase):
         page = self.client.get(main)
         self.assertContains(page, 'Publish to Support')
         self.assertNotContains(page, 'Continue eligible work')
+        self.assertTrue(self.client.get(api).json()['can_publish'])
 
         reader = get_user_model().objects.create_user('handover-publish-reader')
         Grant.objects.bulk_create([Grant(case=sample.case, user=reader, action=action)
@@ -57,8 +63,11 @@ class HandoverPublishTests(TestCase):
             self.assertFalse(rows.exists())
 
         publish = command()
-        self.assertRedirects(self.client.post(main, publish), main, fetch_redirect_response=False)
+        reserved = self.client.post(api, {'expected_revision': publish['revision'],
+            'case_revision': publish['case_revision'], 'version_id': publish['version']}, content_type='application/json')
+        self.assertEqual(reserved.status_code, 202, reserved.content)
         publication = rows.get()
+        self.assertEqual(reserved.json()['record_id'], publication.pk)
         self.assertEqual((publication.version_id, publication.actor_id, publication.review_id),
                          (version.pk, sample.publisher.pk, review.pk))
         self.assertEqual(publication.job.status, 'pending')
@@ -74,6 +83,27 @@ class HandoverPublishTests(TestCase):
         self.assertNotContains(self.client.get(main), 'Publish to Support')
         self.assertContains(self.client.get(recovery), 'Reconcile original delivery')
         self.assertContains(self.client.post(main, command()), 'Check the original handover delivery')
+        root = f'/api/v1/work/{work.pk}'
+        tracked = self.client.get(root + '/tracking').json()
+        self.assertTrue(tracked['can_record_delivery_observation'])
+        effect = tracked['uncertain_effects'][0]
+        self.assertEqual(effect['job_id'], publication.job.pk)
+        document = BytesIO()
+        pdf = PdfWriter()
+        pdf.add_blank_page(width=200, height=200)
+        pdf.write(document)
+        with patch('adapters.case_uploads.put'), patch('adapters.case_uploads.read', return_value=document.getvalue()):
+            upload = self.client.post(f'/api/v1/cases/{work.case_id}/files', {
+                'file': SimpleUploadedFile('delivery-proof.pdf', document.getvalue(), content_type='application/pdf'),
+            }).json()
+            attached = self.client.post(root + '/proofs', {'kind': 'pdf_copy', 'upload_id': upload['upload_id'],
+                'case_revision': rev(work.case)}, content_type='application/json')
+        self.assertEqual(attached.status_code, 201, attached.content)
+        observed = self.client.post(tracked['delivery_observation_url'], {'expected_revision': work.revision,
+            'case_revision': rev(work.case), 'proof_id': attached.json()['evidence_id'], 'outcome': 'unknown',
+            'effect': effect, 'reason': 'Original delivery requires the Support receipt.'}, content_type='application/json')
+        self.assertEqual(observed.status_code, 201, observed.content)
+        self.assertEqual(self.client.get(tracked['delivery_observation_url']).json()['items'], [observed.json()])
         with patch.object(InternalPublicationAdapter, 'deliver', side_effect=AssertionError('Recovery cannot send')):
             self.assertRedirects(self.client.post(recovery, {'action': 'reconcile', 'revision': work.revision}),
                                  recovery, fetch_redirect_response=False)

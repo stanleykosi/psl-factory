@@ -54,7 +54,8 @@ def assigned_alerts(actor):
             continue
         rows.append({'key': digest(['invoice-review-task', task.pk]), 'label': 'Invoice needs your review',
                      'subject': workspace_name(work.case), 'detail': '',
-                     'url': reverse('factory_invoice_decision', args=[work.pk]), 'group': 'action'})
+                     'url': reverse('factory_invoice_decision', args=[work.pk]), 'group': 'action',
+                     'at': task.created_at, 'target_kind': 'decision', 'api_url': f'/api/v1/tasks/{task.pk}'})
         if len(rows) == ASSIGNMENT_ALERT_LIMIT:
             break
     return rows

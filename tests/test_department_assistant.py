@@ -1,3 +1,4 @@
+import hashlib
 import os
 from unittest.mock import patch
 from uuid import uuid4
@@ -7,6 +8,7 @@ from django.urls import reverse
 
 from apps.agents import assistant
 from apps.agents.assistant_models import AssistantConversation, AssistantTurn
+from apps.agents.models import CaseUpload
 from apps.documents.contracts import digest
 from apps.identity.models import Grant
 from tests.factory_helpers import fixture
@@ -28,6 +30,44 @@ class DepartmentAssistantTests(TestCase):
         response = self.client.post(url, {'workspace': self.case.pk, 'key': key})
         self.assertRedirects(response, reverse('assistant_thread', args=[key]), fetch_redirect_response=False)
         return AssistantConversation.objects.get(pk=key)
+
+    def test_api_image_reaches_the_provider_with_source_context_and_only_owner_can_send_it(self):
+        self.client.force_login(self.actor)
+        conversation = self.start('tola')
+        url = f'/api/v1/assistant/conversations/{conversation.pk}'
+        data = bytes.fromhex(
+            '89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c02'
+            '0000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082')
+        upload_fields = {'case': self.case, 'sha256': hashlib.sha256(data).hexdigest(),
+                         'size': len(data), 'name': 'supplied.png'}
+        upload = CaseUpload.objects.create(actor=self.actor, key='assistant-test-image', **upload_fields)
+        foreign = CaseUpload.objects.create(actor=self.other, key='assistant-test-foreign', **upload_fields)
+        sources, _ = assistant.tool_context(conversation)
+        selected = next(item for item in sources if item['label'] == 'Workspace')
+        body = {'text': 'Read the image with this project context.', 'idempotency_key': str(uuid4()),
+                'source_keys': [digest(selected)], 'image_upload_ids': [upload.pk]}
+        with patch('adapters.case_uploads.read', return_value=data) as storage:
+            denied = self.client.post(url + '/messages', {**body, 'image_upload_ids': [foreign.pk]},
+                                      content_type='application/json')
+            self.assertEqual(denied.status_code, 422, denied.content)
+            storage.assert_not_called()
+            for _ in range(2):
+                accepted = self.client.post(url + '/messages', body, content_type='application/json')
+                self.assertEqual(accepted.status_code, 202, accepted.content)
+            with patch('adapters.openrouter.completion', return_value={
+                'answer': 'The image shows the sample.', 'citations': ['S1', 'S2'], 'next_work': '',
+            }) as provider:
+                self.assertTrue(assistant.worker_once())
+            request = provider.call_args.args[2]
+            self.assertIn('Workspace', request[0]['text'])
+            self.assertTrue(request[-1]['image_url']['url'].startswith('data:image/png;base64,'))
+        result = self.client.get(url).json()['messages'][0]
+        self.assertEqual(result['image_upload_ids'], [upload.pk])
+        self.assertEqual(len(result['sources']), 2)
+        self.assertIsNotNone(result['started_at'])
+        self.assertIsNotNone(result['finished_at'])
+        Grant.objects.filter(case=self.case, user=self.actor, action='evidence.add').update(active=False)
+        self.assertIsNone(self.client.get(url).json()['messages'][0]['answer'])
 
     def test_conversation_replays_the_same_two_selected_records_and_hides_revoked_sources(self):
         self.client.force_login(self.actor)
