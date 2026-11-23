@@ -1,134 +1,196 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { describe, expect, it } from 'vitest';
 
 import type { Alert, AlertPrefs } from '@/features/alerts/types';
 import {
   agentName,
-  buildAlertQuery,
+  alertHref,
+  badgeText,
+  bellName,
   buildPrefsBody,
-  countLine,
-  deliveryWords,
+  deliveryTime,
   draftFrom,
-  filterCount,
+  loadedLine,
   metaLine,
-  parseView,
-  quietLabel,
-  viewSearch,
-  workHref,
+  needsYou,
+  prefsChanged,
+  subjectLine,
+  summaryLine,
 } from '@/features/alerts/model';
 
-const fixture = (name: string) => JSON.parse(readFileSync(join(__dirname, '../mock/fixtures', name), 'utf8'));
-const board = fixture('E-NOTIFICATIONS.json') as { items: Alert[]; as_of: string };
-const prefs = fixture('E-ALERT-PREFS-READ.json') as AlertPrefs;
-// 11:00 WAT on the board's day (as_of).
-const NOW = Date.parse(board.as_of);
+const alert = (patch: Partial<Alert> = {}): Alert => ({
+  id: 'a'.repeat(64),
+  title: 'Assistant reply',
+  subject: 'Lagoon Health',
+  detail: 'Tola',
+  group: 'update',
+  read: false,
+  django_url: '/assistant/7/',
+  at: '2026-11-23T09:58:00Z',
+  agent: 'tola',
+  target_kind: 'conversation',
+  api_url: '/api/v1/assistant/conversations/7',
+  ...patch,
+});
+// 10:42 WAT on 23 Nov 2026 (09:42Z).
+const NOW = Date.parse('2026-11-23T09:42:00Z');
 
-describe('meta line (SCR-15 presentation rules)', () => {
-  it('gives each board line', () => {
-    expect(board.items.map((a) => metaLine(a, NOW))).toEqual([
-      'Chidi · WhatsApp and email · 10:42',
-      'Tola · Email · 09:00 daily digest',
-      'Zainab · In app only (you are not HR)',
-      'Chidi · In app · yesterday',
-    ]);
+describe('meta line and secondary line', () => {
+  it('gives the agent and the time when the alert has them', () => {
+    expect(metaLine(alert(), NOW)).toBe('Tola · 10:58');
+    expect(subjectLine(alert())).toBe('Lagoon Health · Tola');
   });
 
-  it('with every proposal field absent: agent and the base time only', () => {
-    const { id, work_id, agent, text, at, read } = board.items[0];
-    expect(metaLine({ id, work_id, agent, text, at, read }, NOW)).toBe('Chidi · 10:42');
+  it('shows neither agent nor time when both are null, and no placeholder', () => {
+    expect(metaLine(alert({ agent: null, at: null }), NOW)).toBe('');
+    expect(metaLine(alert({ at: null }), NOW)).toBe('Tola');
+    expect(metaLine(alert({ agent: null }), NOW)).toBe('10:58');
   });
 
-  it('orders channels whatsapp, email, in app and capitalises the first word', () => {
-    expect(deliveryWords(['in_app', 'email'])).toBe('Email and in app');
-    expect(deliveryWords(['email', 'whatsapp'])).toBe('WhatsApp and email');
-    expect(deliveryWords(['in_app'])).toBe('In app');
-  });
-
-  it('an older WAT day reads "12 Nov"; the WAT day before reads "yesterday"', () => {
-    const base = board.items[3];
-    expect(metaLine({ ...base, delivered_at: '2026-11-12T08:00:00Z' }, NOW)).toBe('Chidi · In app · 12 Nov');
-    // 23:30 WAT on 13 Nov is still yesterday in Lagos, though it is 22:30Z.
-    expect(metaLine({ ...base, delivered_at: '2026-11-13T22:30:00Z' }, NOW)).toBe('Chidi · In app · yesterday');
-    // 00:30 on 14 Nov is today in Lagos, though it is still 13 Nov in UTC.
-    expect(metaLine({ ...base, delivered_at: '2026-11-13T23:30:00Z' }, NOW)).toBe('Chidi · In app · 00:30');
-  });
-
-  it('an unknown agent keeps its key as the name', () => {
+  it('an older WAT day reads "12 Nov"; the WAT day before reads "yesterday"; an unknown agent keeps its key', () => {
+    expect(metaLine(alert({ at: '2026-11-12T08:00:00Z' }), NOW)).toBe('Tola · 12 Nov');
+    // 23:30 WAT on 22 Nov is yesterday in Lagos, though it is 22:30Z.
+    expect(metaLine(alert({ at: '2026-11-22T22:30:00Z' }), NOW)).toBe('Tola · yesterday');
     expect(agentName('kemi')).toBe('kemi');
-    expect(metaLine({ ...board.items[0], agent: 'kemi' }, NOW)).toBe('kemi · WhatsApp and email · 10:42');
+    expect(metaLine(alert({ agent: 'kemi' }), NOW)).toBe('kemi · 10:58');
+  });
+
+  it('leaves out an empty subject or detail', () => {
+    expect(subjectLine(alert({ subject: '', detail: 'INV-0398' }))).toBe('INV-0398');
+    expect(subjectLine(alert({ subject: '', detail: ' ' }))).toBe('');
+  });
+
+  it('only the action group needs the person', () => {
+    expect(needsYou(alert({ group: 'action' }))).toBe(true);
+    expect(needsYou(alert({ group: 'update' }))).toBe(false);
   });
 });
 
-describe('count line', () => {
-  it('reads "1 ALERT", "0 ALERTS" and "4 ALERTS" from total, and nothing without total', () => {
-    expect(countLine(1)).toBe('1 ALERT');
-    expect(countLine(0)).toBe('0 ALERTS');
-    expect(countLine(4)).toBe('4 ALERTS');
-    expect(countLine(undefined)).toBeUndefined();
+describe('alertHref (the typed link)', () => {
+  const href = (api_url: string | null, django_url = '/accounts/profile/') => alertHref({ api_url, django_url });
+
+  it('maps work, project and conversation api_url to the app routes', () => {
+    expect(href('/api/v1/work/abc123')).toBe('/work/abc123');
+    expect(href('/api/v1/work/4103')).toBe('/work/4103');
+    expect(href('/api/v1/projects/6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f')).toBe('/projects/6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f');
+    expect(href('/api/v1/assistant/conversations/7')).toBe('/assistant/7');
+  });
+
+  it('falls back to django_url /work/<id>/ when api_url is null or unrecognised', () => {
+    expect(alertHref({ api_url: null, django_url: '/work/abc123/' })).toBe('/work/abc123');
+    expect(alertHref({ api_url: '/api/v1/clients/9', django_url: '/work/abc123/' })).toBe('/work/abc123');
+  });
+
+  it('gives no link for null, absolute, protocol-relative, javascript:, multi-segment, dotted or empty values', () => {
+    const refused = [
+      null,
+      '',
+      'https://evil.example/api/v1/work/1',
+      '//evil.example/api/v1/work/1',
+      '/\\evil.example',
+      'javascript:alert(1)',
+      '/api/v1/work/',
+      '/api/v1/work',
+      '/api/v1/work/1/history',
+      '/api/v1/work/a/b',
+      '/api/v1/work/..',
+      '/api/v1/work/.',
+      '/api/v1/work/%2e%2e',
+      '/api/v1/work/%2E%2E%2Fadmin',
+      '/api/v1/work/a%2Fb',
+      '/api/v1/work/a%5Cb',
+      '/api/v1/work/a%00b%20c',
+      '/api/v1/work/a b',
+      '/api/v1/work/a?next=//evil',
+      '/api/v1/work/a#x',
+      '/api/v1/work/a.b',
+      '/api/v1/work/%',
+      '/API/V1/WORK/1',
+      ' /api/v1/work/1',
+      '/api/v1/work/1 ',
+      '/api/v1/projects/%2e',
+      '/api/v1/assistant/conversations/1/2',
+      '/accounts/profile/',
+    ];
+    for (const value of refused) expect(href(value), String(value)).toBeUndefined();
+  });
+
+  it('refuses a django_url that is not exactly /work/<id>/', () => {
+    for (const value of ['/work/abc123', '/work/abc/def/', '/work//', '/work/../', '/work/a.b/', '//work/1/', 'https://x.example/work/1/', '/accounts/login/', '/work/%2e%2e/', '/work/a%2Fb/', '', 'javascript:1']) {
+      expect(alertHref({ api_url: null, django_url: value }), value).toBeUndefined();
+    }
+  });
+
+  it('never returns anything but a single-slash same-origin path', () => {
+    for (const value of ['/api/v1/work/abc', '/api/v1/projects/p-1', '/api/v1/assistant/conversations/3']) {
+      expect(alertHref({ api_url: value, django_url: '' })).toMatch(/^\/[^/]/);
+    }
   });
 });
 
-describe('list view in the URL', () => {
-  it('reads q, a known agent and unread=1; ignores unknown values', () => {
-    expect(parseView(new URLSearchParams('q=payroll&agent=chidi&unread=1'))).toEqual({ q: 'payroll', agent: 'chidi', unread: true });
-    expect(parseView(new URLSearchParams('q=&agent=kemi&unread=yes'))).toEqual({});
+describe('badge and bell name', () => {
+  it('hides the badge at 0 and when unknown, and reads 99+ above 99', () => {
+    expect(badgeText(undefined)).toBeUndefined();
+    expect(badgeText(0)).toBeUndefined();
+    expect(badgeText(3)).toBe('3');
+    expect(badgeText(99)).toBe('99');
+    expect(badgeText(100)).toBe('99+');
+    expect(badgeText(120)).toBe('99+');
   });
 
-  it('writes empty values out of the URL', () => {
-    expect(viewSearch({})).toBe('');
-    expect(viewSearch({ q: 'payroll', unread: true })).toBe('?q=payroll&unread=1');
-  });
-
-  it('sends only q, agent, unread=true and cursor; never limit', () => {
-    expect(buildAlertQuery({})).toEqual({});
-    expect(buildAlertQuery({ q: 'x', agent: 'tola', unread: true }, 'o20')).toEqual({ q: 'x', agent: 'tola', unread: true, cursor: 'o20' });
-    expect(filterCount({ q: 'x' })).toBe(0);
-    expect(filterCount({ agent: 'tola', unread: true })).toBe(2);
-  });
-});
-
-describe('settings PUT body', () => {
-  it('echoes channel, frequency and revision, sends every event in order, digest and quiet hours on desktop', () => {
-    const draft = draftFrom(prefs);
-    expect(buildPrefsBody(prefs, draft, false)).toEqual({
-      channel: 'both',
-      frequency: 'immediate',
-      expected_revision: 3,
-      events: prefs.events.map(({ key, whatsapp, email }) => ({ key, whatsapp, email })),
-      digest_at: '08:00',
-      quiet_hours: '20-07-weekends',
-    });
-  });
-
-  it('the phone sends no digest_at and no quiet_hours', () => {
-    const body = buildPrefsBody(prefs, draftFrom(prefs), true);
-    expect(body).not.toHaveProperty('digest_at');
-    expect(body).not.toHaveProperty('quiet_hours');
-  });
-
-  it('omits expected_revision when none was read, and never remaps an unknown channel', () => {
-    const { revision: _revision, ...v6 } = prefs;
-    void _revision;
-    const odd = { ...(v6 as AlertPrefs), channel: 'sms' };
-    const body = buildPrefsBody(odd, draftFrom(odd), false);
-    expect(body).not.toHaveProperty('expected_revision');
-    expect(body.channel).toBe('sms');
-  });
-
-  it('a select left on "Not set" is not sent; quiet hours read as the chosen label', () => {
-    const unset = { ...prefs, digest_at: { options: prefs.digest_at!.options } };
-    expect(buildPrefsBody(unset, draftFrom(unset), false)).not.toHaveProperty('digest_at');
-    expect(quietLabel(prefs)).toBe('20:00 to 07:00, and weekends');
-    expect(quietLabel({ ...prefs, quiet_hours: { options: prefs.quiet_hours!.options } })).toBeUndefined();
+  it('names the bell with the unread total and the loaded need-you count', () => {
+    expect(bellName(undefined, 0)).toBe('Alerts');
+    expect(bellName(0, 0)).toBe('Alerts');
+    expect(bellName(3, 0)).toBe('Alerts, 3 unread');
+    expect(bellName(120, 2)).toBe('Alerts, 120 unread, 2 need you');
   });
 });
 
-describe('workHref (D-164)', () => {
-  const alert = { id: 'N-1', work_id: 'W-9001', agent: 'tola', text: 'x', at: '2026-11-15T08:00:00Z', read: false };
-  it('opens the work item, or the project the alert names', () => {
-    expect(workHref(alert)).toBe('/work/W-9001');
-    expect(workHref({ ...alert, case_id: 'P-9001' })).toBe('/projects/P-9001');
+describe('daily summary line', () => {
+  const summary = { date: '2026-11-23', actions_open: 3, unread_updates_today: 2, unread_without_timestamp: 1, scope: 'current_inbox' as const };
+
+  it('reads the three returned numbers', () => {
+    expect(summaryLine(summary)).toBe('Today, 23 Nov: 3 need you, 2 new updates, 1 older unread.');
+  });
+
+  it('shows zero as 0 and a single update in the singular', () => {
+    expect(summaryLine({ ...summary, actions_open: 0, unread_updates_today: 1, unread_without_timestamp: 0 })).toBe('Today, 23 Nov: 0 need you, 1 new update, 0 older unread.');
+  });
+
+  it('omits a part only when its field is missing, and says nothing without any', () => {
+    expect(summaryLine({ ...summary, unread_updates_today: undefined })).toBe('Today, 23 Nov: 3 need you, 1 older unread.');
+    expect(summaryLine({ date: '2026-11-23' })).toBeUndefined();
+    expect(summaryLine(undefined)).toBeUndefined();
+  });
+
+  it('the loaded line never claims a total', () => {
+    expect(loadedLine(25, 7)).toBe('25 loaded, 7 unread');
+    expect(loadedLine(25, undefined)).toBe('25 loaded');
+  });
+});
+
+describe('settings save body', () => {
+  const prefs: AlertPrefs = {
+    revision: 3,
+    email_requested: true,
+    whatsapp_requested: false,
+    email_ready: true,
+    whatsapp_ready: false,
+    recent_deliveries: [],
+  };
+
+  it('sends exactly the revision and the two switches', () => {
+    expect(buildPrefsBody(prefs, { email: true, whatsapp: true })).toEqual({ revision: 3, email_requested: true, whatsapp_requested: true });
+    expect(Object.keys(buildPrefsBody(prefs, draftFrom(prefs))).sort()).toEqual(['email_requested', 'revision', 'whatsapp_requested']);
+  });
+
+  it('knows when nothing differs from what was read', () => {
+    expect(prefsChanged(prefs, draftFrom(prefs))).toBe(false);
+    expect(prefsChanged(prefs, { email: false, whatsapp: false })).toBe(true);
+    expect(prefsChanged(prefs, { email: true, whatsapp: true })).toBe(true);
+  });
+
+  it('times a receipt by delivery, else by creation', () => {
+    expect(deliveryTime({ channel: 'email', state: 'delivered', created_at: '2026-11-23T08:00:00Z', delivered_at: '2026-11-23T08:00:04Z', receipt: 'r' })).toBe('2026-11-23T08:00:04Z');
+    expect(deliveryTime({ channel: 'whatsapp', state: 'uncertain', created_at: '2026-11-22T17:00:00Z', delivered_at: null, receipt: null })).toBe('2026-11-22T17:00:00Z');
   });
 });

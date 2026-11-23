@@ -42,10 +42,8 @@ const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
 const PROJECT_UUID = '00000000-0000-4000-8000-000000000101';
-const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0401', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201', hr: 'N-0301', hr_lead: 'N-0311' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
-  'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
   'E-SETUP-RULE-SAVE': { expected_revision: 2, value: { roles: ['pmo_lead'] } },
@@ -224,8 +222,7 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
-  const persona = init.persona ?? 'finance_lead';
-  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : id === 'E-PROJECT' && name === 'case_id' ? PROJECT_UUID : PATH_VALUES[name]);
+  const value = (name: string) => (id === 'E-PROJECT' && name === 'case_id' ? PROJECT_UUID : PATH_VALUES[name]);
   const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;

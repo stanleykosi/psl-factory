@@ -1,20 +1,20 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type BrowserContext, type Locator, type Page } from '@playwright/test';
 
-// The alert bell and its drawer (F-15) against the contract mock, scenario needs-you (PROPOSAL needs_you) unless
+// The alert bell and its drawer (F-15, F-61) against the contract mock in the live 1.24.0 shapes, scenario board unless
 // said: 1440 and 390, axe WCAG 2.2 AA. Visual reference: concept 3 of design/concepts/alerts-bell-concepts.html.
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const MOCK = `http://127.0.0.1:${process.env.MOCK_PORT ?? 3102}`;
-const NEED = ['Invoice for Lagoon Health is waiting for your review', 'The project plan for Kestrel Logistics needs your sign-off', 'October payroll has 2 problems for HR'];
-const INFO = ['The UAT response for Lagoon Health is due tomorrow', 'Milestone 1 invoice was verified', 'Milestone 2 for Kestrel Logistics is complete'];
+const NEED = ['Invoice ready for review', 'Project plan to sign off', 'Invoice review'];
+const INFO = ['Assistant reply', 'Milestone 2 is complete', 'Reminder: month-end close'];
+const PROJECT = /\/projects\/6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f$/;
 
 test.use({ timezoneId: 'Africa/Lagos' });
 
-test.beforeEach(async ({ request, context }) => {
+test.beforeEach(async ({ request }) => {
   expect((await request.post(`${MOCK}/__mock/reset`)).status()).toBe(204);
-  await cookies(context, { psl_mock_alerts: 'needs-you' });
 });
 
 async function cookies(context: BrowserContext, values: Record<string, string>) {
@@ -40,11 +40,11 @@ const still = (l: Locator) => l.evaluate((el) => Promise.all(el.getAnimations().
 
 /** Counts the alerts list reads and the mark-read POSTs the page sends. */
 function track(page: Page) {
-  const seen = { lists: 0, posts: [] as { path: string; csrf?: string }[] };
+  const seen = { lists: 0, posts: [] as { path: string; csrf?: string; body: string }[] };
   page.on('request', (r) => {
     const url = new URL(r.url());
     if (url.pathname === '/api/v1/notifications' && r.method() === 'GET') seen.lists += 1;
-    if (r.method() === 'POST' && url.pathname.startsWith('/api/v1/notifications/')) seen.posts.push({ path: url.pathname, csrf: r.headers()['x-csrftoken'] });
+    if (r.method() === 'POST' && url.pathname.startsWith('/api/v1/notifications/')) seen.posts.push({ path: url.pathname, csrf: r.headers()['x-csrftoken'], body: r.postData() ?? '' });
   });
   return seen;
 }
@@ -63,10 +63,10 @@ async function badgeReads(page: Page, text: string, trigger = bell(page)) {
 test.describe('desktop 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('the bell sits right of the links and left of the name; badge 4, chip "3 need you", Start work last', async ({ page }) => {
+  test('the bell sits right of the links and left of the name; badge 5, chip "3 need you", Start work last', async ({ page }) => {
     await ready(page);
-    await badgeReads(page, '4');
-    await expect(bell(page)).toHaveAccessibleName('Alerts, 4 unread, 3 need you');
+    await badgeReads(page, '5');
+    await expect(bell(page)).toHaveAccessibleName('Alerts, 5 unread, 3 need you');
     await expect(bell(page)).toHaveAttribute('aria-expanded', 'false');
     const chip = bar(page).locator('.shell-bellchip');
     await expect(chip).toHaveText('3 need you');
@@ -117,7 +117,7 @@ test.describe('desktop 1440', () => {
     expect(bellLook).toEqual(['rgb(255, 255, 255)', '2px', 'rgb(53, 61, 65)']);
     // The shared Drawer takes focus on its panel; Tab then reaches Close first.
     await expect(d).toBeFocused();
-    await expect(opens(page)).toHaveCount(6);
+    await expect(opens(page)).toHaveCount(5);
     await still(d);
     const panel = await box(d);
     expect(Math.abs(panel.width - 500)).toBeLessThanOrEqual(1);
@@ -126,19 +126,19 @@ test.describe('desktop 1440', () => {
     expect(panel.y + panel.height).toBe(900);
 
     const text = await d.evaluate((el) => (el as HTMLElement).innerText);
-    const marks = ['Alerts', 'NEEDS YOU', ...NEED, 'FOR YOUR INFORMATION', ...INFO, 'See all alerts', 'Alert settings'];
+    const marks = ['Alerts', 'NEEDS YOU', ...NEED, 'FOR INFORMATION', ...INFO, 'See all alerts', 'Alert settings'];
     const at = marks.map((m) => text.indexOf(m));
     expect(at.every((i) => i >= 0)).toBe(true);
     expect([...at].sort((a, b) => a - b)).toEqual(at);
-    await expect(d.locator('.alerts-grp')).toHaveText(['Needs you, 3', 'For your information, 3']);
+    await expect(d.locator('.alerts-grp')).toHaveText(['Needs you, 3', 'For information, 3']);
     expect(await d.locator('.alerts-grp--need').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(251, 227, 217)');
-    await expect(d.locator('.alerts-meta').first()).toHaveText('Chidi · WhatsApp · 09:42');
+    await expect(d.locator('.alerts-meta').first()).toHaveText(/^Chidi · (\d\d:\d\d|yesterday)$/);
     await expect(d.locator('.psl-tag')).toHaveCount(0);
     const fills = await opens(page).evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
-    expect(fills).toEqual([...Array(3).fill('rgb(36, 89, 214)'), ...Array(3).fill('rgb(255, 255, 255)')]);
+    expect(fills).toEqual([...Array(3).fill('rgb(36, 89, 214)'), ...Array(2).fill('rgb(255, 255, 255)')]);
     const weights = await d.locator('.alerts-text').evaluateAll((els) => els.map((el) => getComputedStyle(el).fontWeight));
-    expect(weights).toEqual(['600', '600', '600', '600', '400', '400']);
-    const foot = [await box(d.getByRole('link', { name: 'See all alerts' })), await box(d.getByRole('link', { name: 'Alert settings' }))];
+    expect(weights).toEqual(['600', '600', '600', '600', '400', '600']);
+    const foot = [await box(d.getByRole('link', { name: /^See all alerts/ })), await box(d.getByRole('link', { name: 'Alert settings' }))];
     expect(foot[0].x).toBeLessThan(foot[1].x);
     expect(foot[1].y + foot[1].height).toBeGreaterThan(850);
     await expect(page.getByRole('button', { name: /sign out/i })).toHaveCount(0);
@@ -182,7 +182,7 @@ test.describe('desktop 1440', () => {
   test('the footer links go to /notifications and /settings/alerts and close the drawer', async ({ page }) => {
     await ready(page);
     await bell(page).click();
-    await dialog(page).getByRole('link', { name: 'See all alerts' }).click();
+    await dialog(page).getByRole('link', { name: /^See all alerts/ }).click();
     await expect(page).toHaveURL(/\/notifications$/);
     await expect(dialog(page)).toHaveCount(0);
     await bell(page).click();
@@ -191,18 +191,18 @@ test.describe('desktop 1440', () => {
     await expect(dialog(page)).toHaveCount(0);
   });
 
-  test('Open on an unread alert: one POST with the CSRF token, then the work; back shows badge 3 and "2 need you"', async ({ page }) => {
+  test('Open on an unread alert: one POST of {} with the CSRF token, then the work; back shows badge 4 and "2 need you"', async ({ page }) => {
     const seen = track(page);
     await ready(page);
-    await badgeReads(page, '4');
+    await badgeReads(page, '5');
     await bell(page).click();
     await opens(page).first().dblclick();
-    await expect(page).toHaveURL(/\/work\/w-inv-lh-002$/);
+    await expect(page).toHaveURL(/\/work\/4103$/);
     await expect(dialog(page)).toHaveCount(0);
-    expect(seen.posts).toEqual([{ path: '/api/v1/notifications/n1/read', csrf: 'mock-csrf-finance_lead' }]);
+    expect(seen.posts).toEqual([{ path: `/api/v1/notifications/${'a1'.padEnd(64, '0')}/read`, csrf: 'mock-csrf-finance_lead', body: '{}' }]);
     await page.goBack();
     await expect(page).toHaveURL(/\/my-work$/);
-    await badgeReads(page, '3');
+    await badgeReads(page, '4');
     await expect(bar(page).locator('.shell-bellchip')).toHaveText('2 need you');
   });
 
@@ -211,14 +211,14 @@ test.describe('desktop 1440', () => {
     await ready(page);
     await bell(page).click();
     await opens(page).nth(4).click();
-    await expect(page).toHaveURL(/\/work\/w-inv-lh-001$/);
+    await expect(page).toHaveURL(PROJECT);
     expect(seen.posts).toHaveLength(0);
 
     await page.route('**/api/v1/notifications/*/read', (route) => route.fulfill({ status: 500, json: { code: 'server_error', message: 'Down.' } }));
     await ready(page);
     await bell(page).click();
     await opens(page).first().click();
-    await expect(page).toHaveURL(/\/work\/w-inv-lh-002$/);
+    await expect(page).toHaveURL(/\/work\/4103$/);
     expect(seen.posts).toHaveLength(1);
   });
 
@@ -226,10 +226,10 @@ test.describe('desktop 1440', () => {
     await page.clock.install();
     const seen = track(page);
     await ready(page);
-    await badgeReads(page, '4');
+    await badgeReads(page, '5');
     expect(seen.lists).toBe(1);
     await bell(page).click();
-    await expect(opens(page)).toHaveCount(6);
+    await expect(opens(page)).toHaveCount(5);
     expect(seen.lists).toBe(2);
     await page.keyboard.press('Escape');
     await page.clock.fastForward(70_000);
@@ -244,24 +244,25 @@ test.describe('desktop 1440', () => {
     expect(await dialog(page).evaluate((el) => [getComputedStyle(el).animationName, getComputedStyle(el).transitionDuration])).toEqual(['none', '0s']);
   });
 
-  test('board (no needs_you): "Alerts, 1 unread", no chip, one For your information group', async ({ page, context }) => {
-    await cookies(context, { psl_mock_alerts: 'board' });
+  test('many: the badge is the server total (40), the drawer lists page 1 only, and See all alerts says 40 unread', async ({ page, context }) => {
+    await cookies(context, { psl_mock_alerts: 'many' });
     await ready(page);
-    await expect(bell(page)).toHaveAccessibleName('Alerts, 1 unread');
-    await expect(bar(page).locator('.shell-bellchip')).toHaveCount(0);
+    await expect(bell(page)).toHaveAccessibleName('Alerts, 40 unread, 5 need you');
     await bell(page).click();
-    await expect(dialog(page).locator('.alerts-grp')).toHaveText(['For your information, 4']);
-    await expect(dialog(page).getByText('Needs you')).toHaveCount(0);
+    await expect(dialog(page).locator('.alerts-row')).toHaveCount(25);
+    await expect(dialog(page).getByRole('link', { name: 'See all alerts (40 unread)' })).toBeVisible();
+    await expect(dialog(page).getByText('Load more')).toHaveCount(0);
   });
 
-  test('empty: "No alerts yet." with the footer links; no badge or chip', async ({ page, context }) => {
+  test('empty: "No alerts" with the summary and the footer links; no badge or chip', async ({ page, context }) => {
     await cookies(context, { psl_mock_alerts: 'empty' });
     await ready(page);
     await expect(bell(page)).toHaveAccessibleName('Alerts');
     await expect(bell(page).locator('.shell-bellbadge')).toHaveCount(0);
     await bell(page).click();
-    await expect(dialog(page)).toContainText('No alerts yet.');
-    await expect(dialog(page).getByRole('link', { name: 'See all alerts' })).toBeVisible();
+    await expect(dialog(page)).toContainText('No alerts');
+    await expect(dialog(page).locator('.alerts-summary')).toContainText('0 need you, 0 new updates, 0 older unread');
+    await expect(dialog(page).getByRole('link', { name: /^See all alerts/ })).toBeVisible();
     await expectNoAxeViolations(page);
   });
 
@@ -278,7 +279,7 @@ test.describe('desktop 1440', () => {
     await bell(page).click();
     await expect(dialog(page).getByRole('status')).toHaveText('Loading…');
     release();
-    await expect(opens(page)).toHaveCount(6);
+    await expect(opens(page)).toHaveCount(5);
   });
 
   test('a failure: the error card and no badge; Try again reads once and shows the list', async ({ page }) => {
@@ -294,9 +295,9 @@ test.describe('desktop 1440', () => {
     await page.unroute('**/api/v1/notifications', fail);
     const before = seen.lists;
     await dialog(page).getByRole('button', { name: 'Try again' }).click();
-    await expect(opens(page)).toHaveCount(6);
+    await expect(opens(page)).toHaveCount(5);
     expect(seen.lists).toBe(before + 1);
-    await badgeReads(page, '4');
+    await badgeReads(page, '5');
   });
 
   test('a 401: signed out with Sign in back to this page, and no further reads; a 403 says the account can’t use PSL Factory', async ({ page }) => {
@@ -330,13 +331,13 @@ test.describe('desktop 1440', () => {
 
   test('a person sees only their own alerts: switching persona changes the list and the counts', async ({ page, context }) => {
     await ready(page);
-    await badgeReads(page, '4');
+    await badgeReads(page, '5');
     await bell(page).click();
-    await expect(opens(page)).toHaveCount(6);
+    await expect(opens(page)).toHaveCount(5);
     await page.keyboard.press('Escape');
     await cookies(context, { psl_mock_persona: 'pm' });
     await ready(page);
-    await expect(bell(page)).not.toHaveAccessibleName('Alerts, 4 unread, 3 need you');
+    await expect(bell(page)).not.toHaveAccessibleName('Alerts, 5 unread, 3 need you');
     await bell(page).click();
     await expect(dialog(page).locator('.alerts-text').first()).toHaveText('The project plan for Kestrel Logistics needs your sign-off');
     await expect(dialog(page).getByText(NEED[0])).toHaveCount(0);
@@ -349,7 +350,7 @@ test.describe('bar widths', () => {
       test(`at ${width}px on ${path} the bar fits: links, bell, name and Start work on one line`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await ready(page, path);
-        await expect(bell(page).locator('.shell-bellbadge')).toHaveText('4');
+        await expect(bell(page).locator('.shell-bellbadge')).toHaveText('5');
         await expect(bar(page).locator('.shell-bellchip')).toBeVisible({ visible: width >= 1080 });
         expect(await noHorizontalScroll(page)).toBe(true);
         const inner = await page.locator('.psl-nav__in').evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
@@ -377,7 +378,7 @@ test.describe('phone 390', () => {
     for (let i = 1; i < boxes.length; i++) expect(boxes[i - 1].x + boxes[i - 1].width).toBeLessThanOrEqual(boxes[i].x);
     expect(boxes[2].width).toBeGreaterThanOrEqual(44);
     expect(boxes[2].height).toBeGreaterThanOrEqual(44);
-    await expect(phoneBell(page)).toHaveAccessibleName('Alerts, 4 unread, 3 need you');
+    await expect(phoneBell(page)).toHaveAccessibleName('Alerts, 5 unread, 3 need you');
     await expect(page.locator('.shell-phone .shell-bellchip')).toHaveCount(0);
     await parts[0].focus();
     await page.keyboard.press('Tab');
@@ -416,7 +417,7 @@ test.describe('phone 390', () => {
     expect(close.width).toBeGreaterThanOrEqual(44);
     expect(close.height).toBeGreaterThanOrEqual(44);
     const tabs = d.getByRole('tab');
-    await expect(tabs).toHaveText(['Needs you 3', 'For your information']);
+    await expect(tabs).toHaveText(['Needs you 3', 'For information']);
     for (const t of await tabs.all()) expect((await box(t)).height).toBeGreaterThanOrEqual(44);
     await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
     await expect(d.locator('.alerts-text')).toHaveText(NEED);
@@ -426,7 +427,7 @@ test.describe('phone 390', () => {
       expect(ob.width).toBeGreaterThanOrEqual(60);
     }
     // the footer links are 44px targets on the phone, side by side (QA-2, D-92c)
-    const foot = [await box(d.getByRole('link', { name: 'See all alerts' })), await box(d.getByRole('link', { name: 'Alert settings' }))];
+    const foot = [await box(d.getByRole('link', { name: /^See all alerts/ })), await box(d.getByRole('link', { name: 'Alert settings' }))];
     for (const f of foot) expect(f.height).toBeGreaterThanOrEqual(44);
     expect(Math.abs(foot[0].y - foot[1].y)).toBeLessThanOrEqual(1);
     expect(await noHorizontalScroll(page)).toBe(true);
@@ -450,12 +451,12 @@ test.describe('phone 390', () => {
     await expect(phoneBell(page)).toBeFocused();
   });
 
-  test('without needs_you the sheet has no tabs, only For your information', async ({ page, context }) => {
-    await cookies(context, { psl_mock_alerts: 'board' });
+  test('with no needs-you alert the sheet opens on For information and Needs you is one tap away', async ({ page, context }) => {
+    await cookies(context, { psl_mock_persona: 'pm' });
     await ready(page);
     await phoneBell(page).click();
-    await expect(dialog(page).getByRole('tab')).toHaveCount(0);
-    await expect(dialog(page).locator('.alerts-grp')).toHaveText(['For your information, 4']);
+    await expect(dialog(page).getByRole('tab', { name: 'For information' })).toHaveAttribute('aria-selected', 'true');
+    await expect(dialog(page).getByRole('tab', { name: 'Needs you' })).toBeVisible();
   });
 
   test('with reduced motion the sheet appears without animation', async ({ page }) => {

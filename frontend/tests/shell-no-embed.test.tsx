@@ -22,7 +22,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) =>
-      new URL(request.url).pathname === '/api/v1/me' ? json(200, body) : json(200, { items: [], unread_count: 0, as_of: '2026-11-23T00:00:00Z' }),
+      new URL(request.url).pathname === '/api/v1/me' ? json(200, body) : json(200, { items: [], unread: 0, page: 1, next_page: null, as_of: '2026-11-23T00:00:00Z', daily_summary: { date: '2026-11-23', actions_open: 0, unread_updates_today: 0, unread_without_timestamp: 0, scope: 'current_inbox' } }),
     ),
   );
 });
