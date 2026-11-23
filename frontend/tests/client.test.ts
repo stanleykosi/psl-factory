@@ -194,6 +194,12 @@ describe('403 csrf_failed', () => {
     expect(requestsTo('/api/v1/me/alert-preferences')).toHaveLength(1);
   });
 
+  it('does not loop when GET /session itself answers csrf_failed', async () => {
+    fetchStub.mockResolvedValue(json(403, { code: 'csrf_failed', message: 'z' }));
+    await expect(client.refreshSession()).rejects.toMatchObject({ kind: 'csrf' });
+    expect(requestsTo('/api/v1/session')).toHaveLength(1);
+  });
+
   it('a 403 forbidden stays forbidden and makes no session call', async () => {
     client.setCsrfToken('old');
     fetchStub.mockResolvedValue(json(403, { code: 'forbidden', message: 'Not yours.' }));

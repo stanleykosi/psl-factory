@@ -43,14 +43,14 @@ liveApi.use(csrfMiddleware);
 
 /** GET /api/v1/session: stores the token it returns and gives back the body. Used before sign-in and after a stale token. */
 export async function refreshSession() {
-  const session = await call(liveApi.GET('/api/v1/session'));
+  const session = await call(liveApi.GET('/api/v1/session'), false);
   setCsrfToken(session.csrf_token);
   return session;
 }
 
 type ApiResult<T> = { data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response };
 
-export async function call<T>(operation: Promise<ApiResult<T>>): Promise<Exclude<T, undefined>> {
+export async function call<T>(operation: Promise<ApiResult<T>>, refreshOnCsrf = true): Promise<Exclude<T, undefined>> {
   let result: ApiResult<T>;
   try {
     result = await operation;
@@ -60,7 +60,7 @@ export async function call<T>(operation: Promise<ApiResult<T>>): Promise<Exclude
   }
   if (result.response.ok) return result.data as Exclude<T, undefined>;
   const error = errorFromResponse(result.response.status, result.error);
-  // A stale token: fetch a fresh one for the next press. The request itself is never repeated.
-  if (error.kind === 'csrf') await refreshSession().catch(() => undefined);
+  // A stale token: fetch a fresh one for the next press. The request itself is never repeated, and the session read does not refresh itself.
+  if (error.kind === 'csrf' && refreshOnCsrf) await refreshSession().catch(() => undefined);
   throw error;
 }

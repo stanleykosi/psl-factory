@@ -350,6 +350,31 @@ for (const width of [720, 740, 768, 820, 900, 1079, 1080, 1440]) {
   });
 }
 
+// Five long role names (the live API allows many positions): the role words shorten with an ellipsis and the
+// bar never overflows, so Start work stays in view; the full words stay in the title and the accessible text.
+const LONG_ROLES = ['Finance Lead', 'PMO Lead', 'Head of Delivery Operations', 'Client Services Manager', 'Administrator'];
+for (const width of [1440, 1280]) {
+  test(`five long role names keep the top bar inside ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.route('**/api/v1/role-dashboard', async (route) => {
+      const response = await route.fetch();
+      const body = await response.json();
+      await route.fulfill({ response, json: { ...body, positions: LONG_ROLES.map((name) => ({ ...body.positions[0], name })) } });
+    });
+    await page.goto('/my-work');
+    await loaded(page);
+    const bar = page.getByRole('navigation', { name: 'Main' });
+    const full = `Ada Okafor · ${LONG_ROLES.join(', ')}`;
+    await expect(bar).toContainText(full);
+    await expect(bar.locator('.psl-nav__who')).toHaveAttribute('title', full);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    const start = await bar.getByRole('button', { name: /start work/i }).evaluate((el) => el.getBoundingClientRect().right);
+    expect(start).toBeLessThanOrEqual(width);
+    const who = await bar.locator('.psl-nav__who').evaluate((el) => ({ clipped: el.scrollWidth > el.clientWidth, oneLine: el.getBoundingClientRect().height < 24 }));
+    expect(who).toEqual({ clipped: true, oneLine: true });
+  });
+}
+
 // Design owner, 13 Nov 2026: the bar keeps the page's 28px gutter at 720 to 1079px, so the wordmark and the
 // page title share a left edge; only the gaps between the links tighten.
 for (const width of [720, 900, 1079]) {

@@ -33,7 +33,7 @@ export function TopNav({ me, roleWords, destinations, current, bell }: Props) {
         )}
         {bell && <AlertsBell {...bell} />}
         {me && (
-          <span className="psl-nav__who">
+          <span className="psl-nav__who" title={roleWords ? `${me.name} · ${roleWords}` : undefined}>
             <span className="shell-who-name">{me.name}</span>
             {roleWords && <span className="shell-who-role"> · {roleWords}</span>}
           </span>
