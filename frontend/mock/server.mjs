@@ -45,6 +45,7 @@ import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
+import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
@@ -296,6 +297,18 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
       if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      // F-103: the cash forecast reads (ids 4301 to 4308); every other id falls through to work-live.mjs.
+      if (FORECAST_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const [status, body, headers] = forecastLive({ method, url, scenario, persona });
+        if (Buffer.isBuffer(body)) {
+          res.writeHead(status, { 'Cache-Control': 'no-store', ...headers });
+          return res.end(body);
+        }
+        return send(res, status, body);
+      }
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
