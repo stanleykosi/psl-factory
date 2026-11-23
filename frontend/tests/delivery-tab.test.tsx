@@ -63,10 +63,18 @@ describe('success', () => {
     expect(screen.getByText(/^Checked /)).toBeTruthy();
   });
 
-  it('draws the board\'s static sentence under the rows, with the board wording', async () => {
+  const RULE = "Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance's confirmation.";
+  it('draws the board\'s static sentence under the rows at desktop width, with the board wording', async () => {
     await open();
     const note = screen.getByText("Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance's confirmation.");
     expect(note.previousElementSibling!.tagName).toBe('OL');
+  });
+
+  it('hides the static sentence at phone width (SCR-43-mobile does not draw it)', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+    await open();
+    expect(rows()).toHaveLength(6);
+    expect(screen.queryByText(RULE)).toBeNull();
   });
 
   it('shows no counts, DLV number, gate wording or Tola text, and makes only GET requests', async () => {

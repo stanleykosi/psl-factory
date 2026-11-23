@@ -4,7 +4,7 @@
 // what the API sends (title, reference, state, last update, link to the work item); nothing is counted or worked out here.
 import Link from 'next/link';
 
-import { formatDateTime, formatDayMonth, Panel, Skeleton, Tag } from '@/components';
+import { formatDateTime, formatDayMonth, Panel, Skeleton, Tag, useIsPhone } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -45,6 +45,7 @@ export function DeliveryTab({ caseId }: { caseId: string }) {
 }
 
 function DeliveryRows({ overview, reasons }: { overview: DeliveryOverview; reasons: HoldReason[] }) {
+  const phone = useIsPhone();
   return (
     <Panel head="Delivery lines" headingLevel={2} bodyClassName="projects__journeybody">
       <ol className="delivery__list">
@@ -84,7 +85,7 @@ function DeliveryRows({ overview, reasons }: { overview: DeliveryOverview; reaso
           );
         })}
       </ol>
-      <p className="delivery__rule">Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance&#39;s confirmation.</p>
+      {!phone && <p className="delivery__rule">Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance&#39;s confirmation.</p>}
       <p className="projects__note delivery__asof">Checked {formatDateTime(overview.as_of)}</p>
     </Panel>
   );
