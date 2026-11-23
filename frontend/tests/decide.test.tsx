@@ -42,11 +42,14 @@ const readOf = (taskOver: Partial<LiveTask> = {}, over: Partial<LiveTaskRead> = 
   task: task(taskOver),
   work_id: 17,
   label: 'Invoice 3 for the Lekki handover',
-  invoice_packet: { invoice_id: 9, version: 2, sha256: 'a1b2c3d4'.repeat(8), amount: '4250000.00', currency: 'NGN', recipient: 'Lekki Estates Ltd', preparation_id: 5, sources: [] },
+  invoice_packet: { invoice_id: 9, version: 2, sha256: 'a1b2c3d4'.repeat(8), amount: '4250000.00', currency: 'NGN', recipient: 'Lekki Estates Ltd', preparation_id: 5, basis: 'Milestone 3 certificate', prepared_by: 'Chidi', prepared_at: '2026-11-23T08:00:00Z', sources: [] },
   review_evidence: [
     { id: 88, version: 2, source: 'signed milestone certificate', sha256: 'b'.repeat(64) },
     { id: 91, version: 2, source: 'client email', sha256: 'c'.repeat(64) },
   ],
+  decision_hold_code: null,
+  review_stations_url: null,
+  changes_from_previous: null,
   recipient_change: { earlier: null, current: 'Lekki Estates Ltd' },
   ...over,
 });
@@ -76,6 +79,18 @@ const workOf = (tasks: LiveTask[] = [task()], over: Partial<LiveWork> = {}): Liv
   output_url: null,
   information: [],
   available_control: [],
+  reference: null,
+  started_at: '2026-11-23T08:00:00Z',
+  verified_at: null,
+  queue_output_url: null,
+  exception_code: null,
+  exception_next_step: null,
+  exception_started_at: null,
+  action_kind: null,
+  station: null,
+  agent: null,
+  tracking_url: null,
+  proofs_url: null,
   ...over,
 });
 
@@ -290,7 +305,7 @@ describe('evidence and the decision body (criteria 2 and 3)', () => {
 });
 
 describe('the done board (criterion 4, checklist 2)', () => {
-  const historyItem: LiveHistoryItem = { at: '2026-11-23T09:47:00Z', station: 'Finance review', status: 'approve', task_id: 41, actor: 'Chinedu Eze', reason: 'Matches the certificate', evidence_id: 88 };
+  const historyItem: LiveHistoryItem = { at: '2026-11-23T09:47:00Z', station: 'Finance review', status: 'approve', task_id: 41, actor: 'Chinedu Eze', reason: 'Matches the certificate', evidence_id: 88, actor_kind: 'person', entry_id: 7 };
 
   async function approve(note = '') {
     await openReady();

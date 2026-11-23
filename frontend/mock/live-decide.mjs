@@ -66,6 +66,9 @@ function packetOf(taskId, variant, s) {
     currency: 'NGN',
     recipient: 'Lekki Estates Ltd',
     preparation_id: 5,
+    basis: 'Milestone 3 certificate',
+    prepared_by: 'Chidi',
+    prepared_at: NOW,
     sources: [],
   };
 }
@@ -118,12 +121,24 @@ function workItem(workId, me, variant) {
     output_url: null,
     information: [],
     available_control: [],
+    reference: null,
+    started_at: NOW,
+    verified_at: null,
+    queue_output_url: null,
+    exception_code: null,
+    exception_next_step: null,
+    exception_started_at: null,
+    action_kind: s.decided ? null : 'decide',
+    station: null,
+    agent: null,
+    tracking_url: null,
+    proofs_url: null,
   };
 }
 
 function listItem(workId, me, variant) {
-  const { id, case_id, title, line, state, status_label, owner, sample, updated_at, django_url, api_url } = workItem(workId, me, variant);
-  return { id, case_id, title, line, state, status_label, owner, sample, updated_at, django_url, api_url };
+  const { id, case_id, title, line, state, status_label, owner, sample, updated_at, django_url, api_url, reference, started_at, verified_at, queue_output_url, exception_code, exception_next_step, exception_started_at, action_kind, station, agent } = workItem(workId, me, variant);
+  return { id, case_id, title, line, state, status_label, owner, sample, updated_at, django_url, api_url, reference, started_at, verified_at, queue_output_url, exception_code, exception_next_step, exception_started_at, action_kind, station, agent };
 }
 
 function readBody(taskId, me, variant) {
@@ -138,6 +153,9 @@ function readBody(taskId, me, variant) {
     work_id: work,
     label: WORKS[work].title,
     invoice_packet: packetOf(taskId, variant, s),
+    decision_hold_code: null,
+    review_stations_url: null,
+    changes_from_previous: null,
     review_evidence: evidence,
     recipient_change: { earlier: null, current: taskId === 43 ? null : 'Lekki Estates Ltd' },
   };
@@ -168,7 +186,7 @@ export function liveDecideRoute({ method, url, raw, cookies, scenario, token, me
   const { pathname } = url;
   if (method === 'get' && pathname === '/api/v1/work') {
     const items = [17, 18, 19].filter((id) => taskState(WORKS[id].taskId).decided === null).map((id) => listItem(id, me, variant));
-    return [200, { items, page: 1, next_page: null, as_of: NOW, limited: false, lines: [], evaluated: items.length, deferred: [], payroll_questions: [] }];
+    return [200, { items, page: 1, next_page: null, as_of: NOW, page_size: 20, total: items.length, limited: false, total_coverage: 'complete', lines: [], evaluated: items.length, deferred: [], payroll_questions: [] }];
   }
   const workMatch = /^\/api\/v1\/work\/(\d+)(\/history)?$/.exec(pathname);
   if (workMatch) {
@@ -177,9 +195,9 @@ export function liveDecideRoute({ method, url, raw, cookies, scenario, token, me
     if (!workMatch[2]) return [200, workItem(workId, me, variant)];
     const s = taskState(WORKS[workId].taskId);
     const items = s.decided
-      ? [{ at: s.decided.at, station: 'Finance review', status: s.decided.verdict, task_id: WORKS[workId].taskId, actor: me.name, reason: s.decided.note, evidence_id: s.decided.evidenceId }]
+      ? [{ at: s.decided.at, station: 'Finance review', status: s.decided.verdict, task_id: WORKS[workId].taskId, actor: me.name, actor_kind: 'person', entry_id: 1, reason: s.decided.note, evidence_id: s.decided.evidenceId }]
       : [];
-    return [200, { items, as_of: NOW }];
+    return [200, { items, as_of: NOW, next_before: null }];
   }
   const taskMatch = /^\/api\/v1\/tasks\/(\d+)(?:\/(claim|decision|comments))?$/.exec(pathname);
   const taskId = Number(taskMatch[1]);
