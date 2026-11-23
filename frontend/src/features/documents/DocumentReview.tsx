@@ -52,7 +52,7 @@ function DocumentNoAccess() {
 /** The tab bar (and its counts when E-PROJECT answers). A failed project read leaves the bar without counts. */
 function ProjectBar({ caseId }: { caseId: string }) {
   const { state } = useProject(caseId);
-  return <ProjectTabs base={`/projects/${encodeURIComponent(caseId)}`} current="documents" counts={state.status === 'ready' ? state.journey.tab_counts : undefined} />;
+  return <ProjectTabs base={`/projects/${encodeURIComponent(caseId)}`} current="documents" tabs={state.status === 'ready' ? state.journey.tabs : undefined} />;
 }
 
 /** The approval is told once, as a toast (D-151); the panel then has nothing more to say. */

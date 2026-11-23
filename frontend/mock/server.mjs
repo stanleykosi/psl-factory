@@ -11,7 +11,7 @@
 // Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
 // the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
-// Projects: E-PROJECTS and E-PROJECT answer from projects.mjs (persona rows, q, paging; P-0099 is the no-access id).
+// Projects: E-PROJECTS and E-PROJECT answer from projects.mjs in the live shape (persona rows, status, q, cursor, page; UUID ids, P-nnnn accepted too; P-0099 is the no-access id).
 // Project tabs (F-25): E-PROJECT-TAB answers from project-tabs.mjs (milestones, registers, actions; documents 501; money goes to money.mjs, F-26).
 // Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
 // Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
@@ -28,7 +28,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
-import { caseVisible, projects } from './projects.mjs';
+import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
 import { documentRead } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
@@ -45,7 +45,7 @@ import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
-import { ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, sessionRoute } from './session.mjs';
+import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
@@ -235,9 +235,9 @@ function decodeCookie(value) {
   }
 }
 
-function send(res, status, body) {
+function send(res, status, body, headers = {}) {
   const text = JSON.stringify(body);
-  res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+  res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers });
   res.end(text);
 }
 
@@ -272,6 +272,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const rawBytes = Buffer.concat(chunks);
       const raw = rawBytes.toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
+      // a project may be named by its UUID or its P-nnnn id; the tab and money fixtures are keyed by the P-nnnn form
+      url.pathname = normaliseProjectPath(url.pathname);
       const method = (req.method ?? 'GET').toLowerCase();
       // D-155: in the live demo every answer to the API waits a realistic time (demo.mjs); off, there is no wait.
       if (url.pathname.startsWith('/api/')) delayReply(res, delayMs(method, parseCookies(req.headers.cookie)));
@@ -290,6 +292,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
+      // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
+      if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
       // D-161 (proposal, not in v7): the assistant's image upload and its read-back.
@@ -312,14 +316,23 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
         return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
       }
-      // Live frame reads (session.mjs): not in v7. Reads only, so no token check.
-      if (method === 'get' && (url.pathname === SESSION_PATH || url.pathname === ROLE_DASHBOARD_PATH)) {
+      // Live session reads and writes (session.mjs): not in v7. Reads need no token; sign-in and sign-out check it.
+      if (url.pathname === SESSION_PATH || url.pathname === LOGOUT_PATH || url.pathname === ROLE_DASHBOARD_PATH || url.pathname === ONBOARDING_PATH) {
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
-        if (url.pathname === SESSION_PATH) return send(res, ...sessionRoute({ scenario, me: me[persona] }));
-        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
-        return send(res, ...roleDashboardRoute({ persona }));
+        const ctx = { cookies, scenario, me: me[persona], persona, raw, token: req.headers['x-csrftoken'] };
+        if (method === 'get' && url.pathname === SESSION_PATH) return send(res, ...sessionRoute(ctx));
+        if (method === 'post' && url.pathname === SESSION_PATH) return send(res, ...signInRoute(ctx));
+        if (method === 'post' && url.pathname === LOGOUT_PATH) return send(res, ...logoutRoute(ctx));
+        if (method === 'get' && url.pathname === ONBOARDING_PATH) {
+          if (signedOut(ctx)) return send(res, ...SIGNED_OUT_REPLY);
+          return send(res, ...onboardingRoute(ctx));
+        }
+        if (method === 'get' && url.pathname === ROLE_DASHBOARD_PATH) {
+          if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+          return send(res, ...roleDashboardRoute({ persona }));
+        }
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);

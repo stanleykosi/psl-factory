@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0109",
+  "case_id": "00000000-0000-4000-8000-000000000109",
   "title": "Cedar Pharmacy · stock tracker",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1726"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109"
     },
     {
-      "line": "Plan a project",
-      "state": "verified",
-      "work_id": "W-1727"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000109/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000109/actions"
     }
   ],
-  "next": "Hypercare · week 2: the PM Sola Martins confirms the next step.",
-  "pm": {
-    "name": "Sola Martins",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1726,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1726/",
+      "api_url": "/api/v1/work/1726"
+    },
+    {
+      "id": 1727,
+      "line": "Plan a project",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1727/",
+      "api_url": "/api/v1/work/1727"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 2,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "SOW signed",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0109",
+      "manager": "Sola Martins"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

@@ -12,7 +12,7 @@ import { AppShell } from '@/shell/AppShell';
 // @ts-expect-error plain ESM module without type declarations
 import { moneyRoute } from '../mock/money.mjs';
 // @ts-expect-error plain ESM module without type declarations
-import { projects } from '../mock/projects.mjs';
+import { normaliseProjectPath, projects, uuidOf } from '../mock/projects.mjs';
 import { destinationList } from './destinations';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
@@ -53,7 +53,9 @@ const json = (status: number, body: unknown) => new Response(JSON.stringify(body
 const STATUSES = ['200', '401', '403', '404'];
 
 /** The mock's own answer for a request: E-PROJECT from projects.mjs, money and reports from money.mjs. */
-function fromMock(url: URL, who: string): Response {
+function fromMock(raw: URL, who: string): Response {
+  // the mock server names a project by its P-nnnn id for the money fixtures (normaliseProjectPath)
+  const url = new URL(normaliseProjectPath(raw.pathname) + raw.search, raw);
   const parts = url.pathname.split('/');
   const cookies = { psl_mock_persona: who };
   if (parts[3] === 'reports') return json(...(moneyRoute({ route: { operationId: 'E-REPORT', statuses: STATUSES }, url, req: { headers: {} }, cookies }) as [number, Body]));
@@ -130,7 +132,7 @@ const ZERO = /₦0(?![\d,.])|₦0\.00|(?<![\d,])0\.00|NaN/;
 describe('board rows from data (P-0101, as SCR-12 draws it)', () => {
   it('four stages in position order, amounts with two decimals, invoice and paid as sent, the note and the time', async () => {
     await open();
-    expect(paths()).toEqual(['/api/v1/projects/P-0101', '/api/v1/projects/P-0101/money', '/api/v1/reports/R-0101']);
+    expect(paths()).toEqual(['/api/v1/projects/P-0101', `/api/v1/projects/${uuidOf('P-0101')}/money`, '/api/v1/reports/R-0101']);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(within(panel()).getByRole('heading', { level: 2 }).textContent).toBe('Lagoon Health · billing by contract stage');
     expect(within(panel()).getAllByRole('columnheader').map((th) => [th.textContent, th.getAttribute('scope')])).toEqual([
@@ -434,7 +436,7 @@ describe('errors and access', () => {
     const text = document.body.textContent!;
     for (const word of ['Stage 1', 'Atlas claims build', 'Brightpath portal', '7,100,000', '₦', 'billing by contract stage', 'Your role does not allow this', 'We could not find that record']) expect(text).not.toContain(word);
     expect(paths().some((p) => p.startsWith('/api/v1/reports/'))).toBe(false);
-    expect(paths()).toContain(`/api/v1/projects/${caseId}/money`);
+    expect(paths()).toContain(`/api/v1/projects/${uuidOf(caseId)}/money`);
   });
 
   it('pm on P-0104 and anyone on P-0099: the project read is refused; no money or report read', async () => {
@@ -453,13 +455,13 @@ describe('errors and access', () => {
   it('401 on the money read signs in back to the money tab', async () => {
     respond = (url) => (url.pathname.endsWith('/money') ? json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }) : fromMock(url, persona));
     await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fmoney');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fmoney');
   });
 
   it('401 on the report read signs in too', async () => {
     respond = (url) => (url.pathname.startsWith('/api/v1/reports/') ? json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }) : fromMock(url, persona));
     await open();
-    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fmoney'));
+    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fmoney'));
   });
 
   it.each([
@@ -478,7 +480,7 @@ describe('errors and access', () => {
     const before = paths().length;
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await until(() => expect(bodyRows()).toHaveLength(4));
-    expect(paths().slice(before)).toEqual(['/api/v1/projects/P-0101/money', '/api/v1/reports/R-0101']);
+    expect(paths().slice(before)).toEqual([`/api/v1/projects/${uuidOf('P-0101')}/money`, '/api/v1/reports/R-0101']);
   });
 
   it('P-0105 empty: "No contract stages yet", no table, no total, no aside', async () => {
@@ -487,7 +489,7 @@ describe('errors and access', () => {
     expect(within(panel()).getByText('Stages appear here once the SOW is signed.')).toBeTruthy();
     expect(panel().querySelector('table')).toBeNull();
     expect(screen.queryByRole('complementary')).toBeNull();
-    expect(paths()).toEqual(['/api/v1/projects/P-0105', '/api/v1/projects/P-0105/money']);
+    expect(paths()).toEqual(['/api/v1/projects/P-0105', `/api/v1/projects/${uuidOf('P-0105')}/money`]);
   });
 });
 

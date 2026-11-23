@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0123",
+  "case_id": "00000000-0000-4000-8000-000000000123",
   "title": "Quarry Build · site reports",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1754"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123"
     },
     {
-      "line": "Raise an issue",
-      "state": "ready",
-      "work_id": "W-1755"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000123/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000123/actions"
     }
   ],
-  "next": "Planning · held: the PM Kunle Ade confirms the next step.",
-  "pm": {
-    "name": "Kunle Ade",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1754,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1754/",
+      "api_url": "/api/v1/work/1754"
+    },
+    {
+      "id": 1755,
+      "line": "Raise an issue",
+      "reference": null,
+      "state": "Ready",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1755/",
+      "api_url": "/api/v1/work/1755"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 1,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "SOW signed",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0123",
+      "manager": "Kunle Ade"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

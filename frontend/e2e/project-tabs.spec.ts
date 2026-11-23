@@ -184,7 +184,7 @@ for (const [label, viewport] of [
 
     test('a tab read that fails shows the error card and Try again sends one new request', async ({ page }) => {
       let fail = true;
-      await page.route('**/api/v1/projects/P-0101/actions*', (route) =>
+      await page.route('**/api/v1/projects/00000000-0000-4000-8000-000000000101/actions*', (route) =>
         fail ? route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : route.continue(),
       );
       const requests = recordTabRequests(page);
