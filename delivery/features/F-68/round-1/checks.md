@@ -1,15 +1,93 @@
-GATE: FAIL
-COMMIT: a2f752fb9425190b88844611ddefea0bab2cbb23
-ATTEMPT: 1
+GATE: PASS
+COMMIT: 9ac9d703289113821b42cbaa66f241535ed2a9bb
+ATTEMPT: 3
 
 ## Summary
-- checks.sh failed with exit 124
+- checks.sh passed
 - Protected paths: none changed
-- Commit a2f752fb9425, round 1, attempt 1
+- Commit 9ac9d7032891, round 1, attempt 3
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-b'== backend: django system check\nSystem check identified no issues (0 silenced).\n== frontend: install, lint, typecheck, test, build\n\nadded 457 packages in 17s\n\n> psl-factory-frontend@0.1.0 lint\n> eslint . --max-warnings 0\n\n\n> psl-factory-frontend@0.1.0 typecheck\n> tsc --noEmit\n\n\n> psl-factory-frontend@0.1.0 test\n> vitest run\n\n\n RUN  v5.1.0 /Users/Hunchoo/psl-factory-worktrees/lane-a-hot/frontend\n\n \xe2\x9d\xaf tests/mock-contract.test.ts (392 tests | 1 failed) 42066ms\n   \xe2\x9d\xaf mock work items: per-id fixtures, fallback and history parameters (12)\n     \xc3\x97 serves the per-id item and 404 for the reserved no-access id 644ms\n \xe2\x9d\xaf tests/asset-schedule.test.tsx (37 tests | 1 failed) 174424ms\n   \xe2\x9d\xaf refusals and uncertain writes (AC 13 to 15) (10)\n     \xc3\x97 a 500 re-reads first, shows the uncertain notice, says nothing was approved and never sends again by itself 90612ms\n'b"npm warn EBADENGINE Unsupported engine {\nnpm warn EBADENGINE   package: 'jsdom@31.0.1',\nnpm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },\nnpm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }\nnpm warn EBADENGINE }\nnpm warn EBADENGINE Unsupported engine {\nnpm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',\nnpm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },\nnpm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }\nnpm warn EBADENGINE }\nnpm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.\nNot implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package\nNot implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: navigation to another Document\nNot implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package\nNot implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package\n"
-checks.sh timed out
+├ ○ /exceptions
+├ ƒ /finance/month-end
+├ ○ /finance/payments
+├ ƒ /frame-fixtures/phone-back
+├ ○ /my-work
+├ ○ /notifications
+├ ○ /overview
+├ ○ /projects
+├ ƒ /projects/[caseId]
+├ ƒ /projects/[caseId]/[tab]
+├ ƒ /projects/[caseId]/documents/[documentId]
+├ ○ /settings/alerts
+├ ○ /setup
+├ ○ /setup/costing-rule
+├ ○ /setup/delegation
+├ ○ /setup/payroll-visibility
+├ ○ /setup/roles
+├ ○ /setup/rules
+├ ○ /setup/rules/delivery
+├ ○ /setup/rules/finance
+├ ○ /setup/staff
+├ ○ /setup/templates
+├ ○ /sign-in
+├ ƒ /work/[id]
+├ ƒ /work/[id]/decide
+├ ƒ /work/[id]/history
+├ ƒ /work/[id]/outcome
+└ ƒ /work/[id]/respond
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'jsdom@31.0.1',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
 ```

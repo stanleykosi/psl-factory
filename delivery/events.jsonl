@@ -4401,3 +4401,5 @@
 {"at":"2026-11-23T21:23:28Z","feature":"F-122","round":0,"kind":"created","tasks":["FE-LEADERSHIP-REPORT"]}
 {"at":"2026-11-23T21:23:28Z","feature":"F-123","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
 {"at":"2026-11-23T21:23:29Z","feature":"F-124","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T21:36:03Z","feature":"F-68","round":1,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":1,"seconds":857.0,"commit":"9ac9d7032891"}
+{"at":"2026-11-23T21:47:10Z","feature":"F-68","round":1,"kind":"gate","verdict":"PASS","attempt":3,"exit_code":0,"seconds":569.9,"commit":"9ac9d7032891"}
