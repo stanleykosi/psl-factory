@@ -337,7 +337,7 @@ describe('amounts as returned (AC 2 to 4)', () => {
     }
     const added = diff.split('\n').filter((l) => l.startsWith('+') && !l.startsWith('+++'));
     expect(added.filter((l) => /parseFloat|Number\(|\.reduce\(|compactAmount|toFixed/.test(l))).toEqual([]);
-    expect(added.filter((l) => /\buseMe\b|\/api\/v1\/me/.test(l))).toEqual([]);
+    expect(added.filter((l) => /\buseMe\b|\/api\/v1\/me(?!\/onboarding)/.test(l))).toEqual([]);
   });
 
   it('Unknown is never 0 at desktop and phone; a real "0.00" reads ₦0.00', async () => {

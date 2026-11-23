@@ -193,9 +193,9 @@ test.describe('desktop 1440', () => {
   test('401 shows signed out, 403 and 404 look the same with no title, and a persona without the project sees no text', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '401' });
     await page.goto(PAGE);
-    // /me answers 401 first: the frame's signed-out state shows, with no sign-in link (F-57).
+    // /me answers 401 first: the frame's signed-out state shows, with its link to /sign-in.
     await expect(page.getByText('You’re signed out.')).toBeVisible();
-    await expect(page.getByRole('main').getByRole('link')).toHaveCount(0);
+    await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', /^\/sign-in\?next=/);
     await context.clearCookies({ name: 'psl_mock_scenario' });
     for (const scenario of ['403', '404']) {
       // only the document read fails; the frame's own reads (/me) are not given the scenario

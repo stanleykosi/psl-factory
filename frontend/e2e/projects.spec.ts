@@ -361,9 +361,9 @@ test.describe('desktop 1440 details', () => {
       route.fulfill({ status: 401, contentType: 'application/json', body: '{"code":"not_signed_in","message":"Sign in to continue."}' }),
     );
     await page.goto('/projects');
-    await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fprojects');
+    await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fprojects');
     await page.goto('/projects/P-0101');
-    await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fprojects%2FP-0101');
+    await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fprojects%2FP-0101');
   });
 
   test('journey error: 500 then Try again recovers', async ({ page }) => {

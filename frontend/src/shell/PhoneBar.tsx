@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Me } from '@/api/types';
 import { Icon } from '@/components';
 import { AlertsBell, type BellProps } from '@/features/alerts/AlertsBell';
+import { useSignOut } from '@/features/sign-in/useSignOut';
 import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 
 import type { DestinationInfo } from './destinations';
@@ -30,6 +31,7 @@ type Props = {
  */
 export function PhoneBar({ me, roleWords, destinations, current, back = null, bell }: Props) {
   const [open, setOpen] = useState(false);
+  const { signOut } = useSignOut();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const hasMenu = me !== null && back === null;
   const canStart = me !== null && me.startable_lines.length > 0;
@@ -96,6 +98,10 @@ export function PhoneBar({ me, roleWords, destinations, current, back = null, be
               <strong>{d.label}</strong>
             </Link>
           ))}
+          <div className="psl-sep" aria-hidden="true" />
+          <button type="button" className="psl-menuitem shell-menuaction" onClick={() => void signOut()}>
+            <strong>Sign out</strong>
+          </button>
         </nav>
       )}
       {/* After the menu in the DOM, so Tab goes Menu, its links, the bell, then "+ Start"; drawn at the bar's right end. */}

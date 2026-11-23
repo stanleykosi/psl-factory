@@ -367,13 +367,13 @@ describe('signed out, failures and stale responses', () => {
   it('401 shows the signed-out callout with the project path as the return path', async () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe(`/accounts/login/?next=%2Fprojects%2F${LAGOON}`);
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe(`/sign-in?next=%2Fprojects%2F${LAGOON}`);
   });
 
   it('401 on a tab signs in back to that tab', async () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open(LAGOON, 'milestones');
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe(`/accounts/login/?next=%2Fprojects%2F${LAGOON}%2Fmilestones`);
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe(`/sign-in?next=%2Fprojects%2F${LAGOON}%2Fmilestones`);
   });
 
   it.each([

@@ -13,7 +13,7 @@ import { needsYou, needsYouKnown } from '@/features/alerts/model';
 import { useAlertsFeed } from '@/features/alerts/useAlertsFeed';
 
 import { destinationForPath, visibleDestinations } from './destinations';
-import { ForbiddenState, FrameSignedOutState, LoadErrorState, LoadingState, NoSectionsState } from './FrameStates';
+import { ForbiddenState, LoadErrorState, LoadingState, NoSectionsState, SignedOutState } from './FrameStates';
 import { PhoneBar, type PhoneBack } from './PhoneBar';
 import { TopNav } from './TopNav';
 import { useRoleWords } from './useRoleWords';
@@ -46,8 +46,17 @@ export function usePhoneBack({ label, href, note, onNote }: PhoneBack) {
   }, [setBack, label, href, note, onNote]);
 }
 
+/** Pages a signed-out person opens: no frame, so no /me read, no bars and no role words. F-59 and F-60 add theirs. */
+export const PUBLIC_PATHS: readonly string[] = ['/sign-in'];
+
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/';
+  if (PUBLIC_PATHS.includes(pathname.replace(/(.)\/$/, '$1'))) return <ToastProvider>{children}</ToastProvider>;
+  // The frame mounts fresh each time the person leaves a public path, so a new sign-in reads /me and the role words again.
+  return <FramedShell pathname={pathname}>{children}</FramedShell>;
+}
+
+function FramedShell({ pathname, children }: { pathname: string; children: ReactNode }) {
   const [state, setState] = useState<MeState>({ status: 'loading' });
   const [phoneBack, setPhoneBack] = useState<PhoneBack | null>(null);
 
@@ -144,7 +153,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (state.status === 'loading') main = <LoadingState />;
   else if (state.status === 'error') {
     const { error } = state;
-    if (error.kind === 'unauthenticated') main = <FrameSignedOutState />;
+    if (error.kind === 'unauthenticated') main = <SignedOutState pathname={`${pathname}${window.location.search}`} />;
     else if (error.kind === 'forbidden') main = <ForbiddenState error={error} />;
     else main = <LoadErrorState error={error} onRetry={() => void load()} />;
   } else if (destinations.length === 0) main = <NoSectionsState />;
