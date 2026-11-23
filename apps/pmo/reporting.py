@@ -99,7 +99,7 @@ def draft_period_report(actor,case_id,kind,start_at,end_at,template_id,audience,
     if client_safe:
         content,client_sections=client_content(case,snapshot,client_content_id)
         snapshot['manifest']=client_manifest(snapshot,content)
-    report,created=PeriodReport.objects.get_or_create(case=case,kind=kind,start_at=start_at,end_at=end_at,audience=audience)
+    report,created=PeriodReport.objects.get_or_create(case=case,kind=kind,start_at=start_at,end_at=end_at,audience=audience,scope_owner=None)
     if reuse_existing and report.document_id:
         binding=MinutesReportBinding.objects.filter(report=report,version_id=report.document.current_id).first()
         if binding and binding.manifest==snapshot['manifest'] and binding.version.template_id==template.pk:return binding

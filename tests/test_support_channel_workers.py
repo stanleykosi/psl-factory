@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from datetime import timedelta
 from django.test import TransactionTestCase
-from django.db import transaction,close_old_connections
+from django.db import connection,transaction,close_old_connections
 from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import ValidationError,PermissionDenied
@@ -57,6 +57,6 @@ class SupportChannelConcurrencyTests(TransactionTestCase):
   with gateway() as remote:
    remote['receipts'][f['claim'].payload['receipt_key']]=output(f);j=d.reserve(f['actor'],f['case'].pk,f['claim'].pk,'crash');pk,fence=worker.claim(f['case'].pk);worker.execute(pk,fence,SupportChannelAdapter());self.assertEqual(remote['calls'],1)
   d.Job.objects.filter(pk=j.pk).update(lease_until=timezone.now()-timedelta(seconds=1));Grant.objects.filter(case=f['case'],user=f['actor'],action='support.private.read').update(active=False)
-  env=dict(os.environ,DJANGO_SETTINGS_MODULE='config.settings',PYTHONIOENCODING='utf-8')
-  script="import django;django.setup();from django.conf import settings;from django.db import connections;settings.DATABASES['default']['NAME']='test_psl';connections.close_all();from django.core.management import call_command;call_command('work_support_channels',case='"+str(f['case'].pk)+"',limit=1)"
+  env=dict(os.environ,DJANGO_SETTINGS_MODULE='config.settings',PGDATABASE=connection.settings_dict['NAME'],PYTHONIOENCODING='utf-8')
+  script="import django;django.setup();from django.core.management import call_command;call_command('work_support_channels',case='"+str(f['case'].pk)+"',limit=1)"
   completed=subprocess.run([sys.executable,'-c',script],cwd=settings.BASE_DIR,env=env,capture_output=True,text=True,timeout=60);self.assertEqual(completed.returncode,0,completed.stderr);j.refresh_from_db();self.assertEqual(j.status,'confirmed');self.assertEqual(d.Receipt.objects.count(),1);self.assertFalse(d.Attestation.objects.exists())

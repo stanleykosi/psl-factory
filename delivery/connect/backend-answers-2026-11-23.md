@@ -4,7 +4,7 @@ PSL confirmed these answers on 23 November 2026. The numbers match the developer
 
 ## Screen-by-screen audit
 
-The screen-by-screen sheet pairs all 224 original questions with their answers under the original IDs. It flags agreed behavior that needs a backend change relative to API 1.24.0. [Backend Answers](backend-answers.md)
+The screen-by-screen sheet pairs all 224 original questions with their answers under the original IDs. It includes the final four decisions and their current API request and response details. [Backend Answers](backend-answers.md)
 
 ## 1. Proof and attachments
 

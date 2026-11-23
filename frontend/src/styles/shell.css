@@ -102,7 +102,7 @@ body { margin: 0; background: var(--steel); }
    6px clear inside it), a 4px gap between items (8px kept between the bell and the name, none between the links and
    the bell) and 2px link padding */
 @media (min-width: 720px) and (max-width: 759.98px) {
-  .shell-topbar .psl-nav__in { gap: var(--space-1); }
+  .shell-topbar .psl-nav__in { gap: var(--space-1); padding-inline: var(--space-3); }
   .shell-topbar .shell-bell { width: 32px; height: 32px; }
   .shell-topbar .psl-nav__links:has(+ .shell-bellwrap) { margin-right: calc(var(--space-1) * -1); }
   .shell-topbar .shell-bellwrap ~ .psl-nav__who { margin-left: var(--space-1); }

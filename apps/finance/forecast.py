@@ -265,6 +265,11 @@ def calculate(s):
         if opening_date_gap:findings.append('Opening is not the declared as-of start of day; intervening cash reconciliation is unavailable')
         if any(o['amount'] is None for o in openings.values()) or set(openings)!=set(v['coverage']['accounts']) or opening_date_gap:opening=None
         else:opening=sum((decimal(o['amount']) for o in openings.values()),Decimal(0))
+        if v['months'][0] > v['as_of'][:7]:
+            # A later start skips part of the forecast inventory, which can contain
+            # expected and unverified movements in addition to recorded actuals.
+            opening = None
+            findings.append('Opening for a later forecast month requires reconciliation from the scenario cut-off')
         periods=[]
         for month in v['months']:
             values={}

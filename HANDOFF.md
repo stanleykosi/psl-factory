@@ -2,17 +2,17 @@
 
 ## Frontend connection questions · 23 November 2026
 
-Use GitHub `main` and API 1.24.0. Railway production API `d75291ff-9648-4c75-ab45-868576013ca5` and design acceptance API `46b1a558-8450-47b9-a3dc-503af140ccda` use the same application revision `a766d84b74b7d8ca6ffb4529df4f539022232053`. Both contracts match the checked-in snapshot and both APIs return 404 for the former Django pages. The handoff contains the 13 priority questions and five follow-up decisions. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md) · [Production contract](https://psl-web-production.up.railway.app/api/v1/openapi.json)
+Use GitHub `main` and the API 1.26.0 contract for the Next.js connection. The 1.24.0 Railway release established the API-only setup in production and design acceptance. See the separate record of the 13 priority questions and five follow-up decisions. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md) · [Production contract](https://psl-web-production.up.railway.app/api/v1/openapi.json)
 
-The answer sheet pairs all 224 original frontend questions with answers. C-1 gives the existing free-text loss reason path. The approved rules for Finance bid adjustments, PMO Lead milestone confirmation and all-project leadership reports still need the backend work noted under C-29, D-17 and D-33. The production in-app browser verified health, OpenAPI 1.24.0 and the retired login response. [Backend Answers](delivery/connect/backend-answers.md) · [Test ledger](BUILD-TESTS.md)
+The answer sheet pairs all 224 original frontend questions with answers. C-1, C-29 and D-17 describe the loss note, Finance price change and PMO Lead milestone writes. D-33 explains how to request either leadership report format without sending dates. [Backend Answers](delivery/connect/backend-answers.md) · [Test ledger](BUILD-TESTS.md)
 
 Railway production uses `psl-production-api`, `psl-production-worker`, and `psl-production-postgres`. Design acceptance uses `psl-design-api`, `psl-design-worker`, and `psl-design-postgres`. The design checks service was removed. Both existing public API addresses passed database-backed health checks after the rename. The Next.js frontend origin has yet to be configured. [Railway runbook](docs/runbooks/railway.md)
 
 ## Next.js developer handoff
 
-Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the matching OpenAPI 1.24.0 snapshot, generated types, screen-to-API map, original 262-state crosswalk and six-role permissions. Next.js owns navigation, sign-in, recovery and invitations through the API and same-origin proxy. The archived Django pages remain available for local comparison in [`legacy_ui/`](legacy_ui/README.md).
+Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the OpenAPI 1.26.0 snapshot, generated types, screen-to-API map, original 262-state crosswalk and six-role permissions. Next.js owns navigation, sign-in, recovery and invitations through the API and same-origin proxy. The archived Django pages remain available for local comparison in [`legacy_ui/`](legacy_ui/README.md).
 
-The previous acceptance deployment at `ba17acd9` established the original Django page cutover. The current 1.24.0 results are recorded above. [Acceptance contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
+The acceptance deployment at `ba17acd9` established the original Django page cutover. [Acceptance contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
 
 ## API replay complete · 22 November 2026
 

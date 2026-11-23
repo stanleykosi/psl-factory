@@ -159,12 +159,13 @@ class FactoryReviewForm(forms.Form):
     def __init__(self, actor, case, members, data=None):
         from apps.core.evidence_access import public_evidence
         from apps.workflows.factory_definitions import DEFINITIONS
-        from apps.workflows.factory_views import visible
+        from apps.workflows.factory_views import visible, work_grant_scope
 
         super().__init__(data,initial={'expected':case.revision})
         sources,_ = role_factory_decisions.document_handlers()
-        work = visible(actor,case_id=case.pk).filter(definition__in={*sources,*role_factory_decisions.LINES.values()})
+        work = work_grant_scope(actor).filter(case=case, definition__in={*sources,*role_factory_decisions.LINES.values()})
         work = work.exclude(status__in=['cancelled','verified','followup_needed']).filter(cancel_requested=False)
+        work = visible(actor, candidates=work.order_by().values('pk'))
         self.fields['member'].queryset = members
         self.fields['member'].label_from_instance = lambda item: role_work.actor_name(item.user)
         self.fields['work'].queryset = work.order_by('-updated_at','-pk')

@@ -62,6 +62,21 @@ class RFPLossProofTests(TestCase):
             'target': self.submission.pk, 'verdict': 'lost', 'observed_at': timezone.now().isoformat(),
             'role': 'Client', 'evidence': self.proofs['rfp_outcome'].pk, 'note': 'Actual synthetic customer loss.', **extras}
 
+    def test_loss_note_can_be_written_and_read_without_a_catalogue(self):
+        root = f'/api/v1/work/{self.work.pk}'
+        options = self.client.get(root + '/bid-outcomes').json()
+        note = 'The customer put the project on hold after changing its priorities.'
+        response = self.client.post(root + '/rfp-outcome', {
+            'expected_revision': options['expected_revision'], 'case_revision': options['case_revision'],
+            'submission_id': self.submission.pk, 'verdict': 'lost', 'observed_at': timezone.now().isoformat(),
+            'role': 'Client', 'evidence_id': self.proofs['rfp_outcome'].pk, 'note': note,
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        loss = RFPOutcome.objects.get(submission=self.submission)
+        self.assertEqual((loss.note, loss.loss_reason), (note, {}))
+        read = self.client.get(root + '/bid-outcomes', {'submission_id': self.submission.pk}).json()
+        self.assertEqual(read['outcome']['note'], note)
+
     def test_typed_catalog_and_actual_debrief_survive_verified_archive(self):
         entry = {'action': 'draft_loss_catalog', 'loss-revision': rev(self.case), 'loss-base': 0,
                  'loss-evidence': self.proofs['policy_decision'].pk}
@@ -96,6 +111,7 @@ class RFPLossProofTests(TestCase):
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         self.assertEqual(RFPDisposition.objects.get(outcome=loss).lessons_id, self.proofs['rfp_lessons'].pk)
         result = self.client.get(root + '/bid-outcomes').json()
+        self.assertEqual(result['outcome']['note'], 'Actual synthetic customer loss.')
         self.assertEqual((result['handoff']['kind'], result['handoff']['outcome_id']), ('loss_archive', loss.pk))
         self.assertFalse(ActionItem.objects.filter(case=self.case).exists())
 

@@ -154,8 +154,14 @@ class PeriodReport(models.Model):
     end_at = models.DateTimeField()
     audience = models.CharField(max_length=20)
     document = models.OneToOneField('documents.Document',null=True,on_delete=models.PROTECT)
+    scope_owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.PROTECT)
     class Meta:
-        constraints=[models.UniqueConstraint(fields=['case','kind','start_at','end_at','audience'],name='report_period_identity')]
+        constraints = [
+            models.UniqueConstraint(fields=['case', 'kind', 'start_at', 'end_at', 'audience'],
+                                    condition=models.Q(scope_owner__isnull=True), name='report_period_identity'),
+            models.UniqueConstraint(fields=['case', 'kind', 'start_at', 'end_at', 'audience', 'scope_owner'],
+                                    condition=models.Q(scope_owner__isnull=False), name='report_department_period_identity'),
+        ]
 
 
 class MinutesReportBinding(AppendOnly):

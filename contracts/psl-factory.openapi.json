@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.24.0",
+    "version": "1.26.0",
     "description": "Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or GET /api/v1/me. Use the typed API routes for the Next.js app."
   },
   "security": [
@@ -8844,6 +8844,9 @@
                     "all_projects_available": {
                       "type": "boolean"
                     },
+                    "automatic_project_scope": {
+                      "type": "boolean"
+                    },
                     "setup_actions": {
                       "type": "array",
                       "items": {
@@ -8892,6 +8895,7 @@
                     "next_before",
                     "templates",
                     "all_projects_available",
+                    "automatic_project_scope",
                     "setup_actions",
                     "owner_evidence"
                   ],
@@ -9260,12 +9264,8 @@
                         },
                         "required": [
                           "template_id",
-                          "content_id",
-                          "start_at",
-                          "end_at",
                           "kind",
-                          "audience",
-                          "selections"
+                          "audience"
                         ],
                         "additionalProperties": false
                       },
@@ -9610,12 +9610,8 @@
                         },
                         "required": [
                           "template_id",
-                          "content_id",
-                          "start_at",
-                          "end_at",
                           "kind",
-                          "audience",
-                          "selections"
+                          "audience"
                         ],
                         "additionalProperties": false
                       },
@@ -13117,52 +13113,104 @@
                                 "additionalProperties": false
                               },
                               "scope": {
-                                "type": "object",
-                                "additionalProperties": false,
-                                "properties": {
-                                  "mode": {
-                                    "const": "all_authorised_projects"
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "mode": {
+                                        "const": "all_authorised_projects"
+                                      },
+                                      "actor": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "configuration": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "domains": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "uniqueItems": true,
+                                        "items": {
+                                          "enum": [
+                                            "meetings",
+                                            "actions",
+                                            "milestones",
+                                            "issues",
+                                            "changes",
+                                            "escalations"
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "mode",
+                                      "actor",
+                                      "configuration",
+                                      "domains"
+                                    ]
                                   },
-                                  "actor": {
-                                    "type": "integer",
-                                    "minimum": 1
-                                  },
-                                  "configuration": {
-                                    "type": "integer",
-                                    "minimum": 1
-                                  },
-                                  "domains": {
-                                    "type": "array",
-                                    "minItems": 1,
-                                    "uniqueItems": true,
-                                    "items": {
-                                      "enum": [
-                                        "meetings",
-                                        "actions",
-                                        "milestones",
-                                        "issues",
-                                        "changes",
-                                        "escalations"
-                                      ]
-                                    }
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "mode": {
+                                        "const": "all_psl_projects"
+                                      },
+                                      "actor": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "domains": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "uniqueItems": true,
+                                        "items": {
+                                          "enum": [
+                                            "meetings",
+                                            "actions",
+                                            "milestones",
+                                            "issues",
+                                            "changes",
+                                            "escalations"
+                                          ]
+                                        }
+                                      },
+                                      "register_id": {
+                                        "anyOf": [
+                                          {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9223372036854775807
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "basis": {
+                                        "const": "current_information"
+                                      }
+                                    },
+                                    "required": [
+                                      "mode",
+                                      "actor",
+                                      "register_id",
+                                      "domains"
+                                    ]
                                   }
-                                },
-                                "required": [
-                                  "mode",
-                                  "actor",
-                                  "configuration",
-                                  "domains"
                                 ]
                               }
                             },
                             "required": [
                               "template_id",
                               "content_id",
-                              "start_at",
-                              "end_at",
                               "kind",
                               "audience",
-                              "selections"
+                              "selections",
+                              "scope"
                             ],
                             "additionalProperties": false
                           }
@@ -26164,52 +26212,104 @@
                                 "additionalProperties": false
                               },
                               "scope": {
-                                "type": "object",
-                                "additionalProperties": false,
-                                "properties": {
-                                  "mode": {
-                                    "const": "all_authorised_projects"
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "mode": {
+                                        "const": "all_authorised_projects"
+                                      },
+                                      "actor": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "configuration": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "domains": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "uniqueItems": true,
+                                        "items": {
+                                          "enum": [
+                                            "meetings",
+                                            "actions",
+                                            "milestones",
+                                            "issues",
+                                            "changes",
+                                            "escalations"
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "mode",
+                                      "actor",
+                                      "configuration",
+                                      "domains"
+                                    ]
                                   },
-                                  "actor": {
-                                    "type": "integer",
-                                    "minimum": 1
-                                  },
-                                  "configuration": {
-                                    "type": "integer",
-                                    "minimum": 1
-                                  },
-                                  "domains": {
-                                    "type": "array",
-                                    "minItems": 1,
-                                    "uniqueItems": true,
-                                    "items": {
-                                      "enum": [
-                                        "meetings",
-                                        "actions",
-                                        "milestones",
-                                        "issues",
-                                        "changes",
-                                        "escalations"
-                                      ]
-                                    }
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "mode": {
+                                        "const": "all_psl_projects"
+                                      },
+                                      "actor": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "domains": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "uniqueItems": true,
+                                        "items": {
+                                          "enum": [
+                                            "meetings",
+                                            "actions",
+                                            "milestones",
+                                            "issues",
+                                            "changes",
+                                            "escalations"
+                                          ]
+                                        }
+                                      },
+                                      "register_id": {
+                                        "anyOf": [
+                                          {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9223372036854775807
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "basis": {
+                                        "const": "current_information"
+                                      }
+                                    },
+                                    "required": [
+                                      "mode",
+                                      "actor",
+                                      "register_id",
+                                      "domains"
+                                    ]
                                   }
-                                },
-                                "required": [
-                                  "mode",
-                                  "actor",
-                                  "configuration",
-                                  "domains"
                                 ]
                               }
                             },
                             "required": [
                               "template_id",
                               "content_id",
-                              "start_at",
-                              "end_at",
                               "kind",
                               "audience",
-                              "selections"
+                              "selections",
+                              "scope"
                             ],
                             "additionalProperties": false
                           }
@@ -30790,6 +30890,66 @@
                             "maximum": 9223372036854775807
                           },
                           "maxItems": 100
+                        },
+                        "can_confirm": {
+                          "type": "boolean"
+                        },
+                        "confirmation": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "actor_id": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9223372036854775807
+                                },
+                                "at": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "role": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PMO Lead"
+                                  ]
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "note": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 4000
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "actor_id",
+                                "at",
+                                "role",
+                                "name",
+                                "note"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -30798,7 +30958,9 @@
                         "name",
                         "acceptance_id",
                         "proof_ids",
-                        "owner_decision_ids"
+                        "owner_decision_ids",
+                        "can_confirm",
+                        "confirmation"
                       ],
                       "additionalProperties": false
                     }
@@ -32487,6 +32649,53 @@
                       "expected_revision",
                       "case_revision",
                       "configuration_id",
+                      "acceptance_id",
+                      "evidence_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "const": "confirm_and_complete"
+                      },
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "acceptance_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "evidence_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "expected_revision",
+                      "case_revision",
+                      "name",
                       "acceptance_id",
                       "evidence_id"
                     ],
@@ -49564,6 +49773,10 @@
                               "type": "string",
                               "format": "date-time"
                             },
+                            "note": {
+                              "type": "string",
+                              "minLength": 1
+                            },
                             "award_amount": {
                               "anyOf": [
                                 {
@@ -49693,6 +49906,7 @@
                             "submission_id",
                             "result",
                             "observed_at",
+                            "note",
                             "award_amount",
                             "award_currency",
                             "customer_expected_on",
@@ -50117,6 +50331,153 @@
                     },
                     "can_configure": {
                       "type": "boolean"
+                    },
+                    "finance_targets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "input",
+                              "output"
+                            ]
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "amount": {
+                            "type": "string",
+                            "maxLength": 64
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "kind",
+                          "label",
+                          "amount"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "finance_pending": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "by": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "target": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 100
+                            },
+                            "before": {
+                              "type": "string",
+                              "maxLength": 64
+                            },
+                            "after": {
+                              "type": "string",
+                              "maxLength": 64
+                            },
+                            "reason": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 2000
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "by",
+                            "at",
+                            "target",
+                            "before",
+                            "after",
+                            "reason"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "finance_last_decision": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "proposal_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "by": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9223372036854775807
+                            },
+                            "at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "approved",
+                                "returned"
+                              ]
+                            },
+                            "reason": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 2000
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "proposal_id",
+                            "by",
+                            "at",
+                            "status",
+                            "reason"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "can_propose": {
+                      "type": "boolean"
+                    },
+                    "can_decide": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -50135,7 +50496,12 @@
                     "adjustment_run_id",
                     "adjustment_targets",
                     "adjustment_currency",
-                    "can_configure"
+                    "can_configure",
+                    "finance_targets",
+                    "finance_pending",
+                    "finance_last_decision",
+                    "can_propose",
+                    "can_decide"
                   ],
                   "additionalProperties": false
                 }
@@ -50182,7 +50548,7 @@
         }
       },
       "post": {
-        "summary": "Apply an explicitly bounded adjustment and prepare fresh native bid review",
+        "summary": "Propose or decide an exact naira price change before refreshing native bid review",
         "operationId": "bid_pricing_adjust",
         "parameters": [
           {
@@ -50302,41 +50668,126 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "expected_revision": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 2147483647
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "target": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "amount": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "expected_revision",
+                      "case_revision",
+                      "target",
+                      "amount",
+                      "reason"
+                    ],
+                    "additionalProperties": false
                   },
-                  "case_revision": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 2147483647
+                  {
+                    "type": "object",
+                    "properties": {
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "action": {
+                        "const": "propose"
+                      },
+                      "target": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "amount": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "expected_revision",
+                      "case_revision",
+                      "action",
+                      "target",
+                      "amount",
+                      "reason"
+                    ],
+                    "additionalProperties": false
                   },
-                  "target": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100
-                  },
-                  "amount": {
-                    "type": "string",
-                    "maxLength": 64
-                  },
-                  "reason": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 2000
+                  {
+                    "type": "object",
+                    "properties": {
+                      "expected_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "case_revision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "approve",
+                          "return"
+                        ]
+                      },
+                      "proposal_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9223372036854775807
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "expected_revision",
+                      "case_revision",
+                      "action",
+                      "proposal_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "expected_revision",
-                  "case_revision",
-                  "target",
-                  "amount",
-                  "reason"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -58521,41 +58972,94 @@
                           "additionalProperties": false
                         },
                         "scope": {
-                          "type": "object",
-                          "additionalProperties": false,
-                          "properties": {
-                            "mode": {
-                              "const": "all_authorised_projects"
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "mode": {
+                                  "const": "all_authorised_projects"
+                                },
+                                "actor": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                },
+                                "configuration": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                },
+                                "domains": {
+                                  "type": "array",
+                                  "minItems": 1,
+                                  "uniqueItems": true,
+                                  "items": {
+                                    "enum": [
+                                      "meetings",
+                                      "actions",
+                                      "milestones",
+                                      "issues",
+                                      "changes",
+                                      "escalations"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "mode",
+                                "actor",
+                                "configuration",
+                                "domains"
+                              ]
                             },
-                            "actor": {
-                              "type": "integer",
-                              "minimum": 1
-                            },
-                            "configuration": {
-                              "type": "integer",
-                              "minimum": 1
-                            },
-                            "domains": {
-                              "type": "array",
-                              "minItems": 1,
-                              "uniqueItems": true,
-                              "items": {
-                                "enum": [
-                                  "meetings",
-                                  "actions",
-                                  "milestones",
-                                  "issues",
-                                  "changes",
-                                  "escalations"
-                                ]
-                              }
+                            {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "mode": {
+                                  "const": "all_psl_projects"
+                                },
+                                "actor": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                },
+                                "domains": {
+                                  "type": "array",
+                                  "minItems": 1,
+                                  "uniqueItems": true,
+                                  "items": {
+                                    "enum": [
+                                      "meetings",
+                                      "actions",
+                                      "milestones",
+                                      "issues",
+                                      "changes",
+                                      "escalations"
+                                    ]
+                                  }
+                                },
+                                "register_id": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 9223372036854775807
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "basis": {
+                                  "const": "current_information"
+                                }
+                              },
+                              "required": [
+                                "mode",
+                                "actor",
+                                "register_id",
+                                "domains"
+                              ]
                             }
-                          },
-                          "required": [
-                            "mode",
-                            "actor",
-                            "configuration",
-                            "domains"
                           ]
                         }
                       },
@@ -58577,7 +59081,8 @@
                           "type": "string",
                           "enum": [
                             "selected_records",
-                            "approved_project_scope"
+                            "approved_project_scope",
+                            "all_psl_projects"
                           ]
                         },
                         "captured_at": {
@@ -58616,13 +59121,51 @@
                             "additionalProperties": false
                           },
                           "maxItems": 6
+                        },
+                        "project_register": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "name": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "unavailable_domains": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "meetings",
+                                    "actions",
+                                    "milestones",
+                                    "issues",
+                                    "changes",
+                                    "escalations"
+                                  ]
+                                },
+                                "maxItems": 6
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "unavailable_domains"
+                            ],
+                            "additionalProperties": false
+                          }
                         }
                       },
                       "required": [
                         "scope",
                         "captured_at",
                         "projects",
-                        "counts"
+                        "counts",
+                        "project_register"
                       ],
                       "additionalProperties": false
                     },
@@ -59402,12 +59945,8 @@
                         },
                         "required": [
                           "template_id",
-                          "content_id",
-                          "start_at",
-                          "end_at",
                           "kind",
-                          "audience",
-                          "selections"
+                          "audience"
                         ],
                         "additionalProperties": false
                       },
@@ -59743,12 +60282,8 @@
                         },
                         "required": [
                           "template_id",
-                          "content_id",
-                          "start_at",
-                          "end_at",
                           "kind",
-                          "audience",
-                          "selections"
+                          "audience"
                         ],
                         "additionalProperties": false
                       },
@@ -67222,6 +67757,9 @@
                           "amount": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "sample": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
@@ -67229,7 +67767,8 @@
                           "workspace",
                           "currency",
                           "basis",
-                          "amount"
+                          "amount",
+                          "sample"
                         ],
                         "additionalProperties": false
                       },
