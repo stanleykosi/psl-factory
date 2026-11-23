@@ -4,7 +4,7 @@ from datetime import timedelta, timezone as datetime_timezone
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Min, Q
 from django.utils import timezone
 from apps.core.models import Audit,Case,Evidence
 from apps.core.services import lock_case,add_evidence,event
@@ -42,7 +42,8 @@ LEGACY_SCOPE = {
 }
 LEAD_SCOPE = {
     **LEGACY_SCOPE,
-    'properties': {**LEGACY_SCOPE['properties'], 'mode': {'const': project_scope.LEAD_MODE}, 'register_id': ID},
+    'properties': {**LEGACY_SCOPE['properties'], 'mode': {'const': project_scope.LEAD_MODE}, 'register_id': ID,
+                   'basis': {'const': project_scope.CURRENT}},
     'required': ['mode', 'actor', 'register_id', 'domains'],
 }
 del LEAD_SCOPE['properties']['configuration']
@@ -54,7 +55,8 @@ def input_rows(case,inputs):
     validate(INPUT,inputs)
     for name in ['template_id','content_id']:
         if inputs[name] is not None and type(inputs[name]) is not int:raise ValidationError('Exact selected identifier or explicit unprovided value required')
-    start,end=native.window(inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'])
+    current = inputs.get('scope', {}).get('basis') == project_scope.CURRENT
+    start,end=native.window(inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'],current=current)
     if inputs['content_id'] is not None and not Evidence.objects.filter(case=case,pk=inputs['content_id'],kind=native.CONTENT).exists():raise ValidationError('Choose this project human leadership narrative')
     if inputs['template_id'] is not None:
         t=Template.objects.filter(case=case,pk=inputs['template_id'],definition__document_type='status_report').first()
@@ -114,10 +116,30 @@ def start(actor,case_id,key,inputs,reference,expected=None):
     from .factory import access
     case=lock_case(actor,case_id,'factory.start',expected);access(actor,case,'factory.start',DEFINITION);require(actor,case,'evidence.add')
     if case.kind!='project' or not isinstance(key,str) or not key.isascii() or not 1<=len(key)<=100 or not isinstance(reference,str) or not reference.strip() or len(reference)>160:raise ValidationError('Project and bounded report work identity required')
-    start,end=native.window(inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'])
+    current = 'start_at' not in inputs and 'end_at' not in inputs
+    if current:
+        if not project_scope.department_lead(actor, case):
+            raise PermissionDenied('The PMO Lead or Finance Lead can generate a report from current information.')
+        old = Work.objects.filter(case=case, key=key).first()
+        if old:
+            if old.actor_id != actor.pk or old.definition != DEFINITION or old.request['reference'] != reference:
+                raise ValidationError('IDEMPOTENCY_CONFLICT: changed leadership report intent')
+            previous = source(old, actor, current=False)['inputs']
+            if (previous.get('scope', {}).get('basis') != project_scope.CURRENT
+                    or any(previous[field] != inputs[field] for field in ('kind', 'audience', 'template_id'))
+                    or inputs.get('content_id') is not None or any(inputs.get('selections', {}).values())):
+                raise ValidationError('IDEMPOTENCY_CONFLICT: changed leadership report intent')
+            return old
+        end = timezone.now()
+        start = Case.objects.filter(tenant=case.tenant, synthetic=case.synthetic, kind='project').aggregate(
+            oldest=Min('created_at'))['oldest']
+    else:
+        if 'start_at' not in inputs or 'end_at' not in inputs:
+            raise ValidationError('Supply both dates for a selected period or omit both for current information.')
+        start,end=native.window(inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'])
     inputs=dict(inputs,start_at=start.astimezone(datetime_timezone.utc).isoformat(),
                 end_at=end.astimezone(datetime_timezone.utc).isoformat())
-    inputs=project_scope.prepare_inputs(actor,case,inputs)
+    inputs=project_scope.prepare_inputs(actor,case,inputs,current=current)
     start,end=input_rows(case,inputs)
     inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
     payload={k:inputs[k] for k in ['start_at','end_at','kind','audience']};payload['reference']=reference
@@ -317,12 +339,15 @@ def correct(actor,work_id,expected,case_expected,inputs,reason):
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the source-owned report correction')
     data = source(w, actor, False)
     automatic_scope = data['inputs'].get('scope', {}).get('mode') == project_scope.LEAD_MODE
+    current = data['inputs'].get('scope', {}).get('basis') == project_scope.CURRENT
     if automatic_scope and not automatic:
         raise PermissionDenied('The current lead who started the report can refresh its project coverage.')
     if not automatic_scope and ('scope' in inputs) != ('scope' in data['inputs']):
         raise ValidationError('Keep the existing report coverage type when reviewing changed sources.')
     if automatic_scope or 'scope' in inputs:
-        inputs = project_scope.prepare_inputs(actor, case, inputs)
+        if current:
+            inputs = {**inputs, 'start_at': data['inputs']['start_at'], 'end_at': data['inputs']['end_at']}
+        inputs = project_scope.prepare_inputs(actor, case, inputs, current=current)
         case.refresh_from_db()
     start,end=input_rows(case,inputs);inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
     if any(inputs[k]!=data['inputs'][k] for k in ['start_at','end_at','kind','audience']):raise ValidationError('A different reporting period requires separate work; preserve this period history')

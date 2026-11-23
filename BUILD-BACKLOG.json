@@ -5,6 +5,7 @@
     "contract": "contracts/psl-factory.openapi.json",
     "evidence": "delivery/connect/backend-answers-2026-11-23.md",
     "screen_audit": "delivery/connect/backend-answers.md",
+    "leadership_report_generation": "Both leads can request either format using current information without entering dates.",
     "numbered_questions_audited": 224,
     "questions_requiring_engineering": 0,
     "questions_awaiting_psl_policy": 0,

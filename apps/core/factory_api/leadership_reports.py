@@ -54,7 +54,8 @@ SETUP_INPUT = [obj({'action': {'const': action}, 'case_revision': REVISION, 'evi
 def input_schema(kind):
     properties = {**workflow.INPUT['properties'], **WINDOW, 'kind': {'const': kind}}
     return obj({**properties, 'scope': obj({'domains': {**array(DOMAIN, limit=len(DOMAINS)), 'minItems': 1,
-                                                       'uniqueItems': True}})}, optional=('scope', 'content_id', 'selections'))
+                                                       'uniqueItems': True}})},
+               optional=('scope', 'content_id', 'selections', 'start_at', 'end_at'))
 
 
 INPUT = {kind: input_schema(kind) for kind in native.THEMES}

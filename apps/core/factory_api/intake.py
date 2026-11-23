@@ -59,7 +59,8 @@ def engagement_start(actor, *, case_id, key, reference, expected, **source):
 
 STARTS = {
     'pmo-issues/v1': (factory_issues.start, obj({'issue_id': ID})),
-    'pmo-leadership-report/v1': (factory_leadership.start, obj({'inputs': factory_leadership.INPUT})),
+    'pmo-leadership-report/v1': (factory_leadership.start, obj({'inputs': obj(
+        factory_leadership.INPUT['properties'], optional=('start_at', 'end_at'))})),
     'finance-ledger/v1': (factory_ledger.start, obj({'evidence_id': ID, 'predecessor_id': NID})),
     'finance-bu/v1': (factory_bu.start, obj({'inputs': factory_bu.INPUT})),
     'engagement/v1': (engagement_start, {'oneOf': [obj({'capture_id': ID}),

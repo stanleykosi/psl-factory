@@ -1,5 +1,7 @@
 # Build decisions
 
+23 November 2026. PSL confirmed both department leads can generate either leadership report format on demand. The date of the request sets when its current information was gathered. The report format does not set a schedule. Existing project access, specialist work and native report review govern the draft and any later distribution. [Backend Answers](delivery/connect/backend-answers.md)
+
 23 November 2026. Finance approval binds to one exact pending naira price change and needs a different person from the proposer. Both leads can generate leadership reports for the same period. Each report version retains the access of its source view and uses the existing controlled review and distribution checks. PMO Lead milestone confirmation keeps the exact go-live acceptance and completion evidence on the audit record. [Backend Answers](delivery/connect/backend-answers.md)
 
 23 November 2026. PSL settled four backend questions. PMO records the reason for a lost bid in a free-text note. Finance staff can adjust any pricing line in NGN, with the lines and amounts reviewed by the Finance Lead before the revised bid proceeds. The PMO Lead reviews the project and confirms the exact milestone before completion is recorded. The PMO Lead and Finance Lead can generate Tuesday and monthly leadership reports that automatically cover all PSL projects within the leads’ data permissions. [Backend Answers](delivery/connect/backend-answers.md)

@@ -2,7 +2,7 @@
 
 ## Frontend backend questions · 23 November 2026
 
-The frontend handoff pairs all 224 original screen questions with their answers. API 1.25.0 reads back the free-text bid loss note, applies naira bid changes after Finance Lead approval, records the PMO Lead's exact go-live milestone confirmation, and automatically covers all PSL projects in Tuesday and monthly leadership reports. [Backend Answers](delivery/connect/backend-answers.md)
+The frontend handoff pairs all 224 original screen questions with their answers. API 1.26.0 lets both leads request either leadership report format at any time using the current information across all PSL projects that their role permits. The same release reads back bid loss notes, applies naira bid changes after Finance Lead approval and records the PMO Lead's exact go-live milestone confirmation. [Backend Answers](delivery/connect/backend-answers.md)
 
 All 13 priority questions and five follow-ups have PSL answers. OpenAPI 1.24.0 includes private Assistant images, review-only weekly report notes, the in-app daily alert summary, direct PMO Lead approval on eligible Planning exit, and the known amount and source required for new receipts. The OpenRouter image check used a test response. [Consolidated answers](delivery/connect/backend-answers-2026-11-23.md)
 
@@ -14,7 +14,7 @@ The Django pages, templates and assets are archived in `legacy_ui/`. Both Railwa
 
 ## Next.js handoff prepared
 
-The [frontend handoff folder](handoffs/nextjs/README.md) includes the OpenAPI 1.25.0 snapshot, the map for all 59 screen groups, the 262-state crosswalk and the six-role access model. The 262 replays keep their original revision and deployment references.
+The [frontend handoff folder](handoffs/nextjs/README.md) includes the OpenAPI 1.26.0 snapshot, the map for all 59 screen groups, the 262-state crosswalk and the six-role access model. The 262 replays keep their original revision and deployment references.
 
 ## API state acceptance complete · 22 November 2026
 
