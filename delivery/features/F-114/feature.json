@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-114",
-  "outcome": "Go-live acceptance records both signatures, accepted, changes-requested and declined outcomes through the live sign-off",
+  "outcome": "Go-live acceptance, part 1: the sign-off and client replies are recorded live",
   "state": "PLANNED",
   "task_ids": [
     "FE-DELIVERY-RELEASE"

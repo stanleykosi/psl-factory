@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-112",
-  "outcome": "A change request runs live from impact through decision, authorisation, notice, execution and closure",
+  "outcome": "Change request, part 1: the change log, stage track, impact, deciders and authorisation run live",
   "state": "PLANNED",
   "task_ids": [
     "FE-CHANGE"

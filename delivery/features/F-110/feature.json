@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-110",
-  "outcome": "The payroll run moves through input, combine, match, totals, publish and receipts on the live payroll operations",
+  "outcome": "Payroll run, part 1: the run, its working stations, inputs, checks, HR snapshot and published aggregate read live",
   "state": "PLANNED",
   "task_ids": [
     "FE-FIN-PAYROLL-RUN"

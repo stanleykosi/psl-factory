@@ -374,6 +374,8 @@ F-44 was held on D-PAYROLL-VISIBILITY: may Finance, the BU reviewer and Chidi se
 1. **(Recommended)** Build SCR-57 on what the API serves to each person and nothing more. A board figure the API does not give that person (for example "Legal (2 people)" for a recipient) is hidden. The merge comes to you in the merge batch, because it shows restricted payroll totals and sends them to the CEO and BU heads.
 2. Keep F-107 blocked until PSL records D-PAYROLL-VISIBILITY itself.
 
+_Context added later: `architecture/model.json` scopes D-PAYROLL-VISIBILITY to "SCR-13 fields; E-SETUP-RULES area payroll_visibility", the Setup field-visibility editor. Lane D's payroll readiness checks (F-108, F-109, F-110) found that it does not gate those screens, because the backend enforces restricted payroll per person (INV-RESTRICTED). Lane D builds the payroll screens on that reading. Their merges come to you in the merge batch._
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

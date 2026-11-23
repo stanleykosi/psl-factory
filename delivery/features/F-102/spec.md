@@ -1,0 +1,111 @@
+# The fixed asset schedule (SCR-55) reads live: register, unclear dates, proof and depreciation schedule
+
+> Tasks: FE-CONNECT-1 (part 1 of SCR-55; reviews and corrections are F-102B). Architecture: v9 package (`architecture/packages/v9/tasks.csv`); contract `contracts/psl-factory.openapi.json` 1.24.0. Design: approved 13 Nov canvas under the recorded exceptions in `design/review.json` (D-173/D-181); screens: SCR-55, 6 of 14 boards in `design/canvas/finance/project/`: `SCR-55-{desktop,mobile}-{investigating,calculating,verified}`.
+
+## Summary
+- On line `fixed_assets` (W-3901..W-3912), `/work/{id}` shows the live asset register, the unclear dates with their proof, and the depreciation schedule, all read from `GET /work/{work_id}/assets`. The v7 `workspace.sections` for this line are no longer used.
+- The register, dates and schedule panels are read-only components that F-102B later adds controls to. They are not rebuilt there.
+- Money the API did not return is shown as "Unknown", never 0. The schedule shows its own held reason when `status` is `held`. Nothing is posted: `ledger_posted` is displayed as read.
+- The accounting-note link is drawn only when the API returns `accounting_note_url` for this person. The date-proof PDF opens from `GET /work/{work_id}/assets/date-proofs/{fact_id}`.
+- "Start schedule" from the Start work drawer creates a case with `POST /work` (`finance-ppe/v1`). No other write is built.
+- **Waits on F-85** (lane C, PR #101, the shared line adapter). That delays the build start only; the coordinator holds the builder. The spec is written against `delivery/features/F-85/spec.md`.
+
+## Context
+Paths are in the lane D worktree `/Users/Hunchoo/psl-factory-worktrees/lane-d/frontend` (origin/main b8542c79, API 1.24.0). F-85 files are not on main yet and are cited from its spec.
+- Page and frame: `src/features/work-item/` (`WorkItemView.tsx`, `WorkItemOverview.tsx`); shared frame `src/features/workspace/` (`Workspace.tsx`, `Sections.tsx`, `labels.ts` with `Section`/`Item`/`Cell`). F-85 adds `workspace/adapter.ts` (`LineAdapter`, `PanelRef`, `LineContext`, `registerLineAdapter`). This feature registers one adapter and does not edit the frame.
+- Live client: `src/api/client.ts` (`liveApi`, `call()`), types in `src/api/live-schema.d.ts` (`assets_detail`, `assets_date_file`, `intake_start`, line `finance-ppe/v1` with `intake {register_id, prior_id, ledger_id}`).
+- Start work: `src/features/start-work/` (`StartWorkDrawer.tsx`, `LineForm.tsx`, `labels.ts`: `fixed_assets` already has its button words "Start schedule", the "Accounting note" select and Optional treatment from F-51; `intake.ts`, `useStartWork.ts`).
+- Money: `src/components/format.ts` (`formatAmount`, `UNKNOWN`; string digits, no float).
+- Mock: `frontend/mock/` (`server.mjs`, `workspace.mjs`, `station-items.mjs`, `start-work.mjs`, `fixtures/work/W-39xx.json` are v7 fixtures and are left in place for the pages not yet moved).
+- Live read (viewer): `python3 /Users/Hunchoo/psl-factory-main/delivery/connect/oa.py live GET /api/v1/work/{work_id}/assets 3`.
+- Backend answers: `delivery/connect/backend-answers.md` SCR-55, E-23 (register, basis and schedule reviews; `review_options` sets what to offer) and E-24 (the panel links directly to the accounting note when the person can read the exact Finance mapping; there is no note text).
+
+## Contract
+
+### Read `GET /api/v1/work/{work_id}/assets` (adapter key `assets`)
+The work item's `panels[]` carries `{key:'assets', url:'/api/v1/work/{id}/assets'}` for this line. The adapter `assetsAdapter` (new, `frontend/src/features/fixed-assets/assetsAdapter.ts`, registered with `registerLineAdapter`) reads `ref.url` through `call(liveApi.GET(...))` and returns `Section[]`. It returns no `commands` in this feature.
+
+Response (all keys required): `expected_revision`, `case_revision`, `register_id`, `schedule_id|null`, `accounting_note_id|null`, `stage`, `finding`, `register|null`, `schedule|null`, `accounting_note_url|null`, `review_options[{target_id, purpose register|basis|schedule, verdicts[]}]`, `schedule_review_id|null`, `review_evidence[{id, version, kind}]`, `opening_return{target_id, review_id}|null`, `has_opening_attachment`, `date_attachment_ids[]`.
+- `register`: `entity, provider, currency, unit, period_start, period_end, label_as_of, extracted_at, completeness (complete|partial|unknown), opening_evidence_id, assets[{asset_id, category, capitalisation (capitalise|undecided), classification_evidence_id, opening_cost, opening_accumulated, residual, life, fraction, dates?{delivery_date, in_service_date, fraction_basis, support_evidence_id, evidence_id}}], events[{event_id, asset_id, date, kind addition|disposal|reclassification, cost_delta, accumulated_delta, evidence_id}], closing_controls{cost, accumulated, book_value}`.
+- `schedule`: `status ready|held, findings[], rows[{asset_id, category, closing_cost, charge, closing_accumulated, book_value, event_refs[], findings[], fraction_basis?, used_fraction?}], totals{cost, accumulated, book_value, charge}, scope{entity, currency, unit, period_start, period_end, label_as_of}, coverage, native_source_verified, ledger_posted`.
+- Money and rate fields (`opening_cost`, `charge`, totals and the rest) are `anyOf` value or null. Null renders "Unknown". A string digit value is formatted by `formatAmount` with the register `currency`; it is never parsed to a float and never summed or derived on the client.
+
+### What the page shows (mapping, presentation only)
+| Part | Source | Rule |
+|---|---|---|
+| Stage and what was found | `stage`, `finding` | Plain text under the work item header, as the stage/finding of the current station. For a returned or reviewed case the same two strings are shown read-only, with no controls. |
+| Register header | `register.entity, provider, currency, period_start..period_end, label_as_of, extracted_at` | One facts block. `completeness` and `schedule.native_source_verified` sit in the same block as plain words ("Complete / Partial / Unknown"; "Native source verified: yes / no / Unknown"). |
+| Register table | `register.assets[]` | One row per asset: `asset_id`, `category`, `capitalisation` ("Capitalise" / "Undecided"), opening cost, opening accumulated, residual, life, fraction. Unknown values read "Unknown". |
+| Register changes | `register.events[]` | Rows: date, kind (Addition / Disposal / Reclassification), asset, cost change, accumulated change. Empty shows "No changes in this period." |
+| Closing controls | `register.closing_controls` | Cost, accumulated, book value; each Unknown when null. |
+| Unclear dates and proof | `register.assets[].dates` and `date_attachment_ids` | An asset with `dates` null or both dates null is listed as "Date unclear". An asset with dates shows delivery and in-service dates and its `fraction_basis` in words ("Supplied fraction" / "Reviewed in-service date"). A proof link "Open proof" per fact, to `GET /work/{id}/assets/date-proofs/{fact_id}` where `fact_id` is in `date_attachment_ids` (opens as a download in a new tab; the PDF is served only to a person with access). No link is drawn for a fact id not in `date_attachment_ids`. |
+| Opening proof | `has_opening_attachment`, `opening_return` | Words only: "Opening proof attached" / "No opening proof attached"; when `opening_return` is not null, "Returned for opening proof". No upload control. |
+| Depreciation schedule | `schedule` | Null: the section is absent. `status:'held'`: a held block with every string in `schedule.findings[]` as the reason; no rows or totals are drawn as figures. `status:'ready'`: a table of `rows[]` (asset, category, closing cost, charge, closing accumulated, book value) with `findings[]` per row when present, then `totals`, then `scope` (entity, currency, unit, period, as-of). "Posted to the ledger: No/Yes" from `ledger_posted` (read only; this feature posts nothing). |
+| Who may review what | `review_options`, `schedule_review_id` | Text only, one line per option: purpose in words ("Register", "Basis", "Schedule") and the verdicts offered ("Approve, Return, Reject"). An empty `review_options` shows "No review is open for you." No button, no link. |
+| Accounting note | `accounting_note_url` | A link "Open accounting note" only when the value is a non-null string. Null draws nothing and no placeholder. The link is not followed by the app's own router; it opens the returned URL. |
+
+### Not drawn (D-182)
+Reported as not supplied by API 1.24.0, no placeholder: "Chidi never reads asset values"; the accounting-note text; the phone short money form (amounts show in full); the per-review "APPROVED 13 NOV" lines and "Feeds MANAGEMENT ACCOUNTS" link of the verified board (`review_evidence` carries only id, version and kind); the agent card with numbered steps, the station track and the six facts (F-85 hides them for every line).
+
+### Screen states
+- Loading: existing `WorkItemStates` loading; the page header shows when `GET /work/{id}` has returned, the assets panel shows its own loading line until `GET .../assets` returns.
+- Error on the panel: 401 signed-out state with `/sign-in?next=<path>`; 403 `csrf_failed` is not a no-access state (refresh session, "Refresh your session and try again"); 403 other and 404 show "This record is unavailable." with no difference; 409, 422 show the API `message`; 429, 503 and network show "Try again shortly" with Try again. The header stays when only the panel fails.
+- Empty: `register` null shows "No register has been captured yet." and `finding` stays visible. `register.assets` empty shows "No assets in this register."
+- Success: the table above. A held schedule is a normal success state, not an error.
+- Polling: follows F-85 (poll the work item while `current_activity.watching` or `state==='processing'`); the assets panel is re-read when the work item is re-read and `revision` changed.
+
+### Start a case `POST /api/v1/work`
+From the existing Start work drawer for line `fixed_assets` (`StartWorkDrawer.tsx`; button "Start schedule"). Request: `{line:'finance-ppe/v1', case_id, case_revision, idempotency_key, reference, background?, intake:{register_id, prior_id, ledger_id}}`; header `X-CSRFToken` (shared client). `case_id` and `case_revision` come from the chosen case, `register_id` from the register picker; `prior_id` and `ledger_id` are `null` when not chosen. The `idempotency_key` is one uuid per drawer attempt (`newIdempotencyKey`), reused on retry of the same attempt and replaced only after a success or a change in the form. Response and errors follow F-85/the existing `useStartWork.ts`: success goes to the new `/work/{id}`; 409 re-reads and tells the person the case changed; 422 shows `fields[].message`; 403 `csrf_failed` refreshes the session and asks the person to press again; 404 "This record is unavailable.". Permission: server-side only; the drawer never decides access. The line's definition for the adapter (key, panel key `assets`, intake fields) lives in `frontend/src/features/fixed-assets/line.ts`.
+
+### Fixtures (mock, Next 4990 / mock 4991)
+Numeric live ids, builder's to create in `frontend/mock/` (shapes are the contract): `3901` investigating (`stage`, `finding`, register with 64 assets, 4 additions, 1 disposal, 3 assets with `dates` null, `schedule: null`, `has_opening_attachment:false`); `3902` unknown values (a null `opening_cost`, null `closing_controls.book_value`, `completeness:'partial'`); `3903` held schedule (`status:'held'`, one finding, `rows` present with null charges); `3904` calculating (state `processing`, `schedule:null`, `review_options:[]`); `3905` verified (`status:'ready'`, rows, totals, `ledger_posted:false`, `accounting_note_url` set); `3906` ready with `accounting_note_url:null`; `3907` returned (`opening_return` set, `has_opening_attachment:false`); `3908` empty (`register:null`); `3909` 404 for any caller; `3910` 403 `forbidden`; `date-proofs/{fact_id}` serves a small PDF for a fact in `date_attachment_ids` and 404 for any other id. Amounts are decimal strings such as `"14000000.00"` with currency `NGN`.
+
+## Lanes
+- Frontend lane (owner of everything here): `frontend/src/features/fixed-assets/**` (new: `assetsAdapter.ts`, `line.ts`, panel components, tests), `frontend/src/features/start-work/**` (only the `fixed_assets` mapping and the `finance-ppe/v1` request body), `frontend/mock/**` for the fixtures and routes above, `frontend/e2e/fixed-assets.spec.ts`, live types in `frontend/src/api/types.ts` if needed.
+- Backend lane: none. No backend change. No answered backend question is open.
+- Integration owner: lane D coordinator. Shared files and owners: `frontend/src/features/workspace/**` (lane C owns; read-only here; a needed frame change is a named dependency on lane C), `frontend/src/api/*` and `frontend/src/components/*` (shared; no edits beyond generated types).
+- `delivery/checks.sh`, `delivery/config.json` and `delivery/merge-policy.json` are protected and unchanged.
+
+## Acceptance criteria
+1. `/work/3901` on mock shows the stage, the finding, the register header (entity, provider, period, as-of) and a table of the register's assets; no station track, six facts, agent card or "not available" text appears — verify: open `http://localhost:4990/work/3901`; `frontend/e2e/fixed-assets.spec.ts` asserts the parts are present and absent.
+2. The three assets with `dates` null in `3901` are listed as "Date unclear"; an asset with dates shows its delivery and in-service dates and fraction basis in words — verify: e2e on `3901` and `3905`.
+3. "Open proof" appears only for fact ids in `date_attachment_ids` and opens `/api/v1/work/3905/assets/date-proofs/{fact_id}`; a fact id not in the list has no link and a direct request returns 404 — verify: e2e; unit test on the mapper.
+4. A null money value in `3902` (null `opening_cost`, null `closing_controls.book_value`) renders "Unknown"; no "0" or "0.00" appears for them — verify: unit test on the mapper and e2e text assertion.
+5. `3902` shows `completeness` "Partial"; `3905` shows "Native source verified" as returned — verify: e2e.
+6. `3903` (held schedule) shows the held reason from `schedule.findings[]` and draws no totals as figures; `3905` (ready) shows rows, totals, scope and "Posted to the ledger: No" — verify: e2e.
+7. `3904` (processing, `schedule:null`) shows no schedule section and no review text beyond "No review is open for you." — verify: e2e.
+8. `review_options` render as text only (purpose and verdicts); no Approve, Return, Reject, upload or Correct button exists anywhere on the page — verify: e2e asserts no such buttons; `grep -rn "liveApi.POST" frontend/src/features/fixed-assets` shows nothing.
+9. "Open accounting note" is drawn for `3905` with the returned URL and is absent for `3906` (`accounting_note_url:null`); no placeholder is drawn for the missing note — verify: e2e on both.
+10. `3908` (`register:null`) shows "No register has been captured yet." and the finding — verify: e2e.
+11. `3909` (404) and a live work id the account cannot see both show exactly "This record is unavailable."; `3910` (403 `forbidden`) shows the same wording — verify: e2e and unit test on the error mapping; compare against live with a second account.
+12. A 403 `csrf_failed` on the assets read does not show the no-access state; it refreshes the session once and says to try again — verify: mock scenario `csrf_failed`; unit test counts calls.
+13. A 503 or a dropped network on the panel keeps the work item header and shows "Try again shortly" with Try again; the read is not retried until pressed — verify: mock scenarios; count fetches.
+14. The adapter is registered through F-85's `registerLineAdapter` for key `assets`, returns existing `Section` kinds only, and an unknown panel key elsewhere on the page does not break it — verify: `assetsAdapter.test.ts`; typecheck passes; `git diff` shows no change under `frontend/src/features/workspace/`.
+15. Against live Django (8030, account with the finance role), a real `fixed_assets` work id shows the same register, schedule status and totals as `GET /api/v1/work/{id}/assets` — verify: compare the page with `oa.py live GET /api/v1/work/{work_id}/assets 3` output and the session `curl` JSON.
+16. A second account without access to the case sees "This record is unavailable." on `/work/{id}` and gets 404 from `/api/v1/work/{id}/assets` and its date proofs; no register value appears in the page source — verify: live check with two accounts, view source.
+17. Start schedule from the drawer sends one `POST /api/v1/work` with `line:'finance-ppe/v1'`, `intake:{register_id, prior_id, ledger_id}`, `case_revision` and an `idempotency_key`; pressing twice for the same attempt sends the same key; success opens the new `/work/{id}`; `prior_id` and `ledger_id` are `null` when unchosen — verify: unit test on the request body; network panel; live POST returns 201 and the new id.
+18. Start with a stale `case_revision` (mock scenario 409) re-reads and shows that the case changed; a 422 shows `fields[].message`; a 403 `csrf_failed` asks the person to press again and does not resend by itself — verify: unit tests count fetches.
+19. The drawn parts the API does not supply are absent and listed in the PR: "Chidi never reads asset values", the accounting-note text, the phone short money form, the review dates and "Feeds MANAGEMENT ACCOUNTS" — verify: `grep -rn "never reads asset values\|MANAGEMENT ACCOUNTS" frontend/src/features/fixed-assets` returns nothing.
+20. Viewport check at 1440 and 390 against the six boards (`SCR-55-{desktop,mobile}-{investigating,calculating,verified}`): the frame, header, state tag and the parts that remain match; hidden parts leave no empty heading or gap; amounts show in full on the phone — verify: screenshots at both widths reviewed against `design/screens.md` SCR-55.
+21. Tests exist and pass: unit tests for the mapper (Unknown, held, ready, null link, empty register, dates), the proof-link rule and the start body; `npm run lint`, `npm run typecheck`, `npm test` and `delivery/checks.sh` pass — verify: command output.
+
+## Out of scope
+Everything in readiness's part 2 list belongs to F-102B and is not built or stubbed: `POST /projects/{case_id}/asset-registers` (register capture), `POST .../dates` (multipart), `POST /work/{id}/assets/opening-proof`, `POST /work/{id}/reviews` (register, basis, schedule), the basis review (E-23), Approve/Return/Reject controls, `revoke`. Also not built: any change to `frontend/src/features/workspace/**`, any posting to the ledger, a client-side sum or depreciation calculation, exporting the schedule, the accounting-note text, a "Feeds management accounts" link, the agent card or station track, backend, migrations, contract edits, and the v7 `W-39xx` fixtures (kept for pages not yet moved).
+
+## Assumptions
+- The panel key is `assets` and the page learns it from `panels[]`. Reason: F-85 draws panels by key; the contract names the path `/work/{id}/assets`. If live sends a different key, the builder maps by the panel URL suffix and reports it.
+- `register` null is shown as "No register has been captured yet." Reason: the field is nullable and the sources give no wording.
+- A fact is "unclear" when the asset's `dates` is null or both dates are null. Reason: the contract has no explicit unclear flag; the rule is read only and invents no business rule.
+- The `fact_id` for a proof is taken from `date_attachment_ids`, in the order returned, shown against the asset whose `dates.evidence_id` equals it; ids that match no asset are listed under "Other proof" only when present. Reason: the API gives no asset-to-fact map beyond `evidence_id`.
+- "Start schedule" requires a register record chosen in the drawer; `prior_id` and `ledger_id` default to `null`. Reason: only `register_id` is required non-null by the contract (existing drawer form already has Optional treatment for the other fields).
+- Mock ids 3901..3910 are numeric live ids and do not collide with the v7 `W-39xx` ids. Reason: F-85 serves numeric ids in live shape.
+
+## Questions
+1. Where to put `completeness` and `native_source_verified`, which no board draws. Options: (a) in the register header facts block as plain words (recommended; matches readiness, flagged for product acceptance); (b) hide until the design engineer draws them; (c) as tags beside the title. Recommendation: (a).
+2. The verified board draws "Register review APPROVED 13 NOV", "Date review", "Schedule review" and "Feeds MANAGEMENT ACCOUNTS". The API has no review dates or verdict history in `assets` (only `review_evidence` ids and kinds). Options: (a) hide all four lines and show the schedule and "Posted to the ledger: No" only (recommended, D-182); (b) show "Review approved" lines from a later read of `GET /work/{id}/history`, which needs an extra read and a decision on wording; (c) keep the lines as "Not recorded". Recommendation: (a).
+3. The investigating and calculating boards draw an agent card ("step 3 of 4", sources) and the calculating board draws "Rule F07 CALCULATION RULES". F-85 hides the agent card for all lines and `assets` carries no rule name. Options: (a) hide both, show `stage` and `finding` in their place (recommended); (b) draw a "Chidi" placeholder card; (c) wait for lane C to show `current_activity` as the agent line. Recommendation: (a).
+4. Phone boards drop desktop content (investigating has no Register facts; calculating shows only "PROCESSING"). Options: (a) show the same sections on phone as on desktop in one column, amounts in full (recommended, as F-42 did); (b) follow the phone boards exactly and drop the register table on phone. Recommendation: (a).
+5. The schedule table has per-row `findings[]` and a held reason that no board draws. Options: (a) show findings as muted text under the row and the held reason in a block above the table (recommended); (b) show a count only. Recommendation: (a).
+
+## Conflicts with the boards
+All are the numbered Questions above: 1 (live-only fields added), 2 (verified-board review lines and link removed), 3 (agent card and rule name removed), 4 (phone content added back), 5 (findings and held reason added). Each needs the design engineer's call before the build starts.
