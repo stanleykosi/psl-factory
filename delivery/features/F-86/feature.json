@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-86",
   "outcome": "Start work reads the live lines, picks a project, and starts the weekly report",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -89,22 +89,38 @@
       "at": "2026-11-23T21:58:05Z",
       "seconds": 650.2,
       "evidence_ref": "delivery/features/F-86/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "1407fbe72551058290b2303a86580eef05b945c2",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T23:29:32Z",
+      "seconds": 732.0,
+      "evidence_ref": "delivery/features/F-86/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), lighter panel D-180",
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -123,18 +139,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (lighter panel, D-180)",
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -151,14 +171,42 @@
         "delivery/features/F-86/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-23T22:07:07Z",
           "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T23:08:31Z",
+          "refs": [
+            "mock lines have `request_schema` and `content_type` (project items already carried `django_url`, `source_options_url`, `workflow_intake_url` in the served answer)"
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T23:34:06Z",
+          "refs": [
+            "`/lines` mock items carry `request_schema: {}` and `content_type: 'application/json'`; project items already carry `django_url`, `source_options_url` and `workflow_intake_url` (`start-live.mjs:164`)."
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "mock lines have `request_schema` and `content_type` (project items already carried `django_url`, `source_options_url`, `workflow_intake_url` in the served answer)"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`/lines` mock items carry `request_schema: {}` and `content_type: 'application/json'`; project items already carry `django_url`, `source_options_url` and `workflow_intake_url` (`start-live.mjs:164`)."
       ]
     },
     {
@@ -174,14 +222,42 @@
         "delivery/features/F-86/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-23T22:07:07Z",
           "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T23:08:31Z",
+          "refs": [
+            "test starts the weekly line through the assistant draft path (`prefill` and `onStarted`): the work id arrives as a string and the page does not navigate"
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T23:34:06Z",
+          "refs": [
+            "the new test starts the weekly line through `StartWorkDrawer` with `prefill`. It asserts `onStarted('4102')` is called with a string, `nav.push` is not called, and the sent offsets match the pattern."
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "test starts the weekly line through the assistant draft path (`prefill` and `onStarted`): the work id arrives as a string and the page does not navigate"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "the new test starts the weekly line through `StartWorkDrawer` with `prefill`. It asserts `onStarted('4102')` is called with a string, `nav.push` is not called, and the sent offsets match the pattern."
       ]
     },
     {
@@ -197,14 +273,42 @@
         "delivery/features/F-86/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-23T22:07:07Z",
           "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T23:08:31Z",
+          "refs": [
+            "dead `invoice` filter and its test line removed"
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T23:34:06Z",
+          "refs": [
+            "`listedLines` and the `invoice` filter are removed, and the test no longer feeds an invoice line. The test is reworded, not relaxed: it still asserts no Invoice card appears."
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dead `invoice` filter and its test line removed"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`listedLines` and the `invoice` filter are removed, and the test no longer feeds an invoice line. The test is reworded, not relaxed: it still asserts no Invoice card appears."
       ]
     },
     {
@@ -266,14 +370,42 @@
         "delivery/features/F-86/round-1/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-23T22:22:58Z",
           "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T23:08:31Z",
+          "refs": [
+            "the period sent with a local-midnight offset; mock and tests match the server"
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T23:34:06Z",
+          "refs": [
+            "the body now sends `YYYY-MM-DDT00:00:00\u00b1HH:MM`. Negative offsets use `Math.abs` before `trunc` and `%`, so -3:30 and +5:30 format correctly, and 0 gives `+00:00`. `end_at` is the local midnight of the day after the last day: 7 days for Mon to Sun, inside the 8-day limit. Python `fromisoformat` accepts the output. A date-only value fails `aware()` and the mock refuses it the same way. Timezone and end-boundary choice left to LC-Q32, as instructed."
+          ],
+          "head": "1407fbe72551058290b2303a86580eef05b945c2",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "the period sent with a local-midnight offset; mock and tests match the server"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "the body now sends `YYYY-MM-DDT00:00:00\u00b1HH:MM`. Negative offsets use `Math.abs` before `trunc` and `%`, so -3:30 and +5:30 format correctly, and 0 gives `+00:00`. `end_at` is the local midnight of the day after the last day: 7 days for Mon to Sun, inside the 8-day limit. Python `fromisoformat` accepts the output. A date-only value fails `aware()` and the mock refuses it the same way. Timezone and end-boundary choice left to LC-Q32, as instructed."
       ]
     },
     {
@@ -342,6 +474,52 @@
           "by": "qa",
           "at": "2026-11-23T22:22:58Z",
           "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`weeklyReport.tsx` `localMidnight` hardcodes `T00:00:00`. In a zone where local midnight does not exist on a DST day (a few, e.g. some South American zones), `new Date(y,m,d)` moves to 01:00 and the string would say 00:00 with the 01:00 offset, one hour off. Rare, and PSL's zone is not affected. Fix only if the design question LC-Q32 settles a fixed timezone, which would remove the browser dependence.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T23:34:06Z",
+          "head": "1407fbe72551058290b2303a86580eef05b945c2"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The two period refusals show the server's sentence unchanged. The 8-day one ends \"this is not a configured publication cadence\", which means little to a PMO person. A shorter line such as \"Pick a week of at most 8 days\" would do. Neither message is tied to the Week field. frontend/src/features/start-work/useStart.ts (notice for action_unavailable).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T23:34:06Z",
+          "head": "1407fbe72551058290b2303a86580eef05b945c2"
         }
       ]
     }
@@ -427,7 +605,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-start-work-weekly",
-    "head_sha": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
+    "head_sha": "1407fbe72551058290b2303a86580eef05b945c2",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
     "pr_url": null,
     "pr_number": null,
@@ -554,6 +732,30 @@
       "round": 2,
       "head": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T23:29:59Z",
+      "round": 2,
+      "head": "1407fbe72551058290b2303a86580eef05b945c2",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T23:34:06Z",
+      "round": 2,
+      "head": "1407fbe72551058290b2303a86580eef05b945c2",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T23:41:28Z",
+      "round": 2,
+      "head": "1407fbe72551058290b2303a86580eef05b945c2",
+      "reason": null
     }
   ],
   "routing": {
@@ -570,9 +772,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "1407fbe72551058290b2303a86580eef05b945c2"
   },
   "blocked": null
 }
