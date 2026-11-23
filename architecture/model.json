@@ -127,6 +127,14 @@
       "version": "2026-11-23",
       "classification": "private",
       "sha256": "b83c96160f39c21d43ff98a8904f08eca8cd44da92fd54301ccca34a3eeab022"
+    },
+    {
+      "id": "S-DECISIONS-V8",
+      "title": "Sign-in, reset and invitation set-up approved as the backend built them, 23 Nov 2026",
+      "path": "sources/decisions-2026-11-23-signin.md",
+      "version": "2026-11-23b",
+      "classification": "private",
+      "sha256": "dd0b7796644763c9fcf36d12ea4258859c0027dab257dc51b87a0648ae6a4e60"
     }
   ],
   "requirements": [
@@ -1676,6 +1684,7 @@
       ],
       "evidence": [
         "S-DECISIONS-V6",
+        "S-DECISIONS-V8",
         "S-SCREENS"
       ],
       "owner": "backend developer",
@@ -1693,6 +1702,18 @@
           "evidence": [
             "S-DECISIONS-V6",
             "S-SCREENS"
+          ]
+        },
+        {
+          "revision": 2,
+          "status": "approved",
+          "choice": "The Next.js app draws sign-in, error, reset and account set-up (SCR-17) on /api/v1/session (GET, POST, /logout), /api/v1/accounts/recovery/request, /link and /password, and /api/v1/accounts/invitations/preview and /accept. Reset and invitation emails open /accounts/recovery/link/ and /staff/join/ with the token in the URL fragment, sent in the JSON body. Who may sign in is the backend admission and role model.",
+          "rationale": "Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0).",
+          "alternatives": [
+            "Styled Django sign-in templates"
+          ],
+          "evidence": [
+            "S-DECISIONS-V8"
           ]
         }
       ]

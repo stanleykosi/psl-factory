@@ -19,6 +19,7 @@ SRC = {
     'S-DECISIONS-V5': ('Build in parallel, split where the contract is missing, frontend drafts contract proposals, 14 Nov 2026', 'sources/decisions-2026-11-14-v2.md', '2026-11-14b', 'private'),
     'S-DECISIONS-V6': ('Boards are the spec with a fidelity gate; overnight contract proposals and screen-family splits, 14-15 Nov 2026', 'sources/decisions-2026-11-15.md', '2026-11-15', 'private'),
     'S-DECISIONS-V7': ('API style and sign-in approved as the backend built them (OpenAPI 1.22.0), 23 Nov 2026', 'sources/decisions-2026-11-23.md', '2026-11-23', 'private'),
+    'S-DECISIONS-V8': ('Sign-in, reset and invitation set-up approved as the backend built them, 23 Nov 2026', 'sources/decisions-2026-11-23-signin.md', '2026-11-23b', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -1267,6 +1268,10 @@ add_rev('D-API-STYLE', 'approved', 'Plain Django JSON views under /api/v1 (apps/
         'Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0, main 9bac3109). The views live in apps/core/factory_api rather than the apps/api package r1 proposed.', ['Add Django REST framework', 'Separate API service'], ['S-DECISIONS-V7'])
 add_rev('D-AUTH', 'approved', 'The Django session cookie authenticates; writes send X-CSRFToken. Sign-in, sign-out and token refresh use GET and POST /api/v1/session and POST /api/v1/session/logout; the token rotates on sign-in, sign-out and password change. The Next.js app serves /api/v1 same-origin through its proxy; a separate frontend origin must be listed exactly in PSL_FRONTEND_ORIGINS.',
         'Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0, main 9bac3109).', ['Separate origins with CORS and credentials', 'Token or JWT login'], ['S-DECISIONS-V7'])
+
+# ---- v9 (23 Nov 2026): D-SIGNIN approved as the backend built it (wave 1, FE-SIGNIN)
+add_rev('D-SIGNIN', 'approved', 'The Next.js app draws sign-in, error, reset and account set-up (SCR-17) on /api/v1/session (GET, POST, /logout), /api/v1/accounts/recovery/request, /link and /password, and /api/v1/accounts/invitations/preview and /accept. Reset and invitation emails open /accounts/recovery/link/ and /staff/join/ with the token in the URL fragment, sent in the JSON body. Who may sign in is the backend admission and role model.',
+        'Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0).', ['Styled Django sign-in templates'], ['S-DECISIONS-V8'])
 
 model = {
     'schema_version': '1.0', 'pins': {'skill': '0.1.0', 'generator': '0.1.0'},
