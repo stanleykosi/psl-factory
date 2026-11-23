@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
-  "outcome": "The work item writes run live through the shared adapter: reconcile after an uncertain send, resume and cancel, pause and continue background work, release invoice, and the weekly report review (approve, return, reject) and correct, with locking and uncertain-effect handling",
+  "outcome": "The work item runs its own controls live through the shared adapter: check what happened after an uncertain send (reconcile lookup), resume and cancel, and pause or continue background work, with press locking, uncertain-effect handling and reload on conflict",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"
