@@ -485,3 +485,6 @@ Disk freed to about 25 GB after the clean-up the design engineer approved. Asked
 
 ## D-189 (23 Nov 2026): one heavy job at a time on the machine
 Seven full test runs ran at once across lanes A to D (load about 450), and gates hit their 30-minute limit. The coordinator's engineering rule, a two-way door: every heavy job (a full `feature.py gate`, a full `npx vitest run`, `npm run build` or `next build`, Playwright, `npm ci`) runs through `/Users/Hunchoo/psl-factory-worktrees/heavy-lock.sh run <lane> -- <command>`, which lets one heavy job run at a time and queues the others. Single test files stay free to run. `checks_timeout_seconds` (a protected file) is unchanged. Builders and reviewers on Sonnet are told the same.
+
+## D-190 (23 Nov 2026): six gate attempts per round during the push
+F-72 used its three gate attempts per round on causes outside its own code: a timeout during the machine overload (before D-189), another lane's load-sensitive test (`hypercare.test.tsx`), and a pass that was overtaken by the D-185 main syncs. Asked whether to raise the limit, the design engineer answered "Raise to 6". `delivery/config.json` `max_gate_attempts` changes from 3 to 6. Each gate still has to pass on the exact head before review. A failure the feature caused still needs a real fix, and a test that fails under load gets its cause fixed, not retries.
