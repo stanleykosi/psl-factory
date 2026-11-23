@@ -1,0 +1,217 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory-main",
+  "feature_id": "F-88",
+  "outcome": "Log a received RFP and assign its accountable PM through the live API",
+  "state": "READY",
+  "task_ids": [
+    "FE-CONNECT-1"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "Opening Log RFP loads the client list from `GET /received-bids/organisations` and offers exactly those organisations \u2014 verify: open `/work`, Start work, Log RFP against the mock on 4981 (and Django 8020); the picker lists the two fixture organisations; network log shows no `GET /lines`.",
+    "A valid submit sends one `POST /received-bids` as `multipart/form-data` with `authority`, `start_key`, `reference`, `received_at`, `deadline_status`, `document`, with no `definition`, then one `GET \u2026/receipts/{id}`, and shows \"RFP logged.\" with the reference \u2014 verify: network log; test in `useStartWork` or the new `receivedBids` test asserting the form-data keys.",
+    "`deadline_at` is sent only when the status is `stated` and is required then \u2014 verify: unit test; with \"stated\" and no date the form shows a field error and sends nothing.",
+    "A failed or uncertain POST, then \"Check again\", sends the same `start_key` and body, and never two different keys for one form \u2014 verify: test that fails the first POST with a 503 and compares the two requests.",
+    "A file over 5 MiB or not Word/PDF is refused before sending with plain words; a 413 and a 415 from the server show the same words \u2014 verify: test with a 6 MiB file and a `.png`; mock fixtures for 413/415.",
+    "A duplicate reference shows the API's own `code`/`message` against the Reference field and logs nothing new \u2014 verify: mock 409 fixture; the page shows the field message and one POST was made.",
+    "The form has no Note field, and the success words name no work item or id \u2014 verify: open the drawer; no Note; success shows reference, time, file name.",
+    "A person with no organisations sees the empty state and a disabled submit; a 403 shows \"You can't log RFPs for this organisation.\" and nothing else changes (wrong user / wrong tenant) \u2014 verify: mock persona with `{items:[]}`, and a 403 fixture.",
+    "The Unassigned list reads `GET /received-bids/assignments`, keyed by `case_id`, pages with `cursor`, and shows no Assign button on rows with `owner_access_required: true` \u2014 verify: mock list with 13 items over two pages and one restricted row.",
+    "The drawer shows nominees, roles and proofs exactly as served, preselects nothing, and requires candidate, role, proof and a non-empty reason before sending \u2014 verify: submit empty: summary names all four and no POST is sent; test.",
+    "Submit sends one JSON POST `{intake, revision, candidate, role, evidence, reason}` with integer ids taken from the read, and \"PM assigned: <name>\" appears only after the assignment and list are re-read \u2014 verify: network log order POST, GET assignment, GET assignments; test that the success text is absent until the re-reads resolve.",
+    "A 5xx or network failure on assign re-reads first and never resends; if `assignment` is now present the drawer shows \"Already assigned\" \u2014 verify: test with a mock that fails the POST but stores the assignment.",
+    "A 409 shows \"This changed while you were working.\" and shows the re-read state; a 403 and a 404 show their own plain words; a 422 maps `reason` and `evidence` to their fields \u2014 verify: mock fixtures and tests.",
+    "`setup_required: true` shows the plain setup message with no form; no nominees shows \"No one can be chosen for this RFP yet.\" \u2014 verify: mock fixtures.",
+    "The drawer shows no nominee role, no \"What happens next\" and no \"(optional)\" on Proof, and the Note is replaced by the required Reason \u2014 verify: open the drawer in the mock; file content of `ASSIGN_PM_TEXT` has no `nextHead`/`next`.",
+    "A signed-out person on either screen gets the existing signed-out state, not an error \u2014 verify: mock 401.",
+    "The v7 paths `POST /work`, `POST /work/{id}/assignment` and the base64 `POST /cases/{id}/evidence` are no longer called from these two screens \u2014 verify: `grep` in `src/features/start-work` (rfp_intake path) and `src/features/rfp/AssignPmDrawer.tsx`; network log.",
+    "Keyboard and accessibility: focus moves to the error callout on failure and to the success message on success; every field has a label \u2014 verify: the existing drawer a11y tests extended, and a manual tab through both drawers.",
+    "Add tests for each of the above where testable (the five operations in a mocked client, the two drawers with the mock); the existing `AssignForm` callers (other workspace lines) still pass their tests \u2014 verify: `delivery/checks.sh` passes and the AssignForm tests are unchanged and green."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium: two cross-layer contract changes (multipart upload, integer ids keyed by `case_id`) and a shared form component (`AssignForm.tsx`) used by other workspace lines. Naming the accountable PM is an identity and responsibility decision, but the backend enforces access and the frontend chooses no one. Product-decision surface: making proof and reason mandatory and dropping the Note change a client-approved flow, so the client must accept the wording. No data migration, payments or security-boundary change on the frontend side."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-88/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "not_run",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-88/readiness.md",
+      "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-CONNECT-1",
+    "base_branch": null,
+    "base_sha": null,
+    "task_branch": null,
+    "head_sha": null,
+    "worktree": null,
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-23T13:22:29Z",
+  "round": 0,
+  "round_limit": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:25:06Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-88/readiness.md",
+      "delivery/features/F-88/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 0,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}

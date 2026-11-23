@@ -3,26 +3,71 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-85",
-  "outcome": "The work item page reads live GET /work/{id} (header, state, next step, blocker, decisions waiting, progress and current activity, history, output link), and the shared workspace gains a per-line adapter (panel URL to sections, step to typed command with its tokens) and an evidence picker (case file upload), proven by reading the weekly report panel; no money or client-facing writes",
-  "state": "PLANNED",
+  "outcome": "The work item page shows live work, and the shared workspace can read any line through an adapter",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Opening `/work/4102` against the mock (Next 4980, mock 4981) shows the title, a \"Processing\" state tag, the next step, and \"Drafting the weekly update\" as the activity line; no station track, six facts strip or agent steps are on the page, and no \"not available\" text appears \u2014 verify: open the page and view the DOM; `frontend/e2e/work-item.spec.ts` asserts those three parts are absent.",
+    "The same page against live Django (8020, Postgres 55433, account live-lead) for a real work id shows the live `title`, `status_label`, `next_step` and `blocker`, matching `GET /api/v1/work/{id}` \u2014 verify: compare the page with `oa.py live GET /api/v1/work/{work_id} 3` output and the JSON from `curl` with the session.",
+    "The page makes no request to the v7 mock-only fields: its code imports the `WorkItem` type from the live schema and not from `@/api/schema` \u2014 verify: `grep -rn \"api/schema'\" frontend/src/features/work-item` returns nothing for work item types.",
+    "While `current_activity.watching` is true the page re-reads every 5 s; with `watching:false` and a state other than `processing` it makes one read only; a hidden tab pauses reads \u2014 verify: unit test `useWorkItem` with fake timers; in the browser network panel count `GET /work/4102` calls.",
+    "A failed poll keeps the last good item on screen and shows the \"couldn't refresh\" note; a 401, 403 or 404 on a poll replaces the page with the matching state and stops polling \u2014 verify: unit test with a mocked client.",
+    "`/work/4106` (mock) and a live id the account cannot see both show exactly \"This record is unavailable.\" with no difference between them \u2014 verify: open both and compare the text; unit test on the 404 body.",
+    "A 403 with `code:'csrf_failed'` does not show \"Your account can't use PSL Factory\" or the no-access state; it refreshes the session and says to try again \u2014 verify: mock scenario `csrf_failed` plus unit test.",
+    "A 401 shows the signed-out state with a link to `/sign-in?next=` the current path \u2014 verify: sign out in the mock, open `/work/4102`, click the link.",
+    "Decisions waiting (`/work/4103`) show one row with its role and status and an \"Open decision\" link to `/work/4103/decide?task=<id>` only when `can_decide` or `can_claim` is true; a row with both false has no link; the page makes no claim or decision call \u2014 verify: e2e plus network panel.",
+    "A verified item (`/work/4101`) shows an \"Open the output\" link equal to `output_url`; an item with `output_url:null` shows none \u2014 verify: e2e on both fixtures.",
+    "A null `revision` or `case_revision` (`/work/4104`, `/work/4105`) is not rendered as 0 and the page loads \u2014 verify: e2e plus unit test on the item mapper.",
+    "`/work/4101/history` lists rows from `GET /work/{id}/history`; the Decisions, Agent work and Evidence tabs call it with `kind=decision`, `worker` and `evidence`; no counts and no \"show more\" are drawn; the caption reads \"Showing the latest 30 changes. As of \u2026\" only when 30 rows came back \u2014 verify: unit and e2e tests; network panel.",
+    "A history row with an unknown `station` or `status` shows the raw text; a row without `actor` shows no actor; an `evidence_id` of null shows no evidence link \u2014 verify: unit test on the row mapper.",
+    "History empty shows \"No changes recorded yet.\"; a history error shows the mapped message with Try again and keeps the chosen tab \u2014 verify: mock scenarios and e2e.",
+    "No write button (Resume, Cancel, Check what happened, Release, Start, Correct) appears on the page, and no `POST` other than the file upload is made by anything in this feature \u2014 verify: e2e asserts no such buttons; grep `liveApi.POST` in the new files shows only the upload and the picker's proposal calls.",
+    "`src/features/workspace/adapter.ts` exports `PanelRef`, `LineContext`, `LineAdapter`, `CommandDescriptor`, `registerLineAdapter`, `adapterFor` as specified, and a test registers a fake adapter, reads its panel, gets `Section[]` that the existing `Sections` renderer draws, and gets a `CommandDescriptor` whose `body()` includes the action, the tokens and a uuid key \u2014 verify: `adapter.test.ts`; typecheck passes.",
+    "A `null` token in a descriptor stays `null` in `body()`; a line with no key field gives `idempotency.field === null` and no key in the body \u2014 verify: `adapter.test.ts`.",
+    "`/work/4102` renders the weekly report panel through the adapter: the period, the four parts with \"N records cited\", the recipients with their receipt state, and `next_action`; a recipient with `receipt_id:null` reads \"No receipt yet\"; a null `editable_parts` and `draft` show no parts section \u2014 verify: e2e on 4102 and unit test on `weeklyReportAdapter`.",
+    "Against live Django, a weekly report work item's panel shows the same period and recipients as `GET /api/v1/work/{id}/weekly-report` \u2014 verify: compare the page with the `curl` JSON.",
+    "A `panels[]` entry whose key has no registered adapter does not break the page: it is omitted or shown as a link, and the rest of the page loads \u2014 verify: unit test with an unknown key.",
+    "The weekly report descriptor for `correct` is returned with `disabledReason` set when `can_correct` is false, and is not rendered as a button \u2014 verify: unit test and e2e (no button).",
+    "The picker uploads a PDF to `POST /cases/{case_id}/files` as multipart and returns the `upload_id`; the same call against live Django returns 200 with `upload_id`, `name`, `size`, `sha256` \u2014 verify: unit test against the mock; a live check with `live-lead` on a case they may write to, shown by the returned JSON.",
+    "The picker refuses a `.exe` and a file over 10 MB before any request is sent, and shows the file row's error with Try again \u2014 verify: unit test asserts no fetch call.",
+    "Upload errors map as specified: mock scenarios 413, 415, 422 (with `fields`), 429, 404 and a dropped network each show their own wording, and a failed upload is not retried until Try again is pressed \u2014 verify: unit tests; count fetch calls.",
+    "A 403 `csrf_failed` during upload refreshes the session once and says \"Press upload again\"; no automatic second upload \u2014 verify: unit test counts fetch calls (one upload, one session read).",
+    "The picker's types keep `UploadId` and `EvidenceId` distinct: assigning an `UploadId` where an `EvidenceId` is expected fails typecheck \u2014 verify: a `// @ts-expect-error` test in `evidence.test.ts`.",
+    "`fileToEvidence` calls the drafts route, then the review route, and returns `reviewed_evidence_id`; a null result is returned as null and the code and the PR description label it \"proposal, backend question 1\" \u2014 verify: unit test against the mock; grep for the label.",
+    "The picker and the proposal are not rendered by any page and the PR lists them as unused-by-design until F-87 \u2014 verify: grep for `EvidencePicker` imports shows only tests.",
+    "The picker uploads only to the loaded item's `case_id`; there is no input for a case id \u2014 verify: component test and props type.",
+    "Viewport check at 1440 and 390: the page matches the SCR-02 work item boards for the parts that remain (header, tag, next step, decisions waiting, output link); the hidden parts leave no empty gap or empty heading \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-02 artboards.",
+    "`npm run lint`, `npm run typecheck` and `npm test` pass, and `api-live-schema-drift.test.ts` still passes with `live-schema.d.ts` regenerated from contract 1.22.0 \u2014 verify: `delivery/checks.sh` result."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work touches shared workspace code that lanes A and B build on, and it fixes a cross-layer contract (the adapter and command descriptor shapes). The picker uploads files to case evidence, which is a security surface. Money, identity and migrations are not touched, since all writes are deferred to F-87. Product acceptance is required because the page hides approved design parts, which changes what the client sees."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-85/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +90,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +104,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-85/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +155,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "main",
+    "base_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+    "task_branch": "fe-connect-1-work-item-frame",
+    "head_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +169,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +202,41 @@
     }
   },
   "created_at": "2026-11-23T13:18:43Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:24:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T13:24:35Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-85/readiness.md",
+      "delivery/features/F-85/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

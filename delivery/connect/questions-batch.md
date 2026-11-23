@@ -95,3 +95,19 @@ The work item boards draw Resume, Cancel and "Confirm what happened" buttons and
 Reference (for example "INV-0412"), started by, started at and amount have no live source on `GET /work/{id}` (backend question 7, A-14). Live gives the work id, `owner` and `updated_at`.
 1. **(Recommended)** Drop reference, started by and amount; show "Updated" from `updated_at` and "With" from `owner` when there is one.
 2. Show the numeric work id as the reference.
+
+### LC-Q7 · F-88 · Assigning the PM now needs proof and a reason
+The approved Assign PM drawer draws proof as optional and a short optional Note. Live requires both a proof (chosen from the list the backend offers for that RFP) and a written reason (up to 4000 characters), and has no Note field (backend question C-12).
+1. **(Recommended)** Make "Proof" a required choice from the offered list and replace Note with a required "Reason for choosing this PM"; drop "(optional)".
+2. Keep the drawer as drawn and hold Assign PM until the backend makes both optional.
+
+### LC-Q8 · F-88 · Log RFP: the Note and the client name
+The approved Log RFP form has a free Note and a client picked by name. Live stores no note on a received RFP, and the client picker lists only the organisations where you may record a received bid; a new client is typed as a name (backend questions C-9, C-10).
+1. **(Recommended)** Remove the Note. Keep the organisation picker (required) and add a plain text "Client name as written in the RFP", optional.
+2. Remove the Note and show only the organisation picker.
+3. Keep the Note on screen and hold it until the backend stores it.
+
+### LC-Q9 · F-88 · After logging or assigning: what the success words can say
+Live returns no work item id after logging and no PM name or "what happens next" after assigning (backend questions C-7, C-13). The drawn success lines name the PM and say the PM is alerted.
+1. **(Recommended)** After logging, say "RFP logged" with the reference and received time read back from the receipt and a link to the Unassigned list. After assigning, say "PM assigned" with the person's name from the chosen list entry, only after the list is re-read; leave out the "alerted" and next-steps lines.
+2. Keep the drawn sentences and accept that they may not be true.

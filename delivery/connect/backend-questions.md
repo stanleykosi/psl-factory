@@ -447,3 +447,9 @@ The first section is the short list. Each item groups the screen questions it an
 ## New from lanes
 
 Added during the two-day push (D-180), with a lane prefix (LA-, LB-, LC-).
+
+- **LC-1 (F-85)** `GET /work/{id}` `panels[]` and `tasks[].url`: for each line, which `panels[].key` values exist and what is each response schema? The weekly-report readback is typed, but `recipients[]` and `evidence[]` items are typed loosely. A typed example per line would let one adapter per line be written without guessing.
+- **LC-2 (F-85)** `POST /cases/{case_id}/files` is built as the evidence picker on the best reading of question 1: upload, then file-agent draft and review to `reviewed_evidence_id`. If a direct "record this file as evidence" call exists, which one is it?
+- **LC-3 (F-88)** `GET /received-bids/{case_id}/assignment` `proofs[]` and `POST …/assignment` `evidence`: `proofs[]` is capped at 26 and has only `{id,label}`. Which evidence kinds does it list, and is a proof for a received RFP something the person can add from the screen (and through which call), or must it already exist?
+- **LC-4 (F-88)** `POST /received-bids` on a repeated `reference` or a repeated `start_key` with different values: which status and `code` come back (409 or 200 replay), and does a replay with the same `start_key` return the same `receipt_id`?
+- **LC-5 (F-88)** After `POST …/assignment` returns 201, does the item leave `GET /received-bids/assignments` at once, and which work state does it have? A second assignment on the same `intake`: 409 with which `code`?
