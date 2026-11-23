@@ -184,22 +184,26 @@ function cleanupDialog() {
 }
 
 describe('project first', () => {
-  it('minutes: the disabled box until a project is chosen, no upload; then "Choose a file"', async () => {
+  it('minutes: the disabled box until a project is chosen, no upload; then the zone opens', async () => {
     await openLine('minutes');
     expect(within(proofBox()).getByText('Choose the project first.')).toBeTruthy();
     expect(within(proofBox()).queryByRole('button')).toBeNull();
+    expect(within(proofBox()).getByText('Uploads are closed')).toBeTruthy();
     expect(fileInput()).toBeNull();
     expect(uploads).toHaveLength(0);
     await pick('Project', 'Lagoon Health · patient app');
-    expect(within(proofBox()).getByRole('button', { name: 'Choose a file' })).toHaveProperty('disabled', false);
+    expect(within(proofBox()).getByText('choose a file')).toBeTruthy();
+    expect(fileInput()).toHaveProperty('disabled', false);
   });
 
-  it('the schedule and ledger drawers show "Choose a file" at once', async () => {
+  it('the schedule and ledger drawers show the open zone at once', async () => {
     await openLine('income_schedules');
-    expect(within(proofBox()).getByRole('button', { name: 'Choose a file' })).toHaveProperty('disabled', false);
+    expect(within(proofBox()).getByText('choose a file')).toBeTruthy();
+    expect(fileInput()).toHaveProperty('disabled', false);
     cleanupDialog();
     await openLine('ledger_sources');
-    expect(within(proofBox()).getByRole('button', { name: 'Choose a file' })).toHaveProperty('disabled', false);
+    expect(within(proofBox()).getByText('choose a file')).toBeTruthy();
+    expect(fileInput()).toHaveProperty('disabled', false);
   });
 });
 
@@ -273,7 +277,8 @@ describe('uploads', () => {
     expect(uploads).toHaveLength(1);
     await act(async () => open());
     await within(dialog()).findByText(/a\.pdf/);
-    await waitFor(() => expect(within(proofBox()).getByRole('button', { name: 'Add another file' })).toHaveProperty('disabled', false));
+    await waitFor(() => expect(within(proofBox()).getByText('Add another file')).toBeTruthy());
+    await waitFor(() => expect(fileInput()).toHaveProperty('disabled', false));
     choose(file('c.pdf', 1024));
     await waitFor(() => expect(uploads).toHaveLength(2));
     expect(uploads[1].body.case_revision).toBe(3);

@@ -131,8 +131,7 @@ for (const [label, viewport, phone] of [
       const log = recordWrites(page);
       await openLine(page, phone);
       await fillBoard(page, false);
-      const pickFile = documentBox(page).getByRole('button', { name: 'Choose a file' });
-      await expect(pickFile).toBeEnabled();
+      await expect(documentBox(page).locator('input[type="file"]')).toBeEnabled();
       await chooseFile(page);
       await expect(documentBox(page).getByText('Uploaded · 2.4 MB')).toBeVisible();
       expect(log.uploads()).toHaveLength(1);
@@ -192,7 +191,7 @@ for (const [label, viewport, phone] of [
       await expectNoAxeViolations(page, 'uploading');
       release();
       mode = 'fail';
-      await expect(documentBox(page).getByText(/Not uploaded/)).toBeVisible();
+      await expect(documentBox(page).getByText('Couldn’t upload. Try again.')).toBeVisible();
       await expect(dialog(page).getByRole('button', { name: 'Log RFP' })).toBeDisabled();
       if (phone) expect(await smallTargets(page)).toEqual([]);
       await expectNoAxeViolations(page, 'failed');

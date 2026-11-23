@@ -37,7 +37,7 @@ async function choose(page: Page, label: RegExp | string, option: RegExp | strin
 /** Every visible button, link and field in the dialog is at least 44px in its smaller side. */
 async function smallTargets(page: Page) {
   return dialog(page).evaluate((root) =>
-    [...root.querySelectorAll<HTMLElement>('button, a[href], input:not([type="hidden"]), textarea, [role="combobox"]')]
+    [...root.querySelectorAll<HTMLElement>('button, a[href], input:not([type="hidden"]):not([type="file"]), textarea, [role="combobox"]')]
       .filter((el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden')
       .map((el) => {
         const r = el.getBoundingClientRect();

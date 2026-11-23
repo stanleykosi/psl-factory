@@ -167,7 +167,7 @@ function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: Resp
               })}
             />
           </div>
-          {needsProof && <ProofField proof={proof} />}
+          {needsProof && <ProofField proof={proof} multiple />}
           {proofFirst && (
             <p id={whyId} className="resp-plain">
               Upload the proof to continue.

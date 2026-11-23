@@ -198,7 +198,7 @@ describe('the step form (AC 14, 15)', () => {
     expect(f.getByRole('radiogroup', { name: 'Status' })).toBeTruthy();
     expect(f.getByRole('combobox', { name: 'Project (optional)' })).toBeTruthy();
     expect(f.getByText('Choose Project first')).toBeTruthy();
-    expect(f.getByRole('button', { name: /Add another file|Supporting document/ })).toBeTruthy();
+    expect(f.getByLabelText(/Supporting document/, { selector: 'input' })).toBeTruthy();
     expect(f.getByText('RFP answer · test template v1')).toBeTruthy();
     expect(f.getByText('Restricted')).toBeTruthy();
     expect(document.body.textContent).not.toContain('HIDDEN-COST-CODE');

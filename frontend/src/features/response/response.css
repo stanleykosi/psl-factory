@@ -67,22 +67,6 @@
 .resp-segopt:has(input:checked:focus-visible) { box-shadow: inset 0 0 0 2px var(--focus-on-strong); }
 
 /* proof */
-.resp-drop { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; padding: var(--space-3); border: 2px dashed var(--ink); background: var(--steel); }
-.resp-drop.is-disabled { border-color: var(--disabled); }
-.resp-drop__empty { color: var(--signal-ink); font-weight: 600; }
-.resp-chip { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-6px) var(--space-10px); background: var(--surface); border: 1.5px solid var(--ink); font-family: var(--font-mono); font-size: var(--text-hint-size); max-width: 100%; }
-.resp-chip__name { overflow-wrap: anywhere; min-width: 0; }
-.resp-chip__state { color: var(--ink-muted); }
-.resp-chip--problem, .resp-card--problem { border-color: var(--signal-ink); }
-.resp-chip__problem { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--signal-ink); font-family: var(--font-sans); }
-.resp-chip__remove { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; padding: 0; border: none; background: none; color: inherit; font: inherit; font-size: var(--text-lead-size); cursor: pointer; }
-.resp-filebtn { border: none; min-height: var(--control-sm); padding: 0 var(--space-3); box-shadow: inset 0 0 0 1.5px var(--ink); background: var(--surface); color: var(--ink); font: inherit; white-space: nowrap; cursor: pointer; }
-.resp-filebtn--phone { width: 100%; min-height: 52px; box-shadow: none; border: 2px dashed var(--ink); font-weight: 500; }
-.resp-filebtn[disabled] { color: var(--ink-muted); box-shadow: inset 0 0 0 1.5px var(--disabled); cursor: not-allowed; }
-.resp-card { display: flex; align-items: center; gap: var(--space-10px); padding: var(--space-10px) var(--space-3); border: 2px dashed var(--ink); background: var(--surface); font-size: var(--text-body-size); }
-.resp-card__text { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.resp-card__meta { font-size: var(--text-small-size); line-height: 18px; color: var(--ink-muted); } /* the second line of a 14px block, as the boards draw it */
-.resp-clip { flex: none; }
 
 .resp-attest { align-items: flex-start; }
 .resp-row--proof { align-items: end; }
@@ -132,10 +116,6 @@
   /* the phone boards: 48px of content inside a 2px border, the radio inset as the browser draws it, a taller chip */
   .resp-pill { display: flex; gap: var(--space-10px); min-height: 52px; padding: 0 var(--space-3); }
   .resp-pill input { margin: 0 3px 0 5px; }
-  .resp-chip { padding: var(--space-2) var(--space-10px); }
-  /* 44px targets for the chip's "×" and "Choose a file"; the "×" reaches past the chip's padding so the chip keeps its size */
-  .resp-chip__remove { min-width: var(--control-md); min-height: var(--control-md); margin: calc((var(--control-md) - 1lh) / -2) calc(var(--space-10px) * -1) calc((var(--control-md) - 1lh) / -2) 0; }
-  .resp-filebtn { min-height: var(--control-md); }
   .resp-attest { font-size: var(--text-body-size); }
   .resp-alert { font-size: var(--text-body-size); }
   .resp-signature { background: none; border: none; }

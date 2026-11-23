@@ -430,9 +430,10 @@
 .psl-tip::after { content: ""; position: absolute; left: 14px; top: 100%; border: 6px solid transparent; border-top-color: var(--ink); }
 
 /* file upload */
-.psl-drop { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px; border: 2px dashed var(--ink); background: var(--surface); text-align: center; cursor: pointer; }
+.psl-drop { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 22px 18px; border: 2px dashed var(--ink); background: var(--surface); text-align: center; cursor: pointer; }
 .psl-drop small { color: var(--ink-muted); font-size: 13px; }
 .psl-drop:hover, .psl-drop.is-hover { background: var(--surface-subtle); }
+.psl-drop.psl-drop--compact { flex-direction: row; justify-content: center; gap: 10px; padding: 12px; }
 .psl-drop.is-over { background: var(--action-tint); border-color: var(--action); color: var(--action-ink); border-style: solid; }
 .psl-drop.is-error { border-color: var(--signal); }
 .psl-drop.is-disabled { border-color: var(--disabled); color: var(--ink-muted); background: var(--steel); cursor: not-allowed; }
@@ -443,6 +444,11 @@
 .psl-file.is-error { border-color: var(--signal); }
 .psl-file.is-error small { color: var(--signal-ink); }
 .psl-file .psl-progress { margin-top: 6px; }
+.psl-files { display: flex; flex-direction: column; gap: 8px; }
+@media (max-width: 719.98px) {
+  .psl-drop { min-height: var(--control-phone); }
+  .psl-file .psl-btn { min-height: var(--control-phone); }
+}
 
 /* date picker */
 .psl-cal { padding: 10px; width: 300px; }

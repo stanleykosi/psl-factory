@@ -155,7 +155,7 @@ export function OutcomeForm(props: Props) {
         />
       )}
       <ResultFields outcome={outcome} entries={entries} setEntry={setEntry} />
-      <ProofField proof={proof} layout="card" choose="Choose a file" />
+      <ProofField proof={proof} />
       {showRole &&
         (roles.length === 1 ? (
           <div className="resp-field">

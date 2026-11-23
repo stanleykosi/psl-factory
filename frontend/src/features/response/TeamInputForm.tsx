@@ -80,7 +80,7 @@ export function TeamInputForm(props: FormProps & { heading: boolean }) {
         form), so the board's rows keep their place; on the phone they follow the board's rows.
       */}
       <div className={phone ? 'resp-stack' : 'resp-row resp-row--proof'}>
-        <ProofField proof={proof} layout="card" choose="Choose a file" />
+        <ProofField proof={proof} />
         {!phone && attest}
       </div>
       <div className={phone ? 'resp-stack' : 'resp-row'}>
