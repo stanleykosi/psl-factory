@@ -271,7 +271,7 @@ test.describe('desktop rules', () => {
     }
   });
 
-  test('access: forbidden scenario, pm persona with no rules call, 401 sign-in link (AC 14)', async ({ page, context }) => {
+  test('access: forbidden scenario, pm persona with no rules call, 401 signed-out frame, no sign-in link (AC 14)', async ({ page, context }) => {
     await setCookies(context, { psl_mock_persona: 'admin', psl_mock_setup: 'forbidden' });
     await page.goto('/setup/rules');
     await expect(page.getByText('This section isn’t open to your role.')).toBeVisible();
@@ -285,7 +285,9 @@ test.describe('desktop rules', () => {
 
     await setCookies(context, { psl_mock_persona: 'admin', psl_mock_scenario: '401' });
     await page.goto('/setup/rules');
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', /next=%2Fsetup%2Frules$/);
+    // /me answers 401 first, so the frame's own signed-out state shows (sign-in opens in a later release, F-57).
+    await expect(page.getByText('You’re signed out.')).toBeVisible();
+    await expect(page.getByRole('main').getByRole('link')).toHaveCount(0);
   });
 
   test('finance: crumb, lead, count callout, 7 groups, Set disclosures; read-only has none (AC 16)', async ({ page, context }) => {
