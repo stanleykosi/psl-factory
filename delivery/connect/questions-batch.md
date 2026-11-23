@@ -219,6 +219,18 @@ The weekly board draws no file field and the live weekly body has no field for a
 1. **(Recommended)** Build the upload box (the F-85 evidence picker) in Start work but show it only on lines whose body takes a file; the weekly form shows none.
 2. Show an optional "Add files to this project" box on the weekly form that uploads to the case but is not sent with the start.
 
+### LC-Q12 · F-87 · Resume, Cancel and Check what happened: where they sit
+No approved board draws a Resume, Cancel or Pause/Continue button on the work item. The awaiting-reconciliation board draws a "Confirm what happened" panel with choices and proof (replaced by one button under LC-Q2). The live work item lists which of these the person may use.
+1. **(Recommended)** One small row of buttons under the header, shown only for what the API lists: "Check what happened" (when `reconcile` is listed), "Resume" and "Cancel" (when listed in `available_control`). Cancel asks for a plain yes/no confirmation first. Same row on the phone, stacked. No new colours or panels.
+2. Put "Check what happened" inside the next-step callout and the other two in the page menu.
+3. Hold the buttons until the design engineer draws them.
+
+### LC-Q13 · F-87 · Pausing and continuing background work
+Live lists `background` as an available action but does not say whether the background work is now running or paused (backend question LC-7). Pause and Continue are the two answers to the one call.
+1. **(Recommended)** Show two buttons, "Pause background work" and "Continue background work", whenever `background` is listed. The server's answer decides (it refuses the one that does not apply, and we show its message). No guess from the state.
+2. Show only "Pause background work" while the item is processing and nothing otherwise.
+3. Hold background controls until the backend serves the current setting.
+
 _LC-Q10 and LC-Q11 were added after batch 1 went out; D-182 covers LC-Q1 to LC-Q9 only. They stay open for batch 2, and F-86 builds on their recommended options meanwhile._
 
 ## Answers, batch 1 (23 Nov 2026, D-182)
