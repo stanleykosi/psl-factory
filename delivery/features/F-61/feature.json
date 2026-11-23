@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -75,7 +75,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -91,7 +91,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-61/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -140,11 +140,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-ALERTS",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "main",
+    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "task_branch": "fe-alerts-live-alerts-and-settings",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a3",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -187,14 +187,22 @@
     }
   },
   "created_at": "2026-11-23T13:19:54Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-23T13:56:50Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T21:48:37Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -213,7 +221,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

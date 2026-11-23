@@ -1,0 +1,32 @@
+{
+  "exceptions": [
+    {
+      "role": "textbox",
+      "name": "Confirm new password",
+      "category": "added field",
+      "reason": "The API requires `confirm`; the board draws one password field (D-182 Q1 a).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "textbox",
+      "name": "WhatsApp number for alerts (optional)",
+      "category": "removed content",
+      "reason": "G-SCR17-5: no operation exists in 1.24.0; the field and \"We'll send a code to check it. You can change this later.\" are left out (D-182 Q2 a).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "Welcome, Sola. You've been given PMO for Ojo Foods and Kora Logistics.",
+      "category": "data wording",
+      "reason": "Name, access words and workspaces come from the preview as returned; full name rather than first name (D-182 Q6, Q8).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "This invitation works until <date>.",
+      "category": "data wording",
+      "reason": "The board's duration is replaced by the invitation's real `expires_at` (A-54: no universal 72 hours; D-182 Q5 a).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    }
+  ]
+}
