@@ -458,6 +458,12 @@ None of the five bodies takes an `upload_id` or names an organisation list, and 
 1. **(Recommended)** Accept: the engine has the slots; later lines add controls when a body needs them.
 2. Add an optional "Add files to this project" box to every form (no live field takes it).
 
+### LC-Q32 · F-86 · Weekly report week: which timezone, and does the last day count?
+The live server needs the week as date-times with a timezone offset, at most 8 days long, ending in the past. The contract and backend name no timezone and don't say whether the end day is included.
+1. **(Recommended)** Start at local midnight of the first day and end at local midnight after the last day, so the last day picked is included, using the person's browser timezone. Picking today as the last day is then refused until the day is over ("must have ended").
+2. Use one fixed PSL timezone (for example Africa/Lagos) for everyone, whatever the browser says.
+3. End at 23:59:59 of the last day instead of the next midnight.
+
 ## Lane D
 
 ### LD-Q1 · F-107 · Business-unit totals (SCR-57): build on what the API discloses?
