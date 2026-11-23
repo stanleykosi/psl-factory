@@ -13,11 +13,12 @@ vi.mock('next/navigation', () => ({
 }));
 
 const me = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/me.finance_lead.json'), 'utf8'));
+const WORK_DESK = '/desk/';
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
 beforeEach(() => {
-  // A /me that still carries the fields the removed embed keyed on.
-  const body = { ...me, work_desk_url: '/desk/', sections: me.destinations.map((key: string) => ({ key, ['django' + '_url']: '/x/' })) };
+  // A /me whose work_desk_url and destination django_url hold real-looking paths: the frame must not link to any of them.
+  const body = { ...me, work_desk_url: WORK_DESK, destinations: me.destinations.map((d: { key: string; title: string }) => ({ ...d, ['django' + '_url']: `/x/${d.key}/` })) };
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) =>
@@ -34,5 +35,11 @@ describe('AppShell with Django fields on /me', () => {
     expect(container.querySelector('psl-work-client')).toBeNull();
     expect(container.querySelector('.shell-topbar')).not.toBeNull();
     for (const a of container.querySelectorAll('a')) expect(a.getAttribute('href') ?? '').not.toContain('factory-forms');
+    expect(container.querySelectorAll('nav a').length).toBeGreaterThan(0);
+    for (const el of container.querySelectorAll('[href], [src], [action]')) {
+      const target = `${el.getAttribute('href')} ${el.getAttribute('src')} ${el.getAttribute('action')}`;
+      expect(target).not.toMatch(/\/desk\/|\/x\/|\/retired\//);
+    }
+    expect(container.textContent).not.toContain(WORK_DESK);
   });
 });

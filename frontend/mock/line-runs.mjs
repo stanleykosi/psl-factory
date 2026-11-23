@@ -11,6 +11,7 @@
 // station before it for rework (a new draft, a new task), Reject stops it. The last station ends verified, in Done, with a
 // history entry for every step. Sample data only: nothing is sent to anyone and no rule is decided here.
 import { WORK_IDS } from './start-work.mjs';
+import { roleWords } from './session.mjs';
 
 export const LINE_STEP_MS = 2500;
 
@@ -53,7 +54,7 @@ export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, 
   let counter = 0;
   let alerts = 0;
 
-  const person = (persona) => `${me[persona].name} · ${ROLES[persona] ?? me[persona].roles[0]}`;
+  const person = (persona) => `${me[persona].name} · ${ROLES[persona] ?? roleWords(persona)}`;
   const agentOf = (run) => AGENTS[run.agent];
   const roleOf = (run) => ROLES[run.decider];
   const station = (run, i = run.idx) => run.stations[Math.min(i, run.stations.length - 1)];
@@ -212,7 +213,7 @@ export function createLineRuns({ now = () => Date.now(), stepMs = LINE_STEP_MS, 
       tasks: run.state === 'waiting' ? [task(run, persona)] : [],
       agent: { name: agentOf(run).name, status: { running: 'working', waiting: 'waiting', done: 'done', cancelled: 'stopped' }[run.state], steps, started_at: iso(run.stationStartedAt) },
       next_step: next,
-      started_by: { name: me[run.starter].name, role: ROLES[run.starter] ?? me[run.starter].roles[0], is_you: persona === run.starter },
+      started_by: { name: me[run.starter].name, role: ROLES[run.starter] ?? roleWords(run.starter), is_you: persona === run.starter },
       started_at: iso(run.startedAt),
       sample: true,
     };

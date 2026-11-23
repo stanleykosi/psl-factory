@@ -1,7 +1,9 @@
+import type { paths as livePaths } from './live-schema';
 import type { paths } from './schema';
 
-export type Me = paths['/api/v1/me']['get']['responses'][200]['content']['application/json'];
-export type Destination = Me['destinations'][number];
+// The frame reads the live contract (D-172); the rest of the types stay on v7.
+export type Me = livePaths['/api/v1/me']['get']['responses'][200]['content']['application/json'];
+export type DestinationKey = 'my_work' | 'projects' | 'overview' | 'setup' | 'clients' | 'assistant';
 
 // E-WORK-ITEM is the same type as features/work-item's WorkItem (both derive from the schema).
 export type WorkItem = paths['/api/v1/work/{work_id}']['get']['responses'][200]['content']['application/json'];

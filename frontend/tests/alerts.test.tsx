@@ -9,6 +9,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NotificationsPage } from '@/features/alerts/NotificationsPage';
 import { AppShell } from '@/shell/AppShell';
 
+import { isRoleDashboard, roleDashboard } from './bell-feed';
+
 // @ts-expect-error plain ESM module without type declarations
 import { createAlertsMock } from '../mock/alerts.mjs';
 // @ts-expect-error plain ESM module without type declarations
@@ -74,6 +76,7 @@ beforeEach(() => {
     vi.fn(async (request: Request) => {
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
+      if (isRoleDashboard(request)) return roleDashboard();
       const call = { method: request.method, url, csrf: request.headers.get('X-CSRFToken') };
       calls.push(call);
       return (await hook(call)) ?? fromMock(call);

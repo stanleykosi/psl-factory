@@ -68,7 +68,7 @@ const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.'
 const FORBIDDEN = { code: 'forbidden', message: 'Your role does not allow you to start this line.' };
 const STALE = { code: 'stale_revision', message: 'Someone changed this since you opened it. Reload to see the latest version.' };
 const REUSED = {
-  code: 'idempotency_key_reused',
+  code: 'idempotency_conflict',
   message: 'This start was already sent with different details. Close the form and start again.',
 };
 const INVALID = 'Check the highlighted fields and try again.';

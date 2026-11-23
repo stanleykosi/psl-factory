@@ -325,13 +325,15 @@ describe('amounts as returned (AC 2 to 4)', () => {
 
   it('no changed file under src adds parseFloat, Number(, reduce(, compactAmount or toFixed (AC 3) and none reads /me (AC 8)', () => {
     const root = join(__dirname, '../..');
+    // The frame (src/shell) and the clients (src/api) read /me for every screen; the guard is about the cash forecast's own files.
+    const FRAME_PATHS = [':(exclude)frontend/src/shell', ':(exclude)frontend/src/api'];
     let diff = '';
     try {
       // against the branch point, so later dlv-00 commits are not read as this branch's lines
       const base = execFileSync('git', ['merge-base', 'HEAD', 'origin/dlv-00-delivery-setup'], { cwd: root, encoding: 'utf8' }).trim();
-      diff = execFileSync('git', ['diff', '-U0', base, '--', 'frontend/src'], { cwd: root, encoding: 'utf8' });
+      diff = execFileSync('git', ['diff', '-U0', base, '--', 'frontend/src', ...FRAME_PATHS], { cwd: root, encoding: 'utf8' });
     } catch {
-      diff = execFileSync('git', ['diff', '-U0', 'HEAD', '--', 'frontend/src'], { cwd: root, encoding: 'utf8' });
+      diff = execFileSync('git', ['diff', '-U0', 'HEAD', '--', 'frontend/src', ...FRAME_PATHS], { cwd: root, encoding: 'utf8' });
     }
     const added = diff.split('\n').filter((l) => l.startsWith('+') && !l.startsWith('+++'));
     expect(added.filter((l) => /parseFloat|Number\(|\.reduce\(|compactAmount|toFixed/.test(l))).toEqual([]);

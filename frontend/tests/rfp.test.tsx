@@ -11,7 +11,7 @@ import { ResponseView } from '@/features/response/ResponseView';
 import { OutcomeView } from '@/features/rfp/OutcomeView';
 import { WorkItemOverview } from '@/features/work-item/WorkItemOverview';
 import { AppShell } from '@/shell/AppShell';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 import { optionsOf, pick, setDate, setWhen } from './controls';
 
 vi.mock('next/navigation', () => ({
@@ -54,6 +54,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       const body = request.method === 'GET' ? '' : await request.clone().text();
       const c: Call = { method: request.method, path: url.pathname, body: body ? JSON.parse(body) : undefined, csrf: request.headers.get('X-CSRFToken') };

@@ -10,7 +10,7 @@ import { createContext, useContext, type ReactNode } from 'react';
 import { AgentAvatar, agentKey, Breadcrumb, EmptyState, PageTitle, Panel, STATE_TAGS, Tag, VisuallyHidden, type FactoryState, type TagTone } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
-import { visibleDestinations } from '@/shell/destinations';
+import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 
 import {
@@ -131,7 +131,7 @@ function AgentSummary({ journey }: { journey: JourneyView }) {
         {paragraphs.map((text, i) => (
           <p key={i}>{text}</p>
         ))}
-        {me.destinations.includes('assistant') && (
+        {hasDestination(me, 'assistant') && (
           <p>
             <Link href="/assistant">Ask me about this project</Link>
           </p>
@@ -240,7 +240,7 @@ function ProjectPage({ caseId, tab, children }: { caseId: string; tab: ProjectTa
 export function ProjectFrame({ caseId, tab, children }: { caseId: string; tab: ProjectTab; children: ReactNode }) {
   const me = useMe();
   usePhoneBack({ label: 'Projects', href: '/projects' });
-  if (!me.destinations.includes('projects')) {
+  if (!hasDestination(me, 'projects')) {
     return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   }
   return (

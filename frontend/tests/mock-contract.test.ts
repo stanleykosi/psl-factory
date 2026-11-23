@@ -203,6 +203,9 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-DELEGATIONS': contractDelegations,
   'E-DELEGATION': contractDelegation,
 };
+// GET /me answers the live shape (D-172): its 200 is checked against contracts/psl-factory.openapi.json, its errors against v7.
+const liveOpenapi = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, Record<string, Operation>> };
+const liveMeSchema = liveOpenapi.paths['/api/v1/me'].get.responses['200'].content['application/json'].schema;
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
@@ -234,7 +237,7 @@ async function request(id: string, init: { persona?: string; scenario?: string; 
 
 function expectValid(id: string, status: number, body: unknown) {
   const declared = byId(id).op.responses[String(status)];
-  const schema = declared ? declared.content['application/json'].schema : errorSchema;
+  const schema = id === 'E-ME' && status === 200 ? liveMeSchema : declared ? declared.content['application/json'].schema : errorSchema;
   const validate = ajv.compile(schema);
   const valid = validate(status === 200 ? (CONTRACT_BODY[id]?.(body) ?? body) : body);
   expect(valid, `${id} ${status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
@@ -278,7 +281,7 @@ describe('mock server matches openapi.json', () => {
 
   it('E-ME carries each persona fixture', async () => {
     const names = await Promise.all((PERSONAS as string[]).map(async (persona) => (await request('E-ME', { persona })).body));
-    expect(names.map((me) => [me.name, me.destinations, me.csrf_token])).toEqual([
+    expect(names.map((me) => [me.name, (me.destinations as { key: string }[]).map((d) => d.key), me.csrf_token])).toEqual([
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-finance_lead'],
       ['Tunde Bello', ['my_work', 'projects', 'assistant'], 'mock-csrf-pm'],
       ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],

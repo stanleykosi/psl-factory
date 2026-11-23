@@ -10,6 +10,7 @@
     "dev": "node scripts/dev.mjs",
     "mock": "node mock/server.mjs",
     "gen:api": "openapi-typescript ../architecture/packages/v7/openapi.json -o src/api/schema.d.ts",
+    "gen:api:live": "openapi-typescript ../contracts/psl-factory.openapi.json -o src/api/live-schema.d.ts",
     "gen:styles": "node scripts/gen-styles.mjs",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",

@@ -34,6 +34,19 @@ describe('proxy rewrites', () => {
     }
   });
 
+  it('each of the six download rules has exactly this source and destination', async () => {
+    const { rules } = await load();
+    const U = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}';
+    expect(rules.afterFiles).toEqual([
+      { source: `/cases/:case(${U})/files/:upload(\\d+)`, destination: `${API}/cases/:case/files/:upload/` },
+      { source: `/projects/:case(${U})/templates/:template(\\d+)/file`, destination: `${API}/projects/:case/templates/:template/file/` },
+      { source: `/cases/:case(${U})/rfp/intake/:intake(\\d+)/attachment`, destination: `${API}/cases/:case/rfp/intake/:intake/attachment/` },
+      { source: '/work/:work(\\d+)/invoice-proof/:proof(\\d+)', destination: `${API}/work/:work/invoice-proof/:proof/` },
+      { source: `/cases/:case(${U})/finance/invoices/:issue(\\d+)/payments/:receipt(\\d+)/proof/:kind`, destination: `${API}/cases/:case/finance/invoices/:issue/payments/:receipt/proof/:kind/` },
+      { source: `/cases/:case(${U})/finance/reminders/:issue(\\d+)/drafts/:draft(\\d+)/:file_kind`, destination: `${API}/cases/:case/finance/reminders/:issue/drafts/:draft/:file_kind/` },
+    ]);
+  });
+
   it('adds /__mock/reset only with the demo flag and outside production', async () => {
     const reset = (rules: { beforeFiles?: unknown }) => (rules.beforeFiles as { source: string }[]).filter((r) => r.source === '/__mock/reset');
     expect(reset((await load({ NEXT_PUBLIC_MOCK_DEMO: '' })).rules)).toHaveLength(0);
@@ -90,6 +103,8 @@ describe('the Django embed is gone', () => {
     const root = join(__dirname, '..');
     const removed = new RegExp(['FactoryDesk', 'work_desk_url', 'django_url', 'factory-forms', 'factory-assets', 'NEXT_PUBLIC_FACTORY_ORIGIN'].join('|'));
     const hits = matchingSources(['src', 'tests', 'e2e', 'mock'].map((d) => join(root, d)), removed);
-    expect(hits.filter((file) => !file.endsWith('next-config.test.ts') && !file.endsWith('shell-no-embed.test.tsx'))).toEqual([]);
+    // The live contract itself and its generated types name these fields (the frame reads `/me` and ignores them); the mock's `/me` fixtures hold the fixed /retired/ value and tests/mock-live-me.test.ts proves their shape.
+    const allowed = ['next-config.test.ts', 'shell-no-embed.test.tsx', 'live-schema.d.ts', 'shell-live.test.tsx', 'client.test.ts', 'destinations.ts', 'mock-live-me.test.ts'];
+    expect(hits.filter((file) => !allowed.some((name) => file.endsWith(name)) && !/mock\/fixtures\/me\.[a-z_]+\.json$/.test(file))).toEqual([]);
   });
 });

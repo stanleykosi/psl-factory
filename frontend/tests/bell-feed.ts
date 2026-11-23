@@ -6,7 +6,19 @@ export const isBellFeed = (request: Request) => request.method === 'GET' && new 
 
 export const bellFeed = () => new Response(JSON.stringify(EMPTY), { status: 200, headers: { 'Content-Type': 'application/json' } });
 
-/** The fetch stub with the bell's feed answered before it: the stub never sees that request. */
-export function withoutBellFeed(stub: (request: Request) => Promise<Response>) {
-  return (request: Request) => (isBellFeed(request) ? Promise.resolve(bellFeed()) : stub(request));
+/** The fetch stub with the bell's feed (and, unless `ownRoleDashboard`, the role-dashboard read) answered before it: the stub never sees those requests. */
+export function withoutBellFeed(stub: (request: Request) => Promise<Response>, { ownRoleDashboard = false } = {}) {
+  return (request: Request) => {
+    if (isBellFeed(request)) return Promise.resolve(bellFeed());
+    if (!ownRoleDashboard && isRoleDashboard(request)) return Promise.resolve(roleDashboard());
+    return stub(request);
+  };
 }
+
+// The frame also reads GET /api/v1/role-dashboard once per page load for the role words (F-57). Page tests answer it with no
+// positions (the bar shows the name alone), so the same request counts and queued responses stay theirs.
+const DASHBOARD = { positions: [], actions: [], decisions: [], team_decisions: [], limited: false, workspace_decisions: [], approval_desks: [], has_teams: false, page: 1, has_next: false, as_of: '2026-11-23T09:00:00Z' };
+
+export const isRoleDashboard = (request: Request) => request.method === 'GET' && new URL(request.url).pathname === '/api/v1/role-dashboard';
+
+export const roleDashboard = () => new Response(JSON.stringify(DASHBOARD), { status: 200, headers: { 'Content-Type': 'application/json' } });
