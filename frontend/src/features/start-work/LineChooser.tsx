@@ -1,8 +1,8 @@
 'use client';
 
 // SCR-04 "Choose a line": the lines `GET /lines` returned as bordered cards in the order returned, with a search on title
-// and description. A line with a registered form and `can_submit_via_api` is a choice; any other (except `invoice`, which
-// is not shown) is an "unavailable" card with a link to its full form. Nothing is added from /me or from roles.
+// and description. A line with a registered form and `can_submit_via_api` is a choice; any other is an "unavailable" card with a link to
+// its full form. Nothing is added from roles.
 // On the phone (SCR-04-mobile-lines) the sheet shows the count in its head and the titles only, with no search.
 import Link from 'next/link';
 import { useId, useMemo, useState } from 'react';
@@ -44,8 +44,6 @@ function LoadingLines() {
   );
 }
 
-/** The lines this screen lists: all lines `GET /lines` gives except `invoice`, in that order. */
-export const listedLines = (items: Line[]) => items.filter((line) => (line.key as string) !== 'invoice');
 
 /** Startable: the contract lets the API start it and a form is registered for it. */
 export const isStartable = (line: Line) => line.can_submit_via_api && lineFormFor(line.key) !== undefined;
@@ -69,7 +67,7 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
   const [q, setQ] = useState('');
   const [chosen, setChosen] = useState<string | null>(null);
   const countId = useId();
-  const items = useMemo(() => (state.status === 'ready' ? listedLines(state.data.items) : []), [state]);
+  const items = useMemo(() => (state.status === 'ready' ? state.data.items : []), [state]);
   const shown = useMemo(() => {
     const needle = wide ? q.trim().toLowerCase() : '';
     return items.filter((line) => `${line.title}\n${line.description}`.toLowerCase().includes(needle));

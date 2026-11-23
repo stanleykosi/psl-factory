@@ -32,6 +32,8 @@ const line = (key, title, description, can, slug, projects) => ({
   django_url: `/lines/${slug}/`,
   project_options_url: projects ? `/api/v1/lines/projects?line=${key}` : null,
   submit_url: '/api/v1/work',
+  request_schema: {},
+  content_type: 'application/json',
 });
 const LINES = [
   line(WEEKLY, 'Weekly client report', 'Friday report for a client', true, 'pmo-weekly-report', true),
@@ -87,6 +89,20 @@ function weeklyProblems(body) {
   return fields;
 }
 
+// The server's period rules (apps/workflows/factory_reporting.py): each end carries an explicit offset, the window is
+// positive and at most eight days, and the period has ended. A date alone has no offset and is refused with no field list.
+const AWARE = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})$/;
+function periodProblem(inputs) {
+  for (const [key, label] of [['start_at', 'Period start'], ['end_at', 'Period end']]) {
+    if (!AWARE.test(inputs[key]) || Number.isNaN(Date.parse(inputs[key]))) return `${label} requires an explicit timezone offset`;
+  }
+  const start = Date.parse(inputs.start_at);
+  const end = Date.parse(inputs.end_at);
+  if (end <= start || end - start > 8 * 86400000) return 'Select a positive weekly reporting window of at most eight days; this is not a configured publication cadence';
+  if (end > Date.parse(NOW)) return 'Selected reporting period must have ended; future progress is unknown';
+  return null;
+}
+
 function start({ raw, scenario, csrfOk }) {
   let body;
   try {
@@ -107,6 +123,8 @@ function start({ raw, scenario, csrfOk }) {
   if (body.line !== WEEKLY) return reply(422, { ...BODIES[422], fields: [{ name: 'line', message: 'This line cannot be started here.' }] });
   const fields = weeklyProblems(body);
   if (fields.length > 0) return reply(422, { ...BODIES[422], fields });
+  const period = periodProblem(body.intake.inputs);
+  if (period) return reply(422, { code: 'action_unavailable', message: period });
   const project = PROJECTS.find((p) => p.case_id === body.case_id);
   if (!project) return reply(404, BODIES[404]);
   const done = sentKeys.get(body.idempotency_key);

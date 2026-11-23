@@ -10,7 +10,7 @@ import { setCsrfToken } from '@/api/client';
 import { LineChooser } from '@/features/start-work/LineChooser';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { lineFormFor } from '@/features/start-work/lines';
-import { weeklyReport } from '@/features/start-work/lines/weeklyReport';
+import { localMidnight, weeklyReport } from '@/features/start-work/lines/weeklyReport';
 import { mapProblems, useStart } from '@/features/start-work/useStart';
 import { fetchProjects, fetchSources, useLines } from '@/features/start-work/useStartWork';
 import { StartUpload } from '@/features/start-work/StartUpload';
@@ -74,10 +74,9 @@ describe('chooser', () => {
     expect(requests().filter((r) => new URL(r.url).pathname === '/api/v1/lines')).toHaveLength(1);
   });
 
-  it('shows a line it cannot start, or has no form for, as unavailable with a link, and never invoice (AC2)', async () => {
+  it('shows a line it cannot start, or has no form for, as unavailable with a link, and no invoice line when the server sends none (AC2)', async () => {
     await chooser([
       ...startLive({ method: 'get', url: new URL('http://m/api/v1/lines'), persona: 'pm' })[1].items,
-      { key: 'invoice', title: 'Invoice', description: 'x', can_submit_via_api: true, django_url: '/lines/invoice/', project_options_url: null, submit_url: '/api/v1/work' },
     ]);
     const dialog = screen.getByRole('dialog');
     expect(within(dialog).queryByText('Invoice')).toBeNull();
@@ -129,6 +128,26 @@ describe('chooser', () => {
     expect(await screen.findByRole('button', { name: 'Start report' })).toBeTruthy();
   });
 
+  it('a start from the assistant draft path hands the work id to onStarted as a string and does not navigate (TECH-1-2)', async () => {
+    const onStarted = vi.fn();
+    render(<StartWorkDrawer onClose={vi.fn()} onStarted={onStarted} prefill={{ line_key: 'pmo-weekly-report/v1', intake: {} }} />);
+    const dialog = await screen.findByRole('dialog', { name: 'Weekly client report' });
+    fireEvent.click(within(dialog).getByRole('combobox', { name: 'Project' }));
+    fireEvent.click(await screen.findByRole('option', { name: 'Project 01' }));
+    const week = dialog.querySelector('[data-field="week"]') as HTMLElement;
+    fireEvent.change(within(week).getByLabelText('From'), { target: { value: '16 Nov 2026' } });
+    fireEvent.blur(within(week).getByLabelText('From'));
+    fireEvent.change(within(week).getByLabelText('To'), { target: { value: '22 Nov 2026' } });
+    fireEvent.blur(within(week).getByLabelText('To'));
+    fireEvent.change(within(dialog).getByLabelText('Reference'), { target: { value: 'Week 47' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Start report' }));
+    await waitFor(() => expect(onStarted).toHaveBeenCalledWith('4102'));
+    expect(nav.push).not.toHaveBeenCalled();
+    const [sent] = await bodies();
+    expect(sent.intake.inputs.start_at).toMatch(/^2026-11-16T00:00:00[+-]\d\d:\d\d$/);
+    expect(sent.intake.inputs.end_at).toMatch(/^2026-11-23T00:00:00[+-]\d\d:\d\d$/);
+  });
+
   it('a 401 on the lines read shows the signed-out state with the sign-in return', async () => {
     scenario = '401';
     render(<StartWorkDrawer onClose={vi.fn()} />);
@@ -178,6 +197,69 @@ describe('reads', () => {
   });
 });
 
+/** The offset the browser would report (minutes west of UTC, as `getTimezoneOffset` gives it), for the calls inside `fn`. */
+function offsetMinutes<T>(minutes: number[], fn: () => T): T {
+  const spy = vi.spyOn(Date.prototype, 'getTimezoneOffset');
+  for (const m of minutes) spy.mockReturnValueOnce(m);
+  spy.mockReturnValue(minutes[minutes.length - 1]);
+  try {
+    return fn();
+  } finally {
+    spy.mockRestore();
+  }
+}
+
+describe('the period carries an explicit offset (QA-1-1)', () => {
+  it('local midnight with the zone offset, including half-hour zones, zero and a daylight change', () => {
+    expect(offsetMinutes([-60], () => localMidnight('2026-11-16'))).toBe('2026-11-16T00:00:00+01:00');
+    expect(offsetMinutes([0], () => localMidnight('2026-11-16'))).toBe('2026-11-16T00:00:00+00:00');
+    expect(offsetMinutes([-330], () => localMidnight('2026-11-16'))).toBe('2026-11-16T00:00:00+05:30');
+    expect(offsetMinutes([210], () => localMidnight('2026-11-16'))).toBe('2026-11-16T00:00:00-03:30');
+    // each midnight reads its own offset (the clocks went back that night in New York)
+    expect(offsetMinutes([240], () => localMidnight('2026-11-01'))).toBe('2026-11-01T00:00:00-04:00');
+    expect(offsetMinutes([300], () => localMidnight('2026-11-01', 1))).toBe('2026-11-02T00:00:00-05:00');
+    // the day after rolls over the month and the year
+    expect(offsetMinutes([0], () => localMidnight('2026-12-31', 1))).toBe('2027-01-01T00:00:00+00:00');
+  });
+
+  it('is the browser\'s own local midnight', () => {
+    const at = new Date(localMidnight('2026-11-16'));
+    expect([at.getHours(), at.getMinutes(), at.getDate()]).toEqual([0, 0, 16]);
+  });
+
+  it('the body ends the period at the midnight after the last day, so that day is included', () => {
+    const body = offsetMinutes([-60], () => weeklyReport.buildBody({ week: WEEK, reference: 'r' }, { caseId: PROJECT.case_id, caseRevision: 4, idempotencyKey: 'k' }));
+    expect(body.intake).toEqual({ inputs: { template_id: null, content_id: null, start_at: '2026-11-16T00:00:00+01:00', end_at: '2026-11-23T00:00:00+01:00' } });
+  });
+
+  const post = (inputs: Record<string, unknown>) =>
+    startLive({
+      method: 'post',
+      url: new URL('http://m/api/v1/work'),
+      raw: JSON.stringify({ line: 'pmo-weekly-report/v1', case_id: PROJECT.case_id, case_revision: 4, idempotency_key: `k-${Math.random()}`, intake: { inputs: { template_id: null, content_id: null, ...inputs } }, reference: 'r' }),
+      csrfOk: true,
+      persona: 'pm',
+    }) as [number, { code?: string; message?: string }];
+
+  it('the mock refuses date-only and offset-less values as the server does, so the old body would have failed', () => {
+    for (const bad of [{ start_at: '2026-11-16', end_at: '2026-11-22' }, { start_at: '2026-11-16T00:00:00', end_at: '2026-11-23T00:00:00' }, { start_at: '2026-11-16T00:00:00+01:00', end_at: '2026-11-22' }]) {
+      const [status, body] = post(bad);
+      expect(status).toBe(422);
+      expect(body.code).toBe('action_unavailable');
+      expect(body.message).toMatch(/requires an explicit timezone offset$/);
+    }
+    expect(post({ start_at: '2026-11-16', end_at: '2026-11-22' })[1].message).toBe('Period start requires an explicit timezone offset');
+    expect(post({ start_at: '2026-11-16T00:00:00+01:00', end_at: '2026-11-22' })[1].message).toBe('Period end requires an explicit timezone offset');
+  });
+
+  it('the mock also keeps the server\'s window rules: positive, at most eight days, already ended', () => {
+    expect(post({ start_at: '2026-11-16T00:00:00+01:00', end_at: '2026-11-16T00:00:00+01:00' })[0]).toBe(422);
+    expect(post({ start_at: '2026-11-01T00:00:00+01:00', end_at: '2026-11-10T00:00:00+01:00' })[0]).toBe(422);
+    expect(post({ start_at: '2026-11-22T00:00:00+01:00', end_at: '2026-11-30T00:00:00+01:00' })[1].message).toMatch(/must have ended/);
+    expect(post({ start_at: '2026-11-16T00:00:00+01:00', end_at: '2026-11-23T00:00:00+01:00' })[0]).toBe(200);
+  });
+});
+
 describe('the weekly body', () => {
   it('is exactly the schema branch, with null template and content and no background (AC5)', () => {
     const body = weeklyReport.buildBody({ week: WEEK, reference: ' Week 47 ' }, { caseId: PROJECT.case_id, caseRevision: 4, idempotencyKey: 'k-1' });
@@ -186,7 +268,7 @@ describe('the weekly body', () => {
       case_id: PROJECT.case_id,
       case_revision: 4,
       idempotency_key: 'k-1',
-      intake: { inputs: { template_id: null, content_id: null, start_at: '2026-11-16', end_at: '2026-11-22' } },
+      intake: { inputs: { template_id: null, content_id: null, start_at: localMidnight('2026-11-16'), end_at: localMidnight('2026-11-22', 1) } },
       reference: 'Week 47',
     });
     expect(Object.keys(body).sort()).toEqual(['case_id', 'case_revision', 'idempotency_key', 'intake', 'line', 'reference']);
