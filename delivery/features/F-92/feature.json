@@ -3,26 +3,57 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-92",
-  "outcome": "Start work has one form engine that builds a line form from its request_schema in GET /lines (API 1.24.0, D-185), with the project, source and organisation pickers and per-action uploads, proven on a first batch of PMO lines; the invoice intake and the remaining lines follow in their own features",
-  "state": "PLANNED",
+  "outcome": "Start work builds each line's form from its request_schema, proven on five PMO lines",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`fieldsOf` turns each of the five lines' served `request_schema` into the controls in the table, and returns `unsupported` for the leadership schema (array and object leaves) \u2014 verify: unit tests `engine/schema.test.ts` with the five fixtures and the leadership fixture; chooser test shows leadership as \"Not available here yet\".",
+    "`buildBody` for each line produces exactly the schema's keys and validates against that line's `request_schema` with `ajv` (already in `package.json`); no key beyond the schema, `background` absent, empty optionals are `null` \u2014 verify: unit test per line with ajv, and a test that adds one extra key and fails.",
+    "Guard: F-86's weekly `buildBody` output validates against the weekly `request_schema` fixture \u2014 verify: unit test `lines/weeklyReport.schema.test.ts`.",
+    "Issues: choosing a project and an issue (rows from `intake-sources?field=issue_id`) and pressing Start sends `{line, case_id, case_revision, idempotency_key, intake:{issue_id}}` with no `reference`, and opens `/work/4102` \u2014 verify: e2e with the mock request log.",
+    "Escalation: request rows come from the project's `workflow_intake_url` `requests`, labelled from the served direction and target; the body has `intake.request_id`, `intake.template_id` (null when empty) and `reference` \u2014 verify: e2e and unit test; an empty `requests` list shows \"No escalation requests to start from.\"",
+    "Emergency and change: Authorisation and Outcome are disabled with \"Choose <parent> first.\" until the record is chosen, send `parent_id` of that record, and clear when it changes or the project changes \u2014 verify: component test with a mocked `fetchSources` asserting the `parent_id` query and the clearing.",
+    "Minutes sends one multipart `POST /projects/{case_id}/minutes/intake` with parts `case_revision, idempotency_key, reference, template_id, audience, notes_file` (and `meeting_version_id` only when chosen) and no `background`, no `Content-Type` set by hand; no `/cases/{id}/files` call is made \u2014 verify: e2e mock log lists the part names and zero requests to `/files`; `grep -rn \"uploadCaseFile\" src/features/start-work/engine src/features/start-work/lines` returns nothing.",
+    "A required control left empty makes no request and the summary names each (\"Template is required.\", \"Notes file is required.\", \"Reference is required.\", ...) \u2014 verify: e2e counts requests to `/api/v1/work` and `/minutes/intake` (zero).",
+    "A 422 maps `fields[].name` to the right control for each line (engine table, including `intake.inputs.authorization_id`, a prefix name `intake.inputs`, and minutes' own names); an unknown name is drawn as its own box; none are dropped \u2014 verify: unit test per row of the table.",
+    "Replay and uncertain: a double press sends one request; a 503 locks the form with \"Not confirmed. Check before trying again.\"; \"Check again\" resends the same body (and for minutes the same file) with the same key; a 409 or 422 gives a new key next press \u2014 verify: e2e with `start_uncertain` for one JSON line and for minutes comparing both request bodies and keys.",
+    "The `case_revision` sent is the latest one any `intake-sources` or `lines/projects` answer returned \u2014 verify: unit test with two answers carrying different revisions.",
+    "Permission and tenant: a project not in the viewer's `lines/projects` is never offered; a hand-edited `case_id` (`start_missing`) shows exactly \"This record is unavailable.\"; a 403 shows \"Your role doesn\u2019t let you start this line.\"; `csrf_failed` refreshes the session once and does not show that text; 401 shows the signed-out state \u2014 verify: mock scenarios and unit tests, for one JSON line and minutes.",
+    "Provider failure: a source picker whose read fails shows the retry and does not block other fields; the mock stopped mid-start leaves one started work item at most \u2014 verify: e2e.",
+    "A line whose schema has a required leaf with no source, or any array or object leaf, appears as unavailable with \"Open in the full form\" and is never drawn as a partial form \u2014 verify: chooser unit test.",
+    "No second implementation: `grep -rn \"FormData\" src/features/start-work` matches only the minutes `send`; `LineChooser.tsx` imports no per-line form; the weekly entry is unchanged except the added optional arguments \u2014 verify: grep and the diff.",
+    "No invented rule: `grep -rn \"8 days\\|up to 8\" src/features/start-work` returns nothing, and no field, enum value or length appears in the engine that is not read from the served schema or listed in this spec \u2014 verify: grep and review.",
+    "Layout follows the SCR-04 desktop and mobile minutes, issue, change, incident and escalation boards except as listed under \"Conflicts with the boards\" \u2014 verify: the fidelity tool run for those ten artboards.",
+    "Live: against Django on 8020 with a PM account, `GET /lines` returns the five lines with `request_schema`, one real start per line succeeds or returns a typed 422 shown on its control, and each opens `/work/{id}` \u2014 verify: manual run recorded in the PR with the `work_id`s and `oa.py live GET /api/v1/work/{work_id} 3`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The engine is a shared cross-layer contract (`request_schema`, content type, idempotency, uploads, 422 mapping) that every later line uses. A schema-driven form can silently drop or invent fields, so the 422 `fields[]` mapping and the idempotency replay need real tests. No money, identity or data migration is in this batch, because invoice moved to F-94. `pmo-emergency` and `pmo-change` are the most sensitive lines. The server holds their rules, and the client only passes values and shows the server's refusals. Design: the SCR-04 boards are approved under the recorded exception in `design/review.json`, which covers the 13 Nov client approval. The generic form states (line chosen, needs fixing, upload, submitted, unavailable) must be confirmed against the boards before the build. Any state with no board goes back to the design engineer. It is not invented."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-92/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +90,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-92/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +183,28 @@
   "created_at": "2026-11-23T17:38:22Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T18:37:51Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-92/readiness.md",
+      "delivery/features/F-92/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

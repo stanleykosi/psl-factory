@@ -408,6 +408,29 @@ The approved panel draws one set of choices and no "after" state. Live can list 
 2. Show only the first uncertain send. (Not recommended: it hides a send nobody has settled.)
 3. Hold the panel until the design engineer draws these states.
 
+### LC-Q28 · F-92 · Start forms for minutes, issue, change, emergency and escalation: what the live body changes from the boards
+The SCR-04 boards draw minutes (Project, Meeting, Audience, Proof), change (Project, "What the client asked for", Proof), incident (Project, Incident, Plan) and escalation (Project, From issue, Escalate to). The live bodies take chosen records instead: minutes needs a Template and a Reference and takes the notes file; change takes a Change version, Authorisation, Template and Reference; emergency takes an Emergency record, Authorisation, Outcome, Template, Audience and Reference; escalation takes an Escalation request (direction and target are already on it), Template and Reference. There is no long-text box in any of them. The issue form matches its board.
+1. **(Recommended)** Build the live fields and leave the boards' long-text boxes and "Escalate to" out; labels come from the field names and the design engineer edits the words.
+2. Ask the backend to accept the boards' fields (a new behaviour).
+3. Hold these four lines until the design engineer redraws the boards.
+
+### LC-Q29 · F-92 · Leadership report start is not the weekly shape
+Readiness said the leadership report body matches the weekly report. In API 1.24.0 it also needs a report kind (Tuesday or monthly), an audience and six lists of chosen records (meetings, actions, milestones, issues, changes, escalations) read from `leadership-report-intake`, not from the usual source list.
+1. **(Recommended)** Leave the leadership report out of batch 1; it shows as "Not available here yet" with its link, and gets its own feature and board check.
+2. Build it now with the six record lists and no board.
+3. Send empty lists (not recommended: the server may refuse and the board draws no such form).
+
+### LC-Q30 · F-92 · Minutes: start from a notes file
+`GET /lines` says minutes start with a JSON `POST /work` that needs an existing evidence id, but the live API also has `POST /projects/{case_id}/minutes/intake`, which takes the notes file directly (the route the minutes board's Proof box implies).
+1. **(Recommended)** Use the notes-file route; ask the backend to serve it as the line's submit address.
+2. Use `POST /work` and pick an already-filed meeting-notes record (no upload; the board's Proof box has no live meaning).
+3. Offer both.
+
+### LC-Q31 · F-92 · Uploads and organisation picker have no use in batch 1
+None of the five bodies takes an `upload_id` or names an organisation list, and an upload id cannot stand in for an evidence id. The spec builds no upload-id field or organisation picker here; the organisation picker stays with F-88's received bid, and the escalation request list comes from the project's register read.
+1. **(Recommended)** Accept: the engine has the slots; later lines add controls when a body needs them.
+2. Add an optional "Add files to this project" box to every form (no live field takes it).
+
 ## Lane D
 
 ### LD-Q1 · F-107 · Business-unit totals (SCR-57): build on what the API discloses?
