@@ -175,3 +175,6 @@ D-183 (batch 2): the design engineer confirmed LC-Q16 "Hold Approve" and LC-Q14 
 
 ## Sizing and split (API 1.24.0)
 One build of about 8 boards (SCR-25 review, returned and received at desktop and phone, plus the edit form and the held-Approve state): the new parts are three read-only blocks (report text, notes, returned quote) inside `WeeklyReportActions.tsx`. The compare view is not built, so no split is needed. If the design engineer asks for compare (LC-Q18), build it as a separate feature after this one; it needs a previous version id the readback does not carry.
+
+## Coordinator note (lane C, 23 Nov): where the form attaches
+`WeeklyReportActions.tsx` is registered as `weeklyReportAdapter.Actions` (the optional slot F-87 adds to `LineAdapter`) and receives `{readback, ctx, commands, reload}`. It is not special-cased in `PanelView`.

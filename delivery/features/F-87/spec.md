@@ -191,3 +191,9 @@ F-85 passed every review with non-blocking findings. F-87 fixes these first, in 
 
 ## Coordinator note (lane C, 23 Nov): split
 F-87 is built as the spec's "F-87a": the reconcile lookup, resume/cancel, background and the carried F-85 fixes (criteria 1, 2, 4 to 22 and 33). The "Confirm what happened" panel through delivery-observations (criteria 3 and 23 to 32) moves to F-93, which builds after F-87. The adapter fixes (TECH-1-1 and friends) are wanted early by lanes B and D.
+
+## Coordinator note (lane C, 23 Nov): the line write-form slot
+F-87 also adds the shared seam every line's write form attaches to, because lanes B and D wait on it:
+- `LineAdapter` gains an optional `Actions?: ComponentType<LineActionsProps>`, where `LineActionsProps = { readback, ctx: LineContext, commands: CommandDescriptor[], reload: () => void }` (`reload` re-reads the panel and the work item).
+- `PanelView` in `LiveWorkItemView.tsx` renders `adapter.Actions` under that panel's sections when present, inside the panel's own error boundary; lines without it render as today.
+- Forms send through `useWorkCommand` (this feature). Document the seam in `adapter.ts` with a short example. Add a unit test that a registered `Actions` renders with the right props, and that it is absent when not registered.
