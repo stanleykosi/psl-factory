@@ -8,11 +8,11 @@
 .signin-form { box-sizing: content-box; flex: 1 1 420px; max-width: 520px; margin: 0; padding: 64px 56px; display: flex; flex-direction: column; gap: var(--space-4); align-items: stretch; }
 .signin-form > .psl-btn:not(.psl-btn--block) { align-self: flex-start; }
 .signin-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 32px; line-height: 1.08; }
-.signin-forgot { margin: 0; color: var(--ink-muted); }
+.signin-forgot { margin: 0; color: var(--ink-muted); text-align: center; }
 @media (max-width: 719.98px) {
   .signin { flex-direction: column; flex-wrap: nowrap; }
   .signin-brand { flex: none; padding: var(--space-4) 20px; }
-  .signin-wordmark { font-size: 17px; letter-spacing: 0.02em; }
+  .signin-wordmark { font-size: 17px; letter-spacing: 0.02em; line-height: var(--text-fact-line); }
   .signin-agents, .signin-tagline { display: none; }
   .signin-form { box-sizing: border-box; flex: 1 1 auto; max-width: none; padding: 28px 20px; }
   .signin-title { font-size: var(--text-page-title-phone-size); }
