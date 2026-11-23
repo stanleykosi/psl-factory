@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-62",
   "outcome": "Verified outputs and All exceptions read from live GET /work, through one shared work-list adapter",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -106,10 +106,10 @@
       ]
     },
     "integrated_qa": {
-      "status": "changes_requested",
+      "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA (lighter panel, D-180)",
-      "snapshot_ref": "3b8d10de03c23bf581a9b941189eb38a74b22681",
+      "snapshot_ref": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
       "evidence_refs": [
         "delivery/features/F-62/round-1/review-qa.md"
       ]
@@ -278,13 +278,87 @@
         "delivery/features/F-62/round-1/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-23T16:20:52Z",
           "head": "3b8d10de03c23bf581a9b941189eb38a74b22681"
+        },
+        {
+          "action": "fix",
+          "by": "coordinator",
+          "at": "2026-11-23T17:30:50Z",
+          "refs": [
+            "environment: the design engineer set a local QA test password (relayed by the main coordinator, 23 Nov), retest on 6730a7e7"
+          ],
+          "head": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-23T17:30:50Z",
+          "refs": [
+            "Signed in as live-none, live-lead and live-multi on 6730a7e7 (API and /sign-in page); live GET /work?queue=verified and queue=exceptions returned 200 with the empty shape, and /verified and /exceptions rendered their empty, search and 390 states."
+          ],
+          "head": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
+          "reason": null
+        }
+      ],
+      "fix_by": "coordinator",
+      "fix_refs": [
+        "environment: the design engineer set a local QA test password (relayed by the main coordinator, 23 Nov), retest on 6730a7e7"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "Signed in as live-none, live-lead and live-multi on 6730a7e7 (API and /sign-in page); live GET /work?queue=verified and queue=exceptions returned 200 with the empty shape, and /verified and /exceptions rendered their empty, search and 390 states."
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "An occasional 500 \"Internal Server Error\" came through the Next.js dev proxy (3 of about 40 calls, such as live-none `queue=exceptions&page=2`). The same calls returned 200 when repeated. Cause: `ECONNRESET` in the Next dev log. The single-threaded Django `runserver` dropped a kept-alive connection, and Django's own log shows no error or traceback. Environment only, not a code defect. A retest on a threaded server would settle it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-62/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T17:30:50Z",
+          "head": "6730a7e7829fa8be3efcd2021a24b86c46df375d"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-3",
+      "round": 1,
+      "snapshot_ref": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec says \"As of {as_of}\" always shows, but an empty live list shows no as-of line (the spec also says the empty state has no coverage warning). The spec is ambiguous here. If the design engineer wants the time on empty lists too, add it. This is not a spec break for the acceptance criteria as written.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-62/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T17:30:50Z",
+          "head": "6730a7e7829fa8be3efcd2021a24b86c46df375d"
         }
       ]
     }
@@ -313,7 +387,7 @@
     "base_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
     "task_branch": "fe-connect-1-verified-and-exceptions",
     "head_sha": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
-    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a-qa",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a2",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -524,6 +598,14 @@
       "at": "2026-11-23T14:52:43Z",
       "round": 1,
       "head": "3b8d10de03c23bf581a9b941189eb38a74b22681",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T17:31:03Z",
+      "round": 1,
+      "head": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
       "reason": null
     }
   ],
