@@ -250,6 +250,12 @@ Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), 
   1. (Recommended) Completion only queues the Finance handoff; Finance starts the invoice.
   2. Completion starts the invoice draft automatically.
 
+### Batch 5 (lane B)
+
+- **F-78 · B32. Mark a milestone complete: board changes.** Details in `delivery/features/F-78/spec.md` ("Conflicts with the boards"). We build option 1 of each.
+  1. (Recommended) Accept all: the board's "Chidi drafts the stage 2 invoice… Finance Lead approves" becomes the D-187 wording (completion queues the Finance handoff; "Completing a milestone is not invoicing it" stays); proof is a choice of the project's recorded proofs, plus a PDF upload when the server allows it, with a "this is the right file" tick; a hold line explains why it can't be marked yet; no recorder name or release reference (live gives neither); the page shows the milestone name before recording and the completed date after; "Mark complete" shows on uncompleted rows only when the server allows it, with one hold line above the table.
+  2. Show the milestone's stage number through the link (option 2 of item 4).
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
@@ -540,6 +546,14 @@ Each lane D spec lists its own board conflicts and presentation questions, with 
    3. Notes file source.
    4. Footnote wording "PMO Lead decides on".
    5. Where the checklist strip sits when there is no `dossier` in the link.
+
+### LD-Q3 · F-107 · BU totals part 1 (SCR-57): five presentation questions
+Added after batch 3. The full options are under "Questions" in `delivery/features/F-107/spec.md`. Lane D builds on the recommended options meanwhile.
+1. Staff column: the API types `totals` as a free key-to-value map. **(Recommended)** Draw the Staff column only when the API serves that person a staff count, otherwise hide it.
+2. Decision note: `/reviews` for `business_unit` has no note field. **(Recommended)** Remove the note box and label the button "Return".
+3. "Withdraw approval": the API accepts `revoke` but does not say whether an approval exists. **(Recommended)** Draw it as the board does and show the server's refusal as given.
+4. `restart` and `prepare_rule` have no board and need a configuration id that no read serves. **(Recommended)** No form in part 1.
+5. Hide the board figures the API does not serve (staff in the match, BU counts, "Legal (2 people)", owner names, the station track, "Ask Chidi"), as D-182 and D-187 do. **(Recommended)** Hide each.
 
 ## Answers, batch 1 (23 Nov 2026, D-182)
 

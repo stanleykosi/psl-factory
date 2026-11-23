@@ -3,26 +3,66 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-107",
-  "outcome": "Business-unit totals run live from the eligible payroll match, showing only what the API discloses to each person",
-  "state": "PLANNED",
+  "outcome": "A Finance reviewer reviews the BU totals source and result, seeing only what the API serves them",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-BU"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4701` (mock) shows the Source and rule review: an Inputs list with \"Payroll staff match\" (with its reference) and two \"Exception rule\" rows marked Needs you, an evidence list (nothing preselected), and Approve and Return buttons that are off until an evidence item is chosen; there is no Reject, no note box, no \"FROM\" column and no person's name \u2014 verify: open the page at 1440 and 390 wide against the two source-review boards; `frontend/e2e/finance-bu.spec.ts` asserts these.",
+    "Choosing evidence and pressing Approve sends exactly one `POST /api/v1/work/4701/reviews` with `kind:'business_unit'`, the `purpose` and `verdict:'approve'`, `work_id`, `evidence_id`, `expected_revision`, `case_revision` from the BU read, and a uuid `operation_key`; Return sends `verdict:'return'` \u2014 verify: network panel and unit test of `business-units.review` body; assert no token or key appears in any `inputs`-style object.",
+    "With an empty `proofs[]` both buttons stay off and the reason is written beside them; no evidence id is invented or taken from another source \u2014 verify: e2e on a fixture with `proofs:[]`.",
+    "`/work/4702` shows the Investigating state with the stage and finding only: no \"136\", \"6 business units\", \"1 BU below the minimum\", \"step 2 of 3\", start time or \"Ask Chidi\", and no buttons \u2014 verify: e2e asserts those strings are absent; compare with the investigating boards.",
+    "`/work/4703` shows the held headline, one hold-reason row whose text equals the API's `finding`, and no group name, no \"2 people\" and no minimum-size number; `/work/4707` (empty finding) shows \"Held\" with no reason row and no invented text \u2014 verify: e2e DOM text equals fixture `finding`; grep the DOM for `Legal`, `people`, `minimum` returns nothing.",
+    "A held result shows no totals table and no Approve button \u2014 verify: e2e on 4703.",
+    "`/work/4704` shows the Totals table with business unit and cost rows from `totals`, formatted with the served `currency`, titled with `period`; no total row, no percentage, no number the page computed \u2014 verify: e2e compares each cell with the fixture string; unit test that the mapper output contains only served values (property test: every cell string appears in the input).",
+    "A null cost in `totals` (`/work/4705`) shows \"Unknown\", never 0, `0.00` or a dash; where the served totals carry no staff counts the Staff column and its header do not exist in the DOM \u2014 verify: e2e on 4705.",
+    "In result-review the Approve, Return and Withdraw buttons post `verdict` `approve`, `return`, `revoke` to `/reviews` for the served purpose; no Publish button exists even when `can_publish` is true \u2014 verify: e2e on 4704 with `can_publish:true`; grep `action:'publish'` in `frontend/src` finds only a comment or nothing.",
+    "A recipient (`/work/4706`, `recipient_only:true`) sees only the title, period, currency, finding and totals; no Inputs list, hold detail, evidence list, review or other write control, and no request to `business-unit-intake` is made \u2014 verify: e2e asserts the DOM and the request list.",
+    "Disclosure proof, mock: for fixtures 4701 to 4707 the canary keys (`staff_count`, `employee_id`, `names`, `legal_staff`, `recipient_count`, `min_group_size`) and their values appear nowhere in the DOM text, attributes or the page's serialized state \u2014 verify: e2e `finance-bu.spec.ts` \"disclosure\" tests read `document.body.innerHTML` for each fixture; unit test that the model mapper drops unknown keys (allowlist, not blocklist).",
+    "Disclosure proof, live: against Django on 8030 (seeded BU work item), for three people (a Finance reviewer, a BU recipient, a person with no access), the DOM of each equals what `GET /api/v1/work/{id}/business-units` returned to that same session: every figure on the page is in the JSON, and every staff count, name or pay figure absent from the JSON is absent from the page; the no-access person gets exactly \"This record is unavailable.\" \u2014 verify: `curl` with each session cookie next to the page text; record the three comparisons in build.md.",
+    "A 403 and a 404 on the BU read both show exactly \"This record is unavailable.\" and nothing distinguishes them; `/work/4708` and `/work/4709` match \u2014 verify: e2e compares the text and DOM structure.",
+    "A restricted payroll row in Inputs has no link or button; no request is made to any payroll or working-rows route anywhere on the page \u2014 verify: e2e asserts zero requests matching `/payroll`; DOM has no anchor in the Inputs list.",
+    "A failed `business-unit-intake` read (403/404/500) leaves the panel drawn with the Inputs rows labelled by kind only (\"Payroll staff match\", \"Exception rule\"); it does not hide the review controls \u2014 verify: mock scenario `intake_fail`.",
+    "Stale write: a 409 on Approve re-reads the BU read, shows the server message, and does not retry by itself; a second press sends a fresh `operation_key` \u2014 verify: unit test of the descriptor and e2e with mock scenario `stale`.",
+    "Uncertain write: a dropped connection after Approve locks the buttons, says it could not confirm, and unlocks only when the re-read shows a changed `expected_revision` or purpose state; no automatic resend \u2014 verify: e2e with mock scenario `drop`; count POSTs.",
+    "A 403 with `csrf_failed` refreshes the session once and says \"Press again\" without sending a second review \u2014 verify: unit test counts fetches.",
+    "A 422 shows the server message and `fields[]` as given \u2014 verify: mock scenario `invalid`.",
+    "A null `expected_revision` or `case_revision` holds the write with the \"current version\" reason and sends nothing \u2014 verify: unit test on the descriptor.",
+    "`prepare_rule` and `restart` descriptors exist with the bodies in the table (including `operation_key` and `instruction_key`) and are not rendered; the page has no control that sends `publish`, `prepare_rule` or `restart` \u2014 verify: unit test on `commands.ts`; grep `liveApi.POST` shows only `useWorkCommand` and the upload route use.",
+    "Page load, polling and navigation make no write \u2014 verify: e2e asserts zero POSTs on load of each fixture.",
+    "Viewport check at 1440 and 390: each of the eight boards is matched for the parts that remain; every hidden part leaves no empty heading, no gap and no \"not available\" text \u2014 verify: screenshots of 4701 to 4705 at both widths reviewed against `design/screens.md` SCR-57 artboards; the conflicts list below is the allowed difference.",
+    "Typecheck, lint and tests pass, and `api-live-schema-drift.test.ts` still passes with `live-schema.d.ts` regenerated from 1.25.0 \u2014 verify: `delivery/checks.sh`.",
+    "build.md and the PR description state, in plain words, what is hidden under D-182/D-187, and name every change under `frontend/mock/finance*` (expected: none) \u2014 verify: read build.md."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High: the screen shows payroll-derived money aggregates (restricted payroll, INV-RESTRICTED) and sits one step from sending them to people outside Finance. A wrong per-person view or a small-group leak cannot be undone. Surfaces are ui, api, security and auth (a per-person disclosure view with server-decided authority) and product-decision (D-187 chose to build on the API's disclosure; PSL has not recorded D-PAYROLL-VISIBILITY itself and can overrule). The merge goes to the design engineer's merge batch, not the routine route. Payments is not ticked because F-107 invoices and posts nothing."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-107/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +99,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-107/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +199,29 @@
   "created_at": "2026-11-23T17:35:05Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T18:30:03Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-107/readiness.md",
+      "delivery/features/F-107/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
