@@ -6,10 +6,10 @@ The [13 priority answers and five PSL follow-ups](backend-answers-2026-11-23.md)
 
 The updated register has 113 answers from existing behavior, 107 answers available on the handoff branch and four items that depend on an approved PSL rule. Related IDs can share one implementation.
 
-GitHub main was at 8f562602 during the original review. The branch snapshot is OpenAPI 1.24.0. Railway returned 1.22.0 during that review. Check the deployed contract before connecting branch features. API paths below are relative to `/api/v1`. [Branch contract](../../contracts/psl-factory.openapi.json) · [Railway schema](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+GitHub main was at 8f562602 during the original review. The backend changes are now on main. Railway production and design acceptance serve the matching OpenAPI 1.24.0 contract. API paths below are relative to `/api/v1`. [Repository contract](../../contracts/psl-factory.openapi.json) · [Production contract](https://psl-web-production.up.railway.app/api/v1/openapi.json) · [Acceptance contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
 
 - **Current** means the answer comes from the existing contract or domain behavior. Some answers explain the supported alternative when a proposed field is absent.
-- **Branch** means the answer uses an implementation on the 1.24.0 handoff branch. Each answer states any limits that affect the screen.
+- **Branch** identifies an implementation added in the 1.24.0 handoff release. Each answer states any limits that affect the screen.
 - **PSL** means a business decision or business-owned value is still needed. See the [PSL decision list](#questions-for-psl).
 
 ## A · App frame and core screens
@@ -263,7 +263,7 @@ Sources include [payroll API](../../apps/core/factory_api/payroll_sources.py), [
 
 ## Backend implementation register
 
-The implementation answers are recorded beside the original question IDs. External email, WhatsApp and live HR remain deferred as agreed. The 1.24.0 branch still needs deployment and acceptance through the Next.js app.
+The implementation answers are recorded beside the original question IDs. External email, WhatsApp and live HR remain deferred as agreed. Next.js integration and screen acceptance are with the frontend developer.
 
 ## Questions for PSL
 
@@ -278,4 +278,4 @@ Operational reviewer assignments, account invitations, and the deferred HR and e
 
 ## Verification for this audit
 
-The 224 numbered answers match the original question IDs. The PostgreSQL checks in the test ledger use synthetic data. The Assistant check observed the text and image request sent to the OpenRouter adapter with a test response. Railway and Next.js acceptance for 1.24.0 are pending. [Test ledger](../../BUILD-TESTS.md)
+The 224 numbered answers match the original question IDs. The PostgreSQL checks in the test ledger use synthetic data. The Assistant check observed the text and image request sent to the OpenRouter adapter with a test response. Both Railway APIs matched the 1.24.0 snapshot. The production in-app browser confirmed health, contract version, and retirement of the Django sign-in page. [Test ledger](../../BUILD-TESTS.md)

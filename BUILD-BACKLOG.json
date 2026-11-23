@@ -1,6 +1,6 @@
 {
   "frontend_backend_questions_20261123": {
-    "status": "backend_branch_pending_frontend_and_live_verification",
+    "status": "backend_deployed_pending_nextjs_connection",
     "product_decisions": "13 priority questions and 5 follow-ups answered",
     "contract": "contracts/psl-factory.openapi.json",
     "evidence": "delivery/connect/backend-answers-2026-11-23.md",
@@ -10,7 +10,6 @@
     "questions_awaiting_psl_policy": 4,
     "follow_up": [
       "Resolve C-1, C-29, D-17 and D-33 when the responsible PSL owner approves the missing rule",
-      "Deploy the branch migrations and verify the versioned Railway contract",
       "Wire and verify the Next.js screens using the question register",
       "Check a permitted Assistant image with the configured OpenRouter provider after deployment"
     ]

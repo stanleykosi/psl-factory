@@ -2,15 +2,17 @@
 
 ## Frontend connection questions · 23 November 2026
 
-Use `codex/backend-handoff-answers` for API 1.24.0. The handoff contains the developer’s 13 priority questions and PSL’s five follow-up decisions with concrete backend answers. The branch includes database migrations for Assistant provenance, PMO Lead Planning approval and work status timestamps. Verify the deployed contract before wiring the new routes in Next.js. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md)
+Use GitHub `main` and API 1.24.0. Railway production API `d75291ff-9648-4c75-ab45-868576013ca5` and design acceptance API `46b1a558-8450-47b9-a3dc-503af140ccda` use the same application revision `a766d84b74b7d8ca6ffb4529df4f539022232053`. Both contracts match the checked-in snapshot and both APIs return 404 for the former Django pages. The handoff contains the 13 priority questions and five follow-up decisions. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md) · [Production contract](https://psl-web-production.up.railway.app/api/v1/openapi.json)
 
-The screen-by-screen register covers all 224 numbered items. The four remaining PSL policy items concern bid loss reasons, bid price adjustments, go-live milestone mappings and leadership report coverage. Railway still reported 1.22.0 in the in-app browser. Local workflow, contract and permission evidence is in the test ledger. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md) · [Test ledger](BUILD-TESTS.md)
+The screen-by-screen register covers all 224 numbered items. The four remaining PSL policy items concern bid loss reasons, bid price adjustments, go-live milestone mappings and leadership report coverage. The production in-app browser reached health and OpenAPI 1.24.0 and showed `page_retired` at the former login. The frontend developer can connect their app to the versioned API when their origin is ready. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md) · [Test ledger](BUILD-TESTS.md)
+
+Railway production worker `6388381d-8bb0-4896-ba3c-63bbd1eb095f` and acceptance worker `1adfc80b-99a0-4d08-86f0-51c541543974` started normal queue polls from the matching application build. The existing public Railway service names still include `web`. They now serve the backend API. The Next.js frontend origin has yet to be configured.
 
 ## Next.js developer handoff
 
-Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and six-role permissions. Run the backend in API-only mode and implement the replacement pages under `frontend/`. The archived Django page routes, templates and assets live in [`legacy_ui/`](legacy_ui/README.md). Its local preview uses `PSL_DJANGO_UI=1`. Use the API for sign-in, recovery and invitations and connect authenticated downloads through the frontend proxy. HOD policy choices remain deferred.
+Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the matching OpenAPI 1.24.0 snapshot, generated types, screen-to-API map, original 262-state crosswalk and six-role permissions. Next.js owns navigation, sign-in, recovery and invitations through the API and same-origin proxy. The archived Django pages remain available for local comparison in [`legacy_ui/`](legacy_ui/README.md).
 
-Railway design acceptance web `380f1e05-7879-40fd-87e9-afc726dcccdf` runs `ba17acd9`. Health, session bootstrap and OpenAPI passed on the hosted backend. The former page and static URLs return JSON 404. Worker `42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be` continues polling. The next implementation belongs in the Next.js frontend. [Live contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
+The previous acceptance deployment at `ba17acd9` established the original Django page cutover. The current 1.24.0 results are recorded above. [Acceptance contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
 
 ## API replay complete · 22 November 2026
 
