@@ -4269,3 +4269,9 @@
 {"at":"2026-11-23T17:42:25Z","feature":"F-93","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
 {"at":"2026-11-23T17:43:08Z","feature":"F-90","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","payments","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-23T17:43:11Z","feature":"F-90","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T17:46:23Z","feature":"F-112B","round":0,"kind":"created","tasks":["FE-CHANGE"]}
+{"at":"2026-11-23T17:46:27Z","feature":"F-114B","round":0,"kind":"created","tasks":["FE-DELIVERY-RELEASE"]}
+{"at":"2026-11-23T17:48:43Z","feature":"F-68","round":0,"kind":"planned","risk":"low","surfaces":["contract-change"],"reviewers":["technical"]}
+{"at":"2026-11-23T17:48:45Z","feature":"F-68","round":0,"kind":"transition","head":"b8542c794919","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T17:48:46Z","feature":"F-68","round":1,"kind":"transition","head":"b8542c794919","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T17:48:58Z","feature":"F-110B","round":0,"kind":"created","tasks":["FE-FIN-PAYROLL-RUN"]}
