@@ -100,7 +100,7 @@ const FORECASTS = {
   4308: FORECAST(
     GROUP(['rent', 'payroll-run-nov'], {
       result: RESULT({
-        items: [{ key: 'payroll-run-nov', kind: 'commitment', expected_on: '2026-11-28', matched: null, residual: null, evidence_id: 40, staff_name: 'Ngozi Okafor', pay: '850000.00' }],
+        items: [{ key: 'payroll-run-nov', kind: 'commitment', expected_on: '2026-11-28', matched: null, residual: null, evidence_id: 40, staff_name: 'Ngozi Nwosu', pay: '850000.00' }],
       }),
       matches: [],
     }),

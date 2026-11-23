@@ -94,10 +94,10 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       const main = page.locator('main#main');
       await expect(main.getByText('payroll-run-nov').first()).toBeVisible();
       const html = await page.content();
-      expect(html).not.toMatch(/Ngozi|Okafor|\b850,000\.00|\b850000\.00/);
-      expect(page.url()).not.toMatch(/Ngozi|Okafor/);
+      expect(html).not.toMatch(/Ngozi|Nwosu|\b850,000\.00|\b850000\.00/);
+      expect(page.url()).not.toMatch(/Ngozi|Nwosu/);
       const stored = await page.evaluate(() => JSON.stringify([{ ...localStorage }, { ...sessionStorage }]));
-      expect(stored).not.toMatch(/Ngozi|Okafor|850000/);
+      expect(stored).not.toMatch(/Ngozi|Nwosu|850000/);
       expect(seen.urls.filter((u) => /payroll/i.test(u))).toEqual([]);
     });
 

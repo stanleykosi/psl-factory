@@ -95,8 +95,8 @@ describe('group disclosure (AC9, AC10, AC11)', () => {
     const sections = forecastSections(poisoned);
     const { container } = draw(sections);
     expect(screen.getAllByText('payroll-run-nov').length).toBeGreaterThan(0);
-    expect(container.textContent).not.toMatch(/Ngozi|Okafor|850,?000/);
-    expect(JSON.stringify(sections)).not.toMatch(/Ngozi|Okafor|\b850000\.00/);
+    expect(container.textContent).not.toMatch(/Ngozi|Nwosu|850,?000/);
+    expect(JSON.stringify(sections)).not.toMatch(/Ngozi|Nwosu|\b850000\.00/);
     expect(sections.map((s) => s.key)).not.toContain('expected-items');
     expect(sections.map((s) => s.key)).not.toContain('matches');
   });
