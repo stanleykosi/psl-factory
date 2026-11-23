@@ -4355,3 +4355,7 @@
 {"at":"2026-11-23T20:01:45Z","feature":"F-115B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T20:01:46Z","feature":"F-114C","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","external-messaging"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-23T20:01:53Z","feature":"F-114C","round":0,"kind":"transition","reason":"Backend LD-6: no API 1.25.0 read gives a non-PM reviewer the go-live document version_id; building the form would ship a control that never appears","from":"PLANNED","to":"BLOCKED"}
+{"at":"2026-11-23T20:18:17Z","feature":"F-85","round":2,"kind":"finding","action":"fix","finding":"MAIN-1-1","by":"builder"}
+{"at":"2026-11-23T20:47:15Z","feature":"F-68","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":124,"seconds":1800.1,"commit":"a2f752fb9425"}
+{"at":"2026-11-23T20:48:31Z","feature":"F-85","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":124,"seconds":1800.1,"commit":"cdea4f987fb2"}
+{"at":"2026-11-23T20:48:46Z","feature":"F-113","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":124,"seconds":1800.1,"commit":"0517372f2319"}

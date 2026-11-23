@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: ee8100763d192604e2ca46e93b624427891555b9
+COMMIT: 714580f7340dde93c2b581ed1c2cf9e92c5a6d41
 BUILDER: builder
 LANE: full
 
@@ -62,5 +62,11 @@ Open items, none hidden by an exception: the amount "₦4,250,000.00" is on the 
 - Backend questions this builds on (best reading, flagged): A-18 evidence choice, A-19 reasons/preparer, A-20 no revoke, A-21 chain/basis/changes, no can_comment flag (server 403 turns the box off).
 - Work title and task label are both drawn (title, then work title as sub-line); in the mock they are the same text.
 
+## Fix after the 1.24.0 merge
+Decide test fixtures (decision read, work, history) and mock/live-decide.mjs brought to the 1.24.0 shapes (new required fields only; assertions unchanged). Typecheck: only the three tests/shell-live.test.tsx errors remain (F-68 hotfix on main, not touched). tests/decide.test.tsx and tests/mock-live-decide.test.ts: 69 passed; eslint clean on the changed files. Building the 1.24.0 decision-chain parts is left to a follow-up.
+
 ## Blocked
 Not blocked.
+
+## Coordinator merge of main (after 9d157d98)
+- Merged origin/main e6c24e70 (API 1.26.0, green on its own) as 714580f7. No conflicts, package-lock.json unchanged, `npx tsc --noEmit` 0 errors. The shell-live errors are gone with main.
