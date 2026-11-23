@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-92",
-  "outcome": "Start work builds every remaining line form from the line request_schema in GET /lines (API 1.24.0, D-185), including invoice intake pmo-finance/v1, with the project and source pickers and per-action uploads",
+  "outcome": "Start work has one form engine that builds a line form from its request_schema in GET /lines (API 1.24.0, D-185), with the project, source and organisation pickers and per-action uploads, proven on a first batch of PMO lines; the invoice intake and the remaining lines follow in their own features",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"
