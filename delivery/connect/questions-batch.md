@@ -345,11 +345,27 @@ API 1.24.0 can compare two versions of the same report (changed, added, removed 
 1. **(Recommended)** Leave compare out of this feature. Ask the backend to add the previous version's id to the weekly report read (one field); then add a "What changed since the last version" view in a small follow-up, drawn by the design engineer first.
 2. Build a compare view now with no board, using the id the backend supplies later.
 
-### LC-Q17 · F-87 · Wording of "Confirm what happened"
+### LC-Q19 · F-87 · Wording of "Confirm what happened"
 The approved panel says "It didn't arrive. Allow one resend of the same version." and "I can't tell yet. Keep it held and remind me tomorrow." The backend records an observation (delivered, not delivered, unknown) with a reason and proof, and does not resend, remind, verify or approve anything (A-13, answers section 10). The board also has no Reason box and shows proof only for "It arrived", while live needs both for every outcome.
 1. **(Recommended)** Keep the three choices with short plain sublines that promise nothing the backend does not do, add a required Reason box, always show the proof picker, and keep only "Your choice is recorded with your name."
 2. Keep the board's wording and ask the backend to add resend and reminders (a new behaviour).
 3. Hold the panel until the design engineer redraws it.
+
+### LC-Q20 · F-90 · Release invoice: the button and its confirmation
+No SCR-02 board draws a "Release invoice" button. Live lists `release_invoice` in `actions[]` only for a person the server allows, and releasing cannot be undone from the page. The server serves no amount or condition on this call, so none can be shown in a confirmation.
+1. **(Recommended)** Add "Release invoice" to the same row of buttons as Check what happened and Resume (LC-Q12), shown only when the API lists it, with a plain yes/no dialog ("Release this invoice?" / "This sends the invoice onward and can't be undone from here." / Release invoice, Keep it). No amount line.
+2. Same button with no dialog (one press releases).
+3. Hold the button until the design engineer draws it.
+
+### LC-Q21 · F-90 · Invoice details on the work item
+The verified and awaiting-reconciliation boards show the invoice through the six facts and numbered steps, which belong to the tracking feature (F-91). API 1.24.0 also serves the invoice itself (reference, version, issued, delivered, amount, paid, owed).
+1. **(Recommended)** Add one small read-only "Invoice" block on the work item with those seven values; anything the server leaves empty reads "Unknown" (or "Not issued yet" / "No delivery recorded"), never 0. No payment or correction links (those are the Finance workspaces, lane D).
+2. Show nothing until F-91 draws the facts strip, and rely on it.
+
+### LC-Q22 · F-90 · After an uncertain release, does reloading the page unlock the button?
+After a timeout the page locks the release until the item changes version or the server stops listing it. The lock lives in the open page, so reloading clears it and the server's own list decides what is offered again. A release is money-moving and the API has no duplicate key.
+1. **(Recommended)** Keep the lock across a reload (remembered in the browser for that work item and version) until the item changes version or the server stops listing the action, and say why.
+2. Let a reload clear the lock (as for the other work item buttons, F-87); the server still refuses a stale version.
 
 ## Lane D
 

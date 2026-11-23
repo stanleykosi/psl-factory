@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-90",
-  "outcome": "The invoice release runs live from the work item (POST /work/{id}/actions release_invoice, offered only when the server lists it), with press locking, uncertain-effect handling and no retry before reconciling",
-  "state": "PLANNED",
+  "outcome": "The work item releases an invoice live, only when the server offers it, and never repeats a release",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4120` (mock) shows a \"Release invoice\" button; `/work/4123` (`actions:[]`) shows none, no disabled placeholder, no explanation text, no gap \u2014 verify: open both pages; `frontend/e2e/work-item-release-invoice.spec.ts` asserts by role and name and the absence in the DOM.",
+    "Pressing \"Release invoice\" on `/work/4120` opens the dialog \"Release this invoice?\" and sends nothing; \"Keep it\" closes it with no request; confirming sends exactly one `POST /api/v1/work/4120/actions` with body `{\"action\":\"release_invoice\",\"expected_revision\":9}` and no other key (no amount, case_revision, key) \u2014 verify: e2e counts requests at each step and captures the body; unit test on the `invoice.release` descriptor `body()`.",
+    "After the 202 the item is re-read and the page shows \"Release requested...\" and the returned state (processing), never the words \"Released\", \"Sent\" or \"Delivered\" before the re-read shows `verified`; the page then polls and, with the mock moving to `verified`, shows the Verified tag and the invoice block with Issued and Delivered filled \u2014 verify: e2e through the `4120` sequence.",
+    "On `/work/4121` (202 but the item still lists the action at revision 9) the button stays disabled with \"Release requested. Waiting for the server.\" and no second POST is sent however long the page stays open \u2014 verify: unit test with fake timers over 60 s counts one POST; e2e.",
+    "A double click on the confirm button sends one request; while it runs every control in the row is disabled; a poll result arriving mid-write does not clear the lock or the notice \u2014 verify: unit test with a deferred POST and fake timers.",
+    "After a dropped connection or a 500 on the release, the item is re-read, the message \"We couldn't confirm that this happened. Check the page before trying again.\" appears, the button is disabled with \"Check the page before trying again.\", there is no retry button, and no second request is sent; it unlocks only when a re-read shows a different `revision` or no longer lists `release_invoice` \u2014 verify: unit test (no request over 60 s), e2e with the connection-drop scenario, then a mocked revision change.",
+    "On `/work/4124` the \"Check what happened\" button remains available after an uncertain release lock, and pressing it sends `{\"action\":\"reconcile\",\"expected_revision\":...}`, never a release \u2014 verify: e2e request capture.",
+    "A 409 `stale_version` re-reads the item, shows \"This changed while you were working. Showing the latest version.\", does not repeat the press, and the button is gone when the re-read no longer lists the action \u2014 verify: e2e with the 409 scenario.",
+    "A 403 `forbidden` shows \"You can't do this.\" with the server's message, re-reads, no retry; a 403 `csrf_failed` is not shown as no-access, refreshes the session once, says \"Press the button again\" and sends no second POST \u2014 verify: unit tests count POST and session calls.",
+    "A 422 `setup_required` shows the server's `message` as given plus the first field message when present, re-reads, and the page adds no reason of its own \u2014 verify: e2e with the 422 scenario; text equals the mock's message.",
+    "A 429 and a 503 say \"Try again shortly.\" and send nothing further by themselves; a 404 replaces the page with \"This record is unavailable.\"; a 401 shows the signed-out state with a link to `/sign-in?next=` the current path \u2014 verify: unit tests with a mocked client and 30 s of fake time.",
+    "`/work/4122` (null `revision`) draws the button disabled with \"We don't have this item's current version yet. Reload and try again.\"; pressing sends no request; no body contains 0 or null for `expected_revision` \u2014 verify: e2e and unit test.",
+    "The release button never appears from anything but `actions[]`: a mock item with state `ready` and `actions:[]`, and one with `available_control:['resume']` and no `actions`, show no release button; `release_invoice` listed makes it appear whatever the state or role words \u2014 verify: unit test on `workItemCommands` with those inputs.",
+    "The `invoice` panel on `/work/4120` shows Reference \"INV-0412\", \"v2\", Amount \"NGN 1250000.00\" exactly as served, Issued \"Not issued yet\", Delivered \"No delivery recorded\", Paid \"Unknown\", Owed \"Unknown\"; none of these shows 0, \"0.00\" or a computed value when the server sent `null` \u2014 verify: component test with the fixture; e2e on `/work/4123`.",
+    "A panel `url` that is not a `/api/v1/projects/{case_id}/billing-invoices/{id}` path is not fetched and the block is omitted; an `invoice` panel returning 404 omits the block and leaves the release control (when offered) working \u2014 verify: unit tests on `invoiceAdapter` and `PanelView`.",
+    "No write is made by page load, polling or navigation: the only `POST .../actions` with `release_invoice` comes from the dialog confirm \u2014 verify: `grep -rn \"release_invoice\" frontend/src` shows only the descriptor, tests and mock; e2e asserts zero POSTs on load and after polling.",
+    "v7 and the other F-85/F-87 behaviour is unchanged: `useWorkspaceStep` tests, `/work/W-xxxx` pages, F-87's controls (reconcile, resume, cancel, background) and their tests pass, apart from the one F-87 test updated for `release_invoice` \u2014 verify: `npm test`, `frontend/e2e/workspace.spec.ts`, `work-item.spec.ts`, F-87's e2e.",
+    "New unit tests exist for `invoice.release` (id, url, body, null-token hold), the locking cases in criteria 4, 5 and 6, and `invoiceAdapter` \u2014 verify: `npm test` lists them.",
+    "Against live Django (8020, Postgres 55433, account live-lead or the account holding Finance authority), on an item whose `GET /api/v1/work/{id}` lists `release_invoice`, confirming sends 202 and the page then shows the state `GET` returns; a person for whom the API does not list it sees no button; a 403 or 422 from the live server appears as the server wrote it \u2014 verify: compare the page with `python3 /Users/Hunchoo/psl-factory-main/delivery/connect/oa.py live GET /api/v1/work/{id} 3` before and after; record the 202 JSON. If no local item lists the action, record that and verify by the mock only; do not create or change records to force it.",
+    "Viewport check at 1440 and 390: the controls row with \"Release invoice\", its dialog and the invoice block have no overlap; the row stacks full width on the phone; no empty gap when absent \u2014 verify: screenshots against the SCR-02 artboards for the parts that remain.",
+    "`npm run lint`, `npm run typecheck` and `npm test` pass; `api-live-schema-drift.test.ts` still passes against 1.24.0 \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "payments",
+      "security",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High: the release moves money and cannot be undone. A stale revision or a retry before reconcile would repeat the effect, which AGENTS.md forbids, and the server's 403/409/422 are the only authority. Surfaces: ui (control and states), api (`POST /work/{id}/actions`), payments (invoice release), security (permission comes only from `actions[]` and server errors), contract-change (relies on the F-85 adapter and F-87 lock contract). The change is small and has no migration, so one PR is sized right, but the payments and security reviewers are mandatory. Client acceptance is required because the release is a new live action (SCR-02 \"new in live\")."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-90/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +95,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-90/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +195,29 @@
   "created_at": "2026-11-23T13:31:57Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:43:11Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-90/readiness.md",
+      "delivery/features/F-90/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
