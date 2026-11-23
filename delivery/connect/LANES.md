@@ -19,7 +19,7 @@ Every lane coordinator follows this runbook. The design engineer chose it in D-1
 
 | Lane | Worktree (slim, no docs/ or delivery/) | Feature ids | Next.js / mock | Django |
 |---|---|---|---|---|
-| A | `/Users/Hunchoo/psl-factory` (main checkout) while F-58 finishes, then `/Users/Hunchoo/psl-factory-worktrees/lane-a` | F-58 to F-69 | 4960 / 4961 | 8000 |
+| A | `/Users/Hunchoo/psl-factory` (main checkout) while F-58 finishes, then `/Users/Hunchoo/psl-factory-worktrees/lane-a` | F-58 to F-69, then F-121 to F-135 | 4960 / 4961 | 8000 |
 | B | `/Users/Hunchoo/psl-factory-worktrees/lane-b` | F-70 to F-84 | 4970 / 4971 | 8010 |
 | C | `/Users/Hunchoo/psl-factory-worktrees/lane-c` | F-85 to F-99 | 4980 / 4981 | 8020 |
 | D (added 23 Nov, D-186) | `/Users/Hunchoo/psl-factory-worktrees/lane-d` | F-100 to F-120 | 4990 / 4991 | 8030 |
