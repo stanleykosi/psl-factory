@@ -28,7 +28,7 @@ test('5101 shows the issue, owner, age and the blocked milestone', async ({ page
   await expect(page.getByText('ISS-0233')).toBeVisible();
   await expect(page.getByText('High', { exact: true })).toBeVisible();
   await expect(page.getByText('In Progress', { exact: true })).toBeVisible();
-  await expect(page.getByText('Engineering')).toBeVisible();
+  await expect(page.getByText('Engineering', { exact: true })).toBeVisible();
   await expect(page.getByText('3 days')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Go-live' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'What has happened' })).toBeVisible();
@@ -43,7 +43,7 @@ test('5102 overdue shows the banner, the chasing rows and the timing', async ({ 
   await expect(page.getByText('No receipt yet')).toBeVisible();
   await expect(page.getByText('Reminder due')).toBeVisible();
   await expect(page.getByText('Escalate by')).toBeVisible();
-  await expect(page.getByText('PMO lead')).toBeVisible();
+  await expect(page.getByText('PMO lead', { exact: true })).toBeVisible();
   await noWriteControls(page);
 });
 
