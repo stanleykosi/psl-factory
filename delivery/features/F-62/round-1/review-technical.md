@@ -16,3 +16,14 @@ AUTHORITY: reviewer-technical
 - TECH-1-3 | non-blocking | low | frontend | Before "Keep looking", an empty list with `more='keep-looking'` shows "0 shown so far" in the toolbar. The 0 is a real count of loaded rows, not an unknown. Consider hiding it until rows exist.
 
 ## Verified
+
+## Delta re-check (2957a375)
+
+VERDICT: PASS
+
+- F-62's own code (`src/features/work-list`, `exceptions`, `verified`) is unchanged since 3b8d10de. It does not read the new 1.26.0 fields (`total`, `total_coverage`, `page_size`, `queue_output_url`). The existing reads stay valid.
+- The fixture changes only add the new 1.26.0 fields to the row and page builders (`tests/work-list-rows.ts`, `mock/live-work.mjs`). The values are null, with `total_coverage: 'incomplete'`.
+- No assertion was weakened. The only assertion edits in `verified.test.tsx` and `exceptions.test.tsx` change the expected sign-in href to `/sign-in?next=...`. This follows the merged /sign-in links.
+- Unknown counts are still never shown as 0. `total: null` is not rendered, and the code that shows counts is untouched.
+
+Findings: none new. TECH-1-1 to TECH-1-3 stand, all non-blocking.

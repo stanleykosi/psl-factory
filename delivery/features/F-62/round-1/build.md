@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 3b8d10de03c23bf581a9b941189eb38a74b22681
+COMMIT: 2957a375d13e08ba74a1742bc7657cb19e375f51
 BUILDER: builder
 LANE: frontend
 
@@ -64,6 +64,10 @@ One run, production build (API_ORIGIN baked at build), finance_lead, `round-1/fi
 - Recurring: the `django_url` source guard forces fixture authors to spell the field indirectly; a shared test builder is now at `tests/work-list-rows.ts`.
 - Mock ids: verified 401 to 420 (413 has no output, 412 has a file), exceptions 301 to 320; unknown id gives 404.
 - Servers on 4964/4965 stopped; worktree clean and pushed.
+
+## Update after main (API 1.26.0) merge
+- Fixture-only change in `frontend/tests/work-list-rows.ts` and `frontend/mock/live-work.mjs`: rows gain the 1.26.0 fields (reference, started_at, verified_at, queue_output_url, exception_code, exception_next_step, exception_started_at, action_kind, station, agent) and pages gain page_size 8, total null, total_coverage incomplete. No assertion changed; the new parts stay off (follow-up).
+- From lane-a2/frontend: `tsc --noEmit` clean; `npm run lint` clean; full `npx vitest run` through heavy-lock: 3827 passed, 1 failed (`rfp-submission.test.tsx` uncertain-path timeout under machine load, file untouched; passes alone, 49 of 49).
 
 ## Blocked
 Not blocked.
