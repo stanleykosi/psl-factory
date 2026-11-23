@@ -46,7 +46,9 @@ export const WORK_STATE_WORDS: Record<WorkState, string> = {
   effect_uncertain: 'Not confirmed',
 };
 
-/** A route id as the integer the live API takes; null for anything else ("17x", "-1", "1.5", ""). */
+/** A route id as the integer the live API takes; null for anything else ("17x", "-1", "1.5", "0", ""). */
 export function liveId(value: string | undefined): number | null {
-  return value !== undefined && /^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value)) ? Number(value) : null;
+  if (value === undefined || !/^[1-9]\d*$/.test(value)) return null;
+  const id = Number.parseInt(value, 10);
+  return Number.isSafeInteger(id) ? id : null;
 }
