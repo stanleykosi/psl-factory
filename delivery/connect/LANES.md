@@ -22,8 +22,13 @@ Every lane coordinator follows this runbook. The design engineer chose it in D-1
 | A | `/Users/Hunchoo/psl-factory` (main checkout) while F-58 finishes, then `/Users/Hunchoo/psl-factory-worktrees/lane-a` | F-58 to F-69 | 4960 / 4961 | 8000 |
 | B | `/Users/Hunchoo/psl-factory-worktrees/lane-b` | F-70 to F-84 | 4970 / 4971 | 8010 |
 | C | `/Users/Hunchoo/psl-factory-worktrees/lane-c` | F-85 to F-99 | 4980 / 4981 | 8020 |
+| D (added 23 Nov, D-186) | `/Users/Hunchoo/psl-factory-worktrees/lane-d` | F-100 to F-120 | 4990 / 4991 | 8030 |
 
 The design engineer's own app runs on ports 3000 and 3001 from the main checkout. Never stop, restart or use it. Stop only the processes you start, by their own PIDs.
+
+## Lane D scope (D-186)
+
+Lane D takes the Finance line workspaces from lane B (SCR-32, 53, 54, 55, 56, 57, 58 and payroll SCR-09, 18, 37, 59), and the delivery lines from lane C (SCR-30, 31, 43, 44, 45, 46, 47, 48, 49, 33). Lane B keeps month-end and the payments list (SCR-36, SCR-20). Lane C keeps the PMO lines.
 
 ## Per feature
 
