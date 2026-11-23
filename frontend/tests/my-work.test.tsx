@@ -547,7 +547,7 @@ describe('staying current (D-UPDATES r2)', () => {
     await open();
     work = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work'));
+    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work'));
     expect(screen.queryByRole('tablist')).toBeNull();
   });
 });
@@ -655,7 +655,7 @@ describe('screen states', () => {
     work = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
     await until(() => expect(screen.getByText('You’re signed out.')).toBeTruthy());
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work');
   });
 
   it('loading shows skeleton bars and status; a late response for an older view is ignored', async () => {

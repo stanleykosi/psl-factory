@@ -214,7 +214,7 @@ describe('verified outputs', () => {
       serve(() => json(401, { code: 'not_signed_in', message: 'Sign in.' }));
       render(<VerifiedPage />);
       await screen.findByText('You’re signed out.');
-      expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fverified');
+      expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fverified');
     });
     it('403 says the list is not open to the role and offers no retry', async () => {
       serve(() => json(403, { code: 'queue_not_open', message: 'No.' }));

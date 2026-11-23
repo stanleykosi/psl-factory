@@ -269,7 +269,7 @@ describe('MonthEndView', () => {
     await open({ code: 'not_signed_in', message: 'Sign in to continue.' }, 401);
     expect(screen.getByText('You’re signed out.')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe(
-      `/accounts/login/?next=${encodeURIComponent('/finance/month-end?period=2026-10')}`,
+      `/sign-in?next=${encodeURIComponent('/finance/month-end?period=2026-10')}`,
     );
   });
 

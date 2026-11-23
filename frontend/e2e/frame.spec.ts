@@ -137,12 +137,12 @@ test.describe('desktop 1440', () => {
     }
   });
 
-  test('401 shows signed out with no sign-in link (it opens in a later release)', async ({ page, context }) => {
+  test('401 shows signed out with a Sign in link to /sign-in', async ({ page, context }) => {
     await setCookies(context, { psl_mock_scenario: '401' });
     await page.goto('/my-work');
     await expect(page.getByText('You’re signed out.')).toBeVisible();
-    await expect(page.getByText('Sign-in opens in a later release. Ask your administrator if you need access now.')).toBeVisible();
-    await expect(page.getByRole('main').getByRole('link')).toHaveCount(0);
+    await expect(page.getByText('Sign-in opens in a later release')).toHaveCount(0);
+    await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fmy-work');
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveCount(0);
     await expect(page.locator('.psl-sample')).toHaveCount(0);
     await expectNoAxeViolations(page);

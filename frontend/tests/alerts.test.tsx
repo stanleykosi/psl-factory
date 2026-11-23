@@ -334,7 +334,7 @@ describe('states', () => {
   it('401 shows the signed-out state with the current path and search as next', async () => {
     hook = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open('?q=pay');
-    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fnotifications%3Fq%3Dpay'));
+    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fnotifications%3Fq%3Dpay'));
   });
 });
 

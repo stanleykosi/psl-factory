@@ -283,7 +283,7 @@ describe('access', () => {
   it('a 401 draws the signed-out callout with next set to this page', async () => {
     gone(401, 'not_signed_in');
     await screen.findByText('You’re signed out.');
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fwork%2FW-2299');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fwork%2FW-2299');
     expect(document.body.textContent).not.toMatch(/Lagoon Health|W-2299/);
   });
 

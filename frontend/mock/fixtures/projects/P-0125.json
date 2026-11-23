@@ -1,0 +1,26 @@
+{
+  "case_id": "00000000-0000-4000-8000-000000000125",
+  "title": "Standalone fit-out",
+  "revision": 1,
+  "sample": true,
+  "tabs": [
+    {
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000125/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000125"
+    }
+  ],
+  "items": [],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 0,
+    "waiting": 0,
+    "stopped": 0,
+    "finance": null,
+    "engagement": null
+  },
+  "assistant": []
+}

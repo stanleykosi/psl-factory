@@ -190,7 +190,7 @@ describe('exceptions list', () => {
       serve(() => json(401, { code: 'not_signed_in', message: 'Sign in.' }));
       render(<ExceptionsList />);
       await screen.findByText('You’re signed out.');
-      expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fexceptions');
+      expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fexceptions');
     });
     it('403 says the list is not open to the role, with no retry, rows or search', async () => {
       serve(() => json(403, { code: 'queue_not_open', message: 'No.' }));
