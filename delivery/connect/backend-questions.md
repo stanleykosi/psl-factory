@@ -443,3 +443,7 @@ The first section is the short list. Each item groups the screen questions it an
 - **E-30** Does `eligible_total` ever carry an unknown or excluded part, and how is it marked?
 - **E-31** Which `action` values does `payroll-operations` accept, and what does `working[]` carry per station?
 - **E-32** Can a BU totals run (SCR-57) read the published payroll aggregate, or the match run, as its payroll input?
+
+## New from lanes
+
+Added during the two-day push (D-180), with a lane prefix (LA-, LB-, LC-).
