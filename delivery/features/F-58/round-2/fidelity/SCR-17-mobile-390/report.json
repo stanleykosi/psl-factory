@@ -1,0 +1,313 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-23T13:29:15.209Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-17-mobile.dc.html",
+  "boardName": "SCR-17-mobile.dc.html",
+  "pageUrl": "http://127.0.0.1:4960/sign-in",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-58/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 58.2 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 60,
+    "coverageWithExceptions": 100,
+    "visual": 58.2
+  },
+  "visual": {
+    "score": 58.2,
+    "allCellsScore": 80.7,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1082,
+    "mismatchedCells": 452
+  },
+  "coverage": {
+    "total": 10,
+    "found": 6,
+    "coverage": 60,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 20,
+          "y": 16,
+          "w": 122,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 20,
+          "y": 16,
+          "w": 156,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "",
+        "pageName": "",
+        "pageRole": "form",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 52,
+          "w": 390,
+          "h": 792
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 52,
+          "w": 390,
+          "h": 792
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Sign in to continue",
+        "pageName": "Sign in to continue",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 20,
+          "y": 80,
+          "w": 350,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 20,
+          "y": 80,
+          "w": 350,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Password",
+        "pageName": "Password",
+        "pageRole": "textbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 20,
+          "y": 284,
+          "w": 350,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 20,
+          "y": 246,
+          "w": 350,
+          "h": 52
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Keep me signed in on this phone",
+        "pageName": "Keep me signed in on this phone",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 24,
+          "y": 364,
+          "w": 20,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 20,
+          "y": 323,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Sign in",
+        "pageName": "Sign in",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 20,
+          "y": 412,
+          "w": 350,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 20,
+          "y": 374,
+          "w": 350,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You'll go straight to INV-0412, waiting for your review.",
+        "key": "text: You'll go straight to INV-0412, waiting for your review.",
+        "container": "form",
+        "boardBox": {
+          "x": 20,
+          "y": 116,
+          "w": 350,
+          "h": 36
+        },
+        "exception": {
+          "reason": "D-177: it would show a record name to a signed-out person (G-SCR17-2); left out with no replacement.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Work email",
+        "key": "textbox: Work email",
+        "container": "form",
+        "boardBox": {
+          "x": 20,
+          "y": 192,
+          "w": 350,
+          "h": 52
+        },
+        "exception": {
+          "reason": "D-177: the API accepts a work email or a sign-in name, so the first field reads \"Work email or sign-in name\".",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Forgot your password?",
+        "key": "link: Forgot your password?",
+        "container": "form",
+        "boardBox": {
+          "x": 117,
+          "y": 480,
+          "w": 156,
+          "h": 44
+        },
+        "exception": {
+          "reason": "D-177: until F-59 it is plain text, \"Forgot your password? Reset opens in a later release. Ask your administrator for help.\", centred where the link sits (D-178).",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only PMO, Finance, HR and leadership roles have accounts. Ask your admin if you need one.",
+        "key": "text: Only PMO, Finance, HR and leadership roles have accounts. Ask your admin if you need one.",
+        "container": "form",
+        "boardBox": {
+          "x": 20,
+          "y": 771,
+          "w": 350,
+          "h": 32
+        },
+        "exception": {
+          "reason": "D-177: it states an admission rule the backend owns (A-48); left out with no replacement.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"PSL FACTORY\"",
+        "kind": "Text",
+        "name": "PSL FACTORY",
+        "boardBox": {
+          "x": 20,
+          "y": 16,
+          "w": 122,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 20,
+          "y": 16,
+          "w": 156,
+          "h": 20
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Keep me signed in on this phone",
+        "container": "form",
+        "pageBox": {
+          "x": 50,
+          "y": 322,
+          "w": 203,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Forgot your password? Reset opens in a later release. Ask your administrator for help.",
+        "container": "form",
+        "pageBox": {
+          "x": 20,
+          "y": 440,
+          "w": 350,
+          "h": 39
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

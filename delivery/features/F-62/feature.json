@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-62",
-  "outcome": "A signed-in person sees the verified outputs and the open exceptions from live records on SCR-14 and SCR-10 through one shared work-list adapter, with live coverage and time, and opens any item's work (part 1 of the FE-CONNECT-1 work lists)",
-  "state": "PLANNED",
+  "outcome": "Verified outputs and All exceptions read from live GET /work, through one shared work-list adapter",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/verified` calls `GET /api/v1/work?queue=verified` (no other list call) and shows one row per returned item with title, line title, owner and \"Last updated\" \u2014 verify: run the mock, open `/verified` at 1440 px; the network log shows that one request; the column header reads \"Last updated\", and the words \"Verified at\" appear nowhere on the page.",
+    "`/exceptions` calls `GET /api/v1/work?queue=exceptions` and no longer calls `GET /api/v1/exceptions` \u2014 verify: network log on `/exceptions`; `grep -rn \"api/v1/exceptions\" frontend/src` returns nothing.",
+    "Line titles come from `lines[]`; a row whose key is missing from `lines[]` shows the key \u2014 verify: unit test of the adapter with both cases; page shows \"Finance ledger\", not `finance-ledger/v1`.",
+    "Rows keep the server order and 8 per page; no rows-per-page control exists on either page \u2014 verify: page with 3 mock pages shows 8 rows then \"Show more\"; no page-size control in the DOM.",
+    "\"Show more\" skips empty pages: with page 2 empty and `next_page` 3, one click adds page 3's rows \u2014 verify: adapter test (`tests/work-list.test.ts`) counts the requests (`page=2`, `page=3`); after more than 10 consecutive empty pages the button reads \"Keep looking\" and rows already shown stay.",
+    "A first page that is empty with `next_page` set does not show the empty state; it keeps asking until rows or `next_page: null` \u2014 verify: adapter test.",
+    "The empty state shows only when there are no rows and `next_page` is null \u2014 verify: persona with an empty list shows \"Nothing has been verified yet.\" on `/verified` and \"No exceptions right now.\" on `/exceptions`, desktop and 390 px; with a search that matches nothing the \"No \u2026 match your search.\" text and \"Clear search\" show instead.",
+    "Coverage: `as_of` always shows; `limited: true` shows \"This list may be incomplete\u2026\"; non-empty `deferred` shows the deferred count line; no total, no \"of N\" and no \"0\" appears anywhere for an unknown count \u2014 verify: component test over the two fixtures above plus `limited:false,deferred:[]` (only the as-of line); text search of the rendered DOM for \" of \" counts and \"0 \" finds none.",
+    "A null `owner` shows \"Unassigned\" on both pages; a present owner shows the name \u2014 verify: component test, both layouts.",
+    "Exceptions state tags: `action_needed` shows \"Action needed\", `awaiting_reconciliation` shows \"Awaiting reconciliation\", `effect_uncertain` shows \"Effect uncertain\"; a row of any other state in the queue is shown with its own tag, not dropped \u2014 verify: component test per state; `tsc --noEmit` fails if a state is removed from the lookup.",
+    "Each title links to `/work/{id}` with the integer id and never to `django_url` or `api_url` \u2014 verify: component test reads the `href` of every row and card; navigating from a row opens the work item route.",
+    "\"Open output\" on a verified row reads `GET /work/{id}` and opens `output_url` in a new tab with `noopener noreferrer`; when `output_url` is null the row shows the \"No output file is attached\u2026\" note; when the read fails the row shows the retry message and the rest of the list is unchanged \u2014 verify: component tests with the three mock ids; only the pressed row changes.",
+    "Rows with `sample: true` show the sample label on `/verified` \u2014 verify: component test and page at 1440 px.",
+    "The line filter narrows with `line=<key>`, search sends `q`, and either restarts from page 1; a late answer from an earlier request does not replace newer rows \u2014 verify: adapter test with a delayed first response.",
+    "Errors: 401 shows the signed-out state, 403 shows \"This list isn't open to your role.\" with no retry, a network or 5xx failure shows the error card with Try again and the text that nothing was changed; Try again reloads \u2014 verify: component tests per status (wrong user: mock persona with 403).",
+    "A failed \"Show more\" keeps the rows shown and offers \"Try again\" \u2014 verify: adapter test.",
+    "Phone (390 px): both pages show outlined cards with the title link over the card, search plus a filter icon opening a bottom sheet; no horizontal scroll \u2014 verify: Playwright or component test at 390 px; screenshot compared with `SCR-10-mobile` and `SCR-14-mobile`.",
+    "Desktop (1440 px) layouts match `SCR-10-desktop` and `SCR-14-desktop` for the parts kept; each hidden part (see conflicts) is absent, with no blank column, empty chip or \"\u2014\" placeholder in its place \u2014 verify: screenshots at 1440 px; the design fidelity tool run once because the layout changes.",
+    "Nothing writes: neither page issues a POST/PUT/PATCH/DELETE \u2014 verify: network log on both pages while using search, filter, show more and open output.",
+    "The adapter's public surface (`useWorkList`, row and page types, `coverageNotes`) is exported from `src/features/work-list/index.ts` with no import from `features/exceptions` or `features/verified`, so F-63 can use it unchanged \u2014 verify: `grep -rn \"features/exceptions\\|features/verified\" frontend/src/features/work-list` returns nothing; the adapter test passes `queue: 'needs_me'` and gets the same behaviour.",
+    "New tests exist and pass: `tests/work-list.test.ts` (adapter), `tests/verified.test.tsx`, `tests/exceptions.test.tsx` rewritten, `tests/exceptions-mock.test.ts` rewritten against the live shape, a mock test that the live shape is returned only for `verified` and `exceptions`, and that `queue=done` still returns the v7 shape \u2014 verify: `npm test` in `frontend/`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium: a cross-layer contract change (v7 row shape, paging and queue renames to live GET /work) in code shared with F-63, with read-only access. Surfaces ui, api, contract-change. Product acceptance is required because hidden or relabelled parts change what the client approved (screens-a-frame-core.md, SCR-10 and SCR-14)."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-62/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +79,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +93,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-62/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +137,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "main",
+    "base_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+    "task_branch": "fe-connect-1-verified-and-exceptions",
+    "head_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +151,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +184,40 @@
     }
   },
   "created_at": "2026-11-23T13:21:31Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:31:31Z",
+      "round": 0,
+      "head": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T13:31:39Z",
+      "round": 1,
+      "head": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-62/readiness.md",
+      "delivery/features/F-62/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

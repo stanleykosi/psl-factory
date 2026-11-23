@@ -71,6 +71,30 @@ Context: live has no image upload, thread titles, status badges, step lines or p
 7. Separate person and agent bubbles with edit (board). Live has one object per question. Options: (a) two bubbles per message, no edit (recommended); (b) one card with question above answer; (c) keep edit disabled with a tooltip.
 8. Conversation list paging (board shows page size). Live has none, max 25. Options: (a) remove the size control and show "<n> loaded" (recommended); (b) keep a size control that cuts the client list; (c) show "Latest 25" as a fixed label.
 
+### F-59 · Forgotten password: ask for a link, set a new password (SCR-17 reset boards)
+Context: the reset boards draw only "ask" and "Check your email."; live gives no link validity and one answer for every unusable link (spec `delivery/features/F-59/spec.md`). Q4, Q5 and the confirm field in Q2 follow D-182's answers to F-60 Q4, Q3 and Q1, so they are settled; Q1, Q2 (building the undrawn state), Q3, Q6 and Q7 are new. F-59 builds on F-58; until these are answered it is parked.
+1. Link validity in the ask sentence. The board says the link "works for 30 minutes"; the API returns no validity (A-47).
+   - (a) Recommended: "Enter your work email. If it has an account, we'll send a reset link." (no duration, same call as D-177 for removed numbers).
+   - (b) "...we'll send a reset link that works for a short time." (hints at expiry without a number).
+2. The new-password state has no board (the reset boards draw only "ask" and "Check your email.").
+   - (a) Recommended: build it from the sign-in form column and the set-up pattern ("Choose a new password", two fields, "Change password"), then review it at the fidelity run.
+   - (b) Hold the page until a board is drawn (the whole flow stays unusable meanwhile).
+   - Same as F-60 Q1 for the second "Confirm new password" field (the API needs `new_password2`): recommendation there is to add it; here it is built as in F-60 Q1(a), to be changed with it.
+3. The unusable-link state has no board.
+   - (a) Recommended: heading "This link can't be used", text "It may have expired or already been used. You can ask for a new one.", primary link "Send me a new link", text link "Back to sign in".
+   - (b) The same without the "Send me a new link" button (only "Back to sign in").
+   - (c) Name the exact reason (not possible: the API answers the same for every reason). Same pattern as F-60 Q7; the wording here differs because the next step is asking again, not asking an administrator.
+4. After the change (no board; the backend does not sign the person in).
+   - Same as F-60 Q4, with the recommendation (a): a plain "Your password is changed." state with a "Sign in" button to the F-58 page. It is drawn as heading and text rather than a success callout (D-151).
+5. Password hint line under "New password" (A-47).
+   - Same as F-60 Q3: recommended (a) no hint; after a refusal the server's message shows.
+6. "Use a different email" on "Check your email." (not drawn).
+   - (a) Recommended: keep the small text button so a mistyped address can be fixed without reloading.
+   - (b) Remove it; the person uses the browser back button or reloads (matches the board exactly).
+7. F-58's plain "Forgot your password?" exception. The sentence returns to the drawn link in this feature.
+   - (a) Recommended: link only, no helper words, centred as D-178 placed the sentence.
+   - (b) Keep a helper line such as "We'll email you a link." under it (adds copy the boards do not draw).
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?

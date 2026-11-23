@@ -195,14 +195,28 @@
         "delivery/features/F-58/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-23T13:21:54Z",
           "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T13:30:11Z",
+          "refs": [
+            "57ae81e83de4ca0de7560998684f6e419241185e"
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "57ae81e83de4ca0de7560998684f6e419241185e"
       ]
     },
     {
@@ -218,14 +232,28 @@
         "delivery/features/F-58/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-23T13:21:54Z",
           "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T13:30:11Z",
+          "refs": [
+            "57ae81e83de4ca0de7560998684f6e419241185e"
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "57ae81e83de4ca0de7560998684f6e419241185e"
       ]
     },
     {
@@ -241,14 +269,28 @@
         "delivery/features/F-58/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-23T13:21:54Z",
           "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T13:30:11Z",
+          "refs": [
+            "57ae81e83de4ca0de7560998684f6e419241185e"
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "57ae81e83de4ca0de7560998684f6e419241185e"
       ]
     },
     {
@@ -264,14 +306,28 @@
         "delivery/features/F-58/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-23T13:21:54Z",
           "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T13:30:11Z",
+          "refs": [
+            "57ae81e83de4ca0de7560998684f6e419241185e"
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "57ae81e83de4ca0de7560998684f6e419241185e"
       ]
     },
     {
@@ -386,7 +442,7 @@
     "base_branch": "main",
     "base_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
     "task_branch": "fe-signin-sign-in-reset-and-set-up",
-    "head_sha": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+    "head_sha": "57ae81e83de4ca0de7560998684f6e419241185e",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
