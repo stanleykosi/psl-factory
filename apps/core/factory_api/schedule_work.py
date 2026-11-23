@@ -7,6 +7,7 @@ from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
 from apps.finance import schedules
 from apps.identity.services import active_case_grants
+from apps.policy.services import active_component, reference_values
 from apps.workflows import factory_schedules as native
 from apps.workflows.factory_execution import can_control
 
@@ -50,6 +51,18 @@ def review_options(actor, schedule, stage, last):
     return ['approve'] if stage == 'withdrawn' else ['approve', 'return', 'reject'] if stage == 'output_review' else []
 
 
+def review_hold(case, kind, stage):
+    if stage not in ('output_review', 'withdrawn'):
+        return None
+    try:
+        rules = reference_values(active_component(schedules.AUTH, case))[0]
+    except ValidationError:
+        return 'review_rule_missing'
+    if not any(kind in assignment['purposes'] for assignment in rules['assignments']):
+        return 'reviewer_missing'
+    return None
+
+
 def summary(result):
     keys = ('status', 'adjusted_total', 'parent_amount', 'additive_total', 'reclassification_total', 'target_unit',
             'coverage', 'complete_inventory')
@@ -63,6 +76,7 @@ def summary(result):
     'finding': {'type': 'string'}, 'duplicates': array(ROW_KEY, limit=100),
     'returned': nullable(obj({'review_id': ID, 'rows': array(obj({'key': ROW_KEY, 'relationship': RELATIONSHIP}), limit=100)})),
     'review_id': nullable(ID), 'review_verdicts': array(REVIEW), 'can_export': BOOLEAN,
+    'review_hold_code': nullable(choice('review_rule_missing', 'reviewer_missing')),
     'evidence': array(PROOF, limit=35), 'exports': array(obj({'id': ID, 'kind': ADJUSTMENT, 'adjustment_id': ID}), limit=20),
     'income': nullable(schedules.DETAIL), 'inventory': nullable(schedules.INVENTORY_BODY), 'result': nullable(RESULT)}),
     summary='Read the exact schedule, scoped duplicate and returned rows, reviews and adjustment handoffs')
@@ -93,6 +107,7 @@ def detail(request, work_id):
                 'returned': {'review_id': returned.pk, 'rows': [{'key': row['key'], 'relationship': row['relationship']}
                                                                for row in current.payload['rows']]} if returned else None,
                 'review_id': last.pk if last else None, 'review_verdicts': review_options(actor, current, stage, last) if live else [],
+                'review_hold_code': review_hold(work.case, facts['kind'], stage) if can_read and live else None,
                 'can_export': stage == 'complete' and facts['kind'] == 'income' and {'schedules.adjust', 'finance.adjust'} <= grants,
                 'evidence': proof_rows(proof.order_by('-pk')[:35]) if can_read else [], 'exports': exports,
                 'income': payload if facts['kind'] == 'income' else None, 'inventory': payload if facts['kind'] == 'inventory' else None,

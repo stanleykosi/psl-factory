@@ -108,7 +108,10 @@ def go_live_evidence(case,d,receipt_id,pm_signature_id,client_signature_id,attes
     if not receipt:raise ValidationError('Select the exact delivered client go-live document')
     from apps.documents.controlled import current_version
     current_version(case,receipt.publication.version_id)
-    pm=subject(case,pm_signature_id,'signature');client=subject(case,client_signature_id,'signature')
+    from .services import GO_LIVE_PDF
+    proof_scope=f'{GO_LIVE_PDF}{d.pk}:{receipt.pk}:'
+    pm=subject(case,pm_signature_id,'signature',proof_scope=proof_scope+'PM')
+    client=subject(case,client_signature_id,'signature',proof_scope=proof_scope+'Client')
     if pm.pk==client.pk:raise ValidationError('PM and Client require distinct exact signature evidence')
     binding=DeliveryDocumentBinding.objects.get(version=receipt.publication.version)
     if binding.snapshot!=go_live_inputs(d,binding.data):raise ValidationError('Go-live evidence changed; prepare a current exact report')
@@ -137,25 +140,51 @@ def reaffirm_go_live(actor,case_id,dossier_id,previous_acceptance_id,receipt_id,
 
 
 @observed_fact
-def hypercare_inputs(d):
+def hypercare_inputs(d, *, detailed=False):
     outcome=valid_release(d);accepted=accepted_go_live(d)
     config=active_component('D11.hypercare_criteria_ref',d.case);criteria=reference_values(config)[0]
     due=aware(outcome.data['released_at'])+timedelta(hours=criteria['minimum_hours'])
     sources={};findings=[];unknown=False
+    checks = []
+
+    def check(owner, key, status):
+        checks.append({'owner': owner, 'key': key, 'status': status})
+
     for owner in criteria['confirmation_owners']:
         kind='hypercare_'+owner.lower()
+        metrics = [metric for metric in criteria['metrics'] if metric['owner'] == owner]
         try:s,v=verified_source(d,kind)
-        except ValidationError as exc:findings+=exc.messages;unknown=True;continue
+        except ValidationError as exc:
+            findings += exc.messages
+            unknown = True
+            check(owner, 'confirmation', 'unknown')
+            check(owner, 'elapsed_hours', 'unknown')
+            for metric in metrics:
+                check(owner, f"metric:{metric['key']}", 'unknown')
+            continue
         p=s.payload;sources[owner]=[s.pk,v.pk]
+        check(owner, 'confirmation', 'unknown' if p['confirmed'] is None else 'met' if p['confirmed'] else 'not_met')
         if p['confirmed'] is not True:
             findings.append(owner+' stability confirmation is '+('unknown' if p['confirmed'] is None else 'negative'));unknown|=p['confirmed'] is None
-        if aware(p['observed_at'])<due:findings.append(owner+' observation precedes the configured elapsed hypercare period')
-        for metric in [m for m in criteria['metrics'] if m['owner']==owner]:
+        time_ok = aware(p['observed_at']) >= due
+        check(owner, 'elapsed_hours', 'met' if time_ok else 'not_met')
+        if not time_ok:
+            findings.append(owner+' observation precedes the configured elapsed hypercare period')
+        for metric in metrics:
             actual=p['metrics'].get(metric['key'])
-            if not actual or actual['value'] is None:findings.append(owner+'/'+metric['key']+' remains unknown');unknown=True;continue
-            if actual['unit']!=metric['unit']:findings.append(owner+'/'+metric['key']+' unit differs');continue
+            key = f"metric:{metric['key']}"
+            if not actual or actual['value'] is None:
+                findings.append(owner+'/'+metric['key']+' remains unknown')
+                unknown = True
+                check(owner, key, 'unknown')
+                continue
+            if actual['unit'] != metric['unit']:
+                findings.append(owner+'/'+metric['key']+' unit differs')
+                check(owner, key, 'not_met')
+                continue
             x,y=actual['value'],metric['threshold']
             ok={'lte':lambda:x<=y,'gte':lambda:x>=y,'eq':lambda:x==y}[metric['operator']]()
+            check(owner, key, 'met' if ok else 'not_met')
             if not ok:findings.append(owner+'/'+metric['key']+' fails the configured criterion')
     result = {'outcome_id':outcome.pk,'acceptance_id':accepted.pk,'policy_id':config.pk,'sources':sources,
               'due_at':due.isoformat(),'findings':findings}
@@ -163,13 +192,14 @@ def hypercare_inputs(d):
         from .hypercare_issues import issue_clearance
         register, _ = issue_clearance(d, criteria['issue_clearance'])
         result['issue_clearance'] = register
+        check(None, 'issue_clearance', register['status'])
         if register['status'] == 'unknown':
             findings.append('Current project issue evidence needs review before checking stability.')
             unknown = True
         elif register['status'] == 'not_met':
             findings.append('Current project issues fail the configured stability criterion.')
     result['qualified'] = None if unknown else not findings
-    return result
+    return (result, checks) if detailed else result
 
 
 def guard_evaluate_hypercare(actor,case,dossier_id):

@@ -13,12 +13,14 @@ from apps.pmo.models import RFPDocumentBinding, RFPSubmission
 from apps.workflows import factory, factory_rfp, factory_progress
 
 from .commands import require_line
-from .http import BOOLEAN, DATETIME, ID, TEXT, array, endpoint, nullable, obj
+from .http import BOOLEAN, DATETIME, ID, TEXT, array, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
 from .work import WORK_RESULT, result
 
 
-FILE = obj({'id': ID, 'version_id': ID, 'sha256': TEXT, 'size': ID, 'findings': array(TEXT)})
+FILE = obj({'id': ID, 'version_id': ID, 'sha256': TEXT, 'size': ID, 'findings': array(TEXT),
+            'checks': array(obj({'code': choice('file_format_mismatch', 'file_count_mismatch', 'file_size_exceeded'),
+                                 'message': TEXT}))})
 RECEIPT = obj({'id': ID, 'submitted_at': DATETIME, 'receipt_ids': array(ID), 'late': BOOLEAN})
 
 
@@ -36,6 +38,7 @@ def scope(request, work_id):
 
 @endpoint(response=obj({**VERSIONS, 'version_id': ID, 'file': nullable(FILE), 'route': TEXT,
                         'job_id': nullable(ID), 'job_status': nullable(TEXT), 'submission': nullable(RECEIPT),
+                        'sections': array(obj({'name': TEXT})), 'sample': BOOLEAN,
                         'approval_recorded': BOOLEAN}),
           summary='Read the exact client PDF checks, recorded approval, outbound job and original submission receipt')
 def detail(request, work_id):
@@ -49,8 +52,11 @@ def detail(request, work_id):
         approval = None
     return {'expected_revision': work.revision, 'case_revision': work.case.revision,
             'version_id': version.pk, 'file': {'id': file['file'].pk, 'version_id': version.pk,
-                'sha256': file['file'].sha256, 'size': file['file'].size, 'findings': file['findings']} if file else None,
+                'sha256': file['file'].sha256, 'size': file['file'].size, 'findings': file['findings'],
+                'checks': file['checks']} if file else None,
             'route': binding.snapshot['route']['method'], 'job_id': job.pk if job else None,
+            'sections': [{'name': item['heading']} for item in version.payload['sections']],
+            'sample': work.case.synthetic,
             'job_status': job.status if job else None, 'approval_recorded': approval is not None,
             'submission': {'id': submission.pk, 'submitted_at': submission.submitted_at,
                            'receipt_ids': submission.receipt_ids, 'late': submission.late} if submission else None}

@@ -12,6 +12,7 @@ from apps.core.services import add_evidence
 from apps.documents.models import Template
 from apps.documents.template_access import visible_templates
 from apps.identity.services import require
+from apps.workflows.models import FactoryAttempt
 from apps.pmo.reporting import client_citation_ids, client_content, client_section_findings
 from apps.workflows import factory_reporting as reporting, factory_reporting_drafts as drafts
 
@@ -35,6 +36,14 @@ CORRECTION_FIELDS = {**VERSIONS, 'draft_id': nullable(ID), 'selection': reportin
                      'reason': {**TEXT, 'maxLength': 2000}}
 TEMPLATE = obj({'id': ID, 'name': TEXT, 'version': REVISION})
 RECIPIENT = obj({'name': TEXT, 'status': TEXT, 'receipt_id': nullable(ID), 'recorded_at': nullable(DATETIME)})
+REVIEW_NOTE = obj({'section': choice(*sorted(reporting.SECTIONS)), 'text': TEXT, 'recorded_at': DATETIME})
+REPORT_PREVIEW = obj({'id': ID, 'title': TEXT, 'number': REVISION, 'sections': array(
+    obj({'key': choice(*sorted(reporting.SECTIONS)), 'text': {'type': 'string'}}))})
+RECORD_GROUPS = ('meetings', 'actions', 'milestones', 'issues', 'changes')
+SOURCE_RECORD = obj({'id': ID, 'label': TEXT, 'at': nullable(DATETIME), 'evidence_id': nullable(ID)})
+INVENTORY = obj(dict.fromkeys(RECORD_GROUPS, obj({
+    'count': {'type': 'integer', 'minimum': 0}, 'items': array(SOURCE_RECORD, limit=25),
+})))
 
 
 def draft_payload(row):
@@ -88,20 +97,35 @@ def sources(actor, case, window, before):
                     templates.append({'id': template.pk, 'name': template.name, 'version': template.version})
         narratives = case.evidence.filter(kind='agent_private_report_content').exclude(forecast_private_query()).only(
             'id', 'version', 'kind').order_by('-pk')[:25]
-        proofs, next_before = [], None
+        proofs, next_before, inventory = [], None, None
         if window:
             snapshot = reporting.inventory(actor, case, {**window, 'template_id': None, 'content_id': None})
-            selected = case.evidence.filter(pk__in=client_citation_ids(case, snapshot))
+            pins = client_citation_ids(case, snapshot)
+            selected = case.evidence.filter(pk__in=pins)
+            inventory = {}
+            for key in RECORD_GROUPS:
+                records = []
+                for item in snapshot[key][:25]:
+                    if key == 'milestones':
+                        label, at, evidence_id = item.name, item.completed_at, item.evidence_id
+                    else:
+                        label, current = item.reference, item.current
+                        at = (current.occurred_at if key == 'meetings' else getattr(current, 'created_at', None))
+                        evidence_id = getattr(current, 'evidence_id', None)
+                    records.append({'id': item.pk, 'label': label, 'at': at, 'evidence_id': evidence_id if evidence_id in pins else None})
+                inventory[key] = {'count': len(snapshot[key]), 'items': records}
             if before:
                 selected = selected.filter(pk__lt=before)
             ordered = list(selected.only('id', 'version', 'kind').order_by('-pk')[:51])
             proofs = proof_rows(ordered[:50])
             next_before = ordered[49].pk if len(ordered) > 50 else None
-        return {'templates': templates, 'narratives': proof_rows(narratives), 'evidence': proofs, 'next_before': next_before}
+        return {'templates': templates, 'narratives': proof_rows(narratives), 'evidence': proofs,
+                'next_before': next_before, 'inventory': inventory}
 
 
 @endpoint(response=obj({'case_revision': REVISION, 'draft': nullable(DRAFT), 'templates': array(TEMPLATE, limit=25),
-    'narratives': array(PROOF, limit=25), 'evidence': array(PROOF, limit=50), 'next_before': nullable(ID)}),
+    'narratives': array(PROOF, limit=25), 'evidence': array(PROOF, limit=50), 'next_before': nullable(ID),
+    'inventory': nullable(INVENTORY)}),
     query={**WINDOW, 'before': ID},
     summary='Read the private weekly draft and exact source choices for an elapsed period')
 def intake_options(request, case_id):
@@ -136,8 +160,47 @@ def intake_command(request, case_id, *, body):
     return progress_result(actor, work, body['background'])
 
 
+def review_context(actor, work, panel, return_id):
+    version = panel['document']
+    if not version:
+        return None, None, []
+    require(actor, work.case, 'document.read')
+    returned = panel['return_review']
+    can_inspect = (actor.pk == version.created_by_id or panel['can_correct'] or panel['review_verdicts']
+                   or returned is not None and actor.pk == returned.actor_id)
+    if not can_inspect:
+        return None, None, []
+    preview = {'id': version.pk, 'title': version.document.title, 'number': version.number,
+               'sections': [{'key': part['heading'], 'text': part['text']}
+                            for part in version.payload['sections'] if part['heading'] in reporting.SECTIONS]}
+    return_note = returned.note if returned and returned.pk == return_id else None
+    observation = FactoryAttempt.objects.filter(
+        activity__work=work, activity__kind='ACT04', phase='observed', result__head=work.source_head_id,
+        result__investigation__selected_inventory_current=True,
+    ).order_by('-pk').first()
+    if not observation or panel.get('readiness_changed'):
+        return preview, return_note, []
+    investigation = observation.result['investigation']
+    if investigation.get('manifest') != panel['data']['manifest']:
+        return preview, return_note, []
+    notes = []
+    if investigation.get('coverage'):
+        notes.append(('executive_summary', investigation['coverage']))
+    counts = investigation.get('counts', {})
+    if type(counts.get('milestones_in_period')) is int:
+        notes.append(('timeline', f"{counts['milestones_in_period']} milestone completions are in the selected evidence."))
+    gaps = investigation.get('commitment_gaps', [])
+    if gaps:
+        notes.append(('next_steps', f'{len(gaps)} recorded commitments are missing an owner or deadline.'))
+    unsupported = investigation.get('unsupported_claims', [])
+    if unsupported:
+        notes.append(('risks', 'Check these unsupported claims before approval. ' + '; '.join(unsupported)))
+    return preview, return_note, [{'section': key, 'text': text, 'recorded_at': observation.created_at} for key, text in notes]
+
+
 @endpoint(response=obj({**VERSIONS, 'selection': SELECTION, 'editable_parts': nullable(PARTS), 'draft': nullable(DRAFT),
     'return_review_id': nullable(ID), 'can_correct': BOOLEAN, 'document_version_id': nullable(ID),
+    'return_note': nullable({'type': 'string'}), 'preview': nullable(REPORT_PREVIEW), 'review_notes': array(REVIEW_NOTE),
     'review_verdicts': array(VERDICT), 'recipients': array(RECIPIENT), 'next_action': TEXT,
     'evidence': array(PROOF, limit=50)}), summary='Read sources, returned drafts, review and exact weekly report receipts')
 def detail(request, work_id):
@@ -159,9 +222,14 @@ def detail(request, work_id):
             except (PermissionDenied, ValidationError):
                 pass
             draft = drafts.current(actor, work.case, work, return_id)
+        try:
+            preview, return_note, notes = review_context(actor, work, panel, return_id)
+        except PermissionDenied:
+            preview, return_note, notes = None, None, []
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'selection': inputs,
             'editable_parts': sections, 'draft': draft_payload(draft), 'return_review_id': return_id,
             'can_correct': can_correct, 'document_version_id': panel['document'].pk if panel['document'] else None,
+            'preview': preview, 'return_note': return_note, 'review_notes': notes,
             'review_verdicts': panel['review_verdicts'], 'next_action': panel['next_action'], 'evidence': proofs,
             'recipients': [{'name': item['recipient'], 'status': item['status'], 'recorded_at': item['at'],
                             'receipt_id': item['receipt'].pk if item['receipt'] else None} for item in panel['delivery']]}

@@ -1,13 +1,16 @@
 """Capture an exact successor report on an existing controlled closure journey."""
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.core.services import add_evidence, lock_case
 from apps.identity.services import require, visible_cases
+from apps.finance import payments_overview
+from apps.finance.fixed_charge import case_access
 from apps.pmo import delivery, delivery_closure
 from apps.pmo.models import DeliveryDossier, MeetingVersion
 from apps.workflows import factory, factory_closure
@@ -21,10 +24,53 @@ from .reviews import VERSIONS
 from .work import WORK_RESULT, result
 
 
+def finance_scope(actor, case_id, dossier_id):
+    case = get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
+    require(actor, case, 'delivery.finance_confirm')
+    return case, get_object_or_404(DeliveryDossier.objects.filter(case=case), pk=dossier_id)
+
+
+@endpoint(response=obj({'revision': REVISION, 'confirmation_id': nullable(ID), 'finding': nullable(TEXT),
+    'milestones': array(obj({'milestone_id': ID, 'receipt_id': ID}), limit=200)}),
+          summary='Read the exact milestone notifications Finance must confirm before closure')
+def finance_options(request, case_id, dossier_id):
+    case, dossier = finance_scope(request.user, case_id, dossier_id)
+    known, finding, confirmation_id = [], None, None
+    with limit_queries(500):
+        try:
+            known = delivery_closure.finance_inputs(dossier)['milestones']
+        except ValidationError as exc:
+            finding = exc.messages[0]
+        if finding is None:
+            try:
+                confirmation_id = delivery_closure.current_finance_confirmation(dossier).pk
+            except ValidationError:
+                pass
+    return {'revision': case.revision, 'confirmation_id': confirmation_id, 'finding': finding,
+            'milestones': [{'milestone_id': row[0], 'receipt_id': row[1]} for row in known]}
+
+
+@endpoint(method='POST', request=obj({'revision': REVISION, 'milestone_ids': array(ID, limit=200),
+    'inventory_complete': {'const': True}, 'evidence_id': ID, 'note': {**TEXT, 'maxLength': 4000}}),
+    response=obj({'confirmation_id': ID, 'revision': REVISION}), status=201,
+    summary='Confirm the complete milestone notification inventory with Finance proof')
+def finance_confirmation(request, case_id, dossier_id, *, body):
+    actor = request.user
+    case, dossier = finance_scope(actor, case_id, dossier_id)
+    get_object_or_404(public_evidence(case.evidence.all()), pk=body['evidence_id'])
+    row = delivery_closure.confirm_finance(actor, case.pk, dossier.pk, body['milestone_ids'],
+                                          body['inventory_complete'], body['evidence_id'], body['note'], body['revision'])
+    case.refresh_from_db(fields=['revision'])
+    return {'confirmation_id': row.pk, 'revision': case.revision}
+
+
 @endpoint(response=obj({'revision': REVISION, 'as_of': DATETIME, 'ready_to_prepare': BOOLEAN,
     'recorded_closure_id': nullable(ID), 'checks': array(obj({'key': TEXT, 'title': TEXT,
         'status': choice('current', 'held', 'unknown', 'closed', 'recorded', 'unavailable'),
         'summary': TEXT, 'references': array(ID), 'finding': nullable(TEXT)})),
+    'debt': nullable(obj({'items': array(obj({'reference': TEXT, 'currency': TEXT, 'basis': TEXT,
+        'owed': nullable(TEXT), 'api_url': TEXT}), limit=25), 'limited': BOOLEAN, 'as_of': {'type': 'string', 'format': 'date'}})),
+    'retrospective_url': nullable(TEXT),
 }), query={'retrospective_id': ID, 'report_evidence_id': ID},
           summary='Read exact closure evidence and independent prerequisite holds before preparing closure')
 @read_observation
@@ -47,8 +93,35 @@ def checklist(request, case_id, dossier_id):
             if selection['report_evidence_id'] is not None:
                 get_object_or_404(public.filter(kind='closure_report').only('pk'), pk=selection['report_evidence_id'])
             checked = delivery_closure.closure_requirements(dossier, selection)
+    retrospective_url = None
+    retrospective_id = next((row['references'][0] for row in checked['checks']
+                             if row['key'] == 'retrospective' and row['references']), None)
+    if retrospective_id:
+        try:
+            require(actor, case, 'meeting.read')
+        except PermissionDenied:
+            pass
+        else:
+            meeting = MeetingVersion.objects.filter(meeting__case=case, pk=retrospective_id, kind='retrospective',
+                evidence_id__in=public_evidence(case.evidence.all())).values_list('meeting_id', flat=True).first()
+            if meeting:
+                retrospective_url = f'/api/v1/projects/{case.pk}/meetings/{meeting}?version_id={retrospective_id}'
+    debt = None
+    try:
+        require(actor, case, 'finance.read')
+        case_access(actor, case)
+    except (PermissionDenied, ValidationError):
+        pass
+    else:
+        as_of = timezone.localdate()
+        rows, _, ending, limited = payments_overview.page(actor, [case], '', '', None, as_of)
+        debt = {'as_of': as_of, 'limited': limited or ending is not None, 'items': [
+            {'reference': row['reference'], 'currency': row['currency'], 'basis': row['basis'],
+             'owed': str(row['owed']) if row['owed'] is not None else None,
+             'api_url': f"/api/v1/projects/{case.pk}/billing-invoices/{row['invoice_id']}"}
+            for row in rows if row['owed'] != 0]}
     return {'revision': case.revision, 'as_of': checked['as_of'], 'ready_to_prepare': checked['ready_to_prepare'],
-        'recorded_closure_id': checked['recorded_closure_id'],
+        'recorded_closure_id': checked['recorded_closure_id'], 'retrospective_url': retrospective_url, 'debt': debt,
         'checks': [{**row, 'finding': row.get('finding') or None} for row in checked['checks']]}
 
 

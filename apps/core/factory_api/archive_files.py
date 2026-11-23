@@ -25,7 +25,8 @@ JOB = obj({'id': ID, 'revision': REVISION, 'state': STATES})
 FILES = obj({**VERSIONS, 'plan_id': nullable(ID), 'store': nullable(TEXT), 'finding': {'type': 'string'},
     'verified': BOOLEAN, 'can_reserve': BOOLEAN, 'limited': BOOLEAN,
     'required_source_ids': array(ID, limit=20), 'sources': array(obj({'id': ID, 'label': TEXT}), limit=500),
-    'files': array(obj({'id': ID, 'name': TEXT, 'status': TEXT, 'job': nullable(JOB),
+    'files': array(obj({'id': ID, 'name': TEXT, 'status': TEXT, 'job': nullable(JOB), 'group': TEXT,
+        'source_id': nullable(ID), 'source_kind': nullable(TEXT),
         'actions': array(choice('lookup', 'retry')), 'receipt': nullable(obj({'id': ID, 'at': DATETIME}))}), limit=500)})
 
 
@@ -72,7 +73,9 @@ def inventory(request, work_id):
         if plan and state['can_operate'] and state['verified']:
             receipts = {row.file_id: {'id': row.pk, 'at': row.created_at}
                         for row in ArchiveCopyReceipt.objects.filter(file__plan=plan).only('file_id', 'created_at')}
-        files = [{'id': file.pk, 'name': file.display_name, 'status': file.display_status,
+        files = [{'id': file.pk, 'name': file.display_name, 'status': file.display_status, 'group': file.display_group,
+                  'source_kind': file.display_source_kind,
+                  'source_id': file.evidence_id if file.display_source_kind else None,
                   'job': job_payload(file.job) if state['can_operate'] else None,
                   'actions': [action for action, allowed in (('lookup', file.can_lookup), ('retry', file.can_retry)) if allowed],
                   'receipt': receipts.get(file.pk)} for file in state['files'][:500]]

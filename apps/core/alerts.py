@@ -25,14 +25,17 @@ def items(actor):
             continue
         rows.append({'key': digest(['assignment', item]), 'label': item['label'],
                      'subject': workspace_name(item), 'detail': item['reference'],
-                     'url': item['url'], 'group': 'action'})
+                     'url': item['url'], 'group': 'action',
+                     'target_kind': item['kind'], 'api_url': f"/api/v1/projects/{item['case_id']}"})
     turns = AssistantTurn.objects.filter(conversation__in=owned_conversations(actor), status='answered').select_related(
         'conversation__case',
     ).defer('question', 'answer', 'sources').order_by('-created_at', '-pk')[:20]
     for turn in turns:
         rows.append({'key': digest(['answer', str(turn.pk)]), 'label': 'Assistant reply',
                      'subject': workspace_name(turn.conversation.case), 'detail': turn.conversation.persona.title(),
-                     'url': reverse('assistant_thread', args=[turn.conversation_id]), 'group': 'update'})
+                     'url': reverse('assistant_thread', args=[turn.conversation_id]), 'group': 'update',
+                     'at': turn.finished_at, 'agent': turn.conversation.persona, 'target_kind': 'conversation',
+                     'api_url': f'/api/v1/assistant/conversations/{turn.conversation_id}'})
     works = visible(actor).exclude(definition__in=['finance-payroll/v1', 'finance-bu/v1'])
     jobs = FactoryProgress.objects.filter(work__in=works, requested_by=actor, status='held').select_related(
         'work__case',
@@ -40,7 +43,8 @@ def items(actor):
     for job in jobs:
         rows.append({'key': digest(['held', job.pk, job.updated_at.isoformat()]), 'label': 'Background work needs attention',
                      'subject': workspace_name(job.work.case), 'detail': '',
-                     'url': reverse('factory_detail', args=[job.work_id]), 'group': 'action'})
+                     'url': reverse('factory_detail', args=[job.work_id]), 'group': 'action',
+                     'at': job.updated_at, 'target_kind': 'work', 'api_url': f'/api/v1/work/{job.work_id}'})
     seen = set(AlertRead.objects.filter(actor=actor, key__in=[row['key'] for row in rows]).values_list('key', flat=True))
     for row in rows:
         row['unread'] = row['key'] not in seen

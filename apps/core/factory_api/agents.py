@@ -1,15 +1,18 @@
 from django.core.exceptions import PermissionDenied
+from django.db.models import OuterRef, Subquery
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.agents import assistant, file_draft_reviews, upload_recovery, workflow_handoffs
+from apps.agents import assistant, assistant_images, file_draft_reviews, upload_recovery, workflow_handoffs
+from apps.agents.assistant_models import AssistantTurn
 from apps.agents.assistant_views import current_turns, open_conversation, owned_conversations
 from apps.agents.models import AgentJob, CaseUpload
 from apps.agents.upload_jobs import ROLES, authorize
 from apps.agents.upload_views import queue_draft, upload_file
 from apps.documents.contracts import digest
+from apps.core.presentation import workspace_name
 from apps.identity.services import require
 from apps.pmo.gates import GATE_OWNERS
 
@@ -23,23 +26,29 @@ STATUS = choice('queued', 'running', 'draft', 'reviewed', 'held', 'interrupted')
 STRING = {'type': 'string'}
 SCOPE = choice('project', 'department')
 CONVERSATION = obj({'conversation_id': UUID, 'case_id': UUID, 'scope': SCOPE, 'agent': PERSONA, 'updated_at': DATETIME,
-                    'django_url': TEXT})
+                    'django_url': TEXT, 'title': TEXT, 'last_status': nullable(TEXT)})
 SOURCE = obj({'label': TEXT, 'django_url': TEXT})
 TURN = obj({
     'id': UUID, 'question': TEXT, 'status': TEXT, 'answer': nullable(STRING), 'sources': array(SOURCE),
-    'at': DATETIME, 'started_work_id': nullable(ID), 'draft_url': nullable(TEXT), 'transfer_url': nullable(TEXT),
+    'at': DATETIME, 'started_at': nullable(DATETIME), 'finished_at': nullable(DATETIME),
+    'image_upload_ids': array(ID, limit=assistant_images.MAX_IMAGES),
+    'started_work_id': nullable(ID), 'draft_url': nullable(TEXT), 'transfer_url': nullable(TEXT),
 })
 
 
 def conversation_data(conversation):
     return {'conversation_id': conversation.pk, 'case_id': conversation.case_id, 'agent': conversation.persona,
-            'scope': conversation.scope, 'updated_at': conversation.updated_at, 'django_url': reverse('assistant_thread', args=[conversation.pk])}
+            'scope': conversation.scope, 'updated_at': conversation.updated_at,
+            'title': workspace_name(conversation.case), 'last_status': getattr(conversation, 'last_status', None),
+            'django_url': reverse('assistant_thread', args=[conversation.pk])}
 
 
 @endpoint(response=obj({'items': array(CONVERSATION, limit=25), 'as_of': DATETIME}),
           summary='List the current user’s accessible assistant conversations')
 def conversations(request):
-    rows = owned_conversations(request.user).order_by('-updated_at', '-pk')[:25]
+    latest = AssistantTurn.objects.filter(conversation_id=OuterRef('pk')).order_by('-created_at', '-pk')
+    rows = owned_conversations(request.user).annotate(last_status=Subquery(latest.values('status')[:1])
+                                                     ).order_by('-updated_at', '-pk')[:25]
     return {'items': [conversation_data(row) for row in rows], 'as_of': timezone.now()}
 
 
@@ -60,6 +69,8 @@ def conversation(request, conversation_id):
     sources, next_work = assistant.tool_context(row)
     payroll_only = assistant.payroll_report_only(row)
     turns = current_turns(request.user, row, sources, next_work, payroll_only)
+    if turns:
+        row.last_status = 'source_changed' if turns[-1].stale else turns[-1].status
     return {
         **conversation_data(row),
         'available_sources': [{'key': digest(item), 'label': item['label'], 'django_url': item['url']} for item in sources],
@@ -67,6 +78,8 @@ def conversation(request, conversation_id):
         'messages': [
             {'id': turn.pk, 'question': turn.question, 'at': turn.created_at,
              'status': 'source_changed' if turn.stale else turn.status,
+             'started_at': turn.started_at, 'finished_at': turn.finished_at,
+             'image_upload_ids': turn.image_upload_ids if not turn.stale else [],
              'answer': turn.answer if turn.status == 'answered' and not turn.stale else None,
              'sources': [{'label': item['label'], 'django_url': item['url']} for item in turn.sources]
              if turn.status == 'answered' and not turn.stale else [],
@@ -79,14 +92,16 @@ def conversation(request, conversation_id):
 
 @endpoint(method='POST', request=obj({
     'text': {**TEXT, 'maxLength': 4000}, 'idempotency_key': UUID, 'source_keys': array(HASH, limit=5),
-}, optional=('source_keys',)), response=obj({'message_id': UUID, 'status': TEXT}), status=202,
+    'image_upload_ids': array(ID, limit=assistant_images.MAX_IMAGES),
+}, optional=('source_keys', 'image_upload_ids')), response=obj({'message_id': UUID, 'status': TEXT}), status=202,
           summary='Queue an assistant question with currently authorised evidence')
 def message(request, conversation_id, *, body):
     get_object_or_404(owned_conversations(request.user), pk=conversation_id)
     question = body['text'].strip()
     if not question:
         raise Problem(422, 'invalid_input', 'Enter a message.')
-    turn = assistant.reserve(request.user, conversation_id, body['idempotency_key'], question, body.get('source_keys', []))
+    turn = assistant.reserve(request.user, conversation_id, body['idempotency_key'], question, body.get('source_keys', []),
+                             image_upload_ids=body.get('image_upload_ids', []))
     return {'message_id': turn.pk, 'status': turn.status}
 
 

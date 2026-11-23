@@ -42,6 +42,7 @@ SNAPSHOT = obj({'id': ID, 'status': EXPORT_STATUS, 'retain_until': DATETIME, 'fi
                 'receipt_id': nullable(ID)})
 CORRECTION = obj({'id': ID, 'snapshot_id': ID, 'decision': nullable(choice(*DISPOSITIONS)),
                   'successor_id': nullable(ID)})
+PENDING_CORRECTION = obj({'id': ID, 'contract_id': ID, 'snapshot_id': ID, 'requested_at': DATETIME})
 QUESTION = obj({'task_id': ID, 'revision': REVISION, 'snapshot_id': ID, 'owner_id': ID, 'question': TEXT,
                 'status': choice('held', 'cancelled', 'awaiting_owner', 'await_proper_minimal_resubmission'),
                 'reason': TEXT, 'can_reply': BOOLEAN, 'can_cancel': BOOLEAN})
@@ -118,8 +119,21 @@ def disclosures_for(case):
     return HRDisclosure.objects.filter(need__case=case).annotate(latest_decision=Subquery(decision.values('kind')[:1]))
 
 
+def visible_corrections(actor, case):
+    reviews = HRHandoffRecord.objects.filter(contract__need__case=case, kind='correction')
+    try:
+        hr_scope.owner_access(actor, case)
+    except (PermissionDenied, ValidationError):
+        reviews = reviews.filter(actor=actor)
+    decisions = HRHandoffRecord.objects.filter(contract_id=OuterRef('contract_id'), kind__in=DISPOSITIONS,
+        payload__request_id=Func(OuterRef('pk'), function='to_jsonb', output_field=JSONField())).order_by('-pk')
+    return reviews.annotate(decision_kind=Subquery(decisions.values('kind')[:1]),
+                            successor_id=Subquery(decisions.values('snapshot_id')[:1]))
+
+
 @endpoint(response=obj({'revision': REVISION, 'needs': array(NEED, limit=25),
     'disclosures': array(DISCLOSURE_ITEM, limit=25), 'actions': array(choice(*GRANTS)),
+    'pending_corrections': array(PENDING_CORRECTION, limit=25),
     'proofs': obj({key: array(PROOF, limit=25) for key in PROOF_TYPES}), 'next_page': nullable(PAGE)}),
     query={'page': PAGE}, summary='List the current HR and Finance disclosure records and authorised evidence choices')
 def options(request, case_id):
@@ -133,14 +147,19 @@ def options(request, case_id):
     latest = rows.filter(reference=OuterRef('reference')).order_by('-version').values('pk')[:1]
     needs = list(rows.filter(pk=Subquery(latest)).order_by('-pk')[offset:offset + 26])
     disclosures = list(disclosures_for(case).defer('payload', 'policy_ids').order_by('-pk')[offset:offset + 26])
+    pending = list(visible_corrections(actor, case).filter(decision_kind__isnull=True).order_by('-pk')
+                   .values('id', 'contract_id', 'snapshot_id', 'created_at')[offset:offset + 26])
     return {'revision': case.revision, 'actions': actions,
             'needs': [{'id': row.pk, 'reference': row.reference, 'version': row.version,
                        **{k: row.payload[k] for k in ('entity', 'period', 'purpose', 'fields')}} for row in needs[:25]],
             'disclosures': [disclosure_payload(row) for row in disclosures[:25]],
+            'pending_corrections': [{'id': row['id'], 'contract_id': row['contract_id'],
+                                     'snapshot_id': row['snapshot_id'], 'requested_at': row['created_at']}
+                                    for row in pending[:25]],
             'proofs': {key: proof_rows(public_evidence(case.evidence.filter(kind__in=kinds)).only('kind', 'version')
                                       .order_by('-pk')[:25]) if key in actions else []
                        for key, kinds in PROOF_TYPES.items()},
-            'next_page': number + 1 if number < PAGE['maximum'] and max(len(needs), len(disclosures)) > 25 else None}
+            'next_page': number + 1 if number < PAGE['maximum'] and max(len(needs), len(disclosures), len(pending)) > 25 else None}
 
 
 @endpoint(response=obj({'revision': REVISION, 'disclosure': DISCLOSURE_ITEM, 'current_approval_id': nullable(ID),
@@ -161,15 +180,7 @@ def detail(request, case_id, contract_id):
     snapshots = disclosure.snapshots.defer('payload').annotate(receipt_id=Subquery(receipt)).order_by('-pk')[:25]
     decisions = disclosure.records.filter(kind__in=VERDICT['enum']).values('pk', 'kind', 'created_at').order_by('-pk')[:25]
     corrections = []
-    try:
-        hr_scope.owner_access(actor, case)
-        reviews = disclosure.records.filter(kind='correction')
-    except (PermissionDenied, ValidationError):
-        reviews = disclosure.records.filter(kind='correction', actor=actor)
-    decision = disclosure.records.filter(kind__in=DISPOSITIONS,
-        payload__request_id=Func(OuterRef('pk'), function='to_jsonb', output_field=JSONField())).order_by('-pk')
-    for row in reviews.annotate(decision_kind=Subquery(decision.values('kind')[:1]),
-                                  successor_id=Subquery(decision.values('snapshot_id')[:1])).order_by('-pk')[:25]:
+    for row in visible_corrections(actor, case).filter(contract=disclosure).order_by('-pk')[:25]:
         corrections.append({'id': row.pk, 'snapshot_id': row.snapshot_id, 'decision': row.decision_kind,
                             'successor_id': row.successor_id if row.decision_kind == 'response' else None})
     tasks = HumanTask.objects.filter(Q(claimed_by=actor) | Q(created_by=actor), case=case,

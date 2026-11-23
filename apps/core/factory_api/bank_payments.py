@@ -66,7 +66,7 @@ def options(http, case_id, issue_id):
 @endpoint(method='POST', multipart=True, status=201, response=RESULT, request=obj({
     'revision': REVISION, 'customer': REF, 'amount': DECIMAL, 'currency': {'type': 'string', 'pattern': '^[A-Z]{3}$'},
     'amount_basis': BASIS, 'received_at': DATETIME, 'source': REF, 'transaction_ref': REF, 'locator': REF, 'file': FILE,
-}, optional=('amount',)), summary='Report a bank payment with its original private statement')
+}), summary='Report a bank payment with a known amount and its original private statement')
 def report(http, case_id, issue_id):
     actor = http.user
     case, issue = scope(actor, case_id, issue_id)

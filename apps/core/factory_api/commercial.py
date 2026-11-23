@@ -13,7 +13,7 @@ from adapters.commercial_rework import SOURCE_KINDS
 from apps.agents.upload_views import upload_file
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import limit_queries
-from apps.core.services import lock_case
+from apps.core.services import event, lock_case
 from apps.identity.services import require, visible_cases
 from apps.pmo import commercial as native, commercial_client_response as witness, commercial_rework, signatures
 from apps.pmo.commercial_client_views import ResponseForm, revision_context, signature_form
@@ -31,8 +31,11 @@ KEY = {**TEXT, 'maxLength': 100}
 OPTION = obj({'id': ID, 'label': TEXT})
 FILE = obj({'id': ID, 'name': TEXT, 'size': ID, 'sha256': TEXT})
 OUTCOME = choice('signed', 'changes_requested', 'declined')
+RECEIVED_VIA = choice('email', 'whatsapp', 'call', 'portal', 'in_person', 'other')
+CHANNEL_EVENT = 'delivery.progress.commercial_response_channel'
 RESPONSE = obj({'id': ID, 'evidence_id': ID, 'revision_id': ID, 'receipt_id': ID, 'kind': TEXT})
-WITNESS = obj({'id': ID, 'response_id': ID, 'client_name': TEXT, 'outcome': OUTCOME, 'responded_at': DATETIME})
+WITNESS = obj({'id': ID, 'response_id': ID, 'client_name': TEXT, 'outcome': OUTCOME, 'responded_at': DATETIME,
+               'received_via': nullable(RECEIVED_VIA)})
 ADOPTION = obj({'id': ID, 'revision_id': ID, 'finance_intake_id': nullable(ID), 'current': BOOLEAN})
 PACKET = obj({'id': ID, 'revision_id': nullable(ID), 'sow': TEXT, 'prd': TEXT, 'contract': TEXT, 'authenticity': TEXT})
 RESULT = obj({'case_revision': REVISION, 'record_ids': array(ID, limit=50)})
@@ -92,8 +95,10 @@ def desk(request, case_id):
             except (PermissionDenied, ValidationError):
                 pass
             else:
+                channel = case.audit.filter(action=CHANNEL_EVENT, data__witness_id=metadata.pk).values_list(
+                    'data__channel', flat=True).first()
                 observed = {'id': metadata.pk, 'response_id': response.pk, **{
-                    key: value[key] for key in ('client_name', 'outcome', 'responded_at')}}
+                    key: value[key] for key in ('client_name', 'outcome', 'responded_at')}, 'received_via': channel}
                 if can_record and value['outcome'] == 'changes_requested' and metadata.created_by_id == actor.pk and case.synthetic:
                     form_data = revision_context(actor, case, metadata, files)
                     draft_form = form_data.get('form')
@@ -139,7 +144,8 @@ def desk(request, case_id):
 FIELDS = {
     'witness': {'revision_id': ID, 'receipt_id': ID, 'client_name': {**TEXT, 'maxLength': 160}, 'responded_at': DATETIME,
                 'outcome': OUTCOME, 'genuine': {'const': True}, 'proof_ids': array(ID, limit=50), 'note': NOTE,
-                'operation_key': UUID, 'predecessor_id': nullable(ID), 'party_ref': nullable(KEY)},
+                'operation_key': UUID, 'predecessor_id': nullable(ID), 'party_ref': nullable(KEY),
+                'received_via': RECEIVED_VIA},
     'signatures': {'response_id': ID, 'prd_id': ID, 'signatures': SIGNATURES, 'note': NOTE,
                    'operation_key': KEY, 'predecessor_id': nullable(ID)},
     'adopt': {'response_id': ID},
@@ -152,7 +158,8 @@ FIELDS = {
                       'operation_key': UUID, 'predecessor_id': nullable(ID)},
     'prepare_revision': {'draft_id': ID},
 }
-ACTIONS = {'oneOf': [obj({'action': {'const': key}, 'case_revision': REVISION, **fields})
+ACTIONS = {'oneOf': [obj({'action': {'const': key}, 'case_revision': REVISION, **fields},
+                         optional=('received_via',) if key == 'witness' else ())
                      for key, fields in FIELDS.items()]}
 
 
@@ -168,6 +175,12 @@ def command(request, case_id, *, body):
         row, _ = witness.record(actor, case.pk, body['revision_id'], body['receipt_id'], body['client_name'],
             parse_datetime(body['responded_at']), body['outcome'], body['genuine'], body['proof_ids'], body['note'],
             body['operation_key'], expected, body['predecessor_id'], body['party_ref'])
+        if 'received_via' in body:
+            prior = case.audit.filter(action=CHANNEL_EVENT, data__witness_id=row.pk).values_list('data__channel', flat=True).first()
+            if prior and prior != body['received_via']:
+                raise Problem(409, 'idempotency_conflict', 'The original response has a different recorded channel.')
+            if prior is None:
+                event(actor, case, CHANNEL_EVENT, witness_id=row.pk, channel=body['received_via'])
     elif action in ('signatures', 'adopt'):
         case = lock_case(actor, case.pk, 'commercial.response', expected)
         response = current_response(actor, case, body['response_id'], signed=True)

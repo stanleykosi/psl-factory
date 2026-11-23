@@ -353,6 +353,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{case_id}/document-versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List standalone report versions with currently readable source records */
+        get: operations["documents_version_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{case_id}/document-reviews/{version_id}/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Compare sections in two authorised versions of the same report and audience */
+        get: operations["documents_compare"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{case_id}/document-reviews/{version_id}/publication": {
         parameters: {
             query?: never;
@@ -699,6 +733,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/received-bids/{case_id}/team-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record a request or actual block for a named bid input team */
+        post: operations["bid_responses_request_team_input"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/work": {
         parameters: {
             query?: never;
@@ -711,6 +762,76 @@ export interface paths {
         put?: never;
         /** Start the selected factory line using the current exact native sources */
         post: operations["intake_start"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/counts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Count authorised work with explicit coverage for the queue and line summaries */
+        get: operations["work_counts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/{work_id}/tracking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read observed work progress and independently recorded results */
+        get: operations["work_tracking_tracking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/{work_id}/delivery-observations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read human observations about the original delivery */
+        get: operations["work_tracking_delivery_observations"];
+        put?: never;
+        /** Record an authorised human observation while native delivery reconciliation is pending */
+        post: operations["work_tracking_record_delivery_observation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/{work_id}/proofs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the proof attached to this work */
+        get: operations["work_proofs_proofs"];
+        put?: never;
+        /** Attach a private PDF copy or a current PMO Lead note to this work */
+        post: operations["work_proofs_attach"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1073,7 +1194,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Read recent work, decision or evidence history */
+        /** Read work, decision or evidence history with a stable older-record cursor */
         get: operations["work_history"];
         put?: never;
         post?: never;
@@ -1309,6 +1430,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/work/{work_id}/go-live-signoff/proofs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retain a checked signed PDF copy for the exact go-live receipt and independently attested signer */
+        post: operations["delivery_go_live_proof"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/work/{work_id}/go-live-replies": {
         parameters: {
             query?: never;
@@ -1391,6 +1529,24 @@ export interface paths {
         put?: never;
         /** Let the actual Support recipient acknowledge the exact handover or record gaps */
         post: operations["delivery_acknowledge_support"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/{work_id}/support-publication": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check whether this person can publish the approved document to Support */
+        get: operations["delivery_support_publication"];
+        put?: never;
+        /** Queue publication of the exact approved handover to the configured Support audience */
+        post: operations["delivery_publish_support"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1870,6 +2026,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{case_id}/issues/{issue_id}/blocked-milestone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read recorded milestones available for an exact issue block */
+        get: operations["issues_milestone_options"];
+        put?: never;
+        /** Record or clear a source-backed issue link to an exact milestone */
+        post: operations["issues_link_milestone"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{case_id}/issues/{issue_id}/assignment": {
         parameters: {
             query?: never;
@@ -1952,6 +2126,24 @@ export interface paths {
         put?: never;
         /** Request a source-owned answer, review selected suggestions or restore the previous answer */
         post: operations["bid_responses_answer_command"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/work/{work_id}/bid-clarifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the recorded questions and replies for current bid requirements */
+        get: operations["bid_requirements_clarifications"];
+        put?: never;
+        /** Record the inspected requirement location or an actual client clarification */
+        post: operations["bid_requirements_capture"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3223,7 +3415,7 @@ export interface paths {
         /** Read payment reporting controls for an exact invoice */
         get: operations["bank_payments_options"];
         put?: never;
-        /** Report a bank payment with its original private statement */
+        /** Report a bank payment with a known amount and its original private statement */
         post: operations["bank_payments_report"];
         delete?: never;
         options?: never;
@@ -3352,6 +3544,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{case_id}/payroll/requests/{request_id}/template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download a blank payroll export template for the exact authorised provider and layout */
+        get: operations["payroll_sources_template"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{case_id}/payroll/requests/{request_id}/start-choices": {
         parameters: {
             query?: never;
@@ -3428,7 +3637,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Read a current meeting, its source-backed decisions and linked action states */
+        /** Read an exact meeting version, its source-backed decisions and current linked action states */
         get: operations["meeting_records_detail"];
         put?: never;
         post?: never;
@@ -3677,6 +3886,41 @@ export interface paths {
         get: operations["closure_checklist"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{case_id}/delivery-overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the six Delivery lines and their latest visible work in this project */
+        get: operations["delivery_overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{case_id}/delivery/{dossier_id}/finance-confirmation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the exact milestone notifications Finance must confirm before closure */
+        get: operations["closure_finance_options"];
+        put?: never;
+        /** Confirm the complete milestone notification inventory with Finance proof */
+        post: operations["closure_finance_confirmation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4028,6 +4272,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/setup/{case_id}/decision-proofs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retain a signed policy decision copy for the current governed configuration */
+        post: operations["setup_decision_proof"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup/{case_id}/decision-appointments": {
         parameters: {
             query?: never;
@@ -4214,6 +4475,23 @@ export interface paths {
         };
         /** Read one actor-scoped page of current affected records and its stated coverage */
         get: operations["scoped_policy_impact_records"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/setup/scopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Discover the organisations and workspace policy settings available in Setup */
+        get: operations["setup_scope_options"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4626,7 +4904,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Read current personal alerts */
+        /** Read scoped in-app alerts and the daily summary */
         get: operations["notifications_inbox"];
         put?: never;
         post?: never;
@@ -4823,10 +5101,25 @@ export interface operations {
                             key: string;
                             title: string;
                             django_url: string;
+                            url: string;
+                            available: boolean;
                         }[];
                         startable_lines: string[];
                         csrf_token: string;
                         assistant_agents: ("tola" | "chidi" | "zainab")[];
+                        positions: {
+                            /** @enum {string} */
+                            role: "pmo-lead" | "finance-lead" | "hr" | "admin" | "cto" | "ceo";
+                            /** @enum {string} */
+                            mode: "member" | "lead" | "standalone" | "administrator";
+                            name: string;
+                            area: string;
+                            focus: string;
+                            workspace: string;
+                            team: string | null;
+                            invite_url: string | null;
+                            manage_url: string | null;
+                        }[];
                     };
                 };
             };
@@ -5484,6 +5777,8 @@ export interface operations {
                             access: string;
                             departure_available: boolean;
                             reactivation_available: boolean;
+                            last_signed_in_at: string | null;
+                            deactivated_at: string | null;
                         }[];
                         invitations: {
                             id: number;
@@ -5494,10 +5789,14 @@ export interface operations {
                             email: string;
                             access: string;
                             /** Format: date-time */
+                            created_at: string;
+                            /** Format: date-time */
                             expires_at: string;
                             /** @enum {string} */
                             status: "pending" | "expired" | "accepted" | "superseded";
                         }[];
+                        people_total: number;
+                        invitations_total: number;
                         next_page: number | null;
                         next_invitations_page: number | null;
                         /** Format: date-time */
@@ -6039,6 +6338,8 @@ export interface operations {
                             email: string;
                             access: string;
                             /** Format: date-time */
+                            created_at: string;
+                            /** Format: date-time */
                             expires_at: string;
                             /** @enum {string} */
                             status: "pending" | "expired" | "accepted" | "superseded";
@@ -6112,6 +6413,8 @@ export interface operations {
                             username: string;
                             email: string;
                             access: string;
+                            /** Format: date-time */
+                            created_at: string;
                             /** Format: date-time */
                             expires_at: string;
                             /** @enum {string} */
@@ -6421,6 +6724,9 @@ export interface operations {
                             field: string;
                             text: string;
                         }[];
+                        template_name: string;
+                        template_version: number;
+                        sample: boolean;
                     };
                 };
             };
@@ -6490,6 +6796,116 @@ export interface operations {
             415: components["responses"]["Http415"];
             422: components["responses"]["Http422"];
             429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    documents_version_list: {
+        parameters: {
+            query?: {
+                before?: number;
+            };
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            id: number;
+                            title: string;
+                            version: number;
+                            audience: string;
+                            api_url: string;
+                            /** Format: date-time */
+                            created_at: string;
+                            current: boolean;
+                        }[];
+                        next_before: number | null;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    documents_compare: {
+        parameters: {
+            query: {
+                from_version: number;
+            };
+            header?: never;
+            path: {
+                case_id: string;
+                version_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        from_version: number;
+                        to_version: number;
+                        sections: {
+                            /** @enum {string} */
+                            key: "financial_metrics" | "bu_totals" | "requirements_mapping" | "commercial_terms" | "executive_summary" | "scope" | "timeline" | "risks" | "dependencies" | "status" | "issue_impact" | "issue_status" | "issue_resolution" | "next_steps" | "decisions" | "actions" | "owners" | "deadlines" | "participants" | "internal_notes" | "progress" | "blockers" | "delivery_health" | "performance" | "escalations" | "critical_incidents";
+                            before: string | null;
+                            after: string | null;
+                            before_evidence_ids: number[];
+                            after_evidence_ids: number[];
+                            /** @enum {string} */
+                            change: "added" | "removed" | "changed" | "unchanged";
+                        }[];
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
             500: components["responses"]["Http500"];
             503: components["responses"]["Http503"];
             /** @description Request or domain error */
@@ -6870,6 +7286,10 @@ export interface operations {
                             name: string;
                             version: number;
                             download_url: string | null;
+                            document_type: string;
+                            registered_by: string;
+                            registered_at: string | null;
+                            sample: boolean;
                         }[];
                         proofs: {
                             id: number;
@@ -6991,6 +7411,9 @@ export interface operations {
                             django_url: string;
                             project_options_url: string | null;
                             submit_url: string;
+                            request_schema: Record<string, never>;
+                            /** @enum {string} */
+                            content_type: "application/json" | "multipart/form-data";
                         }[];
                         /** Format: date-time */
                         as_of: string;
@@ -7309,6 +7732,53 @@ export interface operations {
                             kind: string;
                         }[];
                         next_before: number | null;
+                        inventory: {
+                            meetings: {
+                                count: number;
+                                items: {
+                                    id: number;
+                                    label: string;
+                                    at: string | null;
+                                    evidence_id: number | null;
+                                }[];
+                            };
+                            actions: {
+                                count: number;
+                                items: {
+                                    id: number;
+                                    label: string;
+                                    at: string | null;
+                                    evidence_id: number | null;
+                                }[];
+                            };
+                            milestones: {
+                                count: number;
+                                items: {
+                                    id: number;
+                                    label: string;
+                                    at: string | null;
+                                    evidence_id: number | null;
+                                }[];
+                            };
+                            issues: {
+                                count: number;
+                                items: {
+                                    id: number;
+                                    label: string;
+                                    at: string | null;
+                                    evidence_id: number | null;
+                                }[];
+                            };
+                            changes: {
+                                count: number;
+                                items: {
+                                    id: number;
+                                    label: string;
+                                    at: string | null;
+                                    evidence_id: number | null;
+                                }[];
+                            };
+                        } | null;
                     };
                 };
             };
@@ -7872,6 +8342,7 @@ export interface operations {
                     /** Format: uuid */
                     start_key: string;
                     reference: string;
+                    note?: string;
                     /** Format: date-time */
                     received_at: string;
                     /** @enum {string} */
@@ -7971,6 +8442,7 @@ export interface operations {
                             submission_target: string | null;
                             source_version: number;
                         } | null;
+                        note: string | null;
                         original: {
                             filename: string;
                             bytes: number;
@@ -8100,6 +8572,11 @@ export interface operations {
                             id: number;
                             label: string;
                         }[];
+                        next_steps: {
+                            key: string;
+                            label: string;
+                            api_url: string | null;
+                        }[];
                     };
                 };
             };
@@ -8141,8 +8618,17 @@ export interface operations {
                     revision: number;
                     candidate: number;
                     role: string;
-                    evidence: number;
                     reason: string;
+                    evidence: number;
+                } | {
+                    intake: number;
+                    revision: number;
+                    candidate: number;
+                    role: string;
+                    reason: string;
+                    upload_id: number;
+                    /** @constant */
+                    checked: true;
                 };
             };
         };
@@ -8215,6 +8701,22 @@ export interface operations {
                             summary: string | null;
                             person_days: string | null;
                         }[];
+                        team_status: {
+                            /** @enum {string} */
+                            team: "Engineering" | "QA" | "Security" | "Product";
+                            /** @enum {string} */
+                            status: "not_requested" | "awaiting_reply" | "blocked" | "received";
+                            request: {
+                                id: number;
+                                /** @enum {string} */
+                                team: "Engineering" | "QA" | "Security" | "Product";
+                                summary: string;
+                                /** Format: date-time */
+                                requested_at: string;
+                                blocked: boolean;
+                            } | null;
+                            receipt_id: number | null;
+                        }[];
                         choices: {
                             /** @enum {string} */
                             team: "Engineering" | "QA" | "Security" | "Product";
@@ -8264,13 +8766,24 @@ export interface operations {
                     revision: number;
                     /** @enum {string} */
                     team: "Engineering" | "QA" | "Security" | "Product";
-                    evidence_id: number;
                     /** Format: date-time */
                     received_at: string;
                     source_party: string;
                     summary: string;
                     person_days: string | null;
                     attested: boolean;
+                    evidence_id: number;
+                } | {
+                    revision: number;
+                    /** @enum {string} */
+                    team: "Engineering" | "QA" | "Security" | "Product";
+                    /** Format: date-time */
+                    received_at: string;
+                    source_party: string;
+                    summary: string;
+                    person_days: string | null;
+                    attested: boolean;
+                    upload_id: number;
                 };
             };
         };
@@ -8317,6 +8830,70 @@ export interface operations {
             };
         };
     };
+    bid_responses_request_team_input: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    revision: number;
+                    intake_id: number;
+                    /** @enum {string} */
+                    team: "Engineering" | "QA" | "Security" | "Product";
+                    summary: string;
+                    blocked?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: number;
+                        /** @enum {string} */
+                        team: "Engineering" | "QA" | "Security" | "Product";
+                        summary: string;
+                        /** Format: date-time */
+                        requested_at: string;
+                        blocked: boolean;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     work_queue: {
         parameters: {
             query?: {
@@ -8325,6 +8902,9 @@ export interface operations {
                 q?: string;
                 page?: number;
                 project?: string;
+                limit?: 8 | 10 | 15 | 20 | 50;
+                state?: "ready" | "waiting" | "action_needed" | "owner_needed" | "setup_needed" | "verified" | "cancelled" | "awaiting_reconciliation" | "followup_needed" | "processing" | "effect_uncertain";
+                verified_month?: string;
             };
             header?: never;
             path?: never;
@@ -8354,12 +8934,34 @@ export interface operations {
                             updated_at: string;
                             django_url: string;
                             api_url: string;
+                            reference: string | null;
+                            /** Format: date-time */
+                            started_at: string;
+                            verified_at: string | null;
+                            queue_output_url: string | null;
+                            exception_code: string | null;
+                            exception_next_step: string | null;
+                            exception_started_at: string | null;
+                            action_kind: ("decide" | "do" | "fix" | "started") | null;
+                            station: {
+                                /** @enum {string} */
+                                key: "intake" | "execution" | "decision" | "delivery" | "verified";
+                                index: number;
+                                count: number;
+                                name: string;
+                            } | null;
+                            agent: string | null;
                         }[];
                         page: number;
                         next_page: number | null;
                         /** Format: date-time */
                         as_of: string;
+                        /** @enum {integer} */
+                        page_size: 8 | 10 | 15 | 20 | 50;
+                        total: number | null;
                         limited: boolean;
+                        /** @enum {string} */
+                        total_coverage: "complete" | "incomplete";
                         lines: {
                             key: string;
                             title: string;
@@ -8906,6 +9508,415 @@ export interface operations {
             };
         };
     };
+    work_counts: {
+        parameters: {
+            query?: {
+                project?: string;
+                line?: "process-handoff/v1" | "pmo-issues/v1" | "pmo-leadership-report/v1" | "finance-ledger/v1" | "finance-bu/v1" | "engagement/v1" | "pmo-minutes/v1" | "pmo-escalation/v1" | "pmo-weekly-report/v1" | "finance-schedules/v1" | "finance-ppe/v1" | "finance-forecast/v1" | "finance-payroll/v1" | "pmo-emergency/v1" | "pmo-change/v1" | "rfp-response/v1" | "finance-accounts/v1" | "pmo-finance/v1" | "planning/v1" | "commercial/v1" | "delivery-release/v1" | "delivery-hypercare/v1" | "delivery-archive/v1" | "delivery-handover/v1" | "delivery-closure/v1" | "delivery-go-live/v1";
+                q?: string;
+                verified_month?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: date-time */
+                        as_of: string;
+                        evaluated: number;
+                        limited: boolean;
+                        verified_month: string;
+                        queues: {
+                            /** @enum {string} */
+                            key: "needs_me" | "waiting" | "mine" | "active" | "decisions" | "exceptions" | "unassigned" | "verified";
+                            observed: number;
+                            total: number | null;
+                        }[];
+                        lines: {
+                            /** @enum {string} */
+                            key: "process-handoff/v1" | "pmo-issues/v1" | "pmo-leadership-report/v1" | "finance-ledger/v1" | "finance-bu/v1" | "engagement/v1" | "pmo-minutes/v1" | "pmo-escalation/v1" | "pmo-weekly-report/v1" | "finance-schedules/v1" | "finance-ppe/v1" | "finance-forecast/v1" | "finance-payroll/v1" | "pmo-emergency/v1" | "pmo-change/v1" | "rfp-response/v1" | "finance-accounts/v1" | "pmo-finance/v1" | "planning/v1" | "commercial/v1" | "delivery-release/v1" | "delivery-hypercare/v1" | "delivery-archive/v1" | "delivery-handover/v1" | "delivery-closure/v1" | "delivery-go-live/v1";
+                            needs_person: number;
+                            held: number;
+                            open: number;
+                            stopped: number;
+                            verified: number;
+                            verified_this_month: number;
+                            stations: {
+                                /** @enum {string} */
+                                key: "intake" | "execution" | "decision" | "delivery" | "verified";
+                                count: number;
+                                needs_person: number;
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    work_tracking_tracking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        work_id: number;
+                        /** Format: date-time */
+                        as_of: string;
+                        next_step: string;
+                        blocker: string;
+                        owner: string | null;
+                        station: {
+                            /** @enum {string} */
+                            key: "intake" | "execution" | "decision" | "delivery" | "verified";
+                            name: string;
+                            position: number;
+                            /** @enum {string} */
+                            status: "recorded" | "current" | "pending" | "unknown";
+                            owner: string | null;
+                        };
+                        stations: {
+                            /** @enum {string} */
+                            key: "intake" | "execution" | "decision" | "delivery" | "verified";
+                            name: string;
+                            position: number;
+                            /** @enum {string} */
+                            status: "recorded" | "current" | "pending" | "unknown";
+                            owner: string | null;
+                        }[];
+                        /** Format: date-time */
+                        started_at: string;
+                        started_by: string;
+                        verified_at: string | null;
+                        facts: {
+                            drafted: boolean | null;
+                            reviewed: boolean | null;
+                            approved: boolean | null;
+                            sent: boolean | null;
+                            receipt: boolean | null;
+                            verified: boolean | null;
+                        };
+                        worker_history_url: string;
+                        decision_history_url: string;
+                        evidence_history_url: string;
+                        can_record_delivery_observation: boolean;
+                        delivery_observation_url: string | null;
+                        uncertain_effects: {
+                            job_id: number;
+                            job_type: string;
+                        }[];
+                        last_activity: {
+                            kind: string;
+                            status: string;
+                            /** Format: date-time */
+                            at: string;
+                            agent_process: string | null;
+                            evidence_id: number | null;
+                        } | null;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    work_tracking_delivery_observations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            id: number;
+                            effect: {
+                                job_id: number;
+                                job_type: string;
+                            };
+                            /** @enum {string} */
+                            outcome: "delivered" | "not_delivered" | "unknown";
+                            proof_id: number;
+                            reason: string;
+                            /** Format: date-time */
+                            recorded_at: string;
+                        }[];
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    work_tracking_record_delivery_observation: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    expected_revision: number;
+                    case_revision: number;
+                    /** @enum {string} */
+                    outcome: "delivered" | "not_delivered" | "unknown";
+                    effect: {
+                        job_id: number;
+                        job_type: string;
+                    };
+                    proof_id: number;
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: number;
+                        effect: {
+                            job_id: number;
+                            job_type: string;
+                        };
+                        /** @enum {string} */
+                        outcome: "delivered" | "not_delivered" | "unknown";
+                        proof_id: number;
+                        reason: string;
+                        /** Format: date-time */
+                        recorded_at: string;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    work_proofs_proofs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            evidence_id: number;
+                            /** @enum {string} */
+                            kind: "pdf_copy" | "pmo_lead_note";
+                            name: string | null;
+                            sha256: string | null;
+                            note: string | null;
+                            download_url: string | null;
+                        }[];
+                        case_revision: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    work_proofs_attach: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @constant */
+                    kind: "pdf_copy";
+                    upload_id: number;
+                    case_revision: number;
+                } | {
+                    /** @constant */
+                    kind: "pmo_lead_note";
+                    note: string;
+                    case_revision: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        evidence_id: number;
+                        /** @enum {string} */
+                        kind: "pdf_copy" | "pmo_lead_note";
+                        name: string | null;
+                        sha256: string | null;
+                        note: string | null;
+                        download_url: string | null;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     work_finance_sources: {
         parameters: {
             query?: {
@@ -8990,6 +10001,23 @@ export interface operations {
                         updated_at: string;
                         django_url: string;
                         api_url: string;
+                        reference: string | null;
+                        /** Format: date-time */
+                        started_at: string;
+                        verified_at: string | null;
+                        queue_output_url: string | null;
+                        exception_code: string | null;
+                        exception_next_step: string | null;
+                        exception_started_at: string | null;
+                        action_kind: ("decide" | "do" | "fix" | "started") | null;
+                        station: {
+                            /** @enum {string} */
+                            key: "intake" | "execution" | "decision" | "delivery" | "verified";
+                            index: number;
+                            count: number;
+                            name: string;
+                        } | null;
+                        agent: string | null;
                         revision: number | null;
                         case_revision: number | null;
                         next_step: string;
@@ -9030,6 +10058,7 @@ export interface operations {
                         panels: {
                             key: string;
                             url: string;
+                            contract_path: string | null;
                         }[];
                         output_url: string | null;
                         information: {
@@ -9045,6 +10074,8 @@ export interface operations {
                             label: string;
                             watching: boolean;
                         };
+                        tracking_url: string | null;
+                        proofs_url: string | null;
                     };
                 };
             };
@@ -9687,6 +10718,13 @@ export interface operations {
                             created_at: string;
                         }[];
                         actions: ("need" | "contract" | "authorize" | "capture" | "receive" | "correction" | "bind" | "decide_correction" | "scope_reply" | "scope_request" | "scope_cancel" | "investigate" | "draft_policy")[];
+                        pending_corrections: {
+                            id: number;
+                            contract_id: number;
+                            snapshot_id: number;
+                            /** Format: date-time */
+                            requested_at: string;
+                        }[];
                         proofs: {
                             need: {
                                 id: number;
@@ -10898,6 +11936,7 @@ export interface operations {
         parameters: {
             query?: {
                 kind?: "worker" | "decision" | "evidence";
+                before?: number;
             };
             header?: never;
             path: {
@@ -10922,10 +11961,14 @@ export interface operations {
                             task_id?: number;
                             actor?: string;
                             reason?: string;
+                            /** @enum {string} */
+                            actor_kind: "person" | "worker";
+                            entry_id: number;
                             evidence_id?: number | null;
                         }[];
                         /** Format: date-time */
                         as_of: string;
+                        next_before: number | null;
                     };
                 };
             };
@@ -11776,6 +12819,17 @@ export interface operations {
                             response_id: number;
                             review_id: number;
                         } | null;
+                        can_approve_directly: boolean;
+                        latest_decision: {
+                            id: number;
+                            /** @enum {string} */
+                            verdict: "approve" | "return" | "reject";
+                            role: string;
+                            by: string;
+                            /** Format: date-time */
+                            at: string;
+                            direct: boolean;
+                        } | null;
                     };
                 };
             };
@@ -11818,8 +12872,8 @@ export interface operations {
                     packet: string;
                     /** @enum {string} */
                     verdict: "approve" | "return" | "reject";
-                    evidence_id: number;
-                    note: string;
+                    evidence_id?: number | null;
+                    note?: string;
                     issue_id?: number | null;
                 };
             };
@@ -11886,6 +12940,12 @@ export interface operations {
                             request_id: number;
                             receipt_id: number;
                             role: string;
+                            reference: string;
+                            kind: string;
+                            /** Format: date-time */
+                            requested_at: string;
+                            /** Format: date-time */
+                            source_received_at: string;
                             proofs: {
                                 id: number;
                                 version: number;
@@ -12320,6 +13380,21 @@ export interface operations {
                     note: string;
                     environment: string | null;
                     private_log_id: number | null;
+                } | {
+                    /** @constant */
+                    action: "observe_release";
+                    expected_revision: number;
+                    case_revision: number;
+                    readiness_id: number | null;
+                    /** Format: date-time */
+                    released_at: string;
+                    reference: string;
+                    upload_id: number;
+                    /** @constant */
+                    checked: true;
+                    note: string;
+                    environment: string | null;
+                    private_log_id: number | null;
                 };
             };
         };
@@ -12599,6 +13674,66 @@ export interface operations {
                         state: "ready" | "waiting" | "action_needed" | "owner_needed" | "setup_needed" | "verified" | "cancelled" | "awaiting_reconciliation" | "followup_needed" | "processing" | "effect_uncertain";
                         revision: number;
                         record_id: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delivery_go_live_proof: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    case_revision: number;
+                    receipt_id: number;
+                    upload_id: number;
+                    /** @enum {string} */
+                    role: "PM" | "Client";
+                    /** @constant */
+                    checked: true;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        evidence_id: number;
+                        case_revision: number;
                     };
                 };
             };
@@ -13132,6 +14267,20 @@ export interface operations {
                             can_acknowledge: boolean;
                             status: ("received" | "gaps") | null;
                         }[];
+                        document: {
+                            id: number;
+                            title: string;
+                            version: number;
+                            sections: {
+                                heading: string;
+                                text: string;
+                            }[];
+                            supporting_records: {
+                                id: number;
+                                version: number;
+                                kind: string;
+                            }[];
+                        } | null;
                         proofs: {
                             id: number;
                             version: number;
@@ -13223,6 +14372,110 @@ export interface operations {
             };
         };
     };
+    delivery_support_publication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        expected_revision: number;
+                        case_revision: number;
+                        can_publish: boolean;
+                        version_id: number | null;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delivery_publish_support: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    expected_revision: number;
+                    case_revision: number;
+                    version_id: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        work_id: number;
+                        /** @enum {string} */
+                        state: "ready" | "waiting" | "action_needed" | "owner_needed" | "setup_needed" | "verified" | "cancelled" | "awaiting_reconciliation" | "followup_needed" | "processing" | "effect_uncertain";
+                        revision: number;
+                        record_id: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     support_replies_options: {
         parameters: {
             query?: never;
@@ -13265,6 +14518,7 @@ export interface operations {
                                 /** Format: date-time */
                                 responded_at: string;
                                 note: string;
+                                gaps: string[];
                             } | null;
                         }[];
                     };
@@ -13318,6 +14572,7 @@ export interface operations {
                     /** Format: date-time */
                     responded_at: string;
                     role: string;
+                    gaps?: string[];
                 };
             };
         };
@@ -13449,6 +14704,13 @@ export interface operations {
                             /** @enum {string} */
                             status: "complete" | "held";
                             codes: string[];
+                            counts: {
+                                total: number;
+                                held: number;
+                                conflict: number;
+                                matched: number | null;
+                                unmatched: number | null;
+                            } | null;
                         }[];
                         hr_receipt: {
                             snapshot_id: number;
@@ -13627,6 +14889,7 @@ export interface operations {
                         review_id: number | null;
                         review_verdicts: ("approve" | "return" | "reject" | "revoke")[];
                         can_export: boolean;
+                        review_hold_code: ("review_rule_missing" | "reviewer_missing") | null;
                         evidence: {
                             id: number;
                             version: number;
@@ -14103,6 +15366,7 @@ export interface operations {
                             /** @constant */
                             ledger_posted: false;
                         } | null;
+                        accounting_note_url: string | null;
                         review_options: {
                             target_id: number;
                             /** @enum {string} */
@@ -14322,6 +15586,12 @@ export interface operations {
                             case_revision: number;
                             status: string;
                             findings: string[];
+                            finding_details: {
+                                code: string;
+                                message: string;
+                                field: string | null;
+                                line: number | null;
+                            }[];
                             batch_id: number | null;
                             source_id: number | null;
                             work_id: number | null;
@@ -14401,6 +15671,12 @@ export interface operations {
                         case_revision: number;
                         status: string;
                         findings: string[];
+                        finding_details: {
+                            code: string;
+                            message: string;
+                            field: string | null;
+                            line: number | null;
+                        }[];
                         batch_id: number | null;
                         source_id: number | null;
                         work_id: number | null;
@@ -14473,6 +15749,12 @@ export interface operations {
                         case_revision: number;
                         status: string;
                         findings: string[];
+                        finding_details: {
+                            code: string;
+                            message: string;
+                            field: string | null;
+                            line: number | null;
+                        }[];
                         batch_id: number | null;
                         source_id: number | null;
                         work_id: number | null;
@@ -14706,6 +15988,12 @@ export interface operations {
                         unit: "major_currency";
                         status: string;
                         findings: string[];
+                        finding_details: {
+                            code: string;
+                            message: string;
+                            field: string | null;
+                            line: number | null;
+                        }[];
                         rows: {
                             account: string;
                             amount: string | null;
@@ -14958,6 +16246,12 @@ export interface operations {
                         case_revision: number;
                         status: string;
                         findings: string[];
+                        finding_details: {
+                            code: string;
+                            message: string;
+                            field: string | null;
+                            line: number | null;
+                        }[];
                         batch_id: number | null;
                         source_id: number | null;
                         work_id: number | null;
@@ -16153,6 +17447,8 @@ export interface operations {
                             severity: ("Critical" | "High" | "Medium" | "Low") | null;
                             owner_id: number;
                             next_action: string;
+                            opened_at: string | null;
+                            age_days: number | null;
                             acknowledged_at: string | null;
                             resolved_at: string | null;
                         }[];
@@ -16289,6 +17585,8 @@ export interface operations {
                             severity: ("Critical" | "High" | "Medium" | "Low") | null;
                             owner_id: number;
                             next_action: string;
+                            opened_at: string | null;
+                            age_days: number | null;
                             acknowledged_at: string | null;
                             resolved_at: string | null;
                         };
@@ -16302,6 +17600,32 @@ export interface operations {
                             can_resolve: boolean;
                             finding: string;
                         };
+                        blocked_milestone: {
+                            id: number;
+                            name: string;
+                            url: string;
+                        } | null;
+                        blocked_planned_milestone: {
+                            /** @enum {string} */
+                            stage: "uat" | "completion";
+                            name: string;
+                            policy_id: number;
+                        } | null;
+                        history: {
+                            id: number;
+                            status: string;
+                            /** Format: date-time */
+                            at: string;
+                        }[];
+                        messages_url: string;
+                        timeline: {
+                            id: number | null;
+                            /** @enum {string} */
+                            kind: "state" | "acknowledgement" | "request" | "reminder";
+                            status: string;
+                            /** Format: date-time */
+                            at: string;
+                        }[];
                         acknowledgement: {
                             status: string;
                             at: string | null;
@@ -16378,6 +17702,135 @@ export interface operations {
                     /** @enum {string} */
                     role: "QA" | "PM";
                     next_action: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        issue_id: number;
+                        state_id: number;
+                        case_revision: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    issues_milestone_options: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+                issue_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        case_revision: number;
+                        state_id: number;
+                        selected: {
+                            id: number;
+                            name: string;
+                            url: string;
+                        } | null;
+                        choices: {
+                            id: number;
+                            name: string;
+                            url: string;
+                        }[];
+                        has_more: boolean;
+                        planned_choices: {
+                            /** @enum {string} */
+                            stage: "uat" | "completion";
+                            name: string;
+                            policy_id: number;
+                        }[];
+                        selected_planned: {
+                            /** @enum {string} */
+                            stage: "uat" | "completion";
+                            name: string;
+                            policy_id: number;
+                        } | null;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    issues_link_milestone: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                case_id: string;
+                issue_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    case_revision: number;
+                    state_id: number;
+                    milestone_id: number | null;
+                    evidence_id: number;
+                    reason: string;
+                    planned_stage?: ("uat" | "completion") | null;
+                    planned_policy_id?: number | null;
                 };
             };
         };
@@ -16795,6 +18248,8 @@ export interface operations {
                             severity: ("Critical" | "High" | "Medium" | "Low") | null;
                             owner_id: number;
                             next_action: string;
+                            opened_at: string | null;
+                            age_days: number | null;
                             acknowledged_at: string | null;
                             resolved_at: string | null;
                         };
@@ -16810,6 +18265,17 @@ export interface operations {
                         };
                         source_id: number;
                         can_request_update: boolean;
+                        blocked_milestone: {
+                            id: number;
+                            name: string;
+                            url: string;
+                        } | null;
+                        blocked_planned_milestone: {
+                            /** @enum {string} */
+                            stage: "uat" | "completion";
+                            name: string;
+                            policy_id: number;
+                        } | null;
                         response_task: {
                             id: number;
                             revision: number;
@@ -16929,7 +18395,9 @@ export interface operations {
     };
     bid_responses_answers: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+            };
             header?: never;
             path: {
                 work_id: number;
@@ -16962,11 +18430,39 @@ export interface operations {
                             review_verdict: ("accept" | "edit" | "replace" | "undo") | null;
                             can_review: boolean;
                             can_undo: boolean;
+                            position: number;
+                            source: {
+                                id: number;
+                                kind: string;
+                                version: number;
+                                reference: string;
+                            } | null;
+                            citation: {
+                                wording: string;
+                                page: number | null;
+                                evidence_id: number;
+                            } | null;
                         }[];
                         prior_options: {
                             token: string;
                             label: string;
                         }[];
+                        next_page: number | null;
+                        response_review: {
+                            response_id: number;
+                            role: string;
+                            verdict: string;
+                            reason: string;
+                            /** Format: date-time */
+                            reviewed_at: string;
+                        } | null;
+                        counts: {
+                            total: number;
+                            visible: number;
+                            answered: number;
+                            clarification: number;
+                            reviewed: number;
+                        };
                     };
                 };
             };
@@ -17075,6 +18571,139 @@ export interface operations {
             };
         };
     };
+    bid_requirements_clarifications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            id: number;
+                            key: string;
+                            /** @enum {string} */
+                            kind: "question" | "reply";
+                            question_id: number | null;
+                            text: string;
+                            /** Format: date-time */
+                            at: string;
+                            evidence_id: number;
+                        }[];
+                        has_more: boolean;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    bid_requirements_capture: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                work_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    expected_revision: number;
+                    case_revision: number;
+                    /** @constant */
+                    action: "cite";
+                    key: string;
+                    /** Format: uuid */
+                    operation_key: string;
+                    text: string;
+                    page: number | null;
+                    /** @constant */
+                    checked: true;
+                } | {
+                    expected_revision: number;
+                    case_revision: number;
+                    /** @enum {string} */
+                    action: "record_question" | "record_reply";
+                    key: string;
+                    /** Format: uuid */
+                    operation_key: string;
+                    text: string;
+                    /** Format: date-time */
+                    observed_at: string;
+                    evidence_id: number;
+                    question_id: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        work_id: number;
+                        /** @enum {string} */
+                        state: "ready" | "waiting" | "action_needed" | "owner_needed" | "setup_needed" | "verified" | "cancelled" | "awaiting_reconciliation" | "followup_needed" | "processing" | "effect_uncertain";
+                        revision: number;
+                        record_id: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     bid_responses_outcomes: {
         parameters: {
             query?: {
@@ -17131,6 +18760,18 @@ export interface operations {
                                 award_basis: string | null;
                             } | null;
                         } | null;
+                        roles: string[];
+                        loss_catalog_id: number | null;
+                        loss_reasons: {
+                            key: string;
+                            label: string;
+                        }[];
+                        debriefs: {
+                            version_id: number;
+                            reference: string;
+                            /** Format: date-time */
+                            at: string;
+                        }[];
                         handoff: {
                             id: number;
                             outcome_id: number;
@@ -17195,7 +18836,10 @@ export interface operations {
                         }[];
                         approvals: {
                             label: string;
+                            role: string;
                             status: string;
+                            /** @enum {string} */
+                            status_code: "pending" | "approved" | "returned" | "rejected" | "withdrawn" | "recorded" | "review_needed";
                             recorded_at: string | null;
                         }[];
                         costing_note: string;
@@ -17478,6 +19122,11 @@ export interface operations {
                             sha256: string;
                             size: number;
                             findings: string[];
+                            checks: {
+                                /** @enum {string} */
+                                code: "file_format_mismatch" | "file_count_mismatch" | "file_size_exceeded";
+                                message: string;
+                            }[];
                         } | null;
                         route: string;
                         job_id: number | null;
@@ -17489,6 +19138,10 @@ export interface operations {
                             receipt_ids: number[];
                             late: boolean;
                         } | null;
+                        sections: {
+                            name: string;
+                        }[];
+                        sample: boolean;
                         approval_recorded: boolean;
                     };
                 };
@@ -18258,7 +19911,11 @@ export interface operations {
                             /** @enum {string} */
                             verdict: "approve" | "reject";
                             reason: string | null;
+                            reviewer: string;
+                            /** Format: date-time */
+                            at: string;
                         } | null;
+                        review_hold_code: "independent_reviewer_required" | null;
                         review_options: ("approve" | "reject")[];
                         can_observe: boolean;
                         has_attachment: boolean;
@@ -18618,6 +20275,9 @@ export interface operations {
                             kind: "decision" | "action";
                             quote: string;
                             evidence_id: number;
+                            proposed_title: string;
+                            proposed_owner_id: number | null;
+                            proposed_due_at: string | null;
                         }[];
                         document: {
                             version_id: number;
@@ -18773,6 +20433,9 @@ export interface operations {
                                 /** @enum {string} */
                                 state: "pending" | "leased" | "unknown" | "missing" | "confirmed" | "held";
                             } | null;
+                            group: string;
+                            source_id: number | null;
+                            source_kind: string | null;
                             actions: ("lookup" | "retry")[];
                             receipt: {
                                 id: number;
@@ -19029,6 +20692,22 @@ export interface operations {
                         recorded_authorizations: number[];
                         outcome_id: number | null;
                         recorded_outcomes: number[];
+                        outcome_impact: {
+                            customers_affected: number | null;
+                            side_effects: string | null;
+                        } | null;
+                        authorization_history: {
+                            id: number;
+                            by: string;
+                            /** Format: date-time */
+                            at: string;
+                        }[];
+                        outcome_history: {
+                            id: number;
+                            by: string;
+                            /** Format: date-time */
+                            at: string;
+                        }[];
                         document_version_id: number | null;
                         review_verdicts: ("approve" | "return" | "reject")[];
                         receipt_ids: number[];
@@ -19103,6 +20782,8 @@ export interface operations {
                     note: string;
                     /** Format: date-time */
                     implemented_at: string;
+                    customers_affected?: number | null;
+                    side_effects?: string | null;
                 } | {
                     /** @constant */
                     action: "record_review";
@@ -19253,6 +20934,24 @@ export interface operations {
                         return_review_id: number | null;
                         can_correct: boolean;
                         document_version_id: number | null;
+                        return_note: string | null;
+                        preview: {
+                            id: number;
+                            title: string;
+                            number: number;
+                            sections: {
+                                /** @enum {string} */
+                                key: "dependencies" | "executive_summary" | "next_steps" | "risks" | "scope" | "status" | "timeline";
+                                text: string;
+                            }[];
+                        } | null;
+                        review_notes: {
+                            /** @enum {string} */
+                            section: "dependencies" | "executive_summary" | "next_steps" | "risks" | "scope" | "status" | "timeline";
+                            text: string;
+                            /** Format: date-time */
+                            recorded_at: string;
+                        }[];
                         review_verdicts: ("approve" | "return" | "reject")[];
                         recipients: {
                             name: string;
@@ -19425,6 +21124,18 @@ export interface operations {
                                 configuration: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
                             };
+                        };
+                        coverage: {
+                            /** @enum {string} */
+                            scope: "selected_records" | "approved_project_scope";
+                            /** Format: date-time */
+                            captured_at: string;
+                            projects: number;
+                            counts: {
+                                /** @enum {string} */
+                                domain: "meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations";
+                                count: number;
+                            }[];
                         };
                         editable_sections: ({
                             progress: {
@@ -19722,7 +21433,17 @@ export interface operations {
                             verdict: "approve" | "return" | "reject";
                             /** Format: date-time */
                             created_at: string;
+                            note: string | null;
                         }[];
+                        communication: {
+                            title: string;
+                            version: number;
+                            sections: {
+                                heading: string;
+                                text: string;
+                            }[];
+                            recipients: string[] | null;
+                        } | null;
                         receipts: {
                             id: number;
                             publication_id: number;
@@ -19890,6 +21611,21 @@ export interface operations {
                             id: number;
                             version: number;
                             kind: string;
+                        }[];
+                        project: {
+                            label: string;
+                            url: string;
+                        };
+                        planning: {
+                            label: string;
+                            url: string;
+                        } | null;
+                        packet_sources: {
+                            /** @enum {string} */
+                            key: "scope" | "price" | "plan";
+                            label: string;
+                            evidence_id: number | null;
+                            url: string | null;
                         }[];
                         details: {
                             id: number;
@@ -20104,6 +21840,12 @@ export interface operations {
                             owner: "Engineering" | "Infrastructure";
                             source_id: number;
                             verification_id: number;
+                        }[];
+                        criterion_results: {
+                            owner: ("Engineering" | "Infrastructure") | null;
+                            key: string;
+                            /** @enum {string} */
+                            status: "met" | "not_met" | "unknown";
                         }[];
                         findings: string[];
                         due_at: string | null;
@@ -21139,6 +22881,9 @@ export interface operations {
                     loss_reason_key?: string;
                     loss_catalog_id?: number;
                     debrief_version_id?: number;
+                    upload_id?: number;
+                    /** @constant */
+                    checked?: true;
                 };
             };
         };
@@ -21220,11 +22965,27 @@ export interface operations {
                             currency: string;
                             recipient: string | null;
                             preparation_id: number;
+                            basis: string;
+                            prepared_by: string;
+                            /** Format: date-time */
+                            prepared_at: string;
                             sources: {
                                 id: number;
                                 version: number;
                                 kind: string;
                                 sha256: string;
+                            }[];
+                        } | null;
+                        decision_hold_code: ("task_closed" | "claimed_by_other" | "review_needs_update" | "not_assigned" | "decision_unavailable") | null;
+                        review_stations_url: string | null;
+                        changes_from_previous: {
+                            invoice_id: number;
+                            version: number;
+                            changes: {
+                                /** @enum {string} */
+                                field: "reference" | "amount" | "currency" | "amount_basis" | "due_date";
+                                before: string | null;
+                                after: string | null;
                             }[];
                         } | null;
                         review_evidence: {
@@ -21528,7 +23289,23 @@ export interface operations {
                             basis: string;
                             owed: string | null;
                             overdue: string | null;
+                            known_owed: string | null;
+                            unknown_owed_count: number;
                         }[];
+                        received_this_month: {
+                            month: string;
+                            /** @enum {string} */
+                            scope: "workspaces_in_results";
+                            workspaces_read: number;
+                            workspaces_unknown: number;
+                            last_received_at: string | null;
+                            last_verified_at: string | null;
+                            totals: {
+                                currency: string;
+                                basis: string;
+                                amount: string;
+                            }[];
+                        };
                         cursor: string | null;
                         limited: boolean;
                     };
@@ -21700,11 +23477,20 @@ export interface operations {
                             phase: string | null;
                             reviews: number | null;
                             exceptions: number | null;
+                            next_milestone: {
+                                name: string;
+                                due: string | null;
+                            } | null;
                             django_url: string;
                         }[];
                         next_cursor: string | null;
                         /** Format: date-time */
                         as_of: string;
+                        totals: {
+                            all: number;
+                            active: number;
+                            closed: number;
+                        };
                     };
                 };
             };
@@ -21847,6 +23633,8 @@ export interface operations {
                             amount: string | null;
                             currency: string;
                             due_date: string | null;
+                            milestone_id: number | null;
+                            stage_position: number | null;
                             completed_at: string | null;
                             contract_stage: boolean;
                             missing_reason: string | null;
@@ -21868,6 +23656,7 @@ export interface operations {
                                 at: string | null;
                                 kind: string | null;
                                 record_id: number | null;
+                                reference: string | null;
                                 api_url: string | null;
                             }[];
                             changes: {
@@ -22003,6 +23792,7 @@ export interface operations {
                             outcome: "signed" | "changes_requested" | "declined";
                             /** Format: date-time */
                             responded_at: string;
+                            received_via: ("email" | "whatsapp" | "call" | "portal" | "in_person" | "other") | null;
                         } | null;
                         witness_files: {
                             id: number;
@@ -22104,6 +23894,8 @@ export interface operations {
                     operation_key: string;
                     predecessor_id: number | null;
                     party_ref: string | null;
+                    /** @enum {string} */
+                    received_via?: "email" | "whatsapp" | "call" | "portal" | "in_person" | "other";
                 } | {
                     /** @constant */
                     action: "signatures";
@@ -24645,6 +26437,11 @@ export interface operations {
                         suggested_message: string;
                         mode: ("manual_evidence" | "synthetic_mailbox") | null;
                         hold: string | null;
+                        timing: {
+                            minimum_days_between: number;
+                            earliest_date: string | null;
+                            awaiting_receipt: boolean;
+                        } | null;
                         can_prepare: boolean;
                         can_schedule: boolean;
                         can_confirm: boolean;
@@ -25257,7 +27054,7 @@ export interface operations {
                 "multipart/form-data": {
                     revision: number;
                     customer: string;
-                    amount?: string;
+                    amount: string;
                     currency: string;
                     /** @enum {string} */
                     amount_basis: "gross_including_tax" | "net_excluding_tax" | "unknown";
@@ -25766,6 +27563,12 @@ export interface operations {
                         provider_options: {
                             provider: string;
                             formats: ("json" | "csv" | "xlsx")[];
+                            templates: {
+                                /** @enum {string} */
+                                format: "json" | "csv" | "xlsx";
+                                sheet: string | null;
+                                download_url: string;
+                            }[];
                         }[];
                         inputs: {
                             id: number;
@@ -25778,6 +27581,10 @@ export interface operations {
                             /** Format: date-time */
                             created_at: string;
                             replaces_input_id: number | null;
+                            findings: {
+                                code: string;
+                                message: string;
+                            }[];
                         }[];
                         next_page: number | null;
                     };
@@ -25853,6 +27660,10 @@ export interface operations {
                             /** Format: date-time */
                             created_at: string;
                             replaces_input_id: number | null;
+                            findings: {
+                                code: string;
+                                message: string;
+                            }[];
                         };
                     };
                 };
@@ -25867,6 +27678,50 @@ export interface operations {
             415: components["responses"]["Http415"];
             422: components["responses"]["Http422"];
             429: components["responses"]["Http429"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    payroll_sources_template: {
+        parameters: {
+            query: {
+                provider: string;
+                format: "json" | "csv" | "xlsx";
+            };
+            header?: never;
+            path: {
+                case_id: string;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
             500: components["responses"]["Http500"];
             503: components["responses"]["Http503"];
             /** @description Request or domain error */
@@ -26218,6 +28073,7 @@ export interface operations {
         parameters: {
             query?: {
                 page?: number;
+                version_id?: number;
             };
             header?: never;
             path: {
@@ -26280,6 +28136,7 @@ export interface operations {
                             };
                         }[];
                         next_page: number | null;
+                        current: boolean;
                     };
                 };
             };
@@ -26514,6 +28371,7 @@ export interface operations {
                             recorded_at: string;
                         }[];
                         next_page: number | null;
+                        can_attach_pdf: boolean;
                     };
                 };
             };
@@ -26558,8 +28416,19 @@ export interface operations {
                     operation: "assign" | "reassign" | "cancel" | "reopen" | "start" | "complete";
                     owner?: number | null;
                     due_at?: string | null;
-                    evidence: number;
                     reason: string;
+                    evidence: number;
+                } | {
+                    revision: number;
+                    action_revision: number;
+                    /** @enum {string} */
+                    operation: "assign" | "reassign" | "cancel" | "reopen" | "start" | "complete";
+                    owner?: number | null;
+                    due_at?: string | null;
+                    reason: string;
+                    upload_id: number;
+                    /** @constant */
+                    checked: true;
                 };
             };
         };
@@ -26736,6 +28605,7 @@ export interface operations {
         parameters: {
             query?: {
                 page?: number;
+                name?: string;
             };
             header?: never;
             path: {
@@ -26758,6 +28628,9 @@ export interface operations {
                             label: string;
                         }[];
                         next_page: number | null;
+                        can_complete: boolean;
+                        can_attach_pdf: boolean;
+                        hold: ("baseline_required" | "proof_required" | "name_in_use") | null;
                     };
                 };
             };
@@ -26796,8 +28669,14 @@ export interface operations {
             content: {
                 "application/json": {
                     revision: number;
-                    evidence_id: number;
                     name: string;
+                    evidence_id: number;
+                } | {
+                    revision: number;
+                    name: string;
+                    upload_id: number;
+                    /** @constant */
+                    checked: true;
                 };
             };
         };
@@ -27846,6 +29725,19 @@ export interface operations {
                             references: number[];
                             finding: string | null;
                         }[];
+                        debt: {
+                            items: {
+                                reference: string;
+                                currency: string;
+                                basis: string;
+                                owed: string | null;
+                                api_url: string;
+                            }[];
+                            limited: boolean;
+                            /** Format: date */
+                            as_of: string;
+                        } | null;
+                        retrospective_url: string | null;
                     };
                 };
             };
@@ -27856,6 +29748,171 @@ export interface operations {
             405: components["responses"]["Http405"];
             409: components["responses"]["Http409"];
             422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delivery_overview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: date-time */
+                        as_of: string;
+                        lines: {
+                            /** @enum {string} */
+                            key: "delivery-release/v1" | "delivery-go-live/v1" | "delivery-hypercare/v1" | "delivery-handover/v1" | "delivery-archive/v1" | "delivery-closure/v1";
+                            title: string;
+                            work_id: number | null;
+                            state: ("ready" | "waiting" | "action_needed" | "owner_needed" | "setup_needed" | "verified" | "cancelled" | "awaiting_reconciliation" | "followup_needed" | "processing" | "effect_uncertain") | null;
+                            reference: string | null;
+                            updated_at: string | null;
+                            work_url: string | null;
+                            /** @enum {string} */
+                            gate_state: "ready" | "waiting" | "action_needed" | "owner_needed" | "setup_needed" | "verified" | "cancelled" | "awaiting_reconciliation" | "followup_needed" | "processing" | "effect_uncertain" | "not_started";
+                            gate_url: string | null;
+                        }[];
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    closure_finance_options: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+                dossier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        revision: number;
+                        confirmation_id: number | null;
+                        finding: string | null;
+                        milestones: {
+                            milestone_id: number;
+                            receipt_id: number;
+                        }[];
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    closure_finance_confirmation: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                case_id: string;
+                dossier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    revision: number;
+                    milestone_ids: number[];
+                    /** @constant */
+                    inventory_complete: true;
+                    evidence_id: number;
+                    note: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        confirmation_id: number;
+                        revision: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
             500: components["responses"]["Http500"];
             503: components["responses"]["Http503"];
             /** @description Request or domain error */
@@ -28386,10 +30443,12 @@ export interface operations {
                         case_id: string;
                         tab: string;
                         sections: {
+                            key: string;
                             title: string;
                             items: {
                                 title: string;
                                 state: string;
+                                state_code: string;
                                 detail: string | null;
                                 at: string | null;
                                 due: string | null;
@@ -28398,11 +30457,25 @@ export interface operations {
                                 django_url: string;
                                 record_id: number;
                                 api_url: string | null;
+                                reference: string | null;
+                                age_days: number | null;
+                                origin_meeting: {
+                                    id: number;
+                                    reference: string;
+                                    /** Format: date-time */
+                                    at: string;
+                                } | null;
                             }[];
                             page: number;
                             has_more: boolean;
                             django_url: string;
                             api_url: string | null;
+                            total: number;
+                            counts: {
+                                overdue: number;
+                                unassigned: number;
+                                total: number;
+                            } | null;
                         }[];
                         /** Format: date-time */
                         as_of: string;
@@ -28464,6 +30537,7 @@ export interface operations {
                             label: string;
                             project_count: number;
                             contacts_needed: number;
+                            api_url: string;
                         }[];
                         next_group_page: number | null;
                     };
@@ -28520,6 +30594,18 @@ export interface operations {
                             billing: "recorded" | "needed" | "unknown";
                         }[];
                         next_page: number | null;
+                        debt: {
+                            /** Format: date */
+                            as_of: string;
+                            workspace_count: number;
+                            limited: boolean;
+                            totals: {
+                                currency: string;
+                                basis: string;
+                                known_owed: string | null;
+                                unknown_owed_count: number;
+                            }[];
+                        } | null;
                     };
                 };
             };
@@ -29278,10 +31364,16 @@ export interface operations {
                             valid_from: string;
                             /** Format: date-time */
                             valid_until: string;
+                            principal: string | null;
+                            delegate: string | null;
+                            reason: string | null;
+                            /** @enum {string} */
+                            status: "scheduled" | "current_window" | "expired";
                         }[];
                         /** Format: date-time */
                         as_of: string;
                         django_url: string;
+                        configuration_id: number | null;
                     };
                 };
             };
@@ -29388,6 +31480,7 @@ export interface operations {
                     /** Format: date-time */
                     effective: string;
                     evidence: number;
+                    reason?: string;
                 };
             };
         };
@@ -29452,6 +31545,7 @@ export interface operations {
                         items: {
                             label: string;
                             area: string;
+                            component: string;
                             status: string;
                             version: number | null;
                             value: string | null;
@@ -29469,6 +31563,64 @@ export interface operations {
             405: components["responses"]["Http405"];
             409: components["responses"]["Http409"];
             422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    setup_decision_proof: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRFToken": string;
+            };
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    revision: number;
+                    upload_id: number;
+                    /** @constant */
+                    checked: true;
+                    decision_reference: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: number;
+                        revision: number;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            413: components["responses"]["Http413"];
+            415: components["responses"]["Http415"];
+            422: components["responses"]["Http422"];
+            429: components["responses"]["Http429"];
             500: components["responses"]["Http500"];
             503: components["responses"]["Http503"];
             /** @description Request or domain error */
@@ -31498,6 +33650,69 @@ export interface operations {
             };
         };
     };
+    setup_scope_options: {
+        parameters: {
+            query?: {
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        organisations: string[];
+                        workspaces: {
+                            /** Format: uuid */
+                            case_id: string;
+                            organisation: string;
+                            name: string;
+                            revision: number;
+                            can_configure: boolean;
+                            rules_url: string;
+                            policy_scopes_url: string;
+                        }[];
+                        next_page: number | null;
+                        organisation_policies: {
+                            organisation: string;
+                            component: string;
+                            /** Format: uuid */
+                            case_id: string;
+                            configuration_id: number;
+                            scope_id: number;
+                            policy_scopes_url: string;
+                        }[];
+                        organisation_policies_limited: boolean;
+                    };
+                };
+            };
+            400: components["responses"]["Http400"];
+            401: components["responses"]["Http401"];
+            403: components["responses"]["Http403"];
+            404: components["responses"]["Http404"];
+            405: components["responses"]["Http405"];
+            409: components["responses"]["Http409"];
+            422: components["responses"]["Http422"];
+            500: components["responses"]["Http500"];
+            503: components["responses"]["Http503"];
+            /** @description Request or domain error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     roles_built_ins: {
         parameters: {
             query?: never;
@@ -32371,6 +34586,8 @@ export interface operations {
                             /** Format: date-time */
                             updated_at: string;
                             django_url: string;
+                            title: string;
+                            last_status: string | null;
                         }[];
                         /** Format: date-time */
                         as_of: string;
@@ -32439,6 +34656,8 @@ export interface operations {
                         /** Format: date-time */
                         updated_at: string;
                         django_url: string;
+                        title: string;
+                        last_status: string | null;
                     };
                 };
             };
@@ -32494,6 +34713,8 @@ export interface operations {
                         /** Format: date-time */
                         updated_at: string;
                         django_url: string;
+                        title: string;
+                        last_status: string | null;
                         messages: {
                             /** Format: uuid */
                             id: string;
@@ -32506,6 +34727,9 @@ export interface operations {
                             }[];
                             /** Format: date-time */
                             at: string;
+                            started_at: string | null;
+                            finished_at: string | null;
+                            image_upload_ids: number[];
                             started_work_id: number | null;
                             draft_url: string | null;
                             transfer_url: string | null;
@@ -32557,6 +34781,7 @@ export interface operations {
                     /** Format: uuid */
                     idempotency_key: string;
                     source_keys?: string[];
+                    image_upload_ids?: number[];
                 };
             };
         };
@@ -32635,6 +34860,8 @@ export interface operations {
                         /** Format: date-time */
                         updated_at: string;
                         django_url: string;
+                        title: string;
+                        last_status: string | null;
                     };
                 };
             };
@@ -33712,7 +35939,9 @@ export interface operations {
     };
     notifications_inbox: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -33735,9 +35964,25 @@ export interface operations {
                             group: "action" | "update";
                             read: boolean;
                             django_url: string;
+                            at: string | null;
+                            agent: string | null;
+                            target_kind: string | null;
+                            api_url: string | null;
                         }[];
                         /** Format: date-time */
                         as_of: string;
+                        page: number;
+                        next_page: number | null;
+                        unread: number;
+                        daily_summary: {
+                            /** Format: date */
+                            date: string;
+                            actions_open: number;
+                            unread_updates_today: number;
+                            unread_without_timestamp: number;
+                            /** @enum {string} */
+                            scope: "current_inbox";
+                        };
                     };
                 };
             };

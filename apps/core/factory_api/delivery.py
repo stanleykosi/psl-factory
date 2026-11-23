@@ -1,23 +1,32 @@
 """Exact Planning exit, client sign-off and Support receipt actions."""
+import json
 from time import monotonic
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
+from apps.core.design_views import discoverable_work
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
+from apps.core.services import add_evidence, lock_case
 from apps.identity.services import active_case_grants, require
+from apps.identity.factory_access import project_actions
 from apps.pmo import delivery, delivery_ui, gates, go_live_attestations, phase_evidence
 from apps.pmo.models import DeliverySource, GateRecord, MeetingVersion
+from apps.pmo.services import GO_LIVE_PDF
 from apps.workflows import factory_delivery, factory_go_live, factory_handover
 from apps.workflows.factory_progress import wake_waiting
+from apps.workflows.factory_execution import can_control
+from apps.workflows.factory_definitions import DEFINITIONS
 
 from .commands import require_line
 from .http import BOOLEAN, DATETIME, ID, TEXT, array, choice, endpoint, nullable, obj
 from .reviews import VERDICT, VERSIONS
-from .work import WORK_RESULT, result
+from .work import STATE, WORK_RESULT, result, state
+from .work_proofs import owned_pdf
 
 
 PIN = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
@@ -25,6 +34,37 @@ PROOF = obj({'id': ID, 'version': ID, 'kind': TEXT})
 NOTE = {**TEXT, 'maxLength': 4000}
 RESPONSE = obj({**WORK_RESULT['properties'], 'record_id': ID})
 WORKAROUND = {'return_id': ID, 'issue_state_id': ID, 'response_id': ID, 'review_id': ID}
+DELIVERY_LINES = ('delivery-release/v1', 'delivery-go-live/v1', 'delivery-hypercare/v1',
+                  'delivery-handover/v1', 'delivery-archive/v1', 'delivery-closure/v1')
+DELIVERY_PANELS = ('release-register', 'go-live-signoff', 'stability', 'support-publication', 'archive-files', 'tracking')
+
+
+@endpoint(response=obj({'as_of': DATETIME, 'lines': array(obj({
+    'key': choice(*DELIVERY_LINES), 'title': TEXT, 'work_id': nullable(ID), 'state': nullable(STATE),
+    'reference': nullable(TEXT), 'updated_at': nullable(DATETIME), 'work_url': nullable(TEXT),
+    'gate_state': choice(*STATE['enum'], 'not_started'), 'gate_url': nullable(TEXT),
+}))}), summary='Read the six Delivery lines and their latest visible work in this project')
+def overview(request, case_id):
+    from django.utils import timezone
+    from .workspaces import project_for
+
+    actor = request.user
+    case = project_for(actor, case_id)
+    if 'delivery.read' not in project_actions(actor, case):
+        raise PermissionDenied
+    latest = {work.definition: work for work in discoverable_work(actor, case_id=case.pk).filter(
+        definition__in=DELIVERY_LINES).order_by('definition', '-updated_at', '-pk').distinct('definition')}
+    lines = []
+    for key, panel in zip(DELIVERY_LINES, DELIVERY_PANELS):
+        work = latest.get(key)
+        lines.append({'key': key, 'title': DEFINITIONS[key]['title'], 'work_id': work.pk if work else None,
+                      'state': state(work) if work else None,
+                      'reference': (work.request.get('reference') or None) if work else None,
+                      'updated_at': work.updated_at if work else None,
+                      'gate_state': state(work) if work else 'not_started',
+                      'gate_url': f'/api/v1/work/{work.pk}/{panel}' if work else None,
+                      'work_url': f'/api/v1/work/{work.pk}' if work else None})
+    return {'as_of': timezone.now(), 'lines': lines}
 
 
 def proof_rows(rows):
@@ -39,27 +79,36 @@ def recorded(work, row):
 @endpoint(response=obj({
     **VERSIONS, 'packet': nullable(PIN), 'verdicts': array(VERDICT), 'proofs': array(PROOF, limit=50),
     'blockers': array(obj({'id': ID, 'reference': TEXT})), 'checklist': array(obj({'name': TEXT, 'status': TEXT})),
-    'workaround': nullable(obj(WORKAROUND)),
+    'workaround': nullable(obj(WORKAROUND)), 'can_approve_directly': BOOLEAN,
+    'latest_decision': nullable(obj({'id': ID, 'verdict': VERDICT, 'role': TEXT, 'by': TEXT, 'at': DATETIME,
+                                     'direct': BOOLEAN})),
 }), summary='Read current Planning exit checks, decision fingerprint and allowed outcomes')
 @read_observation
 def planning_exit(http, work_id):
     work = require_line(http.user, work_id, factory_delivery.DEFINITION)
     with limit_queries(900, deadline=monotonic() + 8):
         panel = factory_delivery.projection(http.user, work, decision_evidence_limit=50, decision_only=True)
+        prior = panel['last_decision']
+        decision = {'id': prior.pk, 'verdict': prior.data['verdict'], 'role': 'PMO Lead',
+                    'by': prior.actor.get_full_name() or prior.actor.get_username(), 'at': prior.created_at,
+                    'direct': bool(prior.data.get('direct_pmo_approval'))} if prior else None
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'packet': panel['decision_packet'],
             'verdicts': panel['allowed_verdicts'], 'proofs': proof_rows(panel['decision_evidence']),
+            'latest_decision': decision,
+            'can_approve_directly': 'approve' in panel['allowed_verdicts'] and delivery.can_approve_planning_directly(http.user, work.case),
             'workaround': panel['workaround_option'],
             'blockers': [{'id': issue.pk, 'reference': issue.reference} for issue in panel['return_issues']],
             'checklist': [{'name': key, 'status': value['status']} for key, value in panel['checks'].items()]}
 
 
 @endpoint(method='POST', request=obj({**VERSIONS, 'packet': PIN, 'verdict': VERDICT,
-                                     'evidence_id': ID, 'note': NOTE, 'issue_id': nullable(ID)}, optional=('issue_id',)),
+                                     'evidence_id': nullable(ID), 'note': {'type': 'string', 'maxLength': 4000},
+                                     'issue_id': nullable(ID)}, optional=('issue_id','evidence_id','note')),
           response=RESPONSE, summary='Record a Planning exit decision against the current reviewed delivery packet')
 def decide_planning_exit(http, work_id, *, body):
     work = require_line(http.user, work_id, factory_delivery.DEFINITION)
     record = factory_delivery.decide(http.user, work.pk, body['expected_revision'], body['verdict'],
-                                     body['evidence_id'], body['note'], body['case_revision'], body['packet'],
+                                     body.get('evidence_id'), body.get('note', ''), body['case_revision'], body['packet'],
                                      issue_id=body.get('issue_id'))
     return recorded(work, record)
 
@@ -137,8 +186,9 @@ RELEASE_COMMAND = {'oneOf': [
                                                'meeting_version_id': nullable(ID)}),
     release_command_schema('record_glpi_request', {'reference': REFERENCE, 'evidence_id': ID, 'note': NOTE}),
     release_command_schema('prepare_readiness', {}),
-    release_command_schema('observe_release', {'readiness_id': nullable(ID), 'released_at': DATETIME, 'reference': REFERENCE,
-        'evidence_id': ID, 'note': NOTE, 'environment': nullable({**TEXT, 'maxLength': 160}), 'private_log_id': nullable(ID)}),
+    *(release_command_schema('observe_release', {'readiness_id': nullable(ID), 'released_at': DATETIME,
+        'reference': REFERENCE, **proof, 'note': NOTE, 'environment': nullable({**TEXT, 'maxLength': 160}),
+        'private_log_id': nullable(ID)}) for proof in ({'evidence_id': ID}, {'upload_id': ID, 'checked': {'const': True}})),
 ]}
 
 
@@ -182,8 +232,15 @@ def release_action(request, work_id, *, body):
     elif action == 'prepare_readiness':
         row = delivery.prepare_readiness(actor, work.case_id, dossier.pk, expected)
     else:
+        evidence_id = body.get('evidence_id')
+        if 'upload_id' in body:
+            proof = owned_pdf(actor, work.case, body['upload_id'])
+            secured = add_evidence(actor, work.case_id, 'release_log',
+                json.dumps({**proof, 'dossier_id': dossier.pk, 'reference': body['reference']}, sort_keys=True),
+                f'release-log-copy/v1:{dossier.pk}', expected)
+            evidence_id, expected = secured.pk, expected + 1
         row = delivery.capture_release(actor, work.case_id, dossier.pk, body['readiness_id'], body['released_at'],
-            body['reference'], body['evidence_id'], body['note'], expected, deployment_environment=body['environment'],
+            body['reference'], evidence_id, body['note'], expected, deployment_environment=body['environment'],
             private_log_id=body['private_log_id'])
     wake_waiting(work.pk)
     return recorded(work, row)
@@ -224,10 +281,34 @@ def go_live(http, work_id):
     work = require_line(http.user, work_id, factory_go_live.DEFINITION)
     dossier, version, receipts = current_signoff(http.user, work)
     prior = factory_go_live.native.latest_go_live(dossier, False)
-    proofs = public_evidence(work.case.evidence.filter(kind='signature')).only('kind', 'version').order_by('-pk')[:100]
+    sources = ~Q(source__startswith=GO_LIVE_PDF) | Q(source__startswith=f'{GO_LIVE_PDF}{dossier.pk}:')
+    proofs = public_evidence(work.case.evidence.filter(sources, kind='signature')).only('kind', 'version').order_by('-pk')[:100]
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'version_id': version.pk,
             'receipts': [{'id': row.pk, 'recorded_at': row.created_at} for row in receipts],
             'prior_acceptance_id': prior.pk if prior else None, 'proofs': proof_rows(proofs)}
+
+
+@endpoint(method='POST', request=obj({'case_revision': VERSIONS['case_revision'], 'receipt_id': ID,
+    'upload_id': ID, 'role': choice('PM', 'Client'), 'checked': {'const': True}}),
+    response=obj({'evidence_id': ID, 'case_revision': VERSIONS['case_revision']}), status=201,
+    summary='Retain a checked signed PDF copy for the exact go-live receipt and independently attested signer')
+@transaction.atomic
+def go_live_proof(request, work_id, *, body):
+    actor = request.user
+    work = require_line(actor, work_id, factory_go_live.DEFINITION)
+    case = lock_case(actor, work.case_id, 'evidence.add')
+    work.case = case
+    dossier, version, receipts = current_signoff(actor, work)
+    if body['receipt_id'] not in {receipt.pk for receipt in receipts}:
+        raise ValidationError('Choose the exact delivered go-live report and receipt.')
+    proof = owned_pdf(actor, case, body['upload_id'])
+    source = f"{GO_LIVE_PDF}{dossier.pk}:{body['receipt_id']}:{body['role']}"
+    text = json.dumps({**proof, 'version_id': version.pk}, sort_keys=True)
+    row = case.evidence.filter(kind='signature', source=source, created_by=actor, body=text).first()
+    if not row:
+        row = add_evidence(actor, case.pk, 'signature', text, source, body['case_revision'])
+        case.refresh_from_db(fields=['revision'])
+    return {'evidence_id': row.pk, 'case_revision': case.revision}
 
 
 @endpoint(method='POST', request=obj({
@@ -253,8 +334,34 @@ def record_go_live(http, work_id, *, body):
 HANDOVER_STATUS = choice('received', 'gaps')
 
 
+@endpoint(response=obj({**VERSIONS, 'can_publish': BOOLEAN, 'version_id': nullable(ID)}),
+          summary='Check whether this person can publish the approved document to Support')
+def support_publication(request, work_id):
+    work = require_line(request.user, work_id, factory_handover.DEFINITION)
+    version_id = None
+    if can_control(request.user, work):
+        try:
+            version, _ = factory_handover.publication_candidate(work)
+            version_id = version.pk
+        except (ValidationError, PermissionDenied):
+            pass
+    return {'expected_revision': work.revision, 'case_revision': work.case.revision,
+            'can_publish': version_id is not None, 'version_id': version_id}
+
+
+@endpoint(method='POST', request=obj({**VERSIONS, 'version_id': ID}), response=RESPONSE, status=202,
+          summary='Queue publication of the exact approved handover to the configured Support audience')
+def publish_support(request, work_id, *, body):
+    work = require_line(request.user, work_id, factory_handover.DEFINITION)
+    publication = factory_handover.publish(request.user, work.pk, body['expected_revision'], body['case_revision'],
+                                           body['version_id'])
+    return recorded(work, publication)
+
+
 @endpoint(response=obj({
     **VERSIONS, 'receipts': array(obj({'id': ID, 'can_acknowledge': BOOLEAN, 'status': nullable(HANDOVER_STATUS)})),
+    'document': nullable(obj({'id': ID, 'title': TEXT, 'version': ID, 'sections': array(
+        obj({'heading': TEXT, 'text': {'type': 'string'}})), 'supporting_records': array(PROOF, limit=2)})),
     'proofs': array(PROOF, limit=50),
 }), summary='Read your exact Support handover receipts and acknowledgement controls')
 def support_receipt(http, work_id):
@@ -265,11 +372,25 @@ def support_receipt(http, work_id):
         version = factory_handover.document(work)
         _, own = factory_handover.receipt_state(work, version, recipient=actor)
         can_ack = bool(own and factory_handover.can_acknowledge(actor, work, version))
+    document = None
+    if own:
+        require(actor, work.case, 'document.receive:internal')
+        grants = {action for _, action in active_case_grants(actor, [work.case_id])}
+        supporting = []
+        if {'case.read', 'document.read'} <= grants:
+            binding = version.deliverydocumentbinding
+            supporting = proof_rows(public_evidence(work.case.evidence.filter(pk__in=[
+                binding.data.get('support_document'), binding.data.get('escalation_document')
+            ])).only('kind', 'version').order_by('pk'))
+        document = {'id': version.pk, 'title': version.document.title, 'version': version.number,
+                    'supporting_records': supporting,
+                    'sections': [{'heading': part['heading'], 'text': part['text']}
+                                 for part in own[0]['receipt'].payload['sections']]}
     records = public_evidence(work.case.evidence.all()).only('kind', 'version').order_by('-pk')[:50]
     return {'expected_revision': work.revision, 'case_revision': work.case.revision,
             'receipts': [{'id': row['receipt'].pk, 'can_acknowledge': can_ack,
                           'status': row['ack'].data['status'] if row['ack'] else None} for row in own],
-            'proofs': proof_rows(records) if can_ack else []}
+            'document': document, 'proofs': proof_rows(records) if can_ack else []}
 
 
 @endpoint(method='POST', request=obj({**VERSIONS, 'receipt_id': ID, 'evidence_id': ID, 'status': HANDOVER_STATUS, 'note': NOTE}),

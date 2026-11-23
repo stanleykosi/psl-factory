@@ -13,7 +13,7 @@ DEPARTMENT_LEADS = ('pmo-lead', 'finance-lead')
 LEAD_ACTIONS = {
     'pmo-lead': frozenset({
         'case.read', 'factory.read', 'factory.start', 'agent.extract', 'evidence.add',
-        'engagement.read', 'engagement.capture', 'planning.read', 'delivery.read',
+        'engagement.read', 'engagement.capture', 'planning.read', 'delivery.read', 'delivery.planning_decide',
         'issue.read', 'change.read', 'report.read', 'emergency.read', 'rfp.read',
     }),
     'finance-lead': frozenset({

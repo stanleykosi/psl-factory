@@ -2,6 +2,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.http import Http404
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -10,7 +11,7 @@ from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.documents import controlled, design_review, template_catalog, template_uploads
 from apps.documents.contracts import FIELDS, PMO_DOCUMENT_TYPES, digest
 from apps.documents.delivery import operate_publication
-from apps.documents.models import PublicationJob, PublicationReceipt, TemplateFile
+from apps.documents.models import PublicationJob, PublicationReceipt, Template, TemplateFile
 from apps.documents.template_access import visible_templates
 from apps.documents.template_lists import LIST_PAGE, LIST_QUERY_LIMIT, template_page
 from apps.identity.services import active_case_grants, require, visible_cases
@@ -27,7 +28,8 @@ def report(actor, case_id, version_id):
 
 
 @endpoint(response=obj({'title': TEXT, 'version': REVISION, 'revision': REVISION, 'audience': TEXT,
-    'current': BOOLEAN, 'decisions': array(TEXT), 'django_url': TEXT, 'preview': array(obj({'field': TEXT, 'text': {'type':'string'}}))}),
+    'current': BOOLEAN, 'decisions': array(TEXT), 'django_url': TEXT, 'preview': array(obj({'field': TEXT, 'text': {'type':'string'}})),
+    'template_name': TEXT, 'template_version': REVISION, 'sample': BOOLEAN}),
     summary='Read the current audience preview and available decisions for an exact standalone report')
 def preview(request, case_id, version_id):
     actor = request.user
@@ -39,8 +41,48 @@ def preview(request, case_id, version_id):
         decisions = [key for key, _ in design_review.possible_verdicts(actor, case, task)]
     return {'title': version.document.title, 'version': version.number, 'revision': case.revision,
             'current': current, 'audience': version.audience, 'decisions': decisions,
+            'template_name': version.template.name, 'template_version': version.template.version, 'sample': case.synthetic,
             'preview': [{'field': section['heading'], 'text': section['text']} for section in version.payload['sections']],
             'django_url': reverse('design_document_review', args=[case.pk, version.pk])}
+
+
+@endpoint(response=obj({'from_version': ID, 'to_version': ID, 'sections': array(obj({
+    'key': choice(*FIELDS), 'before': nullable({'type': 'string'}), 'after': nullable({'type': 'string'}),
+    'before_evidence_ids': array(ID, limit=20), 'after_evidence_ids': array(ID, limit=20),
+    'change': choice('added', 'removed', 'changed', 'unchanged'),
+}))}), query={'from_version': ID}, required_query=('from_version',),
+          summary='Compare sections in two authorised versions of the same report and audience')
+def compare(request, case_id, version_id):
+    from .intake_sources import positive_id
+
+    actor = request.user
+    previous_id = positive_id(request, 'from_version')
+    if previous_id is None:
+        raise Problem(422, 'invalid_filter', 'Choose an earlier report version to compare.')
+    _, current = report(actor, case_id, version_id)
+    _, previous = report(actor, case_id, previous_id)
+    if (previous.document_id != current.document_id or previous.audience != current.audience
+            or previous.number >= current.number):
+        raise Http404
+    previous_fields = {part['heading']: part['text'] for part in previous.payload['sections']}
+    current_fields = {part['heading']: part['text'] for part in current.payload['sections']}
+    sections = []
+    for key in FIELDS:
+        before = previous_fields.get(key)
+        after = current_fields.get(key)
+        if before is None and after is None:
+            continue
+        change = 'unchanged'
+        if before is None:
+            change = 'added'
+        elif after is None:
+            change = 'removed'
+        elif before != after:
+            change = 'changed'
+        sections.append({'key': key, 'before': before, 'after': after, 'change': change,
+                         'before_evidence_ids': previous.fields[key]['evidence_ids'] if before is not None else [],
+                         'after_evidence_ids': current.fields[key]['evidence_ids'] if after is not None else []})
+    return {'from_version': previous.pk, 'to_version': current.pk, 'sections': sections}
 
 
 @endpoint(method='POST', request=obj({'expected_revision': REVISION, 'verdict': choice('approve','return','reject'),
@@ -172,9 +214,38 @@ SECTIONS = array(choice(*sorted(FIELDS)), limit=len(FIELDS))
 CURSOR = {**TEXT, 'maxLength': 512}
 
 
+@endpoint(response=obj({'items': array(obj({'id': ID, 'title': TEXT, 'version': REVISION, 'audience': TEXT,
+    'api_url': TEXT, 'created_at': DATETIME, 'current': BOOLEAN}), limit=25), 'next_before': nullable(ID)}),
+    query={'before': ID}, summary='List standalone report versions with currently readable source records')
+def version_list(request, case_id):
+    from .intake_sources import positive_id
+
+    actor = request.user
+    case = get_object_or_404(visible_cases(actor), pk=case_id)
+    require(actor, case, 'document.read')
+    before = positive_id(request, 'before')
+    query = design_review.visible_reports(case).select_related('document', 'template').order_by('-pk')
+    if before:
+        query = query.filter(pk__lt=before)
+    items = []
+    with limit_queries(750):
+        versions = list(query[:26])
+        for version in versions[:25]:
+            try:
+                design_review.sources_for(case, version)
+            except (PermissionDenied, ValidationError):
+                continue
+            items.append({'id': version.pk, 'title': version.document.title, 'version': version.number,
+                          'audience': version.audience, 'created_at': version.created_at,
+                          'current': version.document.current_id == version.pk,
+                          'api_url': f'/api/v1/projects/{case.pk}/document-reviews/{version.pk}'})
+    return {'items': items, 'next_before': versions[24].pk if len(versions) > 25 else None}
+
+
 @endpoint(response=obj({
     'revision': REVISION, 'can_upload': BOOLEAN, 'cursor': nullable(CURSOR),
-    'items': array(obj({'id': ID, 'name': TEXT, 'version': ID, 'download_url': nullable(TEXT)}), limit=LIST_PAGE),
+    'items': array(obj({'id': ID, 'name': TEXT, 'version': ID, 'download_url': nullable(TEXT),
+        'document_type': TEXT, 'registered_by': TEXT, 'registered_at': nullable(DATETIME), 'sample': BOOLEAN}), limit=LIST_PAGE),
     'proofs': array(obj({'id': ID, 'kind': TEXT, 'version': ID}), limit=25),
 }), query={'templates': CURSOR}, summary='Browse the visible template catalogue and first-version upload evidence')
 def catalogue(request, case_id):
@@ -183,7 +254,11 @@ def catalogue(request, case_id):
     require(actor, case, 'document.read')
     with limit_queries(LIST_QUERY_LIMIT):
         versions, link = template_page(request, case)
-        attached = set(TemplateFile.objects.filter(case=case, template_id__in=[row.pk for row in versions])
+        ids = [row.pk for row in versions]
+        details = Template.objects.filter(case=case, pk__in=ids).select_related('created_by').in_bulk()
+        registered = {value['template']: at for value, at in case.audit.filter(
+            action='document.template_registered', data__template__in=ids).values_list('data', 'created_at')}
+        attached = set(TemplateFile.objects.filter(case=case, template_id__in=ids)
                        .values_list('template_id', flat=True))
         grants = {action for _, action in active_case_grants(actor, [case.pk], actions=UPLOAD_GRANTS)}
         can_upload = grants.issuperset(UPLOAD_GRANTS)
@@ -192,6 +267,9 @@ def catalogue(request, case_id):
     return {'revision': case.revision, 'can_upload': can_upload,
             'cursor': parse_qs(urlsplit(link).query)['templates'][0] if link else None, 'proofs': proofs,
             'items': [{'id': row.pk, 'name': row.name, 'version': row.version,
+                       'document_type': details[row.pk].definition['document_type'], 'sample': case.synthetic,
+                       'registered_by': details[row.pk].created_by.get_full_name() or details[row.pk].created_by.get_username(),
+                       'registered_at': registered.get(row.pk),
                        'download_url': reverse('design_template_download', args=[case.pk, row.pk]) if row.pk in attached else None}
                       for row in versions]}
 

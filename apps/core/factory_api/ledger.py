@@ -23,7 +23,7 @@ from apps.workflows.factory_progress import wake_waiting
 
 from .commands import require_line
 from .delivery import PROOF, proof_rows, recorded
-from .http import BOOLEAN, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, array, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
 from .work import WORK_RESULT
 
@@ -41,7 +41,8 @@ VERIFIED = obj({'lineage_id': ID, 'source': domain.SOURCE, 'check_id': ID, 'revi
 @endpoint(response=obj({**VERSIONS, 'stage': TEXT, 'finding': {'type': 'string'}, 'source_id': ID,
     'source': domain.SOURCE, 'lineage_id': nullable(ID), 'predecessor_id': nullable(ID), 'conflict_id': nullable(ID),
     'check_id': nullable(ID), 'observation': nullable(domain.RESPONSE),
-    'latest_decision': nullable(obj({'id': ID, 'verdict': VERDICT, 'reason': nullable(NOTE)})),
+    'latest_decision': nullable(obj({'id': ID, 'verdict': VERDICT, 'reason': nullable(NOTE), 'reviewer': TEXT, 'at': DATETIME})),
+    'review_hold_code': nullable(choice('independent_reviewer_required')),
     'review_options': array(VERDICT), 'can_observe': BOOLEAN, 'has_attachment': BOOLEAN,
     'verification_evidence': array(PROOF, limit=30), 'review_evidence': array(PROOF, limit=30),
     'verified': nullable(VERIFIED)}),
@@ -56,7 +57,7 @@ def detail(request, work_id):
         conflict = native.conflicting_source(work, data, lineage)
         grants = {action for _, action in active_case_grants(actor, [work.case_id])}
         check = lineage.checks.order_by('-pk').first() if lineage else None
-        decision = check.decisions.order_by('-pk').first() if check else None
+        decision = check.decisions.select_related('actor').order_by('-pk').first() if check else None
         rejected = decision and decision.verdict == 'reject'
         options = []
         verified = None
@@ -92,7 +93,11 @@ def detail(request, work_id):
                 'lineage_id': lineage.pk if lineage else None, 'predecessor_id': data['predecessor_id'],
                 'conflict_id': conflict.pk if conflict else None, 'check_id': check.pk if check else None,
                 'observation': check.payload if check else None, 'has_attachment': attachment is not None,
-                'latest_decision': {'id': decision.pk, 'verdict': decision.verdict, 'reason': reason} if decision else None,
+                'latest_decision': {'id': decision.pk, 'verdict': decision.verdict, 'reason': reason,
+                                    'reviewer': decision.actor.get_full_name() or decision.actor.get_username(),
+                                    'at': decision.created_at} if decision else None,
+                'review_hold_code': 'independent_reviewer_required' if active and lineage and check and not conflict
+                    and not rejected and actor.pk in (lineage.actor_id, check.actor_id) else None,
                 'review_options': options, 'can_observe': can_observe, 'verified': verified,
                 'verification_evidence': proof_rows(choices.filter(kind='quickbooks_verification')[:30]) if can_observe else [],
                 'review_evidence': proof_rows(public_evidence(choices.filter(kind__in=('finance_review', 'policy_decision')))[:30])
