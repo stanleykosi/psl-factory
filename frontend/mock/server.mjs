@@ -18,6 +18,7 @@
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 // Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Live decision desk (F-64): live-decide.mjs answers the integer-id task and work routes of SCR-03 in the live shapes.
 // Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
@@ -45,6 +46,7 @@ import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
+import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
@@ -287,6 +289,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetClients();
         assistant.reset();
         runs.reset();
+        resetLiveDecide();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
@@ -331,6 +334,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
           return send(res, ...roleDashboardRoute({ persona }));
         }
+      }
+      // F-64: the live decision desk (live-decide.mjs): integer work and task ids, the live shapes. Not in v7.
+      if (ownsLiveDecide(method, url)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        return send(res, ...liveDecideRoute({ method, url, raw, cookies, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, token: req.headers['x-csrftoken'], me: me[persona], persona }));
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);

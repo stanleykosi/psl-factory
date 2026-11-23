@@ -1,15 +1,14 @@
-// SCR-03 decision content: the header, the version rows, the approval chain, the phone station line and the
-// agent note. Only values from tasks[].decision and E-WORK-ITEM are shown; absent fields are left out.
+// SCR-03 decision content: the header and the version rows. Only values from the live task and work reads are
+// shown; a board part with no live source is left out (D-182).
 import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
-import type { TaskDecision, WorkItem } from '@/api/types';
-import { AgentAvatar, agentKey, Breadcrumb, formatDayTime, MiniStationBar, PersonAvatar, Unknown, type StationStatus } from '@/components';
+import type { LiveTaskRead, LiveWork } from '@/api/types';
+import { Breadcrumb, formatDayTime, Unknown } from '@/components';
 import { showSampleLabel } from '@/shell/sample';
 import { SampleLabel } from '@/shell/SampleLabel';
 
-import { AGENT_NAMES, formatAmount, personStationIndex, STEP_STATUS, type Amount } from './format';
-import type { DecidePresentation } from './presentation';
+import { formatAmount, shortHash, type Packet } from './format';
 
 // The boards write these as "12 Nov 10:30" (no year, no WAT); the shared formatter's "12 Nov 2026 10:30 WAT" stays for the screens whose boards do not draw one.
 export function When({ at }: { at: string }) {
@@ -17,17 +16,13 @@ export function When({ at }: { at: string }) {
 }
 
 type HeaderProps = {
-  item: WorkItem;
+  work: LiveWork | null;
   title: string;
-  /** The board's visible trail ("DECISIONS / 1 OF 3 / FINANCE REVIEW · INV-0412"); the Breadcrumb nav stays for screen readers. */
+  /** The board's visible trail ("DECISIONS / 2 OF 5"); the Breadcrumb nav stays for screen readers. */
   trail?: ReactNode;
-  /** The phone boards' line above the title ("FINANCE REVIEW · INV-0412"); phones show it instead of the trail. */
-  phoneEyebrow?: string;
   /** The done view's banner line ("YOU APPROVED · 10:47"). */
   eyebrow?: ReactNode;
   sub?: string;
-  /** A state tag at the end of the title line (the own board). */
-  tag?: ReactNode;
   banner?: 'success' | 'neutral';
   /** The stale phone board draws no title: the header stays for screen readers only below 720px. */
   quietOnPhone?: boolean;
@@ -35,8 +30,8 @@ type HeaderProps = {
   focusHeading?: boolean;
 };
 
-/** The common header: the trail, the title (in a banner on the done view), the state tag and the sub-line. */
-export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, tag, banner, quietOnPhone, focusHeading }: HeaderProps) {
+/** The common header: the trail, the title (in a banner on the done view) and the sub-line. */
+export function DecideHeader({ work, title, trail, eyebrow, sub, banner, quietOnPhone, focusHeading }: HeaderProps) {
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (focusHeading) ref.current?.focus();
@@ -46,14 +41,13 @@ export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, t
       {title}
     </h1>
   );
-  const sample = item.sample && showSampleLabel();
+  const sample = work?.sample && showSampleLabel();
   return (
     <header className={`decide-header${quietOnPhone ? ' decide-header--quiet' : ''}`}>
       <div className="cmp-sr">
-        <Breadcrumb items={[{ label: 'My work', href: '/my-work' }]} current={`${item.line} / ${item.reference}`} />
+        <Breadcrumb items={[{ label: 'My work', href: '/my-work' }]} current={work?.title ?? 'Decision'} />
       </div>
       {trail && <p className="decide-trail">{trail}</p>}
-      {phoneEyebrow && <p className="decide-phone-eyebrow">{phoneEyebrow}</p>}
       {banner ? (
         <div className={`decide-banner decide-banner--${banner}`}>
           {eyebrow && <p className="decide-eyebrow">{eyebrow}</p>}
@@ -66,34 +60,28 @@ export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, t
             <p className="decide-sub">
               {sub && <span>{sub}</span>}
               {/* The shared frame label only (design engineer, 14 Nov 2026: no screen-level sample tags). */}
-              {item.sample && <SampleLabel />}
+              {work?.sample && <SampleLabel />}
             </p>
           )}
-          {tag}
         </div>
       )}
     </header>
   );
 }
 
-/** The actionable trail: "Decisions / 1 of 3 / FINANCE REVIEW · INV-0412" (phones show the station part above the title). */
-export function DecisionTrail({ item, queue }: { item: WorkItem; queue?: string }) {
+/** The actionable trail: "Decisions / 2 of 5" (the place only when the live list holds this work). */
+export function DecisionTrail({ queue }: { queue?: string }) {
   return (
     <>
-      <Link href="/my-work">Decisions</Link> / {queue && `${queue} / `}
-      {stationEyebrow(item)}
+      <Link href="/my-work">Decisions</Link>
+      {queue && ` / ${queue}`}
     </>
   );
 }
 
-/** "FINANCE REVIEW · INV-0412": the station waiting for a person, then the reference. */
-export function stationEyebrow(item: WorkItem): string {
-  const station = item.stations[personStationIndex(item.stations)];
-  return station ? `${station.name.toUpperCase()} · ${item.reference}` : item.reference;
-}
-
-export function AmountValue({ amount }: { amount: Amount }) {
-  const text = formatAmount(amount);
+/** An amount as the boards' value cells; a missing packet or amount reads Unknown (INV-UNKNOWN: never 0). */
+export function AmountValue({ packet }: { packet: Pick<Packet, 'amount' | 'currency'> | null | undefined }) {
+  const text = formatAmount(packet);
   if (text === null) return <Unknown />;
   return <span className="psl-amount">{text}</span>;
 }
@@ -107,141 +95,44 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/** The decision rows; `only` limits them to amount and basis (the read-only view). */
-export function DecisionRows({ decision, only }: { decision: TaskDecision; only?: 'amount-basis' }) {
-  const { amount, basis, recipient, changes, version, prepared_by: by } = decision;
-  const full = only === undefined;
+/** The recipient the task names now, and the earlier one when it changed. */
+export function recipientOf(read: LiveTaskRead): { current: string | null; earlier: string | null } {
+  const current = read.recipient_change?.current ?? read.invoice_packet?.recipient ?? null;
+  const earlier = read.recipient_change?.earlier ?? null;
+  return { current, earlier: earlier !== null && earlier !== current ? earlier : null };
+}
+
+/** The decision rows: amount, recipient (with a changed line), version and the packet's sources. */
+export function DecisionRows({ read }: { read: LiveTaskRead }) {
+  const packet = read.invoice_packet;
+  const { current, earlier } = recipientOf(read);
   return (
     <dl className="decide-rows" aria-label="Decision">
-      {amount && (
-        <Row label="Amount">
-          <AmountValue amount={amount} />
+      <Row label="Amount">
+        <AmountValue packet={packet} />
+      </Row>
+      {current && (
+        <Row label="To">
+          {current}
+          {earlier && <span className="decide-changed decide-recipient-changed"> Recipient changed. It was {earlier}.</span>}
         </Row>
       )}
-      {basis && <Row label="Basis">{basis}</Row>}
-      {full && recipient && <Row label="To">{recipient}</Row>}
-      {full && changes && (
-        <Row label={`Changed since ${changes.previous_label}`}>
+      {packet && (
+        <Row label="Version">
+          {`Version ${packet.version}`} <span className="decide-muted decide-tech">· checksum {shortHash(packet.sha256)}</span>
+        </Row>
+      )}
+      {packet && packet.sources.length > 0 && (
+        <Row label="Sources">
           <ul className="decide-list">
-            {changes.items.map((change, i) => (
-              <li key={i}>{change}</li>
+            {packet.sources.map((source) => (
+              <li key={source.id}>
+                {source.kind} version {source.version} <span className="decide-muted decide-tech">· {shortHash(source.sha256)}</span>
+              </li>
             ))}
           </ul>
         </Row>
       )}
-      {full && (
-        <Row label="Version">
-          {version.label}
-          {version.drafted_at && (
-            <>
-              {' · drafted '}
-              <When at={version.drafted_at} />
-            </>
-          )}
-        </Row>
-      )}
-      {full && by && (
-        <Row label="Prepared by">
-          <span className="decide-by">
-            {by.is_you ? 'You' : by.role ? `${by.name} (${by.role})` : by.name}
-            {by.with_agent && (
-              <>
-                {' with '}
-                <AgentAvatar agent={by.with_agent} size={20} />
-                {AGENT_NAMES[by.with_agent]}
-              </>
-            )}
-          </span>
-        </Row>
-      )}
     </dl>
-  );
-}
-
-export function ApprovalChain({ chain }: { chain: TaskDecision['chain'] }) {
-  return (
-    <section className="decide-chain" aria-labelledby="decide-chain-title">
-      <h2 id="decide-chain-title" className="decide-h2">
-        Approval chain
-      </h2>
-      <p className="decide-plain">
-        {chain.your_step ? `Step ${chain.your_step} of ${chain.step_count}` : chain.step_count === 1 ? '1 step' : `${chain.step_count} steps`}
-      </p>
-      <ol className="decide-steps">
-        {chain.steps.map((step) => (
-          <li key={step.position} className={`decide-step decide-step--${step.status}`}>
-            <span className="decide-step__pos">{step.position}</span>
-            <span className="decide-step__who">
-              <strong>{step.role}</strong> · {step.person ?? 'Not assigned yet'}
-              {step.is_you && ' (you)'}
-            </span>
-            <span className="decide-step__status">
-              {STEP_STATUS[step.status]}
-              {step.decided_at && (
-                <>
-                  {' '}
-                  <When at={step.decided_at} />
-                </>
-              )}
-            </span>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
-const MINI_STATUS: Record<WorkItem['stations'][number]['status'], StationStatus> = {
-  done: 'done',
-  current_person: 'person',
-  current_agent: 'agent',
-  waiting: 'waiting',
-  stopped: 'stopped',
-  verified: 'verified',
-  not_started: 'todo',
-};
-
-/** CMP-03 on the phone: "Station 4 of 7 · Finance review · only a Finance Lead can decide". */
-export function MiniLine({ item, requiredRole, waiting }: { item: WorkItem; requiredRole: string; waiting?: string }) {
-  const index = personStationIndex(item.stations);
-  if (index < 0) return null;
-  return (
-    <MiniStationBar
-      className="decide-mini"
-      stations={item.stations.map((s) => MINI_STATUS[s.status])}
-      text={`Station ${index + 1} of ${item.stations.length} · ${item.stations[index].name} · ${waiting ? `${waiting} · ` : ''}only a ${requiredRole} can decide`}
-    />
-  );
-}
-
-type AgentProps = { id: string; agent: WorkItem['agent']; view?: DecidePresentation['agent']; mode?: 'steps' | 'note' };
-
-/**
- * The agent that prepared the item: who it is, what it did, that it cannot decide, and where its steps are. The
- * stale board draws the redraft note instead of the summary and the link. Phones show the shorter wording when the
- * board block carries one.
- */
-export function AgentNote({ id, agent, view, mode = 'steps' }: AgentProps) {
-  if (agent.status === 'none' || !agent.name) return null;
-  const key = agentKey(agent.name);
-  const desktop = mode === 'note' ? view?.note : view?.summary;
-  const phone = mode === 'note' ? view?.phone_note : view?.phone_summary;
-  return (
-    <section className={`decide-agent${phone ? ' decide-agent--phone' : ''}`} aria-label="Agent">
-      {key ? <AgentAvatar agent={key} className="decide-agent__img" /> : <PersonAvatar name={agent.name} />}
-      <span className="decide-agent__text">
-        <span className="decide-agent__head">
-          <span className="decide-agent__who">
-            <strong>{agent.name}</strong>
-            {view?.role && ` · ${view.role}`}
-            {mode === 'steps' && ' · '}
-          </span>
-          {phone && <span className="decide-agent__short">{phone} </span>}
-          {mode === 'steps' && <small>Cannot approve, send or pay.</small>}
-        </span>
-        {desktop && <span className="decide-agent__summary">{desktop} </span>}
-        {mode === 'steps' && <Link href={`/work/${encodeURIComponent(id)}`}>{view?.link_label ?? `See ${agent.name}’s steps`}</Link>}
-      </span>
-    </section>
   );
 }

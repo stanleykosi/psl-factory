@@ -1,22 +1,18 @@
 'use client';
 
-// SCR-03 decision (/work/[id]/decide?task=<task id>). The only switches are the task's you_can_act and
-// cannot_act_reason from E-WORK-ITEM; /me roles never decide what is offered (INV-ACCESS).
-import { Button, Callout, Tag } from '@/components';
+// SCR-03 decision (/work/[id]/decide?task=<task id>) on the live task API. The only switches are the task's
+// can_decide, can_claim and claimed_by_you; /me roles never decide what is offered (INV-ACCESS).
+import { Button, Callout } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { FactsStrip } from '@/features/work-item/WorkItemOverview';
-import { presentationOf } from '@/features/work-item/presentation';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
-import type { WorkItem } from '@/api/types';
-
 import { DecidePanel } from './DecidePanel';
-import { AgentNote, ApprovalChain, DecideHeader, DecisionRows, DecisionTrail, MiniLine, stationEyebrow } from './DecisionContent';
-import { CannotActView, cannotActCopy, DoneView, NotOpenState, StaleView, UncertainNotice } from './DecideStates';
-import { findDecisionTask } from './format';
-import { decidePresentationOf, queueText } from './presentation';
-import { useDecision } from './useDecision';
+import { DecideHeader, DecisionRows, DecisionTrail } from './DecisionContent';
+import { CannotActView, DoneView, NotOpenState, StaleView, UncertainNotice } from './DecideStates';
+import { liveId } from './format';
+import { queuePlace, queueText } from './presentation';
+import { snapshotOf, useDecision } from './useDecision';
 
 import '@/features/work-item/work-item.css';
 import './decide.css';
@@ -45,26 +41,23 @@ type Layout = 'decide' | 'stale' | 'done' | 'read-only' | 'other';
 const BACK: Record<Layout, string> = { decide: 'Decisions', stale: 'Decisions', done: 'Decisions', 'read-only': 'Queue', other: 'Queue' };
 
 export function DecideView({ id, taskId }: { id: string; taskId: string | undefined }) {
-  const { view, claim, submit, uncertain, retry, retryClaim, decide, recheck, reviewCurrent } = useDecision(id, taskId);
+  const { view, claim, submit, uncertain, queue, commentState, comment, retry, retryClaim, decide, recheck, reviewCurrent } = useDecision(id, taskId);
   const pathname = `/work/${encodeURIComponent(id)}/decide${taskId ? `?task=${encodeURIComponent(taskId)}` : ''}`;
+  const place = queuePlace(queue, liveId(id));
+  const pager = queueText(place);
 
-  const item: WorkItem | undefined = 'item' in view ? view.item : undefined;
-  const task = item && view.kind !== 'done' ? findDecisionTask(item, taskId) : undefined;
-  const deco = decidePresentationOf(item);
-  const queue = queueText(deco);
   const layout: Layout =
     view.kind === 'done'
       ? 'done'
-      : view.kind === 'stale' && task
+      : view.kind === 'stale'
         ? 'stale'
-        : !task || view.kind === 'loading' || view.kind === 'error'
+        : view.kind === 'loading' || view.kind === 'error' || view.kind === 'notopen'
           ? 'other'
-          : view.kind === 'forbidden' || !task.you_can_act || !claim
+          : view.kind === 'forbidden' || !claim
             ? 'read-only'
             : 'decide';
-  // The bar's mono note: the queue position on the actionable boards, the reference on the read-only ones.
-  const note = layout === 'decide' || layout === 'stale' ? queue?.toUpperCase() : layout === 'read-only' && item ? item.reference : undefined;
-  usePhoneBack({ label: BACK[layout], href: '/my-work', note });
+  // The bar's mono note: the place in the decision list on the actionable boards, when the list holds this work.
+  usePhoneBack({ label: BACK[layout], href: '/my-work', note: layout === 'decide' || layout === 'stale' ? pager?.toUpperCase() : undefined });
 
   if (view.kind === 'loading') return <LoadingState />;
   if (view.kind === 'error') {
@@ -100,86 +93,62 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
     return (
       <DoneView
         id={id}
-        item={view.item}
+        work={view.work}
         result={view.result}
         label={view.label}
         note={view.note}
         reloaded={view.reloaded}
+        history={view.history}
         refreshFailed={view.refreshFailed}
-        view={deco}
+        waiting={queue ? queue.filter((entry) => entry.id !== liveId(id)) : null}
       />
     );
   }
-
-  const current: WorkItem = view.item;
-  if (!task) {
+  if (view.kind === 'notopen') {
     return (
       <>
-        <DecideHeader item={current} title={current.title} />
+        <DecideHeader work={view.work} title={view.work?.title ?? 'Decision'} />
         <NotOpenState id={id} />
       </>
     );
   }
-  const title = deco?.subject ? `${task.title} · ${deco.subject}` : task.title;
-  const sub = deco?.subject ? undefined : current.title;
-  const trail = <DecisionTrail item={current} queue={queue} />;
+
+  const { work, read } = view;
+  const trail = <DecisionTrail queue={pager} />;
 
   if (view.kind === 'stale') {
-    const agent = deco?.agent?.note || deco?.agent?.phone_note ? <AgentNote id={id} agent={current.agent} view={deco.agent} mode="note" /> : undefined;
     return (
       <>
-        <DecideHeader item={current} trail={trail} phoneEyebrow={stationEyebrow(current)} title={title} sub={sub} quietOnPhone />
+        <DecideHeader work={work} trail={trail} title={read.label} sub={work.title} quietOnPhone />
         {uncertain && <UncertainNotice />}
-        <StaleView replaced={view.replaced} current={task.decision} agent={agent} onReview={reviewCurrent} />
+        <StaleView replaced={view.replaced} current={snapshotOf(read)} note={view.note} onReview={reviewCurrent} />
       </>
     );
   }
 
   const unconfirmed = view.kind === 'unconfirmed';
   if (layout === 'read-only' || !claim) {
-    // the own board sets its tag at the end of the title line; the others inside the card
-    const tag =
-      task.cannot_act_reason === 'prepared_by_you' ? (
-        <Tag tone="waiting" className="decide-owntag">
-          {cannotActCopy(task.cannot_act_reason, task).eyebrow}
-        </Tag>
-      ) : undefined;
     return (
       <>
-        <DecideHeader item={current} trail={<>Decision · {current.reference}</>} title={title} sub={sub} tag={tag} />
+        <DecideHeader work={work} trail={<>Decision</>} title={read.label} sub={work.title} />
         {uncertain && <UncertainNotice />}
-        {/* After a 403 the reloaded task's reason wins; without one the generic copy shows. */}
-        <CannotActView id={id} task={task} facts={current.facts} view={deco} />
+        <CannotActView id={id} read={read} commentState={commentState} onComment={comment} />
       </>
     );
   }
 
   return (
     <>
-      <DecideHeader item={current} trail={trail} phoneEyebrow={stationEyebrow(current)} title={title} sub={sub} />
+      <DecideHeader work={work} trail={trail} title={read.label} sub={work.title} />
       {unconfirmed ? <UnconfirmedNotice checking={view.checking} onRecheck={recheck} /> : uncertain && <UncertainNotice />}
       <div className="decide-board">
         <div className="decide-main">
-          <MiniLine item={current} requiredRole={task.required_role} waiting={deco?.waiting} />
-          <div className="decide-desktop-only">
-            <FactsStrip facts={current.facts} details={presentationOf(current)?.facts} tones={presentationOf(current)?.fact_tones} paidNote={false} />
-          </div>
           <div className="decide-what">
-            <DecisionRows decision={task.decision} />
-            <AgentNote id={id} agent={current.agent} view={deco?.agent} />
+            <DecisionRows read={read} />
           </div>
-          <ApprovalChain chain={task.decision.chain} />
         </div>
         <aside className="decide-aside">
-          <DecidePanel
-            item={current}
-            task={task}
-            claim={claim}
-            submit={submit}
-            locked={unconfirmed}
-            onDecide={(v, n) => void decide(v, n)}
-            onRetryClaim={retryClaim}
-          />
+          <DecidePanel read={read} claim={claim} submit={submit} locked={unconfirmed} onDecide={(v, e, n) => void decide(v, e, n)} onRetryClaim={retryClaim} />
         </aside>
       </div>
     </>

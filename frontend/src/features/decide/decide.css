@@ -302,3 +302,11 @@
   .decide-sum__row { grid-template-columns: 110px minmax(0, 1fr); }
   .decide-next p { color: var(--action-ink); }
 }
+
+/* live task reads: the evidence picker, the recipient change, the unsent note on the stale board, the closed comment line */
+.decide-evidence { display: block; margin: 0 0 var(--space-3); padding: 0; border: none; }
+.decide-evidence .psl-label { margin-bottom: var(--space-1); }
+.decide-evidence small { display: block; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
+.decide-tech { font-family: var(--font-mono); font-size: var(--text-small-size); }
+.decide-unsent { color: var(--ink-muted); overflow-wrap: anywhere; }
+.decide-comment__closed { color: var(--ink-muted); }

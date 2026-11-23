@@ -3,49 +3,111 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { StrictMode } from 'react';
 
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TaskDecision, WorkItem } from '@/api/types';
+import type { LiveHistoryItem, LiveTask, LiveTaskRead, LiveWork } from '@/api/types';
 import { DecideView } from '@/features/decide/DecideView';
 import { formatAmount } from '@/features/decide/format';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/work/W-1201/decide',
+  usePathname: () => '/work/17/decide',
   useRouter: () => ({ replace: vi.fn(), push: vi.fn(), prefetch: vi.fn() }),
 }));
 
 const fixtures = join(__dirname, '../mock/fixtures');
-const read = <T,>(name: string): T => JSON.parse(readFileSync(join(fixtures, name), 'utf8')) as T;
-const item = (name: string): WorkItem => (name === 'W-1001' ? read('E-WORK-ITEM.json') : read(`work/${name}.json`));
-const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
-const STALE = { code: 'stale_revision', message: 'Someone changed this since you opened it. Reload to see the latest version.' };
+const me = JSON.parse(readFileSync(join(fixtures, 'me.finance_lead.json'), 'utf8')) as unknown;
+const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+const CONFLICT = { code: 'conflict', message: 'This changed while you were reading it.' };
 const FORBIDDEN = { code: 'forbidden', message: 'Your role does not allow this.' };
+const SERVER = { code: 'server_error', message: 'Down.' };
 
-type Call = { method: string; path: string; body: unknown; csrf: string | null };
+const task = (over: Partial<LiveTask> = {}): LiveTask => ({
+  id: 41,
+  kind: 'invoice_review',
+  role: 'finance_reviewer',
+  status: 'open',
+  revision: 3,
+  claimed_by_you: false,
+  can_claim: true,
+  can_decide: false,
+  verdicts: ['approve', 'return', 'reject'],
+  url: '/work/17/decide?task=41',
+  ...over,
+});
+
+const readOf = (taskOver: Partial<LiveTask> = {}, over: Partial<LiveTaskRead> = {}): LiveTaskRead => ({
+  task: task(taskOver),
+  work_id: 17,
+  label: 'Invoice 3 for the Lekki handover',
+  invoice_packet: { invoice_id: 9, version: 2, sha256: 'a1b2c3d4'.repeat(8), amount: '4250000.00', currency: 'NGN', recipient: 'Lekki Estates Ltd', preparation_id: 5, sources: [] },
+  review_evidence: [
+    { id: 88, version: 2, source: 'signed milestone certificate', sha256: 'b'.repeat(64) },
+    { id: 91, version: 2, source: 'client email', sha256: 'c'.repeat(64) },
+  ],
+  recipient_change: { earlier: null, current: 'Lekki Estates Ltd' },
+  ...over,
+});
+
+const workOf = (tasks: LiveTask[] = [task()], over: Partial<LiveWork> = {}): LiveWork => ({
+  id: 17,
+  case_id: '00000000-0000-4000-8000-000000000017',
+  title: 'Lekki handover invoice',
+  line: 'finance-ledger/v1',
+  state: 'action_needed',
+  status_label: 'Needs your decision',
+  owner: null,
+  sample: false,
+  updated_at: '2026-11-23T09:00:00Z',
+  django_url: '/work/17/',
+  api_url: '/api/v1/work/17',
+  revision: 1,
+  case_revision: 1,
+  next_step: 'A reviewer decides.',
+  blocker: '',
+  tasks,
+  screens: [],
+  actions: [],
+  progress: null,
+  aggregate: null,
+  panels: [],
+  output_url: null,
+  information: [],
+  available_control: [],
+  ...over,
+});
+
+type Call = { method: string; path: string; query: string; body: unknown; csrf: string | null };
 type Answer = (n: number, call: Call) => Response | Promise<Response>;
 let calls: Call[];
-let answers: { me: string; item: Answer; claim: Answer; decide: Answer; list: Answer };
+let answers: { work: Answer; task: Answer; claim: Answer; decide: Answer; comment: Answer; history: Answer; queue: Answer };
 
+const only = (suffix: string) => calls.filter((c) => c.method === 'POST' && c.path.endsWith(suffix));
 const counts = () => ({
-  gets: calls.filter((c) => c.method === 'GET' && c.path.startsWith('/api/v1/work/')).length,
-  claims: calls.filter((c) => c.path.endsWith('/claim')),
-  decides: calls.filter((c) => c.path.endsWith('/decision')),
+  taskReads: calls.filter((c) => c.method === 'GET' && c.path === '/api/v1/tasks/41').length,
+  workReads: calls.filter((c) => c.method === 'GET' && c.path === '/api/v1/work/17').length,
+  claims: only('/claim'),
+  decides: only('/decision'),
+  comments: only('/comments'),
+  gets: calls.filter((c) => c.method === 'GET' && c.path !== '/api/v1/me').length,
 });
+
+const claimed = () => readOf({ claimed_by_you: true, can_claim: false, can_decide: true });
 
 beforeEach(() => {
   calls = [];
   answers = {
-    me: 'finance_lead',
-    list: () => json(200, { items: [], as_of: '2026-11-12T09:48:00Z', counts: { needs_me: 0, waiting_on_others: 0, done: 0 } }),
-    item: () => json(200, item('W-1201')),
-    claim: (_, c) => json(200, { task_id: c.path.split('/')[4], revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }),
-    decide: (_, c) => json(200, { task_id: c.path.split('/')[4], verdict: (c.body as { verdict: string }).verdict, decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'ready' }),
+    work: () => json(200, workOf()),
+    task: () => json(200, readOf()),
+    claim: (_, c) => json(200, { task_id: 41, revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }),
+    decide: () => json(200, { task_id: 41, review_id: 12, verdict: 'approve', work_state: 'waiting' }),
+    comment: () => json(200, { comment_id: 5 }),
+    history: () => json(200, { items: [], as_of: '2026-11-23T09:31:00Z' }),
+    queue: () => json(200, { items: [], page: 1, next_page: null, as_of: '2026-11-23T09:31:00Z', limited: false, lines: [], evaluated: 0, deferred: [], payroll_questions: [] }),
   };
-  const n = { item: 0, claim: 0, decide: 0 };
+  const n = { work: 0, task: 0, claim: 0, decide: 0, comment: 0, history: 0, queue: 0 };
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
@@ -53,13 +115,16 @@ beforeEach(() => {
       if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       const text = request.method === 'GET' ? '' : await request.clone().text();
-      const c: Call = { method: request.method, path: url.pathname, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };
+      const c: Call = { method: request.method, path: url.pathname, query: url.search, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };
       calls.push(c);
-      if (url.pathname === '/api/v1/me') return json(200, read(`me.${answers.me}.json`));
-      if (url.pathname === '/api/v1/work') return answers.list(0, c);
+      if (url.pathname === '/api/v1/me') return json(200, me);
+      if (url.pathname === '/api/v1/work') return answers.queue(n.queue++, c);
+      if (url.pathname.endsWith('/history')) return answers.history(n.history++, c);
       if (url.pathname.endsWith('/claim')) return answers.claim(n.claim++, c);
       if (url.pathname.endsWith('/decision')) return answers.decide(n.decide++, c);
-      return answers.item(n.item++, c);
+      if (url.pathname.endsWith('/comments')) return answers.comment(n.comment++, c);
+      if (url.pathname.startsWith('/api/v1/tasks/')) return answers.task(n.task++, c);
+      return answers.work(n.work++, c);
     }),
   );
 });
@@ -67,7 +132,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-async function open(id = 'W-1201', taskId: string | null = 'T-1201', strict = false) {
+async function open(id = '17', taskId: string | null = '41', strict = false) {
   const tree = (
     <AppShell>
       <DecideView id={id} taskId={taskId ?? undefined} />
@@ -76,92 +141,18 @@ async function open(id = 'W-1201', taskId: string | null = 'T-1201', strict = fa
   render(strict ? <StrictMode>{tree}</StrictMode> : tree);
   await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
-const button = (name: string | RegExp) => screen.getByRole('button', { name });
-const ready = () => waitFor(() => expect((button(/^Approve v/) as HTMLButtonElement).disabled).toBe(false));
+const button = (name: string | RegExp) => screen.getByRole('button', { name }) as HTMLButtonElement;
 const text = () => document.body.textContent ?? '';
+const choose = (name: RegExp | string) => fireEvent.click(screen.getByRole('radio', { name }));
 const decisionControls = () => screen.queryAllByRole('button', { name: /approve|return|reject/i });
+/** Opened as a person who can claim: the claim has gone out and the board is ready for the evidence choice. */
+async function openReady() {
+  await open();
+  await waitFor(() => expect(screen.queryByText('Getting this decision ready…')).toBeNull());
+}
 
-describe('default view', () => {
-  it('W-1201 shows only the decision values, the chain and the three controls (A-DECIDE)', async () => {
-    await open();
-    await ready();
-    for (const value of [
-      'Invoice v2',
-      '₦4,250,000.00',
-      'Contract stage 2 of 4 · terms v1',
-      'accounts@lagoonhealth.example',
-      'Changed since Invoice v1',
-      'PO number, as you asked',
-      'Bisi Ade (Finance)',
-      'Chidi',
-      'Step 1 of 1',
-      'Only a Finance Lead can decide. You are Finance Lead.',
-    ]) {
-      expect(text(), value).toContain(value);
-    }
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Approve invoice v2');
-    expect(screen.getByText('FINANCE REVIEW · INV-0412')).toBeTruthy();
-    expect(screen.getByText('Lagoon Health · Milestone 2 invoice')).toBeTruthy();
-    expect(button('Approve v2')).toBeTruthy();
-    // Approve is the default action-blue primary (SCR-03 boards, Button README), not the green Confirm.
-    expect(button('Approve v2').className).toBe('psl-btn psl-btn--lg psl-btn--block decide-approve');
-    expect(button('Return')).toBeTruthy();
-    expect(button('Reject')).toBeTruthy();
-    expect(screen.getByText(/Approving earns APPROVED only\. Issue is the next station\./)).toBeTruthy();
-    expect(screen.getByText('Station 4 of 7 · Finance review · only a Finance Lead can decide')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'See Chidi’s steps' }).getAttribute('href')).toBe('/work/W-1201');
-    expect(screen.getByText('Cannot approve, send or pay.')).toBeTruthy();
-    const crumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
-    expect(crumb.textContent).toBe('My work / Prepare an invoice / INV-0412');
-    const label = screen.getByLabelText(/^Note/) as HTMLTextAreaElement;
-    // the shared TextArea never cuts text: a note over the limit is refused when a button is pressed
-    expect(label.maxLength).toBe(-1);
-    expect(screen.getByText('0 / 2000')).toBeTruthy();
-  });
-
-  it('formats amounts from the decimal string and never shows unknown as zero (INV-UNKNOWN)', async () => {
-    expect(formatAmount({ amount: '4250000.00', currency: 'NGN', unknown: false })).toBe('₦4,250,000.00');
-    expect(formatAmount({ amount: '1200.50', currency: 'USD', unknown: false })).toBe('USD 1,200.50');
-    expect(formatAmount({ amount: '999.99', currency: 'NGN', unknown: false })).toBe('₦999.99');
-    expect(formatAmount({ amount: '-12345678901234567.10', currency: 'NGN', unknown: false })).toBe('-₦12,345,678,901,234,567.10');
-    expect(formatAmount({ currency: 'NGN', unknown: true })).toBeNull();
-    expect(formatAmount({ amount: '4250000.00', currency: 'NGN', unknown: true })).toBeNull();
-
-    answers.item = () => json(200, item('W-1202'));
-    await open('W-1202', 'T-1202');
-    const amountRow = screen.getByText('Amount').parentElement!;
-    expect(amountRow.querySelector('dd')!.textContent).toBe('Unknown');
-    expect(amountRow.querySelector('.psl-unknown')).toBeTruthy();
-    expect(text()).not.toMatch(/0\.00|₦0/);
-  });
-
-  it('a decision with unknown: true and an amount string still shows Unknown', async () => {
-    const crafted = item('W-1201');
-    crafted.tasks[0].decision!.amount = { amount: '4250000.00', currency: 'NGN', unknown: true };
-    answers.item = () => json(200, crafted);
-    await open();
-    expect(screen.getByText('Amount').parentElement!.querySelector('dd')!.textContent).toBe('Unknown');
-    expect(text()).not.toContain('4,250,000');
-  });
-
-  it('W-1208 omits To and Changed since, and shows two earlier approvals with WAT times', async () => {
-    answers.item = () => json(200, item('W-1208'));
-    await open('W-1208', 'T-1208');
-    expect(screen.queryByText('To')).toBeNull();
-    expect(text()).not.toContain('Changed since');
-    expect(text()).toContain('Step 3 of 3');
-    const steps = within(screen.getByRole('region', { name: 'Approval chain' })).getAllByRole('listitem');
-    expect(steps.map((li) => li.textContent)).toEqual([
-      '1PM · Tunde BelloApproved 12 Nov 09:05',
-      '2PMO Lead · Ngozi EzeApproved 12 Nov 09:40',
-      '3Finance Lead · Ada Okafor (you)Current',
-    ]);
-    expect(steps[0].querySelector('time')!.getAttribute('dateTime')).toBe('2026-11-12T08:05:00Z');
-  });
-});
-
-describe('claim and decide', () => {
-  it('claims once on open with the task revision and the CSRF header, also under StrictMode', async () => {
+describe('opening the decision (criterion 1)', () => {
+  it('reads the task, claims once with the task revision (also under StrictMode) and shows label, version, amount and recipient', async () => {
     let release!: () => void;
     const gate = new Promise<void>((resolve) => (release = resolve));
     const original = answers.claim;
@@ -169,140 +160,116 @@ describe('claim and decide', () => {
       await gate;
       return original(n, c);
     };
-    await open('W-1201', 'T-1201', true);
+    await open('17', '41', true);
     await waitFor(() => expect(counts().claims).toHaveLength(1));
     expect(screen.getByText('Getting this decision ready…')).toBeTruthy();
-    for (const name of [/^Approve v2/, 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled).toBe(true);
+    for (const name of [/^Approve v2/, 'Return', 'Reject']) expect(button(name).disabled).toBe(true);
     await act(async () => release());
-    await ready();
+    await waitFor(() => expect(screen.queryByText('Getting this decision ready…')).toBeNull());
+    expect(counts().claims).toEqual([{ method: 'POST', path: '/api/v1/tasks/41/claim', query: '', body: { expected_revision: 3 }, csrf: 'mock-csrf-finance_lead' }]);
+    expect(counts().taskReads).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Invoice 3 for the Lekki handover');
+    for (const value of ['Version 2', '₦4,250,000.00', 'Lekki Estates Ltd', 'Only a finance reviewer can decide.']) expect(text(), value).toContain(value);
+    // no person is inferred: the board never says who "you are"
+    expect(text()).not.toMatch(/You are/);
+  });
+
+  it('a task that is already claimed by the person sends no claim', async () => {
+    answers.task = () => json(200, claimed());
+    await open();
+    expect(counts().claims).toHaveLength(0);
     expect(screen.queryByText('Getting this decision ready…')).toBeNull();
-    expect(counts().claims).toEqual([
-      { method: 'POST', path: '/api/v1/tasks/T-1201/claim', body: { expected_revision: 2 }, csrf: 'mock-csrf-finance_lead' },
-    ]);
   });
 
-  it('Approve sends one decide with the claim revision, then shows the done view with the reloaded facts', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
-    await open();
-    await ready();
+  it('shows the checksum short and secondary, and a recipient change as a visible line', async () => {
+    answers.task = () => json(200, readOf({}, { recipient_change: { earlier: 'Old Estates Ltd', current: 'Lekki Estates Ltd' } }));
+    await openReady();
+    expect(screen.getByText(/checksum a1b2c3d4$/, { selector: '.decide-tech' })).toBeTruthy();
+    expect(text()).not.toContain('a1b2c3d4a1b2c3d4');
+    expect(screen.getByText(/Recipient changed\. It was Old Estates Ltd\./)).toBeTruthy();
+  });
+
+  it('shows no recipient-changed line when the earlier recipient is absent or the same', async () => {
+    answers.task = () => json(200, readOf({}, { recipient_change: { earlier: 'Lekki Estates Ltd', current: 'Lekki Estates Ltd' } }));
+    await openReady();
+    expect(text()).not.toContain('Recipient changed');
+  });
+});
+
+describe('evidence and the decision body (criteria 2 and 3)', () => {
+  it('pre-selects nothing; the three buttons stay off with a visible reason until one item is chosen', async () => {
+    await openReady();
+    const radios = screen.getAllByRole('radio') as HTMLInputElement[];
+    expect(radios.map((r) => r.checked)).toEqual([false, false]);
+    for (const name of [/^Approve v2/, 'Return', 'Reject']) {
+      expect(button(name).disabled).toBe(true);
+      const reason = screen.getByText('Choose the evidence you are relying on to turn on these buttons.');
+      expect(button(name).getAttribute('aria-describedby')).toBe(reason.id);
+    }
+    choose(/client email/);
+    for (const name of [/^Approve v2/, 'Return', 'Reject']) expect(button(name).disabled).toBe(false);
+    expect(screen.queryByText('Choose the evidence you are relying on to turn on these buttons.')).toBeNull();
+  });
+
+  it('Approve sends exactly expected_revision, verdict, the chosen evidence_id and a note key, even when the note is empty', async () => {
+    await openReady();
+    choose(/signed milestone certificate/);
     fireEvent.click(button('Approve v2'));
-    await screen.findByText('Invoice v2 is approved');
+    await screen.findByText(/Decision recorded on|is approved/);
     expect(counts().decides).toEqual([
-      { method: 'POST', path: '/api/v1/tasks/T-1201/decision', body: { expected_revision: 2, verdict: 'approve' }, csrf: 'mock-csrf-finance_lead' },
+      { method: 'POST', path: '/api/v1/tasks/41/decision', query: '', body: { expected_revision: 3, verdict: 'approve', evidence_id: 88, note: '' }, csrf: 'mock-csrf-finance_lead' },
     ]);
-    expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47');
-    // SCR-03-desktop-done: the eyebrow and heading sit in the green success banner.
-    const banner = screen.getByText(/^YOU APPROVED ·/).closest('.decide-banner')!;
-    expect(banner.className).toBe('decide-banner decide-banner--success');
-    expect(within(banner as HTMLElement).getByRole('heading', { level: 1 }).textContent).toBe('Invoice v2 is approved');
-    expect(screen.getByText('Thu 12 Nov, 10:47 WAT').closest('dd')!.textContent).toBe('Thu 12 Nov, 10:47 WAT, by Ada Okafor');
-    await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
-    expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--success');
-    const approved = within(screen.getByRole('list', { name: 'Facts' })).getAllByRole('listitem')[2];
-    expect(approved.textContent).toBe('APPROVEDEarned12 Nov 10:47');
-    expect(screen.getByText('Paid is tracked separately by Finance and is not part of this decision.')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1201');
-    await screen.findByRole('link', { name: 'Back to my work' });
-    expect(decisionControls()).toHaveLength(0);
-    expect(screen.queryByRole('textbox')).toBeNull();
-    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
+    expect(Object.keys(counts().decides[0].body as object).sort()).toEqual(['evidence_id', 'expected_revision', 'note', 'verdict']);
   });
 
-  it('QA-3-1: an approve whose work_state is effect_uncertain shows the uncertain notice, no approved banner, no next step and no Paid line', async () => {
-    answers.decide = () => json(200, { task_id: 'T-1201', verdict: 'approve', decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'effect_uncertain' });
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
-    await open();
-    await ready();
+  it('the decision uses the revision the claim returned', async () => {
+    answers.claim = () => json(200, { task_id: 41, revision: 4, claimed_by: 'Ada Okafor' });
+    await openReady();
+    choose(/client email/);
     fireEvent.click(button('Approve v2'));
-    await screen.findByText(/We couldn’t confirm your decision\./);
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Invoice v2: result not confirmed');
-    expect(document.querySelector('.decide-banner--success')).toBeNull();
-    expect(text()).not.toMatch(/is approved|YOU APPROVED|Next step\.|Paid is tracked/);
-    expect(document.querySelector('.decide-next')).toBeNull();
-    expect(screen.getByText('Approve, result not confirmed')).toBeTruthy(); // the summary never says it was approved
-    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1201');
-    expect(counts().decides).toHaveLength(1);
+    await screen.findByText(/Decision recorded on|is approved/);
+    expect((counts().decides[0].body as { expected_revision: number }).expected_revision).toBe(4);
   });
 
-  it('QA-3-1: a reloaded item that carries a reconcile is also not shown as an outcome', async () => {
-    const reloaded = { ...item('W-1201.approve'), reconcile: { outcomes: ['delivered', 'not_delivered', 'unknown'] }, allowed_actions: ['reconcile'] };
-    answers.item = (n) => json(200, n === 0 ? item('W-1201') : reloaded);
-    await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText(/We couldn’t confirm your decision\./);
-    expect(document.querySelector('.decide-banner--success')).toBeNull();
-    expect(text()).not.toMatch(/is approved|Next step\./);
-  });
-
-  it('the done view keeps its header and warns when the reload fails', async () => {
-    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : json(500, { code: 'server_error', message: 'Down.' }));
-    await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText('We couldn’t refresh this item. Open the work item to see the latest.');
-    expect(screen.getByText('Invoice v2 is approved')).toBeTruthy();
-  });
-
-  it('an echoed verdict other than the three shows a neutral "Decision recorded", never approved', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
-    answers.decide = (_, c) => json(200, { task_id: c.path.split('/')[4], verdict: 'constructor', decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'ready' });
-    await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText('Decision recorded on Invoice v2');
-    expect(screen.getByText(/^DECISION RECORDED ·/).textContent).toBe('DECISION RECORDED · 10:47');
-    expect(screen.getByText(/^DECISION RECORDED ·/).closest('.decide-banner')!.className).toBe('decide-banner decide-banner--neutral');
-    await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
-    expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--info');
-    expect(text()).not.toMatch(/YOU APPROVED|is approved|Paid is tracked separately/);
-    expect(decisionControls()).toHaveLength(0);
-  });
-
-  it('Return or Reject without a note sends nothing and asks for one; a note is sent as typed', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.return'));
-    await open();
-    await ready();
+  it('Return or Reject without a note sends nothing and asks for one; a note is sent as typed with the evidence', async () => {
+    await openReady();
+    choose(/client email/);
     const note = screen.getByLabelText(/^Note/) as HTMLTextAreaElement;
     for (const name of ['Return', 'Reject']) {
       for (const value of ['', '   \n ']) {
         fireEvent.change(note, { target: { value } });
         fireEvent.click(button(name));
-        expect(screen.getByText('Add a note to return or reject.')).toBeTruthy();
-        expect(note.getAttribute('aria-invalid')).toBe('true');
         const error = screen.getByText('Add a note to return or reject.');
+        expect(note.getAttribute('aria-invalid')).toBe('true');
         expect(note.getAttribute('aria-describedby')).toContain(error.id);
-        await waitFor(() => expect(document.activeElement).toBe(note));
       }
     }
     expect(counts().decides).toHaveLength(0);
+    answers.decide = () => json(200, { task_id: 41, review_id: 13, verdict: 'return', work_state: 'action_needed' });
     fireEvent.change(note, { target: { value: 'Wrong PO' } });
-    expect(screen.getByText('8 / 2000')).toBeTruthy();
-    expect(note.getAttribute('aria-invalid')).toBeNull();
     fireEvent.click(button('Return'));
-    await screen.findByText('Invoice v2 was returned');
-    expect(counts().decides.map((c) => c.body)).toEqual([{ expected_revision: 2, verdict: 'return', note: 'Wrong PO' }]);
-    expect(screen.getByText(/^YOU RETURNED ·/).closest('.decide-banner')!.className).toBe('decide-banner decide-banner--neutral');
-    await screen.findByText('Bisi Ade corrects invoice v2 and resubmits it.');
-    expect(screen.getByText('Bisi Ade corrects invoice v2 and resubmits it.').closest('.psl-callout')!.className).toContain('psl-callout--info');
-    expect(screen.queryByText(/Paid is tracked separately/)).toBeNull();
+    await screen.findByText(/Decision recorded on|was returned/);
+    expect(counts().decides.map((c) => c.body)).toEqual([{ expected_revision: 3, verdict: 'return', evidence_id: 91, note: 'Wrong PO' }]);
   });
 
-  it('a note over 2000 characters is refused before any request; Approve sends a note only when non-blank', async () => {
-    await open();
-    await ready();
-    const note = screen.getByLabelText(/^Note/) as HTMLTextAreaElement;
-    fireEvent.change(note, { target: { value: 'x'.repeat(2001) } });
+  it('a note over 2000 characters is refused before any request', async () => {
+    await openReady();
+    choose(/client email/);
+    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'x'.repeat(2001) } });
     fireEvent.click(button('Approve v2'));
     expect(screen.getByText('Keep the note to 2000 characters or fewer.')).toBeTruthy();
     expect(counts().decides).toHaveLength(0);
-    fireEvent.change(note, { target: { value: '  ' } });
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText('Invoice v2 is approved');
-    expect(counts().decides.map((c) => c.body)).toEqual([{ expected_revision: 2, verdict: 'approve' }]);
   });
 
-  it('a double click sends one decide; while pending all three are disabled and Approve reads Approving…', async () => {
+  it('with no review evidence the buttons stay off and a sentence says why', async () => {
+    answers.task = () => json(200, readOf({}, { review_evidence: [] }));
+    await openReady();
+    expect(screen.queryAllByRole('radio')).toHaveLength(0);
+    expect(screen.getByText('There is no evidence to cite yet, so this can’t be decided.')).toBeTruthy();
+    for (const name of [/^Approve v2/, 'Return', 'Reject']) expect(button(name).disabled).toBe(true);
+  });
+
+  it('a double click sends one decision; the other buttons wait while it is pending', async () => {
     let release!: () => void;
     const gate = new Promise<void>((resolve) => (release = resolve));
     const original = answers.decide;
@@ -310,373 +277,472 @@ describe('claim and decide', () => {
       await gate;
       return original(n, c);
     };
-    await open();
-    await ready();
-    const approve = button('Approve v2');
-    fireEvent.click(approve);
-    fireEvent.click(approve);
-    await screen.findByText('Approving…');
-    expect(counts().decides).toHaveLength(1);
-    // the pressed button is busy (it ignores presses, so it is not disabled); the others wait
-    expect(button('Approving…').getAttribute('aria-busy')).toBe('true');
-    for (const name of ['Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled).toBe(true);
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
     fireEvent.click(button('Approving…'));
+    await waitFor(() => expect(counts().decides).toHaveLength(1));
+    for (const name of ['Return', 'Reject']) expect(button(name).disabled).toBe(true);
     await act(async () => release());
-    await screen.findByText('Invoice v2 is approved');
+    await screen.findByText(/Decision recorded on|is approved/);
     expect(counts().decides).toHaveLength(1);
   });
 });
 
-describe('stale (A-STALE)', () => {
-  it('a 409 on decide keeps the replaced version, reloads once and compares; Review claims the new revision', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1207' : 'W-1207.next'));
-    answers.decide = (n) => (n === 0 ? json(409, STALE) : json(200, { task_id: 'T-1207', verdict: 'approve', decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:50:00Z', work_state: 'waiting' }));
-    await open('W-1207', 'T-1207');
-    await ready();
+describe('the done board (criterion 4, checklist 2)', () => {
+  const historyItem: LiveHistoryItem = { at: '2026-11-23T09:47:00Z', station: 'Finance review', status: 'approve', task_id: 41, actor: 'Chinedu Eze', reason: 'Matches the certificate', evidence_id: 88 };
+
+  async function approve(note = '') {
+    await openReady();
+    choose(/signed milestone certificate/);
+    if (note) fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: note } });
+    fireEvent.click(button('Approve v2'));
+  }
+
+  it('shows the verdict, label, note and the work state, and "decided by" from the matching history item', async () => {
+    answers.history = () => json(200, { items: [{ ...historyItem, task_id: 99, actor: 'Someone Else' }, historyItem], as_of: '2026-11-23T09:48:00Z' });
+    answers.work = (n) => json(200, workOf([task()], { state: n === 0 ? 'action_needed' : 'waiting' }));
+    await approve('Matches the certificate');
+    await screen.findByText('Invoice 3 for the Lekki handover is approved');
+    expect(screen.getByText('Approve, with the note “Matches the certificate”')).toBeTruthy();
+    expect(screen.getByText('Waiting on others')).toBeTruthy();
+    expect(screen.getByText(/by Chinedu Eze$/)).toBeTruthy();
+    expect(text()).not.toContain('Someone Else');
+    expect(screen.getByText(/^YOU APPROVED ·/).closest('.decide-banner')!.className).toBe('decide-banner decide-banner--success');
+    expect(screen.getByText('Paid is tracked separately by Finance and is not part of this decision.')).toBeTruthy();
+    expect(decisionControls()).toHaveLength(0);
+    expect(calls.some((c) => c.path === '/api/v1/work/17/history' && c.query === '?kind=decision')).toBe(true);
+  });
+
+  it('draws no "decided by" line when the history has no item for this task', async () => {
+    answers.history = () => json(200, { items: [{ ...historyItem, task_id: 99 }], as_of: '2026-11-23T09:48:00Z' });
+    await approve();
+    await screen.findByText('Invoice 3 for the Lekki handover is approved');
+    expect(screen.queryByText('Decided')).toBeNull();
+    expect(text()).not.toContain('Chinedu Eze');
+    expect(screen.getByText('Approve, with no note')).toBeTruthy();
+  });
+
+  it('never says approved straight after the 200: until the re-read confirms, the board says recorded', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    const original = answers.work;
+    answers.work = async (n, c) => {
+      if (n > 0) await gate;
+      return original(n, c);
+    };
+    await approve();
+    await screen.findByText('Decision recorded on Invoice 3 for the Lekki handover');
+    expect(text()).not.toMatch(/is approved|YOU APPROVED/);
+    expect(document.querySelector('.decide-banner--success')).toBeNull();
+    await act(async () => release());
+    await screen.findByText('Invoice 3 for the Lekki handover is approved');
+  });
+
+  it('a failed re-read keeps what was recorded and says it could not refresh', async () => {
+    answers.work = (n) => (n === 0 ? json(200, workOf()) : json(500, SERVER));
+    await approve('ok');
+    await screen.findByText('We couldn’t refresh this item. Open the work item to see the latest.');
+    expect(screen.getByText('Decision recorded on Invoice 3 for the Lekki handover')).toBeTruthy();
+    expect(screen.getByText('Approve, with the note “ok”')).toBeTruthy();
+  });
+
+  it('a work_state of effect_uncertain shows the uncertain notice, no approved banner and no Paid line', async () => {
+    answers.decide = () => json(200, { task_id: 41, review_id: 12, verdict: 'approve', work_state: 'effect_uncertain' });
+    await approve();
+    await screen.findByText(/We couldn’t confirm your decision\./);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Invoice 3 for the Lekki handover: result not confirmed');
+    expect(document.querySelector('.decide-banner--success')).toBeNull();
+    expect(text()).not.toMatch(/is approved|YOU APPROVED|Paid is tracked/);
+    expect(screen.getByText('Approve, result not confirmed')).toBeTruthy();
+  });
+
+  it('an echoed verdict other than the three is never called approved', async () => {
+    answers.decide = () => json(200, { task_id: 41, review_id: 12, verdict: 'constructor', work_state: 'waiting' });
+    await approve();
+    await screen.findByText('Decision recorded on Invoice 3 for the Lekki handover');
+    await waitFor(() => expect(counts().workReads).toBeGreaterThan(1));
+    expect(text()).not.toMatch(/YOU APPROVED|is approved|Paid is tracked separately/);
+  });
+});
+
+describe('stale (criterion 5, checklist 1)', () => {
+  const redrafted = () => readOf({ revision: 4 }, { invoice_packet: { ...readOf().invoice_packet!, version: 3, amount: '4300000.00' } });
+
+  it('a 409 on the decision reloads, shows the replaced version beside the current one, keeps the unsent note and never resends', async () => {
+    answers.decide = () => json(409, CONFLICT);
+    answers.task = (n) => json(200, n === 0 ? readOf() : redrafted());
+    await openReady();
+    choose(/client email/);
+    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Looks right' } });
     fireEvent.click(button('Approve v2'));
     await screen.findByText('A newer version arrived while you were reading.');
-    expect(counts().decides).toHaveLength(1);
-    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
-    expect(text()).toContain('Version 3 was drafted at 12 Nov 10:46.');
     expect(text()).toContain('Version 2 can no longer be approved.');
-    const old = screen.getByRole('region', { name: 'VERSION 2 · REPLACED' });
-    const now = screen.getByRole('region', { name: 'VERSION 3 · CURRENT' });
-    expect(within(old).getByText('accounts@lagoonhealth.example')).toBeTruthy();
-    const nowRows = Object.fromEntries(within(now).getAllByRole('term').map((dt) => [dt.textContent, dt.nextElementSibling!.textContent]));
-    expect(nowRows).toEqual({
-      Amount: '₦4,250,000.00 · unchanged',
-      Basis: 'Contract stage 2 of 4 · terms v1 · unchanged',
-      'Send to': 'billing@lagoonhealth.example · changed',
-    });
-    expect(within(now).getByText('Billing contact changed')).toBeTruthy();
-    expect(screen.getByText('Decisions always apply to one exact version, so an approval can never land on the wrong one.')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: /^Approve/ })).toBeNull();
-    expect(counts().claims).toHaveLength(1);
+    expect(text()).toContain('VERSION 2 · REPLACED');
+    expect(text()).toContain('VERSION 3 · CURRENT');
+    expect(text()).toContain('₦4,250,000.00');
+    expect(text()).toContain('₦4,300,000.00');
+    expect(text()).toContain('· changed');
+    expect(screen.getByText('Your note wasn’t sent: “Looks right”')).toBeTruthy();
+    expect(decisionControls()).toHaveLength(0);
+    expect(button('Review version 3')).toBeTruthy();
+    expect(counts().decides).toHaveLength(1);
+  });
 
+  it('"Review version 3" shows the current board and claims the new revision once', async () => {
+    answers.decide = () => json(409, CONFLICT);
+    answers.task = (n) => json(200, n === 0 ? readOf() : redrafted());
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText('A newer version arrived while you were reading.');
     fireEvent.click(button('Review version 3'));
     await waitFor(() => expect(counts().claims).toHaveLength(2));
-    expect(counts().claims[1].body).toEqual({ expected_revision: 5 });
-    await ready();
-    expect(button('Approve v3')).toBeTruthy();
+    expect(counts().claims[1].body).toEqual({ expected_revision: 4 });
+    await waitFor(() => expect(button(/^Approve v3/)).toBeTruthy());
     expect(counts().decides).toHaveLength(1);
   });
 
-  it('a 409 on claim goes to the same stale view and sends no decide', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1207' : 'W-1207.next'));
-    answers.claim = (n, c) => (n === 0 ? json(409, STALE) : json(200, { task_id: 'T-1207', revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }));
-    await open('W-1207', 'T-1207');
+  it('two reviewers: when the other one closed the task, the stale board carries no decide buttons and Review lands on read-only', async () => {
+    answers.decide = () => json(409, CONFLICT);
+    answers.task = (n) => json(200, n === 0 ? readOf() : readOf({ status: 'closed', revision: 4, can_claim: false, can_decide: false, claimed_by_you: false, verdicts: [] }));
+    await openReady();
+    choose(/client email/);
+    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Fine by me' } });
+    fireEvent.click(button('Approve v2'));
     await screen.findByText('A newer version arrived while you were reading.');
-    expect(screen.getByRole('region', { name: 'VERSION 2 · REPLACED' })).toBeTruthy();
+    expect(screen.getByText('Your note wasn’t sent: “Fine by me”')).toBeTruthy();
+    expect(decisionControls()).toHaveLength(0);
+    fireEvent.click(button('Review version 2'));
+    await screen.findByText('NOT YOUR DECISION');
+    expect(decisionControls()).toHaveLength(0);
+    expect(counts().claims).toHaveLength(1);
+    expect(counts().decides).toHaveLength(1);
+  });
+
+  it('a 409 on the claim reloads and shows the stale board', async () => {
+    answers.claim = () => json(409, CONFLICT);
+    answers.task = (n) => json(200, n === 0 ? readOf() : redrafted());
+    await open();
+    await screen.findByText('A newer version arrived while you were reading.');
+    expect(counts().claims).toHaveLength(1);
     expect(counts().decides).toHaveLength(0);
   });
+});
 
-  it('Review leads to the read-only view when the current version is not yours to decide', async () => {
-    const next = item('W-1207.next');
-    next.tasks[0] = { ...next.tasks[0], you_can_act: false, cannot_act_reason: 'not_your_role', asked: [] };
-    answers.item = (n) => json(200, n === 0 ? item('W-1207') : next);
-    answers.decide = () => json(409, STALE);
-    await open('W-1207', 'T-1207');
-    await ready();
+describe('uncertain effects (criterion 6)', () => {
+  for (const [name, reply] of [
+    ['a network failure', () => Promise.reject(new TypeError('network'))],
+    ['a 5xx', () => json(500, SERVER)],
+  ] as const) {
+    it(`${name} on the decision reloads once, never resends, and shows the uncertain notice`, async () => {
+      answers.decide = reply as Answer;
+      await openReady();
+      choose(/client email/);
+      const before = counts();
+      fireEvent.click(button('Approve v2'));
+      await screen.findByText(/We couldn’t confirm your decision\./);
+      expect(counts().decides).toHaveLength(1);
+      expect(counts().workReads).toBe(before.workReads + 1);
+      expect(counts().taskReads).toBe(before.taskReads + 1);
+    });
+  }
+
+  it('when the reload fails too, the buttons stay off and Try again only issues GETs', async () => {
+    answers.decide = () => json(500, SERVER);
+    await openReady();
+    choose(/client email/);
+    answers.work = () => json(500, SERVER);
     fireEvent.click(button('Approve v2'));
-    fireEvent.click(await screen.findByRole('button', { name: 'Review version 3' }));
-    expect(screen.getByText('This decision needs a Finance Lead.')).toBeTruthy();
-    expect(decisionControls()).toHaveLength(0);
-    expect(counts().claims).toHaveLength(1);
+    await screen.findByText(/We couldn’t confirm whether your decision was recorded\./);
+    for (const name of [/^Approve v2/, 'Return', 'Reject']) expect(button(name).disabled).toBe(true);
+    const posts = calls.filter((c) => c.method === 'POST').length;
+    fireEvent.click(button('Try again'));
+    await waitFor(() => expect(button('Try again')).toBeTruthy());
+    expect(calls.filter((c) => c.method === 'POST').length).toBe(posts);
   });
 });
 
-describe('cannot act (A-NOT-YOURS)', () => {
-  it.each([
-    ['W-1203', 'T-1203'],
-    ['W-1204', 'T-1204'],
-    ['W-1205', 'T-1205'],
-    ['W-1206', 'T-1206'],
-  ])('%s renders no note and no decision buttons and sends only GETs', async (id, task) => {
-    answers.item = () => json(200, item(id));
-    await open(id, task);
-    expect(screen.queryByRole('textbox')).toBeNull();
-    expect(document.querySelector('textarea')).toBeNull();
-    expect(decisionControls()).toHaveLength(0);
-    expect(calls.every((c) => c.method === 'GET')).toBe(true);
-    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe(`/work/${id}`);
-  });
-
-  it('copy follows cannot_act_reason, with who was asked', async () => {
-    const cases: [string, string[]][] = [
-      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
-      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 10:20.']],
-      ['W-1205', ['ALREADY DECIDED', 'This decision has already been made.', 'Nothing more is needed from you here.', 'Nobody has been asked yet.']],
-      ['W-1206', ['NOT YOUR TURN YET', 'This needs PMO Lead first.', 'You’ll be asked when it’s your turn.', 'Step 3 of 3', 'Ngozi Eze (PMO Lead) has been asked.', 'Waiting for CEO']],
-    ];
-    for (const [id, expected] of cases) {
-      answers.item = () => json(200, item(id));
-      const { unmount } = render(
-        <AppShell>
-          <DecideView id={id} taskId={`T-${id.slice(2)}`} />
-        </AppShell>,
-      );
-      await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
-      for (const value of expected) expect(text(), `${id}: ${value}`).toContain(value);
-      expect(text()).not.toContain('was alerted at 10:20 by');
-      unmount();
-    }
-  });
-
-  it('not_your_turn without a current step, and no reason at all, use their fallback copy', async () => {
-    const turn = item('W-1206');
-    const steps = turn.tasks[0].decision!.chain.steps;
-    turn.tasks[0].decision!.chain.steps = steps.map((s) => (s.status === 'current' ? { ...s, status: 'not_yet' as const } : s));
-    answers.item = () => json(200, turn);
-    const first = render(
-      <AppShell>
-        <DecideView id="W-1206" taskId="T-1206" />
-      </AppShell>,
-    );
-    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
-    expect(text()).toContain('This needs earlier approvals first.');
-    first.unmount();
-
-    const plain = item('W-1203');
-    delete plain.tasks[0].cannot_act_reason;
-    delete plain.tasks[0].asked;
-    answers.item = () => json(200, plain);
-    await open('W-1203', 'T-1203');
-    expect(text()).toContain('NOT YOUR DECISION');
-    expect(text()).toContain('You can’t approve, return or reject it.');
-    expect(text()).toContain('Nobody has been asked yet.');
-  });
-
-  it('eligibility comes from the task, never from /me', async () => {
-    answers.item = () => json(200, item('W-1203'));
-    const first = render(
-      <AppShell>
-        <DecideView id="W-1203" taskId="T-1203" />
-      </AppShell>,
-    );
-    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
-    expect(decisionControls()).toHaveLength(0);
-    first.unmount();
-
-    answers.me = 'pm';
-    answers.item = () => json(200, item('W-1201'));
+describe('who can act (criterion 7)', () => {
+  it('can_decide false and can_claim false is read-only: no claim, no decision controls, the generic sentence and no specific reason', async () => {
+    answers.task = () => json(200, readOf({ can_claim: false, can_decide: false }));
     await open();
-    await ready();
-    expect(button('Approve v2')).toBeTruthy();
-    expect(counts().claims.at(-1)!.csrf).toBe('mock-csrf-pm');
+    expect(screen.getByText('NOT YOUR DECISION')).toBeTruthy();
+    expect(screen.getByText('This decision needs a finance reviewer.')).toBeTruthy();
+    expect(screen.getByText('You can’t approve, return or reject it.')).toBeTruthy();
+    expect(text()).not.toMatch(/prepared by you|not your turn|You hold|was alerted|Basis/i);
+    expect(decisionControls()).toHaveLength(0);
+    expect(screen.queryAllByRole('radio')).toHaveLength(0);
+    expect(counts().claims).toHaveLength(0);
+    expect(text()).toContain('₦4,250,000.00');
   });
-});
 
-describe('errors', () => {
-  it('decide 403 shows the generic read-only view after a reload, with no buttons', async () => {
-    answers.item = () => json(200, item('W-1201'));
+  it('a 404 on the work read shows the no-access state', async () => {
+    answers.work = () => json(404, { code: 'not_found', message: 'We could not find that record.' });
+    await open();
+    expect(text()).toMatch(/can.t open this|don.t have access|no access|isn.t available|couldn.t find/i);
+    expect(decisionControls()).toHaveLength(0);
+  });
+
+  it('a 404 on the task read shows the no-access state', async () => {
+    answers.task = () => json(404, { code: 'not_found', message: 'We could not find that record.' });
+    await open();
+    expect(decisionControls()).toHaveLength(0);
+    expect(counts().claims).toHaveLength(0);
+  });
+
+  it('a 401 shows the signed-out state', async () => {
+    answers.work = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
+    await open();
+    expect(screen.getByText(/You’re signed out\./)).toBeTruthy();
+  });
+
+  it('a 403 on the decision reloads and turns the page read-only', async () => {
     answers.decide = () => json(403, FORBIDDEN);
-    await open();
-    await ready();
+    answers.task = (n) => json(200, n === 0 ? readOf() : readOf({ can_claim: false, can_decide: false, claimed_by_you: false }));
+    await openReady();
+    choose(/client email/);
     fireEvent.click(button('Approve v2'));
-    await screen.findByText('This decision needs a Finance Lead.');
-    expect(text()).toContain('You can’t approve, return or reject it.');
+    await screen.findByText('NOT YOUR DECISION');
     expect(decisionControls()).toHaveLength(0);
-    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
     expect(counts().decides).toHaveLength(1);
   });
 
-  it('a 403 on claim prefers the reloaded reason', async () => {
-    answers.item = (n) => json(200, n === 0 ? item('W-1201') : item('W-1201.approve'));
-    answers.claim = () => json(403, FORBIDDEN);
+  it('a failed claim shows a retry that claims again', async () => {
+    answers.claim = (n) => (n === 0 ? json(500, SERVER) : json(200, { task_id: 41, revision: 3, claimed_by: 'Ada Okafor' }));
     await open();
-    await screen.findByText('This decision has already been made.');
-    expect(decisionControls()).toHaveLength(0);
-  });
-
-  it('decide 422 shows the server message, keeps the note and sends nothing more', async () => {
-    answers.decide = () => json(422, { code: 'invalid', message: 'Check these fields: note.' });
-    await open();
-    await ready();
-    const note = screen.getByLabelText(/^Note/) as HTMLTextAreaElement;
-    fireEvent.change(note, { target: { value: 'Wrong PO' } });
-    fireEvent.click(button('Reject'));
-    const callout = await screen.findByText('Check these fields: note.');
-    expect(callout.closest('.psl-callout')!.className).toContain('psl-callout--problem');
-    expect(note.value).toBe('Wrong PO');
-    expect(counts().decides).toHaveLength(1);
-    expect((button('Reject') as HTMLButtonElement).disabled).toBe(false);
-  });
-
-  it('claim 422 shows the message and keeps the controls disabled', async () => {
-    answers.claim = () => json(422, { code: 'invalid', message: 'Check these fields: expected_revision.' });
-    await open();
-    await screen.findByText('Check these fields: expected_revision.');
-    expect((button('Approve v2') as HTMLButtonElement).disabled).toBe(true);
-  });
-
-  it('claim network error offers Try again, which claims again', async () => {
-    answers.claim = (n, c) => (n === 0 ? Promise.reject(new TypeError('offline')) : json(200, { task_id: 'T-1201', revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }));
-    await open();
-    const claimNotice = await screen.findByText('We couldn’t get this decision ready. Try again.');
-    // it answers the press: announced as an alert (QA-1)
-    expect(claimNotice.closest('[role="alert"]')).not.toBeNull();
-    expect((button('Approve v2') as HTMLButtonElement).disabled).toBe(true);
+    await screen.findByText(/We couldn’t get this decision ready\./);
     fireEvent.click(button('Try again'));
-    await ready();
-    expect(counts().claims).toHaveLength(2);
+    await waitFor(() => expect(counts().claims).toHaveLength(2));
+    await waitFor(() => expect(screen.queryByText(/We couldn’t get this decision ready\./)).toBeNull());
   });
 
-  it('decide network error is an uncertain effect: one reload, no resend, and the controls come back at the same revision', async () => {
-    answers.decide = () => Promise.reject(new TypeError('offline'));
+  it('a work with no ?task, a task that is not on it, or a non-numeric id shows the not-open state; non-numeric ids send nothing', async () => {
+    await open('17', null);
+    expect(screen.getByText('This decision isn’t open here')).toBeTruthy();
+    expect(counts().taskReads).toBe(0);
+  });
+
+  it('the work lists other tasks only: not open, and no task read', async () => {
+    answers.work = () => json(200, workOf([task({ id: 50 })]));
     await open();
-    await ready();
+    expect(screen.getByText('This decision isn’t open here')).toBeTruthy();
+    expect(counts().taskReads).toBe(0);
+    expect(counts().claims).toHaveLength(0);
+  });
+
+  for (const [id, taskId] of [['W-1201', '41'], ['17', 'T-1201'], ['17x', '41'], ['-1', '41'], ['17', '1.5'], ['17', '0']] as const) {
+    it(`route ids ${id} / ${taskId} are not integers: not open, no request`, async () => {
+      await open(id, taskId);
+      expect(screen.getByText('This decision isn’t open here')).toBeTruthy();
+      expect(calls.filter((c) => c.path !== '/api/v1/me')).toHaveLength(0);
+    });
+  }
+});
+
+describe('invalid input (criterion 8)', () => {
+  it('a 422 shows the server message and field messages, keeps the board, the chosen evidence and the note', async () => {
+    answers.decide = () => json(422, { code: 'invalid_input', message: 'Check the details and try again.', fields: [{ name: 'note', message: 'The note is too short for a return.' }, { name: 'evidence_id', message: 'That evidence is not on this review.' }] });
+    await openReady();
+    choose(/client email/);
+    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'ok' } });
     fireEvent.click(button('Approve v2'));
-    const uncertain = await screen.findByText(/We couldn’t confirm your decision\./);
-    // the uncertain decision is announced as an alert, as on base (QA-1)
-    expect(uncertain.closest('[role="alert"]')).not.toBeNull();
-    expect(text()).toContain('We’ve reloaded this item so you can see whether it was recorded.');
-    await ready();
-    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
+    await screen.findByText('Check the details and try again.');
+    expect(screen.getByText('The note is too short for a return.')).toBeTruthy();
+    expect(screen.getByText('That evidence is not on this review.')).toBeTruthy();
+    expect((screen.getByRole('radio', { name: /client email/ }) as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByLabelText(/^Note/) as HTMLTextAreaElement).value).toBe('ok');
+    expect(button('Approve v2').disabled).toBe(false);
     expect(counts().decides).toHaveLength(1);
-    expect(counts().claims).toHaveLength(1);
   });
 
-  it('decide network error and a failed reload keep every control off; Try again only reads the item', async () => {
-    const down = () => json(503, { code: 'server_error', message: 'Down.' });
-    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : n <= 2 ? down() : json(200, item('W-1201')));
-    answers.decide = () => Promise.reject(new TypeError('offline'));
-    await open();
-    await ready();
-    fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Checked the PO' } });
+  it('a 400 is treated like a 422: the board stays', async () => {
+    answers.decide = () => json(400, { code: 'bad_request', message: 'Bad.' });
+    await openReady();
+    choose(/client email/);
     fireEvent.click(button('Approve v2'));
-    const unconfirmed = await screen.findByText('We couldn’t confirm whether your decision was recorded.');
-    // announced as an alert, as on base (QA-1)
-    expect(unconfirmed.closest('[role="alert"]')).not.toBeNull();
-    const off = () => {
-      for (const name of [/^Approve v2/, 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled, String(name)).toBe(true);
+    await screen.findByText(/We could not read that request/);
+    expect(button('Approve v2').disabled).toBe(false);
+  });
+});
+
+describe('unknown amount (criterion 9)', () => {
+  it('formatAmount reads the decimal string, never a float, and unknown is null', () => {
+    expect(formatAmount({ amount: '4250000.00', currency: 'NGN' })).toBe('₦4,250,000.00');
+    expect(formatAmount({ amount: '1200.50', currency: 'USD' })).toBe('USD 1,200.50');
+    expect(formatAmount({ amount: '999.99', currency: 'NGN' })).toBe('₦999.99');
+    expect(formatAmount({ amount: '-12345678901234567.10', currency: 'NGN' })).toBe('-₦12,345,678,901,234,567.10');
+    expect(formatAmount(null)).toBeNull();
+    expect(formatAmount(undefined)).toBeNull();
+    expect(formatAmount({ amount: '', currency: 'NGN' })).toBeNull();
+    expect(formatAmount({ amount: '4250000', currency: 'NGN' })).toBeNull();
+    expect(formatAmount({ amount: 'abc', currency: 'NGN' })).toBeNull();
+  });
+
+  for (const [name, packet] of [
+    ['a null packet', null],
+    ['an empty amount', { ...readOf().invoice_packet!, amount: '' }],
+  ] as const) {
+    it(`${name} shows Unknown, never 0`, async () => {
+      answers.task = () => json(200, readOf({}, { invoice_packet: packet }));
+      await openReady();
+      const row = screen.getByText('Amount').parentElement!;
+      expect(row.querySelector('dd')!.textContent).toBe('Unknown');
+      expect(row.querySelector('.psl-unknown')).toBeTruthy();
+      expect(text()).not.toMatch(/0\.00|₦0/);
+    });
+  }
+});
+
+describe('verdicts and revoke (criterion 10)', () => {
+  it('draws only the verdicts the task lists', async () => {
+    answers.task = () => json(200, readOf({ verdicts: ['approve', 'return'] }));
+    await openReady();
+    expect(button('Approve v2')).toBeTruthy();
+    expect(button('Return')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Reject' })).toBeNull();
+    answers.task = () => json(200, readOf({ verdicts: ['reject'] }));
+  });
+
+  it('a task that lists only reject draws no approve line', async () => {
+    answers.task = () => json(200, readOf({ verdicts: ['reject'] }));
+    await openReady();
+    expect(screen.queryByRole('button', { name: /^Approve/ })).toBeNull();
+    expect(screen.queryByText(/Approving earns/)).toBeNull();
+    expect(button('Reject')).toBeTruthy();
+  });
+
+  it('no revoke path exists in the decide feature or in InlineDecide', () => {
+    const files = ['decide/DecideView.tsx', 'decide/DecidePanel.tsx', 'decide/DecideStates.tsx', 'decide/DecisionContent.tsx', 'decide/useDecision.ts', 'decide/format.ts', 'workspace/InlineDecide.tsx'];
+    for (const file of files) expect(readFileSync(join(__dirname, '../src/features', file), 'utf8').toLowerCase(), file).not.toContain('revoke');
+    for (const file of files.filter((f) => f.startsWith('decide/'))) expect(readFileSync(join(__dirname, '../src/features', file), 'utf8'), file).not.toMatch(/\bapi\.(GET|POST)/);
+  });
+});
+
+describe('the pager (criterion 11)', () => {
+  const listed = (ids: number[]) => ({ items: ids.map((id) => ({ id, case_id: `00000000-0000-4000-8000-0000000000${id}`, title: `Work ${id}`, line: 'finance-ledger/v1', state: 'action_needed', status_label: 'Needs you', owner: null, sample: false, updated_at: '2026-11-23T09:00:00Z', django_url: `/work/${id}/`, api_url: `/api/v1/work/${id}` })), page: 1, next_page: null, as_of: '2026-11-23T09:00:00Z', limited: false, lines: [], evaluated: ids.length, deferred: [], payroll_questions: [] });
+
+  it('draws "2 of 3" only when the live list holds this work', async () => {
+    answers.queue = () => json(200, listed([12, 17, 20]));
+    await openReady();
+    await waitFor(() => expect(text()).toContain('2 of 3'));
+    expect(calls.some((c) => c.path === '/api/v1/work' && c.query === '?queue=decisions')).toBe(true);
+  });
+
+  it('draws no pager when the list does not hold this work', async () => {
+    answers.queue = () => json(200, listed([12, 20]));
+    await openReady();
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/v1/work')).toBe(true));
+    expect(text()).not.toMatch(/\d of \d/);
+  });
+
+  it('with the list failing the rest of the page still works and no count is drawn', async () => {
+    answers.queue = () => json(500, SERVER);
+    await openReady();
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/v1/work')).toBe(true));
+    choose(/client email/);
+    expect(button('Approve v2').disabled).toBe(false);
+    expect(text()).not.toMatch(/\d of \d/);
+  });
+
+  it('the done board lists the other waiting decisions from the live list and links to the next one', async () => {
+    answers.queue = () => json(200, listed([17, 20, 21]));
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText('STILL WAITING ON YOU · 2');
+    expect(screen.getByRole('link', { name: 'Next decision · 1 of 2' }).getAttribute('href')).toBe('/work/20');
+    expect(screen.getByRole('link', { name: 'Work 21' }).getAttribute('href')).toBe('/work/21');
+  });
+
+  it('the done board hides the list and the next link when the list read fails', async () => {
+    answers.queue = () => json(500, SERVER);
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText(/Decision recorded on|is approved/);
+    expect(screen.queryByText(/STILL WAITING|ALL CAUGHT UP/)).toBeNull();
+    expect(screen.queryByRole('link', { name: /Next decision/ })).toBeNull();
+  });
+});
+
+describe('comment on the not-yours board (criterion 12)', () => {
+  beforeEach(() => {
+    answers.task = () => json(200, readOf({ can_claim: false, can_decide: false }));
+  });
+  const box = () => screen.getByLabelText(/^Comment for the finance reviewer/) as HTMLTextAreaElement;
+
+  it('sends {revision, body}, requires a body and clears the box once sent', async () => {
+    await open();
+    fireEvent.click(button('Add comment'));
+    expect(screen.getByText('Write a comment first.')).toBeTruthy();
+    expect(counts().comments).toHaveLength(0);
+    fireEvent.change(box(), { target: { value: 'Please check the PO number.' } });
+    fireEvent.click(button('Add comment'));
+    await screen.findByText('Your comment was added.');
+    expect(counts().comments).toEqual([{ method: 'POST', path: '/api/v1/tasks/41/comments', query: '', body: { revision: 3, body: 'Please check the PO number.' }, csrf: 'mock-csrf-finance_lead' }]);
+    expect(box().value).toBe('');
+  });
+
+  it('does not send twice for one tap', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    answers.comment = async () => {
+      await gate;
+      return json(200, { comment_id: 5 });
     };
-    off();
-    expect(text()).not.toContain('We’ve reloaded this item');
-    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
-    // A tap on a disabled control sends nothing.
-    fireEvent.click(button(/^Approve v2/));
-    expect(counts().decides).toHaveLength(1);
-    // Try again fails too: still unconfirmed, still off, one more GET.
-    fireEvent.click(button('Try again'));
-    await waitFor(() => expect(counts().gets).toBe(3));
-    await waitFor(() => expect((button('Try again') as HTMLButtonElement).disabled).toBe(false));
-    off();
-    // Try again succeeds: the task is still actionable at the claimed revision, so the controls come back.
-    fireEvent.click(button('Try again'));
-    await ready();
-    expect(counts().gets).toBe(4);
-    expect(text()).toContain('We’ve reloaded this item so you can see whether it was recorded.');
-    expect(screen.queryByText('We couldn’t confirm whether your decision was recorded.')).toBeNull();
-    expect(counts().decides).toHaveLength(1);
-    expect(counts().claims).toHaveLength(1);
-    expect(calls.filter((c) => c.method !== 'GET').map((c) => c.path)).toEqual(['/api/v1/tasks/T-1201/claim', '/api/v1/tasks/T-1201/decision']);
-  });
-
-  it('after an uncertain decide, Try again leading to a recorded decision shows the already-decided view', async () => {
-    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : n === 1 ? json(500, { code: 'server_error', message: 'Down.' }) : json(200, item('W-1201.approve')));
-    answers.decide = () => json(502, { code: 'server_error', message: 'Bad gateway.' });
     await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    fireEvent.click(await screen.findByRole('button', { name: 'Try again' }));
-    await screen.findByText('This decision has already been made.');
-    expect(decisionControls()).toHaveLength(0);
-    expect(counts().decides).toHaveLength(1);
+    fireEvent.change(box(), { target: { value: 'One note' } });
+    fireEvent.click(button('Add comment'));
+    fireEvent.click(screen.getByRole('button', { name: /Adding…/ }));
+    await act(async () => release());
+    await screen.findByText('Your comment was added.');
+    expect(counts().comments).toHaveLength(1);
   });
 
-  it.each([
-    ['403', 403, { code: 'forbidden', message: 'No.' }, () => expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item')],
-    ['404', 404, { code: 'not_found', message: 'Gone.' }, () => expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item')],
-    ['401', 401, { code: 'not_signed_in', message: 'Sign in.' }, () => expect(screen.getByRole('link', { name: 'Sign in' })).toBeTruthy()],
-  ])('after an uncertain decide, a %s on the reload replaces the page with no controls', async (_, status, body, check) => {
-    answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : json(status, body));
-    answers.decide = () => Promise.reject(new TypeError('offline'));
+  it('a 403 shows the server message and takes the box away', async () => {
+    answers.comment = () => json(403, FORBIDDEN);
     await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await waitFor(() => expect(decisionControls()).toHaveLength(0));
-    check();
-    expect(counts().decides).toHaveLength(1);
+    fireEvent.change(box(), { target: { value: 'Hello' } });
+    fireEvent.click(button('Add comment'));
+    await screen.findByText('Your role does not allow this.');
+    expect(screen.queryByRole('button', { name: 'Add comment' })).toBeNull();
   });
 
-  it('after an uncertain decide, the stale check compares with the claimed revision', async () => {
-    // The backend may move the revision on claim: the reload shows the task at the claim revision, still undecided.
-    const claimed = item('W-1201');
-    claimed.tasks[0].revision = 3;
-    answers.claim = () => json(200, { task_id: 'T-1201', revision: 3, claimed_by: 'Ada Okafor' });
-    answers.item = (n) => json(200, n === 0 ? item('W-1201') : claimed);
-    answers.decide = () => Promise.reject(new TypeError('offline'));
+  it('a 422 shows the server message and keeps the text', async () => {
+    answers.comment = () => json(422, { code: 'invalid_input', message: 'Check the details and try again.', fields: [{ name: 'body', message: 'Too long.' }] });
     await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText(/We couldn’t confirm your decision\./);
-    await ready();
-    expect(screen.queryByText('A newer version arrived while you were reading.')).toBeNull();
-    expect(counts().decides.map((c) => c.body)).toEqual([{ expected_revision: 3, verdict: 'approve' }]);
+    fireEvent.change(box(), { target: { value: 'Hello' } });
+    fireEvent.click(button('Add comment'));
+    await screen.findByText('Check the details and try again. Too long.');
+    expect(box().value).toBe('Hello');
   });
 
-  it('decide 500 then a reload that shows it was recorded gives the already-decided view', async () => {
-    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
-    answers.decide = () => json(500, { code: 'server_error', message: 'Down.' });
+  it('a 409 shows the server message and reloads the task without resending', async () => {
+    answers.comment = () => json(409, CONFLICT);
     await open();
-    await ready();
-    fireEvent.click(button('Approve v2'));
-    await screen.findByText('This decision has already been made.');
-    expect(text()).toContain('We couldn’t confirm your decision.');
-    expect(decisionControls()).toHaveLength(0);
-    expect(counts().decides).toHaveLength(1);
+    fireEvent.change(box(), { target: { value: 'Hello' } });
+    const before = counts().taskReads;
+    fireEvent.click(button('Add comment'));
+    await screen.findByText('This changed while you were reading it.');
+    await waitFor(() => expect(counts().taskReads).toBe(before + 1));
+    expect(counts().comments).toHaveLength(1);
   });
 
-  it('item 404 shows the no-access view without the id or title', async () => {
-    answers.item = () => json(404, { code: 'not_found', message: 'We could not find that record.' });
+  it('an uncertain failure reloads once and says to check before sending again', async () => {
+    answers.comment = () => json(500, SERVER);
     await open();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item');
-    expect(text()).not.toContain('W-1201');
-    expect(text()).not.toContain('Lagoon');
+    fireEvent.change(box(), { target: { value: 'Hello' } });
+    const before = counts().taskReads;
+    fireEvent.click(button('Add comment'));
+    await screen.findByText(/Check whether it was added before you send it again\./);
+    await waitFor(() => expect(counts().taskReads).toBe(before + 1));
+    expect(counts().comments).toHaveLength(1);
   });
 
-  it('item 401 links to sign in with next set to this decision', async () => {
-    answers.item = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
+  it('the deciding board has no comment box', async () => {
+    answers.task = () => json(200, claimed());
     await open();
-    const href = screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')!;
-    expect(new URL(href, 'http://x').searchParams.get('next')).toBe('/work/W-1201/decide?task=T-1201');
+    expect(screen.queryByRole('button', { name: 'Add comment' })).toBeNull();
   });
-
-  it('item 500 shows the error card; Try again re-fetches', async () => {
-    answers.item = (n) => (n === 0 ? json(500, { code: 'server_error', message: 'Down.' }) : json(200, item('W-1201')));
-    await open();
-    const card = screen.getByRole('alert');
-    expect(card.textContent).toContain('ERROR · COULDN’T LOAD');
-    expect(card.textContent).toContain('We couldn’t load this decision. Your work is safe; nothing was changed.');
-    expect(card.textContent).toContain('Reference server_error for support.');
-    fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
-    await ready();
-    expect(counts().gets).toBe(2); // the item twice; the waiting list is /api/v1/work, not /work/<id>
-  });
-
-  it.each([
-    ['a missing task parameter', 'W-1201', null],
-    ['an unknown task', 'W-1201', 'T-9999'],
-    ['W-1001 / T-2001 without a decision', 'W-1001', 'T-2001'],
-  ])('%s shows "This decision isn’t open here" with no controls', async (_, id, task) => {
-    answers.item = () => json(200, item(id));
-    await open(id, task);
-    expect(screen.getByRole('heading', { name: 'This decision isn’t open here' })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe(`/work/${id}`);
-    expect(decisionControls()).toHaveLength(0);
-    expect(calls.every((c) => c.method === 'GET')).toBe(true);
-  });
-});
-
-it('a chain of one step without your_step reads "1 step"', async () => {
-  const one = item('W-1201');
-  delete one.tasks[0].decision!.chain.your_step;
-  answers.item = () => json(200, one);
-  await open();
-  expect(within(screen.getByRole('region', { name: 'Approval chain' })).getByText('1 step')).toBeTruthy();
-});
-
-it('the decision fixture types line up with the contract', () => {
-  const decision: TaskDecision = item('W-1201').tasks[0].decision!;
-  expect(decision.chain.steps).toHaveLength(1);
 });

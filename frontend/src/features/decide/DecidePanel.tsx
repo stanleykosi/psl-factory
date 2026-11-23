@@ -1,40 +1,46 @@
 'use client';
 
-// SCR-03 "Your decision": the note, Approve v<n>, Return and Reject. Rendered only for a task the API says you
-// can act on. The note rules are checked before any request; one write at a time.
+// SCR-03 "Your decision": the evidence the person relies on, the note, and Approve, Return and Reject. Rendered only
+// for a task the server says the person can decide. Nothing is pre-selected; the note rules are checked before any
+// request; one write at a time.
 import { useId, useRef, useState } from 'react';
 
-import type { TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { Button, Callout, Panel, TextArea } from '@/components';
+import type { LiveTaskRead } from '@/api/types';
+import { Button, Callout, Panel, RadioGroup, TextArea } from '@/components';
 
-import { NOTE_MAX, personStationIndex, VERDICT_WORDS, type Verdict } from './format';
+import { NOTE_MAX, roleWords, shortHash, VERDICT_WORDS, type Verdict } from './format';
 import type { ClaimState, SubmitState } from './useDecision';
 
 type Props = {
-  item: WorkItem;
-  task: WorkTask & { decision: TaskDecision };
+  read: LiveTaskRead;
   claim: ClaimState;
   submit: SubmitState;
   /** True while a decision's effect is unconfirmed: every control stays off. */
   locked: boolean;
-  onDecide: (verdict: Verdict, note: string) => void;
+  onDecide: (verdict: Verdict, evidenceId: number, note: string) => void;
   onRetryClaim: () => void;
 };
 
-export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRetryClaim }: Props) {
+export function DecidePanel({ read, claim, submit, locked, onDecide, onRetryClaim }: Props) {
+  const { task, review_evidence: evidence, invoice_packet: packet } = read;
+  const [chosen, setChosen] = useState<string | undefined>(undefined);
   const [note, setNote] = useState('');
   const [noteError, setNoteError] = useState<string | null>(null);
   const noteRef = useRef<HTMLTextAreaElement>(null);
-  const ids = { reason: useId() };
+  const ids = { reason: useId(), evidence: useId() };
 
   const busy = submit.status === 'busy';
   const ready = claim.status === 'ready';
-  const disabled = !ready || busy || locked;
-  const index = personStationIndex(item.stations);
-  const next = index >= 0 ? item.stations[index + 1] : undefined;
+  const hold = !ready || locked;
+  const picked = evidence.find((item) => String(item.id) === chosen);
+  const disabled = hold || !picked;
+  const serverFields = submit.status === 'invalid' ? submit.fields : [];
+  const fieldMessage = (match: (name: string) => boolean) => serverFields.find((f) => match(f.name))?.message;
+  const evidenceError = fieldMessage((name) => name.includes('evidence'));
+  const serverNoteError = fieldMessage((name) => name === 'note');
 
   function press(verdict: Verdict) {
-    if (disabled) return;
+    if (disabled || busy || !picked) return;
     let problem: string | null = null;
     if (note.length > NOTE_MAX) problem = 'Keep the note to 2000 characters or fewer.';
     else if (verdict !== 'approve' && note.trim() === '') problem = 'Add a note to return or reject.';
@@ -48,25 +54,39 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
       return;
     }
     setNoteError(null);
-    onDecide(verdict, note);
+    onDecide(verdict, picked.id, note);
   }
 
-
-  const hold = !ready || locked;
-  const reasonFor = claim.status === 'pending' ? ids.reason : undefined;
+  // Why the buttons are off, in words beside them (never a disabled button with no reason).
+  const why = claim.status === 'pending' ? 'Getting this decision ready…' : !ready || locked ? null : evidence.length === 0 ? 'There is no evidence to cite yet, so this can’t be decided.' : !picked ? 'Choose the evidence you are relying on to turn on these buttons.' : null;
+  const reasonFor = why ? ids.reason : undefined;
   // One write at a time: while one decision is recorded the pressed button shows busy and the others wait.
   const state = (verdict: Verdict) => ({
     busy: busy && submit.verdict === verdict,
     busyLabel: VERDICT_WORDS[verdict].busy,
-    disabled: hold || (busy && submit.verdict !== verdict),
+    disabled: disabled || (busy && submit.verdict !== verdict),
     'aria-describedby': reasonFor,
   });
+  const offered = (verdict: Verdict) => task.verdicts.includes(verdict);
 
   return (
     <Panel kind="decide" head="Your decision" className="decide-panel">
-      <p className="decide-plain decide-who">
-        Only a {task.required_role} can decide. You are {task.required_role}.
-      </p>
+      <p className="decide-plain decide-who">Only a {roleWords(task.role)} can decide.</p>
+      {evidence.length > 0 && (
+        <RadioGroup
+          legend="Evidence you are relying on"
+          className="decide-evidence"
+          options={evidence.map((item) => ({
+            value: String(item.id),
+            label: `${item.source}, version ${item.version}`,
+            detail: `checksum ${shortHash(item.sha256)}`,
+          }))}
+          value={chosen}
+          onChange={setChosen}
+          disabled={busy || locked}
+          error={evidenceError}
+        />
+      )}
       <TextArea
         ref={noteRef}
         label={
@@ -76,7 +96,7 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
         }
         value={note}
         limit={NOTE_MAX}
-        error={noteError ?? undefined}
+        error={noteError ?? serverNoteError ?? undefined}
         onChange={(e) => {
           setNote(e.target.value);
           setNoteError(null);
@@ -96,25 +116,31 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
       )}
       {submit.status === 'invalid' && <Callout kind="problem">{submit.message}</Callout>}
       <div className="psl-actionbar decide-actions">
-        {claim.status === 'pending' && (
+        {why && (
           <p className="psl-hint decide-reason" id={ids.reason} role="status">
-            Getting this decision ready…
+            {why}
           </p>
         )}
-        <Button size="lg" block className="decide-approve" {...state('approve')} onClick={() => press('approve')}>
-          {`Approve v${task.decision.version.number}`}
-        </Button>
-        <div className="psl-actionbar__pair">
-          <Button kind="secondary" size="lg" {...state('return')} onClick={() => press('return')}>
-            {VERDICT_WORDS.return.button}
+        {offered('approve') && (
+          <Button size="lg" block className="decide-approve" {...state('approve')} onClick={() => press('approve')}>
+            {packet ? `Approve v${packet.version}` : VERDICT_WORDS.approve.button}
           </Button>
-          <Button kind="reject" size="lg" {...state('reject')} onClick={() => press('reject')}>
-            {VERDICT_WORDS.reject.button}
-          </Button>
-        </div>
-        <p className="psl-doesnt decide-doesnt">
-          Approving earns APPROVED only.{next && ` ${next.name} is the next station.`}
-        </p>
+        )}
+        {(offered('return') || offered('reject')) && (
+          <div className="psl-actionbar__pair">
+            {offered('return') && (
+              <Button kind="secondary" size="lg" {...state('return')} onClick={() => press('return')}>
+                {VERDICT_WORDS.return.button}
+              </Button>
+            )}
+            {offered('reject') && (
+              <Button kind="reject" size="lg" {...state('reject')} onClick={() => press('reject')}>
+                {VERDICT_WORDS.reject.button}
+              </Button>
+            )}
+          </div>
+        )}
+        {offered('approve') && <p className="psl-doesnt decide-doesnt">Approving earns APPROVED only.</p>}
       </div>
     </Panel>
   );
