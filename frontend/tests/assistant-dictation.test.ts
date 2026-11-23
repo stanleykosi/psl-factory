@@ -3,16 +3,16 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeEach, expect, it, vi } from 'vitest';
 
-const script = readFileSync(join(__dirname, '../../static/assistant-dictation.js'), 'utf8');
+const script = readFileSync(join(__dirname, '../../legacy_ui/static/assistant-dictation.js'), 'utf8');
 const localOptions = { langs: ['en-US'], processLocally: true };
-let mic: LocalSpeech;
+const live: { mic?: LocalSpeech } = {};
 class LocalSpeech {
   static available = vi.fn(async () => 'available');
   static install = vi.fn(async () => true);
   private local = false;
   get processLocally() { return this.local; }
   set processLocally(value) { this.local = value; }
-  start() { expect(this.processLocally).toBe(true); mic = this; }
+  start() { expect(this.processLocally).toBe(true); live.mic = this; }
   stop = vi.fn();
   abort = vi.fn();
   onresult!: (event: object) => void;
@@ -81,15 +81,15 @@ it('accepts final words once, preserves edits, and waits for an explicit send', 
   button.click();
   expect(send.disabled).toBe(true);
   form.requestSubmit();
-  mic.onresult({resultIndex: 0, results:[result('almost', false)]});
+  live.mic!.onresult({resultIndex: 0, results:[result('almost', false)]});
   expect(field.value).toBe('My draft:');
-  mic.onresult({resultIndex: 0, results:[result('show invoices')]});
+  live.mic!.onresult({resultIndex: 0, results:[result('show invoices')]});
   button.click();
-  expect(mic.stop).toHaveBeenCalledOnce();
+  expect(live.mic!.stop).toHaveBeenCalledOnce();
   expect(send.disabled).toBe(true);
-  mic.onresult({resultIndex: 0, results:[result('show invoices'), result('for Monday')]});
-  mic.onend();
-  mic.onresult({resultIndex: 2, results:[result('a'), result('b'), result('late')]});
+  live.mic!.onresult({resultIndex: 0, results:[result('show invoices'), result('for Monday')]});
+  live.mic!.onend();
+  live.mic!.onresult({resultIndex: 2, results:[result('a'), result('b'), result('late')]});
   expect(field.value).toBe('My draft: show invoices for Monday');
   expect(field.validity.valid).toBe(false);
   expect(submitted).not.toHaveBeenCalled();
@@ -105,13 +105,13 @@ it('restores the draft on microphone denial and stops listening on leaving the p
   await vi.waitFor(() => expect(button.disabled).toBe(false));
   field.value = 'Keep my draft';
   button.click();
-  mic.onerror({error:'not-allowed'});
+  live.mic!.onerror({error:'not-allowed'});
   expect(status.textContent).toContain('permission was denied');
   expect(send.disabled).toBe(false);
   button.click();
   window.dispatchEvent(new Event('pagehide'));
-  expect(mic.abort).toHaveBeenCalledOnce();
-  mic.onresult({resultIndex:0, results:[result('stale')]});
+  expect(live.mic!.abort).toHaveBeenCalledOnce();
+  live.mic!.onresult({resultIndex:0, results:[result('stale')]});
   expect(field.value).toBe('Keep my draft');
   expect(send.disabled).toBe(false);
 });
