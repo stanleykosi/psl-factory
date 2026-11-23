@@ -376,6 +376,136 @@ F-44 was held on D-PAYROLL-VISIBILITY: may Finance, the BU reviewer and Chidi se
 
 _Context added later: `architecture/model.json` scopes D-PAYROLL-VISIBILITY to "SCR-13 fields; E-SETUP-RULES area payroll_visibility", the Setup field-visibility editor. Lane D's payroll readiness checks (F-108, F-109, F-110) found that it does not gate those screens, because the backend enforces restricted payroll per person (INV-RESTRICTED). Lane D builds the payroll screens on that reading. Their merges come to you in the merge batch._
 
+### LD-Q2 · All lane D specs below · Accept every recommended option?
+Each lane D spec lists its own board conflicts and presentation questions, with the options and the recommendation first, under "Questions" in its `spec.md`. Most questions are the same few patterns: hide a part the API does not supply (D-182), add a proof or evidence select the live command needs (PSL answer 1), add a required reason, or say where a board-less control sits. Lane D builds on the recommended options meanwhile.
+1. **(Recommended)** Accept every recommended option in the lane D specs listed below ("accept all recs", as in D-182 and D-183). Lane D merges the routine ones under D-184 and brings the money, payroll and client-facing ones to you in the merge batch.
+2. Accept all, except the ones you name.
+3. Go through them one feature at a time.
+
+- **F-100 · Payment reminder (SCR-32)**, 4 questions, `delivery/features/F-100/spec.md`:
+   1. Where should `mode` and the scheduled send time appear, given the boards do not draw them?
+   2. The boards draw "Copy:
+   3. The boards show one fixed "Send reminder / Edit / Not now" row.
+   4. "Not now" needs a reason (API requires 1..1000 chars) and the boards draw no reason field.
+- **F-101 · Income schedules, part 1 (SCR-54)**, 5 questions, `delivery/features/F-101/spec.md`:
+   1. Evidence on the review form (boards draw only a Note).
+   2. The reviewer's note on a returned schedule (board quotes it; the read has no text field).
+   3. Note on Approve (the board shows the note needed only for return and reject).
+   4. Wording for the two hold codes (the board draws "Who reviews schedules:
+   5. Withdraw approval is offered whenever the read lists `revoke`, which the board draws only on the withdrawn state.
+- **F-102 · Fixed assets, part 1 (SCR-55)**, 5 questions, `delivery/features/F-102/spec.md`:
+   1. Where to put `completeness` and `native_source_verified`, which no board draws.
+   2. The verified board draws "Register review APPROVED 13 NOV", "Date review", "Schedule review" and "Feeds MANAGEMENT ACCOUNTS".
+   3. The investigating and calculating boards draw an agent card ("step 3 of 4", sources) and the calculating board draws "Rule F07 CALCULATION RULES".
+   4. Phone boards drop desktop content (investigating has no Register facts; calculating shows only "PROCESSING").
+   5. The schedule table has per-row `findings[]` and a held reason that no board draws.
+- **F-103 · Cash forecast, part 1 (SCR-56)**, 4 questions, `delivery/features/F-103/spec.md`:
+   1. **The uncertain delivery state:
+   2. **Actuals "more" flags have no paging route.** `more_actuals`, `more_history`, `more_notes` say a list is cut, but the route takes no cursor or limit.
+   3. **Write controls drawn on the read boards (review Decide panel, group-rows editing, "Record what happened", "Record actuals").** The boards draw them on the same artbo…
+   4. **Board parts the API cannot fill (listed for the design engineer).** (a) "Reviewer not set" warning:
+- **F-104 · Ledger source, part 1 (SCR-58)**, 8 questions, `delivery/features/F-104/spec.md`:
+   1. Parts the boards draw that API 1.24.0 does not supply:
+   2. The observe board shows "Found" already chosen and a proof "qb-screenshot-je7741.png · Uploaded · 310 KB".
+   3. The review board's note label reads "(needed to return, reject or withdraw)" and offers no reason for approve.
+   4. The verdict needs one evidence item the boards never draw, and the API lists them in `review_evidence[]` without saying how a reviewer makes one.
+   5. The rejected board's "Correct" button and "Correct it with the right evidence; the correction continues the same lineage", and the "re-check reopens it" sentence on ve…
+   6. The observation proof is optional on the JSON route but required on the board.
+   7. No SCR-58 board draws capturing the ledger source (`incumbent-evidence` kind `ledger_source`) or starting the line (`POST /work`, `finance-ledger/v1`).
+   8. The four answers are drawn as a row of segments on the board; the shared field rule draws more than three options as a `Select`.
+- **F-105 · Management accounts intake (SCR-53)**, 6 questions, `delivery/features/F-105/spec.md`:
+   1. Investigating board:
+   2. Returned board:
+   3. Owner-needed board:
+   4. Units board:
+   5. Intake page entry point:
+   6. Board "Upload a corrected file" on the held board also says "or change the declared period or currency if the file is right".
+- **F-106 · Management accounts reviews and publication (SCR-53)**, 6 questions, `delivery/features/F-106/spec.md`:
+   1. The live decision requires an evidence id, and the reviews board has no evidence field.
+   2. How should the router tell drafting from investigating, since both can be `processing`?
+   3. Uncertain board action.
+   4. Recipients on publishing and verified.
+   5. Verified review tile.
+   6. Reassess has no board.
+- **F-109 · Payroll corrections (SCR-37, restricted)**, 4 questions, `delivery/features/F-109/spec.md`:
+   1. Note field and story text.
+   2. Waiting count, filter and decided row.
+   3. Finance receipt section is not drawn, and the board's header says Finance never sees these records.
+   4. Proof chooser.
+- **F-111 · Issue, part 1 reads (SCR-30)**, 4 questions, `delivery/features/F-111/spec.md`:
+   1. Status wording.
+   2. Disabled write controls.
+   3. No-owner detection.
+   4. Board parts the spec removes or changes (design engineer decides once):
+- **F-112 · Change request, part 1 (SCR-31)**, 8 questions, `delivery/features/F-112/spec.md`:
+   1. The "Log a new change" form and the Changes list have no board, and the readiness scope requires them.
+   2. Where the change list lives.
+   3. The default board draws only Product, Client and Engineering Lead and the decision board draws all five with the line "Open question for the backend team:
+   4. Impact board versus contract:
+   5. Authorise board draws "Authorised by", "Authorised on" and a proof upload.
+   6. Rejected board says "The change is closed as rejected" and quotes the client's note and who recorded it.
+   7. Page frame:
+   8. Mobile boards for the four wide parts (impact table, five-step track):
+- **F-113 · Delivery overview (SCR-43)**, 5 questions, `delivery/features/F-113/spec.md`:
+   1. Tab bar entry.
+   2. Row order.
+   3. Board parts hidden because the API gives nothing (recommend hide, as D-182):
+   4. Row state wording.
+   5. The board sentence "Hypercare, archive and handover run side by side after go-live.
+- **F-114 · Go-live acceptance, part 1 (SCR-45)**, 5 questions, `delivery/features/F-114/spec.md`:
+   1. **Where does the client reply's proof come from?** (a) Use F-85's file-to-evidence proposal and hold the write if it yields nothing (recommended; matches Assumption 1).
+   2. **"Ask Tola to draft v2" (board -changes).** (a) Show "Prepare v2" with a reason box and no agent wording (recommended, D-182).
+   3. **One form versus two on the board.** The board draws one "What the client did:
+   4. **Signer source fields have no board.** The API needs source system, reference, decision id, decision version, signer reference and signed time for each signer.
+   5. **Link from the work item page.** (a) A single "Open go-live acceptance" link on `/work/{id}` for panel keys `go-live-signoff` and `go-live-replies`, added as a small…
+- **F-115 · Hypercare, part 1 (SCR-46)**, 6 questions, `delivery/features/F-115/spec.md`:
+   1. Open issues link.
+   2. Day count.
+   3. Observation rows.
+   4. Tola's card and "Ask Tola".
+   5. Pause control.
+   6. Frame section kinds.
+- **F-116 · Archive (SCR-47)**, 5 questions, `delivery/features/F-116/spec.md`:
+   1. **Human delivery observation for an unconfirmed file.** `POST /work/{id}/delivery-observations` needs `effect {job_id, job_type}`, a work-bound `proof_id` and a reason…
+   2. **Board wording that no longer holds.** The working board says "Archiving has no approval step.
+   3. **Which panel key and route.** Whether `GET /work/{id}` lists an archive panel key in 1.24.0 is unconfirmed.
+   4. **Start control placement.** No board draws the source list or the Start button (the boards start with Tola already working).
+   5. **Per-file checks on 390.** Six or more unknown files with two buttons each are long on mobile.
+- **F-117 · Handover to Support (SCR-48)**, 5 questions, `delivery/features/F-117/spec.md`:
+   1. **Proof for Support's reply.** `evidence_id` must be an existing record, and no documented call turns an uploaded file into one for this route (D-1 says use the owning…
+   2. **Fields the boards do not draw.** The live record needs Role, How they replied (channel), Who replied as text and a required Note; the record board draws one "Support…
+   3. **"Ask Tola to draft v2".** Live `corrections` needs a typed `reason` and the three source ids; the board has one button.
+   4. **Which panel key and route.** The F-85 page draws panels from `panels[]`; whether `GET /work/{id}` lists a handover panel key for this line in 1.24.0 is unconfirmed i…
+   5. **Gap rows after v2.** Live gives no per-gap status, so "OPEN" is drawn while the latest record still has gaps and no row ever shows closed.
+- **F-118 · Closure (SCR-49)**, 7 questions, `delivery/features/F-118/spec.md`:
+   1. Where do `version_id` and `evidence_id` for the closure decision come from on a read?
+   2. Check titles:
+   3. The "blocked" state maps `ready_to_prepare:false` with no work; "ready, not started" has no board.
+   4. Role word on the decision board:
+   5. Returned state:
+   6. Finance evidence field:
+   7. Source corrections for the closure line (`POST /work/{id}/corrections`):
+- **F-108 · Payroll import and matching (SCR-09, SCR-18, restricted)**, 5 questions, `delivery/features/F-108/spec.md`:
+   1. SCR-18 permission board:
+   2. SCR-09 error board:
+   3. SCR-18 default board:
+   4. The board's SCR-18 default view is titled for HR roles with a top-bar persona "HR Lead" and "Ask Zainab a question" / "Review the 4 problems" buttons.
+   5. Presentation:
+- **F-110 · Payroll run, part 1 (SCR-59, restricted)**, 7 questions, `delivery/features/F-110/spec.md`:
+   1. Per-recipient receipts (boards receipts, verified, followup draw "Finance Lead RECEIVED / CEO WAITING" and "2 of 2").
+   2. The nine-station strip on every board.
+   3. F-108 also lists `working` and `receive_hr` for SCR-18.
+   4. Where payroll runs start (`POST /work` `finance-payroll/v1`, requires request and input ids from F-108).
+   5. Per-input state words (Needs you, Approved, Received) and the "See the problem rows" link.
+   6. The `payroll-recovery` prior receipt has a board slot (followup "Already delivered") but with names and dates per recipient.
+   7. The "Gross pay ₦...
+- **F-119 · Retrospective (SCR-33)**, 5 questions, `delivery/features/F-119/spec.md`:
+   1. Decisions rows (not on the board).
+   2. "When it was held" (not on the board).
+   3. Notes file source.
+   4. Footnote wording "PMO Lead decides on".
+   5. Where the checklist strip sits when there is no `dossier` in the link.
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

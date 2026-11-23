@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-106",
-  "outcome": "Management accounts reviews, drafting and publication run live, including an uncertain publication and the verified result",
-  "state": "PLANNED",
+  "outcome": "Management accounts reviews, drafting, publication, uncertain delivery and the verified result run on the live API",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-ACCOUNTS-PUBLISH"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The router picks each board from the read: the five fixtures `4201`..`4205` show reviews, drafting, publishing, uncertain and verified, and `state:'owner_needed'` or `setup_needed` returns `other` \u2014 verify: unit test on `accountingBoard.ts`; open `/work/4201` to `/work/4205` against mock 4991 on Next 4990.",
+    "The reviews board draws one row per station subject with the API status word and no reviewer name column \u2014 verify: open `/work/4201` at 1440 and 390; DOM has no reviewer column.",
+    "\"Take this review\" appears only when `can_claim`; pressing it sends exactly one `POST /tasks/901/claim` with `{expected_revision: 3}` \u2014 verify: e2e plus network panel.",
+    "Decide verdict buttons are exactly the entries of `verdicts[]`; a verdict outside the list is never drawn or sent \u2014 verify: unit test with `verdicts:['approve']` shows one button.",
+    "A decision sends `{expected_revision (task revision), verdict, evidence_id, note}` with `evidence_id` from `review_evidence[]`; return and reject cannot be sent with an empty note; on 200 the board reloads \u2014 verify: unit test on the body; e2e on `4201`.",
+    "With empty `review_evidence` (`4207`) the decide control is disabled with \"No review evidence is available yet.\" and no request is sent \u2014 verify: e2e, network panel shows no decision call.",
+    "Wrong user: a task with `can_claim:false` and `can_decide:false` has no button; a mock 403 on claim shows the API message and leaves the board unchanged \u2014 verify: e2e on both.",
+    "A 409 on claim, decision or any accounting write reloads the read and says \"This changed while you were looking. Check and try again.\"; the write is not repeated \u2014 verify: unit test counts POSTs (one).",
+    "\"Check reviewers again\" is shown only when `can_recheck_reviewers` and sends `{action:'recheck_reviewers', expected_revision}` once \u2014 verify: unit and e2e.",
+    "\"Reassess\" is shown only when `can_reassess`, needs a reason, is disabled when `source_id` is null, and sends the full body with `case_revision` \u2014 verify: unit test on the descriptor body and the form.",
+    "Invalid input: an empty reassess reason and a note over 2000 characters are refused in the form before any request; a mock 422 shows its first `fields[].message` \u2014 verify: unit test, no fetch call on refusal.",
+    "The drafting board shows `calculated_at`, the id-backed done lines and `setup_missing[]`; it draws no revenue, cost, allocation count, unallocated amount, step list, \"Send for output review\" or \"Ask Chidi\" \u2014 verify: e2e on `4202` asserts those texts are absent.",
+    "The publishing board lists one row per `delivery_jobs[]` entry with the raw status and \"Receipts recorded: N\" from `receipt_ids`; no recipient name, no \"Received\" tick \u2014 verify: e2e on `4203` and `4205` fixtures; unit test on the row mapper with an unknown status word.",
+    "The uncertain board shows \"Check what happened\" only when `can_reconcile`; one press sends exactly one `POST /work/{id}/actions {expected_revision, action:'reconcile'}`; a 202 shows \"Checking\" and never \"delivered\" \u2014 verify: e2e plus network panel.",
+    "The page has no resend, retry, cancel or release control anywhere, and the code contains no `release_invoice` call \u2014 verify: e2e asserts those buttons are absent; `grep -rn \"release_invoice\" frontend/src/features/finance/accounts` returns nothing.",
+    "While a write is in flight every write button is disabled, so a double press sends one request \u2014 verify: unit test with a pending promise.",
+    "The verified board appears only with `publication` not null and `state:'verified'`; a job that reports success without a `publication` (state `waiting`, job `sent`) shows the publishing board, never verified \u2014 verify: unit test on the router with that input.",
+    "`ledger_posted` is shown as \"Not posted\" on every board with a `publication`; the page contains no text claiming a posting \u2014 verify: e2e on `4205`; grep of the board files for \"posted to the ledger\" shows only the \"Not posted\" label.",
+    "Unknown values read \"Not recorded\", never 0: `calculated_at:null`, `reviewed_at:null` and a missing date render that way and no money amount is drawn \u2014 verify: unit test; e2e on `4202`.",
+    "`predecessor_id` and `successor_id` show a read-only link line, and no write is attached to it \u2014 verify: e2e on `4208`.",
+    "Error states: 401 shows the signed-out link, 403 `forbidden` no-access, 403 `csrf_failed` is not no-access, 404 reads \"This record is unavailable.\" and is the same for missing and not-yours (`4206`), 429 and 503 offer a retry \u2014 verify: unit tests with mocked client; open `/work/4206`.",
+    "A failed poll keeps the last good board with a \"couldn't refresh\" note; a 401, 403 or 404 on a poll replaces the page and stops polling; polling runs only on `processing`, `drafting` and `publishing` boards and pauses in a hidden tab \u2014 verify: unit test with fake timers.",
+    "Live check against Django 8030 (account with a Finance review role) on a real management-accounts work id: the page's state, `next_action`, stations and delivery jobs match `GET /api/v1/work/{id}/accounting` \u2014 verify: compare the page with the `curl` JSON for the same id; record the id.",
+    "Viewport check at 1440 and 390 for all five boards against the SCR-53 artboards: parts left out leave no empty gap or empty heading, and the stepper (Chidi investigates through Verified) matches the board \u2014 verify: screenshots reviewed against `design/screens.md` SCR-53 artboards.",
+    "The feature changes nothing under `frontend/src/features/workspace/` \u2014 verify: `git diff --stat origin/main -- frontend/src/features/workspace` is empty.",
+    "New tests exist for the router, each write body (claim, decision, recheck, reassess, reconcile), the one-press rule and the hidden-part absences; `delivery/checks.sh` passes \u2014 verify: test files named above run green."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High: publication sends the report to external recipients (`delivery_jobs` per recipient). The screen has an uncertain-effect state where a wrong retry would double-send, and review decisions are accountable approvals. Merge goes to the design engineer's merge batch, not D-180/D-184. Surfaces are ui and api (live contract, `accounting` read and write) plus external-messaging. No money posting happens on this screen (`ledger_posted` is read-only). Product acceptance is required because the client sees new publication and recovery flows and their copy."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-106/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +98,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-106/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +198,29 @@
   "created_at": "2026-11-23T17:35:02Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:53:20Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-106/readiness.md",
+      "delivery/features/F-106/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

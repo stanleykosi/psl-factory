@@ -3,26 +3,64 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-109",
-  "outcome": "Payroll corrections reach the HR Lead for a decision through the live department handoff",
-  "state": "PLANNED",
+  "outcome": "HR Lead decides payroll corrections; the named Finance reader confirms the HR export",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-PAYROLL-CORRECTIONS"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "As `hr-lead` at `http://localhost:4990/finance/payroll/corrections/<case>` (mock 4991), the page lists correction #14 and #13 each with \"Requested 10 Nov\" and \"08 Nov\" and \"WAITING FOR YOU\", and shows \"As of\" \u2014 verify: open the page; `e2e/payroll-corrections.spec.ts`.",
+    "The page shows no masked staff reference (`S-\u25cf\u25cf\u25cf`), no \"3 corrections\" count, no story text and no Note field \u2014 verify: e2e asserts those strings absent; DOM check.",
+    "Selecting #14 shows entity PSL-NG, period 2026-10 and the four field words; \"Record decision\" is disabled until a verdict and the proof (id 301) are both chosen \u2014 verify: e2e.",
+    "Choosing Approve plus proof 301 and pressing Record decision sends exactly one `POST /api/v1/projects/<case>/hr-disclosures` with `action:\"decide_correction\"`, `revision:7`, `request_id:14`, `verdict:\"approve\"`, `successor_id:null`, a uuid `operation_key` and `evidence_id:301`, then re-reads, and #14 leaves the waiting list \u2014 verify: network panel; unit test on `correctionCommands.body()`.",
+    "Return and Reject send `verdict:\"return\"` and `\"reject\"`; a correction whose `corrections[]` entry has `successor_id: 88` sends `successor_id:88` \u2014 verify: unit tests.",
+    "While a decide is in flight the button is disabled; a double press sends one request \u2014 verify: unit test with a deferred mock.",
+    "A network failure on decide shows \"We couldn't confirm. Check before trying again.\" and pressing again re-sends the same `operation_key`; after a 200 or 409 the next attempt uses a new key \u2014 verify: unit test on key handling; mock replay returns the first result.",
+    "A 409 (stale revision 6) keeps the chosen verdict, re-reads, and shows \"This changed while you were looking. Check it and decide again.\"; no success message appears \u2014 verify: mock scenario `stale`; e2e.",
+    "A decide 200 followed by a failed re-read shows \"Recorded. We couldn't refresh the list\" and does not claim the new state \u2014 verify: mock scenario `reread_fails`.",
+    "`csrf_failed` 403 refreshes the session and says \"Press Record decision again\"; it does not show the no-access state \u2014 verify: mock scenario; unit test.",
+    "Failure journey, no HR authority: signed in as `plain-member`, opening the page shows only \"This isn't available to you.\" with no list, counts, ids, entity names or fields; the browser makes no write and the page renders no payroll value; a direct URL for a contract the person cannot see (`.../hr-disclosures/999`, 404) shows the identical wording \u2014 verify: open both as `plain-member`; e2e compares text and asserts the DOM holds no entity, period or field words.",
+    "As `hr-lead` the \"Confirm receipt\" control and the rows table never render, and no request to `snapshots/{id}/rows` or `finance-acknowledgement` is made \u2014 verify: network panel; e2e.",
+    "As `hr-lead`, if `actions[]` lacks `decide_correction` the three verdicts and Record decision are disabled with \"You can't decide corrections here\" (text from the read-driven `disabledReason`) \u2014 verify: unit test with `actions:[]`.",
+    "With `proofs.decide_correction` empty, Record decision is disabled with \"No proof is available to attach.\" \u2014 verify: unit test.",
+    "As `finance-recipient`, the \"HR export awaiting your confirmation\" section shows snapshot 201, \"As of\", \"Partial\", \"30 rows\", a rows table of at most 25 rows with \"Next page\" using `next_page`, and `monthly_pay:null` reads \"Not recorded\", never 0 \u2014 verify: e2e; unit test on the row mapper.",
+    "\"Confirm receipt\" sends one `POST /api/v1/work/4301/department-handoff/finance-acknowledgement` with body exactly `{snapshot_id:201, revision:3}`, then re-reads and shows \"Receipt recorded\" only when `receipt` is not null \u2014 verify: network panel; unit test; mock scenario where `receipt` stays null shows no tick.",
+    "A rows 403 or 404 for a reader who is not the named recipient shows \"This isn't available to you.\" inside that section only and draws no table \u2014 verify: mock scenario; e2e.",
+    "Rows are never summed, no totals are computed on the client, and a `completeness:\"unknown\"` shows \"Not known\" \u2014 verify: unit test; grep shows no arithmetic on row money fields.",
+    "No payroll value (a row field, an entity name, a snapshot id) appears in the URL, document title, `localStorage`, `sessionStorage` or a console message \u2014 verify: e2e inspects them after opening a snapshot.",
+    "Empty and loading states: `pending_corrections:[]` shows \"No corrections are waiting for you.\"; a pending request shows the skeleton; a failed refresh keeps the last list with \"We couldn't refresh\" \u2014 verify: mock scenarios.",
+    "On a 390 px-wide viewport the list shows as rows and the decision panel opens as its own view with the same controls; no horizontal scroll \u2014 verify: Playwright mobile viewport; screenshot compared with `SCR-37-mobile.dc.html`.",
+    "The same page against live Django 8030 for an HR account shows the same fields as `GET /projects/{case_id}/hr-disclosures` \u2014 verify: compare the page with the curl JSON using the session; typecheck and `delivery/checks.sh` pass.",
+    "Unit tests exist for: the pending list mapper, `correctionCommands` bodies and key handling, error mapping for 401/403/404/409/422/429/503/network, and the rows mapper (null handling) \u2014 verify: `npm test` shows them."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This feature shows restricted payroll data (bank account, home address, date of birth, pay fields) and writes an approval verdict that is hard to undo. Both fall under INV-RESTRICTED and the access rules in screens-e-finance-payroll.md (SCR-37). Surfaces are ui, api, security and auth. The contract-change surface is there because item shapes are untyped, so the builder must pin them against real responses and flag any gap."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-109/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +97,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-109/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +197,29 @@
   "created_at": "2026-11-23T17:35:10Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:53:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-109/readiness.md",
+      "delivery/features/F-109/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

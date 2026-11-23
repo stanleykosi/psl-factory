@@ -3,26 +3,63 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-115",
-  "outcome": "Hypercare, part 1: the workspace reads live stability, evaluation and Setup-needed states and can pause or continue background checks",
-  "state": "PLANNED",
+  "outcome": "Hypercare shows the live stability result, each criterion's outcome, and lets the PM pause Tola's evaluation",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "A work item with `criteria:null` (mock `4201`) shows the tag \"Setup needed\", \"Hypercare criteria are not set.\", the held stability check with its finding, and no Pause or Continue control \u2014 verify: open `http://localhost:4990/work/4201` (mock 4991).",
+    "`4202` shows \"Evaluating\", each criterion with its result tag (unknown ones read \"Not known\", never Met), a Pause button, and one Engineering reading with the other owner \"No reading yet\" \u2014 verify: page text and `hypercare-live.spec.ts`.",
+    "`4203` shows \"Qualified\" with \"Verified\", every criterion \"Met\", and \"No open issues.\" \u2014 verify: page.",
+    "`4204` shows \"Not met\", the findings text, the unmet criterion tagged \"Not met\", the unknown one \"Not known\", and the open High issue tagged \"Blocks hypercare\" in a list separate from the readings table \u2014 verify: page and DOM (two distinct sections).",
+    "Each criterion key maps to the specified wording: `confirmation`, `elapsed_hours`, `metric:<k>` with rule words, `issue_clearance`, and an unknown key shows raw text \u2014 verify: unit test on `hypercareLabels.ts`.",
+    "State derivation follows the stated order, including `qualified:true` with `criteria` set, `qualified:null` with `criteria` set, and `criteria:null` with any `qualified` \u2014 verify: unit test on the state function with all four fixtures plus the edge combinations.",
+    "No text \"Day N of 30\", no Tola step cards, no \"Log an observation\", \"Log an issue\", \"Record release\" or \"Ask Tola\" appear in any state; no empty heading is drawn when a section has nothing \u2014 verify: e2e asserts absence at 1440 and 390; grep for those strings in `frontend/src/features/hypercare` returns only tests.",
+    "No actual reading value is drawn and no missing value renders as 0: a missing `due_at` shows the \"{minimum_hours} hours from the release\" wording; a null `finding` shows no finding line \u2014 verify: unit tests.",
+    "Release and acceptance section shows counts from `stability/events`, \"None recorded\" for zero release evidence, and \"Not recorded\" for a null `acceptance_packet`; it draws no button \u2014 verify: page on `4202`; unit test.",
+    "Open issues come from `GET /projects/{case_id}/issues`; Resolved and Closed rows are not listed; an owner id missing from `owners[]` shows \"No owner\"; paging follows `next_before` and stops at 100 \u2014 verify: unit test with a two-page mock; network panel.",
+    "Events read failing (`4207`) or issues read failing (`4208`) shows that section's retry row while the header, criteria and checks still draw; Try again repeats only that read \u2014 verify: open both ids; network panel.",
+    "`stability` 404 for `4206` and for a live id the account cannot see show exactly \"This record is unavailable.\" with no difference \u2014 verify: open both; compare text.",
+    "401 shows the signed-out state linking to `/sign-in?next=<path>`; 403 `csrf_failed` is not shown as no-access \u2014 verify: mock scenarios plus unit test.",
+    "Pause on `4202` sends exactly one `POST /api/v1/work/{id}/background` with `{\"expected_revision\": <work revision>, \"enabled\": false}` and an `X-CSRFToken` header, and no `case_revision`; the button is disabled during the request \u2014 verify: Playwright request capture; double click makes one request.",
+    "Continue on `4205` sends `enabled:true`; after 202 the page re-reads and shows the refreshed state, not the 202 body alone \u2014 verify: e2e counts the two GETs after the POST.",
+    "Background errors map as specified: 409 (re-read once, no resend), 403 `csrf_failed` (session refresh, \"Press again\", one POST), 403, 404, 422 with `fields`, 429, 503, network; no automatic resend after any failure \u2014 verify: unit tests count fetch calls per scenario.",
+    "A work item with `revision:null` leaves the control disabled with \"Not available right now.\" and sends nothing \u2014 verify: unit test.",
+    "Neither control is drawn when `watching` is false and `available_control` lacks `resume`; Pause is not drawn in Setup needed \u2014 verify: unit test on `BackgroundControl`.",
+    "The hypercare feature imports no v7 `WorkItem` type and no file under `frontend/src/features/workspace` is changed \u2014 verify: `git diff --stat origin/main -- frontend/src/features/workspace frontend/src/features/work-item` is empty; `grep -rn \"api/schema'\" frontend/src/features/hypercare` returns nothing.",
+    "Adapters: a test registers `stability` and `stability/events`, reads a mock panel through F-85's `adapterFor`, gets `Section[]` that the existing `Sections` renderer draws, and gets the `hypercare.background` descriptor with a `null` revision token kept `null` \u2014 verify: `hypercareAdapter.test.ts`.",
+    "The only `POST` this feature sends is the background call \u2014 verify: `grep -rn \"liveApi.POST\\|\\.POST(\" frontend/src/features/hypercare` shows one call site; e2e asserts no other POST during each state.",
+    "Against live Django (8030, the Postgres fixture in the runbook, account that can see a hypercare item) the page for a real `delivery-hypercare/v1` work id shows the same state, criteria results, findings and issue list as `curl` of `/api/v1/work/{id}/stability` and `/projects/{case_id}/issues` \u2014 verify: compare page and JSON.",
+    "Viewport check at 1440 and 390 for the four states: one column on the phone, no horizontal scroll, controls 44 px tall, no axe violations, and the parts that remain match the SCR-46 boards (header tag, criteria list with tags, next block) \u2014 verify: screenshots against `design/screens.md` SCR-46 artboards; `hypercare-live.spec.ts` axe run.",
+    "`npm run typecheck`, `npm run lint`, `npm test` pass and `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work is read-only apart from one internal pause call, but it is cross-layer. It adds a new adapter and moves from one generic read to dedicated endpoints (`stability`, `stability/events`). It touches no money, identity or data migration. Sources are `screens-d-delivery-issues-escalation.md` SCR-46 and backend answers D-1, D-18 and D-19. The release record and evidence writes that gate go-live are the high-risk part. They sit in F-115B, which goes to the design engineer's merge batch. Product acceptance is required because the client sees the changed hypercare states and metric/issue presentation."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-115/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +96,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-115/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +189,28 @@
   "created_at": "2026-11-23T17:35:20Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:51:06Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-115/readiness.md",
+      "delivery/features/F-115/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

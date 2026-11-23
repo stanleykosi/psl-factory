@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-118",
-  "outcome": "Closure reads the live closure checklist, Finance confirms milestone notifications, and the decision and return are recorded live",
-  "state": "PLANNED",
+  "outcome": "Closure reads the live checklist, Finance confirms milestone notifications, and the Head of PMO closes or returns the project",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Open `/projects/<case>/delivery` Closure step for dossier 5001 on Next 4990 with mock 4991: tag \"Closure \u00b7 Not yet\"; eight rows (go-live, hypercare, archive, handover, retrospective, finance, scope, report) with the live titles; retrospective shows \"Not yet\" and the finding; finance shows \"Unknown\"; no Tola card, no \"Ask Tola\", no \"read-only\" text \u2014 verify: page and DOM; `frontend/e2e/delivery-closure.spec.ts`.",
+    "The same step against Django 8030 for a real dossier shows the same titles, statuses and findings as `GET /api/v1/projects/{case}/delivery/{dossier}/closure-checklist` \u2014 verify: compare with `oa.py`/`curl` JSON using the session.",
+    "A status of `unknown` or `unavailable` is never drawn as Done; `held` shows its `finding` \u2014 verify: unit test on the check mapper (all six statuses).",
+    "Dossier 5002 (ready, no work) shows \"Start closure\"; dossier 5001 (not ready, no work) shows none \u2014 verify: e2e; the button posts `POST /work` with `line:\"delivery-closure/v1\"` and `intake.dossier_id` and a 201 reloads the page \u2014 verify: network panel.",
+    "Start work options come from `intake-sources?line=delivery-closure/v1`; paging uses `next_before`; no field offers a generic file upload for evidence \u2014 verify: unit test and network panel.",
+    "Dossier 5004 as the Head of PMO shows \"Close the project\" and \"Return with a note\"; the Return button stays disabled until a note is typed \u2014 verify: e2e.",
+    "Pressing \"Close the project\" sends exactly one `POST /work/4302/reviews` with `kind:\"closure\"`, `verdict:\"approve\"`, `expected_revision`, `case_revision`, `version_id`, `evidence_id`, `note`, and no claim call; the page then shows the closed state from the re-read \u2014 verify: network panel and e2e asserting the body.",
+    "\"Return with a note\" sends `verdict:\"return\"` with the typed note; the page then shows the returned state with the note from history \u2014 verify: e2e.",
+    "A viewer with `can_decide:false` (dossier 5003) sees no decision buttons and \"The PMO Lead decides on closure.\" \u2014 verify: e2e.",
+    "A null `revision` or `case_revision` disables the decision buttons with \"Reload to continue\" and sends nothing; a missing `version_id`/`evidence_id` disables them with the \"isn't ready to decide yet\" text \u2014 verify: unit test on the descriptor and e2e.",
+    "A 409 on the decision re-reads work and checklist, shows \"This changed. Review the latest report.\", and does not repeat the write; a double click sends one request \u2014 verify: mock scenario `409` plus fetch-count unit test.",
+    "A 403 `csrf_failed` refreshes the session once and says \"Press again\"; no automatic second write \u2014 verify: unit test counts fetches.",
+    "A 403 (not csrf) on the decision shows \"You can't decide this closure.\" and no reason; a 404 shows \"This record is unavailable.\" identical to a missing record \u2014 verify: mock scenarios; compare the text.",
+    "Returned state (5005) shows who returned, the date and the note from the latest closure history row; with no such row the sentence is absent, not invented \u2014 verify: e2e on 5005 and on a variant without history.",
+    "\"Replace the report\" sends `POST /work/{id}/closure-report` with `previous_evidence_id` from the `report` check, text up to 16 000 characters (counter, 16 001 refused before sending); 201 shows the new report id and re-reads \u2014 verify: unit and e2e; 413 shows \"The report is too long.\"",
+    "The Finance block appears for a Finance user on dossier 5003 with milestones listed; for a non-Finance viewer (mock 403 on the read) it is absent with no message, and the rest of the page loads \u2014 verify: e2e as both users; wrong tenant or unknown dossier gives the 404 wording.",
+    "Confirm is disabled until the completeness checkbox, an evidence id and a note are set, and always when `finding` is not null (shown as the reason) \u2014 verify: e2e.",
+    "Confirm sends `POST .../finance-confirmation` `{revision, milestone_ids (all listed), inventory_complete:true, evidence_id, note}`; 201 re-reads both reads and the finance row becomes \"Confirmed\"; 409 says \"Finance confirmation changed. Review it again.\" and re-reads \u2014 verify: network panel and e2e.",
+    "No text on the page says debts are confirmed; the finance row and form say \"milestone notifications\" \u2014 verify: grep of the feature folder and DOM text for 5003/5004.",
+    "Dossier 5006 (closed) shows \"Still open after closure\" from `debt.items`, \"As of 2026-11-20\", an `owed:null` item as \"Amount not recorded\" (never 0 or blank), and \"List is limited\" when `limited:true` \u2014 verify: e2e and unit test on the debt mapper.",
+    "A viewer whose `debt` is null sees no \"Still open\" section and no placeholder; `items:[]` shows \"No open invoices recorded as of <date>.\" \u2014 verify: unit and e2e.",
+    "The closed state does not say the project is read-only or moved to Closed in Projects, and has no \"Support contract\" row \u2014 verify: grep and DOM.",
+    "Each of 401, 429, 503 and a dropped network shows its mapped wording with Try again (reads) and keeps typed form text on a write failure \u2014 verify: mock scenarios.",
+    "`closureAdapter.ts` registers key `delivery-closure`, returns `Section[]` the existing renderer draws, and its three descriptors carry the tokens, `idempotency.field === null`, and a `null` token stays `null` in `body()` \u2014 verify: `closureAdapter.test.ts`.",
+    "No file under `frontend/src/features/workspace/` or `frontend/src/features/work-item/` is changed \u2014 verify: `git diff --stat origin/main -- frontend/src/features/workspace frontend/src/features/work-item` is empty.",
+    "Viewport check at 1440 and 390 against the ten SCR-49 artboards for the parts drawn; hidden parts leave no empty heading or gap \u2014 verify: screenshots reviewed against `design/screens.md` SCR-49.",
+    "Focus and keyboard: the decision and finance forms are reachable by Tab, errors are announced (role alert), the note field has a label, and the page has no `prefers-reduced-motion` animation \u2014 verify: e2e keyboard run and axe check.",
+    "`npm run lint`, `npm run typecheck`, `npm test` pass and `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. Closing a project is hard to undo. Finance confirmation is a data-affecting write gated on Finance authority, and the debt figures are protected (D-25 to D-27). Two role gates (Head of PMO and Finance), two revision tokens and a recorded evidence proof raise concurrency and authority risk. The screen changes a flow and adds new copy, so the client must see it."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-118/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-118/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +194,28 @@
   "created_at": "2026-11-23T17:35:25Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:53Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-118/readiness.md",
+      "delivery/features/F-118/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

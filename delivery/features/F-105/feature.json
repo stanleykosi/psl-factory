@@ -3,26 +3,58 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-105",
-  "outcome": "Management accounts intake and investigation run live: quarantined files, units, investigation and the owner or Setup holds",
-  "state": "PLANNED",
+  "outcome": "A person uploads a management-accounts extract, sees it held with its findings, confirms its units and follows the investigation",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-ACCOUNTS-INTAKE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/projects/c0000000-0000-4000-8000-000000000053/accounts` on the mock (Next 4990, mock 4991) lists the four fixture submissions newest first, with the held one showing both findings with their code, message and \"Line 88\" and \"Line 212\" \u2014 verify: open the page; `frontend/e2e/accounts-intake.spec.ts` asserts the rows.",
+    "The held board shows no row table with \"Period is 2026-09, you declared 2026-10\" wording and no \"File held until corrected\" column; a legacy submission with only `findings` strings shows its text \u2014 verify: DOM assertion in the e2e spec and a unit test of the findings renderer with `finding_details:[]`.",
+    "Submitting the form with a blank control total sends `control_total: null`, never `\"0\"`, and the page shows \"Not given\" for it \u2014 verify: unit test on the body builder and a captured mock request.",
+    "A submit sends `case_revision` from the latest intake read and one `idempotency_key`; a network failure then Retry reuses the same key, and a new submit makes a new one \u2014 verify: unit test with a mocked client.",
+    "409 on submit shows the changed-while-working message, re-reads the list and keeps the typed values; 422 shows the field message beside `period` \u2014 verify: mock cases `...0054` and `...0055`, e2e spec.",
+    "A 403 `csrf_failed` does not show no-access; it refreshes the session and says to press again; a 401 shows the signed-out state \u2014 verify: unit tests as F-85 criteria 7 and 8.",
+    "A submission with `can_confirm_units: true` shows the unit group with no unit preselected; Confirm stays disabled until unit, note and evidence are set, and sends `{action:'confirm_units', case_revision, unit, evidence_id, note}` with `unit` one of `major_currency|thousands_currency|millions_currency` \u2014 verify: unit test and e2e on the captured request.",
+    "After a unit confirmation the successor is shown and the first submission reads \"Replaced by a newer submission\" and is read only \u2014 verify: e2e on the mock.",
+    "A submission with `source_id` and no `work_id` offers \"Start management accounts\"; pressing it sends `POST /work` with `line:'finance-accounts/v1'`, `intake:{source_id, adjustment_ids:[]}`, a `reference` and one `idempotency_key`, then links to the work page \u2014 verify: captured request in e2e.",
+    "`/work/5301` shows \"Chidi is investigating the accounts.\" text from `finding`, the \"Not posted to the ledger\" line and no review, delivery or publish control \u2014 verify: open the page; e2e asserts those controls are absent.",
+    "`/work/5302` shows the `finding`, `next_action` and a link to `/setup/delegation`, and no reviewer names or reason text beyond what `finding` carries \u2014 verify: open the page; DOM assertion.",
+    "`/work/5303` lists \"Statement contract\" and \"BU metrics for allocation\" each marked \"Not set\", with the link \"Open Finance rules\" to `/setup/rules/finance`; when `setup_missing` is empty no rows are invented \u2014 verify: open the page and a unit test with an empty list.",
+    "`/work/5304` shows `status_reason` in quotes with no reviewer name or date, the declared scope read only, and an upload form; the upload sends multipart with `head_id` 77, `decision_id` 88, `idempotency_key` and the file, and no `Content-Type` header set by hand \u2014 verify: captured request in e2e and a unit test of the form-data builder.",
+    "\"Recheck reviewers\" appears only when `can_recheck_reviewers` is true and \"Reassess\" only when `can_reassess` is true and `source_id` is not null; reassess needs a reason; neither button appears on `/work/5301` \u2014 verify: e2e on `5305` against `5301`.",
+    "Mapping `61` renders three rows with the null amount as \"Not recorded\", \"Show more rows\" requests `after_row` only when the last row has a numeric `source_line`, and `ledger_posted:false` shows \"Not posted to the ledger\" \u2014 verify: unit test and open the page.",
+    "`/work/5399` and a live work id the account cannot see both show exactly \"This record is unavailable.\" \u2014 verify: open both and compare.",
+    "Unknown values: an unrecognised `state` or finding code shows its raw text and nothing is dropped; a null `calculated_at`, `unit` or amount is never drawn as 0 or as a date \u2014 verify: unit tests on the adapter.",
+    "Against live Django (8030) with an account that may use Finance, a held-file upload, units confirmation and `GET /work/{id}/accounting` match what the page shows \u2014 verify: compare with `python3 delivery/connect/oa.py live GET /api/v1/work/{work_id}/accounting 3` and the JSON from `curl` with the session.",
+    "No write is sent by `accountingAdapter.commands()`; descriptors carry `case_revision` and `expected_revision` with nulls kept null \u2014 verify: adapter unit test.",
+    "The phone boards (width 390) show the same content in one column with no horizontal scroll for the findings, the unit group and the forms \u2014 verify: Playwright at 390 px on each state."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It adds an evidence upload and a units confirmation that changes how a finance extract is read, across several states and a cross-layer contract (`frontend/` against the contract in `contracts/psl-factory.openapi.json`). It posts nothing, moves no money, and shows no restricted payroll data or external messages. Writes carry `case_revision` and an idempotency key. Merge route: the F-105 PR can merge under D-180/D-184 once its reviews pass. F-106 carries the publish risk."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-105/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +91,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-105/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +184,28 @@
   "created_at": "2026-11-23T17:34:59Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:52:10Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-105/readiness.md",
+      "delivery/features/F-105/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

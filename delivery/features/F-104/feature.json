@@ -3,26 +3,73 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-104",
-  "outcome": "Ledger source, part 1: the incumbent reference is read, recorded, observed and independently reviewed live",
-  "state": "PLANNED",
+  "outcome": "A Finance person reads a ledger source's incumbent reference, records what they found with proof, and an independent reviewer approves or rejects it, live",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4201` (mock) shows the Source rows (provider \"QuickBooks\", reference, realm, entity, dates, period, user reference, outcome) and the `finding` line, and no form, no station track, no \"Chidi\" card and no \"Ask Chidi\" \u2014 verify: open the page; e2e asserts absence.",
+    "`/work/4203` shows \"What was observed\" with \"Found\" and a \"Proof attached\" link to `/api/v1/work/4203/incumbent-reference/observations/31`, and an Approve reference and a Reject button \u2014 verify: page and DOM; the link target.",
+    "`/work/4204` shows \"Someone who didn't capture or observe this source has to review it.\" and no approve, reject, evidence list or reason field \u2014 verify: e2e asserts the buttons are absent.",
+    "A `review_hold_code` the page does not know is drawn as its raw text and no buttons \u2014 verify: unit test on the mapper.",
+    "`/work/4205` shows \"Ada Okafor rejected it: \"The screenshot shows JE-7714, not JE-7741.\"\" with the date from `at`; no \"Correct\" button and no \"re-check\" text \u2014 verify: page; grep the panel code for no `incumbent-resolutions` call.",
+    "`/work/4206` shows Posting performed NO, Authenticity certified NO, and Reference recorded YES with the approve date; no \"Completeness\" row and no amount anywhere \u2014 verify: page and DOM text search.",
+    "A `verified.posting_performed` that is not `false` is drawn as \"Not recorded\", not NO \u2014 verify: unit test with a malformed read.",
+    "`target_reference:null` and `incumbent_version:null` (`/work/4208`) read \"Not recorded\", never 0 or blank \u2014 verify: page and unit test.",
+    "`/work/4202` opens with nothing chosen and no file; \"Record observation\" is off; choosing Found alone keeps it off; adding a PNG turns it on \u2014 verify: component test and page.",
+    "A `.exe`, a `.jpg` and a file over `PROOF_MAX_BYTES` are refused before any request, with the file row's error \u2014 verify: unit test asserts zero fetch calls.",
+    "One press on \"Record observation\" sends exactly two requests in order: `POST /api/v1/projects/{case_id}/incumbent-evidence` with body `{kind:\"quickbooks_verification\", case_revision, value:{... state:\"found\", incumbent_version:null ...}}` then multipart `POST /api/v1/work/4202/incumbent-reference/observations` carrying `expected_revision`, `case_revision`, `lineage_id`, `evidence_id` (from the first response), `outcome:\"found\"` and `file`; no `Content-Type` is set by hand \u2014 verify: e2e request capture; unit test on the two bodies.",
+    "The evidence value copies `realm`, `entity`, `source_reference`, `transaction_date`, `accounting_period`, `treatment_evidence_id` and `target_reference` from the read and the person types none of them \u2014 verify: unit test compares the body with the read.",
+    "After the 201 the page re-reads the incumbent-reference and shows the new observation from the re-read; with a mock that returns 201 but an unchanged re-read the page does not say \"Recorded\" \u2014 verify: e2e with both mock scenarios.",
+    "If the observations call returns 422 after the evidence was made, pressing Try again sends only the observations call with the same `evidence_id` \u2014 verify: unit test counts evidence and observation POSTs (one and two).",
+    "After a dropped connection on the observations call the page re-reads; when `check_id` is still null it says \"We couldn't confirm that this was recorded. Check the page before trying again.\", disables the button and sends nothing for 60 s of fake time \u2014 verify: unit test.",
+    "`lineage_id:null` turns \"Record observation\" off with \"This source has no lineage yet.\" and sends nothing \u2014 verify: unit test.",
+    "In the review form no evidence row is chosen at first; with `review_evidence:[]` both verdict buttons are off with \"No evidence is available for this review yet.\"; with rows, both buttons stay off until an evidence row and a reason are set \u2014 verify: component test.",
+    "Pressing Approve reference sends one `POST /api/v1/work/4203/incumbent-reference` with `{action, expected_revision, case_revision, check_id:31, evidence_id, verdict:\"approve\", reason}`; Reject sends `verdict:\"reject\"`; neither body has a null or 0 token \u2014 verify: e2e request capture; the `action` value equals the contract const in `live-schema.d.ts`.",
+    "A double click on a verdict sends one request; while it runs both verdict buttons are disabled; a poll result arriving mid-write does not clear the lock \u2014 verify: unit test with a deferred POST; e2e counts requests.",
+    "After a verdict 201 the page shows the result from the re-read (`latest_decision` and the state tag); the 201 alone changes nothing on screen \u2014 verify: e2e with the unchanged-re-read scenario.",
+    "A verdict with the reason empty is refused in the form with no request \u2014 verify: unit test.",
+    "`/work/4210`: the first write gets 409; the page re-reads, says \"This changed while you were working. Showing the latest version.\", and sends nothing more by itself \u2014 verify: e2e counts requests.",
+    "A 403 with `code:'csrf_failed'` on either write refreshes the session once, says \"Press the button again\", is not shown as no-access, and sends no second request \u2014 verify: unit test counts POSTs (one) and session reads (one).",
+    "A 403 `forbidden` on a verdict shows \"You can't do this.\" plus the server message and re-reads \u2014 verify: mock scenario and e2e.",
+    "A 422 shows the server message and the first `fields[].message` as given; 429 and 503 show \"Try again shortly.\" and nothing is retried by itself \u2014 verify: mock scenarios; fetch counts.",
+    "`/work/4209` (404) and a live work id the account cannot see show exactly \"This record is unavailable.\" with no difference \u2014 verify: open both; unit test on the 404 body.",
+    "A person without `can_observe` and without `review_options` sees no form and no write button at any state; no client code reads `/me` or a role to decide a control \u2014 verify: grep `useMe`/`/me` in `features/ledger-source`; e2e on 4201 and 4204.",
+    "On load, poll and navigation the page sends no `POST`; every write is from a press \u2014 verify: e2e asserts zero POSTs after load and after a 12 s poll window.",
+    "`captureLedgerSource` and `startLedgerWork` send the bodies in Contract, with a new uuid `idempotency_key` per attempt, and are rendered by no page in this feature \u2014 verify: unit tests against the mock; grep imports show tests only.",
+    "Against live Django 8030 with a Finance account that may observe, a ledger work item shows the same source, observation and decision as `GET /api/v1/work/{id}/incumbent-reference`; recording an observation with a small PNG changes `observation` and `check_id` in that read \u2014 verify: compare the page with `oa.py live GET /api/v1/work/{work_id}/incumbent-reference 3` output and `curl` with the session. If no account or data can reach this state, say so and record it as not run.",
+    "Against live Django with an account that captured or observed the source, the page shows the hold line and no buttons (or, if the server lets the buttons show, the write returns the server's refusal and the page shows it unchanged) \u2014 verify: the live read's `review_hold_code` and the page.",
+    "Viewport check at 1440 and 390: the five states match the SCR-58 investigating, observe, review, rejected and verified boards for the parts that remain; hidden parts leave no empty gap or heading \u2014 verify: screenshots at both widths against `design/screens.md` SCR-58 artboards.",
+    "New tests: unit tests for the adapter mapper (all five states, nulls, unknown hold code), the two request builders and the lock rules, plus `frontend/e2e/ledger-source.spec.ts`; `delivery/checks.sh` passes \u2014 verify: the check run output."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The screen writes evidence and approve or reject verdicts that gate a ledger reference. The independent-review rule is an authority control (`auth`). The reshaped payloads change the contract against the v7 mock (`contract-change`). The duplicate resolution that retires records is in F-104B, which lowers this part's risk but does not remove it. Merge goes to the design engineer's batch. The client must see the changed review flow, so acceptance is required."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-104/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +106,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-104/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +206,29 @@
   "created_at": "2026-11-23T17:34:56Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:51:02Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-104/readiness.md",
+      "delivery/features/F-104/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

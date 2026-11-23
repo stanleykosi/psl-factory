@@ -3,26 +3,66 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-116",
-  "outcome": "The project archive runs live, showing work in progress and an uncertain archive result with its recovery",
-  "state": "PLANNED",
+  "outcome": "Archive: the PM reserves the project archive, watches the copy, and checks files the store did not confirm",
+  "state": "READY",
   "task_ids": [
     "FE-DELIVERY-HYPERCARE-ARCHIVE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4402` against the mock (Next 4990, mock 4991) shows \"Archiving in progress. 28 of 42 files copied.\", groups with \"Copying\" rows, and no Tola step card, no \"step 3 of 4\", no \"Ask Tola\" \u2014 verify: open the page; `frontend/e2e/delivery-archive.spec.ts` asserts those absent.",
+    "`/work/4401` shows \"Archived and verified: 42 files, each matched in the archive index.\" and every group \"Archived\"; the same page with `verified:false` and all files confirmed does not show the sentence \u2014 verify: e2e on both mock states; unit test on the status mapper.",
+    "Group rows come from `files[].group` as served: a mock with a group the builder did not know (\"Legal\") draws a \"Legal\" row with its count; no hard-coded group list exists \u2014 verify: unit test; `grep -rn \"RFP response\" frontend/src/features/delivery-archive` returns nothing outside tests.",
+    "The group state words follow part 2: a group with 6 `unknown` and 3 `confirmed` reads \"Not confirmed \u00b7 6\", and the counts across rows equal `files.length` \u2014 verify: unit test on the grouping model.",
+    "\"Handover can start now\u2026\" and \"Open handover\" appear only when `verified` is true; the link appears only when the handover work id is known \u2014 verify: e2e with and without it.",
+    "`/work/4404` shows the three sources with \"RFP response\" and \"Costing and SOW\" checked and \"Planning\" unchecked; unchecking all disables Start; no source outside `sources[]` can be added \u2014 verify: e2e plus component test.",
+    "Pressing Start on `/work/4404` sends one `POST /work/4404/archive-files` with `{expected_revision, case_revision, source_ids:[11,12]}`, shows \"Queued\" (not \"Archived\") on the 202, and disables the button until the re-read returns \u2014 verify: network panel shows one POST; unit test with a mock that counts calls.",
+    "With `can_reserve:false` (`/work/4401`) no Start control and no disabled placeholder exist \u2014 verify: e2e.",
+    "A 409 on Start shows \"This changed while you were looking. The page has been refreshed.\", re-reads, and sends no second POST \u2014 verify: mock scenario `conflict`; count POSTs.",
+    "A 422 on Start shows `message` and the first `fields[].message`; a 403 `csrf_failed` refreshes the session once and says \"Press Start archive again\" with no second POST; a 404 shows \"This record is unavailable.\"; a dropped connection re-reads before any further POST \u2014 verify: unit tests with fetch counts.",
+    "`/work/4403` shows \"The archive store didn't confirm 6 of 42 files\u2026\", the RFP group \"Not confirmed \u00b7 6\", and one \"Look up\" per unknown file; no \"Copy again\" button exists before a lookup \u2014 verify: e2e; assert no element named \"Copy again\".",
+    "\"Look up\" posts `{revision: <that row's job.revision>, action:\"lookup\"}` to that row's `job.id`; after the 200 the page re-reads the inventory, and \"Copy again\" appears only for rows whose re-read `actions[]` contains `retry` \u2014 verify: e2e on the 4403 lookup scenario; network panel.",
+    "\"Copy again\" posts `{revision, action:\"retry\"}` once per press; while any recovery call is in flight all row buttons are disabled \u2014 verify: e2e with a slow mock; count POSTs.",
+    "A 409 on a recovery refreshes the inventory with no automatic repeat; a recovery that dropped the connection is not repeated until a re-read lists `retry` again \u2014 verify: unit tests.",
+    "\"Check what happened\" shows only when `GET /work/{id}` `actions[]` includes `reconcile`; it posts `{expected_revision, action:\"reconcile\"}` with no outcome or evidence and shows \"Checking\u2026\" on 202 \u2014 verify: e2e on a mock with and without `reconcile`; request body assertion.",
+    "No part of the page offers \"mark found\" or \"mark not found\", and no archive screen text promises \"no approval step\", \"keep, never purge\" or \"nothing was purged\" \u2014 verify: `grep -rniE \"mark (each|found)|never purge|no approval\" frontend/src/features/delivery-archive` returns nothing; e2e text check.",
+    "A null `job` (not started) draws the group as \"Not started\" and no buttons; a null `receipt` shows no receipt time; a null `store` draws no store line; `limited:true` shows \"Copy limit reached\" \u2014 verify: unit test on the mappers.",
+    "Unknown is not zero: a null `revision`/`case_revision` (`/work/4407`) is not sent as 0 and Start stays disabled \u2014 verify: unit test on the token mapper; e2e.",
+    "Polling: re-reads every 5 s while any file is `pending` or `leased` or work `state` is `processing`; one read when idle; paused in a hidden tab; a failed poll keeps the last read and shows \"couldn't refresh\"; 401/403/404 on a poll replaces the page and stops polling \u2014 verify: unit test with fake timers; network panel count on `/work/4402` and `/work/4401`.",
+    "Another user's work item (`/work/4405`) and a live id the account cannot see both show exactly \"This record is unavailable.\" \u2014 verify: open both; unit test on the 404 body. A person without write rights (`can_reserve:false`, no `reconcile`) sees the index but no write control \u2014 verify: e2e.",
+    "`/work/4406` shows \"2 files are on hold.\" and \"Copy limit reached\", with no buttons on the held rows \u2014 verify: e2e.",
+    "Against live Django (8030, account with PM scope) on a real archive work item, the page's group counts, file count, `verified` word and store line equal `GET /api/v1/work/{id}/archive-files` \u2014 verify: compare the page with `oa.py live GET /api/v1/work/{work_id}/archive-files 3` shape and the `curl` JSON with the session.",
+    "The code imports live types from `live-schema.d.ts` and not the v7 `@/api/schema` for this page \u2014 verify: `grep -rn \"api/schema'\" frontend/src/features/delivery-archive` returns nothing.",
+    "`archiveAdapter.ts` registers with F-85's `registerLineAdapter`, `sections()` returns existing `Section` objects the `Sections` renderer draws, and `commands()` returns the four descriptors whose `body()` includes the action, the tokens and no key field; a null token stays null \u2014 verify: `archiveAdapter.test.ts`; typecheck.",
+    "Viewport check at 1440 and 390: the page matches the SCR-47 default, working and uncertain boards for the parts that remain (header, status sentence, archive index with group, files, state, the Next block); parts removed leave no empty gap or empty heading \u2014 verify: screenshots at both widths against `design/screens.md` SCR-47 artboards.",
+    "`npm run lint`, `npm run typecheck`, `npm test` pass, and the live-schema drift test still passes \u2014 verify: `delivery/checks.sh` result.",
+    "New tests cover: the grouping and counts model, the status sentence, token mapping with nulls, each write's single-POST rule, and the 409/422/403/404/429/503 mapping \u2014 verify: test files named in the build report."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The screen reserves an archive and can retry file copies. That is a cross-layer contract with revision tokens and an uncertain-effect recovery path, but it moves no money, identity or client messages. Retry is gated by a prior lookup and by the API's `actions[]`. Surfaces: ui, api, and product-decision (the design's \"no approval step\" and \"mark found or not found\" change to a person reserving and a system lookup, which is PSL's decision per D-185). Product acceptance is required because the flow and copy differ from the board. Retries must reconcile before repeating. Never invent attempt counts, file counts or limits."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-116/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +99,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-116/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +192,28 @@
   "created_at": "2026-11-23T17:35:22Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:49Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-116/readiness.md",
+      "delivery/features/F-116/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

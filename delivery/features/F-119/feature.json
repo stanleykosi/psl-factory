@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-119",
-  "outcome": "The project retrospective is held and recorded live through the project meetings",
-  "state": "PLANNED",
+  "outcome": "A person records the project retrospective as a saved version and sees where it stands in the closure checklist",
+  "state": "READY",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Case 2001 on Next 4990 + mock 4991 at `/projects/<2001>/retrospective?dossier=5001` shows the project title, three empty boxes, Who took part, Notes file, \"Save retrospective\" and no \"Save draft\" anywhere. \u2014 verify: open the page; search the page text and `src/features/retrospective` for \"draft\" (none).",
+    "Saving with only \"What went well\" filled, one participant, a notes file and a time sends one `POST /api/v1/projects/<case>/meetings` whose body has `kind:\"retrospective\"`, `meeting_id:null`, the current `revision`, a `reference`, and a `summary` that is exactly `## What went well\\n<text>` \u2014 verify: network panel / Playwright request assertion; then the page shows \"Saved ... version 1\" only after the re-read.",
+    "Saving with all three boxes sends them in the order went well, didn't, lessons, each under its heading, joined by one blank line \u2014 verify: unit test on `summary.ts` and the e2e request body.",
+    "Parsing: a `summary` with the three headings fills the three boxes; one with no headings (case 2002 v1) shows as a single \"Retrospective\" block and saving it unchanged sends the identical text; a heading in different case or with a curly apostrophe still parses; text before the first heading appears under \"Other notes\" \u2014 verify: unit tests in `summary.test.ts` including a round trip.",
+    "Saving again on case 2002 sends `meeting_id:301` and the same `reference` (read-only field) and the page then shows version 3 \u2014 verify: e2e request body and page.",
+    "Case 2002 with `dossier=5002`: the strip shows \"The checklist used version 1\" with its date, and \"A newer version has been saved. The checklist has not picked it up yet.\"; no request carries a \"latest\" filter or `retrospective_id` \u2014 verify: e2e and request log.",
+    "`/projects/<2002>/retrospective?meeting=301&version=9001` shows \"Version 1, not the current version\" with no Save new version button and no action controls \u2014 verify: e2e.",
+    "A stale save (mock 409) shows \"This changed while you were editing. Reload and try again.\", re-reads, and keeps every typed box, participant and proof \u2014 verify: e2e.",
+    "A duplicate reference (mock 422 with `fields`) shows the message under the Reference field, not as a generic error; Save re-enables \u2014 verify: e2e.",
+    "A forced 503 after sending shows \"We couldn't confirm it saved\", re-reads the list, and keeps Save disabled until the re-read returns; there is no automatic second POST (exactly one POST in the request log) \u2014 verify: e2e.",
+    "Double click on Save sends one POST \u2014 verify: e2e request count.",
+    "Save is disabled with the reason shown when no box has text, when no notes file is chosen, when the joined summary exceeds 16000 characters, or when `proofs` is empty (case 2004 shows \"No supporting file is recorded for this project yet...\") \u2014 verify: unit and e2e.",
+    "A decision row needs text and a supporting file; saving a new version loads the previous version's decisions and sends them unchanged when untouched, including any `change_evidence_id` \u2014 verify: unit test on the body builder; e2e on case 2002.",
+    "\"Make this a follow-up action\" sends one `POST /actions/create` with `meeting_id` and no call to `/meetings/{id}/actions`; empty deadline sends `due_at:null` and the new row reads \"No deadline set\"; an empty owner reads \"No owner\"; a duplicate action reference shows the 422 under Reference \u2014 verify: e2e request log and page.",
+    "Wrong user: case 2003 (`can_record:false`, options 403) shows saved versions read-only with no form and no action button; the 403 from options is not shown as an error \u2014 verify: e2e.",
+    "Wrong tenant or unknown case shows only \"This record is unavailable.\" for both 404 on project read and on meetings \u2014 verify: e2e on an unknown uuid; same text for a case the mock marks not-yours.",
+    "A signed-out 401 shows the sign-in state with `next=` the current path \u2014 verify: e2e with the mock session cleared.",
+    "A checklist read failure (mock 503 for dossier 5009) hides only the strip, shows \"The closure checklist is unavailable.\", and the form still saves \u2014 verify: e2e.",
+    "`meetings` returns `next_page`: the list shows \"More\" and loads the next page via the `page` query \u2014 verify: e2e with a 30-row fixture.",
+    "Phone width (390px) shows one column with Save reachable and tap targets at least 44px \u2014 verify: Playwright mobile project screenshot.",
+    "Against Django 8030 with a project that has `meeting.record`: first save creates the meeting, `GET /api/v1/projects/<case>/meetings?kind=retrospective` returns it, and the closure checklist `retrospective` check references the saved version \u2014 verify: curl with the session, compare to the page.",
+    "No money, no client message, no approver or count is drawn; any value the API returns as null shows as \"Not recorded\" or the specific wording above, never 0 or blank \u2014 verify: review of the rendered pages and `model.ts` tests for null mapping.",
+    "New tests: `summary.test.ts` (write, parse, round trip, no headings, oversize), `model.test.ts` (body builders, null handling, status words), and `retrospective.spec.ts` (criteria 1 to 20 against the mock) \u2014 verify: `npm test` and `npx playwright test e2e/retrospective.spec.ts` in `frontend/`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The screen has several behaviours (versioned save, action creation, checklist link) and a cross-layer contract: revisions, evidence ids, and a `summary` convention that decides what the screen shows. It writes internal meeting records only. No money, payroll, external messaging, auth or migrations are involved, and nothing is hard to undo because saves append versions. Surfaces are ui, api and contract-change (the three-box to one-summary packing). Product acceptance is required for the changed form layout and the hidden draft."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-119/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +95,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-119/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +188,28 @@
   "created_at": "2026-11-23T17:35:28Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:53:31Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-119/readiness.md",
+      "delivery/features/F-119/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-101",
-  "outcome": "Income schedules, part 1: the workspace reads the live schedule and records the schedule review through the line adapter",
-  "state": "PLANNED",
+  "outcome": "Income schedules: read the live schedule and record the review decision",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4203` (Next 4990, mock 4991) shows the stage and finding, the income rows with their amounts, the result block and the Decide panel with exactly Approve, Return and Reject buttons \u2014 verify: open the page; `frontend/e2e/income-schedules.spec.ts`.",
+    "Against live Django (8030) a real `income_schedules` work item shows the same stage, finding, row keys and result totals as `GET /api/v1/work/{id}/finance-schedule` \u2014 verify: compare the page with `curl` JSON using the session.",
+    "A row with `amount: null` and a result total of null show \"Unknown\", never 0 or an empty cell \u2014 verify: `/work/4201` and a unit test on the row mapper.",
+    "The page performs no arithmetic on money: no total, difference or count is computed (`grep` for `parseFloat|Number(` on amounts in the new files returns nothing) \u2014 verify: grep and code review.",
+    "The Decide panel shows only the verdicts in `review_verdicts[]`: `4203` shows three buttons, `4205` shows only \"Withdraw approval\", `4201`, `4204` and `4206` show none; an unknown verdict string draws no button \u2014 verify: unit test and e2e.",
+    "With `review_hold_code: \"reviewer_missing\"` (`4206`) the page says nobody is set to review schedules and shows no Decide panel, reviewer name or Setup link; `review_rule_missing` shows its own sentence \u2014 verify: e2e and unit test on both codes.",
+    "A decision is not sent without a chosen evidence record and a note; Approve is no exception, and the buttons stay disabled with the reason shown \u2014 verify: unit test asserts no fetch call; e2e tries Approve with each missing.",
+    "Pressing Approve on `4203` with evidence 61 and a note sends exactly one `POST /api/v1/work/4203/reviews` with `{kind:\"schedule\", expected_revision:5, case_revision:12, target_id:9, verdict:\"approve\", evidence_id:61, note}` and the `X-CSRFToken` header \u2014 verify: network panel and unit test on `body()`.",
+    "After a 200 the page re-reads and shows what the re-read says; it does not show \"verified\" from the write response alone \u2014 verify: mock where the re-read returns the old state; unit test.",
+    "A 409 shows \"This schedule changed while you were reading it, so nothing was recorded\", re-reads, and keeps the person's note and evidence choice \u2014 verify: mock scenario.",
+    "A dropped connection or 503 after the press shows the unconfirmed notice, keeps the buttons disabled until the re-read returns, and sends the decision once only \u2014 verify: mock scenario; count POST calls.",
+    "A 403 `csrf_failed` refreshes the session once, says to press again, and does not show the no-access state or retry by itself \u2014 verify: mock scenario; count calls.",
+    "A 404 on the read or the write shows \"This record is unavailable.\" with the same words for a missing and a not-yours schedule (`4299`), no title and no further call \u2014 verify: both cases side by side.",
+    "A 422 with `fields[]` shows the first field message next to the form and keeps the input \u2014 verify: mock scenario.",
+    "`evidence[]` empty shows the \"no evidence to cite\" message and no buttons; the evidence select offers only `evidence[]` rows and the page has no file input or free-text evidence id \u2014 verify: component test.",
+    "`4204` shows the returned rows and \"Returned for correction\" and no correct-and-resubmit control; no quoted note appears unless the read carries one \u2014 verify: e2e; grep the new files for `correct_and_resubmit` and `liveApi.POST` (only the reviews call).",
+    "`duplicates[]` lines are shown read only under \"Possible duplicates\"; there is no settle control \u2014 verify: `4202` e2e.",
+    "An `inventory` item (`4207`) shows coverage as returned and its schedules read only with no button; an `income` read draws no inventory block \u2014 verify: e2e.",
+    "\"Posted to the ledger\", \"Export as an adjustment\" and \"Withdraw approval\" text for export appear nowhere except the revoke button, and the build note says \"Posted to ledger: NO\" is hidden because the read has no field \u2014 verify: grep of the new files; `build.md`.",
+    "A hold code or verdict list is never invented: with `review_hold_code: null` and `review_verdicts: []` (`4205` without revoke) the page shows no panel and no \"reviewer not set\" text \u2014 verify: unit test.",
+    "Viewport check at 1440 and 390 against the SCR-54 investigating, held, review, returned and verified boards: parts that remain match; hidden parts leave no empty heading or gap \u2014 verify: screenshots at both widths against `design/screens.md` SCR-54.",
+    "New tests exist for the adapter's `sections` and `commands` (including null tokens staying null), the note and evidence gate, and each error mapping \u2014 verify: `delivery/checks.sh` runs them green, with `api-live-schema-drift` still passing."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The change is cross-layer (v7 mock to live bodies) and the review write goes through auth, evidence and revision checks (`reviews`), but it does not post to the ledger or move money. The high-risk actions (duplicate settlement, adjustment export) sit in F-101B. Merge goes to the design engineer's batch if the reviewers treat the finance review write as money-adjacent (D-180/D-184). Otherwise it can merge routinely. Source: connection map `### SCR-54`, backend answers E-21 and E-22."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-101/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +95,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-101/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +195,29 @@
   "created_at": "2026-11-23T17:34:51Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:42Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-101/readiness.md",
+      "delivery/features/F-101/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

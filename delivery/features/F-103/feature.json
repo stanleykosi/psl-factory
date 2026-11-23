@@ -3,26 +3,61 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-103",
-  "outcome": "Cash forecast, part 1: the workspace reads the live forecast, group rows and actuals through the line adapter",
-  "state": "PLANNED",
+  "outcome": "The cash forecast page shows the live forecast, its group disclosure and its delivery state, read only",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Opening `/work/4301` against the mock (Next 4990, mock 4991) shows the forecast header (entity, currency, basis, \"As of {date}\"), six month rows, and the delivery line \"Receipt 9\" \u2014 verify: open the page; `frontend/e2e/cash-forecast-live.spec.ts` asserts the rows and the receipt text.",
+    "Against live Django (8030) for a real forecast work id the page shows the same entity, currency, as_of, periods, jobs and matches as `GET /api/v1/work/{id}/forecast` \u2014 verify: compare the page with the `curl` JSON and `python3 delivery/connect/oa.py live GET /api/v1/work/{work_id}/forecast 4`.",
+    "A period with an unknown amount (4301 January closing) reads \"Unknown\" in the table and in the page text; no 0, no carried-forward opening, and no sum is computed \u2014 verify: e2e on 4301; unit test on the period mapper with a missing, null and `\"0.00\"` amount, which must render as Unknown, Unknown and the zero amount respectively.",
+    "`result: null` (4303) shows the stage, finding and \"No forecast figures yet.\" with no table, no delivery section and no matched-actuals section other than \"No actuals matched yet.\" \u2014 verify: e2e and mapper unit test.",
+    "`/work/4307` and a live id the account cannot see both show exactly \"This record is unavailable.\"; 401 shows the sign-in link with `next`; 403 `csrf_failed` is not shown as no-access; 409 and 422 show their own wording; a failed forecast read keeps the work item header on screen \u2014 verify: mock scenarios plus unit tests on the error mapping.",
+    "The uncertain state (4305) shows the job status raw, \"Outcome not known\" when `observation.outcome` is `unknown`, \"Restart allowed under rule 12\", and the text \"Nothing has been resent from this page.\"; no Retry, Cancel, Record what happened or Resend button exists \u2014 verify: e2e on 4305 asserts the texts and the absence of those four buttons.",
+    "A job with `receipt_ids: []` reads \"No receipt yet\" and never a tick or \"Received\" \u2014 verify: unit test and e2e on 4305.",
+    "`observation.has_proof` true (4306) shows a \"Proof on file\" link whose href is `/api/v1/work/{id}/forecast/observations/{observation.id}`; false shows \"No proof on file\" and no link; the page does not request that URL while rendering \u2014 verify: e2e asserts the href and that the network log has no request to it until clicked.",
+    "Group disclosure (4304) shows only `selected_rows`, `selected_fields`, `selected_metadata` and recipients as sent; the poisoned variant (a payroll key in `selected_rows`, an item with `staff_name` and `pay`) shows the key text only and draws no staff name and no pay figure anywhere on the page, and no request is made to any payroll route \u2014 verify: e2e on the poisoned fixture asserts the DOM text contains neither the staff name nor the pay figure and the request log has no `payroll` URL; unit test on the disclosure mapper drops unknown object fields other than a whitelist (`key`, `label`, `kind`, `amount`, `expected_on`, `original_due`, `commitment`, `residual`, `matched`).",
+    "A payroll-related assumption appears on a group view only when it is listed in `disclosure.selected_rows` or `selected_fields` of the read; with a null `disclosure` on `audience: 'group'` none appears \u2014 verify: unit tests on both inputs.",
+    "`disclosure.row_keys`, `oracle_choices` and `decision_choices` are drawn as read-only text with no checkbox, select or input in the disclosure section \u2014 verify: e2e asserts zero `input`, `select` and `[role=checkbox]` elements inside the disclosure section.",
+    "Selecting month 2026-11 loads `GET /work/{id}/forecast/actuals/2026-11` once and shows rows, actuals (direction In or Out, Verified or Not verified) and history (Reversed marked); an actual with a null amount reads \"Unknown\" \u2014 verify: e2e and network panel; unit test on the actuals mapper.",
+    "When `more_actuals`, `more_history` or `more_notes` is true the section says \"Showing the first rows only. The rest isn't available here.\" and no \"Show more\" control exists; when all are false the sentence is absent \u2014 verify: e2e on both fixtures.",
+    "A month with no rows shows \"No actuals recorded for {month}.\"; a 404 on a month shows \"This record is unavailable.\" and leaves the forecast sections on screen \u2014 verify: mock scenarios and e2e.",
+    "The page sends no write: no `POST`, `PUT`, `PATCH` or `DELETE` is made on any forecast state, and none of Approve, Return, Reject, Withdraw, Post, Record, Match, Leave unmatched, Save, Retry, Cancel appears as a button \u2014 verify: e2e records the request methods and the button names on 4301 to 4306; `grep -n \"liveApi.POST\\|\\.POST(\" frontend/src/features/forecast` returns nothing.",
+    "No \"reviewer not set\" text and no shortened money (\"M\" suffix) is drawn at 1440 or 390 \u2014 verify: e2e text search on 4302 at both widths.",
+    "A null `expected_revision` or `case_revision` is carried as null and not rendered as 0 \u2014 verify: unit test on the adapter's context mapping.",
+    "The adapter registers under the live panel key and `adapterFor(key)` returns it; a panel key with no adapter still does not break the page \u2014 verify: `forecastAdapter.test.ts` and the F-85 unknown-key test stays green.",
+    "The generated live types for the three reads match contract 1.24.0 and `api-live-schema-drift.test.ts` passes \u2014 verify: `npm test`; `delivery/checks.sh`.",
+    "At 1440 and 390 the page matches the SCR-56 boards for the parts that remain (investigating, review without decide controls, group rows and group review without edit controls, uncertain without recovery controls, verified, actuals without record controls); hidden parts leave no empty heading or gap and the table scrolls only inside its region \u2014 verify: screenshots at both widths against the SCR-56 artboards; axe WCAG 2.2 AA has no violations on 4301 to 4305.",
+    "The v7 forecast pages `W-4001..W-4013` and `e2e/cash-forecast.spec.ts` still pass unchanged while lane C's adapter route is not used for them \u2014 verify: run that spec.",
+    "New tests: unit tests for the section mapper (periods, items, findings, matches, disclosure, delivery), the actuals mapper, and the error mapping; one e2e file for 4301 to 4307 \u2014 verify: the files exist and run in `npm test` and `npm run e2e`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "security"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It is read-only and sends nothing, but it shows forecast money and group-disclosure content that could carry payroll-related assumptions (E-26), so the security surface applies. The sections of the forecast response are loosely typed, so the mapping must be tested against the live contract in `contracts/psl-factory.openapi.json`. Read-only screens can merge under D-180/D-184. If any payroll-related row can appear in the group view, route the merge to the design engineer's batch."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-103/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +94,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-103/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +194,29 @@
   "created_at": "2026-11-23T17:34:54Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:45Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-103/readiness.md",
+      "delivery/features/F-103/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

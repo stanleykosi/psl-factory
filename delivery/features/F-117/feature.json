@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-117",
-  "outcome": "Handover to Support reads the live handover, records gaps and publishes the approved version to Support with its receipt",
-  "state": "PLANNED",
+  "outcome": "Handover to Support: the PM sees the live handover, publishes the approved version, and records Support's reply with its gaps",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4201` on Next 4990 with mock 4991 shows the handover status \"Waiting to be published\" and a \"Publish to Support\" button with the board's consequence line; `/work/4204` shows no such button \u2014 verify: open both pages; `frontend/e2e/delivery-handover.spec.ts`.",
+    "Pressing Publish on 4201 sends one `POST /api/v1/work/4201/support-publication` whose body is exactly `{expected_revision, case_revision, version_id:9101}` with the values from the read, and the page then reads \"Queued for Support\", not \"received\" or \"delivered\" \u2014 verify: network panel and e2e assertion on the request body.",
+    "A double click on Publish makes one POST; during the re-read the button is disabled \u2014 verify: e2e counts requests.",
+    "A 409 on publish shows the refresh message, re-reads, and makes no second POST; a 422 shows the returned message; a 403 `csrf_failed` refreshes the session and says \"Press Publish again\"; a dropped connection triggers a re-read and no automatic resend \u2014 verify: mock scenarios and unit tests counting calls.",
+    "With `version_id:null` or `can_publish:false` there is no Publish button and no invented \"why not\" text \u2014 verify: unit test on the mapper.",
+    "`/work/4206` (`effect_uncertain`) shows the uncertain banner and \"Check what happened\", no Publish button; pressing it sends `POST /actions {expected_revision, action:\"reconcile\"}` once and accepts 202 \u2014 verify: e2e, network panel.",
+    "`/work/4203` shows the record form with Who replied, Role (fixed text for one role), How they replied (five channels in words), When, What Support said, Note and Proof (one option \"signature v1\"); Record is off until each required field is filled \u2014 verify: e2e.",
+    "Choosing Gaps found shows the Gaps box; two non-blank lines are sent as `gaps:[\"\u2026\",\"\u2026\"]` in order, trimmed; blank lines are dropped; zero gaps, more than 10 gaps or a line over 400 characters keeps Record off with a plain reason; choosing Received sends no `gaps` key \u2014 verify: unit test on the body builder; e2e.",
+    "The record POST body is `{expected_revision, case_revision, receipt_id, previous_id, status, evidence_id, note, party, channel, responded_at, role, gaps?}` with both revisions from the read, `previous_id:null` when the row had no status and the replaced row's id otherwise; a null revision is never sent as 0 \u2014 verify: unit tests on `handover.record_reply` body; e2e on 4203 and 4205.",
+    "With `can_record:false` (4202, 4208 as recorded) no form renders; a 403 on the POST says \"You can't record Support's reply here.\" and keeps typed values; a 422 with `fields[]` shows each message by its field and keeps typed values; a 409 re-reads and keeps typed values \u2014 verify: mock scenarios; e2e.",
+    "After a successful 201 the page re-reads, the new record appears in \"Support's reply\", and the form closes; one press made one POST \u2014 verify: e2e counts requests.",
+    "`/work/4204` lists the two gaps as numbered rows tagged OPEN and shows \"Ask Tola to draft v2\"; `/work/4205` (latest received) shows no gaps list and no OPEN tag, and the earlier gaps record reads \"Replaced\" \u2014 verify: e2e.",
+    "\"Ask Tola to draft v2\" posts `corrections` with `line`, a required `reason`, both revisions and the `source.inputs` ids read from the work item; when those ids cannot be read the button is hidden \u2014 verify: unit test on the body; e2e.",
+    "`/work/4207` shows the recipient's \"Support receipt\" with the document title, version and sections and the acknowledge form; `/work/4201` (viewer is the PM, `document:null`) shows no document and no handover summary; a 403 from `support-receipt` does not break the page \u2014 verify: e2e on both; unit test on the 403.",
+    "The Support receipt (\"Acknowledged by Support\") renders only from `support-receipt` rows with a non-null `status`; the PM's own record never shows that wording \u2014 verify: unit test on the part-6 mapper.",
+    "Nothing on the page draws Tola's step card, \"Review needed?\", an attachments list for the PM, the sub-nav or \"Open question for PSL\", and the page leaves no empty heading or gap where they were \u2014 verify: e2e asserts absence; screenshots at 1440 and 390 against the SCR-48 default, record, gaps and received boards for the parts that remain.",
+    "Wrong user: `/work/4208` and a live id the account cannot see both show exactly \"This record is unavailable.\" \u2014 verify: open both and compare; unit test on the 404 body.",
+    "Wrong tenant and a work item of another line: opening a work id whose `line` is not the handover line does not draw the handover panel \u2014 verify: unit test with another line's fixture.",
+    "Against live Django 8030 with an account that holds the PMO role and a delivery-handover work item, the page matches `GET /api/v1/work/{id}/support-publication`, `support-replies` and `support-receipt` field for field (can_publish, receipts, gaps, channels) \u2014 verify: compare the page with `curl` output using the session.",
+    "Against live Django 8030 the Publish and Record writes are not run against a real Support audience; the live check is read-only plus the reconcile-free record write on a sample item, and the result is labelled as a mock or live evaluation in `build.md` \u2014 verify: `build.md` text.",
+    "`liveApi.POST` appears only in the handover feature files for the six listed writes, none in `workspace/` \u2014 verify: grep.",
+    "`npm run lint`, `npm run typecheck`, `npm test` and `api-live-schema-drift.test.ts` pass; new unit tests cover the adapter mapper, each command body builder (nulls stay null, no key field on the wire), the status sentence, and the gaps parser \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because Publish to Support is an irreversible external send with an uncertain-delivery and reconcile path. The reply record is also checked by role and can replace an earlier record through `previous_id`. Both writes need two revisions, so they are contract-sensitive. Surfaces are ui, api, contract-change (v7 to live shapes, DC-1/DC-2) and external-messaging (publication and receipt). Merge goes to the design engineer's batch. The v9 architecture and the 13 Nov design approval (with the D-173/D-181 exceptions in `design/review.json`) cover this screen. The spec writer should still confirm `design.py check` passes."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-117/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +95,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-117/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +195,29 @@
   "created_at": "2026-11-23T17:35:23Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:51Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-117/readiness.md",
+      "delivery/features/F-117/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

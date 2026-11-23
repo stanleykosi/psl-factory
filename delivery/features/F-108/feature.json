@@ -4,25 +4,71 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-108",
   "outcome": "Restricted payroll inputs are imported, compared and matched live, and people without payroll access see a clear refusal",
-  "state": "PLANNED",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-PAYROLL-IMPORT"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "As the payroll operator, `/projects/{caseId}/payroll` lists the requests from `GET .../payroll/requests` and \"Start a payroll request\" creates one with two providers; the new request opens its detail page \u2014 verify: open the page on 4990; `frontend/e2e/payroll-import.spec.ts`; network panel shows one `POST` with `{revision, reference, metadata, evidence_id}`.",
+    "The request detail shows one row per provider with version, accepted or held, created time and \"Replaces version N\" when `replaces_input_id` is set, from `GET .../inputs` \u2014 verify: e2e on the three fixture inputs; unit test on the row mapper.",
+    "Uploading a CSV for a provider sends one multipart `POST .../inputs` with `revision`, `provider`, `operation_key`, `file`, no hand-set `Content-Type`, and `replaces_input_id` only when \"This replaces an earlier file\" is chosen \u2014 verify: network panel; unit test on the body builder; header `X-CSRFToken` present.",
+    "A file over `PROOF_MAX_BYTES` or a format not in the provider's `formats[]` is refused before any request \u2014 verify: unit test asserts no fetch call.",
+    "A refused upload (fixture C) shows the file error board with the safe explanation and \"Nothing was imported and nothing was changed\", \"Upload again\" and \"Download template\"; the \"What we expected / What we found\" block is drawn only when the response carries sheet names, else it is absent with no empty heading \u2014 verify: e2e on both fixtures.",
+    "\"Download template\" calls `GET .../template?provider=&format=` and saves the file; it offers only formats listed for that provider; the response body is not rendered or logged \u2014 verify: network panel and unit test; grep for `console.` in the payroll folder returns nothing.",
+    "Held rows appear in a \"rows need HR\" table from `working-rows?status=held`; an unknown amount reads \"Unknown\", never 0; a `quarantined` row says Held \u2014 verify: e2e and unit test on the row mapper with `amount: null`.",
+    "\"Continue to matching\" is disabled until one accepted input per provider is selected, sends `POST /work` with `line:\"finance-payroll/v1\"`, `case_revision` from `start-choices`, a fresh `idempotency_key`, and goes to `/work/{work_id}`; the \"N rows\" text appears only when a `ready` count was served \u2014 verify: e2e; unit test on the body; one POST on a double click.",
+    "On a `finance-payroll/v1` work item the payroll adapter draws stage, finding, selected inputs and the `working[]` rows; counts appear only for keys the API sends, and `counts: null` shows \"Counts aren't available yet.\" \u2014 verify: e2e on the two fixtures; unit test on the adapter's `sections`.",
+    "The combine, match and aggregate buttons send `POST /work/{id}/payroll-operations` with `{action:\"working\", expected_revision, case_revision, stage}` and appear only for the next stage; no `publish`, `withdraw`, `successor` or `restart` is sent from this feature \u2014 verify: unit test on descriptors; grep `payroll-operations` bodies in the feature for those four words returns nothing.",
+    "The review controls offer Approve, Return and Withdraw approval (plus Approve draft match on the match run) and no Reject, each only when allowed; the body carries `subject`, `subject_id`, `operation_key`, `evidence_id`, `note` and both revision tokens \u2014 verify: unit test on `body()`; e2e that \"Reject\" text is absent.",
+    "HR view rows (`working-rows`, `kind=run`) render employee, component, amount, business unit and result from served fields only; no \"Left 30 Sep\" text, conflict reason, or \"136 matched\" strip is drawn unless built from served counts \u2014 verify: e2e DOM text search.",
+    "Name checks: with `configured: false` nothing is shown; `can_compare: false` hides the Compare control; `can_route_difference: false` hides \"Send the difference to HR\"; a side absent from `attestation_sides` has no attest form \u2014 verify: unit tests on each flag combination; e2e.",
+    "Comparing names sends `POST name-checks {revision, run_id, input_id, row_key}`; a `different` result offers \"Send the difference to HR\" only when allowed and sends `POST name-checks/{id} {revision}` once \u2014 verify: network panel; unit test.",
+    "`receive_hr` is offered only when `hr_receipt.can_acknowledge` is true and sends `{action:\"receive_hr\", expected_revision, case_revision, snapshot_id, evidence_id}`; with `hr_receipt: null` nothing about HR receipt is drawn \u2014 verify: unit test and e2e.",
+    "As the Finance Lead, the report page shows business units with their served amounts and the eligible total, no staff count column and no names; the \"Individual pay is restricted\" note is shown; no request is made to `working-rows`, `name-checks` or `hr-disclosures` \u2014 verify: e2e on the report fixture with a request logger that fails on those URLs.",
+    "A business unit the API does not return is not shown, and no row or total is shown as 0 when the API sent none \u2014 verify: unit test on the report mapper with a missing unit and a null-like amount.",
+    "\"Confirm you received this report\" appears only with `can_acknowledge: true`, sends exactly one `POST payroll/reports/{id} {revision}`, and afterwards shows the receipt state from the re-read \u2014 verify: e2e; network panel (no `aggregate-receipt` call from the report page).",
+    "Questions: \"Ask HR a question\" appears only when `can_ask` is true with a select of `topics[]` and no free-text field; each row shows only the buttons its `can_*` flags allow, and a reply button per `reply_options[]` \u2014 verify: unit tests per flag; e2e.",
+    "Failure journey 1: with the member persona (403 on rows, inputs and reports) every payroll route shows the \"not admitted\" block and nothing else \u2014 no table, counts, provider names, buttons or hidden DOM nodes holding payroll text \u2014 verify: e2e asserts the page text and `document.body.innerHTML` contain none of the fixture staff names, staff IDs, amounts or provider names.",
+    "Failure journey 2: the outsider persona (404) shows \"This payroll record wasn't found.\" with the same layout as an absent record id; the text of both cases is identical \u2014 verify: e2e compares the two pages.",
+    "Failure journey 3: opening `/projects/{caseId}/payroll/runs/{runId}` as the Finance Lead shows the not-admitted block, and a deep link to an input rows route as the Finance Lead likewise \u2014 verify: e2e; the mock answers 403 and the page renders no fixture data.",
+    "Failure journey 6: with counts 200 and rows 403 the counts are shown and the row area shows the refusal; no count is derived from rows \u2014 verify: e2e with a mock scenario.",
+    "Leak control: after visiting HR rows as the operator, signing out and signing in as the Finance Lead, no staff name or amount from the earlier session appears in the DOM, `localStorage`, `sessionStorage` or the data cache, and none appears in any request URL or query string \u2014 verify: Playwright test reads storage and the network log; unit test that cache keys contain no `row_key`, name or amount.",
+    "No staff name, staff ID, amount or `row_ref` appears in any `console.*` output, thrown error message, toast or error boundary text during the error scenarios (403, 404, 409, 422, 503, network) \u2014 verify: Playwright console listener and a unit test of the error boundary with a thrown error that contains a fixture name.",
+    "Stale writes: a 409 on upload, start, review, stage, attest, question or acknowledge shows the stale message, keeps the person's typed values, re-reads and does not auto-retry \u2014 verify: unit tests with the mock `409` scenario; fetch count is one.",
+    "An upload that times out is not resent automatically; the form tells the person to check the list and re-reads `GET inputs` \u2014 verify: unit test counts fetch calls (one POST).",
+    "401 shows the signed-out state with a link to `/sign-in?next=<current path>`; 403 `csrf_failed` refreshes the session once and says \"Press the button again\" \u2014 verify: unit tests and mock scenarios.",
+    "Viewport check at 1440 and 390: SCR-09 default and error, SCR-18 default and permission match the boards for the parts that remain, and the hidden parts leave no empty heading or gap \u2014 verify: screenshots reviewed against `design/screens.md` SCR-09 and SCR-18 artboards.",
+    "The feature makes no request to a v7 mock-only payroll route and imports types from `live-schema.d.ts`, not `@/api/schema` \u2014 verify: `grep -rn \"api/schema'\" frontend/src/features/finance/payroll` returns nothing.",
+    "Against live Django (8030) as an admitted payroll operator on a real request, the inputs list and template download match `oa.py live GET` output for `inputs` and `template`; as a Finance reader the report matches `GET .../reports/{id}` and the rows route answers 403 \u2014 verify: compare page and curl JSON (session cookie); record the 403.",
+    "`npm run lint`, `npm run typecheck`, `npm test` pass and `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The screens read and write restricted payroll rows, staff names and match results (restricted-payroll invariant, E-3, E-26, E-30). They rely on per-record 403/404 and on viewer flags, so a client-side leak or a wrongly shown control is a security failure. SURFACES are ui, api, security and auth. No money is moved here: payroll release is F-110 and SCR-37 is F-109. The merge goes to the merge batch. Reviewers should confirm that no restricted data is exposed to non-admitted roles, and that a Finance reader sees aggregates only."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-108/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +105,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-108/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +205,29 @@
   "created_at": "2026-11-23T17:35:08Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:53:23Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-108/readiness.md",
+      "delivery/features/F-108/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

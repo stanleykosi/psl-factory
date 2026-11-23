@@ -3,26 +3,69 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-112",
-  "outcome": "Change request, part 1: the change log, stage track, impact, deciders and authorisation run live",
-  "state": "PLANNED",
+  "outcome": "A change request can be logged, assessed, decided and authorised from its work page (part 1 of SCR-31)",
+  "state": "READY",
   "task_ids": [
     "FE-CHANGE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4201` (mock, Next 4990, mock 4991) shows the title, category tag, the five-step track with step 1 current, four impact rows (three recorded, Security \"Not given yet\" and MISSING) and \"Record an assessment\" only on the Security row \u2014 verify: open page; `e2e/change-request.spec.ts`.",
+    "Stage grouping: stages source, impact, authorization all light step 1; notice, execution, go_live, signatures/complete light 2 to 5; an unknown stage lights no step and shows the raw text \u2014 verify: unit test on the stage mapper.",
+    "Steps 2 to 5 have no button or link that sends a request in any state \u2014 verify: e2e asserts no control with those labels; `grep -rn \"document_review\\|operate_delivery\\|\\\"close\\\"\\|execution\\|restart\" frontend/src/features/change-request` finds no request code.",
+    "The decider list shows exactly the roles in `decisions[]` (fixture `4202` five rows, a Normal client-internal fixture with two rows shows two); the page never shows \"all five\" text and no row not in the read \u2014 verify: unit test per fixture and page.",
+    "A decider row shows only the verdict buttons in its `verdicts[]`; an empty list shows none; fixture `4205` shows no write control and no banner \u2014 verify: e2e.",
+    "Recording an impact assessment sends `POST /work/4201/change` with `action:\"assess\"`, `expected_revision`, `case_revision`, `change_version_id`, every contract key present, unknown choices as `null`, `effort_person_days` as the typed string, and the page then shows the team as recorded after re-read \u2014 verify: unit test on the body builder; e2e checks the request body in the mock log.",
+    "An empty effort is `null` and renders \"Not recorded\"; the page never shows \"0\" for an unrecorded effort \u2014 verify: unit and e2e.",
+    "Recording a decision sends `action:\"decide\"` with `role`, `verdict`, a non-empty `note` and `evidence` id from `evidence[]`; with an empty note the Record button stays disabled and no request is made \u2014 verify: unit and e2e.",
+    "A return or reject asks for confirmation and a note; cancelling sends nothing \u2014 verify: e2e.",
+    "After a `reject` (fixture `4203`) the page shows REJECTED, the reject note and who recorded it only if the read carries it, and \"You can log a new change later\"; no authorise control \u2014 verify: e2e on `4203` against the rejected board.",
+    "`/work/4204` shows \"Record the authorisation\" with a choice from `authorization_choices[]` (or none when empty), a confirm step, and sends `{action:\"authorize\", ..., commercial}` once; the Authorised by, Authorised on and proof fields from the board are not drawn \u2014 verify: e2e and body assertion; DOM has no \"Authorised by\" input.",
+    "`can_authorize:false` or a non-null `authorization_id` shows no authorise control; the authorised state shows \"Authorised\" and whatever `authorization_id` allows, no person or time \u2014 verify: e2e on fixtures.",
+    "`deployment_authorized` is false in every state and the page never says deployment is authorised \u2014 verify: unit test on the mapper; grep copy.",
+    "A 409 on any write keeps the typed text, shows \"This change was updated by someone else. Reload to see it.\", and sends nothing automatically; Reload re-reads and keeps the typed note where the field still exists \u2014 verify: mock scenario `conflict`; unit.",
+    "A 422 with `fields[]` shows each message by its field; a 403 `csrf_failed` refreshes the session and says \"Press save again\" without resending; 413, 415 and 429 show their wording \u2014 verify: mock scenarios; fetch counts in unit tests.",
+    "A dropped network or 5xx on a write shows \"We could not confirm this was saved\" with \"Check again\" only; Check again re-reads and never resends; double click on submit sends one request \u2014 verify: unit with fake fetch counting calls.",
+    "A re-read after 201 failing leaves the form locked with \"Couldn't refresh\" and Try again, not a repeat of the write \u2014 verify: unit.",
+    "`/work/4206` and a live work id the caller cannot see both show exactly \"This record is unavailable.\" \u2014 verify: open both; unit on the 404 body.",
+    "The change list for a project shows each record's reference, category tag (Standard or Normal), module and description from `ordinary-changes`; an empty list shows \"No changes logged yet\" \u2014 verify: e2e and live curl comparison of the same project.",
+    "Log a change sends `capture` with reference, category, module, description, reason, `evidence_id` and `case_revision`; every field is required before the button enables; the `evidence_id` can only be chosen from the read's `evidence[]`; a 201 refreshes the list with the new row and a 409 keeps the typed text \u2014 verify: unit and e2e.",
+    "For a Standard change with catalogue entries, `preapprove` and `bind_standard` send the contract bodies with `key` chosen from `catalogue[]`; with `catalogue_finding` non-empty the Standard path is disabled and the finding is shown (fixtures `4207`, `4208`) \u2014 verify: e2e; there is no free-text key input.",
+    "A control that needs an `evidence` id and has an empty `evidence[]` is disabled with \"No proof file is recorded for this case yet\"; no write is sent without an evidence id \u2014 verify: e2e with a fixture whose `evidence` is empty.",
+    "Against live Django 8030 (Postgres, `live-lead`), `GET /work/{id}/change` for a `pmo-change/v1` item renders reference, impact and deciders matching the JSON from curl; one `assess` or `decide` on a test change returns 201 and the page re-read shows it \u2014 verify: compare page and curl; record the response.",
+    "Revision handling: the work `expected_revision` and `case_revision` in every body equal the last read; after a 201 the next write uses a freshly read pair, never the old one \u2014 verify: unit test sequence.",
+    "A `null` or absent optional field renders \"Not recorded\"/omitted, never 0; a `summary` null impact row shows \"Not given yet\" \u2014 verify: unit on the mapper.",
+    "The agent card, \"Recorded by PM \u00b7 date\", person names on deciders, \"Authorised by\" and any \"milestone scope now includes\" line are not drawn and leave no empty gap \u2014 verify: e2e DOM absent; screenshots.",
+    "Layout at 1440 and 390 matches the part 1 boards (default, impact, decision, rejected, authorise) for the parts that remain, with the keyboard and focus order working on the forms and confirm steps \u2014 verify: screenshots at both widths against the 10 boards; Tab through each form.",
+    "The shared frame is unchanged: `git diff origin/main -- frontend/src/features/workspace` is empty \u2014 verify: that command.",
+    "New unit tests cover the stage mapper, status tag, assess/decide/authorize/capture body builders, null handling and the write error mapper; `npm run lint`, `npm run typecheck`, `npm test` pass \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. `authorize` commits a commercial and scope decision, and `decide` and `assess` feed it. Both are role-gated (`can_authorize`, `roles[]`) and revision-gated, and they are hard to undo. The part 2 notice would be an external client message and `close` records signatures. Those stay out of this PR. SURFACES are ui, api, auth (role-gated actions) and product-decision (authorising a change). It is a new flow, so product acceptance is required. The merge goes to the design engineer's batch, not the D-180/D-184 routine route."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-112/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +102,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-112/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +202,29 @@
   "created_at": "2026-11-23T17:35:15Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:51:04Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-112/readiness.md",
+      "delivery/features/F-112/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

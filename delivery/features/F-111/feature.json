@@ -3,26 +3,57 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
-  "outcome": "Issue, part 1: the issue workspace reads the live issue, its age, owner, timeline and messages",
-  "state": "PLANNED",
+  "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Open `/work/5101` on Next 4990 with mock 4991: the page shows ISS-0233, \"Login fails on older Android phones\", a High tag, an \"In Progress\" status, Owner \"Engineering\", Raised with the date, Age \"3 days\", and Blocks \"Go-live\" as a link \u2014 verify: open the page; `frontend/e2e/issue-followup.spec.ts` asserts each.",
+    "\"What has happened\" lists exactly the rows of the detail's `timeline` in the order sent, with the time and words for each kind; no row is built from history or messages \u2014 verify: unit test on the mapper with a timeline of the four kinds; page text compared with the mock JSON.",
+    "`/work/5102` (overdue) shows the overdue banner using `timing.finding`, the Chasing rows (Asked, Reminder with \"No receipt yet\"), \"Reminder due\" and \"Escalate by\" dates and the escalation target; the banner shows only because the flags are true, not from comparing dates \u2014 verify: e2e; flip `reminder_overdue` and `escalation_overdue` to false in the fixture and the banner disappears even with past dates (unit test).",
+    "`/work/5103` (no owner) shows the no-owner banner with `team.finding` and `next_action`, an Owner fact that is not drawn as a name or \"Unassigned\" placeholder, no Raised or Age value of 0 (null reads \"Not recorded\"), no severity tag, and no timing rows \u2014 verify: e2e and mapper unit test asserting no \"0 days\".",
+    "`/work/5104` (verified) shows the verified state tag from the work item, the follow-up `finding` as the lead, and a \"planned UAT\" Blocks line that is not a link; the page does not say \"Closed\" while `issue.status` is `Resolved` \u2014 verify: e2e.",
+    "A null `blocked_milestone` and null `blocked_planned_milestone` leave out the Blocks fact with no empty gap \u2014 verify: unit test and screenshot.",
+    "Tola's note, \"FIX IN TESTING\", \"FOLLOW-UP VERIFIED\", \"recorded by PM\" and any \"not available\" placeholder do not appear on any of the four states \u2014 verify: e2e asserts those strings are absent; `grep -rn \"FIX IN TESTING\" frontend/src/features/issue-followup` returns nothing.",
+    "No write is sent: no `POST` is made by loading, or by pressing any control, on any state, and no control labelled Post update, Record reply, Set owner, Message owner, Refresh, Restart or Raise an escalation is enabled \u2014 verify: e2e records requests and asserts only `GET`; grep `liveApi.POST` in `frontend/src/features/issue-followup` returns nothing.",
+    "A control whose allowed flag (`can_request_update`, `team.can_record`) is false is not drawn; one whose flag is true is drawn disabled \u2014 verify: unit test on both flags with `5101` and `5103`.",
+    "Messages 403 (`/work/5105`): the header, facts, timeline and Next show; Chasing reads \"Chasing is not available to you\"; no page-level error \u2014 verify: e2e.",
+    "Detail 503 (`/work/5107`): facts and Next show; \"What has happened\" shows the mapped message with Try again, and Try again re-reads only the failed read \u2014 verify: e2e counting requests.",
+    "`/work/5106` (404) and a live id the account cannot see show exactly \"This record is unavailable.\" \u2014 verify: open both and compare the text; unit test on the 404 body.",
+    "401 shows the signed-out state linking to `/sign-in?next=` the current path; 403 `csrf_failed` shows the refresh message and not the no-access state \u2014 verify: mock scenarios plus unit tests.",
+    "A wrong case: with the work item's `case_id` changed in the mock, the adapter requests `/projects/{that case_id}/issues/{issue.id}` and never one taken from another body; a person cannot type a case or issue id anywhere \u2014 verify: unit test on the request URLs.",
+    "Polling: while `current_activity.watching` is true the three issue reads repeat every 5 s together; a failed poll keeps the last good data with the \"couldn't refresh\" note; a 404 on a poll replaces the page and stops polling; a hidden tab pauses \u2014 verify: unit test with fake timers on the adapter reader.",
+    "The adapter is registered through `registerLineAdapter` under `issue-followup` and `commands()` returns `[]`; a work item with no `issue-followup` panel shows F-85's generic page \u2014 verify: unit test.",
+    "Against live Django (8030, account that can see an issue) the page matches `oa.py`-described fields of the three live reads for the same issue: reference, severity, status, age, owner label, timeline row count, and message row count \u2014 verify: `curl` the three URLs with the session and compare with the page.",
+    "Viewport check at 1440 and 390: each of the four states matches its SCR-30 desktop and mobile board for the parts that remain, and removed parts leave no empty heading or gap \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-30 artboards.",
+    "New unit tests cover the mapper for all four states, null `age_days`, null `opened_at`, null `severity`, unknown timeline `kind`, null `receipt`, null `timing`; `npm run lint`, `typecheck` and `npm test` pass and the live-schema drift test passes \u2014 verify: `delivery/checks.sh` result."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "low",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Low. This is read-only, internal and routine, and it moves no money, touches no identity or payroll data and sends no messages. It is mapped onto an existing shared adapter, so the contract is reused and not changed. It can merge under D-180/D-184. The spec stage should confirm that the SCR-30 boards match the approved design and that `design.py check` passes. I did not re-verify this."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-111/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +90,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-111/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +183,28 @@
   "created_at": "2026-11-23T17:35:13Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:46Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "haiku",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-111/readiness.md",
+      "delivery/features/F-111/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

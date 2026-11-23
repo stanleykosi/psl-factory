@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-102",
-  "outcome": "Fixed assets, part 1: the workspace reads the live asset register and schedule through the line adapter",
-  "state": "PLANNED",
+  "outcome": "The fixed asset schedule (SCR-55) reads live: register, unclear dates, proof and depreciation schedule",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/3901` on mock shows the stage, the finding, the register header (entity, provider, period, as-of) and a table of the register's assets; no station track, six facts, agent card or \"not available\" text appears \u2014 verify: open `http://localhost:4990/work/3901`; `frontend/e2e/fixed-assets.spec.ts` asserts the parts are present and absent.",
+    "The three assets with `dates` null in `3901` are listed as \"Date unclear\"; an asset with dates shows its delivery and in-service dates and fraction basis in words \u2014 verify: e2e on `3901` and `3905`.",
+    "\"Open proof\" appears only for fact ids in `date_attachment_ids` and opens `/api/v1/work/3905/assets/date-proofs/{fact_id}`; a fact id not in the list has no link and a direct request returns 404 \u2014 verify: e2e; unit test on the mapper.",
+    "A null money value in `3902` (null `opening_cost`, null `closing_controls.book_value`) renders \"Unknown\"; no \"0\" or \"0.00\" appears for them \u2014 verify: unit test on the mapper and e2e text assertion.",
+    "`3902` shows `completeness` \"Partial\"; `3905` shows \"Native source verified\" as returned \u2014 verify: e2e.",
+    "`3903` (held schedule) shows the held reason from `schedule.findings[]` and draws no totals as figures; `3905` (ready) shows rows, totals, scope and \"Posted to the ledger: No\" \u2014 verify: e2e.",
+    "`3904` (processing, `schedule:null`) shows no schedule section and no review text beyond \"No review is open for you.\" \u2014 verify: e2e.",
+    "`review_options` render as text only (purpose and verdicts); no Approve, Return, Reject, upload or Correct button exists anywhere on the page \u2014 verify: e2e asserts no such buttons; `grep -rn \"liveApi.POST\" frontend/src/features/fixed-assets` shows nothing.",
+    "\"Open accounting note\" is drawn for `3905` with the returned URL and is absent for `3906` (`accounting_note_url:null`); no placeholder is drawn for the missing note \u2014 verify: e2e on both.",
+    "`3908` (`register:null`) shows \"No register has been captured yet.\" and the finding \u2014 verify: e2e.",
+    "`3909` (404) and a live work id the account cannot see both show exactly \"This record is unavailable.\"; `3910` (403 `forbidden`) shows the same wording \u2014 verify: e2e and unit test on the error mapping; compare against live with a second account.",
+    "A 403 `csrf_failed` on the assets read does not show the no-access state; it refreshes the session once and says to try again \u2014 verify: mock scenario `csrf_failed`; unit test counts calls.",
+    "A 503 or a dropped network on the panel keeps the work item header and shows \"Try again shortly\" with Try again; the read is not retried until pressed \u2014 verify: mock scenarios; count fetches.",
+    "The adapter is registered through F-85's `registerLineAdapter` for key `assets`, returns existing `Section` kinds only, and an unknown panel key elsewhere on the page does not break it \u2014 verify: `assetsAdapter.test.ts`; typecheck passes; `git diff` shows no change under `frontend/src/features/workspace/`.",
+    "Against live Django (8030, account with the finance role), a real `fixed_assets` work id shows the same register, schedule status and totals as `GET /api/v1/work/{id}/assets` \u2014 verify: compare the page with `oa.py live GET /api/v1/work/{work_id}/assets 3` output and the session `curl` JSON.",
+    "A second account without access to the case sees \"This record is unavailable.\" on `/work/{id}` and gets 404 from `/api/v1/work/{id}/assets` and its date proofs; no register value appears in the page source \u2014 verify: live check with two accounts, view source.",
+    "Start schedule from the drawer sends one `POST /api/v1/work` with `line:'finance-ppe/v1'`, `intake:{register_id, prior_id, ledger_id}`, `case_revision` and an `idempotency_key`; pressing twice for the same attempt sends the same key; success opens the new `/work/{id}`; `prior_id` and `ledger_id` are `null` when unchosen \u2014 verify: unit test on the request body; network panel; live POST returns 201 and the new id.",
+    "Start with a stale `case_revision` (mock scenario 409) re-reads and shows that the case changed; a 422 shows `fields[].message`; a 403 `csrf_failed` asks the person to press again and does not resend by itself \u2014 verify: unit tests count fetches.",
+    "The drawn parts the API does not supply are absent and listed in the PR: \"Chidi never reads asset values\", the accounting-note text, the phone short money form, the review dates and \"Feeds MANAGEMENT ACCOUNTS\" \u2014 verify: `grep -rn \"never reads asset values\\|MANAGEMENT ACCOUNTS\" frontend/src/features/fixed-assets` returns nothing.",
+    "Viewport check at 1440 and 390 against the six boards (`SCR-55-{desktop,mobile}-{investigating,calculating,verified}`): the frame, header, state tag and the parts that remain match; hidden parts leave no empty heading or gap; amounts show in full on the phone \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-55.",
+    "Tests exist and pass: unit tests for the mapper (Unknown, held, ready, null link, empty register, dates), the proof-link rule and the start body; `npm run lint`, `npm run typecheck`, `npm test` and `delivery/checks.sh` pass \u2014 verify: command output."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The reads are reshaped from the v7 mock sections into `assets`, and the accounting-note link depends on per-record access (auth). Both are contract-sensitive but contained. Part 1 has no review decisions, uploads, money movement, ledger posting or restricted payroll data, so it can merge under D-180/D-184. The one write, `POST /work`, starts an internal case. The higher-scrutiny work (review decisions) sits in F-102B. Product acceptance is required because live-only fields are added and some drawn parts are hidden."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-102/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +93,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-102/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +193,29 @@
   "created_at": "2026-11-23T17:34:53Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:43Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-102/readiness.md",
+      "delivery/features/F-102/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

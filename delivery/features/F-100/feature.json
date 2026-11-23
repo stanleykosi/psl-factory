@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-100",
-  "outcome": "Finance staff can open a payment reminder, see the live invoice and debt facts, and record the reminder through the live API",
-  "state": "PLANNED",
+  "outcome": "Payment reminder: Finance prepares, schedules, sends or sets aside the reminder for one invoice, live",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "From Payments, a row with `reminder_url` links to `/finance/payments/{case_id}/invoices/{issue_id}/reminder`; a row with `reminder_url: null` or `issue_id: null` shows no link \u2014 verify: unit test on `PaymentsView`/`model.ts`; e2e click-through at 4990.",
+    "The page shows the live reference, `owed` with `currency`, `due_date`, recipient name and email, subject and message \u2014 verify: e2e on fixture 1; a `owed` of null shows \"Unknown\", never 0.",
+    "The page draws no \"Overdue by\", no \"Last payment\", no \"7 days\" text and no \"Copy:\" line \u2014 verify: e2e text absence on fixtures 1 and 5; grep `frontend/src/features/finance/reminder` for `days overdue` and `7 days` returns nothing.",
+    "Saving the draft posts `{revision, subject, message, attachment_id, attachment_checked}` with the read's `revision`, then re-reads \u2014 verify: unit/e2e request assertion on the mock; a 409 shows the server message and keeps the typed text; a 422 field error shows under its field.",
+    "Send posts `{action:\"send\", draft_id, revision}` once per press; a second press while pending sends nothing \u2014 verify: e2e counts one request on a double click.",
+    "Schedule posts `scheduled_for` as an ISO date-time and appears only when `can_schedule` is true \u2014 verify: e2e with fixture 1 and a fixture with `can_schedule:false`.",
+    "Not now requires a reason (1..1000 chars); an empty reason blocks the request; success shows \"Set aside, nothing was sent\" \u2014 verify: e2e.",
+    "Cancel schedule is offered only for a scheduled dispatch with no receipt and posts `{action:\"cancel_schedule\", dispatch_id, revision}` \u2014 verify: e2e on fixture 3.",
+    "Check mailbox is offered only for a `synthetic_mailbox` dispatch with no receipt and posts `{action:\"check_mailbox\", dispatch_id}`; Record delivery posts `confirm` with `evidence_id` chosen from `receipt_proofs`, `delivered`, `reference` and is offered only when `can_confirm` is true \u2014 verify: e2e on fixture 4 and a fixture with `can_confirm:false`.",
+    "After a failed or timed-out send (mock returns 503 once, then the read shows the dispatch), the page does not offer a new Send for that draft and shows \"Delivery not confirmed yet\" with Check mailbox or Record delivery \u2014 verify: e2e.",
+    "`hold` text is shown verbatim and Send, Schedule, Edit are disabled while it is set; `recipient: null` also disables Send \u2014 verify: e2e on fixture 2.",
+    "`timing` values drive the follow-up lines; `earliest_date: null` hides that line; `awaiting_receipt: true` shows \"Waiting for the original receipt\"; `timing: null` shows no follow-up line \u2014 verify: unit test on `model.ts`.",
+    "`mode` and the scheduled send time show in the dispatch block \u2014 verify: e2e on fixture 3.",
+    "Negative: 403, 404 and 5xx each show their own state with the server message; a malformed `issueId` or `caseId` shows not-found with no API call \u2014 verify: e2e, request log.",
+    "Negative: a user without access to the case sees no draft text and no action buttons; the mock returns 403 for the wrong user and the page keeps no earlier data on screen \u2014 verify: e2e persona switch.",
+    "No request goes to `POST /setup/{case_id}/payment-reminder-rules` and `src/features/workspace` has no changed file \u2014 verify: `git diff --stat origin/main -- frontend/src/features/workspace` is empty (or only F-85 files already on main); request log.",
+    "Phone width (390) shows the same facts and actions in one column with no horizontal scroll \u2014 verify: e2e at 390.",
+    "Against Django at 8030 with the live adapter, the read of one seeded invoice renders and the save and send actions return 201 and 200 \u2014 verify: manual run recorded in the build notes; the mock is the CI evidence.",
+    "Unit tests cover `model.ts` mapping (state selection, hold, timing, unknown money) and the action body builders, including that a missing `revision` disables actions \u2014 verify: `vitest` on `frontend/src/features/finance/reminder`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "external-messaging",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The feature sends a client-facing message about money owed, so a wrong amount, recipient or duplicate send is hard to undo. It also covers scheduling, an uncertain-delivery reconcile path (`confirm`) and a contract move from work-scoped to invoice-scoped. Every send must go through the live action with the draft `revision`. A retry after an uncertain dispatch must go through `confirm` or `check_mailbox`, never a blind resend."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-100/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +93,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-100/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +193,29 @@
   "created_at": "2026-11-23T17:34:50Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:50:40Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-100/readiness.md",
+      "delivery/features/F-100/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

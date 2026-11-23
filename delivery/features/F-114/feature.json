@@ -3,26 +3,67 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-114",
-  "outcome": "Go-live acceptance, part 1: the sign-off and client replies are recorded live",
-  "state": "PLANNED",
+  "outcome": "Go-live acceptance records both signatures and the client's changes or decline",
+  "state": "READY",
   "task_ids": [
     "FE-DELIVERY-RELEASE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4401/go-live` (mock) shows the \"Sent to the client\" block with the receipt time, a PM block and a Client block each with a signed-copy picker, six signer fields, and a disabled \"Record signatures\" \u2014 verify: open the page; `frontend/e2e/go-live.spec.ts`.",
+    "Choosing a file for the Client signer runs the picker upload then `POST /work/{id}/go-live-signoff/proofs` with `role:\"Client\"`, `receipt_id` from the read, the held `case_revision` and `checked:true` only after the box is ticked; the returned `evidence_id` is then listed from the refetched sign-off read \u2014 verify: network panel and unit test on the request body; no proof call is made with the box unticked.",
+    "The form cannot submit the same proof id for PM and Client; selecting the same one shows \"Choose a different signature record for each signer\" and sends nothing \u2014 verify: unit test, network panel shows no POST.",
+    "With both signers' six fields filled and two distinct proofs chosen, \"Record signatures\" sends one `POST /work/{id}/go-live-signoff` whose body contains `expected_revision`, `case_revision`, `version_id`, `receipt_id`, `pm_signature_id`, `client_signature_id`, both `signers` objects, `mode:\"fresh_signatures\"`, `prior_acceptance_id:null`, `note`; on 200 the sections refetch \u2014 verify: unit test on the request body; e2e on 4401.",
+    "With any signer field empty for either signer, the signer shows \"Needs reconciliation\" and the submit stays disabled; no value is prefilled \u2014 verify: e2e blanks one field; unit test.",
+    "On `4406` the `metadata_binding` option appears and, when chosen, sends `prior_acceptance_id:6990`; on `4401` the option is absent \u2014 verify: unit tests on both fixtures.",
+    "A 409 on the sign-off POST (`4407`) shows the changed-record message, re-reads both reads, keeps nothing as recorded, and a second press sends a fresh body with the new revisions \u2014 verify: e2e counts calls and compares revision values.",
+    "A double click on \"Record signatures\" sends exactly one POST \u2014 verify: unit test with a slow mock counts calls.",
+    "A caller who is not the appointed PM (`4405`) sees no sign-off form, the words \"Only the appointed PM records the signatures.\", and still sees replies and the unlock list \u2014 verify: e2e on 4405.",
+    "A work id not on this line, or one that returns 404 (wrong tenant or wrong user), shows exactly \"This record is unavailable.\" with no difference between the two \u2014 verify: e2e with two fixtures; unit test on the mapper.",
+    "On `4410` (no receipts) no form is drawn and the page says the document has not been sent \u2014 verify: e2e.",
+    "On `4402` the \"Go-live accepted\" banner and unlock rows draw only from the reads (acceptance, linked issues count, reviewed handoffs count, milestone name and \"Not recorded yet\"); there is no \"Mark milestone complete\" control and no \"Hypercare\" or \"Archive and handover\" row \u2014 verify: e2e DOM assertions.",
+    "On `4406` the accepted banner is not drawn; \"An earlier acceptance is on file (#6990)\" is \u2014 verify: e2e.",
+    "Recording a reply (fixture with `capture[]`): the form offers only `changes_requested` and `declined`, only `channels[]` from the read and only the entry's `roles[]`; sending without the attestation tick is blocked; the POST body has `action:\"record_reply\"`, `receipt_id`, `previous_id`, both revisions, `attested:true` \u2014 verify: unit test; network panel.",
+    "With `capture[]` empty (`4403`) the reply form is absent and `finding` is shown as the reason \u2014 verify: e2e.",
+    "`4403` shows the client's quoted note and the Prepare v2 form; submitting sends `{expected_revision, case_revision, inputs:{template_id:null, checklist:null, incident_reporting:null, rollback:null}, reason}` \u2014 verify: unit test on the body.",
+    "`4404` shows the decline panel: choosing an existing issue sends `link_decline_issue` with `existing_issue_id` and null title, owner and next action; creating a new one sends title, `owner_id` from `owners[]`, `next_action` and null `existing_issue_id`; `prepare_new_candidate` sends the `requirements_id` from the read; `review_remediation` sends `previous_id`, `destination_id` and `role` from `review_options[]` \u2014 verify: one unit test per action on the request body.",
+    "A decline control for a `reply_id` with no entry in `issues[]`, `new_candidates[]` or `review_options[]` is not drawn \u2014 verify: unit test.",
+    "`4409` lists the `withdrawn` reply as a read-only history row with no control, and no \"withdrawn\" option exists in any form \u2014 verify: e2e.",
+    "`4408` shows \"Details not available to you\" for a reply whose party, channel, note and date are null and never shows 0, blank or \"null\" \u2014 verify: e2e DOM.",
+    "Nothing is sent to the client: no request other than those in the Contract is made by this page, no email or message call \u2014 verify: grep `liveApi.POST` and `liveApi.GET` in `frontend/src/features/go-live` lists only the routes in the Contract; network panel on a full run shows none other.",
+    "Unit test: the proof upload accepts a PDF and refuses a `.exe` or a file over the picker's limit before any request, and an `UploadId` cannot be passed where an `EvidenceId` is expected (`// @ts-expect-error`) \u2014 verify: `go-live` unit tests.",
+    "Against live Django (8030, account the appointed PM of a go-live work item) the page's receipts, proofs, replies, `prior_acceptance_id` and milestone match `GET /api/v1/work/{id}/go-live-signoff` and `.../go-live-replies` \u2014 verify: compare the page with the `curl` JSON using the session.",
+    "A write answered 403 `csrf_failed` refreshes the session once and says to press again; no automatic second POST \u2014 verify: unit test counts calls.",
+    "Viewport check at 1440 and 390: the page matches the SCR-45 boards (header, sent block, signatures, accepted, changes, declined) for the parts kept; hidden parts leave no empty heading or gap \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-45 artboards.",
+    "`npm run lint`, `npm run typecheck` and `npm test` pass and `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because a signed acceptance is identity and evidence data that is hard to undo and gates the milestone and later stages. It also has a cross-layer contract: two distinct evidence ids, signer binding and a revision pair, per `backend-answers.md` D-15, D-16, D-1 and `screens-d-delivery-issues-escalation.md` SCR-45. Surfaces are ui, api, auth (the allowed actions are role-dependent), contract-change and product-decision (acceptance wording and outcomes). Product acceptance is required because this is a new client-visible flow that the client must see."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-114/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +100,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-114/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +200,29 @@
   "created_at": "2026-11-23T17:35:19Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:53:30Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-114/readiness.md",
+      "delivery/features/F-114/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

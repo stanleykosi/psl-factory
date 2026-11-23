@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-110",
-  "outcome": "Payroll run, part 1: the run, its working stations, inputs, checks, HR snapshot and published aggregate read live",
-  "state": "PLANNED",
+  "outcome": "A payroll operator sees where a payroll run stands, runs combine, match and aggregate, confirms the HR snapshot, and sees what was published, live",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-PAYROLL-RUN"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4601` (mock) shows two input rows with provider, rows (142 and 139), checks (\"2 held\" and \"Passed\"), the finding line and a \"Run combine\" button, and no station strip, no STATE column, no decision card \u2014 verify: open the page; e2e asserts absence.",
+    "`/work/4602` shows a Combined block \"Complete\" with total 140 and held 2, and \"Not recorded\" (never 0) for matched and unmatched \u2014 verify: page text; unit test on the mapper with `matched:null`.",
+    "`/work/4603` shows \"Matching can't start.\" with a \"Confirm I received it\" button and \"Run match\" off; with two proofs the person must choose one first \u2014 verify: page; e2e.",
+    "Pressing \"Confirm I received it\" sends exactly one `POST /work/4603/payroll-operations` with `{action:\"receive_hr\", expected_revision, case_revision, snapshot_id:303, evidence_id:77}`, then re-reads, and the page shows \"Received\" only from the re-read \u2014 verify: network panel and mock request log.",
+    "`/work/4604` shows Matched 136, Unmatched 2, Conflict 1, Held 2 and no \"paid after leaving\" reason \u2014 verify: page; e2e.",
+    "Pressing \"Run combine\" on 4601 sends one `POST` with `{action:\"working\", stage:\"combine\", expected_revision, case_revision}` and no other fields; the next read shows the Combined block \u2014 verify: network panel; unit test on the body.",
+    "A body never contains a `null` or `0` token: with the read not loaded every control is off and nothing is sent \u2014 verify: unit test.",
+    "A write that gets 409 (`4611`) re-reads, shows \"This changed while you were working. Showing the latest version.\", and sends nothing again by itself \u2014 verify: mock scenario; count requests.",
+    "A dropped connection after a write, or `/work/4612` (`effect_uncertain`), locks every station button with \"We couldn't confirm that this ran. Check the page before trying again.\" and sends no request until the re-read shows a new `expected_revision` and a settled state \u2014 verify: mock scenario; request count.",
+    "`/work/4605` shows \"NGN 99,200,000.00\" as the eligible total from `eligible_total` \"99200000.00\" through `Money`, the four business-unit rows, \"Version 1\", \"Your receipt: None\", and no \"Unknown\" split, no staff counts and no per-recipient rows \u2014 verify: page; e2e.",
+    "A business unit absent from `by_business_unit` has no row and no 0; an absent `eligible_total` cannot occur by contract, but a report 403 shows \"The totals aren't available to you.\" and the rest of the panel still draws \u2014 verify: unit test; mock 403 on the report.",
+    "`/work/4606` shows the verified tag and the report block and does not show \"Receipts 2 of 2\", \"Written to HR records\" or \"Posted to the ledger\" \u2014 verify: e2e asserts absence.",
+    "`/work/4607` shows \"Totals version 1 were withdrawn\" with the date and \"Receipt recorded\" with the received time, and no \"Start a corrected run\" button \u2014 verify: page; e2e.",
+    "`previous_receipt` with null `receipt_id` and null `received_at` reads \"No receipt was recorded.\" and \"Not recorded\" \u2014 verify: unit test.",
+    "`/work/4609` (404) and `/work/4610` (403) both show exactly \"This record is unavailable.\" with no staff names, values or ids; neither shows a reason \u2014 verify: open both and compare text; unit test on the mapper.",
+    "A 403 `csrf_failed` on a write does not show the no-access state; it refreshes the session once and says \"Press the button again\"; no automatic second send \u2014 verify: unit test counts fetch calls.",
+    "A different signed-in user without the payroll grant, and a different tenant's work id, each get the no-access state and no `working-rows` or report call is made after the first denied read \u2014 verify: mock scenarios; request log; live check with two accounts against Django 8030.",
+    "No `rows[]` value from `working-rows` (employee, amount, bu, row_ref, sources) appears in the DOM, in `localStorage`/`sessionStorage`, in a URL, in a React Query or cache key, or in any `console` output \u2014 verify: unit test greps the mapper output; e2e dumps storage and the DOM and searches fixture employee names.",
+    "Against live Django 8030, for a real payroll work id the page shows the same `stage`, `finding`, `working[]` counts and `hr_receipt` state as `GET /api/v1/work/{id}/payroll-operations` \u2014 verify: compare with the `oa.py live` output or `curl` JSON using the session.",
+    "Against live Django, a run with a publication shows the same `eligible_total`, `by_business_unit` and `version` as `GET .../payroll/reports/{publication_id}` \u2014 verify: compare with the `curl` JSON.",
+    "The page makes no `POST /work/{id}/reviews`, `aggregate-receipt`, `corrections`, or `payroll-operations` with `publish`, `withdraw`, `successor` or `restart`, and shows no Publish, Withdraw, Approve, Return, Ask HR or Start-a-corrected-run control \u2014 verify: grep `liveApi.POST` in `src/features/payroll-run` shows only `working`, `receive_hr` and `startPayrollRun`; e2e asserts absence.",
+    "`startPayrollRun` sends `finance-payroll/v1` with `idempotency_key` and the two input ids, and `hr_snapshot_id` null stays `null` \u2014 verify: unit test against the mock; it is not imported by any page (grep).",
+    "An unknown `working[].codes` value and an unknown `stage` draw their raw text; a missing selected input in Read 3 draws \"Input {n}\" \u2014 verify: unit tests.",
+    "A failed Read 2 or Read 3 leaves the other blocks drawn and shows that block's error with Try again; a failed re-read after a write keeps the last good read \u2014 verify: mock scenarios.",
+    "Viewport check at 1440 and 390: the page matches the SCR-59 boards for the parts that remain; hidden parts leave no empty gap or empty heading \u2014 verify: screenshots at both widths reviewed against the SCR-59 desktop and mobile boards.",
+    "Tests exist for the mapper (all seven states), the two write bodies, the uncertain lock, the 409 path and the no-leak rule in criterion 18; `delivery/checks.sh` passes \u2014 verify: `npm test`; checks result."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "payments",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This is restricted payroll data, with identity-bound access per record (`working-rows`, snapshot rows) and the run that feeds the published pay aggregate for a named recipient. Writes in part 1 (combine, match, aggregate, receive_hr) are hard to undo and need operation keys and evidence ids. The surfaces are ui, api, security, auth, payments and product-decision (new flow and wording the client must see). The effect_uncertain and awaiting_reconciliation states must reconcile before any retry."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-110/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-110/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +201,29 @@
   "created_at": "2026-11-23T17:35:11Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T17:53:28Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-110/readiness.md",
+      "delivery/features/F-110/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
