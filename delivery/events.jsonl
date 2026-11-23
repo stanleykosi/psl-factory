@@ -4394,3 +4394,10 @@
 {"at":"2026-11-23T21:20:53Z","feature":"F-85","round":2,"kind":"transition","head":"cdea4f987fb2","from":"MERGED","to":"DONE"}
 {"at":"2026-11-23T21:21:39Z","feature":"F-86","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":677.8,"commit":"da0d7b698a60"}
 {"at":"2026-11-23T21:21:53Z","feature":"F-69","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T21:23:01Z","feature":"F-87","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T21:23:14Z","feature":"F-111","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T21:23:15Z","feature":"F-103","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T21:23:28Z","feature":"F-121","round":0,"kind":"created","tasks":["FE-EMERGENCY-ESCALATION"]}
+{"at":"2026-11-23T21:23:28Z","feature":"F-122","round":0,"kind":"created","tasks":["FE-LEADERSHIP-REPORT"]}
+{"at":"2026-11-23T21:23:28Z","feature":"F-123","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T21:23:29Z","feature":"F-124","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}

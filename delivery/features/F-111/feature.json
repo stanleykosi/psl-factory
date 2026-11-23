@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
   "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -76,7 +76,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -92,7 +92,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-111/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -134,11 +134,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "main",
+    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "task_branch": "fe-connect-1-issue-reads",
+    "head_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d3",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -148,7 +148,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -181,14 +181,22 @@
     }
   },
   "created_at": "2026-11-23T17:35:13Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-23T17:50:46Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T21:23:14Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -206,7 +214,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
