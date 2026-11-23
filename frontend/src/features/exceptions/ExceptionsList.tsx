@@ -1,44 +1,40 @@
 'use client';
 
-// SCR-10 All exceptions list, from E-EXCEPTIONS only. Read-only: the controls narrow or page the list (search, Filter,
-// rows per page, Show more, Try again), and each row links to its work item, where any action lives. The backend
-// filters by grants (INV-ACCESS); this component shows exactly the rows it is sent and never reads roles.
+// SCR-10 All exceptions list, from the live work list (queue=exceptions) only. Read-only: search, the line filter and
+// Show more narrow or page the list, and each row links to its work item, where any action lives. The server
+// filters by access (INV-ACCESS); this component shows exactly the rows it is sent and never reads roles.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, EmptyState, formatDayTime, ListToolbar, PageTitle, ShowMore, type ShowMoreProps, Table, usePagedRows, Tag, useIsPhone, type Column } from '@/components';
-import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
-
-import { ExceptionsFilter } from './ExceptionsFilter';
-import { KIND_TAGS, sinceText } from './labels';
-import type { ExceptionKind, ExceptionRow, ExceptionsLimit } from './types';
-import { useExceptions } from './useExceptions';
+import { Button, EmptyState, formatDayTime, ListToolbar, PageTitle, SampleLabel, Table, Tag, useIsPhone, type Column } from '@/components';
+import { LineFilter, ownerText, shownText, stateTag, useWorkList, WorkListError, WorkListFooter, WorkListLoading, workHref, type WorkListRow } from '@/features/work-list';
 
 import './exceptions.css';
 
 const CAPTION = 'Exceptions, in the order the factory reports them';
 
-const workHref = (row: ExceptionRow) => `/work/${encodeURIComponent(row.work_id)}`;
-
-function KindTag({ row }: { row: ExceptionRow }) {
-  const tag = KIND_TAGS[row.what];
-  return <Tag tone={tag.tone}>{tag.words}</Tag>;
+function RowTag({ row }: { row: WorkListRow }) {
+  const { text, tone } = stateTag(row.state);
+  return <Tag tone={tone}>{text}</Tag>;
 }
 
-/** Desktop (SCR-10-desktop): the tag with "since" beneath, the title with its reference beneath, doing, who acts. */
-function ExceptionsTable({ rows, asOf, paging }: { rows: ExceptionRow[]; asOf: string; paging?: ShowMoreProps }) {
-  const columns: Column<ExceptionRow>[] = [
+const Updated = ({ row }: { row: WorkListRow }) => (
+  <time className="exc-since" dateTime={row.updated_at}>
+    Last updated {formatDayTime(row.updated_at)}
+  </time>
+);
+
+/** Desktop (SCR-10-desktop): the tag with the last update beneath, the title, what is being done, who acts. */
+function ExceptionsTable({ rows }: { rows: WorkListRow[] }) {
+  const columns: Column<WorkListRow>[] = [
     {
       key: 'what',
       header: 'WHAT HAPPENED',
       cell: (row) => (
         <>
-          <KindTag row={row} />
-          <time className="exc-since" dateTime={row.since} title={formatDayTime(row.since)}>
-            {sinceText(row.since, asOf)}
-          </time>
+          <RowTag row={row} />
+          <Updated row={row} />
         </>
       ),
     },
@@ -47,65 +43,42 @@ function ExceptionsTable({ rows, asOf, paging }: { rows: ExceptionRow[]; asOf: s
       header: 'WORK',
       cell: (row) => (
         <>
-          <Link className="exc-title" href={workHref(row)}>
+          <Link className="exc-title" href={workHref(row.id)}>
             {row.title}
           </Link>
-          {row.ref && <span className="exc-ref">{row.ref}</span>}
+          {row.sample && <SampleLabel />}
         </>
       ),
     },
-    { key: 'doing', header: 'WHAT’S BEING DONE', cell: (row) => <span className="exc-doing">{row.doing}</span> },
-    { key: 'who', header: 'WHO ACTS', cell: (row) => <span className="exc-who">{row.who_acts}</span> },
+    { key: 'doing', header: 'WHAT’S BEING DONE', cell: (row) => <span className="exc-doing">{row.status_label}</span> },
+    { key: 'who', header: 'WHO ACTS', cell: (row) => <span className="exc-who">{ownerText(row.owner)}</span> },
   ];
-  return <Table className="exc-tablewrap" caption={CAPTION} columns={columns} rows={rows} rowKey={(row) => `${row.work_id}:${row.what}:${row.since}`} empty="No exceptions." paging={paging} />;
+  return <Table className="exc-tablewrap" caption={CAPTION} columns={columns} rows={rows} rowKey={(row) => String(row.id)} empty="No exceptions right now." />;
 }
 
 /** Phone (SCR-10-mobile): separate outlined cards (tag, title, what's being done); the title link covers the whole card. */
-function ExceptionsCards({ rows }: { rows: ExceptionRow[] }) {
+function ExceptionsCards({ rows }: { rows: WorkListRow[] }) {
   return (
     <ul className="exc-cards" aria-label={CAPTION}>
-      {rows.map((row, i) => (
-        <li key={i} className="exc-card">
-          <KindTag row={row} />
-          <Link className="exc-title" href={workHref(row)}>
+      {rows.map((row) => (
+        <li key={row.id} className="exc-card">
+          <RowTag row={row} />
+          <Link className="exc-title" href={workHref(row.id)}>
             {row.title}
           </Link>
-          <span className="exc-doing">{row.doing}</span>
+          {row.sample && <SampleLabel />}
+          <span className="exc-doing">{row.status_label}</span>
+          <span className="exc-doing">
+            {ownerText(row.owner)} · <time dateTime={row.updated_at}>Last updated {formatDayTime(row.updated_at)}</time>
+          </span>
         </li>
       ))}
     </ul>
   );
 }
 
-function NoAccess() {
-  return (
-    <EmptyState level={2} title="This list is for Leads" className="exc-empty" action={<Link href="/my-work">Go to My work</Link>}>
-      Your own exceptions appear in My work, under Needs me.
-    </EmptyState>
-  );
-}
-
-export type ExceptionsListProps = {
-  /** The page size first requested; later changes to the prop are ignored (the person picks rows per page). */
-  limit?: ExceptionsLimit;
-  /** Embedded mode: rows, "As of" and a "See all exceptions" link; no header, search, paging chrome or footer. */
-  compact?: boolean;
-  /** Compact mode only: render the first n rows received (display only; never reorders). */
-  maxRows?: number;
-  seeAllHref?: string;
-};
-
-export function ExceptionsList({ limit: initialLimit = 10, compact = false, maxRows, seeAllHref = '/exceptions' }: ExceptionsListProps) {
-  const { state, filters, setFilters, retry, showMore } = useExceptions({ limit: initialLimit });
-  const ready = state.status === 'ready' ? state : null;
-  const { rows: pagedRows, paging } = usePagedRows({
-    items: ready?.items ?? [],
-    next: !compact && Boolean(ready?.nextCursor),
-    busy: ready?.more === 'loading',
-    failed: ready?.more === 'failed',
-    loadMore: (n) => void showMore(n),
-    resetKey: `${filters.q ?? ''}|${filters.what ?? ''}`,
-  });
+export function ExceptionsList() {
+  const { state, filters, setFilters, retry, loadMore } = useWorkList({ queue: 'exceptions' });
   const pathname = usePathname() ?? '/exceptions';
   const phone = useIsPhone();
   const [filterOpen, setFilterOpen] = useState(false);
@@ -116,98 +89,42 @@ export function ExceptionsList({ limit: initialLimit = 10, compact = false, maxR
     const q = value.trim() || undefined;
     setFilters((f) => (f.q === q ? f : { ...f, q }));
   };
-
-  const applyKind = (what: ExceptionKind | undefined) => {
-    setFilterOpen(false);
-    setFilters((f) => ({ ...f, what }));
-  };
   const clearAll = () => {
     setText('');
     setFilters({});
   };
-
-  const narrowed = Boolean(filters.q || filters.what);
+  const narrowed = Boolean(filters.q || filters.line);
 
   let body;
   if (state.status === 'error') {
-    const { error } = state;
-    if (error.kind === 'unauthenticated') body = <SignedOutState pathname={pathname} />;
-    else if (error.kind === 'forbidden' || error.kind === 'not_found') body = <NoAccess />;
-    else {
-      body = (
-        <WorkErrorCard
-          message="We couldn’t load the exceptions. Your work is safe; nothing was changed."
-          error={error}
-          onRetry={() => void retry()}
-        />
-      );
-    }
+    body = <WorkListError error={state.error} pathname={pathname} what="the exceptions" onRetry={() => void retry()} />;
   } else if (state.status === 'loading') {
-    body = <LoadingState />;
-  } else {
-    const asOf = <p className="exc-note">As of {formatDayTime(state.asOf)}</p>;
-    const seeAll = compact && (
-      <p className="exc-seeall">
-        <Link href={seeAllHref} className="cmp-target">
-          See all exceptions
-        </Link>
-      </p>
+    body = <WorkListLoading>Loading exceptions…</WorkListLoading>;
+  } else if (state.items.length === 0 && state.more === 'done') {
+    body = narrowed ? (
+      <EmptyState level={2} title="No exceptions match your search." className="wl-empty" action={<p><Button kind="secondary" onClick={clearAll}>Clear search</Button></p>}>
+        Try other words, or clear them to see every exception.
+      </EmptyState>
+    ) : (
+      <EmptyState level={2} title="No exceptions right now." className="wl-empty">
+        Everything is moving or verified.
+      </EmptyState>
     );
-    if (state.items.length === 0) {
-      body = (
-        <>
-          {narrowed && !compact ? (
-            <EmptyState level={2}
-              title="No exceptions match your search and filter."
-              className="exc-empty"
-              action={
-                <p>
-                  <Button kind="secondary" onClick={clearAll}>
-                    Clear search and filter
-                  </Button>
-                </p>
-              }
-            >
-              Try other words, or clear them to see every exception.
-            </EmptyState>
-          ) : (
-            <EmptyState level={2} title="No exceptions." className="exc-empty">
-              Everything is moving or verified.
-            </EmptyState>
-          )}
-          {asOf}
-          {seeAll}
-        </>
-      );
-    } else {
-      const rows = compact && maxRows !== undefined ? state.items.slice(0, maxRows) : compact ? state.items : pagedRows;
-      body = (
-        <>
-          {phone ? <ExceptionsCards rows={rows} /> : <ExceptionsTable rows={rows} asOf={state.asOf} paging={compact ? undefined : paging} />}
-          {phone && !compact && <ShowMore solo {...paging} />}
-          {asOf}
-          {seeAll}
-          {!compact && (
-            <p className="exc-footer">
-              The factory never resends after an unknown outcome until it has checked for a receipt. Nothing here is lost;
-              each item resumes where it stopped.
-            </p>
-          )}
-        </>
-      );
-    }
+  } else {
+    body = (
+      <>
+        {state.items.length > 0 && (phone ? <ExceptionsCards rows={state.items} /> : <ExceptionsTable rows={state.items} />)}
+        <WorkListFooter more={state.more} onMore={() => void loadMore()} coverage={state.coverage} asOf={state.asOf} />
+      </>
+    );
   }
 
-  if (compact) return <div className="exc-list">{body}</div>;
-
-  // The open total is a proposal field: drawn only when the backend sends it, never counted from loaded rows.
-  const openCount = ready?.openCount;
-  const searchable = state.status !== 'error';
-
+  const ready = state.status === 'ready' ? state : null;
+  const lineChip = ready?.lineOptions.find((line) => line.key === filters.line);
   return (
     <div className="exc-page">
       <header className="exc-header">
-        <PageTitle>{phone ? (openCount === undefined ? 'Exceptions' : `Exceptions · ${openCount}`) : 'All exceptions'}</PageTitle>
+        <PageTitle>All exceptions</PageTitle>
         {phone && (
           // The board draws "← Queue" in the phone top bar, which the app frame owns; until it does, it sits here.
           <Link className="exc-back" href="/my-work">
@@ -221,17 +138,27 @@ export function ExceptionsList({ limit: initialLimit = 10, compact = false, maxR
           </p>
         )}
       </header>
-      {searchable && (
+      {state.status !== 'error' && (
         <div role="search">
           <ListToolbar
             className="exc-toolbar"
             search={{ label: 'Search', placeholder: 'Search exceptions', value: text, onChange: setText, onSearch: applySearch }}
-            filterCount={filters.what ? 1 : 0}
+            filterCount={filters.line ? 1 : 0}
             filterOpen={filterOpen}
             onFilterToggle={() => setFilterOpen((open) => !open)}
-            filterPanel={<ExceptionsFilter applied={filters.what} onApply={applyKind} onClose={() => setFilterOpen(false)} />}
-            resultText={!phone && openCount !== undefined ? `${openCount} OPEN` : ''}
-            chips={filters.what ? [{ key: 'what', name: 'What happened', value: KIND_TAGS[filters.what].words, onRemove: () => applyKind(undefined) }] : []}
+            filterPanel={
+              <LineFilter
+                lines={ready?.lineOptions ?? []}
+                applied={filters.line}
+                onApply={(line) => {
+                  setFilterOpen(false);
+                  setFilters((f) => ({ ...f, line }));
+                }}
+                onClose={() => setFilterOpen(false)}
+              />
+            }
+            resultText={ready && !(ready.items.length === 0 && ready.more === 'done') ? shownText(ready.items.length, ready.more) : ''}
+            chips={filters.line ? [{ key: 'line', name: 'Line', value: lineChip?.title ?? filters.line, onRemove: () => setFilters((f) => ({ ...f, line: undefined })) }] : []}
             onClearAll={clearAll}
           />
         </div>

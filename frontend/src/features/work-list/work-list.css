@@ -1,0 +1,5 @@
+/* The shared footer, coverage notes and cards of the live work list (Verified outputs, All exceptions). */
+.wl-footer { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.wl-more { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.wl-note { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
+.wl-empty { margin: 0; }
