@@ -4330,3 +4330,4 @@
 {"at":"2026-11-23T18:37:50Z","feature":"F-92","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-23T18:37:51Z","feature":"F-92","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T19:35:49Z","feature":"F-71","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T19:55:06Z","feature":"F-114C","round":0,"kind":"created","tasks":["FE-DELIVERY-RELEASE"]}

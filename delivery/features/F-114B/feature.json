@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-114B",
-  "outcome": "Go-live acceptance, part 2: the go-live milestone and document review run live once the backend supplies them (D-17)",
+  "outcome": "Go-live acceptance, part 2: the PMO Lead confirms and completes the go-live milestone, and replies are corrected or withdrawn, live",
   "state": "PLANNED",
   "task_ids": [
     "FE-DELIVERY-RELEASE"
