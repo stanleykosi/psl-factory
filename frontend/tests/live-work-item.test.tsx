@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LiveWorkItemView } from '@/features/work-item/live/LiveWorkItemView';
-import { decisionHref, historyCaption, historyLine, isLiveWorkId, needsPolling, safeHref } from '@/features/work-item/live/model';
+import { decisionHref, historyCaption, historyLine, isLiveWorkId, lineName, needsPolling, safeHref } from '@/features/work-item/live/model';
 import { POLL_MS } from '@/features/work-item/useWorkItem';
 import type { LiveWorkItem } from '@/api/types';
 import { SIGN_IN_URL } from '@/shell/sample';
@@ -297,6 +297,13 @@ describe('F-85 carried fixes', () => {
     open('4101');
     await heading();
     expect(screen.queryByRole('link', { name: 'Open the output' })).toBeNull();
+  });
+
+  it('lineName gives the live lines their plain names and any other key as words, without the version', () => {
+    expect(lineName('pmo-weekly-report/v1')).toBe('Weekly client report');
+    expect(lineName('pmo-finance/v1')).toBe('Invoice');
+    expect(lineName('weekly_report')).toBe('Weekly report');
+    expect(lineName('some-new-line/v2')).toBe('Some new line');
   });
 
   it('the breadcrumb names the line in plain words, never the key', async () => {

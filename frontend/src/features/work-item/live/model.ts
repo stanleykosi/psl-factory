@@ -66,3 +66,37 @@ export function safeHref(url: string | null | undefined): string | null {
     return null;
   }
 }
+
+const LINE_NAMES: Record<string, string> = {
+  'pmo-issues': 'Issue follow-up',
+  'finance-ledger': 'Ledger review',
+  engagement: 'Engagement',
+  'pmo-minutes': 'Meeting minutes',
+  'pmo-escalation': 'Escalation',
+  'pmo-weekly-report': 'Weekly client report',
+  'pmo-leadership-report': 'Leadership report',
+  'finance-schedules': 'Income schedule',
+  'finance-ppe': 'Asset schedule',
+  'finance-forecast': 'Cash forecast',
+  'finance-bu': 'BU aggregate',
+  'finance-payroll': 'Payroll',
+  'pmo-emergency': 'Emergency change',
+  'pmo-change': 'Change request',
+  'rfp-response': 'RFP response',
+  'finance-accounts': 'Management accounts',
+  planning: 'Project plan',
+  commercial: 'Commercial submission',
+  'delivery-release': 'Release',
+  'delivery-hypercare': 'Hypercare',
+  'delivery-go-live': 'Go-live acceptance',
+  'delivery-archive': 'Archive',
+  'delivery-handover': 'Handover to Support',
+  'delivery-closure': 'Project closure',
+  'pmo-finance': 'Invoice',
+};
+
+/** The line's plain name for the breadcrumb: a known line by its name, any other key with its version dropped and read as words. Never the key itself. */
+export function lineName(key: string): string {
+  const base = key.replace(/\/v\d+$/, '');
+  return LINE_NAMES[base] ?? words(base.replace(/-/g, ' '));
+}

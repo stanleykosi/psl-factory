@@ -13,7 +13,7 @@ import { NOT_RECORDED, weeklyReportAdapter } from '@/features/workspace/weeklyRe
 import { workLive } from '../mock/work-live.mjs';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-const ctx: LineContext = { workId: 4102, caseId: 'c1', revision: 3, caseRevision: 7 };
+const ctx: LineContext = { workId: 4102, caseId: 'c1', revision: 3, caseRevision: 7, state: 'processing' };
 const report = (id = 4102) => (workLive({ method: 'get', url: new URL(`/api/v1/work/${id}/weekly-report`, 'http://m.local'), csrfOk: true, persona: 'finance_lead' }) as [number, LiveWeeklyReport])[1];
 
 describe('the adapter interface (AC16, AC17)', () => {

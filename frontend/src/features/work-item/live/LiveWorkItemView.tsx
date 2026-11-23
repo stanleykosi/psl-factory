@@ -2,10 +2,10 @@
 
 // F-85 SCR-02 on the live API: /work/[id] and /work/[id]/history for an integer work id (GET /work/{id}, GET /work/{id}/history).
 // Only what the response carries is drawn: no station track, facts strip or agent steps, and no placeholder where they were.
-// Reads only; every write (resume, cancel, release, decide, ...) is a later feature. Access is the backend's answer (404 = missing or not yours).
+// Writes: the controls row (ItemControls, F-87) and a line's own `Actions` slot; both send through useWorkCommand. Access is the backend's answer (404 = missing or not yours).
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState, type ReactNode } from 'react';
+import { Component, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
 import { Breadcrumb, buttonClass, Button, Callout, EmptyState, formatDayTime, Segmented, Tabs, Tag, useIsPhone } from '@/components';
@@ -20,7 +20,8 @@ import type { LiveWorkItem } from '@/api/types';
 
 import { nextStepKind, STATE_TAGS } from '../labels';
 import { NoAccessState, WorkErrorCard } from '../WorkItemStates';
-import { decisionHref, activityOf, historyCaption, historyLine, HISTORY_FILTERS, safeHref, words } from './model';
+import { ItemControls } from './ItemControls';
+import { decisionHref, activityOf, historyCaption, historyLine, HISTORY_FILTERS, lineName, safeHref, words } from './model';
 import { useLiveHistory } from './useLiveHistory';
 import { useLiveWorkItem } from './useLiveWorkItem';
 
@@ -100,7 +101,7 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
     <header className="work-header work-header--end">
       {!phone && (
         <div className="work-crumbrow">
-          <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: words(item.line) }]} current={<span>Work {item.id}</span>} />
+          <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: lineName(item.line) }]} current={<span>Work {item.id}</span>} />
           <div className="work-crumbright">{tabs}</div>
         </div>
       )}
@@ -120,11 +121,11 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
 }
 
 /** One panel through its adapter; a key with no adapter has nothing to draw and is left out. */
-function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext; version: string }) {
+function PanelView({ panel, ctx, version, reloadItem }: { panel: PanelRef; ctx: LineContext; version: string; reloadItem: () => Promise<LiveWorkItem | null> }) {
   const adapter = adapterFor(panel.key);
-  const [state, setState] = useState<{ status: 'loading' } | { status: 'error' } | { status: 'ready'; sections: Section[] }>({ status: 'loading' });
+  const [state, setState] = useState<{ status: 'loading' } | { status: 'error' } | { status: 'ready'; sections: Section[]; readback: unknown }>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
-  const { workId, caseId, revision, caseRevision } = ctx;
+  const { workId, caseId, revision, caseRevision, state: itemState } = ctx;
 
   useEffect(() => {
     if (!adapter) return;
@@ -132,7 +133,7 @@ function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext;
     adapter
       .read(panel)
       .then((readback) => {
-        if (active) setState({ status: 'ready', sections: adapter.sections(readback, { workId, caseId, revision, caseRevision }) });
+        if (active) setState({ status: 'ready', sections: adapter.sections(readback, { workId, caseId, revision, caseRevision, state: itemState }), readback });
       })
       .catch(() => {
         if (active) setState({ status: 'error' });
@@ -141,7 +142,7 @@ function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext;
       active = false;
     };
     // a new item revision (poll) or a Try again reads the panel again
-  }, [adapter, panel, workId, caseId, revision, caseRevision, version, attempt]);
+  }, [adapter, panel, workId, caseId, revision, caseRevision, itemState, version, attempt]);
 
   if (!adapter) return null;
   if (state.status === 'loading') return null;
@@ -162,22 +163,51 @@ function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext;
       </Callout>
     );
   }
+  const { Actions } = adapter;
   return (
     <>
       {state.sections.map((section) => (
         <SectionView key={section.key} section={section} level={2} />
       ))}
+      {Actions && (
+        <PanelBoundary>
+          <Actions
+            readback={state.readback}
+            ctx={ctx}
+            commands={adapter.commands?.(state.readback, ctx) ?? []}
+            reload={() => {
+              setAttempt((n) => n + 1);
+              return reloadItem();
+            }}
+          />
+        </PanelBoundary>
+      )}
     </>
   );
 }
 
-function Overview({ item }: { item: LiveWorkItem }) {
+/** A line's write form that fails to draw takes only itself down: the page and the panel's sections stay. */
+class PanelBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? <Callout kind="warning">We couldn’t show these controls. Reload the page to try again.</Callout> : this.props.children;
+  }
+}
+
+function Overview({ item, reload, lose }: { item: LiveWorkItem; reload: () => Promise<LiveWorkItem | null>; lose: (error: ApiError) => void }) {
   const activity = activityOf(item);
   const outputHref = safeHref(item.output_url);
-  const ctx: LineContext = { workId: item.id, caseId: item.case_id, revision: item.revision, caseRevision: item.case_revision };
+  const ctx: LineContext = useMemo(
+    () => ({ workId: item.id, caseId: item.case_id, revision: item.revision, caseRevision: item.case_revision, state: item.state }),
+    [item.id, item.case_id, item.revision, item.case_revision, item.state],
+  );
   return (
     <div className="work-columns work-columns--lone">
       <div className="work-column">
+        <ItemControls item={item} reload={reload} onAccessLost={lose} />
         {item.blocker && (
           <Callout kind="warning" announce={false} className="work-next">
             <strong>Why it is stuck.</strong> {item.blocker}
@@ -235,7 +265,7 @@ function Overview({ item }: { item: LiveWorkItem }) {
           </p>
         )}
         {item.panels.map((panel) => (
-          <PanelView key={panel.key} panel={panel} ctx={ctx} version={item.updated_at} />
+          <PanelView key={panel.key} panel={panel} ctx={ctx} version={item.updated_at} reloadItem={reload} />
         ))}
       </div>
     </div>
@@ -288,7 +318,7 @@ function History({ id }: { id: number }) {
 /** The frame and the tab's content for a live work id (one item read for both tabs). */
 export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'history' }) {
   const workId = Number.parseInt(id, 10);
-  const { state, retry } = useLiveWorkItem(workId);
+  const { state, retry, reload, lose } = useLiveWorkItem(workId);
   const base = `/work/${workId}`;
   usePhoneBack(tab === 'history' ? { label: 'Work item', href: base } : { label: 'Queue', href: '/my-work' });
 
@@ -299,7 +329,7 @@ export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'h
     <>
       <Header item={item} base={base} tab={tab} />
       {refreshFailed && <Callout kind="warning">We couldn’t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>}
-      {tab === 'overview' ? <Overview item={item} /> : <History id={workId} />}
+      {tab === 'overview' ? <Overview item={item} reload={reload} lose={lose} /> : <History id={workId} />}
     </>
   );
 }

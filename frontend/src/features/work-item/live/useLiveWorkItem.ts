@@ -38,6 +38,23 @@ export function useLiveWorkItem(id: number) {
     void load();
   }, [load]);
 
+  /** A quiet re-read after a write: the page stays as it is while it loads. Resolves to the new item, or null when the read failed
+   *  (the page then says it couldn't refresh); lost access replaces the page. */
+  const reload = useCallback(async (): Promise<LiveWorkItem | null> => {
+    try {
+      const item = await fetchItem();
+      setState({ status: 'ready', item, loadedAt: new Date(), refreshFailed: false });
+      return item;
+    } catch (error) {
+      if (error instanceof ApiError && ACCESS_LOST.has(error.kind)) setState({ status: 'error', error });
+      else setState((s) => (s.status === 'ready' ? { ...s, refreshFailed: true } : s));
+      return null;
+    }
+  }, [fetchItem]);
+
+  /** A write answered 401 or 404: the page shows the signed-out or unavailable state. */
+  const lose = useCallback((error: ApiError) => setState({ status: 'error', error }), []);
+
   const polling = state.status === 'ready' && needsPolling(state.item);
 
   useEffect(() => {
@@ -72,5 +89,5 @@ export function useLiveWorkItem(id: number) {
     };
   }, [polling, fetchItem]);
 
-  return { state, retry: load };
+  return { state, retry: load, reload, lose };
 }
