@@ -38,6 +38,7 @@ effects() {
 progress() {
     run_child python manage.py work_native_stations --limit 20
     run_child python manage.py work_factory_progress
+    run_child python manage.py work_reports --limit 20
 }
 
 uploads() {

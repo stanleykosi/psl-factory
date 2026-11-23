@@ -229,6 +229,16 @@ class LoopSetup:
 
 
 class SpecialistLoopTests(LoopSetup, TransactionTestCase):
+    def test_report_gap_requires_human_review(self):
+        self.start_invoice()
+        self.assertEqual(self.reach_wait(),'waiting')
+        packet=SpecialistPacket.objects.get(work=self.work)
+        self.provider.side_effect=[{'summary':'The supplied amount is present.','quotes':['1'],'gaps':['Which tax basis applies?'],'assessment':'supported'},
+                                   {'summary':'I found the source.','quotes':['1'],'gaps':[],'assessment':'supported'}]
+        while memory.run_once(): pass
+        self.assertTrue(all(row.status=='ready' for row in packet.members.all()))
+        self.assertEqual(packets.inspect(packet,self.actor)['state'],'review')
+
     def setUp(self):
         self.enterContext(patch.dict(os.environ, OPENROUTER_MODEL="test-only", OPENROUTER_API_KEY="test-only"))
         self.objects = {}

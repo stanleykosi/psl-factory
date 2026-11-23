@@ -122,7 +122,7 @@ class ReviewForm(forms.Form):
 def review(request, work_id):
     from .factory_views import visible
     from .factory import access
-    work = get_object_or_404(visible(request.user).select_related('case', 'actor', 'execution_binding'), pk=work_id)
+    work = get_object_or_404(visible(request.user, candidates=[work_id]).select_related('case', 'actor', 'execution_binding'), pk=work_id)
     access(request.user, work.case, 'factory.manage', work.definition)
     form = ReviewForm(request.POST if request.method == 'POST' else None, initial={'revision': work.revision})
     form.fields['evidence'].queryset = Evidence.objects.filter(case=work.case, kind='policy_decision').order_by('-pk')

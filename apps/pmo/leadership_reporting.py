@@ -41,9 +41,9 @@ SOURCE_OVERLAPS = (
 )
 
 
-def window(kind, start, end, audience):
+def window(kind, start, end, audience, *, current=False):
     start, end = aware(start, 'Period start'), aware(end, 'Period end')
-    if kind not in THEMES or end <= start or end - start > timedelta(days=366) or end > timezone.now():
+    if kind not in THEMES or end <= start or (not current and end - start > timedelta(days=366)) or end > timezone.now():
         raise ValidationError('Choose an elapsed native report period of at most 366 days')
     if audience not in (['internal'] if kind == 'internal_tuesday' else ['internal', 'management']):
         raise ValidationError('Leadership preparation supports only the selected internal audience')
@@ -156,7 +156,7 @@ def scoped_package(actor, case, inputs):
 
 def package(actor, case, kind, start, end, audience, selections, content_id, *, scope=None):
     if case.kind != 'project': raise ValidationError('Leadership reporting requires a project')
-    start, end = window(kind, start, end, audience)
+    start, end = window(kind, start, end, audience, current=(scope or {}).get('basis') == project_scope.CURRENT)
     if scope is not None:
         data = scoped_package(actor, case, scoped_inputs(kind, start, end, audience, selections, content_id, scope))
         if not data['sections']:
@@ -190,12 +190,15 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
     if scope is not None:
         project_scope.lock_projects(case, manifest, {actor.pk})
         manifest, sources, gaps, sections = package(actor, case, kind, start, end, audience, selections, content_id, scope=scope)
-    start, end = window(kind, start, end, audience)
+    current = (scope or {}).get('basis') == project_scope.CURRENT
+    start, end = window(kind, start, end, audience, current=current)
     template = Template.objects.filter(case=case, pk=template_id, definition__document_type='status_report').first()
     required = {'executive_summary', *THEMES[kind]}
     if not template or template.definition.get('internal_review_required') != (kind=='monthly_executive') or set(template.definition['required_fields']) != required or set(template.definition['audience_fields'].get(audience, [])) != required:
         raise ValidationError('Select an exact theme-complete internal template with purpose-specific review requirements')
-    report, _ = PeriodReport.objects.get_or_create(case=case, kind=kind, start_at=start, end_at=end, audience=audience)
+    scope_owner = scope['actor'] if scope and scope['mode'] == project_scope.LEAD_MODE else None
+    report, _ = PeriodReport.objects.get_or_create(case=case, kind=kind, start_at=start, end_at=end,
+                                                  audience=audience, scope_owner_id=scope_owner)
     old = MinutesReportBinding.objects.filter(report=report, version_id=report.document.current_id if report.document_id else None).first()
     if old and ('project_scope' in old.manifest) != (scope is not None):
         raise ValidationError('Open the existing leadership work to review its selected project scope.')
@@ -209,7 +212,8 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
     if Publication.objects.filter(version__minutesreportbinding__report=report, job__status__in=['pending', 'unknown', 'leased', 'held']).exists():
         raise ValidationError('Resolve original report delivery before revising its source package')
     values = {key: '['+value['coverage']+'] '+value['text'] for key, value in sections.items()}
-    values['executive_summary'] = (kind.replace('_', ' ').title()+' · '+start.isoformat()+' / '+end.isoformat()+
+    display_period = 'As of '+end.isoformat() if current else start.isoformat()+' / '+end.isoformat()
+    values['executive_summary'] = (kind.replace('_', ' ').title()+' · '+display_period+
         '. Selected native PMO evidence only. Unselected records, external systems and Finance reporting are not covered. '
         'Human project-performance statements are not calculated financial performance. Source timestamps do not establish completeness or freshness.')
     from .incident_reporting import summary
@@ -221,7 +225,7 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
     case.refresh_from_db()
     from apps.documents.controlled import _create_version
     version = _create_version(actor, case.pk, template.pk,
-        report.document.title if report.document_id else 'Report: '+kind+' · '+start.isoformat()+' / '+end.isoformat(),
+        report.document.title if report.document_id else 'Report: '+kind+' · '+display_period,
         audience, {k: {'text': v, 'evidence_ids': [projection.pk]} for k, v in values.items()}, case.revision,
         report.document_id, authorized_restricted_source_ids=[projection.pk])
     if not report.document_id:
@@ -238,7 +242,7 @@ def binding_access(actor, version, *, budget=None):
     b = bindings.first()
     if not b: return
     if budget is not None:
-        require(actor, b.report.case, 'report.read')
+        project_scope.require_report(actor, b.report.case)
         budget.load(b, 'manifest')
     _bound_access(actor, b.report.case, b.manifest, version.created_at, budget=budget)
 
@@ -413,9 +417,11 @@ def current_manifest(binding):
     try:
         scope = binding.manifest.get('project_scope')
         if scope is not None:
+            pin = 'register_id' if scope['mode'] == project_scope.LEAD_MODE else 'configuration'
+            keys = ('mode', 'actor', pin, 'domains', 'basis') if 'basis' in scope else ('mode', 'actor', pin, 'domains')
             inputs = scoped_inputs(r.kind, r.start_at, r.end_at, r.audience, binding.manifest['selections'],
                                    binding.manifest['content']['id'],
-                                   {field: scope[field] for field in ('mode', 'actor', 'configuration', 'domains')})
+                                   {field: scope[field] for field in keys})
             return project_scope.snapshot(r.case, inputs)
         return package(binding.version.created_by, r.case, r.kind, r.start_at, r.end_at, r.audience,
                        binding.manifest['selections'], binding.manifest['content']['id'])[0]

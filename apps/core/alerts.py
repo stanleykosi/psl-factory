@@ -6,7 +6,7 @@ from django.urls import reverse
 from apps.agents.assistant_models import AssistantTurn
 from apps.agents.assistant_views import owned_conversations
 from apps.documents.contracts import digest
-from apps.workflows.factory_views import visible
+from apps.workflows.factory_views import visible, work_grant_scope
 from apps.workflows.models import FactoryProgress
 
 from .alert_models import AlertPreference, AlertRead
@@ -36,10 +36,13 @@ def items(actor):
                      'url': reverse('assistant_thread', args=[turn.conversation_id]), 'group': 'update',
                      'at': turn.finished_at, 'agent': turn.conversation.persona, 'target_kind': 'conversation',
                      'api_url': f'/api/v1/assistant/conversations/{turn.conversation_id}'})
-    works = visible(actor).exclude(definition__in=['finance-payroll/v1', 'finance-bu/v1'])
+    works = work_grant_scope(actor).exclude(definition__in=['finance-payroll/v1', 'finance-bu/v1'])
     jobs = FactoryProgress.objects.filter(work__in=works, requested_by=actor, status='held').select_related(
         'work__case',
-    ).order_by('-updated_at', '-pk')[:20]
+    ).order_by('-updated_at', '-pk')
+    candidates = list(jobs[:60])
+    visible_ids = set(visible(actor, candidates=[job.work_id for job in candidates]).values_list('pk', flat=True))
+    jobs = [job for job in candidates if job.work_id in visible_ids][:20]
     for job in jobs:
         rows.append({'key': digest(['held', job.pk, job.updated_at.isoformat()]), 'label': 'Background work needs attention',
                      'subject': workspace_name(job.work.case), 'detail': '',
