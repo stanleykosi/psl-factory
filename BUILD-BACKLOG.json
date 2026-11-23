@@ -1,4 +1,16 @@
 {
+  "frontend_backend_questions_20261123": {
+    "status": "implemented_in_part_pending_frontend_and_live_verification",
+    "contract": "contracts/psl-factory.openapi.json",
+    "evidence": "delivery/connect/backend-answers-2026-11-23.md",
+    "follow_up": [
+      "Workflow-specific proof types, complete specialist tracking and panel options",
+      "Whole-queue counts for queues that require evaluating each authorised item",
+      "Per-section agent notes and image attachments in assistant chat",
+      "Alert schedule and per-event settings with deferred external delivery",
+      "Next.js host and live contract verification"
+    ]
+  },
   "django_frontend_separation_20261122": {
     "status": "deployed",
     "archive": "legacy_ui/",

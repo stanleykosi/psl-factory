@@ -164,6 +164,7 @@ def issue_register_row(issue, as_of, register_url):
     return {
         'title': issue.reference, 'detail': issue.current.title,
         'state': issue.current.status.replace('_', ' ').capitalize(),
+        'state_code': issue.current.status,
         'severity': issue.current.severity,
         'owner': name if issue.team_label is None else issue.team_label or 'Owner needed',
         'coordinator': name if issue.team_label is not None else None,
@@ -215,12 +216,12 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
             evidence__in=public_evidence(case.evidence.all())).select_related('completed_by').order_by('-completed_at', '-pk')
         return [section('Recorded completions', 'Open milestone records', 'case',
                         milestones, lambda m: {'title': m.name, 'state': 'Completion recorded', 'at': m.completed_at,
-                            'detail': m.completed_by.get_full_name() or m.completed_by.get_username()})]
+                            'state_code': 'recorded', 'detail': m.completed_by.get_full_name() or m.completed_by.get_username()})]
     if tab == 'documents':
         evidence = public_evidence(case.evidence.all()).order_by('-created_at', '-pk').only('kind', 'version', 'created_at')
         return [section('Project evidence', 'Review controlled documents', 'documents',
                         evidence, lambda e: {'title': e.kind.replace('_', ' ').capitalize(),
-                            'state': f'Version {e.version}', 'at': e.created_at})]
+                            'state': f'Version {e.version}', 'state_code': 'recorded', 'at': e.created_at})]
     if tab == 'actions':
         from apps.identity.services import active_case_grants
         from apps.identity.teams import visible_assignments
@@ -239,6 +240,7 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
             )
         result = section('Project actions', 'Manage actions and minutes', 'meetings', actions,
             lambda a: {'title': a.current.description, 'state': a.current.status.replace('_', ' ').capitalize(),
+             'state_code': a.current.status,
              'detail': (a.current.owner.get_full_name() or a.current.owner.username) if a.current.owner else 'Owner needed',
              'due': a.current.due_at, 'show_due': True, 'assignment_id': a.role_assignment if scoped and not project_reader else None,
              'url': (reverse('department_records', args=['tola', case.pk]) + f'?group=action&id={a.pk}') if project_reader else
@@ -265,6 +267,7 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
             result.append(section('Escalations', 'Open escalations', 'escalations', escalations, lambda item: {
                 'title': item.profile.state.issue.reference,
                 'state': f'Decision recorded · {item.last_verdict.replace("_", " ")}' if item.last_verdict else 'Awaiting decision',
+                'state_code': item.last_verdict or 'awaiting_decision',
                 'at': item.created_at,
             }))
         if 'change.read' in grants:
@@ -272,16 +275,17 @@ def sections(actor, case, tab, grants, query='', pages=None, selected=None):
                 Q(reference__icontains=query) | Q(current__module__icontains=query)).select_related('current').order_by('-pk')
             result.append(section('Changes', 'Open change requests', 'changes', changes, lambda change: {
                 'title': change.reference, 'state': f'Version {change.current.number}', 'detail': change.current.module,
-                'version_id': change.current_id}))
+                'state_code': 'recorded', 'version_id': change.current_id}))
         if 'emergency.read' in grants:
             emergencies = EmergencyProfile.objects.filter(version__change__case=case, version__change__reference__icontains=query,
                 version__change__current_id=F('version_id')).select_related('version__change').order_by('-pk')
             result.append(section('Emergency changes', 'Open emergency records', 'emergencies', emergencies, lambda emergency: {
                 'title': emergency.version.change.reference, 'state': 'Emergency evidence recorded', 'at': emergency.created_at,
-                'version_id': emergency.version_id}))
+                'state_code': 'recorded', 'version_id': emergency.version_id}))
         if 'rfp.read' in grants:
             bids = RFPCase.objects.filter(case=case, current_intake__isnull=False, reference__icontains=query).order_by('-pk')
             result.append(section('Bid requests', 'Open bid requests', 'rfp', bids, lambda bid: {
-                'title': bid.reference, 'state': 'Intake recorded', 'receipt_id': bid.current_intake_id}))
+                'title': bid.reference, 'state': 'Intake recorded', 'state_code': 'recorded',
+                'receipt_id': bid.current_intake_id}))
         return result
     raise Http404

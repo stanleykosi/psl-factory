@@ -21,6 +21,46 @@ from .reviews import VERSIONS
 from .work import WORK_RESULT, result
 
 
+def finance_scope(actor, case_id, dossier_id):
+    case = get_object_or_404(visible_cases(actor), pk=case_id, kind='project')
+    require(actor, case, 'delivery.finance_confirm')
+    return case, get_object_or_404(DeliveryDossier.objects.filter(case=case), pk=dossier_id)
+
+
+@endpoint(response=obj({'revision': REVISION, 'confirmation_id': nullable(ID), 'finding': nullable(TEXT),
+    'milestones': array(obj({'milestone_id': ID, 'receipt_id': ID}), limit=200)}),
+          summary='Read the exact milestone notifications Finance must confirm before closure')
+def finance_options(request, case_id, dossier_id):
+    case, dossier = finance_scope(request.user, case_id, dossier_id)
+    known, finding, confirmation_id = [], None, None
+    with limit_queries(500):
+        try:
+            known = delivery_closure.finance_inputs(dossier)['milestones']
+        except ValidationError as exc:
+            finding = exc.messages[0]
+        if finding is None:
+            try:
+                confirmation_id = delivery_closure.current_finance_confirmation(dossier).pk
+            except ValidationError:
+                pass
+    return {'revision': case.revision, 'confirmation_id': confirmation_id, 'finding': finding,
+            'milestones': [{'milestone_id': row[0], 'receipt_id': row[1]} for row in known]}
+
+
+@endpoint(method='POST', request=obj({'revision': REVISION, 'milestone_ids': array(ID, limit=200),
+    'inventory_complete': {'const': True}, 'evidence_id': ID, 'note': {**TEXT, 'maxLength': 4000}}),
+    response=obj({'confirmation_id': ID, 'revision': REVISION}), status=201,
+    summary='Confirm the complete milestone notification inventory with Finance proof')
+def finance_confirmation(request, case_id, dossier_id, *, body):
+    actor = request.user
+    case, dossier = finance_scope(actor, case_id, dossier_id)
+    get_object_or_404(public_evidence(case.evidence.all()), pk=body['evidence_id'])
+    row = delivery_closure.confirm_finance(actor, case.pk, dossier.pk, body['milestone_ids'],
+                                          body['inventory_complete'], body['evidence_id'], body['note'], body['revision'])
+    case.refresh_from_db(fields=['revision'])
+    return {'confirmation_id': row.pk, 'revision': case.revision}
+
+
 @endpoint(response=obj({'revision': REVISION, 'as_of': DATETIME, 'ready_to_prepare': BOOLEAN,
     'recorded_closure_id': nullable(ID), 'checks': array(obj({'key': TEXT, 'title': TEXT,
         'status': choice('current', 'held', 'unknown', 'closed', 'recorded', 'unavailable'),

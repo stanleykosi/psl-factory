@@ -6,18 +6,22 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
+from apps.core.design_views import discoverable_work
 from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.identity.services import active_case_grants, require
+from apps.identity.factory_access import project_actions
 from apps.pmo import delivery, delivery_ui, gates, go_live_attestations, phase_evidence
 from apps.pmo.models import DeliverySource, GateRecord, MeetingVersion
 from apps.workflows import factory_delivery, factory_go_live, factory_handover
 from apps.workflows.factory_progress import wake_waiting
+from apps.workflows.factory_execution import can_control
+from apps.workflows.factory_definitions import DEFINITIONS
 
 from .commands import require_line
 from .http import BOOLEAN, DATETIME, ID, TEXT, array, choice, endpoint, nullable, obj
 from .reviews import VERDICT, VERSIONS
-from .work import WORK_RESULT, result
+from .work import STATE, WORK_RESULT, result, state
 
 
 PIN = {'type': 'string', 'pattern': '^[a-f0-9]{64}$'}
@@ -25,6 +29,33 @@ PROOF = obj({'id': ID, 'version': ID, 'kind': TEXT})
 NOTE = {**TEXT, 'maxLength': 4000}
 RESPONSE = obj({**WORK_RESULT['properties'], 'record_id': ID})
 WORKAROUND = {'return_id': ID, 'issue_state_id': ID, 'response_id': ID, 'review_id': ID}
+DELIVERY_LINES = ('delivery-release/v1', 'delivery-go-live/v1', 'delivery-hypercare/v1',
+                  'delivery-handover/v1', 'delivery-archive/v1', 'delivery-closure/v1')
+
+
+@endpoint(response=obj({'as_of': DATETIME, 'lines': array(obj({
+    'key': choice(*DELIVERY_LINES), 'title': TEXT, 'work_id': nullable(ID), 'state': nullable(STATE),
+    'reference': nullable(TEXT), 'updated_at': nullable(DATETIME), 'work_url': nullable(TEXT),
+}))}), summary='Read the six Delivery lines and their latest visible work in this project')
+def overview(request, case_id):
+    from django.utils import timezone
+    from .workspaces import project_for
+
+    actor = request.user
+    case = project_for(actor, case_id)
+    if 'delivery.read' not in project_actions(actor, case):
+        raise PermissionDenied
+    latest = {work.definition: work for work in discoverable_work(actor, case_id=case.pk).filter(
+        definition__in=DELIVERY_LINES).order_by('definition', '-updated_at', '-pk').distinct('definition')}
+    lines = []
+    for key in DELIVERY_LINES:
+        work = latest.get(key)
+        lines.append({'key': key, 'title': DEFINITIONS[key]['title'], 'work_id': work.pk if work else None,
+                      'state': state(work) if work else None,
+                      'reference': (work.request.get('reference') or None) if work else None,
+                      'updated_at': work.updated_at if work else None,
+                      'work_url': f'/api/v1/work/{work.pk}' if work else None})
+    return {'as_of': timezone.now(), 'lines': lines}
 
 
 def proof_rows(rows):
@@ -251,6 +282,30 @@ def record_go_live(http, work_id, *, body):
 
 
 HANDOVER_STATUS = choice('received', 'gaps')
+
+
+@endpoint(response=obj({**VERSIONS, 'can_publish': BOOLEAN, 'version_id': nullable(ID)}),
+          summary='Check whether this person can publish the approved document to Support')
+def support_publication(request, work_id):
+    work = require_line(request.user, work_id, factory_handover.DEFINITION)
+    version_id = None
+    if can_control(request.user, work):
+        try:
+            version, _ = factory_handover.publication_candidate(work)
+            version_id = version.pk
+        except (ValidationError, PermissionDenied):
+            pass
+    return {'expected_revision': work.revision, 'case_revision': work.case.revision,
+            'can_publish': version_id is not None, 'version_id': version_id}
+
+
+@endpoint(method='POST', request=obj({**VERSIONS, 'version_id': ID}), response=RESPONSE, status=202,
+          summary='Queue publication of the exact approved handover to the configured Support audience')
+def publish_support(request, work_id, *, body):
+    work = require_line(request.user, work_id, factory_handover.DEFINITION)
+    publication = factory_handover.publish(request.user, work.pk, body['expected_revision'], body['case_revision'],
+                                           body['version_id'])
+    return recorded(work, publication)
 
 
 @endpoint(response=obj({

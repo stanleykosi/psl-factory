@@ -1,5 +1,7 @@
 # Actual test execution ledger
 
+23 November 2026. The first 14 PostgreSQL checks passed for the API contract, frontend sign-in, file downloads, intake forms, scoped work and Emergency outcome capture. A separate seven-test run passed for the API-only surface, Support publication and original delivery recovery, Finance closure confirmation and document comparison without private sections. Eight focused checks passed on the final contract snapshot. A test fixture initially omitted the required Admin roster permission. The corrected fixture verifies that a historical delegation missing an invitation duration keeps administration usable and has invitations disabled.
+
 ## Django page separation · 22 November 2026
 
 37 local PostgreSQL tests passed in 77.127 seconds. They covered API-only sign-in and CSRF, private upload and download scope, the signed inbox rejection, retired page and form requests, contract parity, local archived pages and account delivery. Django system checks and migration drift checks passed in API-only mode. Private object storage calls used controlled test doubles. The existing 262-state ledger retains its original deployments and revisions.

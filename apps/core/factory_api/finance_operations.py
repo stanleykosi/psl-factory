@@ -22,7 +22,8 @@ PAYMENT = obj({
     'age_days': nullable(COUNT), 'paid': MONEY, 'owed': MONEY, 'face': MONEY, 'reason': nullable(TEXT),
     'has_reminder_draft': BOOLEAN,
 })
-TOTAL = obj({'currency': TEXT, 'basis': TEXT, 'owed': MONEY, 'overdue': MONEY})
+TOTAL = obj({'currency': TEXT, 'basis': TEXT, 'owed': MONEY, 'overdue': MONEY,
+             'known_owed': MONEY, 'unknown_owed_count': COUNT})
 
 
 def amount(number):
@@ -50,7 +51,8 @@ def payments(http):
         **{name: amount(row[name]) for name in ('paid', 'owed', 'face')},
     } for row in rows]
     return {'as_of': as_of, 'items': items, 'limited': limited, 'cursor': key,
-            'totals': [{**total, 'owed': amount(total['owed']), 'overdue': amount(total['overdue'])} for total in totals]}
+            'totals': [{**total, 'owed': amount(total['owed']), 'overdue': amount(total['overdue']),
+                        'known_owed': amount(total['known_owed'])} for total in totals]}
 
 
 MONTH_WORK = obj({'title': TEXT, 'workspace_id': UUID, 'workspace': TEXT,

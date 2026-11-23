@@ -2,6 +2,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.http import Http404
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -41,6 +42,45 @@ def preview(request, case_id, version_id):
             'current': current, 'audience': version.audience, 'decisions': decisions,
             'preview': [{'field': section['heading'], 'text': section['text']} for section in version.payload['sections']],
             'django_url': reverse('design_document_review', args=[case.pk, version.pk])}
+
+
+@endpoint(response=obj({'from_version': ID, 'to_version': ID, 'sections': array(obj({
+    'key': choice(*FIELDS), 'before': nullable({'type': 'string'}), 'after': nullable({'type': 'string'}),
+    'before_evidence_ids': array(ID, limit=20), 'after_evidence_ids': array(ID, limit=20),
+    'change': choice('added', 'removed', 'changed', 'unchanged'),
+}))}), query={'from_version': ID}, required_query=('from_version',),
+          summary='Compare sections in two authorised versions of the same report and audience')
+def compare(request, case_id, version_id):
+    from .intake_sources import positive_id
+
+    actor = request.user
+    previous_id = positive_id(request, 'from_version')
+    if previous_id is None:
+        raise Problem(422, 'invalid_filter', 'Choose an earlier report version to compare.')
+    _, current = report(actor, case_id, version_id)
+    _, previous = report(actor, case_id, previous_id)
+    if (previous.document_id != current.document_id or previous.audience != current.audience
+            or previous.number >= current.number):
+        raise Http404
+    previous_fields = {part['heading']: part['text'] for part in previous.payload['sections']}
+    current_fields = {part['heading']: part['text'] for part in current.payload['sections']}
+    sections = []
+    for key in FIELDS:
+        before = previous_fields.get(key)
+        after = current_fields.get(key)
+        if before is None and after is None:
+            continue
+        change = 'unchanged'
+        if before is None:
+            change = 'added'
+        elif after is None:
+            change = 'removed'
+        elif before != after:
+            change = 'changed'
+        sections.append({'key': key, 'before': before, 'after': after, 'change': change,
+                         'before_evidence_ids': previous.fields[key]['evidence_ids'] if before is not None else [],
+                         'after_evidence_ids': current.fields[key]['evidence_ids'] if after is not None else []})
+    return {'from_version': previous.pk, 'to_version': current.pk, 'sections': sections}
 
 
 @endpoint(method='POST', request=obj({'expected_revision': REVISION, 'verdict': choice('approve','return','reject'),

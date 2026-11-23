@@ -19,9 +19,11 @@ from apps.workflows.factory_views import intake_options
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
 from .work import PAGE, page_number
+from .role_work import POSITION
 
 
 LINK = obj({'key': TEXT, 'title': TEXT, 'django_url': TEXT})
+DESTINATION = obj({**LINK['properties'], 'url': TEXT, 'available': BOOLEAN})
 DATES = {'type': 'string', 'format': 'date'}
 MONEY = nullable({'type': 'string'})
 WORKSPACE = obj({'case_id': UUID, 'title': TEXT, 'revision': REVISION, 'sample': BOOLEAN})
@@ -41,23 +43,36 @@ def project_for(actor, case_id):
 
 
 @endpoint(response=obj({
-    'name': TEXT, 'work_desk_url': TEXT, 'destinations': array(LINK), 'startable_lines': array(TEXT),
-    'csrf_token': TEXT, 'assistant_agents': array(choice(*PERSONAS)),
+    'name': TEXT, 'work_desk_url': TEXT, 'destinations': array(DESTINATION), 'startable_lines': array(TEXT),
+    'csrf_token': TEXT, 'assistant_agents': array(choice(*PERSONAS)), 'positions': array(POSITION, limit=50),
 }), summary='Bootstrap the same-origin Django session')
 def me(request):
+    from django.conf import settings
+    from apps.core import client_directory
+    from apps.identity.role_work import workspace_positions
+
     actor = request.user
-    destinations = [('my_work', 'My work', 'home'), ('projects', 'Projects', 'workspace_overview'),
-                    ('overview', 'Overview', 'design_overview'), ('setup', 'Setup', 'design_setup'),
-                    ('clients', 'Clients', 'design_clients'), ('assistant', 'Assistant', 'design_agents')]
+    positions = workspace_positions(actor)
     personas = [name for name in PERSONAS if cases_for(actor, name).exists()]
+    destinations = (
+        ('my_work', 'My work', 'home', '/my-work', True),
+        ('projects', 'Projects', 'workspace_overview', '/projects', project_cases(actor).exists()),
+        ('overview', 'Overview', 'design_overview', '/overview', True),
+        ('setup', 'Setup', 'design_setup', '/setup',
+         any(position['role'] == 'admin' for position in positions) or workbench.granted(actor, ['policy.read']).exists()),
+        ('clients', 'Clients', 'design_clients', '/clients',
+         client_directory.active_links(client_directory.visible_links(actor)).exists()),
+        ('assistant', 'Assistant', 'design_agents', '/assistant', True),
+    )
     return {
         'name': actor.get_full_name() or actor.get_username(),
-        'work_desk_url': reverse('connected_factory_work'),
-        'destinations': [{'key': key, 'title': label,
-                          'django_url': reverse(route) + ('?kind=project' if key == 'projects' else '')}
-                         for key, label, route in destinations],
+        'work_desk_url': reverse('connected_factory_work') if settings.PSL_DJANGO_UI else '/my-work',
+        'destinations': [{'key': key, 'title': label, 'url': url, 'available': available,
+                          'django_url': reverse(route) + ('?kind=project' if key == 'projects' else '')
+                          if settings.PSL_DJANGO_UI else url}
+                         for key, label, route, url, available in destinations],
         'startable_lines': [line['definition'] for line in intake_options(actor)],
-        'csrf_token': get_token(request), 'assistant_agents': personas,
+        'csrf_token': get_token(request), 'assistant_agents': personas, 'positions': positions,
     }
 
 
@@ -119,10 +134,10 @@ def project(request, case_id):
 
 
 SECTION_ITEM = obj({
-    'title': TEXT, 'state': TEXT, 'detail': nullable(TEXT), 'at': nullable(DATETIME), 'due': nullable(DATETIME),
+    'title': TEXT, 'state': TEXT, 'state_code': TEXT, 'detail': nullable(TEXT), 'at': nullable(DATETIME), 'due': nullable(DATETIME),
     'severity': nullable(TEXT), 'owner': nullable(TEXT), 'django_url': TEXT, 'record_id': ID, 'api_url': nullable(TEXT),
 })
-SECTION = obj({'title': TEXT, 'items': array(SECTION_ITEM, limit=25), 'page': ID, 'has_more': BOOLEAN, 'django_url': TEXT,
+SECTION = obj({'key': TEXT, 'title': TEXT, 'items': array(SECTION_ITEM, limit=25), 'page': ID, 'has_more': BOOLEAN, 'django_url': TEXT,
                'api_url': nullable(TEXT)})
 PROJECT_TABS = ('milestones', 'documents', 'registers', 'actions')
 
@@ -174,11 +189,12 @@ def project_tab(request, case_id, tab):
                 'emergencies-page': f"{prefix}/emergency-intake/{item.get('version_id')}"}.get(section['page_key'])
 
     return {'case_id': case.pk, 'tab': tab, 'sections': [
-        {'title': section['title'], 'django_url': section['url'], 'page': section['page'].number,
+        {'key': section['page_key'].removesuffix('-page'), 'title': section['title'],
+         'django_url': section['url'], 'page': section['page'].number,
          'api_url': ('/api/v1/received-bids' if section['page_key'] == 'rfp-page'
                      else f"{prefix}/{collection[section['page_key']]}"),
          'has_more': section['page'].has_next(), 'items': [
-             {'title': item['title'], 'state': item['state'], 'detail': item.get('detail') or None,
+             {'title': item['title'], 'state': item['state'], 'state_code': item['state_code'], 'detail': item.get('detail') or None,
               'at': item.get('at'), 'due': item.get('due'), 'severity': item.get('severity') or None,
               'owner': item.get('owner') or None, 'django_url': item.get('url', section['url']),
               'record_id': item['record_id'], 'api_url': item_url(section, item)}

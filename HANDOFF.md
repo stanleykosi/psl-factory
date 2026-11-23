@@ -1,5 +1,9 @@
 # PSL Operations Factory handoff
 
+## Frontend connection questions · 23 November 2026
+
+Use `codex/backend-handoff-answers` for API 1.23.0. Read the numbered answers beside the developer’s original questions. They name the implemented operations, decisions and remaining gaps. Deploy the matching contract only when the new backend revision is released. Staff sign in through Next.js. [Backend answers](delivery/connect/backend-answers-2026-11-23.md)
+
 ## Next.js developer handoff
 
 Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and six-role permissions. Run the backend in API-only mode and implement the replacement pages under `frontend/`. The archived Django page routes, templates and assets live in [`legacy_ui/`](legacy_ui/README.md). Its local preview uses `PSL_DJANGO_UI=1`. Use the API for sign-in, recovery and invitations and connect authenticated downloads through the frontend proxy. HOD policy choices remain deferred.

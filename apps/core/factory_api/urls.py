@@ -17,7 +17,8 @@ from . import (
     project_operations, received_bids,
     reminders, reviews,
     role_work, roles, schedule_work, scoped_policy, setup, short_payments, staff_access, support_replies,
-    validation_intake, visibility_settings, weekly_reports, work, work_access, work_information, workspaces,
+    validation_intake, visibility_settings, weekly_reports, work, work_access, work_information, work_proofs,
+    work_tracking, workspaces,
 )
 from .http import ID, TEXT, UUID, array, error, missing, obj
 
@@ -44,6 +45,7 @@ ROUTES = (
     ('setup/<uuid:case_id>/people/<int:person_id>/profile', staff_access.profile, staff_access.apply_profile),
     ('setup/<uuid:case_id>/people/<int:person_id>/departure', staff_access.workspace_departure, staff_access.remove_workspace_access),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>', documents.preview, documents.decide),
+    ('projects/<uuid:case_id>/document-reviews/<int:version_id>/compare', documents.compare),
     ('projects/<uuid:case_id>/document-reviews/<int:version_id>/publication', documents.report_controls, documents.report_command),
     ('projects/<uuid:case_id>/department-handoffs', handoffs.project),
     ('work/<int:work_id>/coordination/<int:check_id>/retry', handoffs.retry),
@@ -65,6 +67,10 @@ ROUTES = (
     ('received-bids/<uuid:case_id>/assignment', bid_assignments.detail, bid_assignments.assign),
     ('received-bids/<uuid:case_id>/team-inputs', bid_responses.team_inputs, bid_responses.record_team_input),
     ('work', work.queue, intake.start),
+    ('work/<int:work_id>/tracking', work_tracking.tracking),
+    ('work/<int:work_id>/delivery-observations', work_tracking.delivery_observations,
+     work_tracking.record_delivery_observation),
+    ('work/<int:work_id>/proofs', work_proofs.proofs, work_proofs.attach),
     ('work/source-queues', work.finance_sources),
     ('work/<int:work_id>', work.detail),
     ('work/<int:work_id>/access-request', work_access.status, work_access.request_access),
@@ -104,6 +110,7 @@ ROUTES = (
     ('work/<int:work_id>/go-live-replies/decline', go_live_replies.decline_options, go_live_replies.draft_rules),
     ('work/<int:work_id>/go-live-milestone', go_live_replies.milestone),
     ('work/<int:work_id>/support-receipt', delivery.support_receipt, delivery.acknowledge_support),
+    ('work/<int:work_id>/support-publication', delivery.support_publication, delivery.publish_support),
     ('work/<int:work_id>/support-replies', support_replies.options, support_replies.record_reply),
     ('work/<int:work_id>/aggregate-receipt', reviews.acknowledge_aggregate),
     ('work/<int:work_id>/payroll-operations', payroll_sources.work_options, payroll_sources.operate),
@@ -235,6 +242,9 @@ ROUTES = (
     ('projects/<uuid:case_id>/validation-intake/<int:package_id>', validation_intake.detail, validation_intake.command),
     ('projects/<uuid:case_id>/validation-acceptance/<int:review_id>', validation_intake.receipt),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/closure-checklist', closure.checklist),
+    ('projects/<uuid:case_id>/delivery-overview', delivery.overview),
+    ('projects/<uuid:case_id>/delivery/<int:dossier_id>/finance-confirmation', closure.finance_options,
+     closure.finance_confirmation),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing', client_uat.desk, client_uat.command),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/pack', client_uat.pack_desk, client_uat.pack_command),
     ('projects/<uuid:case_id>/delivery/<int:dossier_id>/client-testing/pack/<int:pack_id>/<str:side>', client_uat.pack_download),
@@ -266,6 +276,7 @@ ROUTES = (
     ('setup/<uuid:case_id>/policy-impact', scoped_policy.impacts, scoped_policy.capture),
     ('setup/<uuid:case_id>/policy-impact/<int:assessment_id>', scoped_policy.assessment, scoped_policy.review),
     ('setup/<uuid:case_id>/policy-impact/records/<int:configuration_id>/<str:domain>', scoped_policy.impact_records),
+    ('setup/scopes', setup.scope_options),
     ('setup/primary-roles', roles.built_ins),
     ('setup/<uuid:case_id>/primary-roles', roles.catalogue, roles.create),
     ('setup/<uuid:case_id>/people/<int:person_id>/primary-role', roles.review, roles.apply),
@@ -378,9 +389,9 @@ def contract():
             operations[method.lower()] = operation
         paths[path_name] = operations
     return {
-        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.22.0',
+        'openapi': '3.1.0', 'info': {'title': 'PSL Operations Factory live API', 'version': '1.23.0',
             'description': 'Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or '
-                           'GET /api/v1/me. Follow returned Django links for workflow steps that use native forms.'},
+                           'GET /api/v1/me. Use the typed API routes for the Next.js app.'},
         'security': [{'Session': []}], 'paths': paths,
         'components': {
             'schemas': {'Error': ERROR},
@@ -389,7 +400,7 @@ def contract():
                           for code, description in ERROR_RESPONSES.items()},
             'securitySchemes': {
                 'Session': {'type': 'apiKey', 'in': 'cookie', 'name': settings.SESSION_COOKIE_NAME,
-                            'description': 'Sign in at the ordinary Django account page on the same origin.'},
+                            'description': 'Sign in via POST /api/v1/session on the same origin.'},
             },
         },
     }

@@ -1,5 +1,7 @@
 # Build decisions
 
+23 November 2026. PSL answered the thirteen frontend connection questions. Staff can supply copies of signed PDFs as evidence, and the current PMO Lead can supply a written proof note. The backend should expose recorded work progress, the current owner, exact actions, form fields, dropdown choices and references. Admins manage their company’s settings. Authorised recovery staff can record a delivery observation with proof. Next.js owns staff navigation. No new rule for unknown Finance amounts was chosen. [Question-by-question record](delivery/connect/backend-answers-2026-11-23.md)
+
 22 November 2026. Run Railway with the Django page callbacks disabled. Preserve compatibility route names so existing JSON responses and published screen mappings keep their shape. Keep the signed Finance inbox and the six API-linked downloads on their established endpoints. The archive can run locally for comparison and regression tests.
 
 22 November 2026. Next.js will use the generated live Django contract for connected pages and retain the v7 client for prototype fixtures during integration. My work uses the existing route and presents role data inline. Django owns workspace and record permission checks, business decisions and background workflow state.

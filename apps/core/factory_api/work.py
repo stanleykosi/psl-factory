@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.utils import timezone
 
 from apps.core.design_views import discoverable_work
@@ -38,6 +38,7 @@ STATE = choice(*STATES.values(), 'processing', 'effect_uncertain')
 ITEM = obj({
     'id': ID, 'case_id': UUID, 'title': TEXT, 'line': TEXT, 'state': STATE,
     'status_label': TEXT, 'owner': nullable(TEXT), 'sample': BOOLEAN, 'updated_at': DATETIME, 'django_url': TEXT, 'api_url': TEXT,
+    'reference': nullable(TEXT),
 })
 FOCUS = obj({'key': choice('decision', 'response', 'recovery'), 'django_url': TEXT})
 TASK = obj({
@@ -52,16 +53,20 @@ DETAIL = obj({
     'progress': nullable(obj({'status': TEXT, 'updated_at': DATETIME})),
     'aggregate': nullable(obj({'report_id': ID, 'values': {'type': 'object', 'additionalProperties': {'type': ['string', 'number']}},
                                'currency': TEXT, 'period': TEXT, 'receipt_id': nullable(ID)})),
-    'department_handoff_url': TEXT, 'panels': array(obj({'key': TEXT, 'url': TEXT})),
+    'department_handoff_url': TEXT, 'panels': array(obj({'key': TEXT, 'url': TEXT, 'contract_path': nullable(TEXT)})),
     'output_url': nullable(TEXT), 'information': array(obj({'task_id': ID, 'url': TEXT})),
     'available_control': array(choice('resume', 'cancel', 'adopt_profile')),
     'profile_adoption': obj({'configuration_id': ID, 'version': REVISION}),
     'current_activity': obj({'label': TEXT, 'watching': BOOLEAN}),
+    'tracking_url': nullable(TEXT), 'proofs_url': nullable(TEXT),
 }, optional=('department_handoff_url', 'profile_adoption', 'current_activity'))
+COUNT = {'type': 'integer', 'minimum': 0}
+PAGE_SIZE = {'type': 'integer', 'enum': [8, 10, 15, 20, 50]}
 QUEUE = obj({
-    'items': array(ITEM, limit=8), 'page': ID, 'next_page': nullable(ID), 'as_of': DATETIME,
+    'items': array(ITEM, limit=50), 'page': ID, 'next_page': nullable(ID), 'as_of': DATETIME,
+    'page_size': PAGE_SIZE, 'total': nullable(COUNT),
     'limited': BOOLEAN, 'lines': array(obj({'key': TEXT, 'title': TEXT})),
-    'evaluated': {'type': 'integer', 'minimum': 0}, 'deferred': array(obj({'id': ID, 'url': TEXT}), limit=8),
+    'evaluated': COUNT, 'deferred': array(obj({'id': ID, 'url': TEXT}), limit=50),
     'payroll_questions': array(obj({'case_id': UUID, 'id': ID, 'state': TEXT, 'url': TEXT}), limit=8),
 })
 WORK_RESULT = obj({'work_id': ID, 'state': STATE, 'revision': REVISION})
@@ -78,9 +83,11 @@ def state(work, row=None):
 
 def summary(row):
     work = row['work']
+    reference = work.request.get('reference') if work.definition not in RESTRICTED_LINES else None
     return {
         'id': work.pk, 'case_id': work.case_id, 'title': row.get('title') or DEFINITIONS[work.definition]['title'],
         'line': work.definition, 'state': state(work, row), 'status_label': row['state'], 'owner': row.get('owner') or None,
+        'reference': reference if isinstance(reference, str) and reference else None,
         'sample': work.case.synthetic, 'updated_at': work.updated_at,
         'django_url': reverse('factory_detail', args=[work.pk]), 'api_url': f'/api/v1/work/{work.pk}',
     }
@@ -95,7 +102,8 @@ def page_number(request):
 
 @endpoint(response=QUEUE, summary='Read the scoped factory queue',
           query={'queue': choice(*factory_views.QUEUES), 'line': choice(*DEFINITIONS),
-                 'q': {'type': 'string', 'maxLength': 120}, 'page': PAGE, 'project': UUID})
+                 'q': {'type': 'string', 'maxLength': 120}, 'page': PAGE, 'project': UUID, 'limit': PAGE_SIZE,
+                 'state': STATE})
 def queue(request):
     scope = discoverable_work(request.user)
     project = request.GET.get('project')
@@ -108,13 +116,30 @@ def queue(request):
             raise Problem(422, 'invalid_filter', 'Choose a valid project identifier.') from None
     values = request.GET.copy()
     values['page'] = str(page_number(request))
+    size = request.GET.get('limit', '8')
+    if size not in {str(value) for value in PAGE_SIZE['enum']}:
+        raise Problem(422, 'invalid_filter', 'Choose 8, 10, 15, 20 or 50 rows per page.')
+    selected_state = request.GET.get('state')
+    if selected_state is not None and selected_state not in STATE['enum']:
+        raise Problem(422, 'invalid_filter', 'Choose one of the available work states.')
     if (values.get('queue', 'needs_me') not in factory_views.QUEUES or
             values.get('line', '') not in ('', *DEFINITIONS) or len(values.get('q', '')) > 120):
         raise Problem(422, 'invalid_filter', 'Check the work queue filters.')
-    context = factory_views.queue_context(request.user, values, scope=scope)
+    def include_row(work, row):
+        return selected_state is None or state(work, row) == selected_state
+
+    context = factory_views.queue_context(request.user, values, scope=scope, page_size=int(size),
+                                          empty_page_lookahead=2, include_row=include_row)
     page = context['candidates']
     questions = context['payroll_questions']
-    return {'items': [summary(row) for row in context['rows']], 'page': page.number,
+    total = None
+    if not context['limited']:
+        if page.paginator.num_pages == 1:
+            total = len(context['rows'])
+        elif selected_state is None and values.get('queue') in ('mine', 'active'):
+            total = page.paginator.count
+    return {'items': [summary(row) for row in context['rows']], 'page': page.number, 'page_size': int(size),
+            'total': total,
             'next_page': page.next_page_number() if page.has_next() and page.number < PAGE['maximum'] else None,
             'limited': context['limited'] or questions['held'], 'as_of': context['as_of'], 'evaluated': context['evaluated'],
             'deferred': [{'id': work.pk, 'url': f'/api/v1/work/{work.pk}'} for work in context['deferred']],
@@ -215,7 +240,7 @@ STATION_PANELS = {
     'engagement/v1': ('engagement',),
     'planning/v1': ('planning-owner-requests', 'planning-exit'),
     'delivery-release/v1': ('release-register',),
-    'delivery-handover/v1': ('support-receipt', 'support-replies'),
+    'delivery-handover/v1': ('support-receipt', 'support-replies', 'support-publication'),
     'delivery-go-live/v1': ('go-live-signoff', 'go-live-replies', 'go-live-milestone'),
     'delivery-hypercare/v1': ('stability', 'stability/events'),
     'delivery-archive/v1': ('archive-files',),
@@ -244,6 +269,18 @@ OUTPUT_PANEL = {
 }
 
 
+def panel_link(key, url):
+    from .urls import PATH_PARAMETER
+
+    try:
+        match = resolve(url)
+    except Resolver404:
+        return {'key': key, 'url': url, 'contract_path': None}
+    handlers = getattr(match.func, 'api_handlers', {})
+    contract_path = '/' + PATH_PARAMETER.sub(r'{\2}', match.route) if 'GET' in handlers else None
+    return {'key': key, 'url': url, 'contract_path': contract_path}
+
+
 def panels_for(work, row):
     root = f'/api/v1/work/{work.pk}'
     case = f'/api/v1/projects/{work.case_id}'
@@ -262,7 +299,8 @@ def panels_for(work, row):
     if work.definition == FINANCE_INVOICE and work.invoice_id:
         output = f'{case}/billing-invoices/{work.invoice_id}'
         panels.append({'key': 'invoice', 'url': output})
-    return panels, output if work.status == 'verified' and not row.get('readiness_changed') else None
+    return [panel_link(panel['key'], panel['url']) for panel in panels], (
+        output if work.status == 'verified' and not row.get('readiness_changed') else None)
 
 
 @endpoint(response=DETAIL, summary='Read the current work, independent tasks and permitted actions')
@@ -273,7 +311,8 @@ def detail(request, work_id):
         return {
             **summary(row), 'revision': None, 'case_revision': None,
             'next_step': 'Open the department handoff to check its evidence and available decisions.',
-            'department_handoff_url': url, 'panels': [{'key': 'department-handoff', 'url': url}],
+            'department_handoff_url': url, 'panels': [panel_link('department-handoff', url)], 'tracking_url': None,
+            'proofs_url': None,
             'output_url': url if work.status == 'verified' else None, 'information': [], 'available_control': [],
             'blocker': '', 'tasks': [], 'screens': [], 'actions': [], 'progress': None, 'aggregate': None,
         }
@@ -290,10 +329,11 @@ def detail(request, work_id):
                if aggregate and work.definition == 'finance-payroll/v1' else None)
         return {
             **summary(row), 'title': 'Received aggregate report', 'revision': None, 'case_revision': None,
+            'reference': None, 'tracking_url': None, 'proofs_url': None,
             'state': 'waiting' if not aggregate or not aggregate['receipt_id'] else 'verified',
             'next_step': row['next_action'], 'blocker': '',
             'tasks': [], 'screens': [], 'actions': [], 'progress': None, 'aggregate': aggregate,
-            'panels': [{'key': 'aggregate', 'url': url}] if url else [], 'output_url': url, 'information': [], 'available_control': [],
+            'panels': [panel_link('aggregate', url)] if url else [], 'output_url': url, 'information': [], 'available_control': [],
         }
     tasks = [task_data(task, request.user) for task in row['tasks'] if task.kind in (
         'factory_review', 'factory_accounting_review')] if work.definition in {FINANCE_INVOICE, ACCOUNTING} else []
@@ -326,6 +366,8 @@ def detail(request, work_id):
     ) if row.get(key) and row[key].get('progress')), None)
     return {
         **summary(row), 'revision': work.revision, 'case_revision': work.case.revision,
+        'tracking_url': f'/api/v1/work/{work.pk}/tracking',
+        'proofs_url': f'/api/v1/work/{work.pk}/proofs',
         'next_step': row.get('next_action') or 'Review the current work.', 'blocker': row.get('blocker') or '',
         'tasks': tasks, 'actions': actions, 'aggregate': aggregate, 'panels': panels, 'output_url': output,
         'available_control': control,

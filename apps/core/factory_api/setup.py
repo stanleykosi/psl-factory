@@ -1,15 +1,40 @@
 """Versioned Setup and delegation through authorised native policy services."""
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from apps.core import setup_rules
 from apps.core.workbench import granted
+from apps.core.presentation import workspace_name
 from apps.identity.services import active_case_grants, require
 from apps.policy import delegation_views
 from apps.policy.role_assignments import eligibility, invoice_delegation_source
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, endpoint, nullable, obj
+from .work import PAGE, page_number
+
+
+@endpoint(response=obj({'organisations': array(TEXT), 'workspaces': array(obj({
+    'case_id': UUID, 'organisation': TEXT, 'name': TEXT, 'revision': REVISION,
+    'can_configure': BOOLEAN, 'rules_url': TEXT, 'policy_scopes_url': TEXT,
+}), limit=25), 'next_page': nullable(PAGE)}), query={'page': PAGE},
+          summary='Discover the organisations and workspace policy settings available in Setup')
+def scope_options(request):
+    from apps.identity.intake import options
+
+    actor = request.user
+    organisations = {authority.tenant for authority in options(actor, 'manage_access')}
+    readable = granted(actor, ['policy.read'])
+    page = Paginator(readable.order_by('title', 'pk'), 25).get_page(page_number(request))
+    cases = list(page)
+    configured = set(granted(actor, ['policy.read', 'policy.configure']).filter(
+        pk__in=[case.pk for case in cases]).values_list('pk', flat=True))
+    return {'organisations': sorted(organisations), 'workspaces': [
+        {'case_id': case.pk, 'organisation': case.tenant, 'name': workspace_name(case), 'revision': case.revision,
+         'can_configure': case.pk in configured, 'rules_url': f'/api/v1/setup/{case.pk}/rules',
+         'policy_scopes_url': f'/api/v1/setup/{case.pk}/policy-scopes'} for case in cases],
+        'next_page': page.next_page_number() if page.has_next() and page.number < PAGE['maximum'] else None}
 
 
 @endpoint(response=obj({
