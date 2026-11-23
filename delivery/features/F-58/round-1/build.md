@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 473090df18b54f3897f876ef417cac262980974e
+COMMIT: 15c8e6bd1aa8c17eefc1f3365473714f6700eb3f
 BUILDER: builder
 LANE: full
 
@@ -22,6 +22,7 @@ LANE: full
 - D-178-1 | 473090df18b54f3897f876ef417cac262980974e | the forgot-password sentence is centred at both widths
 - D-178-2 | 473090df18b54f3897f876ef417cac262980974e | phone brand bar on /sign-in is 52px, the board's height (wordmark line-height uses --text-fact-line); the frame phone bar is untouched (CSS is scoped to .signin-wordmark)
 - D-178-3 | 473090df18b54f3897f876ef417cac262980974e | delivery/features/F-58/fidelity-exceptions.json written (INV-0412 line, Work email label, error attempt count, phone footer, forgot link); the boards' sample values are not in the tool's missing lists, so they are not listed
+- GATE-1 | 15c8e6bd1aa8c17eefc1f3365473714f6700eb3f | the Callout moves focus in a passive effect that can run just after findByRole resolves; the test now waits for focus with waitFor (two assertions in tests/sign-in.test.tsx); the component is unchanged and checks are as strict
 
 ## Acceptance criteria
 1. [x] `/sign-in`: no `/me`, no bars. Unit `sign-in.test.tsx` (spy fetch: only `GET /api/v1/session`); e2e (no navigation, no "My work" link).
