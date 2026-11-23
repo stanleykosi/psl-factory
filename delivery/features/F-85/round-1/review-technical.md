@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 35189b4503a76ae516ba153f77434a9a562bdc0d
+COMMIT: 1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4
 REVIEWER: reviewer-technical
 AUTHORITY: technical reviewer (lead), lighter panel (D-180)
 
@@ -9,6 +9,8 @@ AUTHORITY: technical reviewer (lead), lighter panel (D-180)
 - Null `revision` and `case_revision` pass through the live item, `LineContext` and the weekly-report tokens untouched. No `?? 0` or `|| 0` appears in the new code.
 - The only `liveApi.POST` calls are the upload and the unused-by-design `fileToEvidence` proposal. The picker takes `caseId` as a prop only, and `UploadId` and `EvidenceId` are distinct brands.
 - Live-only criteria 2, 19 and the live half of 22 were not checked, because of the known environment limits.
+
+- Merge delta (35189b45 to 1817c34e, re-confirmed): `git diff --stat origin/main 1817c34e` shows only F-85's 22 files. Against 35189b45 the F-85 files change only in the two resolved conflicts: `mock/server.mjs` (F-58 session and sign-out routes plus F-70 `normaliseProjectPath` sit beside the F-85 work-live route; the signed-out 401 check runs before it, as for every other read) and `tests/next-config.test.ts` (both allow-lists kept). `normaliseProjectPath` only rewrites `/api/v1/projects/<id>`, so numeric work ids are untouched. The one `src/api` change from main is the additive `csrfHeader` export in `client.ts`. Nothing from main touches the adapter or the live work item. Full checks on 1817c34e (`premerge-checks-1817c34e.log`) had not finished when I read it (one line), so they are not counted here.
 
 ## Findings
 - TECH-1-1 | non-blocking | low | frontend | `makeCommand` body spreads `...inputs` last (`adapter.ts` body()), so a caller's inputs could override `action`, the revision tokens or the key. Lane A and B should not pass those names, or the spread should come first. No current caller does.

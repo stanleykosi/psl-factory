@@ -136,7 +136,7 @@
     "base_branch": "fe-connect-1-work-item-frame",
     "base_sha": "6a09ff21cf6f75f7466743fcb3609bf3b8f54195",
     "task_branch": "fe-connect-1-start-work-weekly",
-    "head_sha": null,
+    "head_sha": "6a09ff21cf6f75f7466743fcb3609bf3b8f54195",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": null,
     "pr_number": null,
@@ -147,7 +147,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
