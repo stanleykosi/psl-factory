@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-89",
-  "outcome": "The weekly report review (approve, return, reject) and correct, and the invoice release, run live from the work item through the shared adapter, with press locking and uncertain-effect handling",
+  "outcome": "The weekly report review (approve, return, reject) and correct run live from the work item through the shared adapter, with press locking and uncertain-effect handling",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"
