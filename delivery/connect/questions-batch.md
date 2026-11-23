@@ -188,6 +188,8 @@ The weekly board draws no file field and the live weekly body has no field for a
 1. **(Recommended)** Build the upload box (the F-85 evidence picker) in Start work but show it only on lines whose body takes a file; the weekly form shows none.
 2. Show an optional "Add files to this project" box on the weekly form that uploads to the case but is not sent with the start.
 
+_LC-Q10 and LC-Q11 were added after batch 1 went out; D-182 covers LC-Q1 to LC-Q9 only. They stay open for batch 2, and F-86 builds on their recommended options meanwhile._
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

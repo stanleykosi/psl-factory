@@ -3,26 +3,56 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-86",
-  "outcome": "Start work reads live lines, picks a project and a source record, uploads files to the case, and starts one line (weekly report) through POST /work, then opens the new work item; other lines follow in later features",
-  "state": "PLANNED",
+  "outcome": "Start work reads the live lines, picks a project, and starts the weekly report",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "With the mock running, opening Start work from the top bar shows live lines by title with a description, no group headings and no \"Next:\" line \u2014 verify: open `/` on port 4980, press \"+ Start work\", read the list; `e2e/start-work.spec.ts` asserts no group heading text and no \"Next:\".",
+    "A line with `can_submit_via_api:false` and a line with no registered form appear as unavailable, each with \"Open in the full form\" linking to its `django_url`, are not selectable, and Next stays disabled when one is focused \u2014 verify: chooser unit test and the e2e; `invoice` appears nowhere in the list.",
+    "Choosing the weekly report, the project picker lists projects for `?line=pmo-weekly-report/v1`; typing in the search sends `q` (only when non-empty and at most 120 characters); \"Show more\" loads `page=2` and disappears when `next_page` is null \u2014 verify: unit test on `fetchProjects` with a mocked client and the e2e network log.",
+    "Pressing \"Start report\" with Project, Week or Reference empty makes no `POST /work` and lists each missing field \u2014 verify: e2e counts requests to `/api/v1/work` (zero).",
+    "A valid start sends exactly `{line:\"pmo-weekly-report/v1\", case_id, case_revision, idempotency_key, intake:{inputs:{template_id:null, content_id:null, start_at, end_at}}, reference}` with no other keys and the `X-CSRFToken` header, then lands on `/work/4102` \u2014 verify: unit test on `buildBody`, mock request log, and URL after the e2e.",
+    "A double press on Start report sends one request, and \"Check again\" after a 503 resends the same body with the same `idempotency_key` \u2014 verify: e2e (`start_uncertain`) comparing the two request bodies.",
+    "A 409 keeps every typed value, shows the \"changed since you opened it\" message, re-reads the project's revision, and the next press carries a new key and the new `case_revision`; nothing is resent on its own \u2014 verify: unit test on the state machine with a mocked client.",
+    "A 422 from the server maps `fields[].name` as in the table; an unknown name appears as its own box and none are dropped \u2014 verify: unit test per row of the table.",
+    "401 shows the signed-out state with `/sign-in?next=`; a 403 `csrf_failed` does not show \"can't start\" and refreshes the session once; a 404 says exactly \"This record is unavailable.\" \u2014 verify: unit tests and the mock scenarios `csrf_failed`, `start_missing`.",
+    "Wrong user and wrong tenant: a project from another team is never listed, and a hand-edited `case_id` (mock `start_missing`) shows the 404 wording with no hint it exists \u2014 verify: mock scenario and unit test.",
+    "Provider and network failure: with the mock stopped mid-start the form locks with \"Not confirmed. Check before trying again.\" and does not start a second work item \u2014 verify: e2e with the mock paused; mock log shows one started work.",
+    "`StartUpload` uploads through `uploadCaseFile` to the chosen `case_id` only, returns an `upload_id` (not an evidence id), is disabled before a project is chosen, and is cleared when the project changes \u2014 verify: component test; `grep -n \"uploadCaseFile\" src/features/start-work/StartUpload.tsx`, and no second multipart upload helper exists under `src/features/start-work`.",
+    "`fetchSources` sends `line`, `field`, `parent_id`, `before` only when set, returns `next_before`, and uses the response `case_revision` \u2014 verify: unit test with a mocked client.",
+    "A caller that passes `onStarted` (the assistant draft) receives the work id as a string, and `prefill` for a line not in the startable list shows \"You can't start this here.\" \u2014 verify: update `tests/` for `DraftStart` and run it.",
+    "`StartWorkDrawer.tsx` has no `default_line` path and `LineChooser.tsx` does not import a per-line form \u2014 verify: `grep -rn \"default_line\" src/features/start-work` returns nothing; F-88 can add a line by adding a file and a registry entry (reviewer reads `lines/index.ts`).",
+    "No client-side rule is invented: `grep -n \"8 days\\|up to 8\" src/features/start-work` returns nothing \u2014 verify: grep.",
+    "Layout matches the weekly and lines boards at desktop and phone widths except for the changes under \"Conflicts with the boards\" \u2014 verify: the fidelity tool run for SCR-04-desktop-weekly, SCR-04-mobile-weekly, SCR-04-desktop-lines, SCR-04-mobile-lines.",
+    "Live: against Django on 8020 with a PM account, the chooser lists the 25 lines from the live `GET /lines` and one weekly start for a real project returns 200 and opens its `/work/{id}` \u2014 verify: manual run recorded in the PR with the `work_id` and `oa.py live GET /api/v1/work/{work_id} 3`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The feature creates a work record and uploads files, and it shares F-85's adapter, which is a cross-layer contract. A wrong mapping fails with 422 or starts the wrong work. The effect is contained, easy to check for one line, and has no money, identity or migration. Surfaces are ui and api. The weekly report sends nothing outside the factory. PRODUCT-ACCEPTANCE is required because the client sees a changed start flow and its copy."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-86/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +89,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-86/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +182,28 @@
   "created_at": "2026-11-23T13:19:16Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:29:32Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-86/readiness.md",
+      "delivery/features/F-86/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
