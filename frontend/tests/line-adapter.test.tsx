@@ -48,6 +48,17 @@ describe('the adapter interface (AC16, AC17)', () => {
     expect(Object.keys(body)).not.toContain('operation');
   });
 
+  it('the descriptor\'s own fields win over inputs: action, tokens and the key cannot be overridden', () => {
+    const command = makeCommand({ id: 'line.act', label: 'Act', url: '/api/v1/work/1/x', tokens: { expected_revision: 3, case_revision: null }, keyField: 'operation', successStatuses: [200] });
+    const body = command.body({ action: 'evil', expected_revision: 99, case_revision: 98, operation: 'mine', note: 'kept' });
+    expect(body).toMatchObject({ action: 'act', expected_revision: 3, case_revision: null, operation: command.idempotency.value, note: 'kept' });
+  });
+
+  it('a body with action: null carries no action', () => {
+    const command = makeCommand({ id: 'work.background.pause', label: 'Pause', url: '/api/v1/work/1/background', tokens: { expected_revision: 7 }, action: null, successStatuses: [202] });
+    expect(command.body({ enabled: false })).toEqual({ expected_revision: 7, enabled: false });
+  });
+
   it('each descriptor makes its own key, once', () => {
     const make = () => makeCommand({ id: 'a.b', label: 'B', url: '/api/v1/x', tokens: {}, keyField: 'key', successStatuses: [201] });
     const one = make();

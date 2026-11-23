@@ -20,7 +20,7 @@ import type { LiveWorkItem } from '@/api/types';
 
 import { nextStepKind, STATE_TAGS } from '../labels';
 import { NoAccessState, WorkErrorCard } from '../WorkItemStates';
-import { decisionHref, activityOf, historyCaption, historyLine, HISTORY_FILTERS } from './model';
+import { decisionHref, activityOf, historyCaption, historyLine, HISTORY_FILTERS, safeHref, words } from './model';
 import { useLiveHistory } from './useLiveHistory';
 import { useLiveWorkItem } from './useLiveWorkItem';
 
@@ -97,10 +97,10 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
   );
   const tabs = <Tabs2 base={base} tab={tab} />;
   return (
-    <header className="work-header">
+    <header className="work-header work-header--end">
       {!phone && (
         <div className="work-crumbrow">
-          <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: item.line }]} current={<span>Work {item.id}</span>} />
+          <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: words(item.line) }]} current={<span>Work {item.id}</span>} />
           <div className="work-crumbright">{tabs}</div>
         </div>
       )}
@@ -173,6 +173,7 @@ function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext;
 
 function Overview({ item }: { item: LiveWorkItem }) {
   const activity = activityOf(item);
+  const outputHref = safeHref(item.output_url);
   const ctx: LineContext = { workId: item.id, caseId: item.case_id, revision: item.revision, caseRevision: item.case_revision };
   return (
     <div className="work-columns work-columns--lone">
@@ -212,7 +213,7 @@ function Overview({ item }: { item: LiveWorkItem }) {
                 return (
                   <li key={task.id} className="ws-row">
                     <span>
-                      {task.kind} · {task.role} · {task.status}
+                      {words(task.kind)} · {task.role} · {words(task.status)}
                     </span>{' '}
                     {href && (
                       <Link className="psl-link cmp-target" href={href}>
@@ -226,9 +227,9 @@ function Overview({ item }: { item: LiveWorkItem }) {
             </div>
           </section>
         )}
-        {item.output_url && (
+        {outputHref && (
           <p>
-            <a className="psl-link cmp-target" href={item.output_url}>
+            <a className="psl-link cmp-target" href={outputHref}>
               Open the output
             </a>
           </p>

@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LiveWorkItemView } from '@/features/work-item/live/LiveWorkItemView';
-import { decisionHref, historyCaption, historyLine, isLiveWorkId, needsPolling } from '@/features/work-item/live/model';
+import { decisionHref, historyCaption, historyLine, isLiveWorkId, needsPolling, safeHref } from '@/features/work-item/live/model';
 import { POLL_MS } from '@/features/work-item/useWorkItem';
 import type { LiveWorkItem } from '@/api/types';
 import { SIGN_IN_URL } from '@/shell/sample';
@@ -278,5 +278,32 @@ describe('the mappers', () => {
     expect(historyLine({ at: 'a', station: 's', status: 't', actor_kind: 'person', entry_id: 2, evidence_id: null }).evidenceId).toBeNull();
     expect(historyCaption(30)).toBe('Showing the latest 30 changes.');
     expect(historyCaption(29)).toBe('Showing all changes.');
+  });
+});
+
+describe('F-85 carried fixes', () => {
+  it('safeHref allows http(s) and same-site paths only', () => {
+    expect(safeHref('/api/v1/work/4101/output')).toBe('/api/v1/work/4101/output');
+    expect(safeHref('https://files.example/a.pdf')).toBe('https://files.example/a.pdf');
+    expect(safeHref('http://files.example/a.pdf')).toBe('http://files.example/a.pdf');
+    for (const bad of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', ' javascript:alert(1)', 'data:text/html,x', 'vbscript:x', 'file:///etc/passwd', '//evil.example/x', '/\\evil.example/x', 'relative/path', 'mailto:a@b.c', '', null, undefined]) {
+      expect(safeHref(bad)).toBeNull();
+    }
+  });
+
+  it('an output_url that is not http(s) or a site path draws no link', async () => {
+    const base = mock('/api/v1/work/4101').body as LiveWorkItem;
+    answer = (url) => (url.pathname === '/api/v1/work/4101' ? { status: 200, body: { ...base, output_url: 'javascript:alert(1)' } } : mock(url.pathname + url.search));
+    open('4101');
+    await heading();
+    expect(screen.queryByRole('link', { name: 'Open the output' })).toBeNull();
+  });
+
+  it('the breadcrumb names the line in plain words, never the key', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: false, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+    open('4102');
+    await heading();
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('My work / Weekly report / Work 4102');
+    expect(document.body.textContent).not.toMatch(/weekly_report|WEEKLY_REPORT/);
   });
 });

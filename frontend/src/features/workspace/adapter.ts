@@ -45,7 +45,7 @@ export type CommandDescriptor = {
   tokens: CommandTokens;
   /** The key field the line's body carries, and the uuid made once per attempt; null field: the line has none. */
   idempotency: { field: 'operation' | 'operation_key' | 'key' | null; value: string | null };
-  /** `{ action, ...tokens, [key field]: key, ...inputs }`. */
+  /** `{ ...inputs, action, ...tokens, [key field]: key }`: the descriptor's own fields win over inputs. */
   body(inputs: Record<string, unknown>): Record<string, unknown>;
   /** From the readback (e.g. can_correct false), never invented. */
   disabledReason?: string;
@@ -53,22 +53,26 @@ export type CommandDescriptor = {
   successStatuses: (200 | 201 | 202)[];
 };
 
-type CommandSpec = Pick<CommandDescriptor, 'id' | 'label' | 'url' | 'tokens' | 'disabledReason' | 'successStatuses'> & { keyField?: NonNullable<CommandDescriptor['idempotency']['field']> };
+type CommandSpec = Pick<CommandDescriptor, 'id' | 'label' | 'url' | 'tokens' | 'disabledReason' | 'successStatuses'> & {
+  keyField?: NonNullable<CommandDescriptor['idempotency']['field']>;
+  /** The body's `action`; default the part of the id after the dot, `null` for a body that has none. */
+  action?: string | null;
+};
 
 /** Builds a descriptor; the action in the body is the part of the id after the dot. The key is made here, once. */
 export function makeCommand(spec: CommandSpec): CommandDescriptor {
-  const { keyField, ...rest } = spec;
-  const action = spec.id.slice(spec.id.indexOf('.') + 1);
+  const { keyField, action: given, ...rest } = spec;
+  const action = given === undefined ? spec.id.slice(spec.id.indexOf('.') + 1) : given;
   const idempotency = keyField ? { field: keyField, value: newIdempotencyKey() } : { field: null, value: null };
   return {
     ...rest,
     method: 'POST',
     idempotency,
     body: (inputs) => ({
-      action,
+      ...inputs,
+      ...(action === null ? {} : { action }),
       ...spec.tokens,
       ...(idempotency.field ? { [idempotency.field]: idempotency.value } : {}),
-      ...inputs,
     }),
   };
 }

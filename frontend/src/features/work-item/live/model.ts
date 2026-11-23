@@ -54,3 +54,15 @@ export const HISTORY_LIMIT = 30;
 
 /** "Showing the latest 30 changes." only when exactly 30 rows came back; else everything the API has. */
 export const historyCaption = (count: number) => (count === HISTORY_LIMIT ? `Showing the latest ${HISTORY_LIMIT} changes.` : 'Showing all changes.');
+
+/** A link target the page may draw: an http(s) address or a path on this site. Anything else (javascript:, data:, //host) gets no link. */
+export function safeHref(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (/^\/(?![/\\])/.test(url)) return url;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:' ? url : null;
+  } catch {
+    return null;
+  }
+}
