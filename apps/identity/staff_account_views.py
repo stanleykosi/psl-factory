@@ -67,7 +67,7 @@ def roster_projection(actor,search,status,people_page,invitations_page):
         superseded=Exists(later)).filter(superseded=False)
     if search:pending=pending.filter(Q(name__icontains=search)|Q(username__icontains=search)|Q(email__icontains=search))
     invitations=Paginator(pending.select_related('case').only('id','case_id','case__title','name','username','email',
-        'profile_label','role_scope','expires_at','number').order_by('-pk'),25).get_page(invitations_page)
+        'profile_label','role_scope','created_at','expires_at','number').order_by('-pk'),25).get_page(invitations_page)
     return {'people':page,'search':search,'status':status,
             'invitations':invitations,'observed_at':timezone.now(),'available':cases.exists()}
 

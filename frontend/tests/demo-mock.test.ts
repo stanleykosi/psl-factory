@@ -31,6 +31,14 @@ const check = (id: string, status: number, body: unknown) => {
   expect(validate(body), `${id} ${status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
 };
 
+// GET /projects and GET /projects/{case_id} are the live shape (live contract 1.22.0)
+const live = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, { get: { responses: Record<string, { content: { 'application/json': { schema: object } } }> } }> };
+const checkLive = (path: string, body: unknown) => {
+  const validate = ajv.compile(live.paths[path].get.responses['200'].content['application/json'].schema);
+  expect(validate(body), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+};
+const P_9001 = '00000000-0000-4000-8000-000000009001';
+
 const fixtures = join(__dirname, '..', 'mock', 'fixtures');
 const readJson = (path: string) => JSON.parse(readFileSync(join(fixtures, path), 'utf8'));
 
@@ -345,14 +353,13 @@ describe('D-164: a won demo RFP creates a project', () => {
 
   it('creates one project when the RFP is verified, and not before', async () => {
     const id = await startRfp();
-    expect((await get('/api/v1/projects', 'pmo_lead')).body.items.some((p: any) => p.case_id === 'P-9001')).toBe(false);
+    expect((await get('/api/v1/projects', 'pmo_lead')).body.items.some((p: any) => p.case_id === P_9001)).toBe(false);
     await decideRfp(id, 'approve');
     pass(HOUR);
     const list = await get('/api/v1/projects', 'pmo_lead');
-    check('E-PROJECTS', 200, list.body);
-    expect(list.body.items[0]).toMatchObject({ case_id: 'P-9001', title: 'Tamarind Loans Ltd · new engagement', pm: 'Not assigned yet', sample: true });
-    expect(list.body.items.filter((p: any) => p.case_id.startsWith('P-9'))).toHaveLength(1);
-    expect(list.body.counts.active).toBe(list.body.counts.all - list.body.counts.closed);
+    checkLive('/api/v1/projects', list.body);
+    expect(list.body.items[0]).toMatchObject({ case_id: P_9001, title: 'Tamarind Loans Ltd · new engagement', manager: null, phase: 'Won · ready to plan', sample: true });
+    expect(list.body.items.filter((p: any) => p.case_id.startsWith('00000000-0000-4000-8000-00000000900'))).toHaveLength(1);
   });
 
   it('names a new client by the name given', async () => {
@@ -367,11 +374,13 @@ describe('D-164: a won demo RFP creates a project', () => {
     pass(HOUR);
     for (const persona of PERSONAS_WITH) {
       expect((await projectOptions(persona))[0], persona).toMatchObject({ value: 'P-9001', label: 'Tamarind Loans Ltd · new engagement', case_id: 'C-9001', case_revision: 1 });
-      expect((await get('/api/v1/projects?status=all', persona)).body.items[0].case_id, persona).toBe('P-9001');
-      const page = await get('/api/v1/projects/P-9001', persona);
-      check('E-PROJECT', 200, page.body);
-      expect(page.body.lines).toEqual([expect.objectContaining({ state: 'verified', work_id: 'W-9001' })]);
-      expect(page.body.pm).toBeUndefined();
+      expect((await get('/api/v1/projects?status=all', persona)).body.items[0].case_id, persona).toBe(P_9001);
+      // the project opens by its UUID and by its P-nnnn id, with the same body
+      const page = await get(`/api/v1/projects/${P_9001}`, persona);
+      checkLive('/api/v1/projects/{case_id}', page.body);
+      expect((await get('/api/v1/projects/P-9001', persona)).body).toEqual(page.body);
+      expect(page.body.items).toEqual([expect.objectContaining({ state: 'Verified', id: 9001 })]);
+      expect(page.body.facts.engagement).toBeNull();
       for (const tab of ['milestones', 'documents', 'registers', 'actions', 'money']) {
         const read = await get(`/api/v1/projects/P-9001/${tab}`, persona);
         check('E-PROJECT-TAB', 200, read.body);
@@ -380,7 +389,7 @@ describe('D-164: a won demo RFP creates a project', () => {
     }
     expect((await get('/api/v1/projects/P-9001', 'hr')).status).toBe(404);
     expect((await get('/api/v1/projects/P-9001/milestones', 'hr')).status).toBe(404);
-    expect((await get('/api/v1/projects?status=all', 'hr')).body.items.some((p: any) => p.case_id === 'P-9001')).toBe(false);
+    expect((await get('/api/v1/projects?status=all', 'hr')).body.items.some((p: any) => p.case_id === P_9001)).toBe(false);
   });
 
   it('lets a project line start on the new project, with empty dependent pickers', async () => {

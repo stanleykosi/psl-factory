@@ -1,4 +1,19 @@
 {
+  "frontend_backend_questions_20261123": {
+    "status": "backend_implemented_nextjs_connection_pending",
+    "product_decisions": "13 priority questions, 5 follow-ups and 224 screen questions answered",
+    "contract": "contracts/psl-factory.openapi.json",
+    "evidence": "delivery/connect/backend-answers-2026-11-23.md",
+    "screen_audit": "delivery/connect/backend-answers.md",
+    "leadership_report_generation": "Both leads can request either format using current information without entering dates.",
+    "numbered_questions_audited": 224,
+    "questions_requiring_engineering": 0,
+    "questions_awaiting_psl_policy": 0,
+    "follow_up": [
+      "Wire and verify the Next.js screens using the question register",
+      "Check a permitted Assistant image with the configured OpenRouter provider after deployment"
+    ]
+  },
   "django_frontend_separation_20261122": {
     "status": "deployed",
     "archive": "legacy_ui/",

@@ -37,6 +37,19 @@ const item = (id, patch) => ({
   updated_at: NOW,
   django_url: `/work/${id}/`,
   api_url: `/api/v1/work/${id}`,
+  // API 1.24.0 fields; the page draws none of them yet (tracking, facts and reference are a later feature)
+  reference: null,
+  started_at: '2026-11-20T09:00:00Z',
+  verified_at: null,
+  queue_output_url: null,
+  exception_code: null,
+  exception_next_step: null,
+  exception_started_at: null,
+  action_kind: null,
+  station: null,
+  agent: null,
+  tracking_url: null,
+  proofs_url: null,
   revision: 3,
   case_revision: 7,
   next_step: 'No further step is needed yet.',
@@ -61,7 +74,7 @@ const WORK = {
     next_step: 'The agent is drafting the update. You will be asked to review it.',
     current_activity: { label: 'Drafting the weekly update', watching: true },
     progress: { status: 'drafting', updated_at: NOW },
-    panels: [{ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report' }],
+    panels: [{ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report', contract_path: null }],
   }),
   4103: item(4103, {
     state: 'waiting',
@@ -74,7 +87,7 @@ const WORK = {
   }),
   4104: item(4104, { state: 'setup_needed', status_label: 'Setup needed', owner: null, blocker: 'A policy value is missing.', next_step: 'Ask the PMO Lead to set the value.', revision: null, case_revision: null }),
   4105: item(4105, { state: 'action_needed', status_label: 'Action needed', revision: null, department_handoff_url: '/handoff/4105' }),
-  4107: item(4107, { state: 'waiting', status_label: 'Waiting', panels: [{ key: 'weekly-report', url: '/api/v1/work/4107/weekly-report' }, { key: 'forecast', url: '/api/v1/work/4107/forecast' }] }),
+  4107: item(4107, { state: 'waiting', status_label: 'Waiting', panels: [{ key: 'weekly-report', url: '/api/v1/work/4107/weekly-report', contract_path: null }, { key: 'forecast', url: '/api/v1/work/4107/forecast', contract_path: null }] }),
   4108: item(4108, { state: 'verified', status_label: 'Verified' }),
 };
 
@@ -87,6 +100,9 @@ const REPORT = (patch) => ({
   return_review_id: null,
   can_correct: false,
   document_version_id: null,
+  return_note: null,
+  preview: null,
+  review_notes: [],
   review_verdicts: [],
   recipients: [],
   next_action: 'Nothing to do yet.',
@@ -109,13 +125,13 @@ const REPORTS = {
 };
 
 const HISTORY_ROWS = [
-  { at: '2026-11-23T08:00:00Z', station: 'draft', status: 'completed', actor: 'Chidi', evidence_id: 11 },
-  { at: '2026-11-23T07:30:00Z', station: 'review', status: 'approved', task_id: 9101, actor: 'Kemi Adebayo', reason: 'Figures agree with the ledger.', evidence_id: null },
-  { at: '2026-11-23T07:00:00Z', station: 'odd_station', status: 'odd_status', evidence_id: null },
+  { at: '2026-11-23T08:00:00Z', station: 'draft', status: 'completed', actor_kind: 'worker', entry_id: 301, actor: 'Chidi', evidence_id: 11 },
+  { at: '2026-11-23T07:30:00Z', station: 'review', status: 'approved', task_id: 9101, actor_kind: 'person', entry_id: 302, actor: 'Kemi Adebayo', reason: 'Figures agree with the ledger.', evidence_id: null },
+  { at: '2026-11-23T07:00:00Z', station: 'odd_station', status: 'odd_status', actor_kind: 'worker', entry_id: 303, evidence_id: null },
 ];
 const kindOf = { worker: (r) => r.station === 'draft', decision: (r) => r.station === 'review', evidence: (r) => r.evidence_id != null };
 function historyOf(id, kind) {
-  if (id === 4108) return Array.from({ length: 30 }, (_, i) => ({ at: new Date(Date.parse(NOW) - i * 60000).toISOString(), station: 'draft', status: 'completed' }));
+  if (id === 4108) return Array.from({ length: 30 }, (_, i) => ({ at: new Date(Date.parse(NOW) - i * 60000).toISOString(), station: 'draft', status: 'completed', actor_kind: 'worker', entry_id: 400 + i }));
   if (id === 4101) return kind ? HISTORY_ROWS.filter(kindOf[kind] ?? (() => true)) : HISTORY_ROWS;
   return kind && kindOf[kind] ? HISTORY_ROWS.filter(kindOf[kind]) : HISTORY_ROWS;
 }
@@ -145,7 +161,7 @@ export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
     if (read[2] === '/history') {
       const kind = url.searchParams.get('kind');
       if (kind && !['worker', 'decision', 'evidence'].includes(kind)) return send(400, BODIES[400]);
-      return send(200, { items: historyOf(id, kind), as_of: NOW });
+      return send(200, { items: historyOf(id, kind), as_of: NOW, next_before: null });
     }
     return REPORTS[id] ? send(200, REPORTS[id]) : send(404, BODIES[404]);
   }

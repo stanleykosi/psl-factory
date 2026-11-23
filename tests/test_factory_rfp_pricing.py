@@ -90,6 +90,50 @@ class FactoryFinalCostingDecisionTests(TestCase):
 
 
 class FactoryBidAdjustmentTests(TestCase):
+    def test_finance_lead_approves_exact_naira_price_before_it_changes(self):
+        from apps.pmo.costing_models import CostingBinding
+        from apps.workflows import factory, factory_rfp, factory_rfp_adjustments as adjustments
+        from tests.helpers import admit_department
+
+        work, original, base = factory_rfp_helpers.final_costing_wait(adjustable=True)
+        lead, staff = admit_department(work.actor, work.case, 'finance-lead', member=True)
+        url = f'/api/v1/work/{work.pk}/bid-pricing'
+        self.client.force_login(staff)
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertTrue(page.json()['can_propose'])
+        self.assertIn({'key': 'output:cost', 'kind': 'output', 'label': 'cost', 'amount': '20.00'},
+                      page.json()['finance_targets'])
+        versions = {key: page.json()[key] for key in ('expected_revision', 'case_revision')}
+        response = self.client.post(url, {**versions, 'action': 'propose', 'target': 'output:cost',
+            'amount': '70.25', 'reason': 'Reprice installation after the updated estimate.'},
+            content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        page = self.client.get(url).json()
+        self.assertIn({'key': 'cost', 'unit': 'NGN', 'value': '20.00'}, page['amounts'])
+        proposal_id = page['finance_pending']['id']
+        command = {**versions, 'case_revision': page['case_revision'], 'action': 'approve',
+                   'proposal_id': proposal_id, 'reason': 'Verified the revised installation estimate.'}
+        self.assertEqual(self.client.post(url, command, content_type='application/json').status_code, 403)
+        self.client.force_login(lead)
+        self.assertTrue(self.client.get(url).json()['can_decide'])
+        response = self.client.post(url, command, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        work.refresh_from_db()
+        changed = CostingBinding.objects.get(costing_id=factory_rfp.inputs(work)['sources']['costing']).run
+        self.assertEqual(changed.result['values'][0]['value'], '70.25')
+        self.assertEqual(changed.snapshot['sources'], base.snapshot['sources'])
+        self.assertEqual(work.case.audit.get(action=adjustments.APPROVED, data__proposal=proposal_id).actor_id, lead.pk)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        current = factory_rfp.response_for(work)
+        self.assertIsNotNone(current, work.finding)
+        self.assertEqual(current.commercial.previous_id, original.commercial_id)
+        self.assertFalse(current.commercial.decisions.exists())
+        read = self.client.get(url).json()
+        self.assertIn({'key': 'cost', 'unit': 'NGN', 'value': '70.25'}, read['amounts'])
+        self.assertIsNone(read['finance_pending'])
+
     def test_adjustment_recalculates_native_figures_and_starts_new_decisions(self):
         from apps.pmo.costing_models import CostingBinding, CostingRun
         from apps.pmo.models import RFPSubmission

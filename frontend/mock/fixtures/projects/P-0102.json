@@ -1,27 +1,318 @@
 {
-  "case_id": "P-0102",
+  "case_id": "00000000-0000-4000-8000-000000000102",
   "title": "Harmattan Bank · mobile onboarding",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "Prepare a costing",
-      "state": "waiting",
-      "work_id": "W-1206"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102"
     },
     {
-      "line": "Record a receipt",
-      "state": "action_needed",
-      "work_id": "W-1002"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/actions"
     }
   ],
-  "next": "Finance records the receipt for INV-0398.",
-  "pm": {
-    "name": "Kunle Ade",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1206,
+      "line": "Prepare a costing",
+      "reference": null,
+      "state": "Waiting",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1206/",
+      "api_url": "/api/v1/work/1206"
+    },
+    {
+      "id": 1002,
+      "line": "Record a receipt",
+      "reference": null,
+      "state": "Action needed",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1002/",
+      "api_url": "/api/v1/work/1002"
+    },
+    {
+      "id": 10022,
+      "line": "Weekly status report",
+      "reference": "RPT-102",
+      "state": "Verified",
+      "started": "2026-05-12T09:00:00Z",
+      "updated": "2026-11-07T14:30:00Z",
+      "django_url": "/work/10022/",
+      "api_url": "/api/v1/work/10022"
+    },
+    {
+      "id": 10023,
+      "line": "Weekly status report",
+      "reference": "RPT-103",
+      "state": "Verified",
+      "started": "2026-06-13T09:00:00Z",
+      "updated": "2026-11-10T14:30:00Z",
+      "django_url": "/work/10023/",
+      "api_url": "/api/v1/work/10023"
+    },
+    {
+      "id": 10024,
+      "line": "Weekly status report",
+      "reference": "RPT-104",
+      "state": "Verified",
+      "started": "2026-07-14T09:00:00Z",
+      "updated": "2026-11-13T14:30:00Z",
+      "django_url": "/work/10024/",
+      "api_url": "/api/v1/work/10024"
+    },
+    {
+      "id": 10025,
+      "line": "Weekly status report",
+      "reference": "RPT-105",
+      "state": "Verified",
+      "started": "2026-08-15T09:00:00Z",
+      "updated": "2026-11-16T14:30:00Z",
+      "django_url": "/work/10025/",
+      "api_url": "/api/v1/work/10025"
+    },
+    {
+      "id": 10026,
+      "line": "Weekly status report",
+      "reference": "RPT-106",
+      "state": "Verified",
+      "started": "2026-03-16T09:00:00Z",
+      "updated": "2026-11-19T14:30:00Z",
+      "django_url": "/work/10026/",
+      "api_url": "/api/v1/work/10026"
+    },
+    {
+      "id": 10027,
+      "line": "Weekly status report",
+      "reference": "RPT-107",
+      "state": "Verified",
+      "started": "2026-04-17T09:00:00Z",
+      "updated": "2026-11-22T14:30:00Z",
+      "django_url": "/work/10027/",
+      "api_url": "/api/v1/work/10027"
+    },
+    {
+      "id": 10028,
+      "line": "Weekly status report",
+      "reference": "RPT-108",
+      "state": "Verified",
+      "started": "2026-05-18T09:00:00Z",
+      "updated": "2026-11-03T14:30:00Z",
+      "django_url": "/work/10028/",
+      "api_url": "/api/v1/work/10028"
+    },
+    {
+      "id": 10029,
+      "line": "Weekly status report",
+      "reference": "RPT-109",
+      "state": "Verified",
+      "started": "2026-06-19T09:00:00Z",
+      "updated": "2026-11-06T14:30:00Z",
+      "django_url": "/work/10029/",
+      "api_url": "/api/v1/work/10029"
+    },
+    {
+      "id": 10030,
+      "line": "Weekly status report",
+      "reference": "RPT-110",
+      "state": "Verified",
+      "started": "2026-07-20T09:00:00Z",
+      "updated": "2026-11-09T14:30:00Z",
+      "django_url": "/work/10030/",
+      "api_url": "/api/v1/work/10030"
+    },
+    {
+      "id": 10031,
+      "line": "Weekly status report",
+      "reference": "RPT-111",
+      "state": "Verified",
+      "started": "2026-08-21T09:00:00Z",
+      "updated": "2026-11-12T14:30:00Z",
+      "django_url": "/work/10031/",
+      "api_url": "/api/v1/work/10031"
+    },
+    {
+      "id": 10032,
+      "line": "Weekly status report",
+      "reference": "RPT-112",
+      "state": "Verified",
+      "started": "2026-03-22T09:00:00Z",
+      "updated": "2026-11-15T14:30:00Z",
+      "django_url": "/work/10032/",
+      "api_url": "/api/v1/work/10032"
+    },
+    {
+      "id": 10033,
+      "line": "Weekly status report",
+      "reference": "RPT-113",
+      "state": "Verified",
+      "started": "2026-04-23T09:00:00Z",
+      "updated": "2026-11-18T14:30:00Z",
+      "django_url": "/work/10033/",
+      "api_url": "/api/v1/work/10033"
+    },
+    {
+      "id": 10034,
+      "line": "Weekly status report",
+      "reference": "RPT-114",
+      "state": "Verified",
+      "started": "2026-05-24T09:00:00Z",
+      "updated": "2026-11-21T14:30:00Z",
+      "django_url": "/work/10034/",
+      "api_url": "/api/v1/work/10034"
+    },
+    {
+      "id": 10035,
+      "line": "Weekly status report",
+      "reference": "RPT-115",
+      "state": "Verified",
+      "started": "2026-06-10T09:00:00Z",
+      "updated": "2026-11-02T14:30:00Z",
+      "django_url": "/work/10035/",
+      "api_url": "/api/v1/work/10035"
+    },
+    {
+      "id": 10036,
+      "line": "Weekly status report",
+      "reference": "RPT-116",
+      "state": "Verified",
+      "started": "2026-07-11T09:00:00Z",
+      "updated": "2026-11-05T14:30:00Z",
+      "django_url": "/work/10036/",
+      "api_url": "/api/v1/work/10036"
+    },
+    {
+      "id": 10037,
+      "line": "Weekly status report",
+      "reference": "RPT-117",
+      "state": "Verified",
+      "started": "2026-08-12T09:00:00Z",
+      "updated": "2026-11-08T14:30:00Z",
+      "django_url": "/work/10037/",
+      "api_url": "/api/v1/work/10037"
+    },
+    {
+      "id": 10038,
+      "line": "Weekly status report",
+      "reference": "RPT-118",
+      "state": "Verified",
+      "started": "2026-03-13T09:00:00Z",
+      "updated": "2026-11-11T14:30:00Z",
+      "django_url": "/work/10038/",
+      "api_url": "/api/v1/work/10038"
+    },
+    {
+      "id": 10039,
+      "line": "Weekly status report",
+      "reference": "RPT-119",
+      "state": "Verified",
+      "started": "2026-04-14T09:00:00Z",
+      "updated": "2026-11-14T14:30:00Z",
+      "django_url": "/work/10039/",
+      "api_url": "/api/v1/work/10039"
+    },
+    {
+      "id": 10040,
+      "line": "Weekly status report",
+      "reference": "RPT-120",
+      "state": "Verified",
+      "started": "2026-05-15T09:00:00Z",
+      "updated": "2026-11-17T14:30:00Z",
+      "django_url": "/work/10040/",
+      "api_url": "/api/v1/work/10040"
+    },
+    {
+      "id": 10041,
+      "line": "Weekly status report",
+      "reference": "RPT-121",
+      "state": "Verified",
+      "started": "2026-06-16T09:00:00Z",
+      "updated": "2026-11-20T14:30:00Z",
+      "django_url": "/work/10041/",
+      "api_url": "/api/v1/work/10041"
+    },
+    {
+      "id": 10042,
+      "line": "Weekly status report",
+      "reference": "RPT-122",
+      "state": "Verified",
+      "started": "2026-07-17T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/10042/",
+      "api_url": "/api/v1/work/10042"
+    },
+    {
+      "id": 10043,
+      "line": "Weekly status report",
+      "reference": "RPT-123",
+      "state": "Verified",
+      "started": "2026-08-18T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/10043/",
+      "api_url": "/api/v1/work/10043"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 24,
+    "waiting": 1,
+    "stopped": 1,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "Go-live acceptance",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0102",
+      "manager": "Kunle Ade"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

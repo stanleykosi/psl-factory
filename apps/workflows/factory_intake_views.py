@@ -22,7 +22,7 @@ class InstructionForm(forms.Form):
 def review(request,work_id):
     from .factory_views import visible
     from .factory import access
-    work=get_object_or_404(visible(request.user).filter(definition__in=[service.DEFINITION,'delivery-hypercare/v1']),pk=work_id)
+    work=get_object_or_404(visible(request.user, candidates=[work_id]).filter(definition__in=[service.DEFINITION,'delivery-hypercare/v1']),pk=work_id)
     access(request.user,work.case,'factory.manage',work.definition)
     finding='';packet=None
     try:_,packet=service.reaffirmation(request.user,work)

@@ -57,7 +57,8 @@ def invoice_rows(actor, case, budget):
         'preparation__coverage', 'preparation__handoff__milestone', 'invoiceissue', 'invoicedelivery',
     ).filter(invoiceissue__isnull=False)
     drafts = Invoice.objects.filter(case=case).annotate(known_issue=Exists(issued)).filter(known_issue=False)
-    current_draft_ids = drafts.order_by('obligation_key', '-version', '-pk').distinct('obligation_key').values('pk')
+    # Draft versions are per reference. The newest draft for the obligation wins across references.
+    current_draft_ids = drafts.order_by('obligation_key', '-pk').distinct('obligation_key').values('pk')
     drafts = Invoice.objects.filter(pk__in=current_draft_ids).select_related('preparation__coverage', 'preparation__handoff__milestone')
     result = []
     for invoice in budget.take(current.order_by('-pk'), 35) + budget.take(drafts.order_by('-pk'), 35):
@@ -127,13 +128,14 @@ def build(case, records, baseline, cover, invoices, figure, budget, configuratio
                           'status': 'Delivered' if hasattr(invoice, 'invoicedelivery') else 'Issued' if paid is not None else 'Draft'})
             if key == figure:
                 sources = sources + [{'label': f'Invoice {invoice.reference} · version {invoice.version}', 'url': finance_url,
-                                      'record_kind': 'invoice', 'record_id': invoice.pk,
+                                      'record_kind': 'invoice', 'record_id': invoice.pk, 'reference': invoice.reference,
                                       'issue_id': invoice.invoiceissue.pk if hasattr(invoice, 'invoiceissue') else None}]
                 sources += [{'label': f'Accepted {item.correction.kind} · {item.correction.reference}',
                              'url': reverse('finance_corrections', args=[case.pk]), 'record_kind': 'correction',
-                             'record_id': item.correction_id} for item in corrections_used]
+                             'record_id': item.correction_id, 'reference': item.correction.reference} for item in corrections_used]
                 sources += [{'label': f'Applied receipt {item.lot.receipt.transaction_ref} · {invoice.currency} {item.amount:f}',
-                             'url': finance_url, 'record_kind': 'cash-lot', 'record_id': item.lot_id} for item in allocations]
+                             'url': finance_url, 'record_kind': 'cash-lot', 'record_id': item.lot_id,
+                             'reference': item.lot.receipt.transaction_ref} for item in allocations]
         has_figure = amount is not None or bool(sources)
         item = {'key': key, 'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
                 'due_date': due_date, 'contract_stage': contract_stage,
@@ -162,7 +164,8 @@ def build(case, records, baseline, cover, invoices, figure, budget, configuratio
                                 'record_kind': 'reviewed-terms', 'record_id': configuration.pk})
             if completion:
                 sources.append({'label': f'Completion proof · {completion.name}', 'url': reverse('case', args=[case.pk]),
-                                'at': completion.completed_at, 'record_kind': 'milestone', 'record_id': completion.pk})
+                                'at': completion.completed_at, 'record_kind': 'milestone', 'record_id': completion.pk,
+                                'reference': completion.name})
             amount = record.get('amount')
             reason = None
             if amount is None:

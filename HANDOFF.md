@@ -1,10 +1,18 @@
 # PSL Operations Factory handoff
 
+## Frontend connection questions · 23 November 2026
+
+Use GitHub `main` and the API 1.26.0 contract for the Next.js connection. The 1.24.0 Railway release established the API-only setup in production and design acceptance. See the separate record of the 13 priority questions and five follow-up decisions. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md) · [Production contract](https://psl-web-production.up.railway.app/api/v1/openapi.json)
+
+The answer sheet pairs all 224 original frontend questions with answers. C-1, C-29 and D-17 describe the loss note, Finance price change and PMO Lead milestone writes. D-33 explains how to request either leadership report format without sending dates. [Backend Answers](delivery/connect/backend-answers.md) · [Test ledger](BUILD-TESTS.md)
+
+Railway production uses `psl-production-api`, `psl-production-worker`, and `psl-production-postgres`. Design acceptance uses `psl-design-api`, `psl-design-worker`, and `psl-design-postgres`. The design checks service was removed. Both existing public API addresses passed database-backed health checks after the rename. The Next.js frontend origin has yet to be configured. [Railway runbook](docs/runbooks/railway.md)
+
 ## Next.js developer handoff
 
-Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the verified OpenAPI 1.22.0 snapshot, screen-to-API map, 262-state crosswalk and six-role permissions. Run the backend in API-only mode and implement the replacement pages under `frontend/`. The archived Django page routes, templates and assets live in [`legacy_ui/`](legacy_ui/README.md). Its local preview uses `PSL_DJANGO_UI=1`. Use the API for sign-in, recovery and invitations and connect authenticated downloads through the frontend proxy. HOD policy choices remain deferred.
+Start with the [Next.js handoff folder](handoffs/nextjs/README.md). It includes the OpenAPI 1.26.0 snapshot, generated types, screen-to-API map, original 262-state crosswalk and six-role permissions. Next.js owns navigation, sign-in, recovery and invitations through the API and same-origin proxy. The archived Django pages remain available for local comparison in [`legacy_ui/`](legacy_ui/README.md).
 
-Railway design acceptance web `380f1e05-7879-40fd-87e9-afc726dcccdf` runs `ba17acd9`. Health, session bootstrap and OpenAPI passed on the hosted backend. The former page and static URLs return JSON 404. Worker `42ee30c7-9b91-43b4-9bf4-0c4a4c2c91be` continues polling. The next implementation belongs in the Next.js frontend. [Live contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
+The acceptance deployment at `ba17acd9` established the original Django page cutover. [Acceptance contract](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
 
 ## API replay complete · 22 November 2026
 

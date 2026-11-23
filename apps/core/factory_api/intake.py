@@ -59,7 +59,8 @@ def engagement_start(actor, *, case_id, key, reference, expected, **source):
 
 STARTS = {
     'pmo-issues/v1': (factory_issues.start, obj({'issue_id': ID})),
-    'pmo-leadership-report/v1': (factory_leadership.start, obj({'inputs': factory_leadership.INPUT})),
+    'pmo-leadership-report/v1': (factory_leadership.start, obj({'inputs': obj(
+        factory_leadership.INPUT['properties'], optional=('start_at', 'end_at'))})),
     'finance-ledger/v1': (factory_ledger.start, obj({'evidence_id': ID, 'predecessor_id': NID})),
     'finance-bu/v1': (factory_bu.start, obj({'inputs': factory_bu.INPUT})),
     'engagement/v1': (engagement_start, {'oneOf': [obj({'capture_id': ID}),
@@ -104,8 +105,11 @@ START_INPUT = {'oneOf': [
          **({} if line in DERIVED_REFERENCES else {'reference': REF})},
         optional=('background',)) for line, (_, schema) in STARTS.items()
 ]}
+INPUTS_BY_LINE = {schema['properties']['line']['const']: schema for schema in START_INPUT['oneOf']}
 LINE = obj({'key': choice(*STARTS, factory_views.rfp_fresh_intake.LINE), 'title': TEXT, 'description': TEXT,
-            'can_submit_via_api': BOOLEAN, 'django_url': TEXT, 'project_options_url': nullable(TEXT), 'submit_url': TEXT})
+            'can_submit_via_api': BOOLEAN, 'django_url': TEXT, 'project_options_url': nullable(TEXT), 'submit_url': TEXT,
+            'request_schema': {'type': 'object'},
+            'content_type': choice('application/json', 'multipart/form-data')})
 TRIGGER_GUIDE = obj({'action': TEXT, 'screen': TEXT, 'source_url': TEXT, 'tracking_url': TEXT})
 LINE_PROJECT = obj({'case_id': UUID, 'title': TEXT, 'case_revision': REVISION, 'sample': BOOLEAN, 'django_url': TEXT,
                     'source_options_url': TEXT, 'workflow_intake_url': nullable(TEXT)})
@@ -119,7 +123,11 @@ WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1
 
 
 def start_projects(actor, line):
-    return granted(actor, INTAKE_GRANTS[line]).filter(kind='project')
+    projects = granted(actor, INTAKE_GRANTS[line]).filter(kind='project')
+    if line == factory_leadership.DEFINITION:
+        from apps.identity.factory_access import department_cases
+        projects |= department_cases(actor, 'finance-lead', heads_only=True).distinct()
+    return projects
 
 
 @endpoint(response=obj({'items': array(obj({'process': TEXT, 'title': TEXT, 'department': choice('PMO', 'Finance'),
@@ -133,12 +141,16 @@ def processes(request):
 
 @endpoint(response=obj({'items': array(LINE), 'as_of': DATETIME}), summary='List available factory intake choices')
 def lines(request):
+    from .received_bids import record
+
     return {'items': [
         {'key': item['definition'], 'title': item['title'], 'description': item['description'],
          'can_submit_via_api': item['definition'] in STARTS or item['definition'] == factory_views.rfp_fresh_intake.LINE,
          'django_url': reverse('factory_create') + '?definition=' + item['definition'],
          'project_options_url': '/api/v1/lines/projects?line=' + item['definition'] if item['definition'] in STARTS else None,
-         'submit_url': '/api/v1/work' if item['definition'] in STARTS else '/api/v1/received-bids'}
+         'submit_url': '/api/v1/work' if item['definition'] in STARTS else '/api/v1/received-bids',
+         'request_schema': INPUTS_BY_LINE.get(item['definition'], record.operation['request']),
+         'content_type': 'application/json' if item['definition'] in STARTS else 'multipart/form-data'}
         for item in factory_views.intake_options(request.user)
     ], 'as_of': timezone.now()}
 

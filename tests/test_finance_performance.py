@@ -12,7 +12,7 @@ from apps.identity.models import Grant
 from .finance_performance_helpers import fixture_performance,build
 from .finance_analysis_helpers import policy,pipeline
 from apps.policy.services import reference_values
-from apps.finance.services import capture_import
+from apps.finance.services import capture_import, validate_import
 from .helpers import rev
 from apps.policy.services import transition
 from apps.finance.documents import draft_report
@@ -23,6 +23,14 @@ from apps.agents.finance_performance import investigate
 
 
 class FinancePerformanceTests(TestCase):
+    def test_mismatched_cadence_keeps_actual(self):
+        a,c,e,*_=self.data
+        b=self.budget(self.data[4]['csv'].replace('2026-10','FY2026'),cadence='annual')
+        performance.decide(a,c.pk,'budget',b.pk,'Finance','approve',e['finance_review'].pk,'Independently recorded synthetic review',rev(c))
+        result=performance.build(a,c.pk,'2026-10',[self.data[8].pk],b.pk,[],rev(c)).result
+        self.assertEqual(result['company']['pbt']['value'],'609.99')
+        self.assertIsNone(result['company']['pbt']['budget'])
+
     @classmethod
     def setUpTestData(cls):cls.data=fixture_performance()
 
@@ -40,7 +48,7 @@ class FinancePerformanceTests(TestCase):
         self.assertContains(response, 'Needs a fresh review')
         self.assertNotContains(response, '609.99')
         Grant.objects.filter(user=actor, case=case, action='finance.read').update(active=False)
-        self.assertEqual(self.client.get(url, {'month': '2026-10'}).status_code, 403)
+        self.assertEqual(self.client.get(url, {'month': '2026-10'}).status_code, 404)
 
     def test_explicit_budget_ytd_comparison_and_undefined_ratio(self):
         report=build(self.data)
@@ -174,8 +182,11 @@ class FinancePerformanceTests(TestCase):
             conf=policy(a,c,component,rules,e['policy_decision'])
             analysis.review(a,c.pk,analysis.PURPOSE[component],conf.pk,'Finance','approve',e['finance_review'].pk,'Explicit two-period rule range',rev(c))
         input=add_evidence(a,c.pk,'financial_input',f['csv'].replace('2026-10','2026-09').replace('asset,500','asset,400'),'synthetic:september-export')
+        from tests.finance_analysis_helpers import declared_units
         batch=capture_import(a,c.pk,input.pk,rev(c))
-        september=analysis.capture_source(a,c.pk,batch.pk,'synthetic-company',basis,timezone.now()-timedelta(hours=1),'complete','-209.99',e['finance_source'].pk,rev(c))
+        validate_import(a,c.pk,batch.pk,rev(c))
+        units=declared_units(a,c,batch)
+        september=analysis.capture_source(a,c.pk,batch.pk,'synthetic-company',basis,timezone.now()-timedelta(hours=1),'complete','-209.99',e['finance_source'].pk,rev(c),unit_declaration=units)
         analysis.review(a,c.pk,'source',september.pk,'Finance','approve',e['finance_review'].pk,'Exact September source accepted',rev(c))
         mapped=analysis.map_source(a,c.pk,september.pk,[],rev(c));run=analysis.calculate(a,c.pk,mapped.pk,rev(c))
         analysis.review(a,c.pk,'output',run.pk,'Finance','approve',e['finance_review'].pk,'Exact September output accepted',rev(c))

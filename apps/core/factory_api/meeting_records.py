@@ -7,9 +7,10 @@ from apps.core.evidence_access import public_evidence
 from apps.core.views import accessible_case
 from apps.identity.services import active_case_grants, require
 from apps.pmo import meetings
-from apps.pmo.models import ActionItem, Meeting, MeetingActionLink
+from apps.pmo.models import ActionItem, Meeting, MeetingActionLink, MeetingVersion
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, Problem, array, choice, endpoint, nullable, obj
+from .intake_sources import positive_id
 from .project_operations import ACTION, OPTION, action_payload, next_page
 from .work import PAGE, page_number
 
@@ -125,23 +126,30 @@ def record(http, case_id, *, body):
 @endpoint(response=obj(MEETING['properties'] | {
     'revision': REVISION, 'summary': TEXT, 'participants': array(OPTION, limit=50), 'decisions': array(DECISION, limit=50),
     'evidence_id': ID, 'actions': array(ACTION, limit=25), 'next_page': nullable(PAGE),
-}), query={'page': PAGE}, summary='Read a current meeting, its source-backed decisions and linked action states')
+    'current': BOOLEAN,
+}), query={'page': PAGE, 'version_id': ID},
+    summary='Read an exact meeting version, its source-backed decisions and current linked action states')
 def detail(http, case_id, meeting_id):
     case = workspace(http.user, case_id)
     meeting = get_object_or_404(visible_meetings(case), pk=meeting_id)
     version = meeting.current
+    sources = public_evidence(case.evidence.all()).values('pk')
+    version_id = positive_id(http, 'version_id')
+    if version_id is not None and version_id != version.pk:
+        version = get_object_or_404(MeetingVersion, meeting=meeting, pk=version_id, evidence_id__in=sources)
+    current = version.pk == meeting.current_id
     public_ids(case, {row['evidence_id'] for row in version.decisions})
     public_ids(case, {row['change_evidence_id'] for row in version.decisions if row.get('change_evidence_id')},
                kind='change_request')
-    sources = public_evidence(case.evidence.all()).values('pk')
     linked = MeetingActionLink.objects.filter(meeting=meeting, evidence_id__in=sources).values('item_id')
     actions = ActionItem.objects.filter(case=case, pk__in=linked, current__evidence_id__in=sources).select_related(
         'current__owner').order_by('pk')
-    page = Paginator(actions, 25).get_page(page_number(http))
+    page = Paginator(actions if current else actions.none(), 25).get_page(page_number(http))
     return meeting_payload(version) | {'revision': case.revision, 'summary': version.summary,
         'participants': choices(people(case, 'meeting.participate').filter(pk__in=version.participant_ids)),
         'decisions': version.decisions, 'evidence_id': version.evidence_id,
-        'actions': [action_payload(case, item, item.current) for item in page], 'next_page': next_page(page)}
+        'actions': [action_payload(case, item, item.current) for item in page], 'next_page': next_page(page),
+        'current': current}
 
 
 @endpoint(method='POST', request=obj({

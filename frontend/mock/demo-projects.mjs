@@ -27,24 +27,38 @@ export const resetDemoProjects = () => { projects.length = 0; };
 /** True when the persona may see demo projects (as the sample list). */
 export const demoVisible = (persona) => DEMO_PROJECT_PERSONAS.includes(persona);
 
-/** E-PROJECTS item: no PM is chosen yet, so the PM and stage say so instead of a name. */
-export const listItem = (p) => ({ case_id: p.case_id, title: p.title, pm: 'Not assigned yet', stage: 'Won · ready to plan', sample: true, reference: p.reference, needs_person: 0, stopped: 0 });
+// The live-shape ids: the project's fixed UUID (P-9001 is 00000000-0000-4000-8000-000000009001), and the work id as an integer.
+export const uuidOf = (caseId) => `00000000-0000-4000-8000-${caseId.slice(2).padStart(12, '0')}`;
 
-/** E-PROJECT: the journey lists the won RFP run as verified; everything else is empty or unknown. */
-export const journey = (p) => ({
-  case_id: p.case_id,
-  title: p.title,
-  lines: [{ line: p.line, state: 'verified', work_id: p.work_id, reference: p.reference, title: p.line, detail: 'RFP won · project created' }],
-  next: 'Ready to plan: a PMO Lead chooses the project manager.',
-  revision: 1,
-  tab_counts: { milestones: 0, documents: 0, registers: 0, actions: 0 },
-  facts: [
-    { label: 'CONTRACT STAGES', value: '0' },
-    { label: 'INVOICES VERIFIED', value: '0' },
-    { label: 'WAITING ON PEOPLE', value: '0' },
-    { label: 'NEXT MILESTONE', value: 'Unknown', unknown: true },
-  ],
-});
+/** GET /projects item: no manager is chosen yet, so there is none; the phase says the project was won. */
+export const listItem = (p) => ({ case_id: uuidOf(p.case_id), title: p.title, revision: 1, sample: true, manager: null, lifecycle: 'active', phase: 'Won · ready to plan', reviews: 0, exceptions: 0, next_milestone: null, django_url: `/projects/${uuidOf(p.case_id)}/` });
+
+/** GET /projects/{case_id}: the journey lists the won RFP run as verified; everything else is empty or not available. */
+export const journey = (p) => {
+  const caseId = uuidOf(p.case_id);
+  const workId = Number(p.work_id.slice(2));
+  const now = new Date().toISOString();
+  return {
+    case_id: caseId,
+    title: p.title,
+    revision: 1,
+    sample: true,
+    tabs: [
+      { key: 'journey', title: 'Journey', django_url: `/projects/${caseId}/`, api_url: `/api/v1/projects/${caseId}` },
+      { key: 'milestones', title: 'Milestones', django_url: `/projects/${caseId}/milestones/`, api_url: `/api/v1/projects/${caseId}/milestones` },
+      { key: 'documents', title: 'Documents', django_url: `/projects/${caseId}/documents/`, api_url: `/api/v1/projects/${caseId}/documents` },
+      { key: 'money', title: 'Money', django_url: `/projects/${caseId}/money/`, api_url: `/api/v1/projects/${caseId}/money` },
+      { key: 'registers', title: 'Registers', django_url: `/projects/${caseId}/registers/`, api_url: `/api/v1/projects/${caseId}/registers` },
+      { key: 'actions', title: 'Actions', django_url: `/projects/${caseId}/actions/`, api_url: `/api/v1/projects/${caseId}/actions` },
+    ],
+    items: [{ id: workId, line: p.line, reference: p.reference ?? null, state: 'Verified', started: now, updated: now, django_url: `/work/${workId}/`, api_url: `/api/v1/work/${workId}` }],
+    page: 1,
+    next_page: null,
+    as_of: now,
+    facts: { total: 1, waiting: 0, stopped: 0, finance: null, engagement: null },
+    assistant: [],
+  };
+};
 
 /** A start-work project option row; value and case id as the fixtures give them. */
 export const optionRow = (p) => ({ value: p.case_id, label: p.title, case_id: p.option_case_id, case_revision: 1, sample: true, _personas: DEMO_PROJECT_PERSONAS });

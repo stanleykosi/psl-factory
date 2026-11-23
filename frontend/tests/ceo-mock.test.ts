@@ -121,15 +121,18 @@ describe('ceo work rows', () => {
 
 describe('ceo projects', () => {
   it('sees every project the Finance Lead sees, and the Finance Lead still sees them', async () => {
-    const mine = (await get('/api/v1/projects?status=all&limit=50')).body;
-    const lead = (await get('/api/v1/projects?status=all&limit=50', 'finance_lead')).body;
+    const mine = (await get('/api/v1/projects?status=all')).body;
+    const lead = (await get('/api/v1/projects?status=all', 'finance_lead')).body;
     expect(mine.items.map((i: any) => i.case_id)).toEqual(lead.items.map((i: any) => i.case_id));
-    expect(mine.counts).toEqual({ active: 22, closed: 2, all: 24 });
-    expect((await get('/api/v1/projects?limit=50')).body.items).toHaveLength(22);
+    // 25 rows: 20 on the first page, the rest behind next_cursor
+    expect(mine.items).toHaveLength(20);
+    expect(mine.next_cursor).toBe('o20');
+    expect((await get('/api/v1/projects?status=all&cursor=o20')).body.items).toHaveLength(5);
+    expect((await get('/api/v1/projects?status=active')).body.items).toHaveLength(20);
   });
 
   it('opens a project, its tabs and its money tab; the no-access id stays 404; hr is unchanged and pmo_lead sees projects (D-153)', async () => {
-    expect((await get('/api/v1/projects/P-0103')).body.case_id).toBe('P-0103');
+    expect((await get('/api/v1/projects/P-0103')).body.case_id).toBe('00000000-0000-4000-8000-000000000103');
     expect((await get('/api/v1/projects/P-0103/milestones')).status).toBe(403); // P-0103 answers 403 on every tab, as before
     expect((await get('/api/v1/projects/P-0101/milestones')).status).toBe(200);
     expect((await get('/api/v1/projects/P-0101/money')).status).toBe(200);

@@ -170,6 +170,11 @@ class FactoryHandoverTests(TestCase):
         options = self.client.get(api)
         self.assertEqual(options.status_code, 200, options.content)
         self.assertEqual(options.json()['receipts'], [{'id': r.pk, 'status': None, 'can_acknowledge': True}])
+        self.assertEqual(options.json()['document']['supporting_records'], [])
+        Grant.objects.create(case=f.case, user=receiver, action='document.read')
+        privileged = self.client.get(api)
+        self.assertEqual(privileged.status_code, 200, privileged.content)
+        self.assertEqual(len(privileged.json()['document']['supporting_records']), 2)
         body = {'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'receipt_id': r.pk,
                 'status': 'received', 'evidence_id': f.e['requirements'].pk, 'note': 'Actual synthetic Support receipt'}
         saved = self.client.post(api, body, content_type='application/json')

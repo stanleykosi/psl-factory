@@ -18,7 +18,7 @@ FACTS = obj({'prospect_name': nullable(TEXT), 'submission_method': nullable(METH
 
 @endpoint(response=obj({'id': ID, 'case_id': UUID, 'reference': TEXT, 'number': REVISION, 'current': BOOLEAN,
                         'received_at': DATETIME, 'deadline_status': choice('unknown', 'stated', 'not_stated'),
-                        'deadline_at': nullable(DATETIME), 'customer_instructions': nullable(FACTS),
+                        'deadline_at': nullable(DATETIME), 'customer_instructions': nullable(FACTS), 'note': nullable(TEXT),
                         'original': obj({'filename': TEXT, 'bytes': ID, 'download_url': TEXT})}),
           summary='Read one exact private received bid receipt and its authorised original file link')
 def receipt(request, case_id, receipt_id):
@@ -39,6 +39,7 @@ def receipt(request, case_id, receipt_id):
     return {'id': intake.pk, 'case_id': case.pk, 'reference': intake.rfp.reference, 'number': intake.number,
             'current': intake.pk == intake.rfp.current_intake_id, 'received_at': intake.received_at,
             'deadline_status': intake.deadline_status, 'deadline_at': intake.deadline_at,
+            'note': intake.note if intake.note and intake.note != rfp_fresh_intake.RECEIPT_NOTE else None,
             'customer_instructions': instructions, 'original': {'filename': attachment.name, 'bytes': attachment.size,
                 'download_url': reverse('rfp_intake_attachment', args=[case.pk, intake.pk])}}
 
@@ -52,6 +53,7 @@ def organisations(request):
 
 @endpoint(method='POST', multipart=True, request=obj({
     'authority': ID, 'start_key': UUID, 'reference': {**TEXT, 'maxLength': 160},
+    'note': {'type': 'string', 'maxLength': 4000},
     'received_at': DATETIME, 'deadline_status': choice('unknown', 'stated', 'not_stated'),
     'deadline_at': {'anyOf': [DATETIME, {'type': 'string', 'const': ''}],
                     'description': 'Required for a stated deadline. Otherwise omit it or send the native form’s empty value.'},
@@ -61,7 +63,7 @@ def organisations(request):
     'document': {'type': 'string', 'format': 'binary', 'description': 'Original private Word or PDF file, up to 5 MiB.'},
     'definition': {'type': 'string', 'const': rfp_fresh_intake.LINE, 'deprecated': True,
                    'description': 'The optional hidden identifier sent by the existing Django form.'},
-}, optional=('deadline_at', 'prospect_name', 'submission_method', 'submission_target', 'context_attested', 'definition')),
+}, optional=('deadline_at', 'prospect_name', 'submission_method', 'submission_target', 'context_attested', 'definition', 'note')),
     response=obj({'receipt_id': ID, 'case_id': UUID, 'django_url': TEXT}), summary='Record the bid with its original private file')
 def record(request):
     scopes = list(rfp_fresh_intake.available(request.user).only('pk','tenant'))

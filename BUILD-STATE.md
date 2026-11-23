@@ -1,12 +1,20 @@
 # PSL Operations Factory build state
 
+## Frontend backend questions · 23 November 2026
+
+The frontend handoff pairs all 224 original screen questions with their answers. API 1.26.0 lets both leads request either leadership report format at any time using the current information across all PSL projects that their role permits. The same release reads back bid loss notes, applies naira bid changes after Finance Lead approval and records the PMO Lead's exact go-live milestone confirmation. [Backend Answers](delivery/connect/backend-answers.md)
+
+All 13 priority questions and five follow-ups have PSL answers. OpenAPI 1.24.0 includes private Assistant images, review-only weekly report notes, the in-app daily alert summary, direct PMO Lead approval on eligible Planning exit, and the known amount and source required for new receipts. The OpenRouter image check used a test response. [Consolidated answers](delivery/connect/backend-answers-2026-11-23.md)
+
+The previous OpenAPI 1.24.0 release reached Railway production and design acceptance at application revision `a766d84b74b7d8ca6ffb4529df4f539022232053`. The production in-app browser returned health `ok`, the deployed contract and `page_retired` for the former login page. The Next.js connection belongs to the frontend developer. [Production contract](https://psl-web-production.up.railway.app/api/v1/openapi.json) · [Test ledger](BUILD-TESTS.md)
+
 ## Django page separation
 
-The Django pages, templates and assets are archived in `legacy_ui/`. Railway web `380f1e05-7879-40fd-87e9-afc726dcccdf` serves API-only revision `ba17acd9`. The runtime keeps the JSON routes, health check, signed Finance inbox and six authenticated file routes returned by the API. All 39 cutover tests have passing Railway evidence across the main run and targeted retest. The next frontend work is to connect the design in `frontend/` using the published handoff. HOD policy choices remain deferred. [Frontend handoff](handoffs/nextjs/README.md) · [Test ledger](BUILD-TESTS.md)
+The Django pages, templates and assets are archived in `legacy_ui/`. Both Railway API services run with `PSL_DJANGO_UI=0`. The runtime keeps the JSON routes, health check, signed Finance inbox and six authenticated file routes returned by the API. The 39 original cutover tests retain their Railway evidence and the final local API-only tests cover 1.24.0. The frontend developer connects the Next.js app using the published handoff. [Frontend handoff](handoffs/nextjs/README.md) · [Test ledger](BUILD-TESTS.md)
 
 ## Next.js handoff prepared
 
-The [frontend handoff folder](handoffs/nextjs/README.md) includes the OpenAPI 1.22.0 snapshot, the map for all 59 screen groups, the 262-state crosswalk and the six-role access model. The Railway preview serves the verified contract.
+The [frontend handoff folder](handoffs/nextjs/README.md) includes the OpenAPI 1.26.0 snapshot, the map for all 59 screen groups, the 262-state crosswalk and the six-role access model. The 262 replays keep their original revision and deployment references.
 
 ## API state acceptance complete · 22 November 2026
 

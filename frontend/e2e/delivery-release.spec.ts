@@ -44,20 +44,14 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, reducedMotion: 'reduce', ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('Delivery tab: six rows, links, sub-nav only at 1440, no axe violations, no sideways scroll', async ({ page }) => {
+    test('Delivery tab: not available yet, no rows, not in the tab bar, no axe violations, no sideways scroll', async ({ page }) => {
       await page.goto('/projects/P-0101/delivery');
       await loaded(page);
-      const tabs = page.getByRole('tablist', { name: 'Project' }).getByRole('tab');
-      await expect(tabs).toHaveText(['Journey', 'Delivery', 'Milestones 4', 'Documents 6', 'Money', 'Registers 6', 'Actions 9']);
-      await expect(page.getByRole('tab', { name: 'Delivery' })).toHaveAttribute('aria-selected', 'true');
-      await expect(page.locator('ol.delivery__rows > li')).toHaveCount(6);
-      await expect(page.getByRole('link', { name: 'Release gates' })).toHaveAttribute('href', '/work/W-2503');
-      await expect(page.getByRole('link', { name: 'Go-live acceptance' })).toHaveAttribute('href', '/work/W-2510');
-      const nav = page.getByRole('navigation', { name: 'Delivery lines' });
-      if (phone) await expect(nav).toBeHidden();
-      else await expect(nav.getByRole('link')).toHaveText(['Release', 'Go-live', 'Hypercare', 'Handover']);
+      await expect(page.getByRole('tablist', { name: 'Project' }).getByRole('tab')).toHaveText(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+      await expect(page.getByRole('heading', { name: 'Delivery is not available yet' })).toBeVisible();
+      await expect(page.getByText('This project’s delivery view is not connected yet.')).toBeVisible();
+      await expect(page.locator('ol.delivery__rows')).toHaveCount(0);
       expect(await noHorizontalScroll(page)).toBe(true);
-      if (phone) await expectTouchTargets([page.getByRole('link', { name: 'Release gates' }), page.getByRole('link', { name: 'Go-live acceptance' }), page.getByRole('link', { name: 'Ask Tola' })]);
       await expectNoAxeViolations(page);
     });
 
@@ -67,19 +61,7 @@ for (const [label, viewport] of [
       await expect(page.getByRole('tab', { name: 'Delivery' })).toHaveCount(0);
     });
 
-    test('empty Delivery tab and the no-access views have no axe violations', async ({ page }) => {
-      await page.route('**/api/v1/projects/P-0101', async (route) => {
-        const response = await route.fetch();
-        const body = await response.json();
-        body.delivery = [];
-        delete body.delivery_agent;
-        await route.fulfill({ response, json: body });
-      });
-      await page.goto('/projects/P-0101/delivery');
-      await loaded(page);
-      await expect(page.getByText('No delivery lines yet.')).toBeVisible();
-      await expectNoAxeViolations(page);
-      await page.unroute('**/api/v1/projects/P-0101');
+    test('the no-access views have no axe violations', async ({ page }) => {
       await page.goto('/projects/P-0099/delivery');
       await expect(page.getByText('You can’t open this project')).toBeVisible();
       await expectNoAxeViolations(page);

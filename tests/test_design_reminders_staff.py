@@ -85,6 +85,8 @@ class PaymentReminderTests(TestCase):
         url = f'/api/v1/projects/{case.pk}/invoices/{issue.pk}/reminder'
         options = self.client.get(url).json()
         self.assertEqual(options['recipient']['email'], 'billing@example.invalid')
+        self.assertEqual(options['timing'], {'minimum_days_between': 1,
+            'earliest_date': issue.invoice.due_date.isoformat(), 'awaiting_receipt': False})
         writer, file = PdfWriter(), BytesIO()
         writer.add_blank_page(width=240, height=150)
         writer.write(file)

@@ -182,12 +182,18 @@ class AccountDeliveryTests(TestCase):
     def test_api_personal_alert_retains_read_state_without_cross_account_access(self):
         self.client.force_login(self.actor)
         url = '/api/v1/notifications'
-        alert, = self.client.get(url).json()['items']
+        inbox = self.client.get(url).json()
+        alert, = inbox['items']
         self.assertEqual(alert['title'], 'Assistant reply')
         self.assertFalse(alert['read'])
+        self.assertEqual(alert['target_kind'], 'conversation')
+        self.assertEqual(inbox['unread'], 1)
+        self.assertEqual(inbox['daily_summary']['scope'], 'current_inbox')
         marked = self.client.post(f"{url}/{alert['id']}/read", {}, content_type='application/json')
         self.assertEqual(marked.status_code, 200, marked.content)
-        self.assertTrue(self.client.get(url).json()['items'][0]['read'])
+        inbox = self.client.get(url).json()
+        self.assertTrue(inbox['items'][0]['read'])
+        self.assertEqual(inbox['unread'], 0)
         self.client.force_login(get_user_model().objects.create_user('outside-alert-replay'))
         self.assertEqual(self.client.get(url).json()['items'], [])
         self.assertEqual(self.client.post(f"{url}/{alert['id']}/read", {}, content_type='application/json').status_code, 404)

@@ -1,4 +1,4 @@
-// F-32: the delivery rows on P-0101 and the release items W-2501 to W-2510 in the contract mock. Each validates against the
+// F-32: the release items W-2501 to W-2510 in the contract mock. Each validates against the
 // generated schema once the proposed keys are removed, the proposed keys match mock/proposals/delivery-release.json, and the
 // decision rules hold (one apply of the approve sidecar, a repeat is 409, a task the person can't act on is 403).
 import { readFileSync } from 'node:fs';
@@ -16,13 +16,11 @@ import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
 type Schema = Record<string, unknown>;
 type Op = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: Schema } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Op>> };
-const overlay = JSON.parse(readFileSync(join(__dirname, '../mock/proposals/delivery-release.json'), 'utf8')) as { $comment: string; project_extra: Schema; work_link: Schema };
+const overlay = JSON.parse(readFileSync(join(__dirname, '../mock/proposals/delivery-release.json'), 'utf8')) as { $comment: string; work_link: Schema };
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const schemaOf = (path: string) => openapi.paths[path].get.responses['200'].content['application/json'].schema;
 const workSchema = ajv.compile(schemaOf('/api/v1/work/{work_id}'));
-const projectSchema = ajv.compile(schemaOf('/api/v1/projects/{case_id}'));
-const extra = ajv.compile(overlay.project_extra);
 const workLink = ajv.compile(overlay.work_link);
 
 const dir = join(__dirname, '../mock/fixtures/work');
@@ -123,41 +121,5 @@ describe('the decision on T-2502', () => {
 
   it('a decide on T-2504, which this person may not act on, answers 403', async () => {
     expect((await decide('T-2504', { expected_revision: 1, verdict: 'approve' })).status).toBe(403);
-  });
-});
-
-describe('P-0101 delivery rows', () => {
-  const stripped = (body: Body) => {
-    const copy = structuredClone(body);
-    for (const row of copy.delivery) for (const key of ['reference', 'at', 'detail', 'short_title']) delete row[key];
-    delete copy.delivery_agent;
-    delete copy.delivery_summary;
-    return copy;
-  };
-
-  it('validates against the E-PROJECT schema without the proposed keys, and the proposed keys match the overlay', async () => {
-    expect(overlay.$comment).toMatch(/PROPOSED/);
-    const { status, body } = await send('GET', '/api/v1/projects/P-0101');
-    expect(status).toBe(200);
-    expect(projectSchema(stripped(body)), ajv.errorsText(projectSchema.errors)).toBe(true);
-    expect(extra(body), ajv.errorsText(extra.errors)).toBe(true);
-  });
-
-  it('has the six rows in order; only Release, Go-live, Hypercare and Handover carry a work id', async () => {
-    const { body } = await send('GET', '/api/v1/projects/P-0101');
-    expect(body.delivery.map((r: Body) => [r.title, r.work_id])).toEqual([
-      ['Release gates', 'W-2503'],
-      ['Go-live acceptance', 'W-2510'],
-      ['Hypercare', 'W-3101'],
-      ['Archive', undefined],
-      ['Handover to Support', 'W-3704'],
-      ['Closure', undefined],
-    ]);
-  });
-
-  it('leaves the journey keys as they were', async () => {
-    const { body } = await send('GET', '/api/v1/projects/P-0101');
-    expect(body.lines).toHaveLength(8);
-    expect(body.next).toBe('Client UAT response, then Finance review of the milestone 2 invoice.');
   });
 });

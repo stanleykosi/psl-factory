@@ -87,12 +87,13 @@ def inspect(actor, work):
                 commercial_cost = binding.costing
                 costing.verify_costing(commercial_cost, selected['sources']['plan'])
                 recorded = costing.report(actor, case.pk, binding.run_id)
-                if not recorded['current_usable'] or 'result' not in recorded:
+                finance = factory_rfp_adjustments.finance_role(actor, case)
+                if not recorded['current_usable'] or 'result' not in recorded and not finance:
                     raise ValidationError('Costing rules or access changed.')
             except (ValidationError, PermissionDenied):
                 note = 'The recorded calculation needs review against the current inputs and costing rule.'
             else:
-                amounts = recorded['result']['values']
+                amounts = (recorded.get('result') or binding.run.result)['values']
                 note = 'Amounts come from the reviewed calculation for these inputs.'
 
     approvals = []

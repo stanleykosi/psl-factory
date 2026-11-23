@@ -4,6 +4,7 @@ from io import BytesIO
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
@@ -21,7 +22,7 @@ from apps.policy.services import active_component, reference_values
 from tests.billing_helpers import policy
 from tests.helpers import rev
 from tests.obligation_helpers import issue_identified
-from tests.settlement_helpers import draft, fixture
+from tests.settlement_helpers import draft, fixture, receipt
 
 
 def pdf_file(name, width=100):
@@ -158,15 +159,32 @@ class BankReceiptCaptureTests(TestCase):
             self.assertContains(response,'Private bank proof storage is unavailable')
             discard.assert_called_once_with(put.call_args.args[0])
         self.assertFalse(CashReceipt.objects.filter(case=self.case).exists())
-        with patch('adapters.case_uploads.put',side_effect=self.objects.__setitem__):
+        with patch('adapters.case_uploads.put') as store:
             response=self.report(amount='')
-        self.assertEqual(response.status_code,302)
-        receipt=CashReceipt.objects.get(case=self.case)
-        self.assertIsNone(receipt.payload['amount'])
-        self.assertContains(self.client.get(response.url),'The reported amount is unknown')
-        self.assertEqual(self.verify(response.url).status_code,403)
-        self.assertFalse(CashVerification.objects.filter(receipt=receipt).exists())
+            self.assertContains(response,'This field is required')
+            store.assert_not_called()
+        self.assertFalse(CashReceipt.objects.filter(case=self.case).exists())
         self.assertEqual(cash.open_amount(self.issue),initial)
+
+    def test_new_receipts_require_amount_and_source_but_legacy_replay_is_preserved(self):
+        from apps.core.services import add_evidence
+        import json
+
+        historical, _ = receipt(self.actor, self.case, amount=None, ref='legacy-unknown-amount', verify=False)
+        self.assertEqual(cash.report(self.actor, self.case.pk, historical.evidence_id, rev(self.case)), historical)
+        draft_evidence = add_evidence(self.actor, self.case.pk, 'cash_report',
+            json.dumps({**historical.payload, 'transaction_ref': 'new-unknown-amount'}), 'synthetic:bank')
+        with self.assertRaisesMessage(ValidationError, 'Confirm the amount received'):
+            cash.report(self.actor, self.case.pk, draft_evidence.pk, rev(self.case))
+        url = f'/api/v1/projects/{self.case.pk}/invoices/{self.issue.pk}/payments'
+        fields = {'revision': rev(self.case), 'customer': self.coverage.customer, 'amount': '20',
+                  'currency': 'NGN', 'amount_basis': 'gross_including_tax', 'received_at': self.at,
+                  'source': 'synthetic-bank', 'transaction_ref': 'new-incomplete-receipt', 'locator': 'bank'}
+        for missing in ('source', 'amount'):
+            response = self.client.post(url, {**{key: value for key, value in fields.items() if key != missing},
+                                              'file': pdf_file('bank.pdf')})
+            self.assertEqual(response.status_code, 422, response.content)
+        self.assertEqual(list(CashReceipt.objects.filter(case=self.case)), [historical])
 
     def test_configured_independence_requires_actual_distinct_bytes_and_locator(self):
         current=active_component(SOURCE_POLICY,self.case)

@@ -1,27 +1,108 @@
 {
-  "case_id": "P-0104",
+  "case_id": "00000000-0000-4000-8000-000000000104",
   "title": "Delta Foods · ordering app",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "Prepare an invoice",
-      "state": "verified",
-      "work_id": "W-1006"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104"
     },
     {
-      "line": "Weekly client update",
-      "state": "processing",
-      "work_id": "W-1003"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000104/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000104/actions"
     }
   ],
-  "next": "The weekly client update goes to the PM for review.",
-  "pm": {
-    "name": "Kemi Adebayo",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1006,
+      "line": "Prepare an invoice",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1006/",
+      "api_url": "/api/v1/work/1006"
+    },
+    {
+      "id": 1003,
+      "line": "Weekly client update",
+      "reference": null,
+      "state": "Processing",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1003/",
+      "api_url": "/api/v1/work/1003"
+    },
+    {
+      "id": 10042,
+      "line": "Weekly status report",
+      "reference": null,
+      "state": "Waiting",
+      "started": "2026-05-12T09:00:00Z",
+      "updated": "2026-11-07T14:30:00Z",
+      "django_url": "/work/10042/",
+      "api_url": "/api/v1/work/10042"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 3,
+    "waiting": 2,
+    "stopped": 1,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "Handover sign-off",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0104",
+      "manager": "Kemi Adebayo"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

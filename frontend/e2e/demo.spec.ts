@@ -83,7 +83,7 @@ test('a won RFP creates a project: it shows in the Projects list, its page and t
   const link = page.getByRole('link', { name: /Tamarind Loans Ltd · new engagement/ });
   await expect(link).toBeVisible();
   await link.click();
-  await expect(page).toHaveURL(/\/projects\/P-9001$/);
+  await expect(page).toHaveURL(/\/projects\/00000000-0000-4000-8000-000000009001$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Tamarind Loans Ltd · new engagement' })).toBeVisible();
 
   await page.goto('/my-work');

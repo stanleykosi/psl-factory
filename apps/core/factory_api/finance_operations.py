@@ -1,9 +1,14 @@
 """Payment coverage and close capture through their native Finance readers."""
+from decimal import Decimal, localcontext
+
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from apps.core.workbench import granted
+from apps.core.models import Case
+from apps.core.read_budget import ReadLimit
 from apps.finance import month_end, payments_overview
 
 from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, UUID, Problem, array, choice, endpoint, nullable, obj
@@ -22,14 +27,46 @@ PAYMENT = obj({
     'age_days': nullable(COUNT), 'paid': MONEY, 'owed': MONEY, 'face': MONEY, 'reason': nullable(TEXT),
     'has_reminder_draft': BOOLEAN,
 })
-TOTAL = obj({'currency': TEXT, 'basis': TEXT, 'owed': MONEY, 'overdue': MONEY})
+TOTAL = obj({'currency': TEXT, 'basis': TEXT, 'owed': MONEY, 'overdue': MONEY,
+             'known_owed': MONEY, 'unknown_owed_count': COUNT})
+CASH_COVERAGE = obj({'month': MONTH, 'scope': choice('workspaces_in_results'), 'workspaces_read': COUNT,
+    'workspaces_unknown': COUNT, 'last_received_at': nullable(DATETIME), 'last_verified_at': nullable(DATETIME),
+    'totals': array(obj({'currency': TEXT, 'basis': TEXT, 'amount': TEXT}))})
 
 
 def amount(number):
     return str(number) if number is not None else None
 
 
+def receipt_coverage(actor, rows, as_of):
+    workspace_ids = {row['case_id'] for row in rows}
+    month = as_of.strftime('%Y-%m')
+    totals = {}
+    read = 0
+    received_at, verified_at = None, None
+    with localcontext() as precision:
+        precision.prec = 512
+        for case in Case.objects.filter(pk__in=workspace_ids):
+            try:
+                groups, received, verified = month_end.cash_received_snapshot(actor, case, month)
+            except (PermissionDenied, ValidationError, ReadLimit):
+                continue
+            read += 1
+            if received:
+                received_at = max(received_at, received) if received_at else received
+            if verified:
+                verified_at = max(verified_at, verified) if verified_at else verified
+            for currency, basis, value in groups:
+                key = (currency, basis)
+                totals[key] = totals.get(key, Decimal(0)) + value
+    return {'month': month, 'scope': 'workspaces_in_results', 'workspaces_read': read,
+            'workspaces_unknown': len(workspace_ids) - read, 'last_received_at': received_at, 'last_verified_at': verified_at,
+            'totals': [{'currency': key[0], 'basis': key[1], 'amount': amount(value)}
+                       for key, value in sorted(totals.items())]}
+
+
 @endpoint(response=obj({'as_of': DATES, 'items': array(PAYMENT, limit=25), 'totals': array(TOTAL, limit=25),
+                        'received_this_month': CASH_COVERAGE,
                         'cursor': nullable(CURSOR), 'limited': BOOLEAN}),
           query={'q': {'type': 'string', 'maxLength': 100}, 'state': PAYMENTS_STATE, 'cursor': CURSOR},
           summary='Read the scoped payments queue and explicitly bounded totals')
@@ -50,14 +87,16 @@ def payments(http):
         **{name: amount(row[name]) for name in ('paid', 'owed', 'face')},
     } for row in rows]
     return {'as_of': as_of, 'items': items, 'limited': limited, 'cursor': key,
-            'totals': [{**total, 'owed': amount(total['owed']), 'overdue': amount(total['overdue'])} for total in totals]}
+            'received_this_month': receipt_coverage(http.user, rows, as_of),
+            'totals': [{**total, 'owed': amount(total['owed']), 'overdue': amount(total['overdue']),
+                        'known_owed': amount(total['known_owed'])} for total in totals]}
 
 
 MONTH_WORK = obj({'title': TEXT, 'workspace_id': UUID, 'workspace': TEXT,
                   'state': choice('done', 'waiting', 'in_progress', 'stopped'), 'label': TEXT,
                   'at': DATETIME, 'url': TEXT})
 CASH_GROUP = obj({'workspace_id': nullable(UUID), 'workspace': nullable(TEXT), 'currency': TEXT,
-                  'basis': TEXT, 'amount': TEXT})
+                  'basis': TEXT, 'amount': TEXT, 'sample': BOOLEAN})
 
 
 @endpoint(response=obj({'month': MONTH, 'as_of': DATETIME, 'workspaces': array(CLOSE, limit=12),

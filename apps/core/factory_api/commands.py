@@ -1,14 +1,20 @@
+import json
+
+from django.db import transaction
 from django.http import Http404
 from django.urls import reverse
 from django.utils.dateparse import parse_date, parse_datetime
 
+from apps.core.services import add_evidence
 from apps.identity.services import require
 from apps.workflows import factory_minutes, factory_rfp, factory_rfp_submission_pack as submission_pack
 from apps.workflows.factory_rfp_views import human_command
+from apps.workflows.models import FactoryWork
 
-from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, choice, endpoint, nullable, obj
+from .http import BOOLEAN, DATETIME, ID, REVISION, TEXT, Problem, choice, endpoint, nullable, obj
 from .reviews import VERSIONS
 from .work import WORK_RESULT, bound_work, result
+from .work_proofs import owned_pdf
 
 
 def require_line(actor, work_id, definition):
@@ -102,18 +108,32 @@ def request_bid_review(request, work_id, *, body):
     'customer_expected_on': {'type': 'string', 'format': 'date'}, 'followup_on': {'type': 'string', 'format': 'date'},
     'remind_at': DATETIME, 'loss_reason_key': {**TEXT, 'maxLength': 100}, 'loss_catalog_id': ID,
     'debrief_version_id': ID,
+    'upload_id': ID, 'checked': {'const': True},
 }, optional=('selection_packet', 'selection_acknowledged', 'award_amount', 'award_currency',
              'customer_expected_on', 'followup_on', 'remind_at', 'loss_reason_key', 'loss_catalog_id',
-             'debrief_version_id')), response=WORK_RESULT,
+             'debrief_version_id', 'upload_id', 'checked')), response=WORK_RESULT,
     summary='Record an observed customer outcome against the exact submitted bid')
+@transaction.atomic
 def bid_outcome(request, work_id, *, body):
     work = require_line(request.user, work_id, factory_rfp.DEFINITION)
     selection = None
     if body.get('selection_acknowledged'):
         selection = {'packet': body.get('selection_packet', ''), 'acknowledged': True}
+    evidence_id, revision = body['evidence_id'], body['case_revision']
+    if 'upload_id' in body:
+        if evidence_id is not None or body.get('checked') is not True:
+            raise Problem(422, 'invalid_input', 'Choose one proof and confirm the exact signed copy.')
+        require(request.user, work.case, 'rfp.outcome')
+        proof = owned_pdf(request.user, work.case, body['upload_id'])
+        FactoryWork.objects.select_for_update().only('id').get(pk=work.pk)
+        evidence = add_evidence(request.user, work.case_id, 'rfp_outcome',
+            json.dumps({**proof, 'submission': body['submission_id'], 'outcome': body['verdict'],
+                        'observed_at': body['observed_at'], 'checked': body['checked']}, sort_keys=True),
+            f"bid-outcome-copy/v1:{proof['upload_id']}", revision)
+        evidence_id, revision = evidence.pk, revision + 1
     human_command(
-        request.user, work.pk, body['expected_revision'], body['case_revision'], 'outcome',
-        body['submission_id'], body['role'], body['verdict'], body['evidence_id'], body['note'],
+        request.user, work.pk, body['expected_revision'], revision, 'outcome',
+        body['submission_id'], body['role'], body['verdict'], evidence_id, body['note'],
         parse_datetime(body['observed_at']), selection,
         followup_on=parse_date(body['followup_on']) if 'followup_on' in body else None,
         award_amount=body.get('award_amount'), award_currency=body.get('award_currency'),

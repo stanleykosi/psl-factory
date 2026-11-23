@@ -1,7 +1,8 @@
 {
-  "as_of": "2026-11-14T09:00:00Z",
+  "as_of": "2026-11-23T09:00:00Z",
   "rows": [
     {
+      "id": "P-0101",
       "personas": [
         "finance_lead",
         "pm",
@@ -10,23 +11,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0101",
+        "case_id": "00000000-0000-4000-8000-000000000101",
         "title": "Lagoon Health · patient app",
-        "pm": "Tunde Bello",
-        "stage": "Release · UAT with client",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "UAT sign-off",
-          "due": {
-            "date": "2026-11-14",
-            "unknown": false
-          }
-        },
-        "needs_person": 2,
-        "stopped": 1
+        "manager": "Tunde Bello",
+        "lifecycle": "active",
+        "phase": "Release · UAT with client",
+        "reviews": 2,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000101/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0102",
       "personas": [
         "finance_lead",
         "pm",
@@ -35,19 +34,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0102",
+        "case_id": "00000000-0000-4000-8000-000000000102",
         "title": "Harmattan Bank · mobile onboarding",
-        "pm": "Kunle Ade",
-        "stage": "Go-live · report sent",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Go-live acceptance"
-        },
-        "needs_person": 1,
-        "stopped": 1
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Go-live · report sent",
+        "reviews": 1,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000102/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0103",
       "personas": [
         "finance_lead",
         "pm",
@@ -56,19 +57,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0103",
+        "case_id": "00000000-0000-4000-8000-000000000103",
         "title": "Kora Logistics · fleet tracker",
-        "pm": "Tunde Bello",
-        "stage": "Pre-sale · costing approval",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "SOW signed"
-        },
-        "needs_person": 1,
-        "stopped": 0
+        "manager": "Tunde Bello",
+        "lifecycle": "active",
+        "phase": "Pre-sale · costing approval",
+        "reviews": 1,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000103/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0106",
       "personas": [
         "finance_lead",
         "pm",
@@ -77,19 +80,44 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0106",
+        "case_id": "00000000-0000-4000-8000-000000000106",
         "title": "Ojo Foods · ordering app",
-        "pm": "Sola Martins",
-        "stage": "Planning · held",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Planning exit"
-        },
-        "needs_person": 0,
-        "stopped": 1
+        "manager": "Sola Martins",
+        "lifecycle": "active",
+        "phase": "Planning · held",
+        "reviews": 0,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000106/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0125",
+      "personas": [
+        "finance_lead",
+        "pm",
+        "ceo",
+        "pmo_lead"
+      ],
+      "status": "active",
+      "item": {
+        "case_id": "00000000-0000-4000-8000-000000000125",
+        "title": "Standalone fit-out",
+        "revision": 1,
+        "sample": true,
+        "manager": null,
+        "lifecycle": null,
+        "phase": null,
+        "reviews": null,
+        "exceptions": null,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000125/",
+        "next_milestone": null
+      }
+    },
+    {
+      "id": "P-0105",
       "personas": [
         "finance_lead",
         "pm",
@@ -98,16 +126,21 @@
       ],
       "status": "closed",
       "item": {
-        "case_id": "P-0105",
+        "case_id": "00000000-0000-4000-8000-000000000105",
         "title": "Sabi Market · web store",
-        "pm": "Kemi Adebayo",
-        "stage": "Closed 09 Nov",
+        "revision": 1,
         "sample": true,
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Kemi Adebayo",
+        "lifecycle": "closed",
+        "phase": "Closed 09 Nov",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000105/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0104",
       "personas": [
         "finance_lead",
         "ceo",
@@ -115,19 +148,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0104",
+        "case_id": "00000000-0000-4000-8000-000000000104",
         "title": "Delta Foods · ordering app",
-        "pm": "Kemi Adebayo",
-        "stage": "Delivery · sprint 4 of 6",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Handover sign-off"
-        },
-        "needs_person": 2,
-        "stopped": 1
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Delivery · sprint 4 of 6",
+        "reviews": 2,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000104/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0107",
       "personas": [
         "finance_lead",
         "ceo",
@@ -135,19 +170,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0107",
+        "case_id": "00000000-0000-4000-8000-000000000107",
         "title": "Atlas Insurance · claims portal",
-        "pm": "Kemi Adebayo",
-        "stage": "Delivery · sprint 2 of 5",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Planning exit"
-        },
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Delivery · sprint 2 of 5",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000107/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0108",
       "personas": [
         "finance_lead",
         "ceo",
@@ -155,19 +192,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0108",
+        "case_id": "00000000-0000-4000-8000-000000000108",
         "title": "Brightpath Schools · parent app",
-        "pm": "Kunle Ade",
-        "stage": "Planning · costing review",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Plan approved"
-        },
-        "needs_person": 1,
-        "stopped": 0
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Planning · costing review",
+        "reviews": 1,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000108/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0109",
       "personas": [
         "finance_lead",
         "ceo",
@@ -175,19 +214,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0109",
+        "case_id": "00000000-0000-4000-8000-000000000109",
         "title": "Cedar Pharmacy · stock tracker",
-        "pm": "Sola Martins",
-        "stage": "Hypercare · week 2",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "SOW signed"
-        },
-        "needs_person": 2,
-        "stopped": 0
+        "manager": "Sola Martins",
+        "lifecycle": "active",
+        "phase": "Hypercare · week 2",
+        "reviews": 2,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000109/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0110",
       "personas": [
         "finance_lead",
         "ceo",
@@ -195,19 +236,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0110",
+        "case_id": "00000000-0000-4000-8000-000000000110",
         "title": "Dune Energy · meter readings",
-        "pm": "Kemi Adebayo",
-        "stage": "Release · UAT with client",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "UAT sign-off"
-        },
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Release · UAT with client",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000110/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0111",
       "personas": [
         "finance_lead",
         "ceo",
@@ -215,19 +258,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0111",
+        "case_id": "00000000-0000-4000-8000-000000000111",
         "title": "Eko Transit · ticketing",
-        "pm": "Kunle Ade",
-        "stage": "Delivery · sprint 5 of 8",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Go-live acceptance"
-        },
-        "needs_person": 1,
-        "stopped": 1
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Delivery · sprint 5 of 8",
+        "reviews": 1,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000111/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0112",
       "personas": [
         "finance_lead",
         "ceo",
@@ -235,19 +280,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0112",
+        "case_id": "00000000-0000-4000-8000-000000000112",
         "title": "Fola Fashion · online shop",
-        "pm": "Sola Martins",
-        "stage": "Go-live · report sent",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Sprint review"
-        },
-        "needs_person": 2,
-        "stopped": 0
+        "manager": "Sola Martins",
+        "lifecycle": "active",
+        "phase": "Go-live · report sent",
+        "reviews": 2,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000112/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0113",
       "personas": [
         "finance_lead",
         "ceo",
@@ -255,19 +302,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0113",
+        "case_id": "00000000-0000-4000-8000-000000000113",
         "title": "Gidi Realty · listings site",
-        "pm": "Kemi Adebayo",
-        "stage": "Pre-sale · costing approval",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Handover sign-off"
-        },
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Pre-sale · costing approval",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000113/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0114",
       "personas": [
         "finance_lead",
         "ceo",
@@ -275,19 +324,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0114",
+        "case_id": "00000000-0000-4000-8000-000000000114",
         "title": "Hilltop Clinic · bookings",
-        "pm": "Kunle Ade",
-        "stage": "Closure · retrospective",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Planning exit"
-        },
-        "needs_person": 1,
-        "stopped": 0
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Closure · retrospective",
+        "reviews": 1,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000114/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0115",
       "personas": [
         "finance_lead",
         "ceo",
@@ -295,19 +346,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0115",
+        "case_id": "00000000-0000-4000-8000-000000000115",
         "title": "Iroko Bank · card controls",
-        "pm": "Sola Martins",
-        "stage": "Delivery · sprint 1 of 6",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Plan approved"
-        },
-        "needs_person": 2,
-        "stopped": 0
+        "manager": "Sola Martins",
+        "lifecycle": "active",
+        "phase": "Delivery · sprint 1 of 6",
+        "reviews": 2,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000115/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0116",
       "personas": [
         "finance_lead",
         "ceo",
@@ -315,19 +368,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0116",
+        "case_id": "00000000-0000-4000-8000-000000000116",
         "title": "Jade Telecom · self-service",
-        "pm": "Kemi Adebayo",
-        "stage": "Planning · plan approval",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "SOW signed"
-        },
-        "needs_person": 0,
-        "stopped": 1
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Planning · plan approval",
+        "reviews": 0,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000116/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0117",
       "personas": [
         "finance_lead",
         "ceo",
@@ -335,19 +390,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0117",
+        "case_id": "00000000-0000-4000-8000-000000000117",
         "title": "Kano Agro · farmer payments",
-        "pm": "Kunle Ade",
-        "stage": "Release · release checklist",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "UAT sign-off"
-        },
-        "needs_person": 1,
-        "stopped": 0
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Release · release checklist",
+        "reviews": 1,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000117/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0118",
       "personas": [
         "finance_lead",
         "ceo",
@@ -355,19 +412,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0118",
+        "case_id": "00000000-0000-4000-8000-000000000118",
         "title": "Lekki Hotels · guest app",
-        "pm": "Sola Martins",
-        "stage": "Handover · support handover",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Go-live acceptance"
-        },
-        "needs_person": 2,
-        "stopped": 0
+        "manager": "Sola Martins",
+        "lifecycle": "active",
+        "phase": "Handover · support handover",
+        "reviews": 2,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000118/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0119",
       "personas": [
         "finance_lead",
         "ceo",
@@ -375,19 +434,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0119",
+        "case_id": "00000000-0000-4000-8000-000000000119",
         "title": "Mainland Courier · tracking",
-        "pm": "Kemi Adebayo",
-        "stage": "Delivery · sprint 3 of 4",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Sprint review"
-        },
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Delivery · sprint 3 of 4",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000119/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0120",
       "personas": [
         "finance_lead",
         "ceo",
@@ -395,19 +456,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0120",
+        "case_id": "00000000-0000-4000-8000-000000000120",
         "title": "Niger Delta Water · billing",
-        "pm": "Kunle Ade",
-        "stage": "Pre-sale · RFP response",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Handover sign-off"
-        },
-        "needs_person": 1,
-        "stopped": 0
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Pre-sale · RFP response",
+        "reviews": 1,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000120/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0121",
       "personas": [
         "finance_lead",
         "ceo",
@@ -415,19 +478,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0121",
+        "case_id": "00000000-0000-4000-8000-000000000121",
         "title": "Owerri Motors · service desk",
-        "pm": "Sola Martins",
-        "stage": "Hypercare · week 1",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Planning exit"
-        },
-        "needs_person": 2,
-        "stopped": 1
+        "manager": "Sola Martins",
+        "lifecycle": "active",
+        "phase": "Hypercare · week 1",
+        "reviews": 2,
+        "exceptions": 1,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000121/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0122",
       "personas": [
         "finance_lead",
         "ceo",
@@ -435,19 +500,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0122",
+        "case_id": "00000000-0000-4000-8000-000000000122",
         "title": "Palm Credit · loan origination",
-        "pm": "Kemi Adebayo",
-        "stage": "Delivery · sprint 6 of 6",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "Plan approved"
-        },
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Kemi Adebayo",
+        "lifecycle": "active",
+        "phase": "Delivery · sprint 6 of 6",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000122/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0123",
       "personas": [
         "finance_lead",
         "ceo",
@@ -455,19 +522,21 @@
       ],
       "status": "active",
       "item": {
-        "case_id": "P-0123",
+        "case_id": "00000000-0000-4000-8000-000000000123",
         "title": "Quarry Build · site reports",
-        "pm": "Kunle Ade",
-        "stage": "Planning · held",
+        "revision": 1,
         "sample": true,
-        "next_milestone": {
-          "name": "SOW signed"
-        },
-        "needs_person": 1,
-        "stopped": 0
+        "manager": "Kunle Ade",
+        "lifecycle": "active",
+        "phase": "Planning · held",
+        "reviews": 1,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000123/",
+        "next_milestone": null
       }
     },
     {
+      "id": "P-0124",
       "personas": [
         "finance_lead",
         "ceo",
@@ -475,13 +544,17 @@
       ],
       "status": "closed",
       "item": {
-        "case_id": "P-0124",
+        "case_id": "00000000-0000-4000-8000-000000000124",
         "title": "Rivers Media · content hub",
-        "pm": "Sola Martins",
-        "stage": "Archive · records kept",
+        "revision": 1,
         "sample": true,
-        "needs_person": 0,
-        "stopped": 0
+        "manager": "Sola Martins",
+        "lifecycle": "closed",
+        "phase": "Archive · records kept",
+        "reviews": 0,
+        "exceptions": 0,
+        "django_url": "/projects/00000000-0000-4000-8000-000000000124/",
+        "next_milestone": null
       }
     }
   ]

@@ -123,15 +123,18 @@ def show(request, case, tabs):
     })
 
 
-def cash_received(actor, case, month):
+def cash_received_snapshot(actor, case, month):
     require(actor, case, 'finance.read')
     budget = ReadBudget()
     with limit_queries(100):
         budget.take(BillingPreparation.objects.filter(case=case, kind='fixed_contract').only('pk'), 50)
         case_access(actor, case)
-        verified = CashVerification.objects.filter(receipt__case=case, cashreversal__isnull=True).select_related('receipt', 'successor')
-        lots = budget.take(verified.only('amount', 'receipt__payload', 'successor__payload').order_by('pk'), 300)
+        verified = CashVerification.objects.filter(receipt__case=case, cashreversal__isnull=True).select_related(
+            'receipt', 'successor', 'reported_amount')
+        lots = budget.take(verified.only('amount', 'created_at', 'receipt__payload', 'successor__payload',
+                                         'reported_amount__payload').order_by('pk'), 300)
     groups = {}
+    last_received_at, last_verified_at = None, None
     with localcontext() as context:
         context.prec = 512
         for lot in lots:
@@ -140,7 +143,13 @@ def cash_received(actor, case, month):
             if received and timezone.is_aware(received) and timezone.localtime(received).strftime('%Y-%m') == month:
                 key = (fact['currency'], fact['amount_basis'])
                 groups[key] = groups.get(key, Decimal(0)) + lot.amount
-    return [(currency, basis, groups[currency, basis]) for currency, basis in sorted(groups)]
+                last_received_at = max(last_received_at, received) if last_received_at else received
+                last_verified_at = max(last_verified_at, lot.created_at) if last_verified_at else lot.created_at
+    return [(currency, basis, groups[currency, basis]) for currency, basis in sorted(groups)], last_received_at, last_verified_at
+
+
+def cash_received(actor, case, month):
+    return cash_received_snapshot(actor, case, month)[0]
 
 
 def receivable_cutoff(month, today):
@@ -261,9 +270,8 @@ def work_in_month(actor, entries, start, as_of):
         actions = common | {DEFINITIONS[definition]['read']}
         if definition == 'finance-ledger/v1':
             actions.add('ledger.private.read')
-        permitted = [case_id for case_id, values in grants.items() if actions <= values]
-        if permitted:
-            scope |= Q(definition=definition, case_id__in=permitted)
+        permitted = granted(actor, sorted(actions)).filter(pk__in=ids)
+        scope |= Q(definition=definition, case_id__in=permitted.values('pk'))
 
     last = start.replace(day=monthrange(start.year, start.month)[1])
     window = (timezone.make_aware(datetime.combine(start, time.min)),
@@ -308,10 +316,11 @@ def cash_in_month(entries):
             case = entry['case']
             workspace = (str(case.pk), workspace_name(case)) if by_workspace else (None, None)
             for currency, basis, amount in entry['cash']:
-                key = (workspace, currency, basis)
+                key = (workspace, case.synthetic, currency, basis)
                 totals[key] = totals.get(key, Decimal(0)) + amount
-    groups = [{'workspace_id': case_id, 'workspace': name, 'currency': currency, 'basis': basis, 'amount': amount}
-              for ((case_id, name), currency, basis), amount in totals.items()]
+    groups = [{'workspace_id': case_id, 'workspace': name, 'sample': sample,
+               'currency': currency, 'basis': basis, 'amount': amount}
+              for ((case_id, name), sample, currency, basis), amount in totals.items()]
     return {'groups': groups[:12], 'more_groups': len(groups) > 12}
 
 
