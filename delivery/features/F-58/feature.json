@@ -157,7 +157,7 @@
     "base_branch": "main",
     "base_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
     "task_branch": "fe-signin-sign-in-reset-and-set-up",
-    "head_sha": null,
+    "head_sha": "12181de9ac7e8649cc36d2f3173fb2a8dc12b27b",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
@@ -168,7 +168,25 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "architecture/build_model.py",
+      "architecture/model.json",
+      "architecture/packages/v9/delivery.md",
+      "architecture/packages/v9/endpoints.csv",
+      "architecture/packages/v9/handoff.md",
+      "architecture/packages/v9/impact.json",
+      "architecture/packages/v9/index.html",
+      "architecture/packages/v9/integrations.csv",
+      "architecture/packages/v9/manifest.json",
+      "architecture/packages/v9/manifest.sha256",
+      "architecture/packages/v9/model.json",
+      "architecture/packages/v9/openapi.json",
+      "architecture/packages/v9/reviews.json",
+      "architecture/packages/v9/tasks.csv",
+      "architecture/packages/v9/traceability.csv",
+      "architecture/packages/v9/validation.json",
+      "architecture/sources/decisions-2026-11-23-signin.md"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
