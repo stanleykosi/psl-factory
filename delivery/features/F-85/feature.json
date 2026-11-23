@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-85",
   "outcome": "The work item page shows live work, and the shared workspace can read any line through an adapter",
-  "state": "APPROVED",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -972,9 +972,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -994,8 +994,8 @@
     "designated_approver": null,
     "ci_status": "passed",
     "human_approval": "approved",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "merge_policy": "not_configured",
     "changed_paths": [
       "BUILD-BACKLOG.json",
@@ -1349,10 +1349,10 @@
       "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
     ],
     "decided_for_head_sha": "cdea4f987fb2e1d59cf051a8bdf96dd7197cf6e9",
-    "merged_by": null,
+    "merged_by": "hunchoweb (squash-merged from the main coordinator session on the design engineer's instruction, PR #101, 2026-11-23T21:20:02Z)",
     "pre_merge_sync": {
-      "base_sha": null,
-      "checks_rerun": "not_run"
+      "base_sha": "e6c24e701ec6121aca239a5e8b5ec60af35768f6",
+      "checks_rerun": "passed"
     }
   },
   "created_at": "2026-11-23T13:18:43Z",
@@ -1467,6 +1467,22 @@
       "from": "AWAITING_USER_APPROVAL",
       "to": "APPROVED",
       "at": "2026-11-23T21:15:58Z",
+      "round": 2,
+      "head": "cdea4f987fb2e1d59cf051a8bdf96dd7197cf6e9",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-23T21:20:53Z",
+      "round": 2,
+      "head": "cdea4f987fb2e1d59cf051a8bdf96dd7197cf6e9",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-23T21:20:53Z",
       "round": 2,
       "head": "cdea4f987fb2e1d59cf051a8bdf96dd7197cf6e9",
       "reason": null
