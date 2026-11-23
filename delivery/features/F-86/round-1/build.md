@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: da0d7b698a60bd7f5800ea238bb7468591ced77a
+COMMIT: 7d7d6cc313cb158e9d765a2593d154f06e430d16
 BUILDER: builder
 LANE: full
 
@@ -73,3 +73,5 @@ Run on 4980/4981 from the lane worktree (production build, the project's Playwri
 
 ## Coordinator note (lane C, 23 Nov)
 Head moved from the builder's 540892b4 to da0d7b69 only by the coordinator merging F-85's head cdea4f98 (F-85 round 2 plus main e6c24e70, API 1.26.0). One conflict, in the `tests/next-config.test.ts` allow-list: main's entries were kept and F-86's three added. typecheck: 0 errors. Start work and weekly tests: 192 passed. The recorded base moved to cdea4f98, so the review diff is F-86 only.
+
+Head then moved to 7d7d6cc3 by the coordinator merging origin/main e2f44656 (F-85's squash merge). The tree is byte-identical to the gated da0d7b69: `git diff da0d7b69 7d7d6cc3` is empty, and the two conflicts were resolved to F-86's side, which already held F-85's content. Base is now main e2f44656.

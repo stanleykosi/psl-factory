@@ -65,7 +65,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "da0d7b698a60bd7f5800ea238bb7468591ced77a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T21:21:39Z",
+      "seconds": 677.8,
+      "evidence_ref": "delivery/features/F-86/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -133,10 +146,10 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": "fe-connect-1-work-item-frame",
-    "base_sha": "cdea4f987fb2e1d59cf051a8bdf96dd7197cf6e9",
+    "base_branch": "main",
+    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-start-work-weekly",
-    "head_sha": "da0d7b698a60bd7f5800ea238bb7468591ced77a",
+    "head_sha": "7d7d6cc313cb158e9d765a2593d154f06e430d16",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
     "pr_url": null,
     "pr_number": null,
@@ -247,9 +260,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "da0d7b698a60bd7f5800ea238bb7468591ced77a"
   },
   "blocked": null
 }
