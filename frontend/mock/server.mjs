@@ -28,8 +28,9 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
-import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
+import { caseVisible, idOf, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
+import { deliveryRead } from './delivery-overview.mjs';
 import { documentRead } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
@@ -334,6 +335,9 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           return send(res, ...roleDashboardRoute({ persona }));
         }
       }
+      // F-113 (not in v7): the delivery overview and the two reads behind the closure reason (delivery-overview.mjs).
+      const delivery = method === 'get' ? deliveryRead({ pathname: url.pathname, idOf }) : null;
+      if (delivery) return send(res, ...delivery);
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
