@@ -132,5 +132,6 @@ button.psl-nav__who::after { content: " ▾"; }
 .shell-topbar .psl-nav__in { position: relative; }
 .shell-accountpop { position: absolute; top: 100%; right: var(--space-6); z-index: var(--z-pop); }
 .shell-accountpop .psl-pop.cmp-pop { position: static; width: 340px; }
+.shell-accountpop .psl-pop { color: var(--ink); }
 .shell-accountpop .cmp-menuhead small { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
 .shell-menuaction { width: 100%; align-items: flex-start; background: none; border: none; font: inherit; text-align: left; }
