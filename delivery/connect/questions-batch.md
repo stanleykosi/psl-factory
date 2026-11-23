@@ -4,6 +4,17 @@ Lanes append here; the coordinator brings them about twice a day and writes the 
 
 ## Lane A
 
+### F-60 · Account set-up from an invitation (SCR-17 set-up boards, `/staff/join/`)
+Context: live accept needs a confirm field, does not sign the person in, and answers every unusable invitation the same way (spec `delivery/features/F-60/spec.md`). F-60 builds on F-58 and is parked until these are answered.
+1. Confirm password: the API needs it; the boards draw one field. (a) Recommended: add "Confirm new password" under "New password". (b) One field with a show-password toggle, sending the same value as confirm (a typo is not caught).
+2. WhatsApp number block (no operation, G-SCR17-5). (a) Recommended: leave it out, as D-177 did for removed content. (b) A disabled field, "Not available yet".
+3. Password hint "At least 12 characters" (no rule in the API, A-47). (a) Recommended: no hint; after a refusal the server's message shows. (b) A hint with no number: "Choose a password that's hard to guess."
+4. After "Finish setup" (not drawn; the backend does not sign them in). (a) Recommended: "Your account is ready. Sign in with <email>." with a Sign in button to `/sign-in`. (b) Ask the backend to sign them in on accept (backend change, and the admission call A-48). (c) Go to `/sign-in` with a small "Your account is ready" note (changes F-58's page).
+5. The invitation's end date (live gives `expires_at`). (a) Recommended: one secondary line, "This invitation works until 26 Nov 2026, 15:00." (b) Leave it off, as the board.
+6. Welcome line when the invitation gives several workspaces with different access. (a) Recommended: one sentence per access group. (b) A short list under "You've been given:".
+7. Wording for a link that cannot be used (no board). (a) Recommended: "This invitation can't be used. It may have expired or already been used. Ask the person who invited you to send a new one." plus "Already set up? Sign in". (b) The same without the sign-in link.
+8. Name in the welcome line (boards say "Sola"; live gives the full name). (a) Recommended: the name as returned. (b) The first word only.
+
 ### F-61 · Alerts list, drawer and alert settings on the live API (SCR-15 default and settings)
 Context: live `GET /notifications` and `/me/alert-preferences` are much smaller than the boards (spec `delivery/features/F-61/spec.md`, "Conflicts with the boards"). F-61 is parked until these are answered.
 1. Alert rows have no agent avatar, name or time in live (A-42). (a) Recommended: show title over subject and detail, no avatar, no time. (b) Keep a neutral PSL mark in the avatar slot so the board's row alignment holds. (c) Wait for the backend to add `at` and `agent`.

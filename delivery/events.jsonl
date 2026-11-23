@@ -4032,3 +4032,4 @@
 {"at":"2026-11-23T13:22:32Z","feature":"F-70","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-23T13:22:33Z","feature":"F-70","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T13:22:43Z","feature":"F-70","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T13:23:39Z","feature":"F-64","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
