@@ -4,6 +4,8 @@
 // tokens, idempotency key), never sent: sending is added by the feature that wires a write.
 //   - An adapter never invents text its readback does not carry; unknown or null values stay unknown ("Not recorded"), never 0.
 //   - A null token stays null in a command body (unknown, not 0); a line without a key field has no key in its body.
+import type { ComponentType } from 'react';
+
 import { call, liveApi } from '@/api/client';
 import { newIdempotencyKey } from '@/features/start-work/intake';
 
@@ -15,6 +17,9 @@ export type PanelRef = { key: string; url: string };
 /** What every adapter reads from: the loaded live work item. Revisions may be null (unknown). */
 export type LineContext = { workId: number; caseId: string; revision: number | null; caseRevision: number | null };
 
+/** What an adapter's `Extra` draws from: the panel's readback and the item context. */
+export type LineExtraProps<Readback = unknown> = { readback: Readback; ctx: LineContext };
+
 export type LineAdapter<Readback = unknown> = {
   /** The panels[].key it handles, e.g. 'weekly-report'. */
   key: string;
@@ -23,6 +28,8 @@ export type LineAdapter<Readback = unknown> = {
   sections(readback: Readback, ctx: LineContext): Section[];
   /** Commands are described, not sent. */
   commands?(readback: Readback, ctx: LineContext): CommandDescriptor[];
+  /** Read-only parts the section kinds cannot draw (a link, a control that reads more); drawn under the sections. */
+  Extra?: ComponentType<LineExtraProps<Readback>>;
 };
 
 export type CommandTokens = {
