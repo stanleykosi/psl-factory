@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-57",
-  "outcome": "The frontend talks to the live API 1.22.0 next to the v7 mock: live-generated types and client with a drift test, session token and error handling per the live contract, and the app frame loads from the live GET /api/v1/me with mock /me in the live shape (FE-CONNECT-1 part b, D-172)",
-  "state": "PLANNED",
+  "outcome": "The app frame loads from the live API: live types and client, session and error handling, role words from role-dashboard",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Generated live types match the contract \u2014 verify: `cd /Users/Hunchoo/psl-factory/frontend && npm run gen:api:live && git diff --exit-code src/api/live-schema.d.ts`; `npx vitest run tests/api-live-schema-drift.test.ts` passes; changing one character in `live-schema.d.ts` makes it fail.",
+    "`GET /session` stores the token \u2014 verify: unit test in `tests/client.test.ts`: `refreshSession()` with a stubbed fetch calls `/api/v1/session` and a following `liveApi.POST` sends `X-CSRFToken` equal to the returned token; with no token set a write still throws `csrf_unavailable` and sends nothing.",
+    "403 `csrf_failed` is not `forbidden` and is never retried \u2014 verify: unit test: stub fetch answers 403 `{code:'csrf_failed'}` to the write and a new token to `/session`; `call` rejects with `kind:'csrf'`, the stated message, exactly one write request was made, `/session` was called once, and the next write uses the new token. A 403 `forbidden` still gives `kind:'forbidden'` with no `/session` call.",
+    "Every row of the error table maps as written \u2014 verify: table-driven unit test in `tests/client.test.ts` for 400, 401, 403 (both codes), 404, 409 (`idempotency_conflict`, `stale_version`), 422 with `fields`, 413, 415, 429 (with a `Retry-After` header present: message shows no value), 503 `read_limited`, 500, network failure, and a body that is not JSON (`unexpected_response`).",
+    "422 keeps `fields` through `call()` \u2014 verify: unit test: a 422 body with `fields:[{name:'x',message:'m'}]` gives `error.fields` equal to it; a 422 with none gives `[]`.",
+    "`idempotency_conflict` \u2014 verify: `rg idempotency_key_reused frontend/src` has no match; `tests/start-work.test.tsx` has a case where the write answers 409 `idempotency_conflict` and the form shows the problem message.",
+    "Frame draws from live `/me` \u2014 verify: `tests/shell.test.tsx` renders `AppShell` with the fixture example above: top bar links My work, Projects, Overview, Assistant, Setup in that order and no \"Clients\" link; Projects is current on `/clients`; Start work shows; the DOM has no element whose `href` or text includes `/retired/` or the `work_desk_url` value (extend `tests/shell-no-embed.test.tsx`).",
+    "Callers use `hasDestination` \u2014 verify: `rg \"me\\.destinations\\.includes|visibleDestinations\\(me\\.destinations\\)\" frontend/src` returns nothing outside `destinations.ts`; a test per frame page (my-work, projects, assistant, setup) for a `/me` whose list omits that key shows `NotOpenState`.",
+    "Role words from role-dashboard \u2014 verify: unit tests with stubbed `/me` and `/role-dashboard`: positions with names \"PMO Lead\", \"PMO Lead\", \"Finance Lead\" give \"Name \u00b7 PMO Lead, Finance Lead\" in the top bar (`.shell-who-role`) and in the phone menu `<small>`; role-dashboard 500, 401, a network failure, `positions: []`, and blank names each give the name alone with no \" \u00b7 \" and no error shown; `/me` success never waits for role-dashboard (assert the frame renders while role-dashboard is pending).",
+    "Signed-out state \u2014 verify: test: `/me` 401 renders \"You're signed out.\" and the later-release line, `GET /session` was called and the token stored, and `main` contains no anchor at all and nothing pointing at `/accounts/`. If `/session` answers `signed_in:true`, `/me` is read once more and the frame renders.",
+    "Error and csrf states on `/me` \u2014 verify: tests: 429, 503 `read_limited`, 400, 500 and a network failure each render `LoadErrorState` with the code reference and a Try again that reloads; 403 `forbidden` renders `ForbiddenState`; 403 `csrf_failed` on `/me` triggers one `/session` and one `/me` retry only.",
+    "Mock `/me` is in the live shape and validated \u2014 verify: `tests/mock-contract.test.ts` (or new `tests/mock-live-me.test.ts`) validates every `mock/fixtures/me.<persona>.json` and the running mock's `GET /api/v1/me`, `/session`, `/role-dashboard` bodies for every persona against the live schema in `contracts/psl-factory.openapi.json` with Ajv; `roles` is absent; the test fails if a fixture gains an extra key.",
+    "Mock run looks and behaves as today \u2014 verify: with the mock (`npm run dev` on port 3000, finance_lead persona): top bar shows the same links as before the change and \"<name> \u00b7 Finance Lead\"; switching persona with the demo bar gives pmo_lead without Setup, `none` with the \"No sections are open\" empty state and name alone; Start work shows only where it showed before; Reset demo works (`/__mock/reset`); `npx playwright test e2e/frame.spec.ts e2e/demo.spec.ts` passes with fixtures updated only for the new shape (axe still clean on desktop and phone).",
+    "The frame shows the csrf notice on the mock \u2014 verify: with the mock scenario 403 set to `csrf_failed` for a write (alert settings Save at `/settings/alerts`), the page shows the \"Press the action again\" text, not \"Your account can't use PSL Factory\"; a second press succeeds when the scenario is cleared; the mock log shows one write per press.",
+    "Download rewrites asserted exactly \u2014 verify: `tests/next-config.test.ts` asserts each of the six `afterFiles` rules' exact `source` and `destination` (`${API}/cases/:case/files/:upload` style, as built in `next.config.ts`), not only the count and prefix (TECH-1-2).",
+    "Live run through `next start` (integration owner). Setup: Postgres on 55432; `cd /Users/Hunchoo/psl-factory && PSL_DJANGO_UI=0 PGDATABASE=psl PGUSER=psl PGHOST=127.0.0.1 PGPORT=55432 PSL_ENV=development PSL_FRONTEND_ORIGINS=http://127.0.0.1:3101 python3 manage.py runserver 127.0.0.1:8001`; create a local test account with `manage.py` (never the demo login file); `cd frontend && API_ORIGIN=http://127.0.0.1:8001 npm run build && API_ORIGIN=http://127.0.0.1:8001 npx next start -p 3101`. Checks, using a browser or Playwright script kept outside the repo:",
+    "Whole gate \u2014 verify: `cd /Users/Hunchoo/psl-factory/frontend && npm run lint && npm run typecheck && npm test` pass, and `python3 delivery/design.py check` passes (not run by readiness)."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. There is no money or data migration, but the change sets how every later screen handles session, CSRF and 403, and it is a cross-layer contract change (live OpenAPI 1.22.0 against the v7 mock, frontend/src/api/client.ts and errors.ts, about 56 files that touch the old `/me` shape). Surfaces: ui (frame, role words, menu), api and contract-change (generated types, mock validated against the live contract), security and auth (CSRF refresh, no auto-retry of writes, 401 and 403 handling), product-decision (role-words fallback and an unfiltered menu, both accepted in D-172 but not seen by PSL). Product acceptance is required because what people see in the top bar and menu changes (no role words on failure, same menu for everyone) and PSL has not seen it."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-57/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "06305ba6d0dc499acd054d6f493c4102efd6b7cc83bea6966753b6462029a27d",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +78,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +92,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-57/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +143,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "main",
+    "base_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
+    "task_branch": "fe-connect-1-live-client",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +190,41 @@
     }
   },
   "created_at": "2026-11-22T23:46:51Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T00:50:11Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T00:50:11Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-57/readiness.md",
+      "delivery/features/F-57/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

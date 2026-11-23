@@ -402,3 +402,10 @@ Engineering rule for every wave (proposal, two-way door): when a screen is conne
 
 ## D-173 (23 Nov 2026): design exception for the current design version
 F-56 readiness was refused because the design is STALE against the 13 Nov client approval. Since D-89 (15 Nov) the design changed only through the design engineer's own live changes, 18 commits under `design/` (D-92a, D-93, D-144, D-151, D-156, D-158 to D-161, D-163, D-166, D-169), and no screen was added or removed. Asked whether to record a design exception for the current version (06305ba6), the design engineer answered "Record exception". It is recorded in `design/review.json`. PSL's approval of those changes is still required.
+
+## D-174 (23 Nov 2026): F-57 board conflicts accepted as the spec proposes
+The F-57 spec listed where the frame boards cannot be met with live data. The design engineer answered:
+- "Accept both": role words are the person's distinct role names from `GET /role-dashboard` `positions[].name`, joined with commas, or the name alone if that read fails, where the boards draw one role. Setup shows in the menu for everyone, because live `/me` lists the same six destinations for every account (CMP-01 says Leads only). Backend questions A-1 and A-2 stay open.
+- "Keep the extra line": the signed-out state reads "You're signed out." plus "Sign-in opens in a later release. Ask your administrator if you need access now." with no link, until SCR-17 (wave 1).
+- "Use this wording": a refused write with a stale session token shows "Your session was refreshed. Press the action again. Nothing was changed." in that screen's own error spot. The write is never repeated automatically.
+Also accepted with the recommendation: mock persona `none` shows only "Sample Person", and "No sections" can only occur in the mock.
