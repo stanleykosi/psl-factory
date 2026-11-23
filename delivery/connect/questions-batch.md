@@ -177,3 +177,17 @@ The approved Log RFP form has a free Note and a client picked by name. Live stor
 Live returns no work item id after logging and no PM name or "what happens next" after assigning (backend questions C-7, C-13). The drawn success lines name the PM and say the PM is alerted.
 1. **(Recommended)** After logging, say "RFP logged" with the reference and received time read back from the receipt and a link to the Unassigned list. After assigning, say "PM assigned" with the person's name from the chosen list entry, only after the list is re-read; leave out the "alerted" and next-steps lines.
 2. Keep the drawn sentences and accept that they may not be true.
+
+### LC-Q10 · F-86 · Weekly report start form: what the live body changes from the board
+The SCR-04 weekly board draws Project, Week ("Must have ended; up to 8 days") and a Template line reading "Client weekly report · test template v1". The live `POST /work` weekly body also requires a `reference` (1 to 160 characters), carries the template only as an id with no name, and has no "up to 8 days" rule in the contract.
+1. **(Recommended)** Add one text field "Reference" under Week, leave the template line out (send `template_id` and `content_id` as null), and drop the "up to 8 days" help line; the server's own message shows if the week is refused.
+2. Keep the Template line as drawn and fill the words from a source the live API does not serve yet (needs a backend change).
+
+### LC-Q11 · F-86 · Upload on the weekly form
+The weekly board draws no file field and the live weekly body has no field for an uploaded file (`upload_id` has nowhere to go). The first slice still builds the upload for the lines that need it.
+1. **(Recommended)** Build the upload box (the F-85 evidence picker) in Start work but show it only on lines whose body takes a file; the weekly form shows none.
+2. Show an optional "Add files to this project" box on the weekly form that uploads to the case but is not sent with the start.
+
+## Answers, batch 1 (23 Nov 2026, D-182)
+
+Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

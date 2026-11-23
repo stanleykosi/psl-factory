@@ -449,3 +449,11 @@ Unchanged: no AI footer; never force-push; check disk before spawning (stop unde
 
 ## D-181 (23 Nov 2026): design exception after the upload-field merge
 PR #99 (D-171) added the upload concepts page to the main canvas, which made the design gate STALE (design 4eed6eff). Asked whether to record the same kind of exception as D-173, the design engineer answered "Record exception". It is recorded in `design/review.json`. PSL approval of the design engineer's changes since 13 Nov is still required.
+
+## D-182 (23 Nov 2026): first question batch, every recommended option accepted
+The first batch (`delivery/connect/questions-batch.md`: lane A F-60, F-61, F-62, F-64, F-65 and F-66; lane B B1 and B8 to B17 for F-70, F-72 to F-74, F-76 and F-79; lane C LC-Q1 to LC-Q9) was put to the design engineer. They answered:
+- "Hide, accept all recs": accept the recommended option of every question. Where the live API does not supply something a board draws, hide that part and switch it on when the backend adds the data.
+- LC-Q1, "Hide until backend": the work item's station track, six-facts strip and agent step cards stay hidden. The page shows the state, next step, blocker, current activity and output link. Backend question 2 asks for the three parts back.
+- F-65, "As recommended": Overview shows one row per line with its total and an "Open work" link, a ninth "Other lines" floor for the PMO lines, and in 3D one neutral machine per line.
+- F-76, "Read-only list now": the staff list and person page ship read-only. Writes wait for PSL's D-ADMIN-AUTHORITY.
+F-77 (costing rule, D-COSTING-RULE) and F-78 (mark a milestone complete) stay BLOCKED on PSL.
