@@ -133,6 +133,33 @@ Context: A-1 to A-5 and A-55 (backend-answers.md); the menu now varies by accoun
 3. A 429 or 503 message from the server is shown as the server writes it. Recommendation: show it as is in the existing error or toast spot. Alternative: a fixed PSL sentence with the server text as the reference line.
 4. When a download hits a signed-out session, recommendation: replace the main area with the signed-out callout (as on `/me`). Alternative: a toast with a Sign in link that keeps the page.
 
+### Lane A · line workspaces: F-69 Emergency change (SCR-50), F-121 Escalation (SCR-51), F-122 Leadership report (SCR-52)
+Context: these three build on lane C's F-85 page and line adapter and also need lane C's F-87 (command and reconcile seam); F-122 also needs F-86 (start-work registry). Each spec lists "Conflicts with the boards" (parts the live read has no source for are not drawn: no names or times on decisions, no Tola cards, no attempt counts; upload proof becomes a pick from existing evidence). Accepting the recommendations below accepts those conflicts too. Backend gaps LA-1 to LA-3 are in backend-questions.md.
+
+**F-69 Emergency change (spec `delivery/features/F-69/spec.md`)**
+1. Refused board without the refuser's name, time and reason: draw only "CTO refused the preauthorisation." (recommended), or leave the refused board empty until the backend adds them?
+2. Proof on the record, review and retrospective forms: a plain list of existing evidence ("Deploy log · version 1") (recommended), or hide the forms until an upload route exists?
+3. Authorise confirmation: a small yes/no step before sending (recommended), or send on the first press?
+4. Retrospective role: a two-choice radio "Engineering Lead / Product" shown on the form (recommended), or a dropdown?
+5. Report review buttons: "Approve report / Return report / Refuse report" (recommended), or only Approve and Return?
+6. Follow-up changes: show the list and the create form on the retrospective board only (recommended), or also on the report board?
+
+**F-121 Escalation (spec `delivery/features/F-121/spec.md`)**
+1. Board status tags: (recommended) keep the page's state tag only, and put a small panel heading that names what is waiting on this person ("Your decision", "Your review") only when a decision or review control is drawn; or derive the six tags from `stage` once the backend lists its values. Reason: `stage` has no enum.
+2. Direction and target wording: (recommended) "Escalate to the client" exactly as the board for `escalate`/`Client`, and "Escalate to PMO", "Escalate to CTO", "De-escalate to {target}" for the rest; or show the raw values with a label. These three phrases are new copy; the client may want to confirm them.
+3. A `reject` offered in `review_verdicts` (the board has Approve and Return only): (recommended) draw nothing for it; or add a third "Refuse" button with the same required note.
+4. Delivery block placement: (recommended) below the message and receipts, collapsed to one line until a job exists; or in the right column on desktop beside Next.
+5. History list: (recommended) draw it as a compact list under the message on every board, as the read serves it (up to 30); or only the newest decision, as the boards show.
+6. "Return for rework" label: (recommended) that wording; or "Send back to the issue owner" (not recommended: it names a person the read does not).
+
+**F-122 Leadership report (spec `delivery/features/F-122/spec.md`)**
+1. Setup: page or drawer? Recommendation: the Start work drawer form (the same shell as every other line in F-86 and the SCR-04 start boards), with the SCR-52 setup artboard's fields and sentences inside it. Alternative: a full page at `/overview/leadership-reports/new` as the setup artboard draws, with the drawer line opening it.
+2. Counts block on the review board: recommendation a plain six-row list ("Meetings 41 in this report" ... "Not recorded") under the board's headline, as the facts strip, with "As of" beneath. Alternative: keep the board's four large figure tiles for the domains that exist and show the other domains as small grey "Not recorded" tiles.
+3. Review order of buttons: recommendation Approve and send, Return with a note, then Refuse as a quiet text button (the board draws two buttons only). Alternative: hide Refuse until a note is typed.
+4. Coverage tags on sections: recommendation a small tag beside each heading ("Supported", "Partly supported", "Unknown", "Not applicable") using the existing CMP-10 status tag tones (verified, held, neutral). Alternative: only show a tag when coverage is not "supported".
+5. The "left out" sentence on drafting and review: recommendation a muted line under the state/facts, naming projects. Alternative: a held-tone callout.
+6. "Open the full report" link: the contract serves no report page for `document_version_id`. Recommendation: draw nothing now and add the link when the document review page for this version is chosen (it is not built for live). Alternative: link to F-85's `output_url` only once verified (this spec does that for the received board).
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?
