@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-86",
   "outcome": "Start work reads the live lines, picks a project, and starts the weekly report",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -123,20 +123,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; client/product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-86/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
+      "authority": "D-182, D-183 and D-191 (batch answers); D-184 (batch-approved board changes count as product acceptance)",
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -522,6 +526,75 @@
           "head": "1407fbe72551058290b2303a86580eef05b945c2"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` has `operation_ids: []`, `architecture_manifest_sha256: null` and `approval_evidence_refs` holding only `readiness.md`. Readiness said the coordinator must confirm architecture approval and the SCR-04 design gate. The design gate is recorded as EXCEPTION (13 Nov canvas). The coordinator should record the operations (`GET /lines`, `GET /lines/projects`, `GET /projects/{case_id}/intake-sources`, `POST /work`, `POST /cases/{case_id}/files` via F-85) and the manifest evidence before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T23:48:11Z",
+          "head": "1407fbe72551058290b2303a86580eef05b945c2"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "LC-Q32 (week timezone and last-day rule) stays open. Product acceptance should settle it before the client sees the weekly start. TECH-2-1 depends on its answer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T23:48:11Z",
+          "head": "1407fbe72551058290b2303a86580eef05b945c2"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "1407fbe72551058290b2303a86580eef05b945c2",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Accepted lows carry to F-92, which rebuilds Start work on the schema engine: TECH-2-1, UX-2-1 and the carried UX-1-1, UX-1-2, QA-1-4. Two of these are not F-86 code and need other owners: QA-1-2 (backend question, A-24, the server reused an open weekly item and ignored the new reference) and QA-1-3 (`/my-work` crash at `src/features/my-work/WorkRows.tsx:11`, My work owner, lane A). Authority for deferring them is the lane C coordinator under D-180. They are not blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-86/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T23:48:11Z",
+          "head": "1407fbe72551058290b2303a86580eef05b945c2"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -607,14 +680,14 @@
     "task_branch": "fe-connect-1-start-work-weekly",
     "head_sha": "1407fbe72551058290b2303a86580eef05b945c2",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/103",
+    "pr_number": 103,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "3b7df6cc589bebd8014502db6ce1eaaa8a01afde",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/hr.spec.ts",
@@ -669,16 +742,21 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
-    "merged_by": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-86/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "32 changed files exceed the auto-merge limit of 15"
+    ],
+    "decided_for_head_sha": "1407fbe72551058290b2303a86580eef05b945c2",
+    "merged_by": "lane C coordinator (gh as hunchoweb), routine merge delegated under D-180/D-184, PR #103",
     "pre_merge_sync": {
-      "base_sha": null,
-      "checks_rerun": "not_run"
+      "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+      "checks_rerun": "passed"
     }
   },
   "created_at": "2026-11-23T13:19:16Z",
@@ -753,6 +831,22 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-23T23:41:28Z",
+      "round": 2,
+      "head": "1407fbe72551058290b2303a86580eef05b945c2",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-23T23:48:42Z",
+      "round": 2,
+      "head": "1407fbe72551058290b2303a86580eef05b945c2",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-23T23:49:46Z",
       "round": 2,
       "head": "1407fbe72551058290b2303a86580eef05b945c2",
       "reason": null
