@@ -3992,3 +3992,5 @@
 {"at":"2026-11-23T09:44:13Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-23T09:44:14Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"MERGED","to":"DONE"}
 {"at":"2026-11-23T11:27:08Z","feature":"F-58","round":0,"kind":"created","tasks":["FE-SIGNIN"]}
+{"at":"2026-11-23T11:30:18Z","feature":"F-59","round":0,"kind":"created","tasks":["FE-SIGNIN"]}
+{"at":"2026-11-23T11:30:19Z","feature":"F-60","round":0,"kind":"created","tasks":["FE-SIGNIN"]}

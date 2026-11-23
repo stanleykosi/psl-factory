@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-58",
-  "outcome": "A person signs in, signs out, resets a forgotten password and sets up their account from an invitation on Next.js pages drawn to the SCR-17 boards, against the live session, recovery and invitation APIs (wave 1, D-SIGNIN r2)",
+  "outcome": "A person signs in, sees the error state when it fails, and signs out, on the SCR-17 sign-in board, against the live session API; every Sign in link in the app opens this page and the frame re-reads role words after sign-in (wave 1 part a, D-176)",
   "state": "PLANNED",
   "task_ids": [
     "FE-SIGNIN"

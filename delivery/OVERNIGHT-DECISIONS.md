@@ -412,3 +412,6 @@ Also accepted with the recommendation: mock persona `none` shows only "Sample Pe
 
 ## D-175 (23 Nov 2026): wave 1 starts with sign-in; D-SIGNIN approved as built
 "Yes, start wave 1". Wave 1 covers SCR-17 (sign-in, error, reset, account set-up) as F-58 (task FE-SIGNIN), then SCR-15 (alerts and account preferences), one at a time. FE-SIGNIN was gated on D-SIGNIN. Asked whether to approve it as the backend built it, the design engineer answered "Approve as built": D-SIGNIN r2 is approved in architecture package v9 (source `architecture/sources/decisions-2026-11-23-signin.md`). Asked about an unexplained change to `delivery/features/F-52/round-1/build.md` in the main checkout, they answered "Set it aside": it is kept in `git stash` ("F-52 round-1 build.md change found 23 Nov …") and can be restored. F-58 is built on branch `fe-signin-sign-in-reset-and-set-up` from main 44878365 plus the v9 commit 12181de9.
+
+## D-176 (23 Nov 2026): sign-in split in three
+Readiness found SCR-17 too large for one review. Asked whether to split it into (a) sign in, error, sign out and every Sign in link, (b) forgotten password and (c) account set-up from an invitation, the design engineer answered "Split in three". F-58 is part (a), F-59 part (b) and F-60 part (c), all on task FE-SIGNIN and built one after another.
