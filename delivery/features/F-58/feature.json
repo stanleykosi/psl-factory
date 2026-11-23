@@ -79,7 +79,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "473090df18b54f3897f876ef417cac262980974e",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T12:50:10Z",
+      "seconds": 520.4,
+      "evidence_ref": "delivery/features/F-58/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -157,7 +170,7 @@
     "base_branch": "main",
     "base_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
     "task_branch": "fe-signin-sign-in-reset-and-set-up",
-    "head_sha": "12181de9ac7e8649cc36d2f3173fb2a8dc12b27b",
+    "head_sha": "473090df18b54f3897f876ef417cac262980974e",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
@@ -185,7 +198,58 @@
       "architecture/packages/v9/tasks.csv",
       "architecture/packages/v9/traceability.csv",
       "architecture/packages/v9/validation.json",
-      "architecture/sources/decisions-2026-11-23-signin.md"
+      "architecture/sources/decisions-2026-11-23-signin.md",
+      "frontend/e2e/alerts-bell.spec.ts",
+      "frontend/e2e/alerts.spec.ts",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/e2e/sign-in.spec.ts",
+      "frontend/mock/server.mjs",
+      "frontend/mock/session.mjs",
+      "frontend/src/api/client.ts",
+      "frontend/src/app/sign-in/page.tsx",
+      "frontend/src/features/sign-in/SignInView.tsx",
+      "frontend/src/features/sign-in/sign-in.css",
+      "frontend/src/features/sign-in/useSignOut.ts",
+      "frontend/src/shell/AccountMenu.tsx",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/FrameStates.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/shell/destinations.ts",
+      "frontend/src/shell/sample.ts",
+      "frontend/src/shell/signInNext.ts",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/exceptions.test.tsx",
+      "frontend/tests/finance-month-end.test.tsx",
+      "frontend/tests/mock-live-me.test.ts",
+      "frontend/tests/money.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/overview.test.tsx",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/shell-live.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/sign-in-next.test.ts",
+      "frontend/tests/sign-in.test.tsx",
+      "frontend/tests/start-work-ppe-forecast.test.tsx",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx",
+      "frontend/tests/weekly-returned-received.test.tsx",
+      "frontend/tests/work-item.test.tsx"
     ]
   },
   "parallel_execution": {
@@ -254,9 +318,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "473090df18b54f3897f876ef417cac262980974e"
   },
   "blocked": null
 }

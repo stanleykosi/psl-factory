@@ -3997,3 +3997,4 @@
 {"at":"2026-11-23T11:36:52Z","feature":"F-58","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","auth","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-23T11:36:52Z","feature":"F-58","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T11:36:52Z","feature":"F-58","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T12:50:10Z","feature":"F-58","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":520.4,"commit":"473090df18b5"}
