@@ -83,6 +83,43 @@ class GoLiveMilestoneTests(TestCase):
         self.assertFalse(Outbox.objects.filter(case=self.case).exists())
         self.assertFalse(Handoff.objects.filter(case=self.case).exists())
 
+    def test_current_pmo_lead_confirms_exact_milestone_and_creates_finance_handoff(self):
+        from tests.helpers import admit_department
+
+        lead, member = admit_department(self.f.actor, self.case, 'pmo-lead', member=True)
+        url = f'/api/v1/work/{self.work.pk}'
+        command = {'expected_revision': self.work.revision, 'case_revision': rev(self.case),
+                   'action': 'confirm_and_complete', 'name': 'Production rollout',
+                   'acceptance_id': self.acceptance.pk, 'evidence_id': self.completion.pk,
+                   'note': 'Checked the live rollout and accepted delivery record.'}
+        self.client.force_login(member)
+        self.assertIn(self.client.post(url + '/go-live-milestone', command, content_type='application/json').status_code,
+                      (403, 404))
+        self.assert_no_milestone()
+        self.client.force_login(lead)
+        panel = self.client.get(url + '/go-live-replies')
+        self.assertEqual(panel.status_code, 200, panel.content)
+        self.assertTrue(panel.json()['milestone']['can_confirm'], panel.json())
+        wrong = self.client.post(url + '/go-live-milestone', {**command, 'evidence_id': self.decision.pk},
+                                 content_type='application/json')
+        self.assertGreaterEqual(wrong.status_code, 400)
+        self.assert_no_milestone()
+        response = self.client.post(url + '/go-live-milestone', command, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        milestone = Milestone.objects.get(case=self.case)
+        self.assertEqual((milestone.completed_by_id, milestone.evidence_id), (lead.pk, self.completion.pk))
+        readback = self.client.get(url + '/go-live-replies').json()['milestone']
+        self.assertEqual(readback['confirmation']['actor_id'], lead.pk)
+        self.assertEqual(readback['confirmation']['note'], command['note'])
+        self.assertEqual(readback['recorded_id'], milestone.pk)
+        self.assertTrue(Outbox.objects.filter(case=self.case, milestone=milestone, status='pending').exists())
+        self.assertTrue(run_once(case_id=self.case.pk))
+        self.assertTrue(Handoff.objects.filter(case=self.case).exists())
+        duplicate = self.client.post(url + '/go-live-milestone', {**command, 'case_revision': rev(self.case)},
+                                     content_type='application/json')
+        self.assertGreaterEqual(duplicate.status_code, 400)
+        self.assertEqual(Milestone.objects.filter(case=self.case).count(), 1)
+
     def test_approved_mapping_allows_one_explicit_pm_record_and_existing_internal_handoff(self):
         self.assertEqual(connection.vendor, 'postgresql')
         page = self.client.get(self.url)

@@ -88,6 +88,55 @@ class LeadershipProjectScopeTests(TestCase):
             }), reverse('policy', args=[self.case.pk]), fetch_redirect_response=False)
         return config
 
+    def test_leads_generate_both_reports_over_all_same_organisation_projects(self):
+        from tests.helpers import admit_department
+
+        second, _ = self.project('Included PSL project')
+        empty = Case.objects.create(tenant=self.case.tenant, synthetic=True, title='PSL project without records',
+                                    kind='project')
+        self.project('Another organisation', tenant='outside-leadership-test')
+        Case.objects.create(tenant=self.case.tenant, synthetic=False, title='Outside the sample', kind='project')
+        for action in ('case.read', 'report.read'):
+            Grant.objects.create(case=empty, user=self.actor, action=action)
+        pmo, member = admit_department(self.actor, self.case, 'pmo-lead', member=True)
+        finance, _ = admit_department(self.actor, self.case, 'finance-lead')
+        intake = f'/api/v1/projects/{self.case.pk}/leadership-report-intake'
+        kinds = ('internal_tuesday', 'monthly_executive')
+        expected = {str(project.pk) for project in (self.case, second, empty)}
+        for actor in (pmo, finance):
+            self.client.force_login(actor)
+            for kind in kinds:
+                options = self.client.get(intake, {'kind': kind})
+                self.assertEqual(options.status_code, 200, options.content)
+                self.assertTrue(options.json()['automatic_project_scope'])
+                template = self.template.pk if kind == 'monthly_executive' else None
+                response = self.client.post(intake, {'action': 'start', 'case_revision': options.json()['revision'],
+                    'key': f'synthetic-{actor.pk}-{kind}', 'reference': 'PSL company-wide report', 'background': False,
+                    'selection': {'kind': kind, 'audience': 'internal', 'template_id': template,
+                                  'start_at': self.start.isoformat(), 'end_at': self.end.isoformat()}, 'sections': None},
+                    content_type='application/json')
+                self.assertEqual(response.status_code, 201, response.content)
+                work = FactoryWork.objects.select_related('source_head', 'case').get(pk=response.json()['work_id'])
+                report = flow.source(work, actor)
+                register = report['manifest']['project_scope']
+                self.assertEqual({project['case'] for project in register['projects']}, expected)
+                self.assertIn(register['register_id'], coverage.citations(report['manifest']))
+                detail = self.client.get(f'/api/v1/work/{work.pk}/leadership-report')
+                self.assertEqual(detail.status_code, 200, detail.content)
+                self.assertEqual(detail.json()['coverage']['scope'], 'all_psl_projects')
+                self.assertEqual({row['id'] for row in detail.json()['coverage']['project_register']}, expected)
+                meeting_count = next(row['count'] for row in detail.json()['coverage']['counts'] if row['domain'] == 'meetings')
+                self.assertGreaterEqual(meeting_count, 1) if actor == pmo else self.assertEqual(meeting_count, 0)
+                if template:
+                    factory.run_until_wait(work.pk)
+                    work.refresh_from_db()
+                    document = flow.document(work)
+                    self.assertIsNotNone(document, work.finding)
+                    self.assertIn(empty.title, document.fields['executive_summary']['text'])
+                    self.assertEqual(MinutesReportBinding.objects.get(version=document).report.scope_owner_id, actor.pk)
+        self.client.force_login(member)
+        self.assertIn(self.client.get(intake, {'kind': kinds[0]}).status_code, (403, 404))
+
     def test_scope_requires_owner_enablement_and_every_exact_recipient_permission(self):
         self.assertEqual(connection.vendor, 'postgresql')
         second, meeting = self.project('Included authorised project')

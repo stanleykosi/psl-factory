@@ -136,6 +136,8 @@ def work_grant_scope(actor, *, include_native=False):
         scope |= Q(pk__in=candidates(actor).values('pk'))
     for persona, role in [('tola', 'pmo-lead'), ('chidi', 'finance-lead')]:
         scope |= Q(definition__in=work_definitions(persona), case_id__in=department_cases(actor, role).values('pk'))
+    scope |= Q(definition='pmo-leadership-report/v1', actor=actor,
+               case_id__in=department_cases(actor, 'finance-lead', heads_only=True).values('pk'))
     explicit = visible_cases(actor)
     works = FactoryWork.objects.all() if include_native else FactoryWork.objects.exclude(definition='process-handoff/v1')
     if not explicit.exists():

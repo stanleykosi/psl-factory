@@ -195,7 +195,9 @@ def prepare(actor, case_id, kind, start, end, template_id, audience, selections,
     required = {'executive_summary', *THEMES[kind]}
     if not template or template.definition.get('internal_review_required') != (kind=='monthly_executive') or set(template.definition['required_fields']) != required or set(template.definition['audience_fields'].get(audience, [])) != required:
         raise ValidationError('Select an exact theme-complete internal template with purpose-specific review requirements')
-    report, _ = PeriodReport.objects.get_or_create(case=case, kind=kind, start_at=start, end_at=end, audience=audience)
+    scope_owner = scope['actor'] if scope and scope['mode'] == project_scope.LEAD_MODE else None
+    report, _ = PeriodReport.objects.get_or_create(case=case, kind=kind, start_at=start, end_at=end,
+                                                  audience=audience, scope_owner_id=scope_owner)
     old = MinutesReportBinding.objects.filter(report=report, version_id=report.document.current_id if report.document_id else None).first()
     if old and ('project_scope' in old.manifest) != (scope is not None):
         raise ValidationError('Open the existing leadership work to review its selected project scope.')
@@ -238,7 +240,7 @@ def binding_access(actor, version, *, budget=None):
     b = bindings.first()
     if not b: return
     if budget is not None:
-        require(actor, b.report.case, 'report.read')
+        project_scope.require_report(actor, b.report.case)
         budget.load(b, 'manifest')
     _bound_access(actor, b.report.case, b.manifest, version.created_at, budget=budget)
 
@@ -413,9 +415,10 @@ def current_manifest(binding):
     try:
         scope = binding.manifest.get('project_scope')
         if scope is not None:
+            pin = 'register_id' if scope['mode'] == project_scope.LEAD_MODE else 'configuration'
             inputs = scoped_inputs(r.kind, r.start_at, r.end_at, r.audience, binding.manifest['selections'],
                                    binding.manifest['content']['id'],
-                                   {field: scope[field] for field in ('mode', 'actor', 'configuration', 'domains')})
+                                   {field: scope[field] for field in ('mode', 'actor', pin, 'domains')})
             return project_scope.snapshot(r.case, inputs)
         return package(binding.version.created_by, r.case, r.kind, r.start_at, r.end_at, r.audience,
                        binding.manifest['selections'], binding.manifest['content']['id'])[0]

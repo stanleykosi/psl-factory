@@ -122,7 +122,11 @@ WORKFLOW_INTAKE = {'pmo-emergency/v1': 'emergency-intake', 'pmo-weekly-report/v1
 
 
 def start_projects(actor, line):
-    return granted(actor, INTAKE_GRANTS[line]).filter(kind='project')
+    projects = granted(actor, INTAKE_GRANTS[line]).filter(kind='project')
+    if line == factory_leadership.DEFINITION:
+        from apps.identity.factory_access import department_cases
+        projects |= department_cases(actor, 'finance-lead', heads_only=True).distinct()
+    return projects
 
 
 @endpoint(response=obj({'items': array(obj({'process': TEXT, 'title': TEXT, 'department': choice('PMO', 'Finance'),

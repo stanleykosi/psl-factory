@@ -2,7 +2,7 @@
 
 **224 answered screen questions**
 
-Each entry keeps the frontend developer's original question and ID. The questions reflect API 1.22.0, which was live when the frontend team wrote them. The answers describe API 1.24.0 and identify newly agreed rules that need backend work. Paths in the answers are relative to `/api/v1`.
+Each entry keeps the frontend developer's original question and ID. The questions reflect API 1.22.0, which was live when the frontend team wrote them. The answers describe API 1.25.0. Paths in the answers are relative to `/api/v1`.
 
 [Original frontend questions](backend-questions.md) · [13 priority answers and five follow-ups](backend-answers-2026-11-23.md) · [OpenAPI contract](../../contracts/psl-factory.openapi.json) · [Production API](https://psl-web-production.up.railway.app/api/v1/openapi.json)
 
@@ -722,7 +722,7 @@ Each entry keeps the frontend developer's original question and ID. The question
 
 **Answer**  When a bid is lost, the PMO staff member recording the outcome types the actual reason in a free-text note. Use a text field for the reason.
 
-**API 1.24.0**  `GET /work/{work_id}/bid-outcomes` supplies the eligible roles and available debriefs. `POST /work/{work_id}/rfp-outcome` saves the reason in `note` with `verdict: lost`. Omit `loss_reason_key` and `loss_catalog_id`. Supply the existing customer outcome evidence. The read currently omits the saved note.
+**API 1.25.0**  Use `GET /work/{work_id}/bid-outcomes` for eligible roles and available debriefs. Send `verdict: lost`, the reason in `note`, and the customer outcome evidence to `POST /work/{work_id}/rfp-outcome`. Omit `loss_reason_key` and `loss_catalog_id`. Read the saved reason from `outcome.note` for the exact submission.
 
 #### C-2
 
@@ -902,7 +902,7 @@ Each entry keeps the frontend developer's original question and ID. The question
 
 **Answer**  Finance staff can adjust any bid pricing line in naira (NGN). Finance decides the lines and amounts for each bid. The Finance Lead reviews and approves the exact changes before the revised bid moves forward.
 
-**API 1.24.0**  `GET /work/{work_id}/bid-pricing` returns `adjustment_targets: []` and `adjustment_currency: null` when there is no active adjustment rule. The current write is limited to the assigned PM and configured lines and limits. Backend work is needed to support Finance edits and Finance Lead approval under the agreed rule.
+**API 1.25.0**  `GET /work/{work_id}/bid-pricing` returns `finance_targets` with current naira input and output lines, `finance_pending` with the exact proposed change, and `finance_last_decision` with the decision. Use `can_propose` and `can_decide` for the buttons. POST `action: propose`, the target, new naira amount and reason with the current revisions. The current price stays in effect while the proposal is pending. A different Finance Lead submits `action: approve` or `action: return` with the proposal ID, reason and current revisions. Approval saves the new calculation and starts a fresh round of the existing bid reviews.
 
 #### C-30
 
@@ -1136,7 +1136,7 @@ Each entry keeps the frontend developer's original question and ID. The question
 
 **Answer**  The PMO Lead reviews the project and the go-live evidence, confirms which milestone is complete, and records that decision before the milestone is marked complete.
 
-**API 1.24.0**  `GET /work/{work_id}/go-live-replies` supplies milestone options and eligible decision evidence. `POST /work/{work_id}/go-live-milestone` takes recorded project decision evidence for `owner_decision_id` and checks for a current approved mapping and verified go-live acceptance before completion. Its completion action checks the configured `PM` authority. Backend work is needed to route the decision to the PMO Lead and keep their confirmation on the exact milestone record.
+**API 1.25.0**  `GET /work/{work_id}/go-live-replies` gives the PMO Lead `milestone.can_confirm`, the verified acceptance ID and eligible completion evidence IDs. POST `action: confirm_and_complete` to `/work/{work_id}/go-live-milestone` with the exact milestone name, acceptance, completion evidence and current revisions. A note is optional. Read the PMO Lead's saved decision under `milestone.confirmation` and the completed milestone under `milestone.recorded_id`. The internal Finance handoff follows from the completion.
 
 ### SCR-46
 
@@ -1248,7 +1248,7 @@ Each entry keeps the frontend developer's original question and ID. The question
 
 **Answer**  The PMO Lead and Finance Lead can generate leadership reports covering all PSL projects. The Tuesday and monthly reports both include all projects automatically. Show the reporting period and report type and let the backend determine the project list. Existing permissions continue to govern the information each lead can see for those projects.
 
-**API 1.24.0**  `GET /projects/{case_id}/leadership-report-intake` exposes `all_projects_available` when the current workspace rule allows it. The existing start command accepts a source-domain scope. Backend work is needed to select all PSL projects automatically for the two leads and enforce their authority on report generation.
+**API 1.25.0**  `GET /projects/{case_id}/leadership-report-intake` returns `automatic_project_scope: true` for either current lead. Start the Tuesday or monthly report with its period, audience and template. The backend fills in the project list and eligible evidence. `GET /work/{work_id}/leadership-report` returns the captured list under `coverage.project_register`, with counts and unavailable areas. Existing report reviews and recipient checks still apply.
 
 #### D-34
 

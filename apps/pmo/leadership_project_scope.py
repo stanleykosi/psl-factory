@@ -7,12 +7,18 @@ from django.db import OperationalError, connection, transaction
 
 from apps.core.models import Case
 from apps.core.services import add_evidence
+from apps.identity.factory_access import department_cases, role_managed
 from apps.identity.models import Grant
+from apps.identity.services import require
+from apps.identity.team_models import StaffMembership
 from apps.policy.services import active_component, reference_values
 
 
 COMPONENT = 'OPS.leadership_project_scope'
 MODE = 'all_authorised_projects'
+LEAD_MODE = 'all_psl_projects'
+REGISTER_KIND = 'agent_private_leadership_project_register'
+REGISTER_SOURCE = 'psl:leadership-project-register/v1'
 GENERATED_SOURCE = 'psl:leadership-project-coverage/v1'
 THEME_DOMAINS = {'delivery_health': ('meetings', 'actions', 'milestones'), 'risks': ('issues', 'changes'),
                  'performance': ('milestones',), 'escalations': ('escalations',), 'critical_incidents': ('issues',),
@@ -65,6 +71,10 @@ def lock_projects(case, manifest, people):
                 raise ValidationError('Leadership coverage no longer matches its original projects.')
             list(Grant.objects.select_for_update(nowait=True).filter(
                 case_id__in=project_ids, user_id__in={scope['actor'], *people}).order_by('pk'))
+            if scope['mode'] == LEAD_MODE:
+                list(StaffMembership.objects.select_for_update(nowait=True, of=('self',)).filter(
+                    active=True, mode='lead', user_id__in={scope['actor'], *people}, case_id__in=project_ids
+                ).order_by('pk'))
     except OperationalError as exc:
         if getattr(exc.__cause__, 'sqlstate', None) != '55P03':
             raise
@@ -72,8 +82,11 @@ def lock_projects(case, manifest, people):
 
 
 def citations(manifest):
-    return sorted({source['id'] for member in manifest['project_scope']['projects']
-                   for source in member['inventory']['sources']})
+    scope = manifest['project_scope']
+    ids = {source['id'] for member in scope['projects'] for source in member['inventory']['sources']}
+    if scope.get('register_id'):
+        ids.add(scope['register_id'])
+    return sorted(ids)
 
 
 def sections(manifest, kind):
@@ -107,9 +120,27 @@ def sections(manifest, kind):
 
 def prepare_inputs(actor, case, inputs):
     """Accept a human-selected domain list and derive authority and provenance internally."""
-    from .leadership_reporting import CONTENT, DOMAINS, MODE as NARRATIVE_MODE
+    from .leadership_reporting import DOMAINS
 
-    requested = inputs['scope']
+    requested = inputs.get('scope')
+    if department_lead(actor, case):
+        if any(inputs.get('selections', {}).values()) or inputs.get('content_id') is not None:
+            raise ValidationError('Leadership reports automatically use all PSL projects and their permitted records.')
+        inputs = dict(inputs, selections={domain: [] for domain in DOMAINS}, content_id=None,
+                      scope={'mode': LEAD_MODE, 'actor': actor.pk, 'register_id': None, 'domains': sorted(DOMAINS)})
+        manifest = snapshot(case, inputs)
+        lock_projects(case, manifest, {actor.pk})
+        if snapshot(case, inputs) != manifest:
+            raise ValidationError('The PSL project register changed. Start the report again.')
+        body = _scalar('SELECT psl_leadership_register(%s::jsonb)::text',
+                       [json.dumps(manifest['project_scope']['projects'])])
+        register = evidence_for(actor, case, REGISTER_KIND, REGISTER_SOURCE, body)
+        inputs['scope']['register_id'] = register.pk
+        return with_narrative(actor, case, inputs, snapshot(case, inputs))
+    if not case.synthetic or role_managed(actor):
+        raise PermissionDenied('The PMO Lead or Finance Lead can generate PSL leadership reports.')
+    if requested is None:
+        return inputs
     if not isinstance(requested, dict) or set(requested) != {'domains'}:
         raise ValidationError('Choose the areas to include in the authorised project report.')
     domains = requested['domains']
@@ -125,12 +156,29 @@ def prepare_inputs(actor, case, inputs):
     lock_projects(case, manifest, {actor.pk})
     if snapshot(case, scoped) != manifest:
         raise ValidationError('Current project coverage changed. Recheck the selected reporting areas and start again.')
+    return with_narrative(actor, case, scoped, manifest)
+
+
+def department_lead(actor, case):
+    return any(department_cases(actor, role, heads_only=True).filter(pk=case.pk).exists()
+               for role in ('pmo-lead', 'finance-lead'))
+
+
+def require_report(actor, case):
+    if not department_cases(actor, 'finance-lead', heads_only=True).filter(pk=case.pk).exists():
+        require(actor, case, 'report.read')
+
+
+def evidence_for(actor, case, kind, source, body):
+    evidence = case.evidence.filter(kind=kind, source=source, body=body, created_by=actor).order_by('-pk').first()
+    return evidence or add_evidence(actor, case.pk, kind, body, source)
+
+
+def with_narrative(actor, case, scoped, manifest):
+    from .leadership_reporting import CONTENT, MODE as NARRATIVE_MODE
+
     themes = sections(manifest, scoped['kind'])
     if themes:
         body = json.dumps({'kind': scoped['kind'], 'protocol': NARRATIVE_MODE, 'sections': themes}, sort_keys=True)
-        evidence = case.evidence.filter(kind=CONTENT, source=GENERATED_SOURCE, body=body,
-                                        created_by=actor).order_by('-pk').first()
-        if evidence is None:
-            evidence = add_evidence(actor, case.pk, CONTENT, body, GENERATED_SOURCE)
-        scoped['content_id'] = evidence.pk
+        scoped['content_id'] = evidence_for(actor, case, CONTENT, GENERATED_SOURCE, body).pk
     return scoped

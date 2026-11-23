@@ -9,7 +9,7 @@ from django.utils import timezone
 from apps.core.models import Audit,Case,Evidence
 from apps.core.services import lock_case,add_evidence,event
 from apps.core.read_observation import read_observation
-from apps.identity.services import require
+from apps.identity.services import require, subject_actions
 from apps.identity.models import Grant
 from apps.documents.contracts import digest,validate
 from apps.documents.models import Template,Publication,PublicationJob,PublicationReceipt
@@ -33,13 +33,20 @@ SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'inputs':INP
 DOMAINS={key:{'type':'array','maxItems':200,'uniqueItems':True,'items':{'type':'integer','minimum':1}} for key in native.DOMAINS}
 INPUT['properties'].update(kind={'enum':list(native.THEMES)},audience={'enum':['internal','management']},selections={'type':'object','properties':DOMAINS,'required':list(DOMAINS),'additionalProperties':False})
 INPUT['required']+=['kind','audience','selections']
-INPUT['properties']['scope'] = {
+LEGACY_SCOPE = {
     'type': 'object', 'additionalProperties': False,
     'properties': {'mode': {'const': project_scope.MODE}, 'actor': {'type': 'integer', 'minimum': 1},
                    'configuration': {'type': 'integer', 'minimum': 1},
                    'domains': {'type': 'array', 'minItems': 1, 'uniqueItems': True, 'items': {'enum': list(DOMAINS)}}},
     'required': ['mode', 'actor', 'configuration', 'domains'],
 }
+LEAD_SCOPE = {
+    **LEGACY_SCOPE,
+    'properties': {**LEGACY_SCOPE['properties'], 'mode': {'const': project_scope.LEAD_MODE}, 'register_id': ID},
+    'required': ['mode', 'actor', 'register_id', 'domains'],
+}
+del LEAD_SCOPE['properties']['configuration']
+INPUT['properties']['scope'] = {'oneOf': [LEGACY_SCOPE, LEAD_SCOPE]}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
 
@@ -69,7 +76,7 @@ def inventory(actor,case,inputs):
     return {'manifest':manifest,'sources':sources,'gaps':gaps}
 
 def source(work,actor=None,current=True):
-    reader=actor or work.actor;require(reader,work.case,'report.read');e=work.source_head
+    reader=actor or work.actor;project_scope.require_report(reader,work.case);e=work.source_head
     if not e or e.case_id!=work.case_id or e.kind!=KIND or e.sha256!=hashlib.sha256(e.body.encode()).hexdigest():raise ValidationError('Exact private leadership reporting intake required')
     try:data=json.loads(e.body)
     except (TypeError,ValueError):raise ValidationError('Typed leadership report intake required') from None
@@ -89,7 +96,10 @@ def source(work,actor=None,current=True):
     audit=Audit.objects.filter(case=work.case,actor_id=e.created_by_id,action__in=['factory.leadership_intake','factory.leadership_source'],data={'evidence_id':e.pk,'sha256':e.sha256}).first()
     if not audit or any(data['inputs'][k]!=work.request[k] for k in ['start_at','end_at','kind','audience']):raise ValidationError('Exact selected report period and source-owned provenance required')
     if current:
-        for action in ['case.read','report.read','evidence.add','factory.start' if audit.action=='factory.leadership_intake' else 'factory.manage']:require(e.created_by,work.case,action)
+        action = ('factory.start' if audit.action == 'factory.leadership_intake'
+                  or can_correct_automatic(e.created_by, work) else 'factory.manage')
+        project_scope.require_report(e.created_by, work.case)
+        for required in ['case.read','evidence.add',action]:require(e.created_by,work.case,required)
         if inventory(reader,work.case,data['inputs'])['manifest']!=data['manifest']:raise ValidationError('Selected native report inventory changed; explicitly review the current source snapshot')
     return data
 
@@ -104,12 +114,17 @@ def start(actor,case_id,key,inputs,reference,expected=None):
     from .factory import access
     case=lock_case(actor,case_id,'factory.start',expected);access(actor,case,'factory.start',DEFINITION);require(actor,case,'evidence.add')
     if case.kind!='project' or not isinstance(key,str) or not key.isascii() or not 1<=len(key)<=100 or not isinstance(reference,str) or not reference.strip() or len(reference)>160:raise ValidationError('Project and bounded report work identity required')
-    if 'scope' in inputs:
-        inputs = project_scope.prepare_inputs(actor, case, inputs)
+    start,end=native.window(inputs['kind'],inputs['start_at'],inputs['end_at'],inputs['audience'])
+    inputs=dict(inputs,start_at=start.astimezone(datetime_timezone.utc).isoformat(),
+                end_at=end.astimezone(datetime_timezone.utc).isoformat())
+    inputs=project_scope.prepare_inputs(actor,case,inputs)
     start,end=input_rows(case,inputs)
     inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
     payload={k:inputs[k] for k in ['start_at','end_at','kind','audience']};payload['reference']=reference
-    sha=digest(payload);business=digest([str(case.pk),DEFINITION,inputs['kind'],inputs['audience'],start.isoformat(),end.isoformat()])
+    sha=digest(payload);identity=[str(case.pk),DEFINITION,inputs['kind'],inputs['audience'],start.isoformat(),end.isoformat()]
+    if inputs.get('scope', {}).get('mode') == project_scope.LEAD_MODE:
+        identity.extend([project_scope.LEAD_MODE, actor.pk])
+    business=digest(identity)
     old=Work.objects.filter(case=case).filter(Q(key=key)|Q(definition=DEFINITION,business_key=business)).first()
     if old:
         if old.actor_id!=actor.pk or old.definition!=DEFINITION or old.key==key and old.request_hash!=sha:raise ValidationError('IDEMPOTENCY_CONFLICT: changed leadership report intent')
@@ -275,21 +290,38 @@ def verify(work,actor=None):
     return {'verified':True,'verification_scope':'selected_native_leadership_report_and_exact_internal_recipient_receipts','head':work.source_head_id,'document_version':v.pk,'report':b.report_id,'publication':p.pk,'receipt_ids':[r.pk for r in receipts],
         'source_manifest':data['manifest'],'complete_project_coverage':False,'external_delivery_verified':False,'business_approval_granted':False}
 
+def automatic_scope(work):
+    try:
+        return json.loads(work.source_head.body)['inputs'].get('scope', {}).get('mode') == project_scope.LEAD_MODE
+    except (TypeError, ValueError, KeyError, AttributeError):
+        return False
+
+
+def can_correct_automatic(actor, work):
+    return (work.actor_id == actor.pk and automatic_scope(work) and project_scope.department_lead(actor, work.case))
+
+
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,inputs,reason):
     from .factory import access
     from apps.agents.factory_coordinator import pending,has_receipt
     w=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
-    access(actor,w.case,'factory.manage',DEFINITION);case=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=case
+    automatic = can_correct_automatic(actor, w)
+    with subject_actions(actor, w.case, ('factory.manage',) if automatic else ()):
+        access(actor,w.case,'factory.manage',DEFINITION)
+    case=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=case
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.status in ['cancelled','followup_needed']:raise ValidationError('STALE_VERSION: refresh current report work')
     if w.lease_until and w.lease_until>timezone.now() or PublicationJob.objects.filter(publication__factory_work=w,status__in=['pending','unknown','leased','held']).exists():raise ValidationError('Resolve original effects before report source correction')
     planning=pending(w)
     if planning and not has_receipt(planning):raise ValidationError('Resolve original planning response before correction')
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the source-owned report correction')
     data = source(w, actor, False)
-    if ('scope' in inputs) != ('scope' in data['inputs']):
+    automatic_scope = data['inputs'].get('scope', {}).get('mode') == project_scope.LEAD_MODE
+    if automatic_scope and not automatic:
+        raise PermissionDenied('The current lead who started the report can refresh its project coverage.')
+    if not automatic_scope and ('scope' in inputs) != ('scope' in data['inputs']):
         raise ValidationError('Keep the existing report coverage type when reviewing changed sources.')
-    if 'scope' in inputs:
+    if automatic_scope or 'scope' in inputs:
         inputs = project_scope.prepare_inputs(actor, case, inputs)
         case.refresh_from_db()
     start,end=input_rows(case,inputs);inputs=dict(inputs,start_at=start.isoformat(),end_at=end.isoformat())
@@ -412,7 +444,9 @@ def projection(actor,work,*,include_progress=False):
         except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     can_correct=False;can_restart=False
     try:
-        require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
+        if not can_correct_automatic(actor, work):
+            require(actor,work.case,'factory.manage')
+        require(actor,work.case,'evidence.add')
         settled=not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
         can_correct=live and work.status not in ['cancelled','followup_needed'] and settled
         can_restart=idle and work.cancel_requested and work.status=='cancelled' and settled and not PublicationReceipt.objects.filter(publication__factory_work=work).exists()
