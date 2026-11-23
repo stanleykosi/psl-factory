@@ -297,7 +297,7 @@ test.describe('list states', () => {
     await page.setViewportSize(DESKTOP);
     await page.route('**/api/v1/notifications*', (route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '401' } }));
     await page.goto('/notifications');
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fnotifications');
+    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fnotifications');
   });
 });
 
@@ -459,7 +459,7 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
       route.request().method() === 'PUT' ? route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '401' } }) : route.continue(),
     );
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fsettings%2Falerts');
+    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fsettings%2Falerts');
   });
 });
 

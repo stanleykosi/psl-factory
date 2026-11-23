@@ -25,15 +25,6 @@ export function SignedOutState({ pathname }: { pathname: string }) {
   );
 }
 
-/** The frame's own signed-out state: sign-in opens in a later release (SCR-17), so there is no link, and none to Django. */
-export function FrameSignedOutState() {
-  return (
-    <Callout kind="warning">
-      <strong>You&rsquo;re signed out.</strong> Sign-in opens in a later release. Ask your administrator if you need access now.
-    </Callout>
-  );
-}
-
 export function ForbiddenState({ error }: { error: ApiError }) {
   return (
     <Callout kind="warning">

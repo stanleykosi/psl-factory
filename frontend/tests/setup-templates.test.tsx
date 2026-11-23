@@ -338,7 +338,7 @@ describe('upload gating (AC 6, 14)', () => {
         </SetupLayoutFrame>
       </AppShell>,
     );
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Ftemplates'));
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsetup%2Ftemplates'));
     signedOut.unmount();
     let tries = 0;
     answers.list = () => (tries++ === 0 ? json(500, BOOM) : json(200, fixture('desktop')));
@@ -567,7 +567,7 @@ describe('other failures (AC 11)', () => {
     await open();
     choose(await openPanel('Invoice'), pdf());
     send();
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Ftemplates'));
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsetup%2Ftemplates'));
     expect(lists()).toHaveLength(1);
   });
 

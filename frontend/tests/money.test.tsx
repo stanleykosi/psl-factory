@@ -453,13 +453,13 @@ describe('errors and access', () => {
   it('401 on the money read signs in back to the money tab', async () => {
     respond = (url) => (url.pathname.endsWith('/money') ? json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }) : fromMock(url, persona));
     await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fmoney');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fmoney');
   });
 
   it('401 on the report read signs in too', async () => {
     respond = (url) => (url.pathname.startsWith('/api/v1/reports/') ? json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }) : fromMock(url, persona));
     await open();
-    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fmoney'));
+    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fmoney'));
   });
 
   it.each([

@@ -521,7 +521,7 @@ describe('upload errors', () => {
     await ledgerReady();
     choose(file('x.pdf', 1024));
     expect(await within(dialog()).findByText('You’re signed out.')).toBeTruthy();
-    expect(within(dialog()).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
+    expect(within(dialog()).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work');
   });
 
   it('422 shows the backend message word for word: the mock’s .exe sample and another message as text', async () => {

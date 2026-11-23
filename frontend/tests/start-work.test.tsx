@@ -247,7 +247,7 @@ describe('chooser states', () => {
     override = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await openChooser();
     expect(within(dialog()).getByText('You’re signed out.')).toBeTruthy();
-    expect(within(dialog()).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
+    expect(within(dialog()).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work');
   });
 
   it('a 403 shows the error message', async () => {

@@ -429,7 +429,7 @@ describe('access and failures', () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
     await until(() => expect(screen.getByText('You’re signed out.')).toBeTruthy());
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects');
   });
 
   it('403 shows not open with the first destination', async () => {

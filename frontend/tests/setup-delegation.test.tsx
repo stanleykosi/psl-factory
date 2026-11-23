@@ -602,7 +602,7 @@ describe('access (AC 15)', () => {
   it('401 on the read: signed out with next=/setup/delegation', async () => {
     answers.list = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Fdelegation'));
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsetup%2Fdelegation'));
   });
 
   it('401 on the write: signed out', async () => {
@@ -610,7 +610,7 @@ describe('access (AC 15)', () => {
     await open();
     fill();
     await send();
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Fdelegation'));
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsetup%2Fdelegation'));
   });
 
   it('403 or 404 on the read: the not-open view, no names, no further call', async () => {

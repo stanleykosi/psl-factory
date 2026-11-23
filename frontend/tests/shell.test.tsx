@@ -150,13 +150,13 @@ describe('navigation follows /me', () => {
     expect(fetchStub).toHaveBeenCalledTimes(1);
   });
 
-  it('persona none (no startable lines) has no Start work, bell, account menu or sign-out', async () => {
+  it('persona none (no startable lines) has no Start work or bell, and only Sign out in the phone menu', async () => {
     fetchStub.mockResolvedValue(json(200, fixture('none')));
     renderAt('/my-work');
     await loaded();
     fireEvent.click(menuButton());
-    expect(document.body.textContent).not.toMatch(/Start|Sign out|Notifications/);
-    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Menu']);
+    expect(document.body.textContent).not.toMatch(/Start|Notifications/);
+    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Account menu: Sample Person', 'Menu', 'Sign out']);
   });
 
   it('roles never decide it: a CEO with no startable lines sees no Start work', async () => {
@@ -165,16 +165,17 @@ describe('navigation follows /me', () => {
     await loaded();
     expect(screen.queryByRole('button', { name: 'Start work' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'More ways to start' })).toBeNull();
-    // The alert bell (F-15) is in both bars: top bar, then the phone bar's Menu and bell.
-    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Alerts', 'Menu', 'Alerts']);
+    // The alert bell (F-15) is in both bars: top bar (bell, then the account menu on the name), then the phone bar's Menu and bell.
+    expect(screen.queryAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual(['Alerts', 'Account menu: Folake Bello', 'Menu', 'Alerts']);
   });
 
-  it('finance_lead has no account menu or sign-out', async () => {
+  it('finance_lead has Sign out as the only account item, after the destinations, and no Notifications entry', async () => {
     fetchStub.mockResolvedValue(json(200, fixture('finance_lead')));
     renderAt('/my-work');
     await loaded();
     fireEvent.click(menuButton());
-    expect(document.body.textContent).not.toMatch(/Sign out|Notifications/);
+    expect(document.body.textContent).not.toMatch(/Notifications/);
+    expect([...document.querySelectorAll('#phone-menu a, #phone-menu button')].map((el) => el.textContent)).toEqual(['My work', 'Projects', 'Overview', 'Assistant', 'Setup', 'Sign out']);
   });
 });
 
@@ -192,12 +193,12 @@ describe('frame states', () => {
     await loaded();
   });
 
-  it('401 shows signed out with no sign-in link (sign-in opens in a later release)', async () => {
+  it('401 shows signed out with a Sign in link to /sign-in?next=<path>', async () => {
     fetchStub.mockResolvedValue(json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }));
     renderAt('/my-work');
     await waitFor(() => expect(screen.getByText('You’re signed out.')).toBeTruthy());
-    expect(screen.getByText(/Sign-in opens in a later release/)).toBeTruthy();
-    expect(within(screen.getByRole('main')).queryAllByRole('link')).toEqual([]);
+    expect(document.body.textContent).not.toContain('Sign-in opens in a later release');
+    expect(within(screen.getByRole('main')).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work');
     expect(within(topNav()).queryByText('My work')).toBeNull();
     expect(document.querySelector('.psl-callout--warning')).toBeTruthy();
   });

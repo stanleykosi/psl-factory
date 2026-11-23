@@ -567,7 +567,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     answers.save = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
     fireEvent.click(saveButton());
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Frules'));
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsetup%2Frules'));
     expect(screen.queryByRole('table')).toBeNull();
   });
 });
@@ -628,7 +628,7 @@ describe('read states and paging (AC 14, 19, 21)', () => {
   it('401 on read shows the signed-out state; 403 and 404 show no-access and no rule', async () => {
     answers.rules = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsetup%2Frules');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsetup%2Frules');
     for (const status of [403, 404]) {
       document.body.innerHTML = '';
       answers.rules = () => json(status, FORBIDDEN);
@@ -762,7 +762,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
     expect(desktop().getByText(/^These are PSL’s decisions\. Until a rule is set/)).toBeTruthy();
     expect(desktop().getByText('Each rule is versioned. Changing one doesn’t change work already finished.')).toBeTruthy();
     // no controls but the paging footer's rows per page
-    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell):not(.psl-seg__opt)')).toHaveLength(0);
+    expect(document.querySelectorAll('input, select, textarea, button:not(.shell-menubutton):not(.shell-bell):not(.psl-nav__who):not(.shell-menuaction):not(.psl-seg__opt)')).toHaveLength(0);
   });
 });
 
