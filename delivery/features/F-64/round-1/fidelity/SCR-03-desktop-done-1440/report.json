@@ -1,0 +1,1128 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-23T15:18:04.525Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-03-desktop-done.dc.html",
+  "boardName": "SCR-03-desktop-done.dc.html",
+  "pageUrl": "http://localhost:4964/work/17/decide?task=41",
+  "viewport": {
+    "width": 1440,
+    "height": 760
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-64/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "1 board item(s) are missing from the page and are not approved exceptions (coverage 97.7% with exceptions, needs 100%).",
+    "Visual match 70.5 is below 90.",
+    "8 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 52.3,
+    "coverageWithExceptions": 97.7,
+    "visual": 70.5
+  },
+  "visual": {
+    "score": 70.5,
+    "allCellsScore": 83.7,
+    "width": 1440,
+    "height": 760,
+    "boardHeight": 760,
+    "pageHeight": 760,
+    "cell": 12,
+    "contentCells": 4237,
+    "mismatchedCells": 1250
+  },
+  "coverage": {
+    "total": 44,
+    "found": 23,
+    "coverage": 52.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Account menu: Ada Okafor · Finance Lead",
+        "pageRole": "button",
+        "similarity": 86,
+        "note": "a button on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 626
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 488
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOU APPROVED · 10:47",
+        "pageName": "YOU APPROVED · 16:18",
+        "pageRole": "text",
+        "similarity": 85,
+        "looks": [],
+        "boardBox": {
+          "x": 108,
+          "y": 102,
+          "w": 1224,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 108,
+          "y": 95,
+          "w": 1224,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Invoice v2 for Lagoon Health is approved",
+        "pageName": "Invoice 3 for the Lekki handover is approved",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Invoice v2 for Lagoon Health is approved\" on the board, \"Invoice 3 for the Lekki handover is approved\" on the page",
+        "looks": [
+          "text size 28px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 108,
+          "y": 123,
+          "w": 1224,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 108,
+          "y": 119,
+          "w": 1224,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORK",
+        "pageName": "WORK",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 286,
+          "w": 140,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 208,
+          "w": 140,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOU DECIDED",
+        "pageName": "YOU DECIDED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 364,
+          "w": 140,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 250,
+          "w": 140,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approve, with no note",
+        "pageName": "Approve, with no note",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 258,
+          "y": 364,
+          "w": 672,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 258,
+          "y": 250,
+          "w": 672,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECIDED",
+        "pageName": "DECIDED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 403,
+          "w": 140,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 334,
+          "w": 140,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sat 21 Nov, 10:47 WAT, by Ada Okafor",
+        "pageName": "Mon 23 Nov, 16:18 WAT, by Ada Okafor",
+        "pageRole": "text",
+        "similarity": 81,
+        "looks": [],
+        "boardBox": {
+          "x": 258,
+          "y": 403,
+          "w": 672,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 258,
+          "y": 334,
+          "w": 672,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Paid is tracked separately by Finance and is not part of this decision.",
+        "pageName": "Paid is tracked separately by Finance and is not part of this decision.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 453,
+          "w": 860,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 393,
+          "w": 860,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "WHAT HAPPENS NEXT",
+        "pageName": "WHAT HAPPENS NEXT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 974,
+          "y": 193,
+          "w": 376,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 974,
+          "y": 194,
+          "w": 376,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "link",
+        "name": "Next decision · 1 of 8",
+        "pageName": "Next decision · 1 of 2",
+        "pageRole": "link",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 988,
+          "y": 344,
+          "w": 348,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 988,
+          "y": 247,
+          "w": 348,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the work item",
+        "pageName": "Open the work item",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 988,
+          "y": 402,
+          "w": 348,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 988,
+          "y": 307,
+          "w": 348,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STILL WAITING ON YOU · 8",
+        "pageName": "STILL WAITING ON YOU · 2",
+        "pageRole": "heading",
+        "similarity": 96,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 988,
+          "y": 494,
+          "w": 348,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 988,
+          "y": 401,
+          "w": 348,
+          "h": 17
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "key": "text: DRAFTED",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 205,
+          "w": 113,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Q8: the facts strip (DRAFTED/REVIEWED/APPROVED/SENT/RECEIPT/VERIFIED) has no live source; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "key": "text: v2",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 223,
+          "w": 113,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Q8: facts strip detail; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "key": "text: REVIEWED",
+        "container": "main",
+        "boardBox": {
+          "x": 247,
+          "y": 205,
+          "w": 113,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You",
+        "key": "text: You",
+        "container": "main",
+        "boardBox": {
+          "x": 247,
+          "y": 223,
+          "w": 113,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Q8: facts strip detail; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "key": "text: APPROVED",
+        "container": "main",
+        "boardBox": {
+          "x": 389,
+          "y": 205,
+          "w": 113,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10:47",
+        "key": "text: 10:47",
+        "container": "main",
+        "boardBox": {
+          "x": 389,
+          "y": 223,
+          "w": 113,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Q6/Q8: time comes from the decision history only; hidden when absent.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "key": "text: SENT",
+        "container": "main",
+        "boardBox": {
+          "x": 532,
+          "y": 205,
+          "w": 113,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next",
+        "key": "text: Next",
+        "container": "main",
+        "boardBox": {
+          "x": 532,
+          "y": 223,
+          "w": 113,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Q8: facts strip detail; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "key": "text: RECEIPT",
+        "container": "main",
+        "boardBox": {
+          "x": 675,
+          "y": 205,
+          "w": 113,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "main",
+        "boardBox": {
+          "x": 675,
+          "y": 223,
+          "w": 113,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "key": "text: VERIFIED",
+        "container": "main",
+        "boardBox": {
+          "x": 817,
+          "y": 205,
+          "w": 115,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "main",
+        "boardBox": {
+          "x": 817,
+          "y": 223,
+          "w": 115,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412 · Prepare an invoice",
+        "key": "text: INV-0412 · Prepare an invoice",
+        "container": "main",
+        "boardBox": {
+          "x": 258,
+          "y": 286,
+          "w": 672,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: no invoice reference or line name live; the Work row shows the work title.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECT",
+        "key": "text: PROJECT",
+        "container": "main",
+        "boardBox": {
+          "x": 106,
+          "y": 325,
+          "w": 140,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: no project name live; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health, milestone 2",
+        "key": "text: Lagoon Health, milestone 2",
+        "container": "main",
+        "boardBox": {
+          "x": 258,
+          "y": 325,
+          "w": 672,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: no project name live; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "(side panel)",
+        "key": "complementary:",
+        "container": "main",
+        "boardBox": {
+          "x": 972,
+          "y": 191,
+          "w": 380,
+          "h": 435
+        },
+        "exception": null
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step. Chidi will issue it and email it to Lagoon Health. You'll see SENT once the delivery receipt comes back.",
+        "key": "text: Next step. Chidi will issue it and email it to Lagoon Health. You'll see SENT once the delivery receipt comes back.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1064,
+          "y": 255,
+          "w": 272,
+          "h": 63
+        },
+        "exception": {
+          "reason": "Q8: Chidi next-step sentence has no live source; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Coastal Freight · Milestone 2 invoice",
+        "key": "link: Coastal Freight · Milestone 2 invoice",
+        "container": "complementary",
+        "boardBox": {
+          "x": 988,
+          "y": 516,
+          "w": 348,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: \"Still waiting on you\" is filled from GET /work?queue=decisions only.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Eko Insurance · Milestone 4 invoice",
+        "key": "link: Eko Insurance · Milestone 4 invoice",
+        "container": "complementary",
+        "boardBox": {
+          "x": 988,
+          "y": 542,
+          "w": 348,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: filled from the live decision list only.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Eko Insurance · Receipt for INV-0401",
+        "key": "link: Eko Insurance · Receipt for INV-0401",
+        "container": "complementary",
+        "boardBox": {
+          "x": 988,
+          "y": 568,
+          "w": 348,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: filled from the live decision list only.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See all",
+        "key": "link: See all",
+        "container": "complementary",
+        "boardBox": {
+          "x": 988,
+          "y": 594,
+          "w": 348,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Q8: shown only when the live list holds more than three.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Text \"Ada Okafor · Finance Lead\"",
+        "kind": "Text",
+        "name": "Ada Okafor · Finance Lead",
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Setup\"",
+          "across the page: right on the board (89% across), right on the page (76% across)"
+        ]
+      },
+      {
+        "label": "Pagination \"WHAT HAPPENS NEXT\"",
+        "kind": "Pagination",
+        "name": "WHAT HAPPENS NEXT",
+        "boardBox": {
+          "x": 974,
+          "y": 193,
+          "w": 376,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 974,
+          "y": 194,
+          "w": 376,
+          "h": 39
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 626
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 488
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"WORK\"; on the page it comes after Pagination \"Next decision · 1 of 8\""
+        ]
+      },
+      {
+        "label": "Pagination \"Next decision · 1 of 8\"",
+        "kind": "Pagination",
+        "name": "Next decision · 1 of 8",
+        "boardBox": {
+          "x": 988,
+          "y": 344,
+          "w": 348,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 988,
+          "y": 247,
+          "w": 348,
+          "h": 50
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Link \"Open the work item\"",
+        "kind": "Link",
+        "name": "Open the work item",
+        "boardBox": {
+          "x": 988,
+          "y": 402,
+          "w": 348,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 988,
+          "y": 307,
+          "w": 348,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Sat 21 Nov, 10:47 WAT, by Ada Okafor\"; on the page it comes after Main area \"\"",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"STILL WAITING ON YOU · 8\"",
+        "kind": "Text",
+        "name": "STILL WAITING ON YOU · 8",
+        "boardBox": {
+          "x": 988,
+          "y": 494,
+          "w": 348,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 988,
+          "y": 401,
+          "w": 348,
+          "h": 17
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice 4 for the Ikeja fit-out",
+        "container": "main",
+        "pageBox": {
+          "x": 988,
+          "y": 426,
+          "w": 186,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice 5 for the Yaba office",
+        "container": "main",
+        "pageBox": {
+          "x": 988,
+          "y": 455,
+          "w": 181,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Status message",
+        "role": "status",
+        "name": "Your decision was recorded.",
+        "container": "page",
+        "pageBox": {
+          "x": 598,
+          "y": 691,
+          "w": 244,
+          "h": 45
+        }
+      }
+    ],
+    "unexcepted": 1
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

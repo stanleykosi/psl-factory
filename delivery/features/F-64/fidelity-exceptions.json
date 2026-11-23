@@ -1,0 +1,403 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "DECISIONS / 1 OF 3 / FINANCE REVIEW · INV-0412",
+      "category": "changed text",
+      "reason": "Q7/Q3: the trail reads \"Decisions / n of m\" from the live decision list only (no station or invoice reference live); hidden when the list fails or lacks this work.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "FINANCE REVIEW · INV-0412",
+      "category": "removed content",
+      "reason": "Q7: no station or invoice reference on the live read; left out.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Station 4 of 7 · Finance review · waiting 2h · only a Finance Lead can decide",
+      "category": "removed content",
+      "reason": "Q3/Q11: no station line or wait time live; left out.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Basis",
+      "category": "removed content",
+      "reason": "Q3: no live source for the basis row (A-19, A-21); hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Contract stage 2 of 4 · terms v1",
+      "category": "removed content",
+      "reason": "Q3: basis value has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Contract stage 2 of 4",
+      "category": "removed content",
+      "reason": "Q3: basis value has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Changed since v1",
+      "category": "removed content",
+      "reason": "Q3: no live change list; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Changed",
+      "category": "removed content",
+      "reason": "Q3: no live change list (phone); hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "PO number, as you asked",
+      "category": "removed content",
+      "reason": "Q3: change list value has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Chidi · Finance agent Drafted this from 3 sources: the milestone record, the signed SOW stage 2 and the client register. See his steps",
+      "category": "removed content",
+      "reason": "Q3/Q9: no live agent note; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Chidi",
+      "category": "removed content",
+      "reason": "Q3/Q9: no live agent; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "See his steps",
+      "category": "removed content",
+      "reason": "Q3: no live agent steps link; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Chidi, the Finance agent, drafted this from 3 sources. See sources",
+      "category": "removed content",
+      "reason": "Q3: no live agent note (phone); hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "See sources",
+      "category": "removed content",
+      "reason": "Q3: hidden with the agent note.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Only a Finance Lead can decide. You are Finance Lead.",
+      "category": "changed text",
+      "reason": "Q11: reads \"Only a finance reviewer can decide.\" from the task; \"You are ...\" dropped because /me must not decide what is offered.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "Preview: a newer version arrives",
+      "category": "removed content",
+      "reason": "Design toggle, not built (spec Conflicts).",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "Preview: what happens if a newer version arrives",
+      "category": "removed content",
+      "reason": "Design toggle, not built (spec Conflicts).",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "← Decisions",
+      "category": "changed text",
+      "reason": "Phone back link is the shell bar's \"Back to Decisions\" link.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "← Queue",
+      "category": "changed text",
+      "reason": "Phone back link is the shell bar's \"Back to Queue\" link.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "INV-0412 · Prepare an invoice",
+      "category": "removed content",
+      "reason": "Q8: no invoice reference or line name live; the Work row shows the work title.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "PROJECT",
+      "category": "removed content",
+      "reason": "Q8: no project name live; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health, milestone 2",
+      "category": "removed content",
+      "reason": "Q8: no project name live; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Next step. Chidi will issue it and email it to Lagoon Health. You'll see SENT once the delivery receipt comes back.",
+      "category": "removed content",
+      "reason": "Q8: Chidi next-step sentence has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "complementary",
+      "name": "(side panel)",
+      "category": "changed content",
+      "reason": "Q8: the side panel keeps \"Open the work item\" and the live-list links; the next-step callout is hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "Coastal Freight · Milestone 2 invoice",
+      "category": "sample data",
+      "reason": "Q8: \"Still waiting on you\" is filled from GET /work?queue=decisions only.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "Eko Insurance · Milestone 4 invoice",
+      "category": "sample data",
+      "reason": "Q8: filled from the live decision list only.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "Eko Insurance · Receipt for INV-0401",
+      "category": "sample data",
+      "reason": "Q8: filled from the live decision list only.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "link",
+      "name": "See all",
+      "category": "sample data",
+      "reason": "Q8: shown only when the live list holds more than three.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "DRAFTED",
+      "category": "removed content",
+      "reason": "Q8: the facts strip (DRAFTED/REVIEWED/APPROVED/SENT/RECEIPT/VERIFIED) has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "v2",
+      "category": "removed content",
+      "reason": "Q8: facts strip detail; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "REVIEWED",
+      "category": "removed content",
+      "reason": "Q8: facts strip; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Waiting",
+      "category": "removed content",
+      "reason": "Q8: facts strip; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "You",
+      "category": "removed content",
+      "reason": "Q8: facts strip detail; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "APPROVED",
+      "category": "removed content",
+      "reason": "Q8: facts strip; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "10:47",
+      "category": "removed content",
+      "reason": "Q6/Q8: time comes from the decision history only; hidden when absent.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "SENT",
+      "category": "removed content",
+      "reason": "Q8: facts strip; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Next",
+      "category": "removed content",
+      "reason": "Q8: facts strip detail; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "RECEIPT",
+      "category": "removed content",
+      "reason": "Q8: facts strip; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "VERIFIED",
+      "category": "removed content",
+      "reason": "Q8: facts strip; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "category": "removed content",
+      "reason": "Q8: facts strip placeholder; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "status",
+      "name": "A newer version arrived while you were reading. Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+      "category": "changed text",
+      "reason": "Q9: reads \"A newer version arrived while you were reading. Version 2 can no longer be approved.\"; drafted time and cause dropped.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "status",
+      "name": "A newer version arrived while you were reading Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+      "category": "changed text",
+      "reason": "Q9: as the desktop board; time and cause dropped.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "billing@lagoonhealth.example · changed",
+      "category": "sample data",
+      "reason": "Q9: the recipient comparison row stays; its values come from the live read.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "billing@lagoonhealth.example changed",
+      "category": "sample data",
+      "reason": "Q9: as above (phone).",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "accounts@lagoonhealth.example",
+      "category": "sample data",
+      "reason": "Q9: recipient value comes from the live read.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Chidi · Finance agent Redrafted it from the updated client record. Nothing else changed.",
+      "category": "removed content",
+      "reason": "Q9: no live agent note; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Chidi redrafted it from the updated client record.",
+      "category": "removed content",
+      "reason": "Q9: no live agent note (phone); hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Invoice v2 · ₦4,250,000.00",
+      "category": "changed text",
+      "reason": "Q9: the replaced card shows the live amount without the invoice label.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Bisi Adeyemi · Finance",
+      "category": "removed content",
+      "reason": "Q10: no live source for the person named; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "DECISION · INV-0412",
+      "category": "removed content",
+      "reason": "Q10: no invoice reference live; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "INV-0412",
+      "category": "removed content",
+      "reason": "Q10: no invoice reference live; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "BASIS",
+      "category": "removed content",
+      "reason": "Q10: basis has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "SOW v2 stage 2",
+      "category": "removed content",
+      "reason": "Q10: basis value has no live source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Finance Lead",
+      "category": "changed text",
+      "reason": "Q10: the waiting box shows the task role (\"finance reviewer\").",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "This decision needs a Finance Lead. You hold Finance on this project, so you can read it and add a comment, but you can't approve, return or reject it.",
+      "category": "changed text",
+      "reason": "Q10: the reason sentence is hidden; the generic \"This decision needs a finance reviewer. You can't approve, return or reject it.\" shows.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.",
+      "category": "removed content",
+      "reason": "Q10: no live alert source; hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    },
+    {
+      "role": "text",
+      "name": "This needs a Finance Lead. You can read it and comment, but not decide. Ada Okafor was alerted at 10:42.",
+      "category": "changed text",
+      "reason": "Q10: generic sentence only; alert line hidden.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-182"
+    }
+  ]
+}

@@ -1,0 +1,384 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-23T15:18:24.238Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-03-mobile-stale.dc.html",
+  "boardName": "SCR-03-mobile-stale.dc.html",
+  "pageUrl": "http://localhost:4964/work/17/decide?task=41",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-64/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "2 board item(s) are missing from the page and are not approved exceptions (coverage 84.6% with exceptions, needs 100%).",
+    "Visual match 77.5 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 46.2,
+    "coverageWithExceptions": 84.6,
+    "visual": 77.5
+  },
+  "visual": {
+    "score": 77.5,
+    "allCellsScore": 87.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1309,
+    "mismatchedCells": 295
+  },
+  "coverage": {
+    "total": 13,
+    "found": 6,
+    "coverage": 46.2,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 OF 3",
+        "pageName": "1 OF 3",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 236,
+          "y": 21,
+          "w": 43,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 171,
+          "y": 19,
+          "w": 55,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 291,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Amount",
+        "pageName": "Amount",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page",
+          "background none on the board, #FFF1D6 on the page"
+        ],
+        "boardBox": {
+          "x": 34,
+          "y": 295,
+          "w": 53,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 336,
+          "w": 81,
+          "h": 30
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00 unchanged",
+        "pageName": "₦4,300,000.00 · changed",
+        "pageRole": "text",
+        "similarity": 83,
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 17px on the board, 15px on the page",
+          "background none on the board, #FFF1D6 on the page"
+        ],
+        "boardBox": {
+          "x": 101,
+          "y": 295,
+          "w": 255,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 99,
+          "y": 336,
+          "w": 273,
+          "h": 30
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Review version 3",
+        "pageName": "Review version 3",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 732,
+          "w": 354,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 726,
+          "w": 354,
+          "h": 54
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Decisions always apply to one exact version, so an approval can never land on the wrong one.",
+        "pageName": "Decisions always apply to one exact version, so an approval can never land on the wrong one.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 796,
+          "w": 354,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 790,
+          "w": 354,
+          "h": 36
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Decisions",
+        "key": "link: ← Decisions",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone back link is the shell bar's \"Back to Decisions\" link.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Status message",
+        "role": "status",
+        "name": "A newer version arrived while you were reading Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+        "key": "status: A newer version arrived while you were reading Version 3 was drafted at 10:46 after the billing contact changed. Version 2 can no longer be approved.",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 74,
+          "w": 354,
+          "h": 130
+        },
+        "exception": {
+          "reason": "Q9: as the desktop board; time and cause dropped.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice v2 · ₦4,250,000.00",
+        "key": "text: Invoice v2 · ₦4,250,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 34,
+          "y": 232,
+          "w": 185,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q9: the replaced card shows the live amount without the invoice label.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REPLACED",
+        "key": "text: REPLACED",
+        "container": "page",
+        "boardBox": {
+          "x": 298,
+          "y": 232,
+          "w": 58,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To",
+        "key": "text: To",
+        "container": "page",
+        "boardBox": {
+          "x": 34,
+          "y": 327,
+          "w": 53,
+          "h": 38
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "billing@lagoonhealth.example changed",
+        "key": "text: billing@lagoonhealth.example changed",
+        "container": "page",
+        "boardBox": {
+          "x": 101,
+          "y": 327,
+          "w": 255,
+          "h": 38
+        },
+        "exception": {
+          "reason": "Q9: as above (phone).",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi redrafted it from the updated client record.",
+        "key": "text: Chidi redrafted it from the updated client record.",
+        "container": "page",
+        "boardBox": {
+          "x": 76,
+          "y": 391,
+          "w": 280,
+          "h": 34
+        },
+        "exception": {
+          "reason": "Q9: no live agent note (phone); hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"1 OF 3\"",
+        "kind": "Text",
+        "name": "1 OF 3",
+        "boardBox": {
+          "x": 236,
+          "y": 21,
+          "w": 43,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 171,
+          "y": 19,
+          "w": 55,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (66% across), middle on the page (51% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Decisions",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "alert",
+        "role": "alert",
+        "name": "A newer version arrived while you were reading. Version 2 can no longer be approved.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 80
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "A newer version arrived while you were reading.",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 88,
+          "w": 326,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 2
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
