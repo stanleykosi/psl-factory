@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-85",
   "outcome": "The work item page shows live work, and the shared workspace can read any line through an adapter",
-  "state": "PR_OPEN",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -108,69 +108,55 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "technical reviewer (lead), lighter panel (D-180)",
-      "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "passed",
-      "reviewer": "qa",
-      "authority": "integrated QA (lighter panel, D-180)",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/review-qa.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "pmo_acceptance": {
-      "status": "passed",
-      "reviewer": "pmo-acceptance",
-      "authority": "PMO delivery acceptance (D-180 lighter panel; delivery only, not client/product acceptance, merge or release)",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/acceptance-pmo.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-85/readiness.md",
-      "status": "passed",
-      "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
-      "authority": "D-182 (batch 1 answers), D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/acceptance-product.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "UX reviewer (lighter panel, D-180)",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "UI design reviewer",
-      "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "security": {
-      "status": "passed",
-      "reviewer": "reviewer-security",
-      "authority": "reviewer-security (lighter panel, D-180)",
-      "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
-      "evidence_refs": [
-        "delivery/features/F-85/round-1/review-security.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -541,9 +527,101 @@
           "head": "35189b4503a76ae516ba153f77434a9a562bdc0d"
         }
       ]
+    },
+    {
+      "id": "MAIN-1-1",
+      "round": 1,
+      "snapshot_ref": "6a09ff21cf6f75f7466743fcb3609bf3b8f54195",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "After syncing with main (API 1.24.0, b8542c79) typecheck fails: tests/live-work-item.test.tsx history rows lack the now-required actor_kind and entry_id; adapt F-85's live history types, mock fixtures and tests to 1.24.0 (premerge-checks-dd576237.log)",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "lane-c-coordinator",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "lane-c-coordinator",
+          "at": "2026-11-23T17:35:25Z",
+          "head": "6a09ff21cf6f75f7466743fcb3609bf3b8f54195"
+        }
+      ]
     }
   ],
-  "prior_review_records": [],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), lighter panel (D-180)",
+          "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "qa",
+          "authority": "integrated QA (lighter panel, D-180)",
+          "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO delivery acceptance (D-180 lighter panel; delivery only, not client/product acceptance, merge or release)",
+          "snapshot_ref": "35189b4503a76ae516ba153f77434a9a562bdc0d",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-85/readiness.md",
+          "status": "passed",
+          "reviewer": "design engineer (hunchoweb), recorded by the coordinator",
+          "authority": "the design engineer's answer in the coordinator session, 23 Nov 2026",
+          "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/acceptance-product.md"
+          ]
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer (lighter panel, D-180)",
+          "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security (lighter panel, D-180)",
+          "snapshot_ref": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+          "evidence_refs": [
+            "delivery/features/F-85/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -566,7 +644,7 @@
     "base_branch": "main",
     "base_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
     "task_branch": "fe-connect-1-work-item-frame",
-    "head_sha": "6a09ff21cf6f75f7466743fcb3609bf3b8f54195",
+    "head_sha": "dd5762371ce22827b682b8b7e69eb2f362ca9b79",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/101",
     "pr_number": 101,
@@ -578,24 +656,172 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      "BUILD-BACKLOG.json",
+      "BUILD-DECISIONS.md",
+      "BUILD-LOG.md",
+      "BUILD-STATE.md",
+      "BUILD-TESTS.md",
+      "HANDOFF.md",
+      "adapters/openrouter.py",
+      "adapters/payroll_spreadsheet.py",
+      "apps/agents/assistant.py",
+      "apps/agents/assistant_images.py",
+      "apps/agents/assistant_models.py",
+      "apps/agents/assistant_views.py",
+      "apps/agents/migrations/0023_assistant_images_and_finished_at.py",
+      "apps/core/alerts.py",
+      "apps/core/factory_api/accounting.py",
+      "apps/core/factory_api/accounts.py",
+      "apps/core/factory_api/agents.py",
+      "apps/core/factory_api/archive_files.py",
+      "apps/core/factory_api/assets.py",
+      "apps/core/factory_api/bank_payments.py",
+      "apps/core/factory_api/bid_assignments.py",
+      "apps/core/factory_api/bid_pricing.py",
+      "apps/core/factory_api/bid_requirements.py",
+      "apps/core/factory_api/bid_responses.py",
+      "apps/core/factory_api/bid_submission.py",
+      "apps/core/factory_api/clients.py",
+      "apps/core/factory_api/closure.py",
+      "apps/core/factory_api/commands.py",
+      "apps/core/factory_api/commercial.py",
+      "apps/core/factory_api/delivery.py",
+      "apps/core/factory_api/documents.py",
+      "apps/core/factory_api/emergency.py",
+      "apps/core/factory_api/engagements.py",
+      "apps/core/factory_api/escalations.py",
+      "apps/core/factory_api/finance_operations.py",
+      "apps/core/factory_api/hr_handoffs.py",
+      "apps/core/factory_api/hypercare.py",
+      "apps/core/factory_api/intake.py",
+      "apps/core/factory_api/issue_communications.py",
+      "apps/core/factory_api/issues.py",
+      "apps/core/factory_api/leadership_reports.py",
+      "apps/core/factory_api/ledger.py",
+      "apps/core/factory_api/meeting_records.py",
+      "apps/core/factory_api/minutes.py",
+      "apps/core/factory_api/notifications.py",
+      "apps/core/factory_api/payroll_sources.py",
+      "apps/core/factory_api/planning.py",
+      "apps/core/factory_api/project_operations.py",
+      "apps/core/factory_api/received_bids.py",
+      "apps/core/factory_api/reminders.py",
+      "apps/core/factory_api/role_work.py",
+      "apps/core/factory_api/schedule_work.py",
+      "apps/core/factory_api/setup.py",
+      "apps/core/factory_api/staff_access.py",
+      "apps/core/factory_api/support_replies.py",
+      "apps/core/factory_api/urls.py",
+      "apps/core/factory_api/weekly_reports.py",
+      "apps/core/factory_api/work.py",
+      "apps/core/factory_api/work_proofs.py",
+      "apps/core/factory_api/work_tracking.py",
+      "apps/core/factory_api/workspaces.py",
+      "apps/core/project_journey.py",
+      "apps/core/setup_rules.py",
+      "apps/core/workbench.py",
+      "apps/finance/bank_receipt_capture.py",
+      "apps/finance/bank_receipt_views.py",
+      "apps/finance/cash.py",
+      "apps/finance/month_end.py",
+      "apps/finance/payments_overview.py",
+      "apps/finance/payroll_working.py",
+      "apps/finance/project_money.py",
+      "apps/finance/reminders.py",
+      "apps/identity/factory_access.py",
+      "apps/identity/intake.py",
+      "apps/identity/migrations/0021_current_pmo_direct_planning.py",
+      "apps/identity/staff_account_views.py",
+      "apps/pmo/archive_transfer.py",
+      "apps/pmo/delivery.py",
+      "apps/pmo/delivery_closure.py",
+      "apps/pmo/emergencies.py",
+      "apps/pmo/emergency_models.py",
+      "apps/pmo/migrations/0085_emergency_outcome_impact.py",
+      "apps/pmo/rfp_followup.py",
+      "apps/pmo/rfp_fresh_intake.py",
+      "apps/pmo/rfp_submission_artifacts.py",
+      "apps/pmo/services.py",
+      "apps/policy/delegation_views.py",
+      "apps/workflows/factory_delivery.py",
+      "apps/workflows/factory_emergency.py",
+      "apps/workflows/factory_fresh_bid_views.py",
+      "apps/workflows/factory_invoice_review.py",
+      "apps/workflows/factory_models.py",
+      "apps/workflows/factory_views.py",
+      "apps/workflows/migrations/0102_work_status_timestamp.py",
+      "config/urls.py",
+      "contracts/psl-factory.openapi.json",
+      "delivery/connect/README.md",
+      "delivery/connect/backend-answers-2026-11-23.md",
+      "delivery/connect/backend-answers-by-screen-2026-11-23.md",
+      "delivery/connect/backend-answers.md",
+      "docs/runbooks/railway.md",
       "frontend/e2e/alerts-bell.spec.ts",
       "frontend/e2e/alerts.spec.ts",
+      "frontend/e2e/ceo.spec.ts",
+      "frontend/e2e/delivery-hypercare.spec.ts",
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/demo.spec.ts",
       "frontend/e2e/document-review.spec.ts",
       "frontend/e2e/exceptions.spec.ts",
       "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/project-tabs.spec.ts",
       "frontend/e2e/projects.spec.ts",
       "frontend/e2e/setup.spec.ts",
       "frontend/e2e/sign-in.spec.ts",
       "frontend/e2e/work-item-live.spec.ts",
+      "frontend/mock/demo-projects.mjs",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/E-PROJECT.json",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/projects/P-0102.json",
+      "frontend/mock/fixtures/projects/P-0103.json",
+      "frontend/mock/fixtures/projects/P-0104.json",
+      "frontend/mock/fixtures/projects/P-0105.json",
+      "frontend/mock/fixtures/projects/P-0106.json",
+      "frontend/mock/fixtures/projects/P-0107.json",
+      "frontend/mock/fixtures/projects/P-0108.json",
+      "frontend/mock/fixtures/projects/P-0109.json",
+      "frontend/mock/fixtures/projects/P-0110.json",
+      "frontend/mock/fixtures/projects/P-0111.json",
+      "frontend/mock/fixtures/projects/P-0112.json",
+      "frontend/mock/fixtures/projects/P-0113.json",
+      "frontend/mock/fixtures/projects/P-0114.json",
+      "frontend/mock/fixtures/projects/P-0115.json",
+      "frontend/mock/fixtures/projects/P-0116.json",
+      "frontend/mock/fixtures/projects/P-0117.json",
+      "frontend/mock/fixtures/projects/P-0118.json",
+      "frontend/mock/fixtures/projects/P-0119.json",
+      "frontend/mock/fixtures/projects/P-0120.json",
+      "frontend/mock/fixtures/projects/P-0121.json",
+      "frontend/mock/fixtures/projects/P-0122.json",
+      "frontend/mock/fixtures/projects/P-0123.json",
+      "frontend/mock/fixtures/projects/P-0124.json",
+      "frontend/mock/fixtures/projects/P-0125.json",
+      "frontend/mock/fixtures/projects/list.json",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/mock/projects.mjs",
       "frontend/mock/server.mjs",
       "frontend/mock/session.mjs",
       "frontend/mock/work-live.mjs",
       "frontend/src/api/client.ts",
+      "frontend/src/api/live-schema.d.ts",
       "frontend/src/api/types.ts",
       "frontend/src/app/sign-in/page.tsx",
       "frontend/src/app/work/[id]/(item)/history/page.tsx",
       "frontend/src/app/work/[id]/(item)/layout.tsx",
       "frontend/src/app/work/[id]/(item)/page.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/projects/DeliveryTab.tsx",
+      "frontend/src/features/projects/MoreFooter.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectTabContent.tsx",
+      "frontend/src/features/projects/ProjectTabs.tsx",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/projects/model.ts",
+      "frontend/src/features/projects/projects.css",
+      "frontend/src/features/projects/useProject.ts",
       "frontend/src/features/sign-in/SignInView.tsx",
       "frontend/src/features/sign-in/sign-in.css",
       "frontend/src/features/sign-in/useSignOut.ts",
@@ -621,14 +847,23 @@
       "frontend/tests/alerts-settings.test.tsx",
       "frontend/tests/alerts.test.tsx",
       "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/ceo-mock.test.ts",
+      "frontend/tests/delivery-hypercare-mock.test.ts",
       "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/demo-mock.test.ts",
       "frontend/tests/document-review.test.tsx",
+      "frontend/tests/engagement-planning-mock.test.ts",
+      "frontend/tests/engagement-planning.test.tsx",
       "frontend/tests/evidence.test.tsx",
       "frontend/tests/exceptions.test.tsx",
       "frontend/tests/finance-month-end.test.tsx",
       "frontend/tests/line-adapter.test.tsx",
       "frontend/tests/live-work-item.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
       "frontend/tests/mock-live-me.test.ts",
+      "frontend/tests/mock-live-projects.test.ts",
+      "frontend/tests/mock-projects.test.ts",
       "frontend/tests/mock-work-live.test.ts",
       "frontend/tests/money.test.tsx",
       "frontend/tests/my-work.test.tsx",
@@ -636,6 +871,7 @@
       "frontend/tests/overview.test.tsx",
       "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects-model.test.ts",
       "frontend/tests/projects.test.tsx",
       "frontend/tests/setup-delegation.test.tsx",
       "frontend/tests/setup-rules.test.tsx",
@@ -647,9 +883,32 @@
       "frontend/tests/start-work-ppe-forecast.test.tsx",
       "frontend/tests/start-work-proof.test.tsx",
       "frontend/tests/start-work.test.tsx",
+      "frontend/tests/support-handover-mock.test.ts",
       "frontend/tests/weekly-returned-received.test.tsx",
       "frontend/tests/weekly.test.tsx",
-      "frontend/tests/work-item.test.tsx"
+      "frontend/tests/work-item.test.tsx",
+      "handoffs/nextjs/README.md",
+      "handoffs/nextjs/live-schema.d.ts",
+      "handoffs/nextjs/psl-factory.openapi.json",
+      "tests/settlement_helpers.py",
+      "tests/test_account_delivery.py",
+      "tests/test_bank_receipt_capture.py",
+      "tests/test_closure_preparation.py",
+      "tests/test_controlled_documents.py",
+      "tests/test_department_assistant.py",
+      "tests/test_design_reminders_staff.py",
+      "tests/test_factory_accounting_intake.py",
+      "tests/test_factory_api.py",
+      "tests/test_factory_delivery.py",
+      "tests/test_factory_emergency.py",
+      "tests/test_factory_go_live.py",
+      "tests/test_factory_handover.py",
+      "tests/test_factory_issues.py",
+      "tests/test_frontend_connection.py",
+      "tests/test_handover_publish.py",
+      "tests/test_issue_messages.py",
+      "tests/test_payroll_api_cutover.py",
+      "tests/test_rfp_answers.py"
     ]
   },
   "parallel_execution": {
@@ -693,7 +952,7 @@
     }
   },
   "created_at": "2026-11-23T13:18:43Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -743,6 +1002,22 @@
       "round": 1,
       "head": "35189b4503a76ae516ba153f77434a9a562bdc0d",
       "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-23T17:35:57Z",
+      "round": 1,
+      "head": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T17:36:10Z",
+      "round": 2,
+      "head": "1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4",
+      "reason": null
     }
   ],
   "routing": {
@@ -759,10 +1034,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "35189b4503a76ae516ba153f77434a9a562bdc0d"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

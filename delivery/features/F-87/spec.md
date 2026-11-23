@@ -197,3 +197,7 @@ F-87 also adds the shared seam every line's write form attaches to, because lane
 - `LineAdapter` gains an optional `Actions?: ComponentType<LineActionsProps>`, where `LineActionsProps = { readback, ctx: LineContext, commands: CommandDescriptor[], reload: () => void }` (`reload` re-reads the panel and the work item).
 - `PanelView` in `LiveWorkItemView.tsx` renders `adapter.Actions` under that panel's sections when present, inside the panel's own error boundary; lines without it render as today.
 - Forms send through `useWorkCommand` (this feature). Document the seam in `adapter.ts` with a short example. Add a unit test that a registered `Actions` renders with the right props, and that it is absent when not registered.
+
+## Coordinator note (lane C, 23 Nov): two additive asks from lane D
+- `LineContext` gains `state` (the work item's `state` from GET /work/{id}, read-only), so a line's `Actions` can offer a control only in the states the server reports. Lane D's ledger Restart needs this. No client-side rule about which state allows what: the line reads the served state and the server still answers 409/422.
+- `useWorkCommand` supports multipart bodies: a `CommandDescriptor` may say `contentType: 'multipart/form-data'`, and `useWorkCommand` sends `FormData` with the same press lock, uncertain lock, CSRF handling and re-read as JSON. Lane D's fixed-assets dates and opening proof (F-102B) and hypercare observations (F-115B) send through it, so there is no second sender. Unit-test both content types.
