@@ -28,7 +28,9 @@ def calculate(method,request,periods,prior,budget,snapshot):
     elif not snapshot['budget_review']['valid']:findings.append('Budget is incomplete, superseded or lacks current configured review')
     budget_basis_valid=budget is not None and budget.accounting_basis is not None and budget.accounting_basis==basis
     if not budget_basis_valid:findings.append('Budget accounting basis is unknown or incompatible; no conversion')
-    if budget and (budget.cadence=='monthly')!=(method['budget_method']=='monthly_exact'):findings.append('Budget cadence and approved method disagree')
+    budget_cadence_valid = budget is not None and (budget.cadence == 'monthly') == (method['budget_method'] == 'monthly_exact')
+    if budget is not None and not budget_cadence_valid:
+        findings.append('Budget cadence and approved method disagree')
     scopes=([('company',None)] if method['include_company'] else [])+[('bu',key) for key in method['bu_keys']]
     company={};by_bu={key:{} for key in method['bu_keys']};chart=[]
     ordered=sorted(periods,key=lambda p:p.manifest['period'])
@@ -51,7 +53,7 @@ def calculate(method,request,periods,prior,budget,snapshot):
                 actual=actual_values(ordered,len(expected)) if compatible['actual'] and sorted(p.manifest['period'] for p in ordered)==expected else None
                 previous=actual_values(prior_ordered,len(expected)) if compatible['prior'] and len(prior_ordered)==len(expected) else None
                 selected_budget=[]
-                for month in expected:
+                for month in expected if budget_cadence_valid else ():
                     matches=[] if budget is None else [r for r in budget.rows if r['entity']==method['entity'] and r['scope']==scope and r['bu']==(bu or '') and r['metric']==key and r['period']==(month if budget.cadence=='monthly' else method['year_key'])]
                     if len(matches)!=1 or matches[0]['amount'] is None or matches[0]['currency']!=currency or matches[0]['unit']!=unit:
                         selected_budget.append(None);line_findings.append('Missing/duplicate/incompatible budget dimension');continue

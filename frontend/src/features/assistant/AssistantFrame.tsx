@@ -7,6 +7,7 @@ import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
+import type { Me } from '@/api/types';
 import { BottomSheet, buttonClass, useIsPhone } from '@/components';
 import { useMe } from '@/shell/AppShell';
 import { hasDestination, visibleDestinations } from '@/shell/destinations';
@@ -21,6 +22,11 @@ import './assistant.css';
 
 export function AssistantFrame({ children }: { children: ReactNode }) {
   const me = useMe();
+  if (!hasDestination(me, 'assistant')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
+  return <AuthorizedAssistant me={me}>{children}</AuthorizedAssistant>;
+}
+
+function AuthorizedAssistant({ me, children }: { me: Me; children: ReactNode }) {
   const pathname = usePathname() ?? '/assistant';
   const phone = useIsPhone();
   const list = useConversationList();
@@ -30,7 +36,6 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
   const agents = me.assistant_agents;
   const value = useMemo(() => ({ me, agents: agents ?? [], list, pending, setPending, showList }), [me, agents, list, pending, showList]);
 
-  if (!hasDestination(me, 'assistant')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   const current = /^\/assistant\/([^/]+)/.exec(pathname)?.[1];
   const currentId = current ? decodeURIComponent(current) : undefined;
   const rows = (

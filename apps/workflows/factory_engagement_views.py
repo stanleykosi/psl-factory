@@ -136,7 +136,7 @@ def detail(request,work):
             messages.success(request,'Project record updated. Check the registration and Planning handoff.')
             return redirect(request.get_full_path())
         except (ValidationError,ValueError,get_user_model().DoesNotExist) as exc:messages.error(request,str(exc))
-        work=visible(request.user).get(pk=work.pk)
+        work=visible(request.user, candidates=[work.pk]).get(pk=work.pk)
     row=presentation(request.user,work)
     activities=[]
     for item in work.activities.prefetch_related('attempts').order_by('pk'):
