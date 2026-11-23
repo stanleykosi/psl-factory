@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LiveHistoryItem, LiveTask, LiveTaskRead, LiveWork } from '@/api/types';
 import { DecideView } from '@/features/decide/DecideView';
-import { formatAmount } from '@/features/decide/format';
+import { formatAmount } from '@/features/decide/liveFormat';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
@@ -613,7 +613,7 @@ describe('verdicts and revoke (criterion 10)', () => {
   });
 
   it('no revoke path exists in the decide feature or in InlineDecide', () => {
-    const files = ['decide/DecideView.tsx', 'decide/DecidePanel.tsx', 'decide/DecideStates.tsx', 'decide/DecisionContent.tsx', 'decide/useDecision.ts', 'decide/format.ts', 'workspace/InlineDecide.tsx'];
+    const files = ['decide/DecideView.tsx', 'decide/DecidePanel.tsx', 'decide/LiveStates.tsx', 'decide/LiveContent.tsx', 'decide/useLiveDecision.ts', 'decide/liveFormat.ts', 'workspace/InlineDecide.tsx'];
     for (const file of files) expect(readFileSync(join(__dirname, '../src/features', file), 'utf8').toLowerCase(), file).not.toContain('revoke');
     for (const file of files.filter((f) => f.startsWith('decide/'))) expect(readFileSync(join(__dirname, '../src/features', file), 'utf8'), file).not.toMatch(/\bapi\.(GET|POST)/);
   });

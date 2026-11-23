@@ -10,10 +10,10 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Breadcrumb, Button, buttonClass, Callout, Loading, PageTitle, Tag, useIsPhone, useToast, type TagTone } from '@/components';
-import { When } from '@/features/decide-v7/DecisionContent';
-import { cannotActCopy, UncertainNotice } from '@/features/decide-v7/DecideStates';
-import { findDecisionTask } from '@/features/decide-v7/format';
-import { useDecision } from '@/features/decide-v7/useDecision';
+import { When } from '@/features/decide/DecisionContent';
+import { cannotActCopy, UncertainNotice } from '@/features/decide/DecideStates';
+import { findDecisionTask } from '@/features/decide/format';
+import { useDecision } from '@/features/decide/useDecision';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { ProjectTabs, PANEL_ID } from '@/features/projects/ProjectTabs';
 import { routeCaseId } from '@/features/projects/model';

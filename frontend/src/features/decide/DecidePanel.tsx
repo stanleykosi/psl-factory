@@ -8,8 +8,8 @@ import { useId, useRef, useState } from 'react';
 import type { LiveTaskRead } from '@/api/types';
 import { Button, Callout, Panel, RadioGroup, TextArea } from '@/components';
 
-import { NOTE_MAX, roleWords, shortHash, VERDICT_WORDS, type Verdict } from './format';
-import type { ClaimState, SubmitState } from './useDecision';
+import { NOTE_MAX, roleWords, shortHash, VERDICT_WORDS, type Verdict } from './liveFormat';
+import type { ClaimState, SubmitState } from './useLiveDecision';
 
 type Props = {
   read: LiveTaskRead;

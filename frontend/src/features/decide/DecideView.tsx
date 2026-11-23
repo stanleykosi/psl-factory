@@ -8,11 +8,11 @@ import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
 import { DecidePanel } from './DecidePanel';
-import { DecideHeader, DecisionRows, DecisionTrail } from './DecisionContent';
-import { CannotActView, DoneView, NotOpenState, StaleView, UncertainNotice } from './DecideStates';
-import { liveId } from './format';
-import { queuePlace, queueText } from './presentation';
-import { snapshotOf, useDecision } from './useDecision';
+import { DecideHeader, DecisionRows, DecisionTrail } from './LiveContent';
+import { CannotActView, DoneView, NotOpenState, StaleView, UncertainNotice } from './LiveStates';
+import { liveId } from './liveFormat';
+import { queuePlace, queueText } from './livePresentation';
+import { snapshotOf, useDecision } from './useLiveDecision';
 
 import '@/features/work-item/work-item.css';
 import './decide.css';

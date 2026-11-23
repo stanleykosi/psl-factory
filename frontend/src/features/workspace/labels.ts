@@ -2,7 +2,7 @@
 // the frame draws. Presentation only: which sections and steps exist, their values and who may act are the
 // backend's. A value outside these lists is shown as it came, never hidden.
 import { formatDate, formatDayTime, type TagTone } from '@/components';
-import { formatAmount } from '@/features/decide-v7/format';
+import { formatAmount } from '@/features/decide/format';
 import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';
 import type { WorkItem } from '@/features/work-item/labels';
 

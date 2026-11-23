@@ -9,9 +9,9 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import { Button, Callout, Drawer, Loading, TextArea, useIsPhone } from '@/components';
-import { cannotActCopy, UncertainNotice } from '@/features/decide-v7/DecideStates';
-import { findDecisionTask, NOTE_MAX, VERDICT_WORDS, type Verdict } from '@/features/decide-v7/format';
-import { useDecision } from '@/features/decide-v7/useDecision';
+import { cannotActCopy, UncertainNotice } from '@/features/decide/DecideStates';
+import { findDecisionTask, NOTE_MAX, VERDICT_WORDS, type Verdict } from '@/features/decide/format';
+import { useDecision } from '@/features/decide/useDecision';
 
 import type { Step } from './labels';
 import { stepVerdict } from './proposals';

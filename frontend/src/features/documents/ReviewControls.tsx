@@ -6,8 +6,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { Button, Callout, Drawer, Panel, TextArea } from '@/components';
-import type { Verdict } from '@/features/decide-v7/format';
-import type { ClaimState, SubmitState } from '@/features/decide-v7/useDecision';
+import type { Verdict } from '@/features/decide/format';
+import type { ClaimState, SubmitState } from '@/features/decide/useDecision';
 
 import { noteProblem } from './documentModel';
 
