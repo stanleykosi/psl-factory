@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
-  "outcome": "The delivery overview lists the six live Delivery lines and the release gates read and record the live planning exit and release register",
+  "outcome": "The delivery overview lists the six live Delivery lines with their latest work, state and link",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

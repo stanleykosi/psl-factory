@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-101",
-  "outcome": "The income schedules workspace reads its live schedule, reviews and corrections through the line adapter",
+  "outcome": "Income schedules, part 1: the workspace reads the live schedule and records the schedule review through the line adapter",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

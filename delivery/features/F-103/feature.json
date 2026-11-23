@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-103",
-  "outcome": "The cash forecast workspace reads the live forecast, group rows and actuals and records its reviews through the line adapter",
+  "outcome": "Cash forecast, part 1: the workspace reads the live forecast, group rows and actuals through the line adapter",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

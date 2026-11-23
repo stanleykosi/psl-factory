@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-104",
-  "outcome": "The ledger source workspace reads the live incumbent reference, flags duplicates and records the independent review through the line adapter",
+  "outcome": "Ledger source, part 1: the incumbent reference is read, recorded, observed and independently reviewed live",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
-  "outcome": "The issue workspace reads and updates a live project issue, including overdue, no-owner and verified issues",
+  "outcome": "Issue, part 1: the issue workspace reads the live issue, its age, owner, timeline and messages",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

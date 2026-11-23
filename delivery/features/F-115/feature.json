@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-115",
-  "outcome": "Hypercare records live stability readings and shows evaluating, qualified, not-met and Setup-needed states",
+  "outcome": "Hypercare, part 1: the workspace reads live stability, evaluation and Setup-needed states and can pause or continue background checks",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

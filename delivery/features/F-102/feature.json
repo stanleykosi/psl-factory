@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-102",
-  "outcome": "The fixed asset schedule workspace reads the live asset register and schedule and records its reviews through the line adapter",
+  "outcome": "Fixed assets, part 1: the workspace reads the live asset register and schedule through the line adapter",
   "state": "PLANNED",
   "task_ids": [
     "FE-CONNECT-1"

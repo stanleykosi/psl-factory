@@ -340,6 +340,17 @@ Live now lets the person upload a file as the proof for choosing a PM, but only 
 2. Show no tick-boxes and send the confirmations as true. (Not recommended: it records a confirmation nobody gave.)
 3. Hold both until PSL supplies the wording.
 
+### LC-Q18 · F-89 · Comparing a report with its previous version
+API 1.24.0 can compare two versions of the same report (changed, added, removed and unchanged sections, with their records). The weekly report read gives only this version's id, not the previous one, and the SCR-25 boards draw no compare. The page shows the report text and the agent's notes without it.
+1. **(Recommended)** Leave compare out of this feature. Ask the backend to add the previous version's id to the weekly report read (one field); then add a "What changed since the last version" view in a small follow-up, drawn by the design engineer first.
+2. Build a compare view now with no board, using the id the backend supplies later.
+
+### LC-Q17 · F-87 · Wording of "Confirm what happened"
+The approved panel says "It didn't arrive. Allow one resend of the same version." and "I can't tell yet. Keep it held and remind me tomorrow." The backend records an observation (delivered, not delivered, unknown) with a reason and proof, and does not resend, remind, verify or approve anything (A-13, answers section 10). The board also has no Reason box and shows proof only for "It arrived", while live needs both for every outcome.
+1. **(Recommended)** Keep the three choices with short plain sublines that promise nothing the backend does not do, add a required Reason box, always show the proof picker, and keep only "Your choice is recorded with your name."
+2. Keep the board's wording and ask the backend to add resend and reminders (a new behaviour).
+3. Hold the panel until the design engineer redraws it.
+
 ## Lane D
 
 ### LD-Q1 · F-107 · Business-unit totals (SCR-57): build on what the API discloses?
