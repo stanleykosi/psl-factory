@@ -1,15 +1,15 @@
 'use client';
 
-// SCR-04 Proof box (FE-M2A-PROOF): F-09's ProofField and useEvidenceUpload on the line's case, as StepForm's
-// EvidenceField hosts them. A chosen file uploads at once; its card reads "Uploaded" only once the backend returns an
+// SCR-04 Proof box (FE-M2A-PROOF): ProofField and useEvidenceUpload on the line's case, as StepForm's
+// EvidenceField hosts them. A chosen file uploads at once; its row reads "Uploaded" only once the backend returns an
 // evidence_id, and only those ids are sent with the start. There is no size or type rule here: the backend's 422
-// message is the only one. Until a project gives the case, the box is F-05's disabled box. The uploader is keyed by
+// message is the only one. Until a project gives the case, the zone is closed. The uploader is keyed by
 // case, so another project starts it again empty; what was uploaded stays on the old case and is never sent.
 // 403 and 404 read the same: the file is dropped from the start and the drawer says proof can't be added.
 import { useEffect, useId, useRef } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { Icon } from '@/components';
+import { FileUpload, Icon } from '@/components';
 import { ProofField, useEvidenceUpload } from '@/features/response';
 import '@/features/response/response.css';
 
@@ -77,9 +77,9 @@ function Uploader({ field, caseId, caseRevision, reread, onState, onSignedOut, o
 
   return (
     <>
-      <ProofField proof={proof} label={field.label} layout={field.multiple ? 'drop' : 'card'} choose={field.multiple ? undefined : 'Choose a file'} />
+      <ProofField proof={proof} label={field.label} multiple={field.multiple} />
       {/* The card's reason is plain text in F-09's ProofField: a failure is also announced here, as Callout announces
-          a problem (role="alert", inserted with its words), and shown to sight only on the card. */}
+          a problem (role="alert", inserted with its words), and shown to sight only on the row. */}
       {files
         .filter((f) => f.status === 'failed' && f.problem && f.problem !== CANT_ADD)
         .map((f) => (
@@ -102,20 +102,9 @@ type Props = Omit<UploaderProps, 'caseId' | 'caseRevision'> & {
   moved: boolean;
 };
 
-/** The disabled dashed box: no picker. */
+/** The closed zone: no picker. */
 function Unavailable({ field, text }: { field: Field; text: string }) {
-  const labelId = useId();
-  return (
-    <div className="resp-field" role="group" aria-labelledby={labelId}>
-      <span className="psl-label" id={labelId}>
-        {field.label}
-      </span>
-      <span className="sw-proof" aria-disabled="true">
-        <Icon name="clip" />
-        {text}
-      </span>
-    </div>
-  );
+  return <FileUpload label={field.label} state={{ status: 'empty' }} onFile={() => {}} onRemove={() => {}} disabledReason={text} />;
 }
 
 export function StartProof({ field, sendCase, readOnly, error, movedHelp, moved, ...uploader }: Props) {

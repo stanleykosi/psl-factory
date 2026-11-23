@@ -147,7 +147,7 @@ for (const [label, viewport] of [
       await scope.getByRole('combobox', { name: /What you found/ }).click();
       await page.getByRole('option', { name: 'Found', exact: true }).click();
       await scope.locator('input[type="file"]').setInputFiles(PNG);
-      await expect(scope.getByText('qb-screenshot-je7741.png · 310 KB')).toBeVisible();
+      await expect(scope.getByText('Uploaded · 310 KB')).toBeVisible();
       await expect(scope.getByText(/Uploading…/)).toHaveCount(0);
       await expectNoAxeViolations(page);
       if (phone) expect(await smallTargets(page)).toEqual([]);
@@ -174,7 +174,7 @@ for (const [label, viewport] of [
       await scope.getByRole('combobox', { name: /What you found/ }).click();
       await page.getByRole('option', { name: 'Unknown', exact: true }).click();
       await scope.locator('input[type="file"]').setInputFiles(PNG);
-      await expect(scope.getByText('qb-screenshot-je7741.png · 310 KB')).toBeVisible();
+      await expect(scope.getByText('Uploaded · 310 KB')).toBeVisible();
       await expect(scope.getByText(/Uploading…/)).toHaveCount(0);
       await scope.getByRole('button', { name: 'Record observation' }).click();
       await expect(page.locator('.work-state')).toHaveText('CHECK HELD');
@@ -190,7 +190,7 @@ for (const [label, viewport] of [
       await scope.getByRole('combobox', { name: /What you found/ }).click();
       await page.getByRole('option', { name: 'Found', exact: true }).click();
       await scope.locator('input[type="file"]').setInputFiles(PNG);
-      await expect(scope.getByText('qb-screenshot-je7741.png · 310 KB')).toBeVisible();
+      await expect(scope.getByText('Uploaded · 310 KB')).toBeVisible();
       await expect(scope.getByText(/Uploading…/)).toHaveCount(0);
       await scope.getByRole('button', { name: 'Record observation' }).click();
       await expect(page.getByText('We couldn’t confirm this step. Check the page before trying again.')).toBeVisible();

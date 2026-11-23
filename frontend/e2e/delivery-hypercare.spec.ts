@@ -82,7 +82,7 @@ for (const [label, viewport] of [
       await expect(form.getByText(/release-1.0.0-log.pdf/)).toBeVisible();
       if (phone) {
         await expectTouchTargets(await form.locator('button, input:not([type="file"])').all());
-        const box = (await form.locator('.resp-chip__remove').boundingBox())!;
+        const box = (await form.getByRole('button', { name: /^Remove / }).boundingBox())!;
         expect([box.width >= 44, box.height >= 44]).toEqual([true, true]);
       }
       expect(await noHorizontalScroll(page)).toBe(true);

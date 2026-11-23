@@ -74,10 +74,9 @@
 .ws-empty, .ws-restricted { margin: 0; line-height: 1.5; }
 .ws-empty, .ws-restricted { color: var(--ink-muted); }
 .ws-detail { font-size: var(--text-hint-size); color: var(--ink-muted); }
-/* PROPOSAL (F-41 G-SCR32-3): the file that goes with a message, as the SCR-32 board draws it (dashed box, paperclip); text only, never a link.
+/* PROPOSAL (F-41 G-SCR32-3): the file that goes with a message, as the design system's file row (paperclip, name, size); text only, never a link.
    Drawn only for an item that carries `attachment`; today that is the payment reminder alone. */
-.ws-attachment { display: flex; align-items: center; gap: var(--space-10px); margin-top: var(--space-2); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--surface); color: var(--ink); }
-.ws-attachment__meta { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
+.ws-attachment { margin-top: var(--space-2); }
 
 /* rows */
 .ws-rows { list-style: none; margin: 0; padding: 0; }
@@ -137,7 +136,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-form { min-width: 0; }
 .ws-form__head { margin: 0; }
 .ws-form__body { gap: var(--space-4); }
-.ws-form .psl-seg__opt, .ws-form .resp-filebtn { min-height: var(--control-md); }
+.ws-form .psl-seg__opt, .ws-form .psl-file .psl-btn { min-height: var(--control-md); }
 .ws-form__actions { display: flex; flex-wrap: wrap; gap: var(--space-10px); }
 .ws-checkwrap { display: inline-flex; align-items: center; justify-content: center; min-width: var(--control-md); min-height: var(--control-md); cursor: pointer; }
 .ws-check { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
@@ -248,7 +247,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 /* department input: one column, no page box, F-18's Record bar pinned in the Drawer, 44px+ targets on a phone */
 .ws-respdrawer .resp-form { border: none; background: none; padding: 0; }
 @media (min-width: 720px) { .ws-respdrawer .resp-phonebar { position: sticky; left: auto; right: auto; bottom: 0; background: var(--surface); padding: var(--space-3) 0; } }
-.ws-respdrawer .psl-seg__opt, .ws-respdrawer .resp-filebtn { min-height: var(--control-phone); }
+.ws-respdrawer .psl-seg__opt, .ws-respdrawer .psl-file .psl-btn { min-height: var(--control-phone); }
 @media (max-width: 719.98px) {
   .ws-form--bare { border: none; background: none; padding: 0; }
   .ws[data-line="engagement"] .ws-ref { display: inline-flex; align-items: center; min-height: var(--control-phone); }
@@ -260,10 +259,6 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .cmp-panel--full .ws-form > .ws-form__body { flex: 1; display: flex; flex-direction: column; }
   .cmp-panel--full .ws-form__actions { margin-top: auto; }
 }
-/* QA-2-1: the uploaded file chip's remove button is a 44px target inside a Drawer (F-18's own page is unchanged) */
-.cmp-panel .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
-/* QA-2-1 (F-34): and in the step form on a phone (F-18's own page is unchanged) */
-@media (max-width: 719.98px) { .ws-form .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); } }
 
 /* F-33: the income schedule boards: the stations in the main column, the working agent's card beside the sections,
    and the decision steps decided in place (InlineDecide) in the side column */
@@ -301,7 +296,6 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-respinline .resp-form--handover { gap: var(--space-18px); }
 @media (max-width: 719.98px) {
   .ws-respinline .resp-form--handover .resp-row { grid-template-columns: minmax(0, 1fr); }
-  .ws-respinline .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
   .ws-respinline .resp-form--handover .psl-input:not(textarea) { min-height: var(--control-phone); }
   .ws-respinline .resp-attest { min-height: var(--control-phone); align-items: center; }
   /* UI-1-4: the phone board has no card; the screen heading above names the form, the panel head stays for screen readers */

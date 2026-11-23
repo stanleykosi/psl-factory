@@ -225,7 +225,7 @@ describe('validation (SCR-16-desktop-validation)', () => {
     await fillW1601({ file: false, attest: false });
     expect(recordButton('Record response').disabled).toBe(true);
     expect(screen.getByRole('alert').textContent).toBe('Add the proof and confirm it’s genuine to record this.');
-    expect(text()).toContain('No proof added yet');
+    expect(text()).toContain('Drop a file here or choose a file');
     fireEvent.click(recordButton('Record response'));
     expect(writes()).toHaveLength(0);
     await addFile();
@@ -253,7 +253,8 @@ describe('validation (SCR-16-desktop-validation)', () => {
     when();
     tick();
     expect(text()).toContain('Proof can’t be uploaded for this item.');
-    expect((screen.getByRole('button', { name: 'Add another file' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(text()).toContain('Uploads are closed');
+    expect(document.querySelector('input[type="file"]')).toBeNull();
     expect(recordButton('Record response').disabled).toBe(true);
     expect(writes()).toHaveLength(0);
   });
@@ -268,7 +269,8 @@ describe('proof and the record body', () => {
     expect(first).toEqual({ kind: 'client_response_proof', filename: 'Lagoon_UAT_signoff_11Nov.pdf', content_base64: first.content_base64, case_revision: 4 });
     expect(typeof first.content_base64).toBe('string');
     expect(first.content_base64).not.toContain('data:');
-    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf · 184 KB');
+    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf');
+    expect(text()).toContain('Uploaded · 184 KB');
     await addFile(pdf('Second_page.pdf', 2048));
     expect(posts('/evidence')[1].body!.case_revision).toBe(5);
     choose('Approved');
@@ -489,7 +491,7 @@ describe('absent fields are left out (W-1606)', () => {
     expect(document.querySelector('.resp-drop .psl-hint')).toBeNull();
     expect(screen.getByLabelText('Who responded')).toBeTruthy();
     expect(screen.getByRole('group', { name: 'What they did' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Add another file' })).toBeTruthy();
+    expect(screen.getByLabelText('Proof', { selector: 'input' })).toBeTruthy();
     expect(screen.getByRole('checkbox')).toBeTruthy();
     for (const s of BOARD) expect(text()).not.toContain(s);
   });
@@ -529,7 +531,8 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     expect(radios.map((r) => r.labels![0].textContent)).toEqual(['Signed', 'Asked for changes', 'Declined']);
     expect(text()).toContain("What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.");
     expect(recordButton('Record signature')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Choose the signed copy' })).toBeTruthy();
+    expect(screen.getByLabelText('Proof', { selector: 'input' })).toBeTruthy();
+    expect(text()).toContain('Drop a file here or choose a file');
     expect(screen.getByRole('complementary', { name: 'About this signature' }).textContent).toContain("The client doesn't log in.");
   });
 
@@ -562,7 +565,7 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     expect(text()).toContain('Lagoon Health · Patient app · build 2.4.0 · Dr Amaka Obi');
     expect(screen.queryByLabelText('Who responded')).toBeNull();
     expect(screen.getByLabelText('When they responded')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Take a photo or choose a file' })).toBeTruthy();
+    expect(text()).toContain('Take a photo or choose a file');
     expect(fileInput().hasAttribute('capture')).toBe(false);
     expect(screen.getByRole('checkbox', { name: 'I confirm this response is genuine.' })).toBeTruthy();
     expect(text()).not.toContain("Lagoon Health's client contact");
@@ -592,7 +595,8 @@ describe('errors on record', () => {
     expect(gets()).toBe(2);
     expect((screen.getByRole('radio', { name: 'Approved' }) as HTMLInputElement).checked).toBe(true);
     expect((screen.getByRole('checkbox') as HTMLInputElement).checked).toBe(true);
-    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf · 184 KB');
+    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf');
+    expect(text()).toContain('Uploaded · 184 KB');
     expect(posts('/response')).toHaveLength(1);
   });
 

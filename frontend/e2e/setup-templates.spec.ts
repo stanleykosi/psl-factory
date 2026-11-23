@@ -84,12 +84,12 @@ test.describe('desktop', () => {
     expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     await button.click();
     const panel = page.getByRole('region', { name: 'Upload a version of Invoice' });
-    await panel.getByLabel('File').setInputFiles(FILE);
+    await panel.locator('input[type="file"]').setInputFiles(FILE);
     await expect(panel.getByText('invoice-v2.pdf · 17 B')).toBeVisible();
     await panel.getByLabel('Note (optional)').fill('Real template from PSL legal');
     await expectNoAxeViolations(page);
 
-    await panel.getByLabel('File').focus();
+    await panel.locator('input[type="file"]').focus();
     await page.keyboard.press('Tab');
     await expect(panel.getByLabel('Note (optional)')).toBeFocused();
     await page.keyboard.press('Tab');
@@ -102,7 +102,7 @@ test.describe('desktop', () => {
     await expect(button).toBeFocused();
 
     await button.click();
-    await panel.getByLabel('File').setInputFiles(FILE);
+    await panel.locator('input[type="file"]').setInputFiles(FILE);
     await panel.getByLabel('Note (optional)').fill('Real template from PSL legal');
     await panel.getByRole('button', { name: 'Upload version' }).dblclick();
     await expect(page.locator('.psl-toast')).toHaveText('Version 2 uploaded for Invoice');
@@ -124,14 +124,14 @@ test.describe('desktop', () => {
     await openAs(page, context, { psl_mock_templates_save: 'invalid' });
     await desktopRow(page, 'Invoice').getByRole('button', { name: UPLOAD }).click();
     const panel = page.getByRole('region', { name: 'Upload a version of Invoice' });
-    await panel.getByLabel('File').setInputFiles(FILE);
+    await panel.locator('input[type="file"]').setInputFiles(FILE);
     await panel.getByLabel('Note (optional)').fill('keep me');
     await panel.getByRole('button', { name: 'Upload version' }).click();
     await expect(panel.getByRole('alert')).toHaveText('Check these fields: filename, note.');
-    await expect(panel.getByLabel('File')).toHaveAttribute('aria-invalid', 'true');
+    await expect(panel.locator('input[type="file"]')).toHaveAttribute('aria-invalid', 'true');
     await expect(panel.getByLabel('Note (optional)')).toHaveAttribute('aria-invalid', 'true');
     await expect(panel.getByLabel('Note (optional)')).toHaveValue('keep me');
-    await expect(panel.getByLabel('File')).toHaveAccessibleDescription(/That file type isn’t accepted\./);
+    await expect(panel.locator('input[type="file"]')).toHaveAccessibleDescription(/That file type isn’t accepted\./);
     await expectNoAxeViolations(page);
   });
 
@@ -140,7 +140,7 @@ test.describe('desktop', () => {
     await openAs(page, context, { psl_mock_templates_save: 'stale' });
     await desktopRow(page, 'Invoice').getByRole('button', { name: UPLOAD }).click();
     const panel = page.getByRole('region', { name: 'Upload a version of Invoice' });
-    await panel.getByLabel('File').setInputFiles(FILE);
+    await panel.locator('input[type="file"]').setInputFiles(FILE);
     await panel.getByRole('button', { name: 'Upload version' }).click();
     const notice = page.locator('.setup-desktop').getByText('This template changed. Reload to see the newer version.');
     await expect(notice).toBeVisible();
@@ -234,7 +234,7 @@ test.describe('phone', () => {
     expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     await button.click();
     const panel = card.getByRole('region', { name: 'Upload a version of Minutes' });
-    await panel.getByLabel('File').setInputFiles(FILE);
+    await panel.locator('input[type="file"]').setInputFiles(FILE);
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
     await panel.getByRole('button', { name: 'Upload version' }).click();
@@ -247,14 +247,14 @@ test.describe('phone', () => {
     await openAs(page, context, { psl_mock_templates: 'mobile', psl_mock_templates_save: 'invalid' });
     const card = phoneCard(page, 'Invoice');
     await card.getByRole('button', { name: UPLOAD }).click();
-    await card.getByLabel('File').setInputFiles(FILE);
+    await card.locator('input[type="file"]').setInputFiles(FILE);
     await card.getByRole('button', { name: 'Upload version' }).click();
     await expect(card.getByRole('alert')).toHaveText('Check these fields: filename, note.');
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
     await openAs(page, context, { psl_mock_templates: 'mobile', psl_mock_templates_save: 'stale' });
     await phoneCard(page, 'Invoice').getByRole('button', { name: UPLOAD }).click();
-    await phoneCard(page, 'Invoice').getByLabel('File').setInputFiles(FILE);
+    await phoneCard(page, 'Invoice').locator('input[type="file"]').setInputFiles(FILE);
     await phoneCard(page, 'Invoice').getByRole('button', { name: 'Upload version' }).click();
     await expect(page.locator('.setup-phone').getByText('This template changed. Reload to see the newer version.')).toBeVisible();
     await expectNoAxeViolations(page);

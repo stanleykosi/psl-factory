@@ -393,6 +393,16 @@ The design engineer chose concept B ("Summary and next panel") from the four on 
 ## D-170 (21 Nov 2026): switching tabs keeps the page's frame; only the content shows a skeleton
 "from top to the tab shouldnt be switching as i click to go to another tab since it doesnt necessarily change. i dont like the layout shift. skeleton should just show from the content that changes. same principle should apply across the paltform." Then "Yes, fix all four". Four tabbed pages rebuilt the whole page on a tab change, because each tab was its own page: Project (Journey … Actions), the work item (Overview, History), the RFP tabs (each a different work item) and Setup. Each now keeps its breadcrumb or eyebrow, title and tab bar in a frame that stays put. The record is read once, not again per tab, and only the area under the tabs shows a content-shaped skeleton. A tab count that is not yet known is blank, never 0. The RFP frame shows the header it already has while the next item loads. The first visit, signed-out, no-access and failed reads are unchanged: nothing about a record shows before a read allows it. My work and the Projects list already worked this way and are the model.
 
+## D-171 (22 Nov 2026): one upload field everywhere, concept A (the design system drop zone)
+"this doesnt seem to be following our design system upload area at all. lets have concepts so we decis on the universal one across the platfomr", then "Concept A" from the four on the main canvas (UPLOAD-concepts). The app had four upload looks: a plain "Choose a file" button (Assign PM, Outcome, client responses), the design system drop zone (Setup only), a dashed box with "No proof added yet" and "Add another file" (work item steps, start-work proof) and a large phone button. From now on every file field is the design system's FileUpload:
+- a dashed ink zone with an upload icon, "Drop a file here or choose a file" and what it accepts ("PDF, PNG, JPG or EML · up to 10 MB");
+- solid blue with "Drop to upload" while a file is dragged over;
+- files as rows under the zone (clip icon, name, "Uploaded · 420 KB" or "Uploading · 1.2 of 3.4 MB" with a progress bar and Cancel, Remove, or an orange-edged error row with Try again);
+- once a file is in, the zone shrinks to one line, "Add another file or drop it here", where more than one file is allowed;
+- on a phone the zone says "Take a photo or choose a file";
+- a closed record shows a grey zone saying why ("Uploads are closed · The record is verified.").
+The assistant's attach button in the chat composer stays an icon button (a message attachment, not a form field). Existing boards that draw other upload looks are superseded by this rule and the FileUpload component spec.
+
 ## D-172 (23 Nov 2026): connecting the frontend to the live API starts with wave 0, split in two
 The backend shipped API 1.22.0 on main, and the connection map (`delivery/connect/`, PR #95) lays out the waves. The design engineer said "Yes, start wave 0". Readiness found it gated and too large, and asked three questions. The answers:
 - "Approve both decisions": D-API-STYLE r3 and D-AUTH r3 are approved as built (source `architecture/sources/decisions-2026-11-23.md`, architecture package v8).
