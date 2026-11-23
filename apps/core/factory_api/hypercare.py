@@ -9,6 +9,7 @@ from apps.core.read_budget import limit_queries
 from apps.core.read_observation import read_observation
 from apps.core.services import lock_case
 from apps.identity.services import active_case_grants, require
+from apps.pmo.delivery_closure import hypercare_inputs
 from apps.pmo.release_proofs import own_pdfs
 from apps.policy.change_drafts import draft_standard_policy
 from apps.policy.delivery_validators import METRIC, criteria_schema
@@ -96,6 +97,7 @@ def record_event(request, work_id, *, body):
     'configuration_id': nullable(ID), 'criteria': nullable(CRITERIA), 'can_draft_criteria': BOOLEAN,
     'observation_owners': array(OWNER), 'assessment_id': nullable(ID),
     'qualified': CONFIRMED, 'observations': array(obj({'owner': OWNER, 'source_id': ID, 'verification_id': ID})),
+    'criterion_results': array(obj({'owner': nullable(OWNER), 'key': TEXT, 'status': choice('met', 'not_met', 'unknown')})),
     'findings': array(TEXT), 'due_at': nullable(DATETIME), 'verified': BOOLEAN,
 }), summary='Read active stability criteria, current observations and the exact qualified assessment')
 @read_observation
@@ -109,9 +111,12 @@ def detail(request, work_id):
         state = checks['stability'].get('inputs', {})
         configuration = None
         criteria = None
+        criterion_results = []
         try:
             configuration = active_component(COMPONENT, work.case)
             criteria = reference_values(configuration)[0]
+            if state:
+                _, criterion_results = hypercare_inputs(dossier, detailed=True)
         except (PermissionDenied, ValidationError):
             pass
         owners = [form.owner_name for form in observation_forms(actor, work)]
@@ -130,6 +135,7 @@ def detail(request, work_id):
             'configuration_id': configuration.pk if configuration else None, 'criteria': criteria,
             'can_draft_criteria': 'policy.configure' in grants, 'observation_owners': owners,
             'assessment_id': assessment.pk if current else None, 'qualified': state.get('qualified'),
+            'criterion_results': criterion_results,
             'observations': [{'owner': owner, 'source_id': ids[0], 'verification_id': ids[1]}
                              for owner, ids in state.get('sources', {}).items()],
             'findings': state.get('findings', []), 'due_at': state.get('due_at'), 'verified': verified}

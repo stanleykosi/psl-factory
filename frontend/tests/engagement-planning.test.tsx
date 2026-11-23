@@ -871,7 +871,7 @@ describe('access and the project (AC 12, 13, 14)', () => {
     }
   });
 
-  it('P-0106’s "Plan a project" line links to /work/W-2603', async () => {
+  it('P-0106’s "Plan a project" line links to /work/2603', async () => {
     vi.stubGlobal(
       'fetch',
       withoutBellFeed(async (request: Request) => {
@@ -887,7 +887,7 @@ describe('access and the project (AC 12, 13, 14)', () => {
       </AppShell>,
     );
     const link = await screen.findByRole('link', { name: /Plan a project/ });
-    expect(link.getAttribute('href')).toBe('/work/W-2603');
+    expect(link.getAttribute('href')).toBe('/work/2603');
   });
 
   it('the project bar on W-2603 links seven tabs to P-0106 and marks none current; on a phone the back link reads Project, and other lines keep Queue', async () => {

@@ -1,11 +1,13 @@
 """Planning/delivery and release evidence. No deployment command exists here."""
+import json
 import math
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import transaction,DatabaseError
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from apps.core.evidence_access import public_evidence
-from apps.core.services import lock_case,event,bump
+from apps.core.services import add_evidence,lock_case,event,bump
+from apps.identity.factory_access import department_cases
 from apps.identity.services import require
 from apps.policy.services import decision_authority
 from apps.documents.controlled import baseline_manifest
@@ -187,9 +189,17 @@ def planning_inputs(d):
 
 @transaction.atomic
 def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*,issue_id=None):
-    case=lock_case(actor,case_id,'delivery.planning_decide',expected);d=dossier_for(case,dossier_id);ensure_open(d);note_required(note)
+    case=lock_case(actor,case_id,'delivery.planning_decide',expected);d=dossier_for(case,dossier_id);ensure_open(d)
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose an explicit planning verdict')
     authority=decision_authority(actor,case,'PMO Lead',verdict)
+    direct = evidence_id is None
+    if direct:
+        if verdict != 'approve' or not can_approve_planning_directly(actor, case):
+            raise PermissionDenied('Only the current PMO Lead may approve Planning exit directly.')
+        if note:
+            note_required(note)
+    else:
+        note_required(note)
     inputs = planning_inputs(d)
     if verdict == 'approve':
         from .coordinator_intake import planning_exit
@@ -220,7 +230,20 @@ def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*
             delivery_workarounds.approval_statement(actor, d, remedy)
         data['issue_remedy'] = remedy
         data['blocking_decision_id'] = returned.pk
-    return record(actor,case,d,'planning_decision',subject(case,evidence_id),data,inputs,parent=prior)
+    if direct:
+        evidence = add_evidence(actor, case.pk, 'agent_private_planning_approval',
+            json.dumps({'dossier': d.pk, 'role': 'PMO Lead', 'approver': actor.pk, 'verdict': verdict,
+                        'planning_packet': digest(inputs), 'previous_decision': prior.pk if prior else None},
+                       sort_keys=True), f'planning-approval/v1:{d.pk}', case.revision)
+        case.refresh_from_db(fields=['revision'])
+        data['direct_pmo_approval'] = True
+    else:
+        evidence = subject(case, evidence_id)
+    return record(actor,case,d,'planning_decision',evidence,data,inputs,parent=prior)
+
+
+def can_approve_planning_directly(actor, case):
+    return department_cases(actor, 'pmo-lead', heads_only=True).filter(pk=case.pk).exists()
 
 
 def planning_issue(d, issue_id):

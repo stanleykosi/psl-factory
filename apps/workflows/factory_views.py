@@ -733,7 +733,7 @@ def index(request):
     response['Cache-Control']='no-store';return response
 
 
-def queue_context(actor, values, *, scope=None):
+def queue_context(actor, values, *, scope=None, page_size=8, empty_page_lookahead=0, include_row=None):
     from time import monotonic
     from django.core.paginator import Paginator
     from apps.core.design_views import discoverable_work
@@ -753,23 +753,29 @@ def queue_context(actor, values, *, scope=None):
     elif queue=='mine':query=query.filter(actor=actor)
     elif queue=='waiting':query=query.filter(status__in=['waiting','waiting_effect'])
     else:query=query.exclude(status__in=['verified','cancelled'])
-    candidates=Paginator(query.distinct().order_by('-updated_at','-pk'), 8).get_page(values.get('page'))
+    paginator = Paginator(query.distinct().order_by('-updated_at', '-pk'), page_size)
+    candidates = paginator.get_page(values.get('page'))
     items=[];deferred=[];evaluated=0;deadline=monotonic()+9
-    for work in candidates:
-        try:
-            with observation_scope(), limit_queries(1400, deadline=deadline):
-                row=presentation(actor,work)
-        except ReadLimit:
-            deferred.append(work)
-            continue
-        evaluated+=1
-        if queue=='verified' and row.get('readiness_changed'):continue
-        if queue=='exceptions' and not exception_inbox_row(row,work.status):continue
-        if queue=='needs_me' and not row['needs_me']:continue
-        if queue=='waiting' and row['needs_me']:continue
-        if queue=='decisions' and not decision_inbox_row(row):continue
-        if queue=='unassigned' and row['owner']!='Unassigned':continue
-        items.append(row)
+    for skipped in range(empty_page_lookahead + 1):
+        for work in candidates:
+            try:
+                with observation_scope(), limit_queries(1400, deadline=deadline):
+                    row=presentation(actor,work)
+            except ReadLimit:
+                deferred.append(work)
+                continue
+            evaluated+=1
+            if queue=='verified' and row.get('readiness_changed'):continue
+            if queue=='exceptions' and not exception_inbox_row(row,work.status):continue
+            if queue=='needs_me' and not row['needs_me']:continue
+            if queue=='waiting' and row['needs_me']:continue
+            if queue=='decisions' and not decision_inbox_row(row):continue
+            if queue=='unassigned' and row['owner']!='Unassigned':continue
+            if include_row is not None and not include_row(work, row):continue
+            items.append(row)
+        if items or deferred or not candidates.has_next() or skipped == empty_page_lookahead:
+            break
+        candidates = paginator.page(candidates.next_page_number())
     from apps.finance.payroll_questions import queue_cards as payroll_question_cards
     questions=payroll_question_cards(actor,queue,q,line)
     return {'rows':items,'candidates':candidates,'deferred':deferred,'payroll_questions':questions,

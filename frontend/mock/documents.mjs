@@ -72,7 +72,7 @@ export function documentRead({ url, persona, cookies = {}, work, overrides }) {
   if (id !== 'D-2901') return undefined;
   const base = versions[rawVersion];
   if (!base) return { status: 404, body: NOT_FOUND };
-  const row = list.rows.find((r) => r.item.case_id === base.case_id);
+  const row = list.rows.find((r) => r.id === base.case_id);
   if (row && !row.personas.includes(persona)) return { status: 404, body: NOT_FOUND };
   if (rawVersion === '1') return { status: 200, body: base };
 

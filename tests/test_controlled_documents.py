@@ -133,6 +133,12 @@ class ControlledDocumentTests(TestCase):
         self.assertNotContains(self.client.get(url), 'Clarified status for the client')
         submit(successor_url, action='request')
         review_api = f'/api/v1/projects/{self.case.pk}/document-reviews/{successor.pk}'
+        compared = self.client.get(f'{review_api}/compare', {'from_version': version.pk})
+        self.assertEqual(compared.status_code, 200, compared.content)
+        status = next(section for section in compared.json()['sections'] if section['key'] == 'status')
+        self.assertEqual((status['change'], status['after']), ('changed', corrected['status']))
+        self.assertNotContains(compared, 'internal_notes')
+        self.assertNotContains(compared, 'PRIVATE TRACE')
         preview = self.client.get(review_api)
         self.assertContains(preview, 'Clarified status for the client')
         self.assertNotContains(preview, 'PRIVATE TRACE')

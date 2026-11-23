@@ -103,8 +103,8 @@ describe('the fixtures', () => {
 
   it('the only change to an existing fixture is the one P-0106 lines entry', () => {
     const p0106 = fixture(join(__dirname, '../mock/fixtures/projects/P-0106.json'));
-    expect(p0106.lines.at(-1)).toEqual({ line: 'Plan a project', state: 'waiting', work_id: 'W-2603' });
-    expect(p0106.lines).toHaveLength(3);
+    expect(p0106.items.at(-1)).toMatchObject({ line: 'Plan a project', state: 'Waiting', id: 2603 });
+    expect(p0106.items).toHaveLength(3);
   });
 
   it('the registered item cites the project and the planning item, and the packet keeps its unknowns', () => {

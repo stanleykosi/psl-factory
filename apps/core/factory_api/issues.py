@@ -4,15 +4,22 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.db.models import OuterRef, Subquery
+from django.utils import timezone
 
 from apps.core.evidence_access import public_evidence
+from apps.core.services import bump, event, lock_case
 from apps.core.views import accessible_case
+from apps.finance import project_money
 from apps.identity.services import require
 from apps.pmo import issue_teams, issues as native
-from apps.pmo.issue_access import public_current_issues
+from apps.pmo.issue_access import public_current_issues, public_states
+from apps.pmo.models import Milestone
 from apps.policy.document_validators import ROLES
 from apps.policy.issue_team_validators import CHANNELS
+from apps.policy.services import reference_values, resolve
 from apps.workflows import factory_issues as flow
 from apps.workflows.factory_issue_views import presentation
 
@@ -32,8 +39,13 @@ ROLE = choice(*ROLES)
 STATE = obj({'id': ID, 'state_id': ID, 'reference': TEXT, 'title': TEXT, 'kind': TEXT,
              'status': choice('Open', 'In Progress', 'Resolved', 'Closed'),
              'severity': SEVERITY, 'owner_id': ID, 'next_action': TEXT,
+             'opened_at': nullable(DATETIME), 'age_days': nullable({'type': 'integer', 'minimum': 0}),
              'acknowledged_at': nullable(DATETIME), 'resolved_at': nullable(DATETIME)})
 RECORD = obj({'issue_id': ID, 'state_id': ID, 'case_revision': REVISION})
+MILESTONE = obj({'id': ID, 'name': TEXT, 'url': TEXT})
+PLANNED_STAGE = choice('uat', 'completion')
+PLANNED_MILESTONE = obj({'stage': PLANNED_STAGE, 'name': TEXT, 'policy_id': ID})
+MILESTONE_LINK = 'issue.milestone_block'
 LINK = obj({'kind': choice('risk', 'incident', 'change'), 'source_ref': {**TEXT, 'maxLength': 240}, 'evidence_id': ID})
 
 
@@ -50,9 +62,57 @@ def record(case, state):
 
 def state(issue):
     row = issue.current
+    opened_at = getattr(issue, 'opened_at', None)
     return {'id': issue.pk, 'state_id': row.pk, 'reference': issue.reference, 'title': row.title, 'kind': row.kind,
             'status': row.status, 'severity': row.severity or None, 'owner_id': row.owner_id, 'next_action': row.next_action,
+            'opened_at': opened_at, 'age_days': max((timezone.now() - opened_at).days, 0) if opened_at else None,
             'acknowledged_at': row.acknowledged_at, 'resolved_at': row.resolved_at}
+
+
+def issue_records(case):
+    opening = public_states(case).filter(issue_id=OuterRef('pk'), number=1).values('created_at')[:1]
+    return public_current_issues(case).annotate(opened_at=Subquery(opening))
+
+
+def milestone_records(case):
+    return Milestone.objects.filter(case=case, evidence_id__in=public_evidence(case.evidence.all()).values('pk'))
+
+
+def milestone_data(case, milestone):
+    return {'id': milestone.pk, 'name': milestone.name, 'url': f'/api/v1/projects/{case.pk}/milestones/{milestone.pk}'}
+
+
+def milestone_block(case, issue):
+    pk = case.audit.filter(action=MILESTONE_LINK, data__issue_id=issue.pk).order_by('-pk').values_list(
+        'data__milestone_id', flat=True).first()
+    milestone = milestone_records(case).filter(pk=pk).only('id', 'name').first() if pk else None
+    return milestone_data(case, milestone) if milestone else None
+
+
+def planned_milestones(actor, case):
+    try:
+        require(actor, case, 'delivery.read')
+    except PermissionDenied:
+        return {}
+    _, baseline, coverage_id, _ = project_money.terms(case)
+    result = {}
+    if baseline and coverage_id:
+        for stage in PLANNED_STAGE['enum']:
+            policy = resolve(f'D12.{stage}_billing_predicate_ref', case)
+            if policy.status != 'ACTIVE':
+                continue
+            rule = reference_values(policy.configuration)[0]
+            if rule['coverage_id'] == coverage_id:
+                result[stage] = {'stage': stage, 'name': rule['milestone_name'], 'policy_id': policy.configuration.pk}
+    return result
+
+
+def planned_block(actor, case, issue):
+    row = case.audit.filter(action=MILESTONE_LINK, data__issue_id=issue.pk).order_by('-pk').values_list('data', flat=True).first()
+    if not row or not row.get('planned_stage'):
+        return None
+    current = planned_milestones(actor, case).get(row['planned_stage'])
+    return current if current and current['policy_id'] == row['planned_policy_id'] else None
 
 
 @endpoint(response=obj({'case_revision': REVISION, 'issues': array(STATE, limit=50), 'next_before': nullable(ID),
@@ -60,7 +120,7 @@ def state(issue):
     query={'before': ID}, summary='Page readable project issues and exact owner and evidence choices')
 def register(request, case_id):
     case = project(request.user, case_id)
-    issues = public_current_issues(case).select_related('current').order_by('-pk')
+    issues = issue_records(case).select_related('current').order_by('-pk')
     before = request.GET.get('before')
     if before:
         if not before.isascii() or not before.isdecimal() or len(before) > 19 or not 1 <= int(before) <= ID['maximum']:
@@ -100,14 +160,81 @@ def team_projection(actor, issue):
 
 
 @endpoint(response=obj({'case_revision': REVISION, 'issue': STATE, 'team': TEAM,
+    'blocked_milestone': nullable(MILESTONE),
+    'blocked_planned_milestone': nullable(PLANNED_MILESTONE),
+    'history': array(obj({'id': ID, 'status': TEXT, 'at': DATETIME}), limit=25), 'messages_url': TEXT,
+    'timeline': array(obj({'id': nullable(ID), 'kind': choice('state', 'acknowledgement', 'request', 'reminder'),
+                           'status': TEXT, 'at': DATETIME}), limit=66),
     'acknowledgement': obj({'status': TEXT, 'at': nullable(DATETIME), 'basis': nullable(TEXT), 'reply_id': nullable(ID)})}),
     summary='Read the exact current issue and source-bound owner acknowledgement without changing the issue')
 def detail(request, case_id, issue_id):
+    from .issue_communications import timeline_events
+
     case = project(request.user, case_id)
-    issue = get_object_or_404(public_current_issues(case).select_related('case', 'current__owner'), pk=issue_id)
+    issue = get_object_or_404(issue_records(case).select_related('case', 'current__owner'), pk=issue_id)
     clock = issue_teams.acknowledgement_clock(issue)
+    events = public_states(case).filter(issue=issue).order_by('-number').values('id', 'status', 'created_at')[:25]
+    history = [{'id': row['id'], 'status': row['status'], 'at': row['created_at']} for row in events]
+    timeline = [dict(row, kind='state') for row in history]
+    if clock['at']:
+        timeline.append({'id': clock['reply_id'], 'kind': 'acknowledgement', 'status': clock['status'], 'at': clock['at']})
+    try:
+        timeline.extend(timeline_events(request.user, issue))
+    except PermissionDenied:
+        pass
+    timeline.sort(key=lambda row: row['at'], reverse=True)
     return {'case_revision': case.revision, 'issue': state(issue), 'team': team_projection(request.user, issue),
+            'blocked_milestone': milestone_block(case, issue),
+            'blocked_planned_milestone': planned_block(request.user, case, issue),
+            'history': history, 'timeline': timeline,
+            'messages_url': f'/api/v1/projects/{case.pk}/issues/{issue.pk}/messages',
             'acknowledgement': {key: clock[key] for key in ('status', 'at', 'basis', 'reply_id')}}
+
+
+@endpoint(response=obj({'case_revision': REVISION, 'state_id': ID, 'selected': nullable(MILESTONE),
+    'choices': array(MILESTONE, limit=50), 'has_more': BOOLEAN,
+    'planned_choices': array(PLANNED_MILESTONE, limit=2), 'selected_planned': nullable(PLANNED_MILESTONE)}),
+    summary='Read recorded milestones available for an exact issue block')
+def milestone_options(request, case_id, issue_id):
+    case = project(request.user, case_id)
+    require(request.user, case, 'issue.manage')
+    issue = get_object_or_404(public_current_issues(case), pk=issue_id)
+    rows = list(milestone_records(case).only('id', 'name').order_by('name', 'pk')[:51])
+    return {'case_revision': case.revision, 'state_id': issue.current_id, 'selected': milestone_block(case, issue),
+            'planned_choices': list(planned_milestones(request.user, case).values()),
+            'selected_planned': planned_block(request.user, case, issue),
+            'choices': [milestone_data(case, row) for row in rows[:50]], 'has_more': len(rows) > 50}
+
+
+@endpoint(method='POST', request=obj({'case_revision': REVISION, 'state_id': ID,
+    'milestone_id': nullable(ID), 'evidence_id': ID, 'reason': REASON,
+    'planned_stage': nullable(PLANNED_STAGE), 'planned_policy_id': nullable(ID),
+}, optional=('planned_stage', 'planned_policy_id')), response=RECORD, status=201,
+    summary='Record or clear a source-backed issue link to an exact milestone')
+@transaction.atomic
+def link_milestone(request, case_id, issue_id, *, body):
+    actor = request.user
+    project(actor, case_id)
+    case = lock_case(actor, case_id, 'issue.manage', body['case_revision'])
+    issue = get_object_or_404(public_current_issues(case).select_related('current'), pk=issue_id)
+    if issue.current_id != body['state_id']:
+        raise ValidationError('Open the current issue before changing its milestone link.')
+    milestone_id, stage, policy_id = body['milestone_id'], body.get('planned_stage'), body.get('planned_policy_id')
+    if stage or policy_id:
+        current = planned_milestones(actor, case).get(stage)
+        if milestone_id or current is None or current['policy_id'] != policy_id:
+            raise ValidationError('Choose the current approved planned milestone or a recorded milestone.')
+    if milestone_id is not None:
+        get_object_or_404(milestone_records(case), pk=milestone_id)
+    get_object_or_404(public_evidence(case.evidence.all()), pk=body['evidence_id'])
+    reason = body['reason'].strip()
+    if not reason:
+        raise ValidationError('Explain what the source says about the blocked milestone.')
+    event(actor, case, MILESTONE_LINK, issue_id=issue.pk, state_id=issue.current_id,
+          milestone_id=milestone_id, planned_stage=stage, planned_policy_id=policy_id,
+          evidence_id=body['evidence_id'], reason=reason)
+    bump(case)
+    return record(case, issue.current)
 
 
 COMMANDS = {
@@ -173,6 +300,7 @@ def team_reply(request, case_id, issue_id, *, body):
 
 
 @endpoint(response=obj({**VERSIONS, 'issue': STATE, 'team': TEAM, 'source_id': ID, 'can_request_update': BOOLEAN,
+                        'blocked_milestone': nullable(MILESTONE), 'blocked_planned_milestone': nullable(PLANNED_MILESTONE),
                         'response_task': nullable(obj({'id': ID, 'revision': REVISION})),
                         'next_action': TEXT, 'finding': {'type': 'string'}}),
     summary='Read the exact issue investigation and source-scoped owner response task')
@@ -183,7 +311,11 @@ def work_detail(request, work_id):
     if not panel:
         raise PermissionDenied
     task = next((task for task in row['tasks'] if task.status == 'open'), None) if panel['can_respond'] else None
-    return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'issue': state(panel['issue']),
+    issue = panel['issue']
+    issue.opened_at = public_states(work.case).filter(issue=issue, number=1).values_list('created_at', flat=True).first()
+    return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'issue': state(issue),
+            'blocked_milestone': milestone_block(work.case, issue),
+            'blocked_planned_milestone': planned_block(request.user, work.case, issue),
             'team': team_projection(request.user, panel['issue']), 'source_id': work.source_head_id,
             'can_request_update': row['can_request_update'], 'next_action': row['next_action'], 'finding': row['blocker'],
             'response_task': {'id': task.pk, 'revision': task.revision} if task else None}

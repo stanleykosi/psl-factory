@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0115",
+  "case_id": "00000000-0000-4000-8000-000000000115",
   "title": "Iroko Bank · card controls",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1738"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115"
     },
     {
-      "line": "Record a receipt",
-      "state": "action_needed",
-      "work_id": "W-1739"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000115/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000115/actions"
     }
   ],
-  "next": "Delivery · sprint 1 of 6: the PM Sola Martins confirms the next step.",
-  "pm": {
-    "name": "Sola Martins",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1738,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1738/",
+      "api_url": "/api/v1/work/1738"
+    },
+    {
+      "id": 1739,
+      "line": "Record a receipt",
+      "reference": null,
+      "state": "Action needed",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1739/",
+      "api_url": "/api/v1/work/1739"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 2,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "Plan approved",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0115",
+      "manager": "Sola Martins"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

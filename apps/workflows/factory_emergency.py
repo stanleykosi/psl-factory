@@ -360,7 +360,10 @@ def human_action(actor,work_id,expected,case_expected,profile_id,action,values,*
                 raise ValidationError('Select the available emergency decision evidence.')
         result=native.decide_emergency(actor,w.case_id,p.pk,values['role'],values['authority_role'],values['verdict'],values['evidence'],values['note'],case_expected)
     elif action=='authorize':result=native.authorize_emergency(actor,w.case_id,p.pk,case_expected)
-    elif action=='capture_outcome':result=native.capture_outcome(actor,w.case_id,p.pk,data['inputs']['authorization_id'],values['implemented_at'],values['evidence'],values['note'],case_expected)
+    elif action=='capture_outcome':
+        result=native.capture_outcome(actor,w.case_id,p.pk,data['inputs']['authorization_id'],values['implemented_at'],
+            values['evidence'],values['note'],case_expected,customers_affected=values.get('customers_affected'),
+            side_effects=values.get('side_effects'))
     elif action=='record_review':result=native.record_review(actor,w.case_id,outcome(w,data).pk,values['evidence'],values['note'],case_expected)
     elif action=='retrospective_decision':result=native.decide_retrospective(actor,w.case_id,outcome(w,data).pk,values['role'],values['verdict'],values['evidence'],values['note'],case_expected)
     elif action=='reconcile_retrospective':result=native.reconcile_retrospective(actor,w.case_id,outcome(w,data).pk,case_expected)

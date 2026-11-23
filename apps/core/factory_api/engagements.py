@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from apps.core.evidence_access import public_evidence
 from apps.core.models import ClientContactRevision
+from apps.core.presentation import workspace_name
 from apps.core.read_budget import limit_queries
 from apps.identity.services import active_case_grants, require
 from apps.pmo import engagement, engagement_details
@@ -37,6 +38,7 @@ COMMANDS = {
 }
 DETAILS = obj({'id': ID, 'reference': TEXT, 'plan_id': ID, 'evidence_id': ID, 'planned_start': nullable(DATE),
                'contact_id': nullable(ID)})
+LINK = obj({'label': TEXT, 'url': TEXT})
 
 
 def capture_projection(case, pk=None):
@@ -73,6 +75,9 @@ def options(request, case_id):
     'planning_packet_id': nullable(ID), 'finding': {'type': 'string'}, 'actions': array(choice(*COMMANDS)),
     'assignment_roles': array(ROLE), 'registration_roles': array(ROLE),
     'managers': array(obj({'id': ID, 'name': TEXT}), limit=30), 'source_proofs': array(PROOF, limit=35),
+    'project': LINK, 'planning': nullable(LINK),
+    'packet_sources': array(obj({'key': choice('scope', 'price', 'plan'), 'label': TEXT,
+                                 'evidence_id': nullable(ID), 'url': nullable(TEXT)}), limit=3),
     'details': nullable(DETAILS), 'project_contact_id': nullable(ID)}),
     summary='Read the exact engagement assignment, registration inputs and Planning handoff')
 def detail(request, work_id):
@@ -83,6 +88,8 @@ def detail(request, work_id):
         native = workflow.projection(actor, work)
         capture = capture_projection(case, native['capture']) if native['capture'] else None
         grants = {action for _, action in active_case_grants(actor, [case.pk])}
+        prefix = f'/api/v1/projects/{case.pk}'
+        link_to_planning = {'label': 'Project planning', 'url': f'{prefix}/planning'} if 'planning.read' in grants else None
         live = not (work.cancel_requested or work.status in ('verified', 'cancelled', 'followup_needed'))
         assign = workflow.human_roles(actor, case, 'assign') if live and capture else []
         register = workflow.human_roles(actor, case, 'register') if live and capture else []
@@ -102,6 +109,16 @@ def detail(request, work_id):
                 saved = {'id': details.pk, 'reference': details.reference, 'plan_id': details.plan_id,
                          'evidence_id': details.evidence_id, 'planned_start': details.planned_start,
                          'contact_id': contact.pk if contact else None}
+        evidence_ids = {row for row in (capture['evidence_id'] if capture else None, saved['plan_id'] if saved else None) if row}
+        admitted = set(public_evidence(case.evidence.filter(pk__in=evidence_ids)).values_list('pk', flat=True))
+        packet = []
+        if capture and capture['evidence_id'] in admitted:
+            packet.append({'key': 'scope', 'label': 'Engagement source', 'evidence_id': capture['evidence_id'], 'url': None})
+        if 'finance.read' in grants:
+            packet.append({'key': 'price', 'label': 'Recorded project figures', 'evidence_id': None, 'url': f'{prefix}/money'})
+        if saved and saved['plan_id'] in admitted and link_to_planning:
+            packet.append({'key': 'plan', 'label': 'Selected plan evidence', 'evidence_id': saved['plan_id'],
+                           'url': link_to_planning['url']})
         candidates = public_evidence(case.evidence.filter(kind__in=PROOFS)).only('id', 'kind', 'version').order_by('-pk')
         contact_id = None
         if manage:
@@ -111,6 +128,7 @@ def detail(request, work_id):
             'assignment_id': native['assignment'], 'registration_id': native['registration'], 'planning_work_id': native['planning_work'],
             'planning_receipt_id': native.get('receipt'), 'planning_packet_id': native.get('planning_packet'), 'finding': native['finding'],
             'actions': actions, 'assignment_roles': assign, 'registration_roles': register, 'managers': managers,
+            'project': {'label': workspace_name(case), 'url': prefix}, 'planning': link_to_planning, 'packet_sources': packet,
             'source_proofs': proof_rows(candidates[:35]) if actions else [], 'details': saved, 'project_contact_id': contact_id}
 
 

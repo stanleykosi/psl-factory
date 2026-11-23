@@ -1,5 +1,19 @@
 # Build progress log
 
+23 November 2026. PSL answered the last four frontend questions. The completed answer sheet pairs all 224 original questions with their answers and records the three new workflows that need backend alignment. [Backend Answers](delivery/connect/backend-answers.md)
+
+23 November 2026. Renamed the Railway API, worker and database services by environment and role, and removed the exited design checks service. Verified the same API 1.24.0 release, database-backed health, resolved worker configuration and all six running services after the change. [Railway runbook](docs/runbooks/railway.md)
+
+23 November 2026. Published API 1.24.0 to GitHub main and rolled the same application revision to the API and worker in both Railway environments. Verified matching contracts, worker polling and retired Django login routes. Regenerated the frontend handoff API types and left the Next.js deployment and connection to the frontend developer. [Release evidence](BUILD-TESTS.md)
+
+23 November 2026. Closed the backend implementation entries in the 224-question register on API 1.24.0. Recorded the endpoint and access limits for each answer, including private Assistant images, weekly report notes, signed copies, PMO Lead Planning approval, issue and milestone links, Finance receipt checks and alerts. Four questions remain open where PSL has yet to approve the rule. Railway still serves 1.22.0. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md)
+
+23 November 2026. Audited the 224 detailed frontend questions against GitHub main, the backend branch and Railway’s live 1.22.0 schema. Connected the full answer ledger and implementation register to the existing handoff. [Screen-by-screen audit](delivery/connect/backend-answers-by-screen-2026-11-23.md)
+
+23 November 2026. Consolidated PSL’s five follow-up answers into the numbered frontend handoff and updated the approved behavior for proof, receipts and the Assistant, report review and alert screens.
+
+23 November 2026. Recorded PSL’s answers against the frontend checklist and prepared API 1.23.0 on a branch from GitHub main. Fixed A-55 download responses and A-56 Admin sign-in and role reads. Added the new proof, tracking, forms, Setup, Finance and Delivery operations described in the handoff. [Backend answers](delivery/connect/backend-answers-2026-11-23.md)
+
 22 November 2026. Moved the Django page routes and assets into `legacy_ui/`. Made the Railway image API-only and documented how Next.js takes over navigation, account links and private file access. [Test ledger](BUILD-TESTS.md)
 
 22 November 2026. Packaged the Next.js integration handoff in its own repository folder with the OpenAPI 1.22.0 snapshot, generated types, screen map, state crosswalk and six-role permissions. Checked Railway health and sign-in and matched the live schema to GitHub main. [Frontend handoff](handoffs/nextjs/README.md)

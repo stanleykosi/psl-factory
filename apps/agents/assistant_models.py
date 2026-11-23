@@ -24,6 +24,7 @@ class AssistantTurn(models.Model):
     question = models.TextField(max_length=4000)
     focus = models.CharField(max_length=64, blank=True)
     selected_sources = models.JSONField(default=list, blank=True)
+    image_upload_ids = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=12, default='queued', db_index=True)
     answer = models.TextField(blank=True)
     sources = models.JSONField(default=list)
@@ -33,6 +34,7 @@ class AssistantTurn(models.Model):
     started_draft = models.ForeignKey('AssistantDraftVersion', null=True, related_name='+', on_delete=models.PROTECT)
     transferred_to = models.ForeignKey(AssistantConversation, null=True, related_name='+', on_delete=models.PROTECT)
     started_at = models.DateTimeField(null=True)
+    finished_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

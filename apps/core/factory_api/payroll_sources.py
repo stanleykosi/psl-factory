@@ -1,12 +1,18 @@
 """Nominee-scoped payroll imports and private working rows."""
+from io import BytesIO
+import json
+from urllib.parse import urlencode
+
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Exists, Func, JSONField, OuterRef, Subquery
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from adapters.forecast import KEY
+from adapters.payroll_spreadsheet import blank_template
 from apps.core.evidence_access import public_evidence
 from apps.core.models import Audit
 from apps.core.read_budget import limit_queries
@@ -112,17 +118,34 @@ def create_request(request, case_id, *, body):
 
 IMPORT = obj({'id': ID, 'provider': TEXT, 'version': REVISION, 'accepted': BOOLEAN,
               'status': choice('complete', 'held'), 'codes': array(TEXT), 'created_at': DATETIME,
-              'replaces_input_id': nullable(ID)})
+              'replaces_input_id': nullable(ID), 'findings': array(obj({'code': TEXT, 'message': TEXT}))})
+FORMATS = choice('json', 'csv', 'xlsx')
 
 
 def import_payload(row):
     return {'id': row.pk, 'provider': row.provider, 'version': row.version, 'created_at': row.created_at,
             'replaces_input_id': row.replaces_input_id,
+            'findings': [{'code': code, 'message': payroll_working.REJECTION_MESSAGES.get(
+                code, payroll_working.MESSAGES.get(code, 'Check this export against its agreed payroll layout.'))}
+                for code in row.metadata['codes']],
             **{key: row.metadata[key] for key in ('accepted', 'status', 'codes')}}
 
 
+def admitted_provider_options(actor, case, policy):
+    for entry in policy['providers']:
+        if entry['owner_id'] != actor.pk:
+            continue
+        try:
+            require(actor, case, 'payroll.capture')
+            decision_authority(actor, case, entry['owner_role'])
+        except (PermissionDenied, ValidationError):
+            continue
+        yield entry
+
+
 @endpoint(response=obj({'revision': REVISION, 'request': REQUEST, 'provider_options': array(obj({
-    'provider': TEXT, 'formats': array(choice('json', 'csv', 'xlsx'))}), limit=2),
+    'provider': TEXT, 'formats': array(FORMATS), 'templates': array(obj({
+        'format': FORMATS, 'sheet': nullable(TEXT), 'download_url': TEXT}), limit=3)}), limit=2),
     'inputs': array(IMPORT, limit=25), 'next_page': nullable(PAGE)}), query={'page': PAGE},
     summary='Read authorised payroll provider import options and status without exposing employee rows')
 def imports(request, case_id, request_id):
@@ -136,16 +159,13 @@ def imports(request, case_id, request_id):
     except PermissionDenied:
         readable = False
     available = []
-    for entry in policy['providers']:
-        if entry['owner_id'] != actor.pk:
-            continue
-        try:
-            require(actor, case, 'payroll.capture')
-            decision_authority(actor, case, entry['owner_role'])
-        except (PermissionDenied, ValidationError):
-            continue
-        available.append({'provider': entry['provider'], 'formats': ['json', *[row['format']
-                          for row in entry.get('spreadsheet_layouts', [])]]})
+    for entry in admitted_provider_options(actor, case, policy):
+        prefix = f'/api/v1/projects/{case.pk}/payroll/requests/{payroll.pk}/template'
+        templates = [{'format': row['format'], 'sheet': row.get('sheet'),
+                      'download_url': prefix + '?' + urlencode({'provider': entry['provider'], 'format': row['format']})}
+                     for row in [{'format': 'json'}, *entry.get('spreadsheet_layouts', [])]]
+        available.append({'provider': entry['provider'], 'formats': [row['format'] for row in templates],
+                          'templates': templates})
     if not (readable or available):
         raise PermissionDenied
     replacements = Audit.objects.filter(case=case, action=native.INPUT_REPLACED,
@@ -157,6 +177,31 @@ def imports(request, case_id, request_id):
     return {'revision': case.revision, 'request': request_payload(payroll), 'provider_options': available,
             'inputs': [import_payload(row) for row in page],
             'next_page': page.next_page_number() if page.has_next() and page.number < PAGE['maximum'] else None}
+
+
+@endpoint(response={'type': 'string', 'format': 'binary'}, media_type='application/octet-stream',
+          query={'provider': {**TEXT, 'maxLength': 100}, 'format': FORMATS}, required_query=('provider', 'format'),
+          summary='Download a blank payroll export template for the exact authorised provider and layout')
+def template(request, case_id, request_id):
+    case = workspace(request, case_id)
+    payroll = get_object_or_404(PayrollRequest.objects.select_related('case'), case=case, pk=request_id)
+    _, policy = native.access(payroll)
+    provider, format_ = request.GET.get('provider'), request.GET.get('format')
+    owner = next((item for item in admitted_provider_options(request.user, case, policy) if item['provider'] == provider), None)
+    if owner is None:
+        raise Http404
+    if format_ == 'json':
+        source = {'provider': provider, **{key: payroll.metadata[key] for key in ('entity', 'period', 'currency')},
+                  'source_version': '', 'unit': 'major_currency', 'extracted_at': '',
+                  'completeness': 'unknown', 'control_total': None, 'rows': []}
+        data = json.dumps(source, indent=2).encode()
+    else:
+        layout = next((row for row in owner.get('spreadsheet_layouts', []) if row['format'] == format_), None)
+        if layout is None:
+            raise Http404
+        data = blank_template(layout)
+    return FileResponse(BytesIO(data), as_attachment=True, filename=f'payroll-template.{format_}',
+                        content_type='application/octet-stream')
 
 
 @endpoint(method='POST', request=obj({'revision': REVISION, 'provider': {**TEXT, 'maxLength': 100}, 'operation_key': KEY,
@@ -196,6 +241,7 @@ ROW = obj({'position': REVISION, 'employee': TEXT, 'component': TEXT, 'amount': 
     'quarantined': BOOLEAN, 'has_source_amount': BOOLEAN, 'source_amount': nullable(TEXT), 'source_currency': nullable(TEXT),
     'sources': array(obj({'input_id': ID, 'row_ref': TEXT, 'provider': TEXT, 'data_row': nullable(ID)}))})
 COUNT = {'type': 'integer', 'minimum': 0}
+WORKING_COUNTS = obj({'total': COUNT, 'held': COUNT, 'conflict': COUNT, 'matched': nullable(COUNT), 'unmatched': nullable(COUNT)})
 
 
 @endpoint(response=obj({'record_id': ID, 'currency': TEXT, 'period': TEXT, 'status': ROW_STATUS,
@@ -234,6 +280,7 @@ OPERATIONS = {
 @endpoint(response=obj({**VERSIONS, 'request_id': ID, 'selected': factory_payroll.INPUT, 'stage': TEXT,
     'finding': {'type': 'string'}, 'publication_id': nullable(ID), 'working': array(obj({
         'id': ID, 'kind': choice('combine', 'match', 'aggregate'), 'status': choice('complete', 'held'), 'codes': array(TEXT),
+        'counts': nullable(WORKING_COUNTS),
     }), limit=3), 'hr_receipt': nullable(obj({'snapshot_id': ID, 'receipt_id': nullable(ID),
         'can_acknowledge': BOOLEAN, 'proofs': array(PROOF, limit=50)})),
 }), summary='Read authorised payroll working references and the assigned matcher’s exact HR receipt options')
@@ -254,11 +301,21 @@ def work_options(request, work_id):
             proofs = public_evidence(work.case.evidence.filter(kind='hr_disclosure_decision')).only('kind', 'version')
             hr_receipt = {'snapshot_id': snapshot_id, 'receipt_id': recorded_id, 'can_acknowledge': can_acknowledge,
                           'proofs': proof_rows(proofs.order_by('-pk')[:50]) if can_acknowledge else []}
+        working = []
+        for kind, row in state['working_runs'].items():
+            try:
+                record = native.exact(work.case, PayrollRun, row['id'])
+                native.check_run_access(actor, record)
+                table = payroll_working.rows(record.result, kind)
+            except (PermissionDenied, ValidationError):
+                counts = None
+            else:
+                counts = {key: table[key] for key in WORKING_COUNTS['properties']}
+            working.append({'id': row['id'], 'kind': kind, 'status': row['status'], 'codes': row['codes'], 'counts': counts})
     return {'expected_revision': work.revision, 'case_revision': work.case.revision, 'request_id': state['request'],
             'selected': state['inputs'], 'stage': state['stage'], 'finding': state['finding'],
             'publication_id': state['publication'], 'hr_receipt': hr_receipt,
-            'working': [{'id': row['id'], 'kind': kind, 'status': row['status'], 'codes': row['codes']}
-                        for kind, row in state['working_runs'].items()]}
+            'working': working}
 
 
 @endpoint(method='POST', request={'oneOf': [obj({'action': {'const': action}, **VERSIONS, **fields})

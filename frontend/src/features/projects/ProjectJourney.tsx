@@ -1,100 +1,81 @@
 'use client';
 
 // SCR-07 project page: breadcrumb, title, the project tab bar, then the tab. Journey shows the PM and route line, the
-// facts strip, every line's work in the order returned, what is next and Tola's summary. Data comes only from
-// E-PROJECT (v7 optional fields, see model.ts); the backend decides access (INV-ACCESS).
+// facts strip and every piece of work in the order returned. Data comes only from the live GET /projects/{case_id}
+// (see model.ts); the backend decides access and which tabs and figures a person gets.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react';
 
-import { AgentAvatar, agentKey, Breadcrumb, EmptyState, PageTitle, Panel, STATE_TAGS, Tag, VisuallyHidden, type FactoryState, type TagTone } from '@/components';
+import { Breadcrumb, EmptyState, formatDayMonth, PageTitle, Panel, Tag, VisuallyHidden } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
+import { SampleLabel } from '@/shell/SampleLabel';
 
-import {
-  agentSummaryOf,
-  clientOf,
-  factsOf,
-  factText,
-  findFact,
-  lineDetail,
-  linesText,
-  pmNameOf,
-  piecesText,
-  PROJECT_TABS,
-  textOf,
-  workCounts,
-  type JourneyFact,
-  type JourneyLineView,
-  type JourneyView,
-  type ProjectTab,
-} from './model';
+import { clientOf, factText, piecesText, projectCounts, PROJECT_TABS, type Journey, type JourneyItem, type ProjectTab } from './model';
 import { DeliveryTab } from './DeliveryTab';
 import { MoneyTab } from './MoneyTab';
+import { MoreFooter } from './MoreFooter';
 import { ProjectNoAccess } from './ProjectStates';
 import { ProjectTabContent } from './ProjectTabContent';
 import { PANEL_ID, ProjectTabs } from './ProjectTabs';
 import { hasTabContent } from './tabsModel';
-import { useProject } from './useProject';
+import { useProject, type MoreState } from './useProject';
 
 import './projects.css';
 
-/** CMP-05 tag for a line; a state outside the enum (only if the contract changes) shows its raw value as neutral. */
-const tagFor = (state: JourneyLineView['state']): { text: string; tone: TagTone } => (Object.hasOwn(STATE_TAGS, state) ? STATE_TAGS[state as FactoryState] : { text: state, tone: 'neutral' });
-
-// The six facts SCR-07 draws, shown "Unknown" when the response sends no facts. Their tones are presentation only.
-const BOARD_FACTS = ['CONTRACT STAGES', 'INVOICES VERIFIED', 'WAITING ON PEOPLE', 'STOPPED', 'NEXT MILESTONE', 'PAID'];
-const FACT_TONES: Record<string, (value: string) => string | undefined> = {
-  'invoices verified': () => 'psl-fact--earned',
-  'waiting on people': (v) => (v !== '0' ? 'psl-fact--current' : undefined),
-  stopped: (v) => (v !== '0' ? 'psl-fact--current' : undefined),
-};
-
-/** The facts in the response's order; a value it does not know reads "Unknown", never 0. */
-function ProjectFacts({ facts }: { facts?: JourneyFact[] }) {
-  const shown = facts ?? BOARD_FACTS.map((label) => ({ label, unknown: true }));
+/** The four facts SCR-07 draws from live; a figure the response does not carry reads "Not available", never 0. */
+function ProjectFacts({ journey }: { journey: Journey }) {
+  const { facts } = journey;
+  const cells: { label: string; value: number | string | null | undefined; current?: boolean }[] = [
+    { label: 'CONTRACT STAGES', value: facts.finance?.stages },
+    { label: 'WAITING ON PEOPLE', value: facts.waiting, current: facts.waiting > 0 },
+    { label: 'STOPPED', value: facts.stopped, current: facts.stopped > 0 },
+    { label: 'NEXT MILESTONE', value: facts.finance?.next },
+  ];
   return (
-    <section aria-label="Facts earned" className="psl-facts projects__facts">
-      {shown.map((fact, i) => {
-        const value = factText(fact);
-        const tone = value === undefined ? 'psl-fact--unknown' : FACT_TONES[fact.label.toLowerCase()]?.(value);
-        return (
-          <div key={`${fact.label}-${i}`} className={tone ? `psl-fact ${tone}` : 'psl-fact'}>
-            <b>{fact.label}</b>
-            <strong>{value ?? 'Unknown'}</strong>
-          </div>
-        );
-      })}
-    </section>
+    <>
+      <section aria-label="Facts earned" className="psl-facts projects__facts">
+        {cells.map((cell) => {
+          const value = factText(cell.value);
+          const tone = value === 'Not available' ? 'psl-fact--unknown' : cell.current ? 'psl-fact--current' : undefined;
+          return (
+            <div key={cell.label} className={tone ? `psl-fact ${tone}` : 'psl-fact'}>
+              <b>{cell.label}</b>
+              <strong>{value}</strong>
+            </div>
+          );
+        })}
+      </section>
+      {facts.finance?.limited && <p className="projects__partial">Figures may be partial.</p>}
+    </>
   );
 }
 
-function JourneyLines({ lines }: { lines: JourneyLineView[] }) {
-  const names = lines.map((l) => textOf(l.title) ?? l.line);
+/** One piece of work: its line, the reference when there is one, when it started and last changed, and its state words as given. */
+function JourneyLines({ items }: { items: JourneyItem[] }) {
   return (
     <ol className="projects__lines">
-      {lines.map((line, i) => {
-        const tag = tagFor(line.state);
-        const name = names[i];
-        // Two lines with the same name get their reference or state in the link name (UX-1-1).
-        const repeated = names.indexOf(name) !== names.lastIndexOf(name);
-        const reference = textOf(line.reference);
-        const detail = lineDetail(line);
+      {items.map((item) => {
+        // Two rows with the same title get their reference or state in the link name (UX-1-1).
+        const repeated = items.filter((other) => other.line === item.line).length > 1;
         return (
-          <li key={`${line.work_id}-${i}`} className="projects__line">
-            <span aria-hidden="true" className={`projects__dot projects__dot--${tag.tone}`} />
+          <li key={item.id} className="projects__line">
+            <span aria-hidden="true" className="projects__dot projects__dot--neutral" />
             <span className="projects__linemain">
-              <Link href={`/work/${encodeURIComponent(line.work_id)}`} className="projects__linename">
-                {name}
-                {repeated && <VisuallyHidden>, {reference ?? tag.text}</VisuallyHidden>}
+              <Link href={`/work/${item.id}`} className="projects__linename">
+                {item.line}
+                {repeated && <VisuallyHidden>, {item.reference ?? item.state}</VisuallyHidden>}
               </Link>
-              {reference && <span className="projects__ref"> {reference}</span>}
-              {detail && <span className="projects__detail">{detail}</span>}
+              {item.reference && <span className="projects__ref"> {item.reference}</span>}
+              <span className="projects__detail">
+                Started {formatDayMonth(item.started)} · Updated {formatDayMonth(item.updated)}
+              </span>
             </span>
-            <Tag tone={tag.tone} className="projects__state">
-              {tag.text}
+            <Tag tone="neutral" className="projects__state">
+              {item.state}
             </Tag>
           </li>
         );
@@ -103,87 +84,79 @@ function JourneyLines({ lines }: { lines: JourneyLineView[] }) {
   );
 }
 
-/** Tola's summary of the project (PROPOSAL `agent_summary`); without one the panel says so. */
-function AgentSummary({ journey }: { journey: JourneyView }) {
+/** The right-hand panel: only the link to the Assistant, and only when live offers an Assistant for this project and the person has it. */
+function AskPanel({ journey }: { journey: Journey }) {
   const me = useMe();
-  const summary = agentSummaryOf(journey.agent_summary);
-  const agent = summary?.name ?? 'Tola';
-  const role = summary ? summary.role : 'PMO agent';
-  const paragraphs = summary?.paragraphs ?? [];
-  const key = agentKey(agent);
+  if (journey.assistant.length === 0 || !hasDestination(me, 'assistant')) return null;
   return (
-    <Panel
-      kind="agent"
-      as="aside"
-      aria-label={`${agent}'s summary`}
-      className="projects__agent"
-      head={
-        <span className="projects__agenthead">
-          {key && <AgentAvatar agent={key} size={40} />}
-          <span className="projects__agentname">
-            {agent} {role && <span className="projects__agentrole">· {role}</span>}
-          </span>
-        </span>
-      }
-    >
-      <div className="projects__agentbody">
-        {paragraphs.length === 0 && <p>{agent} has not summarised this project yet.</p>}
-        {paragraphs.map((text, i) => (
-          <p key={i}>{text}</p>
-        ))}
-        {hasDestination(me, 'assistant') && (
-          <p>
-            <Link href="/assistant">Ask me about this project</Link>
-          </p>
-        )}
-      </div>
+    <Panel kind="agent" as="aside" aria-label="Assistant" className="projects__agent">
+      <p className="projects__plain">
+        <Link href="/assistant">Ask me about this project</Link>
+      </p>
     </Panel>
   );
 }
 
-function JourneyTab({ journey }: { journey: JourneyView }) {
-  const counts = workCounts(journey);
-  const facts = factsOf(journey.facts);
-  const pm = pmNameOf(journey.pm);
-  const waiting = factText(findFact(facts, 'waiting on people'));
-  const stopped = factText(findFact(facts, 'stopped'));
-  const route = [pm && `PM ${pm}`, textOf(journey.route), `${piecesText(counts.pieces)} across ${linesText(counts.lines)}`];
-  const phoneLine = [piecesText(counts.pieces), waiting && `${waiting} waiting on people`, stopped && `${stopped} stopped`];
+function JourneyTab({ journey, more, showMore }: { journey: Journey; more: MoreState; showMore: () => void }) {
+  const counts = projectCounts(journey);
+  const engagement = journey.facts.engagement;
+  const route = [engagement?.manager && `PM ${engagement.manager}`, engagement?.route, piecesText(counts.pieces)];
+  const phoneLine = [piecesText(counts.pieces), `${counts.waiting} waiting on people`, `${counts.stopped} stopped`];
+  const rowsRef = useRef<HTMLDivElement>(null);
+  // Show more: the keyboard moves to the first row it added.
+  const focusRow = useRef<number | null>(null);
+  useEffect(() => {
+    if (focusRow.current !== null && journey.items.length > focusRow.current) {
+      rowsRef.current?.querySelectorAll<HTMLElement>('.projects__linename')[focusRow.current]?.focus();
+      focusRow.current = null;
+    }
+  }, [journey.items.length]);
   return (
     <>
       <p className="projects__route">{route.filter(Boolean).join(' · ')}</p>
-      <p className="projects__phoneline">{phoneLine.filter(Boolean).join(' · ')}</p>
-      <ProjectFacts facts={facts} />
+      <p className="projects__phoneline">{phoneLine.join(' · ')}</p>
+      <ProjectFacts journey={journey} />
       <div className="projects__body">
         <Panel className="projects__journey" head="The whole journey, oldest first" bodyClassName="projects__journeybody">
-          {journey.lines.length === 0 ? (
+          {journey.items.length === 0 ? (
             <EmptyState title="No work yet" className="projects__empty">
               No work on this project yet.
             </EmptyState>
           ) : (
-            <JourneyLines lines={journey.lines} />
+            <div ref={rowsRef}>
+              <JourneyLines items={journey.items} />
+            </div>
           )}
-          <p className="projects__next">
-            <strong>What is next</strong> <span className="projects__nexttext">{journey.next}</span>
-          </p>
+          {journey.items.length > 0 && (
+            <MoreFooter
+              text={`${journey.items.length} of ${counts.pieces} shown`}
+              hasMore={journey.next_page !== null}
+              busy={more === 'loading'}
+              failed={more === 'error'}
+              onMore={() => {
+                if (more !== 'error') focusRow.current = journey.items.length;
+                showMore();
+              }}
+            />
+          )}
         </Panel>
-        <AgentSummary journey={journey} />
+        <AskPanel journey={journey} />
       </div>
     </>
   );
 }
 
-const ProjectContext = createContext<{ journey: JourneyView; base: string; tab: ProjectTab } | null>(null);
+const ProjectContext = createContext<{ journey: Journey; base: string; tab: ProjectTab; more: MoreState; showMore: () => void } | null>(null);
 
 /** The tab's content, drawn inside the frame's tabpanel; the frame has already read the project. */
 export function ProjectTabBody() {
   const ctx = useContext(ProjectContext);
   if (!ctx) throw new Error('ProjectTabBody needs the project frame');
-  const { journey, base, tab } = ctx;
+  const { journey, base, tab, more, showMore } = ctx;
   return tab === 'journey' ? (
-    <JourneyTab journey={journey} />
+    <JourneyTab journey={journey} more={more} showMore={showMore} />
   ) : tab === 'delivery' ? (
-    <DeliveryTab journey={journey} />
+    <DeliveryTab />
   ) : hasTabContent(tab) ? (
     <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
   ) : (
@@ -191,19 +164,20 @@ export function ProjectTabBody() {
   );
 }
 
-function ProjectView({ journey, base, tab, children }: { journey: JourneyView; base: string; tab: ProjectTab; children: ReactNode }) {
+function ProjectView({ journey, base, tab, more, showMore, children }: { journey: Journey; base: string; tab: ProjectTab; more: MoreState; showMore: () => void; children: ReactNode }) {
   return (
-    <ProjectContext.Provider value={{ journey, base, tab }}>
+    <ProjectContext.Provider value={{ journey, base, tab, more, showMore }}>
       <div className="projects__page">
         <header className="projects__header">
           <div className="projects__crumb">
-            <Breadcrumb items={[{ label: 'Projects', href: '/projects' }]} current={clientOf(journey)} />
+            <Breadcrumb items={[{ label: 'Projects', href: '/projects' }]} current={clientOf(journey.title)} />
           </div>
           <PageTitle size={36} phoneSize={22}>
             {journey.title}
           </PageTitle>
+          <SampleLabel show={journey.sample} />
         </header>
-        <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
+        <ProjectTabs base={base} current={tab} tabs={journey.tabs} />
         <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">
           {children}
         </div>
@@ -213,7 +187,7 @@ function ProjectView({ journey, base, tab, children }: { journey: JourneyView; b
 }
 
 function ProjectPage({ caseId, tab, children }: { caseId: string; tab: ProjectTab; children: ReactNode }) {
-  const { state, retry } = useProject(caseId);
+  const { state, retry, more, showMore } = useProject(caseId);
   const base = `/projects/${encodeURIComponent(caseId)}`;
 
   if (state.status === 'loading') return <LoadingState />;
@@ -230,7 +204,7 @@ function ProjectPage({ caseId, tab, children }: { caseId: string; tab: ProjectTa
     );
   }
   return (
-    <ProjectView journey={state.journey} base={base} tab={tab}>
+    <ProjectView journey={state.journey} base={base} tab={tab} more={more} showMore={() => void showMore()}>
       {children}
     </ProjectView>
   );

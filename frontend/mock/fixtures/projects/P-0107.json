@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0107",
+  "case_id": "00000000-0000-4000-8000-000000000107",
   "title": "Atlas Insurance · claims portal",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1722"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107"
     },
     {
-      "line": "Prepare an invoice",
-      "state": "processing",
-      "work_id": "W-1723"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000107/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/actions"
     }
   ],
-  "next": "Delivery · sprint 2 of 5: the PM Kemi Adebayo confirms the next step.",
-  "pm": {
-    "name": "Kemi Adebayo",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1722,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1722/",
+      "api_url": "/api/v1/work/1722"
+    },
+    {
+      "id": 1723,
+      "line": "Prepare an invoice",
+      "reference": null,
+      "state": "Processing",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1723/",
+      "api_url": "/api/v1/work/1723"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 0,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "Planning exit",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0107",
+      "manager": "Kemi Adebayo"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

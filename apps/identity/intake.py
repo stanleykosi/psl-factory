@@ -21,6 +21,10 @@ SCHEMA['properties']['staff_lifecycle']=obj({
     'allow_invite':{'type':'boolean'},
     'allow_deactivation':{'type':'boolean'},
 })
+lifecycle = SCHEMA['properties']['staff_lifecycle']
+lifecycle['required'] = []
+lifecycle['if'] = {'required': ['allow_invite'], 'properties': {'allow_invite': {'const': True}}}
+lifecycle['then'] = {'required': ['invite_minutes']}
 for key in ['allow_roster','allow_account_deactivation','allow_unassigned_departure']:
     SCHEMA['properties']['staff_lifecycle']['properties'][key]={'type':['boolean','null']}
 for key in ['allow_profile_edit','allow_reactivation']:
@@ -79,6 +83,11 @@ def current(actor,tenant,purpose):
     if not fresh.is_active or not actor.is_authenticated:raise PermissionDenied('Active technical principal required')
     cfg=Authority.objects.filter(user=actor,tenant=tenant).order_by('-version').first()
     if not cfg or not cfg.enabled or cfg.expires_at<=timezone.now():raise PermissionDenied('Current explicit tenant authority required')
+    controls = cfg.value.get('staff_lifecycle')
+    if (isinstance(controls, dict) and controls.get('allow_invite') is True
+            and 'invite_minutes' not in controls):
+        # Existing incomplete delegations can still administer access. They cannot issue invitations.
+        cfg.value = {**cfg.value, 'staff_lifecycle': {**controls, 'allow_invite': False}}
     checked(cfg.value)
     if not cfg.value[purpose]:raise PermissionDenied('This technical purpose was not delegated')
     return cfg
@@ -144,7 +153,7 @@ def options(actor, purpose='create_cases'):
     tenants=Authority.objects.filter(user=actor).values_list('tenant',flat=True).distinct();rows=[]
     for tenant in tenants:
         try:rows.append(current(actor,tenant,purpose))
-        except PermissionDenied:pass
+        except (PermissionDenied, ValidationError):pass
     return rows
 
 def investigate(actor,case_id):
