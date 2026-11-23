@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-89",
-  "outcome": "The weekly report review (approve, return, reject) and correct run live from the work item through the shared adapter, with press locking and uncertain-effect handling",
-  "state": "PLANNED",
+  "outcome": "The weekly client report can be corrected after a return, and approved, returned or refused by its reviewer, live",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4120` (mock) shows \"Approve and send\", \"Return with a note\" and \"Refuse\" and a Note box; `/work/4121` shows the first two only; `/work/4123` shows no review block, no heading and no gap \u2014 verify: open the pages; `frontend/e2e/work-item-weekly-report.spec.ts` asserts buttons by name and absence.",
+    "`/work/4124` (`document_version_id:null`) shows no review buttons even though verdicts are listed \u2014 verify: e2e plus unit test on `weeklyReportAdapter.commands`.",
+    "Approve on `/work/4120` sends exactly one `POST /api/v1/work/4120/reviews` with body `{\"kind\":\"document\",\"expected_revision\":6,\"case_revision\":12,\"version_id\":9101,\"verdict\":\"approve\",\"note\":\"\"}`: no `action`, no key, no `decision` field \u2014 verify: e2e captures the body; unit test on the descriptor `body()`.",
+    "Return and Refuse send the same shape with `verdict` `return` / `reject` and the typed note; with an empty or blank note they send nothing and show \"Write a note first.\" \u2014 verify: e2e counts requests; unit test.",
+    "After a 200 the page re-reads the report and the item, and shows \"Recorded. This item is now: {state tag}.\" from the re-read; the review buttons disappear when the re-read no longer offers them; the page never says \"Sent\" or \"Delivered\" for a review result and the recipients still read \"No receipt yet\" when `receipt_id` is null \u2014 verify: e2e on the mock; DOM text assertion.",
+    "If the re-read after a success fails, the page says \"Sent. We couldn't reload the item; reload the page to see its state.\" and all report controls stay disabled \u2014 verify: unit test of the run path with a failing reload.",
+    "`/work/4122` shows \"Edit your update\" (and \"Returned to you\" without any note text); `/work/4123` and `/work/4125` show no working edit button (4125 shows its `disabledReason`); a `can_correct:false` report shows no edit block \u2014 verify: e2e on all three; unit test on descriptors.",
+    "The edit form is prefilled from `editable_parts`, shows \"N records cited\" per part and has no cite control; \"Send for review\" is disabled while a part or the reason is blank, or over 10000 / 2000 characters \u2014 verify: component test.",
+    "Send for review sends one `POST /api/v1/work/4122/weekly-report` with `{\"action\":\"correct\",\"expected_revision\":\u2026,\"case_revision\":\u2026,\"draft_id\":null,\"selection\":{\u2026as read, nulls kept\u2026},\"parts\":{\u2026four parts, each with its original evidence_ids\u2026},\"reason\":\"\u2026\"}`; no key field, no other keys \u2014 verify: e2e captures the body and compares `evidence_ids` and `selection` with the readback; unit test.",
+    "After the 201 the page re-reads and says \"Your update was sent for review. This item is now: {state tag}.\" with the re-read state; the edit block is gone when `can_correct` is now false \u2014 verify: e2e.",
+    "A double click on any of the four buttons sends one request; while one runs every control on the report and the F-87 control row is disabled; a poll result arriving mid-write does not clear the lock or the notice \u2014 verify: unit test with fake timers and a deferred POST; e2e counts requests.",
+    "A null or missing token sends nothing and shows \"We don't have this report's current version yet. Reload and try again.\"; no body contains 0 or null for `expected_revision` or `case_revision` \u2014 verify: unit test with a readback missing the tokens.",
+    "A 409 `stale_version` re-reads the report, shows \"This changed while you were working. Showing the latest version.\", keeps the typed note or form text, does not repeat the press, and the next press carries the new revisions \u2014 verify: e2e with the 409 scenario capturing both requests.",
+    "A 403 `forbidden` shows \"You can't do this.\" with the server message (for example the self-review message), re-reads, makes no retry, and the page offers no other route around it; a 403 `csrf_failed` refreshes the session once, says \"Press the button again\" and sends nothing more \u2014 verify: unit test counts POST and session calls; e2e on the forbidden scenario.",
+    "A 422 shows the server message and puts a `note` or `reason` field message under that input, keeps the typed text and re-reads \u2014 verify: e2e with both 422 scenarios.",
+    "A 429 and a 503 each say \"Try again shortly.\" and send nothing further over 30 s of fake time \u2014 verify: unit test.",
+    "After a dropped connection or a 500 on Approve, Return, Refuse or Send for review: the report is re-read, \"We couldn't confirm that this happened. Check the page before trying again.\" appears, all four buttons are disabled with \"Check the page before trying again.\" beside them, typed text is kept, and no second request is sent by the page over 60 s of fake time; the buttons unlock only when a re-read shows a different `expected_revision` (mock scenario where the write was applied) or after a page reload \u2014 verify: unit test with fake timers; e2e drops the connection in both mock variants (applied and not applied); in the not-applied variant the controls stay locked until reload.",
+    "A 404 on a write replaces the page with \"This record is unavailable.\"; a 401 shows the signed-out state with a link to `/sign-in?next=` the current path \u2014 verify: unit tests with a mocked client.",
+    "No write is made by load, polling or navigation, and the review and correct POSTs appear only in `useWorkCommand`'s send path: `grep -rn \"liveApi.POST\" frontend/src/features/work-item frontend/src/features/workspace` shows no new call site other than inside `useWorkCommand` and F-85's upload calls; e2e asserts zero POSTs on load \u2014 verify: grep and e2e.",
+    "The returned note, cite labels, assembled text, \"Open the report as the client will see it\", \"What happened\" and \"Approved by\" are not drawn, and no \"not available\" placeholder text appears \u2014 verify: e2e DOM assertions on 4120 and 4122.",
+    "The v7 paths are unchanged: `useWorkspaceStep` tests, F-87's control-row tests and `/work/W-xxxx` pages pass without edits \u2014 verify: `npm test`, `frontend/e2e/workspace.spec.ts`, `work-item.spec.ts`, `work-item-controls.spec.ts`.",
+    "Unit tests exist for the four descriptors (ids, urls, bodies, null-token hold, `fixed` and `action:null` handling) and for `WeeklyReportActions` states (loading, empty, pressing, success, each error kind) \u2014 verify: `npm test` lists them; `adapter.test.ts` still passes.",
+    "Against live Django (8020, Postgres 55433, account live-lead and a second reviewer account): on a weekly report work item where `GET /api/v1/work/{id}/weekly-report` lists `review_verdicts`, a review by the account the API lists returns 200 and the page then shows the readback's state; the author account sees no review block (or gets the server's 403 message if the API listed one); record the JSON of each response and compare the page with `oa.py live GET /api/v1/work/{id}/weekly-report 3` before and after. On a returned report, \"Send for review\" returns 201 and `document_version_id`/`review_verdicts` on the re-read are shown as served \u2014 verify: the recorded JSON and the page.",
+    "Viewport check at 1440 and 390: the review block and edit form have no overlap, buttons stack full width on the phone, the review block leaves no empty gap when absent, and the parts that remain match the SCR-25 review, returned and received artboards \u2014 verify: screenshots against `design/screens.md` SCR-25 artboards (see Conflicts with the boards).",
+    "`npm run lint`, `npm run typecheck` and `npm test` pass; `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. There are two writes through one shared lock and idempotency contract (contract-change). An approve or return of a weekly report reaches the client (external-messaging). A retry before reconcile would repeat that effect, so the F-87 uncertain-lock rule is the main test target. There is no data migration, no money, and no new identity or approver rule in the frontend, because the API decides what is offered. Product acceptance is required because the client sees a changed review and edit flow."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-89/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +98,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-89/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +198,29 @@
   "created_at": "2026-11-23T13:30:25Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:39:14Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-89/readiness.md",
+      "delivery/features/F-89/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

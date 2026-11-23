@@ -231,7 +231,24 @@ Live lists `background` as an available action but does not say whether the back
 2. Show only "Pause background work" while the item is processing and nothing otherwise.
 3. Hold background controls until the backend serves the current setting.
 
-_LC-Q10 and LC-Q11 were added after batch 1 went out; D-182 covers LC-Q1 to LC-Q9 only. They stay open for batch 2, and F-86 builds on their recommended options meanwhile._
+### LC-Q14 · F-89 · Review buttons on the weekly report
+The approved review board draws two buttons, "Approve and send" and "Return with a note". Live also allows a third verdict, reject, and lists which verdicts this person may give (`review_verdicts`).
+1. **(Recommended)** Draw a button for each verdict the API lists, in the order Approve and send, Return with a note, Refuse. Return and Refuse need a note. No extra confirm: the board's line "Approving sends this exact version to the client" stays above the buttons.
+2. Same, plus a yes/no confirm before Approve, because it reaches the client.
+3. Draw only the two board buttons and hold Refuse until the design engineer draws it.
+
+### LC-Q15 · F-89 · Editing after a return
+The returned board quotes the reviewer's note and has an "Edit your update" button with no edit screen drawn. Live does not serve the note (backend C-16), requires a "reason" with every correction, and carries cites as record ids with no labels (C-15).
+1. **(Recommended)** "Returned to you" with no quote. "Edit your update" opens an inline form: four text boxes prefilled from the report, "N records cited" under each (cites kept as they are, not editable), a required "Reason for the change", then "Send for review" and "Cancel".
+2. Hold editing until the backend serves the returned note and cite labels.
+
+### LC-Q16 · F-89 · What the reviewer sees before approving
+The review board shows the four parts with their records, a byline and a link to the report as the client will see it. Live gives the reviewer a version id and the list of verdicts; the report text is not documented as served to a reviewer, there is no byline, and the client-facing preview is not connected yet (backend B-7, C-17).
+1. **(Recommended by the lane C coordinator)** Do not draw Approve and send until the parts are shown on the page: the reviewer must see what goes to the client. Return and Refuse stay.
+2. Show the parts the report read serves (nothing more, no link, no byline) and the review buttons whenever the API offers them. If no text is served, the block says so in one line and Approve is still drawn (the spec writer's first pick; it can let a reviewer approve a client message they cannot read).
+3. Hold the whole review block until the preview is connected.
+
+_LC-Q10 onwards were added after batch 1 went out; D-182 covers LC-Q1 to LC-Q9 only. They stay open for batch 2, and lane C builds on their recommended options meanwhile._
 
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
